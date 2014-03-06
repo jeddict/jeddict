@@ -1,0 +1,158 @@
+#####################Package Name definition ###########################
+#if ($classDef.getPackageName())
+package $classDef.getPackageName();
+#end
+
+#####################import statements #################################
+import java.io.Serializable;
+
+#foreach ( $importStatement in $classDef.getImportSnippets() )
+$importStatement
+#end
+
+#####################class annotations ###############################
+$classDef.getEntityString()
+#if ($classDef.getTableDef())
+$classDef.getTableDef().getSnippet()
+#end
+#if ($classDef.getInheritance())
+$classDef.getInheritance().getSnippet()
+#end
+#if ($classDef.getPrimaryKeyJoinColumns())
+$classDef.getPrimaryKeyJoinColumns().getSnippet()
+#end
+#if ($classDef.getSecondaryTables())
+$classDef.getSecondaryTables().getSnippet()
+#end
+#if ($classDef.getIdClass())
+$classDef.getIdClass().getSnippet()
+#end
+#if ($classDef.getAssociationOverrides())
+$classDef.getAssociationOverrides().getSnippet()
+#end
+#if ($classDef.getAttributeOverrides())
+$classDef.getAttributeOverrides().getSnippet()
+#end
+#if ($classDef.getSQLResultSetMappings())
+$classDef.getSQLResultSetMappings().getSnippet()
+#end
+#if ($classDef.getEntityListeners())
+$classDef.getEntityListeners().getSnippet()
+#end
+#if ($classDef.isDefaultExcludeListener())
+@ExcludeDefaultListeners
+#end
+#if ($classDef.isExcludeSuperClassListener())
+@ExcludeSuperclassListeners
+#end
+#if ($classDef.getDiscriminatorValue())
+$classDef.getDiscriminatorValue().getSnippet()
+#end
+#if ($classDef.getDiscriminatorColumn())
+$classDef.getDiscriminatorColumn().getSnippet()
+#end
+#####################named queries ###############################
+#if ($classDef.getNamedQueries() )
+$classDef.getNamedQueries().getSnippet()
+#end
+#if ($classDef.getNamedNativeQueries() )
+$classDef.getNamedNativeQueries().getSnippet()
+#end
+public #if ($classDef.isMappedSuperClass())abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end implements Serializable {
+#####################member variables ###############################
+#foreach( $varDef in $classDef.getVariableDefs() )
+
+#if($varDef.getColumnDef())
+    $varDef.getColumnDef().getSnippet()
+#end
+#if($varDef.isTranzient())
+    @Transient
+#end
+#if($varDef.isPrimaryKey())
+    @Id
+#end
+#if($varDef.isAutoGenerate())
+    @GeneratedValue(strategy = GenerationType.AUTO)
+#end
+#if($varDef.getRelationDef())
+    $varDef.getRelationDef().getSnippet()
+#end
+#if($varDef.getElementCollection())
+    $varDef.getElementCollection().getSnippet()
+#end
+#if($varDef.isTemporal())
+    $varDef.getTemporalTypeString()
+#end
+#if($varDef.isVersion())
+    @Version
+#end
+#if($varDef.isEmbedded())
+    @Embedded
+#end
+#if($varDef.isEmbeddedId())
+    @EmbeddedId
+#end
+#if($varDef.isLob())
+    @Lob
+#end
+#if($varDef.getBasic())
+    $varDef.getBasic().getSnippet()
+#end
+#if($varDef.getOrderBy())
+    $varDef.getOrderBy().getSnippet()
+#end
+#if($varDef.getMapKey())
+    $varDef.getMapKeyString()
+#end
+#if($varDef.getJoinColumns())
+    $varDef.getJoinColumns().getSnippet()
+#end
+#if($varDef.getJoinTable() && !$varDef.getJoinTable().isEmpty())
+    $varDef.getJoinTable().getSnippet()
+#end
+#if($varDef.getCollectionTable() && !$varDef.getCollectionTable().isEmpty())
+    $varDef.getCollectionTable().getSnippet()
+#end
+#if($varDef.getGeneratedValue())
+    $varDef.getGeneratedValue().getSnippet()
+#end
+#if($varDef.getTableGenerator())
+    $varDef.getTableGenerator().getSnippet()
+#end
+#if($varDef.getSequenceGenerator())
+    $varDef.getSequenceGenerator().getSnippet()
+#end
+#if($varDef.getEnumerated())
+    $varDef.getEnumerated().getSnippet()
+#end
+## $varDef.type => $varDef.getTypeIdentifier().getVariableType() ## to resolve problem Collection => Collection<Entity>
+    private $varDef.type $varDef.name;
+#end
+
+#####################Constructor #################################
+    public $classDef.getClassName()(){
+
+    }
+#####################getter/setter #################################
+#foreach( $varDef in $classDef.getVariableDefs() )
+#set($method = $varDef.getMethodName())
+
+
+#if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
+    public $varDef.type is$method() {
+        return this.$varDef.name;
+    }
+#else
+   public $varDef.type get$method() {
+        return this.$varDef.name;
+    }
+#end
+
+
+  public void set$method ($varDef.type $varDef.name) {
+        this.$varDef.name = $varDef.name;
+    }
+
+#end
+}
+

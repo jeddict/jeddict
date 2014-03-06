@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0">
+    <persistence-unit name="$pu.getName()" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        #foreach ( $entityClass in $pu.getClassNames() )
+        <class>$entityClass</class>
+        #end
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/sample"/>
+            <property name="javax.persistence.jdbc.password" value="app"/>
+            <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
+            <property name="javax.persistence.jdbc.user" value="app"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+        </properties>
+    </persistence-unit>
+</persistence>

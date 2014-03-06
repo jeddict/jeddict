@@ -1,0 +1,32 @@
+
+#####################Package Name definition ###########################
+
+#if ($lifeCycleListener.getPackageName())
+package $lifeCycleListener.getPackageName();
+#end
+
+#####################import statements #################################
+
+#foreach ( $importStatement in $lifeCycleListener.getImportSnippets() )
+$importStatement
+#end
+
+public class $lifeCycleListener.getClassName() {
+
+#####################Constructor #################################
+    public $lifeCycleListener.getClassName()(){
+
+    }
+
+#####################getter/setter #################################
+#foreach( $methodDef in $lifeCycleListener.getMethodDefs() )
+#foreach ( $callback in $methodDef.getCallbacks() )
+    @$callback.getCallbackType()
+#end
+    public void $methodDef.getMethodName()(Object object) {
+        //Your code here
+    }
+
+#end
+}
+

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<document-config>
+    <documents>
+        <document id="Entity" widget="org.netbeans.jpa.modeler.core.widget.EntityWidget" specification="org.netbeans.jpa.modeler.spec.Entity"  documentModel="ENTITY">
+            <container-document>/org/netbeans/jpa/modeler/resource/element/java/ENTITY.png</container-document>
+            <bounds>
+                <width value="80.0" min="60.0" max="298.0"/>
+                <height value="64.0" min="48.0" max="242.0"/>
+            </bounds>
+            <shape-design>
+                <outer-shape>
+                    <background start-color="RGB(255,255,255)" end-color="RGB(226,232,236)"/>
+                    <border color="RGB(108,142,183)" width="2.5"/>
+                </outer-shape>
+                <inner-shape>
+                    <background start-color="RGB(255,255,255)" end-color="RGB(255,248,159)"/>
+                    <border color="RGB(30,69,123)" width="1.0"/>
+                </inner-shape>
+            </shape-design>
+        </document>
+        <document id="MappedSuperclass" widget="org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget" specification="org.netbeans.jpa.modeler.spec.MappedSuperclass"  documentModel="ENTITY">
+            <container-document>/org/netbeans/jpa/modeler/resource/element/java/MAPPED_SUPER_CLASS.png</container-document>
+            <bounds>
+                <width value="80.0" min="60.0" max="298.0"/>
+                <height value="64.0" min="48.0" max="242.0"/>
+            </bounds>
+            <shape-design>
+                <outer-shape>
+                    <background start-color="RGB(255,255,255)" end-color="RGB(226,232,236)"/>
+                    <border color="RGB(108,142,183)" width="2.5"/>
+                </outer-shape>
+                <inner-shape>
+                    <background start-color="RGB(255,255,255)" end-color="RGB(255,248,159)"/>
+                    <border color="RGB(30,69,123)" width="1.0"/>
+                </inner-shape>
+            </shape-design>
+        </document>
+        <document id="Embeddable" widget="org.netbeans.jpa.modeler.core.widget.EmbeddableWidget" specification="org.netbeans.jpa.modeler.spec.Embeddable"  documentModel="ENTITY">
+            <container-document>/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE.png</container-document>
+            <bounds>
+                <width value="80.0" min="60.0" max="298.0"/>
+                <height value="64.0" min="48.0" max="242.0"/>
+            </bounds>
+            <shape-design>
+                <outer-shape>
+                    <background start-color="RGB(255,255,255)" end-color="RGB(226,232,236)"/>
+                    <border color="RGB(108,142,183)" width="2.5"/>
+                </outer-shape>
+                <inner-shape>
+                    <background start-color="RGB(255,255,255)" end-color="RGB(255,248,159)"/>
+                    <border color="RGB(30,69,123)" width="1.0"/>
+                </inner-shape>
+            </shape-design>
+        </document>
+    </documents>
+</document-config>
