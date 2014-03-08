@@ -23,7 +23,7 @@ import java.util.ServiceLoader;
  */
 public interface ISourceCodeGeneratorFactory {
 
-    public ISourceCodeGenerator getSourceGeneratorFactory(SourceCodeGeneratorType sourceGeneratorFactoryType);
+    public ISourceCodeGenerator getSourceGenerator(SourceCodeGeneratorType sourceGeneratorFactoryType);
 
 //    public static ISourceCodeGeneratorFactory getInstance() {
 //        for (ISourceCodeGeneratorFactory service : ServiceLoader.load(ISourceCodeGeneratorFactory.class)) {

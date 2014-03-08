@@ -27,7 +27,7 @@ import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType
 public class DefaultSourceCodeGeneratorFactory implements ISourceCodeGeneratorFactory {
 
     @Override
-    public ISourceCodeGenerator getSourceGeneratorFactory(SourceCodeGeneratorType sourceGeneratorFactoryType) {
+    public ISourceCodeGenerator getSourceGenerator(SourceCodeGeneratorType sourceGeneratorFactoryType) {
         if (sourceGeneratorFactoryType == SourceCodeGeneratorType.JPA) {
             return new JPASourceCodeGenerator();
         } else {

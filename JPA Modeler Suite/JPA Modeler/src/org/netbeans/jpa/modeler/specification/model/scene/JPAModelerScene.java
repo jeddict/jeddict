@@ -402,7 +402,7 @@ public class JPAModelerScene extends PModelerScene {
         generateCode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GenerateCodeDialog dialog = new GenerateCodeDialog();
+                GenerateCodeDialog dialog = new GenerateCodeDialog(JPAModelerScene.this.getModelerFile().getFileObject());
                 dialog.setVisible(true);
                 if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
                     RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N

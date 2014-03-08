@@ -40,7 +40,7 @@ import org.openide.util.NbBundle.Messages;
         id = "jpa.file.JPAFileActionListener")
 @ActionRegistration(
         displayName = "#CTL_JPAFileActionListener")
-@ActionReference(path = "Loaders/text/jpa+xml/Actions", position = -100, separatorBefore = -150, separatorAfter = -50)
+@ActionReference(path = "Loaders/text/jpa+xml/Actions", position = 0, separatorAfter = +50)
 @Messages("CTL_JPAFileActionListener=Edit in Modeler")
 @ModelerConfig(palette = "org/netbeans/jpa/modeler/resource/document/PaletteConfig.xml",
         document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
@@ -51,6 +51,7 @@ public class JPAFileActionListener extends ModelerFileActionListener {
 
     public JPAFileActionListener(JPAFileDataObject context) {
         super(context);
+//        context.getPrimaryFile().ge
     }
 
     @Override
