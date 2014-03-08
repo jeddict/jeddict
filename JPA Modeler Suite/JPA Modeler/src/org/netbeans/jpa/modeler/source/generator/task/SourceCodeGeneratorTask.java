@@ -55,6 +55,12 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     @Override
     protected void begin() {
+        // Issue Fix #5847 Start
+        if (!modelerFile.getModelerPanelTopComponent().isPersistenceState()) {
+            this.log("Saving " + modelerFile.getName() + " File..\n");
+            modelerFile.save();
+        }
+        // Issue Fix #5847 End
         exportCode();
     }
 
@@ -67,11 +73,11 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
      *
      */
     private void exportCode() {
-        ISourceCodeGeneratorFactory sourceGeneratorFactoryProvider = (ISourceCodeGeneratorFactory) Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
-        ISourceCodeGenerator sourceGeneratorFactory = sourceGeneratorFactoryProvider.getSourceGeneratorFactory(SourceCodeGeneratorType.JPA);
+        ISourceCodeGeneratorFactory sourceGeneratorFactory = (ISourceCodeGeneratorFactory) Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
+        ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
         InputDefinition definiton = new ORMInputDefiniton();
         definiton.setModelerFile(modelerFile);
-        sourceGeneratorFactory.generate(this, targetDir, definiton);
+        sourceGenerator.generate(this, targetDir, definiton);
     }
 
     private static String getBundleMessage(String key) {
