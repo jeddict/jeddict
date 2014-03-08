@@ -34,10 +34,12 @@ import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.jpa.modeler.core.widget.ui.GenericDialog;
+import org.netbeans.modules.profiler.api.ProjectUtilities;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 
 /**
@@ -47,10 +49,13 @@ import org.openide.util.NbBundle;
 public class GenerateCodeDialog extends GenericDialog
         implements PropertyChangeListener {
 
+    private FileObject modelerFileObject;
+
     /**
      * Creates new form GenerateCodeDialog
      */
-    public GenerateCodeDialog() {
+    public GenerateCodeDialog(FileObject fileObject) {
+        this.modelerFileObject = fileObject;
         initComponents();
         propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -340,7 +345,15 @@ public class GenerateCodeDialog extends GenericDialog
                     = new DefaultComboBoxModel(list.toArray());
 
             targetProjectCombo.setModel(projectsModel);
-            targetProjectCombo.setSelectedIndex(-1);
+
+            // Issue Fix #5850 Start
+            Project project = FileOwnerQuery.getOwner(modelerFileObject);
+            if (project != null) {
+                targetProjectCombo.setSelectedItem(project);
+            } else {
+                targetProjectCombo.setSelectedIndex(-1);
+            }
+             // Issue Fix #5850 End
 
             // When the selected index was set to -1 it reset the targetPrj
             // value.  Since the targetPrj was simply initialized with the
@@ -482,6 +495,20 @@ public class GenerateCodeDialog extends GenericDialog
      */
     public void setSourceGroup(SourceGroup sourceGroup) {
         this.sourceGroup = sourceGroup;
+    }
+
+    /**
+     * @return the modelerFileObject
+     */
+    public FileObject getModelerFileObject() {
+        return modelerFileObject;
+    }
+
+    /**
+     * @param modelerFileObject the modelerFileObject to set
+     */
+    public void setModelerFileObject(FileObject modelerFileObject) {
+        this.modelerFileObject = modelerFileObject;
     }
 
     /**
