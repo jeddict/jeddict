@@ -20,16 +20,23 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.ManyToMany;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.FlowPin;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
@@ -40,7 +47,12 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
+import org.netbeans.modules.db.api.sql.SQLKeywords;
+import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
+import org.netbeans.orm.converter.util.ClassHelper;
 import org.openide.util.ImageUtilities;
+import org.openide.util.NbBundle;
 
 /**
  *
@@ -50,8 +62,48 @@ public class AttributeWidget extends FlowPinWidget {
 
     public AttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-//        WidgetAction.Chain selectActionTool = this.getImageWidget().createActions(DesignerTools.SELECT);
-//        selectActionTool.addAction(ActionFactory.createSelectAction(selectProvider, true));
+        this.addPropertyChangeListener("name", new PropertyChangeListener<String>() {
+            @Override
+            public void changePerformed(String value) {
+                if (value == null || value.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
+                    setName(AttributeWidget.this.getLabel());//rollback
+                } else {
+                    setName(value);
+                    setLabel(value);
+                }
+            }
+        });
+
+        this.addPropertyChangeListener("table_name", new PropertyChangeListener<String>() {
+            @Override
+            public void changePerformed(String tableName) {
+                if (tableName != null && !tableName.trim().isEmpty()) {
+                    if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                        throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    } else {
+                        clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    }
+                } else {
+                    clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                }
+            }
+        });
+        this.addPropertyChangeListener("column_name", new PropertyChangeListener<String>() {
+            @Override
+            public void changePerformed(String tableName) {
+                if (tableName != null && !tableName.trim().isEmpty()) {
+                    if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                        throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    } else {
+                        clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    }
+                } else {
+                    clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                }
+            }
+        });
+
     }
 
 //    private static SelectProvider selectProvider = new SelectProvider() {
@@ -81,14 +133,30 @@ public class AttributeWidget extends FlowPinWidget {
         this.setPinImage(image);
     }
 
-    public void throwError(String message) {
-        this.setToolTipText(message);
-        this.setPinImage(getErrorIcon());
+    private final java.util.Map<String, String> errorList = new HashMap<String, String>();
+
+    public void throwError(String key) {
+        errorList.put(key, NbBundle.getMessage(AttributeValidator.class, key));
+        printError();
     }
 
-    public void clearError() {
-        this.setToolTipText(null);
-        this.setPinImage(icon);
+    public void clearError(String key) {
+        errorList.remove(key);
+        printError();
+    }
+
+    private void printError() {
+        StringBuilder errorMessage = new StringBuilder();
+        for (String errorKey : errorList.keySet()) {
+            errorMessage.append(errorList.get(errorKey));
+        }
+        if (errorMessage.length() != 0) {
+            this.setToolTipText(errorMessage.toString());
+            this.setPinImage(getErrorIcon());
+        } else {
+            this.setToolTipText(null);
+            this.setPinImage(icon);
+        }
     }
 
     private Image getErrorIcon() {
@@ -159,10 +227,11 @@ public class AttributeWidget extends FlowPinWidget {
             public String getDisplay() {
                 if (attribute instanceof BaseAttribute) {
                     if (attribute instanceof ElementCollection) {
+                        String collectionType = ((ElementCollection) attribute).getCollectionType();
                         if (((ElementCollection) attribute).getConnectedClassId() == null) { //Basic
-                            displayName = "Collection<" + ((ElementCollection) attribute).getTargetClass() + ">";
+                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + ((ElementCollection) attribute).getTargetClass() + ">";
                         } else { //Embedded
-                            displayName = "Collection<" + persistenceClassWidget.getName() + ">";
+                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
                         }
                     } else if (attribute instanceof Embedded) {
                         displayName = persistenceClassWidget.getName();
@@ -170,7 +239,20 @@ public class AttributeWidget extends FlowPinWidget {
                         displayName = ((BaseAttribute) attribute).getAttributeType();
                     }
                 } else if (attribute instanceof RelationAttribute) {
-                    displayName = "Collection<" + persistenceClassWidget.getName() + ">";
+                    // Issue Fix #5851 Start
+                    if (attribute instanceof OneToMany || attribute instanceof ManyToMany) {
+                        String collectionType = null;
+                        if (attribute instanceof OneToMany) {
+                            collectionType = ((OneToMany) attribute).getCollectionType();
+                        } else if (attribute instanceof ManyToMany) {
+                            collectionType = ((ManyToMany) attribute).getCollectionType();
+                        }
+                        displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
+                    } else {
+                        displayName = persistenceClassWidget.getName();
+                    }
+                    // Issue Fix #5851 Start
+
                 }
                 return displayName;
 
@@ -205,45 +287,53 @@ public class AttributeWidget extends FlowPinWidget {
         return menuList;
     }
 
-    public void remove() {
-        remove(false);
-    }
-
-    public void remove(boolean notification) {
-        getClassWidget().deleteAttribute(AttributeWidget.this);
-        super.remove(notification);
-        getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-        getClassWidget().sortAttributes();
-    }
-
-    protected String id;
-    protected String name;
-
     @Override
-    public String getId() {
-        return id;
+    public boolean remove() {
+        return remove(false);
     }
 
     @Override
-    public void setId(String id) {
-        this.id = id;
+    public boolean remove(boolean notification) {
+        // Issue Fix #5855 Start
+        if (super.remove(notification)) {
+            getClassWidget().deleteAttribute(AttributeWidget.this);
+            return true;
+        }
+        // Issue Fix #5855 End
+        return false;
     }
 
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//        if (name != null && !name.trim().isEmpty()) {
-//            ((FlowPin)FlowPinWidget.this.getBaseElementSpec()).setName(name);
-//        } else {
-//            ((FlowPin) FlowPinWidget.this.getBaseElementSpec()).setName(null);
-//        }
-//
-//    }
     @Override
-    public void createVisualPropertySet(ElementPropertySet elementPropertySet) {
+    public void setName(String name) {
+
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name.replaceAll("\\s+", "");
+            ((FlowPin) getBaseElementSpec()).setName(this.name);
+        }
+        if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
+            throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        } else {
+            clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        }
+
+        JavaClass javaClass = (JavaClass) this.getClassWidget().getBaseElementSpec();
+        if (javaClass.getAttributes().findAllAttribute(this.getName()).size() > 1) {
+            throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+        } else {
+            clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+        }
+
+    }
+
+    public void setLabel(String label) {
+        if (label != null && !label.trim().isEmpty()) {
+            this.setPinName(label.replaceAll("\\s+", ""));
+        }
+    }
+
+    @Override
+    public void createVisualPropertySet(ElementPropertySet elementPropertySet
+    ) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
