@@ -17,13 +17,16 @@ package org.netbeans.jpa.modeler.core.widget;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.netbeans.jpa.modeler.constant.ErrorType;
+import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.Table;
@@ -76,6 +79,7 @@ public class EntityWidget extends PersistenceClassWidget {
         setName(entity.getClazz());
         setLabel(entity.getClazz());
 
+        scanPrimaryKeyError();
     }
 
     @Override
@@ -259,18 +263,43 @@ public class EntityWidget extends PersistenceClassWidget {
         return idAttributeWidgets;
     }
 
-    @Override
-    public void scanError() {
+//    @Override
+    public void scanInheritenceError() {
         if ("SINGLETON".equals(this.getInheritenceState()) || "ROOT".equals(this.getInheritenceState())) {
             for (IdAttributeWidget attributeWidget : this.getIdAttributeWidgets()) {
-                attributeWidget.clearError();
+                attributeWidget.clearError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             }
         } else {
             for (IdAttributeWidget attributeWidget : this.getIdAttributeWidgets()) {
-                attributeWidget.throwError(ErrorType.PRIMARY_KEY_INVALID_LOCATION);
+                attributeWidget.throwError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             }
         }
 
+    }
+
+    public void scanPrimaryKeyError() {
+        if ("SINGLETON".equals(this.getInheritenceState()) || "ROOT".equals(this.getInheritenceState())) {
+            if (this.getIdAttributeWidgets().isEmpty()) {
+                throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
+            } else {
+                clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
+            }
+        }
+    }
+
+    @Override
+    public IdAttributeWidget addNewIdAttribute(String name, Id id) { // override for scanning error in case of entity
+        IdAttributeWidget idAttributeWidget = super.addNewIdAttribute(name, id);
+        scanPrimaryKeyError();
+        return idAttributeWidget;
+    }
+
+    @Override
+    public void deleteAttribute(AttributeWidget attributeWidget) {// override for scanning error in case of entity
+        super.deleteAttribute(attributeWidget);
+        if (attributeWidget instanceof IdAttributeWidget) {
+            scanPrimaryKeyError();
+        }
     }
 
 }

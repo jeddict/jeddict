@@ -165,24 +165,6 @@ public class EmbeddableFlowWidget extends PEdgeWidget implements IFlowEdgeWidget
      * @param sourceNode the sourceNode to set
      */
     public void setSourceNode(FlowNodeWidget sourceNode) {
-//        this.sourceNode = sourceNode;
-//        if (sourceNode != null) {
-//            IBaseElement baseElement = sourceNode.getBaseElementSpec();
-//            IBaseElement flowSeqElement = this.getBaseElementSpec();
-//            if (baseElement instanceof TFlowNode && flowSeqElement instanceof TSequenceFlow) {
-//                TFlowNode flowNode = (TFlowNode) baseElement;
-//                TSequenceFlow sequenceFlow = (TSequenceFlow) flowSeqElement;
-//                sequenceFlow.setSourceRef(flowNode.getId());
-//            } else {
-//                throw new InvalidElmentException("Invalid BPMN Element");
-//            }
-//        } else {
-//            TFlowElement flowSeqElement = (TFlowElement) this.getBaseElementSpec();
-//            if (flowSeqElement instanceof TSequenceFlow) {
-//                TSequenceFlow sequenceFlow = (TSequenceFlow) flowSeqElement;
-//                sequenceFlow.setSourceRef(null);
-//            }
-//        }
 
     }
 
@@ -196,24 +178,6 @@ public class EmbeddableFlowWidget extends PEdgeWidget implements IFlowEdgeWidget
      * @param targetNode the targetNode to set
      */
     public void setTargetNode(FlowNodeWidget targetNode) {
-//        this.targetNode = targetNode;
-//        if (targetNode != null) {
-//            IBaseElement baseElement = targetNode.getBaseElementSpec();//bpmnProcess.getFlowElement(targetNode.getId());
-//            TFlowElement flowSeqElement = this.getSequenceFlowSpec();//bpmnProcess.getFlowElement(this.getId());
-//            if (baseElement instanceof TFlowNode && flowSeqElement instanceof TSequenceFlow) {
-//                TFlowNode flowNode = (TFlowNode) baseElement;
-//                TSequenceFlow sequenceFlow = (TSequenceFlow) flowSeqElement;
-//                sequenceFlow.setTargetRef(flowNode.getId());
-//            } else {
-//                throw new InvalidElmentException("Invalid BPMN Element");
-//            }
-//        } else {
-//            TFlowElement flowSeqElement = this.getSequenceFlowSpec();//bpmnProcess.getFlowElement(this.getId());
-//            if (flowSeqElement instanceof TSequenceFlow) {
-//                TSequenceFlow sequenceFlow = (TSequenceFlow) flowSeqElement;
-//                sequenceFlow.setTargetRef(null);
-//            }
-//        }
 
     }
     protected String id;
@@ -267,7 +231,6 @@ public class EmbeddableFlowWidget extends PEdgeWidget implements IFlowEdgeWidget
 
     public Sheet.Set getVisualPropertiesSet(Sheet.Set set) throws NoSuchMethodException, NoSuchFieldException {
         set.put(new ElementPropertySupport(this, Color.class, "color", "Color", "The Line Color of the SequenceFlow Element."));
-//        //  set.put(new BPMNElementPropertySupport(this, Float.class, "innerElementStartOffset", "Start Background Offset", "The Start Background Offset of the Inner Element."));
         return set;
     }
 

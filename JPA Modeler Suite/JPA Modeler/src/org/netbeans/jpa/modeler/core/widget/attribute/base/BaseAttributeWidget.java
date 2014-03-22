@@ -17,12 +17,14 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.Column;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 /**
  *
@@ -32,6 +34,29 @@ public class BaseAttributeWidget extends AttributeWidget {
 
     public BaseAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+        this.addPropertyChangeListener("collectionType", new PropertyChangeListener<String>() {
+            @Override
+            public void changePerformed(String collectionType) { //Point here should be for only ElementCollection
+                if (BaseAttributeWidget.this.getBaseElementSpec() instanceof ElementCollection) {
+                    ElementCollection elementCollection = (ElementCollection) BaseAttributeWidget.this.getBaseElementSpec();
+                    boolean valid = false;
+                    try {
+                        if (collectionType != null || !collectionType.trim().isEmpty()) {
+                            if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
+                                valid = true;
+                            }
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        //skip allow = false;
+                    }
+                    if (!valid) {
+                        collectionType = java.util.Collection.class.getName();
+                    }
+                    elementCollection.setCollectionType(collectionType.trim());
+                }
+            }
+        });
+
     }
 
     @Override

@@ -15,11 +15,14 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
+import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
 import org.netbeans.jpa.modeler.spec.CascadeType;
+import org.netbeans.jpa.modeler.spec.ManyToMany;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -31,6 +34,7 @@ import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 /**
  *
@@ -42,6 +46,32 @@ public abstract class RelationAttributeWidget extends AttributeWidget {
 
     public RelationAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+        this.addPropertyChangeListener("collectionType", new PropertyChangeListener<String>() {
+            @Override
+            public void changePerformed(String collectionType) {
+                RelationAttribute relationAttribute = (RelationAttribute) RelationAttributeWidget.this.getBaseElementSpec();
+                boolean valid = false;
+                try {
+                    if (collectionType != null || !collectionType.trim().isEmpty()) {
+                        if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
+                            valid = true;
+                        }
+                    }
+                } catch (ClassNotFoundException ex) {
+                    //skip allow = false;
+                }
+                if (!valid) {
+                    collectionType = java.util.Collection.class.getName();
+                }
+                if (relationAttribute instanceof OneToMany) {
+                    ((OneToMany) relationAttribute).setCollectionType(collectionType.trim());
+                } else if (relationAttribute instanceof ManyToMany) {
+                    ((ManyToMany) relationAttribute).setCollectionType(collectionType.trim());
+                }
+
+            }
+        });
+
     }
 
     @Override

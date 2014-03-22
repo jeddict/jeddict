@@ -6,10 +6,14 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -55,6 +59,22 @@ public class DiscriminatorColumn {
     @XmlAttribute
     protected Integer length;
 
+     public static DiscriminatorColumn load(Element element) {
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.DiscriminatorColumn");
+        DiscriminatorColumn column = null;
+        if (annotationMirror != null) {
+            column = new DiscriminatorColumn();
+            column.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            column.discriminatorType = DiscriminatorType.load(element,annotationMirror);
+            column.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
+            column.length = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "length");
+           }
+        return column;
+
+    }
+
+    
+    
     /**
      * Gets the value of the name property.
      *

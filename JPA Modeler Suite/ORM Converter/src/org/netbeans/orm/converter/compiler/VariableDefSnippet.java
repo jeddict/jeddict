@@ -103,10 +103,11 @@ public class VariableDefSnippet implements Snippet {
     }
 
     public String getType() {//Modified : Collection => Collection<Entity>
-        if ("Collection".equals(classHelper.getClassName())) {
+        if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
             return this.getTypeIdentifier().getVariableType();
+        } else {
+            return classHelper.getClassName();
         }
-        return classHelper.getClassName();
     }
 
     public void setType(String type) {

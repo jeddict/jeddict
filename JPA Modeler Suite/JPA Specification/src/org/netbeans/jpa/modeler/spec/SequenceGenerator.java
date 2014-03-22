@@ -72,7 +72,7 @@ public class SequenceGenerator {
     @XmlAttribute(name = "allocation-size")
     protected Integer allocationSize;
 
-    public static SequenceGenerator load(Element element, VariableElement variableElement) {
+    public static SequenceGenerator load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
         SequenceGenerator sequenceGenerator = null;
         if (annotationMirror != null) {

@@ -9,16 +9,14 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
@@ -126,9 +124,9 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
     protected String description;
     protected Table table;
     @XmlElement(name = "secondary-table")
-    protected List<SecondaryTable> secondaryTable;
+    protected List<SecondaryTable> secondaryTable;//RENENG PENDING
     @XmlElement(name = "primary-key-join-column")
-    protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;
+    protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//RENENG PENDING
     @XmlElement(name = "id-class")
     protected IdClass idClass;
     protected Inheritance inheritance;
@@ -141,35 +139,35 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
     @XmlElement(name = "table-generator")
     protected TableGenerator tableGenerator;
     @XmlElement(name = "named-query")
-    protected List<NamedQuery> namedQuery;
+    protected List<NamedQuery> namedQuery;//RENENG PENDING
     @XmlElement(name = "named-native-query")
-    protected List<NamedNativeQuery> namedNativeQuery;
+    protected List<NamedNativeQuery> namedNativeQuery;//RENENG PENDING
     @XmlElement(name = "sql-result-set-mapping")
-    protected List<SqlResultSetMapping> sqlResultSetMapping;
+    protected List<SqlResultSetMapping> sqlResultSetMapping;//RENENG PENDING
     @XmlElement(name = "exclude-default-listeners")
-    protected EmptyType excludeDefaultListeners;
+    protected EmptyType excludeDefaultListeners;//RENENG PENDING
     @XmlElement(name = "exclude-superclass-listeners")
-    protected EmptyType excludeSuperclassListeners;
+    protected EmptyType excludeSuperclassListeners;//RENENG PENDING
     @XmlElement(name = "entity-listeners")
-    protected EntityListeners entityListeners;
+    protected EntityListeners entityListeners;//RENENG PENDING
     @XmlElement(name = "pre-persist")
-    protected PrePersist prePersist;
+    protected PrePersist prePersist;//RENENG PENDING
     @XmlElement(name = "post-persist")
-    protected PostPersist postPersist;
+    protected PostPersist postPersist;//RENENG PENDING
     @XmlElement(name = "pre-remove")
-    protected PreRemove preRemove;
+    protected PreRemove preRemove;//RENENG PENDING
     @XmlElement(name = "post-remove")
-    protected PostRemove postRemove;
+    protected PostRemove postRemove;//RENENG PENDING
     @XmlElement(name = "pre-update")
-    protected PreUpdate preUpdate;
+    protected PreUpdate preUpdate;//RENENG PENDING
     @XmlElement(name = "post-update")
-    protected PostUpdate postUpdate;
+    protected PostUpdate postUpdate;//RENENG PENDING
     @XmlElement(name = "post-load")
-    protected PostLoad postLoad;
+    protected PostLoad postLoad;//RENENG PENDING
     @XmlElement(name = "attribute-override")
-    protected List<AttributeOverride> attributeOverride;
+    protected List<AttributeOverride> attributeOverride;//RENENG PENDING
     @XmlElement(name = "association-override")
-    protected List<AssociationOverride> associationOverride;
+    protected List<AssociationOverride> associationOverride;//RENENG PENDING
     protected Attributes attributes;
     @XmlAttribute
     protected String name;
@@ -178,22 +176,60 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
     @XmlAttribute
     protected AccessType access;
     @XmlAttribute
-    protected Boolean cacheable;
+    protected Boolean cacheable;//RENENG PENDING
     @XmlAttribute(name = "metadata-complete")
-    protected Boolean metadataComplete;
+    protected Boolean metadataComplete;//RENENG PENDING
 
-    public void load(TypeElement typeElement, boolean fieldAccess) {
-        this.getAttributes().load(typeElement, fieldAccess);
-        System.out.println("");
-//        this.name = typeElement.
+    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.Entity");
+//JavaSourceParserUtil.getSuperclassTypeElement(element).getQualifiedName().toString()
+
+        if (entityMappings.findEntity(element.getSimpleName().toString()) == null) {
+            TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
+            if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
+                if (JavaSourceParserUtil.isEntityClass(superClassElement)) {
+                    org.netbeans.jpa.modeler.spec.Entity entitySuperclassSpec = new org.netbeans.jpa.modeler.spec.Entity();
+                    entitySuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
+                    super.setSuperclass(entitySuperclassSpec.getClazz());
+                    super.setSuperclassId(entitySuperclassSpec.getId());
+                    entityMappings.addEntity(entitySuperclassSpec);
+                } else if (JavaSourceParserUtil.isMappedSuperClass(superClassElement)) {
+                    org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclassSpec = new org.netbeans.jpa.modeler.spec.MappedSuperclass();
+                    mappedSuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
+                    super.setSuperclass(mappedSuperclassSpec.getClazz());
+                    super.setSuperclassId(mappedSuperclassSpec.getId());
+                    entityMappings.addMappedSuperclass(mappedSuperclassSpec);
+                } else {
+                    //Skip
+                }
+            }
+            this.setId(NBModelerUtil.getAutoGeneratedStringId());
+            this.table = Table.load(element);
+            this.idClass = IdClass.load(element);
+            this.inheritance = Inheritance.load(element);
+            AnnotationMirror annotDiscrValue = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.DiscriminatorValue");
+            if (annotDiscrValue != null) {
+                Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+                if (value != null) {
+                    discriminatorValue = value.toString();
+                }
+            }
+            this.discriminatorColumn = DiscriminatorColumn.load(element);
+            this.tableGenerator = TableGenerator.load(element);
+            this.sequenceGenerator = SequenceGenerator.load(element);
+            this.getAttributes().load(entityMappings, element, fieldAccess);
+            if (annotationMirror != null) {
+                this.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            }
+            this.clazz = element.getSimpleName().toString();
+            this.access = AccessType.load(element);
+        }
     }
 
     void beforeMarshal(Marshaller marshaller) {
-
         if (NBModelerUtil.isEmptyObject(table)) {
             table = null;
         }
-
     }
 
     /**

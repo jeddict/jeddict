@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
 import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 
 /**

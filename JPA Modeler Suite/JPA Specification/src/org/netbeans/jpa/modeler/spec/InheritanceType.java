@@ -6,8 +6,11 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -41,6 +44,19 @@ public enum InheritanceType {
     public static InheritanceType fromValue(String v) {
         return valueOf(v);
     }
+    
+       public static InheritanceType load(Element element , AnnotationMirror annotationMirror ) {        
+        InheritanceType inheritanceType = null;
+        if (annotationMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "strategy");
+            if (value != null) {
+                inheritanceType = InheritanceType.valueOf(value.toString());
+            }
+        }
+        return inheritanceType;
+    }
+    
+    
 
     private final String name;
 

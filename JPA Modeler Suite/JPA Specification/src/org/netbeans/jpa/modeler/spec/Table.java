@@ -8,11 +8,15 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -61,6 +65,25 @@ public class Table {
     protected String catalog;
     @XmlAttribute
     protected String schema;
+
+    public static Table load(Element element) {
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Table");
+        Table table = null;
+        if (annotationMirror != null) {
+            table = new Table();
+            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
+            if (uniqueConstraintsAnnot != null) {
+                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
+                    table.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
+                }
+            }
+            table.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            table.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
+            table.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
+        }
+        return table;
+
+    }
 
     /**
      * Gets the value of the uniqueConstraint property.

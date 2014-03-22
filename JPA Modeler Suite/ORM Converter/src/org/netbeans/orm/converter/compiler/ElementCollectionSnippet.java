@@ -17,6 +17,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ElementCollectionSnippet implements Snippet {
 
+    private String collectionType;
     private String targetClass;
     private String fetchType = null;
 //    private String accessType = null;
@@ -78,4 +79,18 @@ public class ElementCollectionSnippet implements Snippet {
 //    public void setAccessType(String accessType) {
 //        this.accessType = accessType;
 //    }
+
+    /**
+     * @return the collectionType
+     */
+    public String getCollectionType() {
+        return collectionType;
+    }
+
+    /**
+     * @param collectionType the collectionType to set
+     */
+    public void setCollectionType(String collectionType) {
+        this.collectionType = collectionType;
+    }
 }

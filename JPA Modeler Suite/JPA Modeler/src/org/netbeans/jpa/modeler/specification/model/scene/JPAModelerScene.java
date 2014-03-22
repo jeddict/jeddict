@@ -127,7 +127,7 @@ public class JPAModelerScene extends PModelerScene {
                     }
                 }
             } else {
-                throw new InvalidElmentException("Invalid BPMN Element" + baseElementWidget);
+                throw new InvalidElmentException("Invalid JPA Element" + baseElementWidget);
             }
         }
         return widget;
@@ -279,7 +279,7 @@ public class JPAModelerScene extends PModelerScene {
                 }
 
             } else {
-                throw new InvalidElmentException("Invalid BPMN Element");
+                throw new InvalidElmentException("Invalid JPA Element");
             }
 
         }
@@ -318,7 +318,7 @@ public class JPAModelerScene extends PModelerScene {
                 throw new InvalidElmentException("Invalid JPA FlowElement : " + baseElementWidget);
             }
         } else {
-            throw new InvalidElmentException("Invalid BPMN Element");
+            throw new InvalidElmentException("Invalid JPA Element");
         }
 
         if (!isExist) {
@@ -334,15 +334,15 @@ public class JPAModelerScene extends PModelerScene {
                     } else if (baseElementWidget instanceof EmbeddableWidget) {
                         baseElement = new Embeddable();
                     } else {
-                        throw new InvalidElmentException("Invalid BPMN Task Element : " + baseElement);
+                        throw new InvalidElmentException("Invalid JPA Task Element : " + baseElement);
                     }
                 } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                     // skip don't need to create spec RelationFlowWidget, GeneralizationFlowWidget,EmbeddableFlowWidget
                 } else {
-                    throw new InvalidElmentException("Invalid BPMN Element");
+                    throw new InvalidElmentException("Invalid JPA Element");
                 }
             } else {
-                throw new InvalidElmentException("Invalid BPMN Element");
+                throw new InvalidElmentException("Invalid JPA Element");
             }
             if (baseElement != null) {
                 baseElementWidget.setBaseElementSpec(baseElement);
@@ -361,10 +361,10 @@ public class JPAModelerScene extends PModelerScene {
 //                    SequenceFlowWidget sequenceFlowWidget = (SequenceFlowWidget) baseElementWidget;//TBF_CODE
 //                    baseElementWidget.setBaseElementSpec(sequenceFlowWidget.getEdgeWidgetInfo().getBaseElementSpec());
                 } else {
-                    throw new InvalidElmentException("Invalid BPMN Element");
+                    throw new InvalidElmentException("Invalid JPA Element");
                 }
             } else {
-                throw new InvalidElmentException("Invalid BPMN Element");
+                throw new InvalidElmentException("Invalid JPA Element");
             }
         }
 

@@ -242,6 +242,7 @@ public abstract class ClassGenerator {
             }
             FetchType parsedFetchType = parsedElementCollection.getFetch();
             ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
+            elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
             elementCollection.setTargetClass(parsedElementCollection.getTargetClass());
             if (parsedFetchType != null) {
                 elementCollection.setFetchType(parsedFetchType.value());
@@ -933,6 +934,7 @@ public abstract class ClassGenerator {
 
             ManyToManySnippet manyToMany = new ManyToManySnippet();
 
+            manyToMany.setCollectionType(parsedManyToMany.getCollectionType());
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
             manyToMany.setCascadeTypes(cascadeTypes);
@@ -1031,6 +1033,7 @@ public abstract class ClassGenerator {
             oneToMany.setCascadeTypes(cascadeTypes);
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
+            oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
 
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());

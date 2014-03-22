@@ -49,7 +49,7 @@ public enum AccessType {
         return FIELD;
     }
 
-    public static AccessType load(Element element, VariableElement variableElement) {
+    public static AccessType load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Access");
         AccessType accessType = null;
         if (annotationMirror != null) {

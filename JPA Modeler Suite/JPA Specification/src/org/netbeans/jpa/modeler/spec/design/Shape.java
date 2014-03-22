@@ -86,11 +86,4 @@ public class Shape
         this.elementRef = value;
     }
 
-//    /**
-//     * @return the jpaShapeDesign
-//     */
-//    public JPAShapeDesign getBpmnShapeDesign() {
-//        return jpaShapeDesign;
-//    }
-//
 }

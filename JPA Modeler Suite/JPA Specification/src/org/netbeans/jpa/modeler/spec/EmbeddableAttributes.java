@@ -8,11 +8,18 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -70,6 +77,46 @@ public class EmbeddableAttributes implements IAttributes {
     protected List<Embedded> embedded;
     @XmlElement(name = "transient")
     protected List<Transient> _transient;
+
+    public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
+
+        for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {
+            String methodName = method.getSimpleName().toString();
+            if (methodName.startsWith("get")) {
+                Element element;
+                VariableElement variableElement = JavaSourceParserUtil.guessField(method);
+                if (fieldAccess) {
+                    element = variableElement;
+                } else {
+                    element = method;
+                }
+
+                if (element != null) {
+                    if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
+                        this.getBasic().add(Basic.load(element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
+                        this.getTransient().add(Transient.load(element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
+                        this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
+                        this.getOneToOne().add(OneToOne.load(element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
+                        this.getManyToOne().add(ManyToOne.load(element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
+                        this.getOneToMany().add(OneToMany.load(element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
+                        this.getManyToMany().add(ManyToMany.load(element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
+                        this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
+                    } else {
+                        this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
+                    }
+
+                }
+            }
+        }
+
+    }
 
     /**
      * Gets the value of the basic property.
@@ -311,6 +358,71 @@ public class EmbeddableAttributes implements IAttributes {
     }
 
     @Override
+    public List<Attribute> findAllAttribute(String name) {
+        List<Attribute> attributes = new ArrayList<Attribute>();
+
+        if (basic != null) {
+            for (Basic basic_TMP : basic) {
+                if (basic_TMP.getName() != null && basic_TMP.getName().equals(name)) {
+                    attributes.add(basic_TMP);
+                }
+            }
+        }
+        if (elementCollection != null) {
+            for (ElementCollection elementCollection_TMP : elementCollection) {
+                if (elementCollection_TMP.getName() != null && elementCollection_TMP.getName().equals(name)) {
+                    attributes.add(elementCollection_TMP);
+                }
+            }
+        }
+
+        if (_transient != null) {
+            for (Transient transient_TMP : _transient) {
+                if (transient_TMP.getName() != null && transient_TMP.getName().equals(name)) {
+                    attributes.add(transient_TMP);
+                }
+            }
+        }
+        if (oneToOne != null) {
+            for (OneToOne oneToOne_TMP : oneToOne) {
+                if (oneToOne_TMP.getName() != null && oneToOne_TMP.getName().equals(name)) {
+                    attributes.add(oneToOne_TMP);
+                }
+            }
+        }
+        if (oneToMany != null) {
+            for (OneToMany oneToMany_TMP : oneToMany) {
+                if (oneToMany_TMP.getName() != null && oneToMany_TMP.getName().equals(name)) {
+                    attributes.add(oneToMany_TMP);
+                }
+            }
+        }
+        if (manyToOne != null) {
+            for (ManyToOne manyToOne_TMP : manyToOne) {
+                if (manyToOne_TMP.getName() != null && manyToOne_TMP.getName().equals(name)) {
+                    attributes.add(manyToOne_TMP);
+                }
+            }
+        }
+        if (manyToMany != null) {
+            for (ManyToMany manyToMany_TMP : manyToMany) {
+                if (manyToMany_TMP.getName() != null && manyToMany_TMP.getName().equals(name)) {
+                    attributes.add(manyToMany_TMP);
+                }
+            }
+        }
+        if (embedded != null) {
+            for (Embedded embedded_TMP : embedded) {
+                if (embedded_TMP.getName() != null && embedded_TMP.getName().equals(name)) {
+                    attributes.add(embedded_TMP);
+                }
+            }
+        }
+
+        return attributes;
+    }
+
+    @Override
     public boolean isAttributeExist(String name) {
 
         if (basic != null) {
@@ -372,6 +484,42 @@ public class EmbeddableAttributes implements IAttributes {
         }
 
         return false;
+    }
+
+    public void removeRelationAttribute(RelationAttribute relationAttribute) {
+        if (relationAttribute instanceof ManyToMany) {
+            this.getManyToMany().remove((ManyToMany) relationAttribute);
+        } else if (relationAttribute instanceof OneToMany) {
+            this.getOneToMany().remove((OneToMany) relationAttribute);
+        } else if (relationAttribute instanceof ManyToOne) {
+            this.getManyToOne().remove((ManyToOne) relationAttribute);
+        } else if (relationAttribute instanceof OneToOne) {
+            this.getOneToOne().remove((OneToOne) relationAttribute);
+        } else {
+            throw new IllegalStateException("Invalid Type Relation Attribute");
+        }
+    }
+
+    public void addRelationAttribute(RelationAttribute relationAttribute) {
+        if (relationAttribute instanceof ManyToMany) {
+            this.getManyToMany().add((ManyToMany) relationAttribute);
+        } else if (relationAttribute instanceof OneToMany) {
+            this.getOneToMany().add((OneToMany) relationAttribute);
+        } else if (relationAttribute instanceof ManyToOne) {
+            this.getManyToOne().add((ManyToOne) relationAttribute);
+        } else if (relationAttribute instanceof OneToOne) {
+            this.getOneToOne().add((OneToOne) relationAttribute);
+        } else {
+            throw new IllegalStateException("Invalid Type Relation Attribute");
+        }
+    }
+
+    public List<RelationAttribute> getRelationAttributes() {
+        List<RelationAttribute> relationAttributes = new ArrayList<RelationAttribute>(this.getOneToOne());
+        relationAttributes.addAll(this.getOneToMany());
+        relationAttributes.addAll(this.getManyToOne());
+        relationAttributes.addAll(this.getManyToMany());
+        return relationAttributes;
     }
 
 }

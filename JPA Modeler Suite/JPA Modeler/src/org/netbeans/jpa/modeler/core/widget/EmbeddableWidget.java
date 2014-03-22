@@ -110,9 +110,4 @@ public class EmbeddableWidget extends PersistenceClassWidget {
         this.incomingEmbeddableFlowWidgets.remove(incomingEmbeddableFlowWidget);
     }
 
-    @Override
-    public void scanError() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

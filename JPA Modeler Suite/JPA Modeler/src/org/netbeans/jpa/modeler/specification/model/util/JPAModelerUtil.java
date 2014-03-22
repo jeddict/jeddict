@@ -151,16 +151,16 @@ import org.openide.windows.InputOutput;
 public class JPAModelerUtil implements PModelerUtil {
 
     /*---------------------------------Load File Start---------------------------------*/
-//    public static void loadBPMN(final BPMNFile file) {
+//    public static void loadJPA(final JPAFile file) {
 //
 //        Runnable runnable = new Runnable() {
 //            @Override
 //            public void run() {
-//                loadBPMNImpl(file);
+//                loadJPAImpl(file);
 //            }
 //        };
 //        final RequestProcessor.Task theTask = RP.create(runnable);
-//        final ProgressHandle ph = ProgressHandleFactory.createHandle("Loading BPMN File...", theTask);
+//        final ProgressHandle ph = ProgressHandleFactory.createHandle("Loading JPA File...", theTask);
 //        theTask.addTaskListener(new TaskListener() {
 //            @Override
 //            public void taskFinished(org.openide.util.Task task) {
@@ -171,10 +171,10 @@ public class JPAModelerUtil implements PModelerUtil {
 //        theTask.schedule(0);
 //    }
 //
-    JAXBContext bpmnProcessContext;
-    Unmarshaller bpmnProcessUnmarshaller;
-    Marshaller bpmnProcessMarshaller;
-    InputOutput io = IOProvider.getDefault().getIO("JPA Modeler Console", false);
+    private JAXBContext jpaModelContext;
+    private Unmarshaller jpaModelUnmarshaller;
+    private Marshaller jpaModelMarshaller;
+    private InputOutput io = IOProvider.getDefault().getIO("JPA Modeler Console", false);
 
     @Override
     public void loadModelerFile(ModelerFile file) {
@@ -182,14 +182,14 @@ public class JPAModelerUtil implements PModelerUtil {
             IModelerScene scene = file.getModelerScene();
 
             File savedFile = file.getFile();
-            if (bpmnProcessContext == null) {
-                bpmnProcessContext = JAXBContext.newInstance(new Class<?>[]{ShapeDesign.class, EntityMappings.class});
+            if (jpaModelContext == null) {
+                jpaModelContext = JAXBContext.newInstance(new Class<?>[]{ShapeDesign.class, EntityMappings.class});
             }
-            if (bpmnProcessUnmarshaller == null) {
-                bpmnProcessUnmarshaller = bpmnProcessContext.createUnmarshaller();
+            if (jpaModelUnmarshaller == null) {
+                jpaModelUnmarshaller = jpaModelContext.createUnmarshaller();
             }
-            bpmnProcessUnmarshaller.setEventHandler(new ValidateJAXB());
-            EntityMappings definition_Load = bpmnProcessUnmarshaller.unmarshal(new StreamSource(savedFile), EntityMappings.class).getValue();
+            jpaModelUnmarshaller.setEventHandler(new ValidateJAXB());
+            EntityMappings definition_Load = jpaModelUnmarshaller.unmarshal(new StreamSource(savedFile), EntityMappings.class).getValue();
 
             scene.setRootElementSpec(definition_Load);
 
@@ -215,7 +215,7 @@ public class JPAModelerUtil implements PModelerUtil {
                 loadDiagram(scene, diagram, diagramElement_Tmp);
             }
 
-            if (definition_Load.isDBImportGenerated()) {
+            if (definition_Load.isGenerated()) {
                 scene.autoLayout();
                 definition_Load.setStatus(null);
             }
@@ -243,8 +243,8 @@ public class JPAModelerUtil implements PModelerUtil {
 
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
             nodeWidgetInfo.setName(flowElement.getName());
-            nodeWidgetInfo.setExist(Boolean.TRUE);//to Load BPMN
-            nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load BPMN
+            nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
+            nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
             INodeWidget nodeWidget = (INodeWidget) scene.createNodeWidget(nodeWidgetInfo);
             if (flowElement.getName() != null) {
                 nodeWidget.setLabel(flowElement.getName());
@@ -621,46 +621,25 @@ public class JPAModelerUtil implements PModelerUtil {
             }
 
             File savedFile = file.getFile();
-
-            if (bpmnProcessContext == null) {
-                bpmnProcessContext = JAXBContext.newInstance(new Class<?>[]{ShapeDesign.class, EntityMappings.class});
+            if (jpaModelContext == null) {
+                jpaModelContext = JAXBContext.newInstance(new Class<?>[]{ShapeDesign.class, EntityMappings.class});
             }
-            if (bpmnProcessMarshaller == null) {
-                bpmnProcessMarshaller = bpmnProcessContext.createMarshaller();
+            if (jpaModelMarshaller == null) {
+                jpaModelMarshaller = jpaModelContext.createMarshaller();
             }
 
             // output pretty printed
-            bpmnProcessMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            bpmnProcessMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd");
-//            bpmnProcessMarshaller.setProperty("com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() { // property required for CDATA
-//                @Override
-//                public void escape(char[] ac, int i, int j, boolean flag, Writer writer) throws IOException {
-//                    writer.write(ac, i, j);
-//                }
-//            });
+            jpaModelMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jpaModelMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
 
-//            bpmnProcessMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-//            bpmnProcessMarshaller.marshal(file.getDefinitionElement(), savedFile);
-//            com.sun.xml.bind.marshaller.NamespacePrefixMapper mapper = new com.sun.xml.bind.marshaller.NamespacePrefixMapper() {
-//                public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
-//                    if ("http://www.omg.org/spec/BPMN/20100524/MODEL".equals(namespaceUri) && !requirePrefix) {
-//                        return "";
-//                    }
-//                    return "ns";
-//                }
-//            };
-//            bpmnProcessMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", mapper);
-            bpmnProcessMarshaller.setEventHandler(new ValidateJAXB());
+            jpaModelMarshaller.setEventHandler(new ValidateJAXB());
 
-            bpmnProcessMarshaller.marshal(file.getDefinitionElement(), System.out);
+            jpaModelMarshaller.marshal(file.getDefinitionElement(), System.out);
             StringWriter sw = new StringWriter();
-            bpmnProcessMarshaller.marshal(file.getDefinitionElement(), sw);
+            jpaModelMarshaller.marshal(file.getDefinitionElement(), sw);
 
-            FileUtils.writeStringToFile(savedFile, sw.toString().replaceFirst("xmlns:ns[A-Za-z\\d]{0,3}=\"http://www.omg.org/spec/BPMN/20100524/MODEL\"",
-                    "xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\""));
+            FileUtils.writeStringToFile(savedFile, sw.toString());
 
-//            NamespacePrefixMapper prefixMapper = new BPMNNamespacePrefixMapper();
-//jaxbMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", prefixMapper);
         } catch (JAXBException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
@@ -670,7 +649,7 @@ public class JPAModelerUtil implements PModelerUtil {
         // file.get
     }
 
-    public static ShapeDesign getBPMNShapeDesign(INodeWidget nodeWidget) {
+    public static ShapeDesign getJPAShapeDesign(INodeWidget nodeWidget) {
 //        ShapeDesign shapeDesign = new ShapeDesign();
 //        shapeDesign.setOuterShapeContext(new OuterShapeContext(
 //                new GradientPaint(nodeWidget.getOuterElementStartBackgroundColor(), nodeWidget.getOuterElementStartOffset(),
@@ -731,13 +710,13 @@ public class JPAModelerUtil implements PModelerUtil {
 //
 //                Rectangle rec_label = new Rectangle(bound.x, bound.y, (int) bound.getWidth(), (int) bound.getHeight());
 //
-////                BPMNLabel label = new BPMNLabel();
+////                JPALabel label = new JPALabel();
 ////                label.setBounds(new Bounds(rec_label));
-////                shape.setBPMNLabel(label);
+////                shape.setJPALabel(label);
 //            }
             plane.addDiagramElement(shape);
 
-//            ShapeDesign shapeDesign = null;// BPMNShapeDesign XML Location Change Here
+//            ShapeDesign shapeDesign = null;// JPAShapeDesign XML Location Change Here
 //            if (nodeWidget instanceof FlowNodeWidget) {
 //                TFlowNode flowNode = (TFlowNode) ((FlowNodeWidget) nodeWidget).getBaseElementSpec();
 //                if (flowNode.getExtensionElements() == null) {
@@ -748,13 +727,13 @@ public class JPAModelerUtil implements PModelerUtil {
 //                    if (obj instanceof Element) { //first time save
 //                        Element element = (Element) obj;
 //                        if ("ShapeDesign".equals(element.getNodeName())) {
-//                            shapeDesign = getBPMNShapeDesign(nodeWidget);
+//                            shapeDesign = getJPAShapeDesign(nodeWidget);
 //                            extensionElements.getAny().remove(obj);
 //                            extensionElements.getAny().add(shapeDesign);
 //                            break;
 //                        }
 //                    } else if (obj instanceof ShapeDesign) {
-//                        shapeDesign = getBPMNShapeDesign(nodeWidget);
+//                        shapeDesign = getJPAShapeDesign(nodeWidget);
 //                        extensionElements.getAny().remove(obj);
 //                        extensionElements.getAny().add(shapeDesign);
 //                        break;
@@ -765,11 +744,11 @@ public class JPAModelerUtil implements PModelerUtil {
 //                if (nodeWidget instanceof FlowNodeWidget) {
 //                    TFlowNode flowNode = (TFlowNode) ((FlowNodeWidget) nodeWidget).getBaseElementSpec();
 //                    TExtensionElements extensionElements = flowNode.getExtensionElements();
-//                    shapeDesign = getBPMNShapeDesign(nodeWidget);
+//                    shapeDesign = getJPAShapeDesign(nodeWidget);
 //                    extensionElements.getAny().add(shapeDesign);
 //                }
 //            }
-//            shape.setBpmnShapeDesign(getBPMNShapeDesign(nodeWidget));
+//            shape.setShapeDesign(getJPAShapeDesign(nodeWidget));
 //            if (nodeWidget instanceof SubProcessWidget) {
 //                SubProcessWidget subProcessWidget = (SubProcessWidget) nodeWidget;
 //                for (FlowElementWidget flowElementChildrenWidget : subProcessWidget.getFlowElements()) {
@@ -823,7 +802,7 @@ public class JPAModelerUtil implements PModelerUtil {
         if (nodeWidget instanceof IFlowNodeWidget) {
             sourceAnchor = new CustomRectangularAnchor(nodeWidget, 0, true);
         } else {
-            throw new InvalidElmentException("Invalid BPMN Process Element : " + nodeWidget);
+            throw new InvalidElmentException("Invalid JPA Process Element : " + nodeWidget);
         }
         return sourceAnchor;
     }
@@ -924,20 +903,16 @@ public class JPAModelerUtil implements PModelerUtil {
     @Override
     public INodeWidget attachNodeWidget(IModelerScene scene, NodeWidgetInfo widgetInfo) {
         IFlowNodeWidget widget = null;
-        IModelerDocument bpmnDocument = widgetInfo.getModelerDocument();
-        if (bpmnDocument.getId().equals("Entity")) {
+        IModelerDocument modelerDocument = widgetInfo.getModelerDocument();
+        if (modelerDocument.getId().equals("Entity")) {
             widget = new EntityWidget(scene, widgetInfo);
-        } else if (bpmnDocument.getId().equals("MappedSuperclass")) {
+        } else if (modelerDocument.getId().equals("MappedSuperclass")) {
             widget = new MappedSuperclassWidget(scene, widgetInfo);
-        } else if (bpmnDocument.getId().equals("Embeddable")) {
+        } else if (modelerDocument.getId().equals("Embeddable")) {
             widget = new EmbeddableWidget(scene, widgetInfo);
         } else {
-            throw new InvalidElmentException("Invalid BPMN Element");
+            throw new InvalidElmentException("Invalid JPA Element");
         }
-//        } else {
-//            throw new InvalidElmentException("Invalid BPMN Model" + bpmnDocument.getDocumentModel());
-//        }
-//        widget.setId(widgetInfo.getId());
 
         return (INodeWidget) widget;
     }

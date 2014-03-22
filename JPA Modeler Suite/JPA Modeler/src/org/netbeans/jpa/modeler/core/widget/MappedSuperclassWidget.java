@@ -102,8 +102,4 @@ public class MappedSuperclassWidget extends PersistenceClassWidget {
 //
 //        return menuList;
 //    }
-    @Override
-    public void scanError() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

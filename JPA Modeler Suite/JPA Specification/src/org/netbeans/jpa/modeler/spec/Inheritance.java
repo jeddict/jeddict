@@ -6,10 +6,13 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -47,6 +50,18 @@ public class Inheritance {
 
     @XmlAttribute
     protected InheritanceType strategy;
+    
+    
+      public static Inheritance load(Element element) {
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Inheritance");
+        Inheritance inheritance = null;
+        if (annotationMirror != null) {
+            inheritance = new Inheritance();
+                    inheritance.strategy = InheritanceType.load(element,annotationMirror);
+           }
+        return inheritance;
+    }
+
 
     /**
      * Gets the value of the strategy property.

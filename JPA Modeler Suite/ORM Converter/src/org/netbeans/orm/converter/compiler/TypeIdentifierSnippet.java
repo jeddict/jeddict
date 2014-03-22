@@ -81,36 +81,22 @@ public class TypeIdentifierSnippet implements Snippet {
 
                 importSnippets = new ArrayList<String>();
 
-                importSnippets.add("java.util.Collection");
-
-                if (relationDef.getTargetEntity() == null) {
-                    type = "Collection";
-                } else {
-
-                    ClassHelper classHelper = getClassHelper(
-                            relationDef.getTargetEntity());
-
-                    type = "Collection<"
-                            + classHelper.getClassName() + ">";
-
-                    importSnippets.add(classHelper.getFQClassName());
+                ClassHelper collectionTypeClassHelper = null;
+                if (relationDef instanceof OneToManySnippet) {
+                    collectionTypeClassHelper = getClassHelper(((OneToManySnippet) relationDef).getCollectionType());
+                } else if (relationDef instanceof ManyToManySnippet) {
+                    collectionTypeClassHelper = getClassHelper(((ManyToManySnippet) relationDef).getCollectionType());
                 }
 
+                ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
+                type = collectionTypeClassHelper.getClassName() + "<" + classHelper.getClassName() + ">";
+                importSnippets.add(collectionTypeClassHelper.getFQClassName());
+                importSnippets.add(classHelper.getFQClassName());
                 return;
             } else {
-
-                if (relationDef.getTargetEntity() == null) {
-                    type = "Object";
-                } else {
-                    ClassHelper classHelper = getClassHelper(
-                            relationDef.getTargetEntity());
-
-                    type = classHelper.getClassName();
-
-                    importSnippets = Collections.singletonList(
-                            classHelper.getFQClassName());
-                }
-
+                ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
+                type = classHelper.getClassName();
+                importSnippets = Collections.singletonList(classHelper.getFQClassName());
                 return;
             }
         }
@@ -119,17 +105,12 @@ public class TypeIdentifierSnippet implements Snippet {
             ElementCollectionSnippet elementCollection = variableDef.getElementCollection();
             importSnippets = new ArrayList<String>();
 
-            importSnippets.add("java.util.Collection");
-            ClassHelper classHelper = getClassHelper(
-                    elementCollection.getTargetClass());
-
-            type = "Collection<"
-                    + classHelper.getClassName() + ">";
-
+            ClassHelper collectionTypeClassHelper = getClassHelper(elementCollection.getCollectionType());
+            ClassHelper classHelper = getClassHelper(elementCollection.getTargetClass());
+            type = collectionTypeClassHelper.getClassName() + "<" + classHelper.getClassName() + ">";
+            importSnippets.add(collectionTypeClassHelper.getFQClassName());
             importSnippets.add(classHelper.getFQClassName());
-
             return;
-
         }
 
         if (variableDef.isLob()) {

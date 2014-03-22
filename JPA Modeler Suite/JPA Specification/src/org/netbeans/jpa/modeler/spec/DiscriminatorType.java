@@ -6,8 +6,12 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -40,6 +44,19 @@ public enum DiscriminatorType {
 
     public static DiscriminatorType fromValue(String v) {
         return valueOf(v);
+    }
+    
+    
+    public static DiscriminatorType load(Element element , AnnotationMirror annotationMirror ) {        
+        DiscriminatorType discriminatorType = null;
+        if (annotationMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "discriminatorType");
+            if (value != null) {
+                discriminatorType = DiscriminatorType.valueOf(value.toString());
+            }
+        }
+        return discriminatorType;
+
     }
 
 }

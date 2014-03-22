@@ -99,7 +99,7 @@ public class JoinTable {
             List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
             if (uniqueConstraintsAnnot != null) {
                 for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
-                    joinTable.getUniqueConstraint().add(UniqueConstraint.load(element, variableElement, (AnnotationMirror) uniqueConstraintsObj));
+                    joinTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
                 }
             }
 

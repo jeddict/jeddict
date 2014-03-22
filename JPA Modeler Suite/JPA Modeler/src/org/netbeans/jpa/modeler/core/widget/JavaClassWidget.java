@@ -19,16 +19,22 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
+import org.netbeans.modules.db.api.sql.SQLKeywords;
+import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.ImageUtilities;
+import org.openide.util.NbBundle;
 
 public abstract class JavaClassWidget extends FlowNodeWidget {
 
@@ -41,13 +47,27 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
             @Override
             public void changePerformed(String value) {
                 if (value == null || value.trim().isEmpty()) {
-//                    NotifyDescriptor d = new NotifyDescriptor.Confirmation("Java Class name can not be empty", "Java Class name", NotifyDescriptor.ERROR_MESSAGE);
-//                    DialogDisplayer.getDefault().notify(d);
-                    JOptionPane.showMessageDialog(null, "Java Class name can not be empty");
+                    JOptionPane.showMessageDialog(null, NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
                     setName(JavaClassWidget.this.getLabel());//rollback
                 } else {
                     setName(value);
                     setLabel(value);
+                }
+
+            }
+        });
+
+        this.addPropertyChangeListener("table_name", new PropertyChangeListener<String>() {
+            @Override
+            public void changePerformed(String tableName) {
+                if (tableName != null && !tableName.trim().isEmpty()) {
+                    if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                        throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    } else {
+                        clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    }
+                } else {
+                    clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             }
         });
@@ -58,14 +78,30 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     private Image icon;
     private static Image errorIcon = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/error_small_icon.gif");
 
-    public void throwError(String message) {
-        this.setToolTipText(message);
-        this.setNodeImage(getErrorIcon());
+    private final java.util.Map<String, String> errorList = new HashMap<String, String>();
+
+    public void throwError(String key) {
+        errorList.put(key, NbBundle.getMessage(EntityValidator.class, key));
+        printError();
     }
 
-    public void clearError() {
-        this.setToolTipText(null);
-        this.setNodeImage(icon);
+    public void clearError(String key) {
+        errorList.remove(key);
+        printError();
+    }
+
+    private void printError() {
+        StringBuilder errorMessage = new StringBuilder();
+        for (String errorKey : errorList.keySet()) {
+            errorMessage.append(errorList.get(errorKey));
+        }
+        if (errorMessage.length() != 0) {
+            this.setToolTipText(errorMessage.toString());
+            this.setNodeImage(getErrorIcon());
+        } else {
+            this.setToolTipText(null);
+            this.setNodeImage(icon);
+        }
     }
 
     private Image getErrorIcon() {
@@ -87,9 +123,21 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
 
     @Override
     public void setName(String name) {
-        this.name = name;
+
         if (name != null && !name.trim().isEmpty()) {
-            ((JavaClass) getBaseElementSpec()).setClazz(name);
+            this.name = name.replaceAll("\\s+", "");
+            ((JavaClass) getBaseElementSpec()).setClazz(this.name);
+        }
+        if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
+            throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+        } else {
+            clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+        }
+        EntityMappings entityMapping = (EntityMappings) JavaClassWidget.this.getModelerScene().getBaseElementSpec();
+        if (entityMapping.findAllEntity(JavaClassWidget.this.getName()).size() > 1) {
+            throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+        } else {
+            clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         }
 
     }
@@ -97,7 +145,7 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     @Override
     public void setLabel(String label) {
         if (label != null && !label.trim().isEmpty()) {
-            this.setNodeName(label);
+            this.setNodeName(label.replaceAll("\\s+", ""));
         }
     }
 

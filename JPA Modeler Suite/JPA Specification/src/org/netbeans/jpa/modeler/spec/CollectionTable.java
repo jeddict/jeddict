@@ -8,11 +8,15 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -66,6 +70,35 @@ public class CollectionTable {
     protected String catalog;
     @XmlAttribute
     protected String schema;
+
+    public static CollectionTable load(Element element, VariableElement variableElement) {
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinTable");
+
+        CollectionTable collectionTable = null;
+        if (annotationMirror != null) {
+            collectionTable = new CollectionTable();
+
+            List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
+            if (joinColumnsAnnot != null) {
+                for (Object joinColumnObj : joinColumnsAnnot) {
+                    collectionTable.getJoinColumn().add(JoinColumn.load(element, variableElement, (AnnotationMirror) joinColumnObj));
+                }
+            }
+
+            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
+            if (uniqueConstraintsAnnot != null) {
+                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
+                    collectionTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
+                }
+            }
+
+            collectionTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            collectionTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
+            collectionTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
+        }
+        return collectionTable;
+
+    }
 
     /**
      * Gets the value of the joinColumn property.

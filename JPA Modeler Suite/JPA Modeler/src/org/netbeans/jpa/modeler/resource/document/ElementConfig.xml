@@ -171,6 +171,9 @@
                 <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
+                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
+                    <display-name>Collection Class</display-name>
+                </attribute>
             </attributes>
         </element>
            <element id="Embedded" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Embedded">
@@ -213,6 +216,9 @@
                 <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
+                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
+                    <display-name>Collection Class</display-name>
+                </attribute>
 
                 <!--                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
@@ -237,7 +243,9 @@
                 <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
-
+                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
+                    <display-name>Collection Class</display-name>
+                </attribute>
                 <!--                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
                 </attribute>-->

@@ -69,4 +69,5 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
     public abstract JoinTable getJoinTable();
 
     public abstract void setJoinTable(JoinTable value);
+
 }

@@ -16,7 +16,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -83,7 +85,7 @@ public class Attributes implements IPersistenceAttributes {
     protected String description;
     protected List<Id> id;
     @XmlElement(name = "embedded-id")
-    protected EmbeddedId embeddedId; //RENENG PENDING
+    protected EmbeddedId embeddedId; //RENENG PENDING //findAllAttribute PENDING //isAttributeExist PENDING
     protected List<Basic> basic;
     protected List<Version> version;
     @XmlElement(name = "many-to-one")
@@ -100,12 +102,12 @@ public class Attributes implements IPersistenceAttributes {
     @XmlElement(name = "transient")
     protected List<Transient> _transient;
 
-    public void load(TypeElement typeElement, boolean fieldAccess) {
+    public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
 
-        for (ExecutableElement method : JavaSourceParserUtil.getEntityMethods(typeElement)) {
+        for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {
             String methodName = method.getSimpleName().toString();
             if (methodName.startsWith("get")) {
-                Element element = null;
+                Element element;
                 VariableElement variableElement = JavaSourceParserUtil.guessField(method);
                 if (fieldAccess) {
                     element = variableElement;
@@ -123,7 +125,7 @@ public class Attributes implements IPersistenceAttributes {
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Version")) {
                         this.getVersion().add(Version.load(element, variableElement));
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
-
+                        this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
                         this.getOneToOne().add(OneToOne.load(element, variableElement));
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
@@ -131,13 +133,97 @@ public class Attributes implements IPersistenceAttributes {
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
                         this.getOneToMany().add(OneToMany.load(element, variableElement));
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
-
+                        this.getManyToMany().add(ManyToMany.load(element, variableElement));
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
+                        //Not Supported Currently
+                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
+                        this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
+                    } else {
+                        this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
                     }
 
                 }
             }
         }
 
+    }
+
+    @Override
+    public List<Attribute> findAllAttribute(String name) {
+        List<Attribute> attributes = new ArrayList<Attribute>();
+        if (id != null) {
+            for (Id id_TMP : id) {
+                if (id_TMP.getName() != null && id_TMP.getName().equals(name)) {
+                    attributes.add(id_TMP);
+                }
+            }
+        }
+        if (version != null) {
+            for (Version version_TMP : version) {
+                if (version_TMP.getName() != null && version_TMP.getName().equals(name)) {
+                    attributes.add(version_TMP);
+                }
+            }
+        }
+        if (basic != null) {
+            for (Basic basic_TMP : basic) {
+                if (basic_TMP.getName() != null && basic_TMP.getName().equals(name)) {
+                    attributes.add(basic_TMP);
+                }
+            }
+        }
+        if (elementCollection != null) {
+            for (ElementCollection elementCollection_TMP : elementCollection) {
+                if (elementCollection_TMP.getName() != null && elementCollection_TMP.getName().equals(name)) {
+                    attributes.add(elementCollection_TMP);
+                }
+            }
+        }
+
+        if (_transient != null) {
+            for (Transient transient_TMP : _transient) {
+                if (transient_TMP.getName() != null && transient_TMP.getName().equals(name)) {
+                    attributes.add(transient_TMP);
+                }
+            }
+        }
+        if (oneToOne != null) {
+            for (OneToOne oneToOne_TMP : oneToOne) {
+                if (oneToOne_TMP.getName() != null && oneToOne_TMP.getName().equals(name)) {
+                    attributes.add(oneToOne_TMP);
+                }
+            }
+        }
+        if (oneToMany != null) {
+            for (OneToMany oneToMany_TMP : oneToMany) {
+                if (oneToMany_TMP.getName() != null && oneToMany_TMP.getName().equals(name)) {
+                    attributes.add(oneToMany_TMP);
+                }
+            }
+        }
+        if (manyToOne != null) {
+            for (ManyToOne manyToOne_TMP : manyToOne) {
+                if (manyToOne_TMP.getName() != null && manyToOne_TMP.getName().equals(name)) {
+                    attributes.add(manyToOne_TMP);
+                }
+            }
+        }
+        if (manyToMany != null) {
+            for (ManyToMany manyToMany_TMP : manyToMany) {
+                if (manyToMany_TMP.getName() != null && manyToMany_TMP.getName().equals(name)) {
+                    attributes.add(manyToMany_TMP);
+                }
+            }
+        }
+        if (embedded != null) {
+            for (Embedded embedded_TMP : embedded) {
+                if (embedded_TMP.getName() != null && embedded_TMP.getName().equals(name)) {
+                    attributes.add(embedded_TMP);
+                }
+            }
+        }
+
+        return attributes;
     }
 
     //UPDATE ELEMENT
@@ -557,6 +643,42 @@ public class Attributes implements IPersistenceAttributes {
             _transient = new ArrayList<Transient>();
         }
         return this._transient;
+    }
+
+    public void removeRelationAttribute(RelationAttribute relationAttribute) {
+        if (relationAttribute instanceof ManyToMany) {
+            this.getManyToMany().remove((ManyToMany) relationAttribute);
+        } else if (relationAttribute instanceof OneToMany) {
+            this.getOneToMany().remove((OneToMany) relationAttribute);
+        } else if (relationAttribute instanceof ManyToOne) {
+            this.getManyToOne().remove((ManyToOne) relationAttribute);
+        } else if (relationAttribute instanceof OneToOne) {
+            this.getOneToOne().remove((OneToOne) relationAttribute);
+        } else {
+            throw new IllegalStateException("Invalid Type Relation Attribute");
+        }
+    }
+
+    public void addRelationAttribute(RelationAttribute relationAttribute) {
+        if (relationAttribute instanceof ManyToMany) {
+            this.getManyToMany().add((ManyToMany) relationAttribute);
+        } else if (relationAttribute instanceof OneToMany) {
+            this.getOneToMany().add((OneToMany) relationAttribute);
+        } else if (relationAttribute instanceof ManyToOne) {
+            this.getManyToOne().add((ManyToOne) relationAttribute);
+        } else if (relationAttribute instanceof OneToOne) {
+            this.getOneToOne().add((OneToOne) relationAttribute);
+        } else {
+            throw new IllegalStateException("Invalid Type Relation Attribute");
+        }
+    }
+
+    public List<RelationAttribute> getRelationAttributes() {
+        List<RelationAttribute> relationAttributes = new ArrayList<RelationAttribute>(this.getOneToOne());
+        relationAttributes.addAll(this.getOneToMany());
+        relationAttributes.addAll(this.getManyToOne());
+        relationAttributes.addAll(this.getManyToMany());
+        return relationAttributes;
     }
 
 }

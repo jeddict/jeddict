@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
 import org.netbeans.modeler.specification.model.document.IRootElement;
@@ -140,11 +142,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     @XmlElement(name = "diagram")
     private Diagram jpaDiagram;//Custom Added
     @XmlAttribute
-    private String status;//
-    /*
-     * DBIMP_REGEN : DATABSE-IMPORT-REVERSE-ENGINEERING-GENERATED
-     *
-     */
+    private String status;//GENERATED (DBRE,JCRE)
+
     @XmlAttribute
     private String persistenceUnitName;
 
@@ -601,6 +600,18 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return null;
     }
 
+    public List<Entity> findAllEntity(String entityName) {
+        List<Entity> entities = new ArrayList<Entity>();
+        if (entity != null) {
+            for (Entity entity_In : entity) {
+                if (entityName.equals(entity_In.getClazz())) {
+                    entities.add(entity_In);
+                }
+            }
+        }
+        return entities;
+    }
+
     public void removeMappedSuperclass(MappedSuperclass mappedSuperclass_In) {
         if (mappedSuperclass != null) {
             this.mappedSuperclass.remove(mappedSuperclass_In);
@@ -614,6 +625,17 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.mappedSuperclass.add(mappedSuperclass_In);
     }
 
+    public MappedSuperclass findMappedSuperclass(String mappedSuperclassName) {
+        if (mappedSuperclass != null) {
+            for (MappedSuperclass mappedSuperclass_In : mappedSuperclass) {
+                if (mappedSuperclassName.equals(mappedSuperclass_In.getClazz())) {
+                    return mappedSuperclass_In;
+                }
+            }
+        }
+        return null;
+    }
+
     public void removeEmbeddable(Embeddable embeddable_In) {
         if (embeddable != null) {
             this.embeddable.remove(embeddable_In);
@@ -625,6 +647,17 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             embeddable = new ArrayList<Embeddable>();
         }
         this.embeddable.add(embeddable_In);
+    }
+
+    public Embeddable findEmbeddable(String embeddableName) {
+        if (embeddable != null) {
+            for (Embeddable embeddable_In : embeddable) {
+                if (embeddableName.equals(embeddable_In.getClazz())) {
+                    return embeddable_In;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -703,15 +736,138 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.status = status;
     }
 
-    public void setDBImportGenerated() {
-        this.status = "DBIMP_REGEN";
+    public void setGenerated() {
+        this.status = "GENERATED";
     }
 
-    public boolean isDBImportGenerated() {
-        if ("DBIMP_REGEN".equals(this.status)) {
+    public boolean isGenerated() {
+        if ("GENERATED".equals(this.status)) {
             return true;
         } else {
             return false;
+        }
+    }
+
+//    public void manageSiblingAttribute(org.netbeans.jpa.modeler.spec.Entity targetEntity, RelationAttribute relationAttribute_Owner) {
+//        org.netbeans.jpa.modeler.spec.Entity sourceEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());
+//        if (relationAttribute_Owner instanceof ManyToMany) {
+//            ManyToMany targetAttribute = (ManyToMany) relationAttribute_Owner;
+//            ManyToMany sourceAttribute = null;
+//            String mappedBy = ((ManyToMany) relationAttribute_Owner).getMappedBy();
+//            for (ManyToMany sourceManyToMany : sourceEntity.getAttributes().getManyToMany()) {
+//                if (mappedBy.equals(sourceManyToMany.getName())) {
+//                    sourceAttribute = sourceManyToMany;
+//                    break;
+//                }
+//            }
+//            targetAttribute.setConnectedEntityId(sourceEntity.getId());
+//            targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
+//            sourceAttribute.setConnectedEntityId(targetEntity.getId());
+//            sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+//
+//        } else if (relationAttribute_Owner instanceof OneToMany) {
+//            OneToMany targetAttribute = (OneToMany) relationAttribute_Owner;
+//            ManyToOne sourceAttribute = null;
+//            String mappedBy = ((OneToMany) relationAttribute_Owner).getMappedBy();
+//            for (ManyToOne sourceManyToOne : sourceEntity.getAttributes().getManyToOne()) {
+//                if (mappedBy.equals(sourceManyToOne.getName())) {
+//                    sourceAttribute = sourceManyToOne;
+//                    break;
+//                }
+//            }
+//            targetAttribute.setConnectedEntityId(sourceEntity.getId());
+//            targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
+//            sourceAttribute.setConnectedEntityId(targetEntity.getId());
+//            sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+//
+//        } //            else if (relationAttribute_Owner instanceof ManyToOne) {
+//        //                ManyToOne targetAttribute = (ManyToOne) relationAttribute_Owner;
+//        //                OneToMany sourceAttribute = null;
+//        //                String mappedBy = ((ManyToOne) relationAttribute_Owner).getMappedBy();
+//        //                for (OneToMany sourceOneToMany : sourceEntity.getAttributes().getOneToMany()) {
+//        //                    if (mappedBy.equals(sourceOneToMany.getName())) {
+//        //                        sourceAttribute = sourceOneToMany;
+//        //                        break;
+//        //                    }
+//        //                }
+//        //                targetAttribute.setConnectedEntityId(sourceEntity.getId());
+//        //                targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
+//        //                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+//        //                sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+//        //
+//        //            }
+//        else if (relationAttribute_Owner instanceof OneToOne) {
+//            OneToOne targetAttribute = (OneToOne) relationAttribute_Owner;
+//            OneToOne sourceAttribute = null;
+//            String mappedBy = ((OneToOne) relationAttribute_Owner).getMappedBy();
+//            for (OneToOne sourceOneToMany : sourceEntity.getAttributes().getOneToOne()) {
+//                if (mappedBy.equals(sourceOneToMany.getName())) {
+//                    sourceAttribute = sourceOneToMany;
+//                    break;
+//                }
+//            }
+//            targetAttribute.setConnectedEntityId(sourceEntity.getId());
+//            targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
+//            sourceAttribute.setConnectedEntityId(targetEntity.getId());
+//            sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+//
+//        }
+//
+//    }
+    public void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
+        org.netbeans.jpa.modeler.spec.Entity targetEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());
+        if (targetEntity != null) {
+            if (relationAttribute_Owner instanceof ManyToMany) {
+                ManyToMany sourceAttribute = (ManyToMany) relationAttribute_Owner;
+                ManyToMany targetAttribute = null;
+                for (ManyToMany targetManyToMany : targetEntity.getAttributes().getManyToMany()) {
+                    if (sourceAttribute.getName().equals(targetManyToMany.getMappedBy())) {
+                        targetAttribute = targetManyToMany;
+                        break;
+                    }
+                }
+                if (targetAttribute != null) {
+                    targetAttribute.setConnectedEntityId(sourceJavaClass.getId());
+                    targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
+                    sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+                }
+                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+            } else if (relationAttribute_Owner instanceof OneToMany) {
+                OneToMany sourceAttribute = (OneToMany) relationAttribute_Owner;
+                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+            } else if (relationAttribute_Owner instanceof ManyToOne) {
+                ManyToOne sourceAttribute = (ManyToOne) relationAttribute_Owner;
+                OneToMany targetAttribute = null;
+                for (OneToMany targetOneToMany : targetEntity.getAttributes().getOneToMany()) {
+                    if (sourceAttribute.getName().equals(targetOneToMany.getMappedBy())) {
+                        targetAttribute = targetOneToMany;
+                        break;
+                    }
+                }
+                if (targetAttribute != null) {
+                    targetAttribute.setConnectedEntityId(sourceJavaClass.getId());
+                    targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
+                    sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+                }
+                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+
+            } else if (relationAttribute_Owner instanceof OneToOne) {
+                OneToOne sourceAttribute = (OneToOne) relationAttribute_Owner;
+                OneToOne targetAttribute = null;
+                for (OneToOne targetOneToOne : targetEntity.getAttributes().getOneToOne()) {
+                    if (sourceAttribute.getName().equals(targetOneToOne.getMappedBy())) {
+                        targetAttribute = targetOneToOne;
+                        break;
+                    }
+                }
+                if (targetAttribute != null) {
+                    targetAttribute.setConnectedEntityId(sourceJavaClass.getId());
+                    targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
+                    sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+                }
+                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+
+            }
         }
     }
 

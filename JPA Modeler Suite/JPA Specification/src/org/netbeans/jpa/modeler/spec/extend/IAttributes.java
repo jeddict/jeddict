@@ -222,6 +222,8 @@ public interface IAttributes {
      */
     List<Transient> getTransient();
 
+    List<Attribute> findAllAttribute(String name);
+
     //UPDATE ELEMENT
     boolean isAttributeExist(String name);
 

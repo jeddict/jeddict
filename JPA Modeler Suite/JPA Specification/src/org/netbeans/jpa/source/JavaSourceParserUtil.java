@@ -35,13 +35,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.lang.model.element.AnnotationMirror;
@@ -161,7 +157,11 @@ public class JavaSourceParserUtil {
         while (typeElement != null) {
             if (isAnnotatedWith(typeElement, "javax.persistence.Entity") || isAnnotatedWith(typeElement, "javax.persistence.MappedSuperclass")) { // NOI18N
                 for (Element element : typeElement.getEnclosedElements()) {
-                    if (isAnnotatedWith(element, "javax.persistence.Id") || isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
+                    if (isAnnotatedWith(element, "javax.persistence.Id") || isAnnotatedWith(element, "javax.persistence.EmbeddedId") || isAnnotatedWith(element, "javax.persistence.Embedded")
+                            || isAnnotatedWith(element, "javax.persistence.Basic") || isAnnotatedWith(element, "javax.persistence.Transient")
+                            || isAnnotatedWith(element, "javax.persistence.Version") || isAnnotatedWith(element, "javax.persistence.ElementCollection")
+                            || isAnnotatedWith(element, "javax.persistence.OneToMany") || isAnnotatedWith(element, "javax.persistence.ManyToMany")
+                            || isAnnotatedWith(element, "javax.persistence.OneToOne") || isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
                         if (ElementKind.FIELD == element.getKind()) {
                             fieldAccess = true;
                         }
@@ -180,6 +180,10 @@ public class JavaSourceParserUtil {
 
     public static boolean isAnnotatedWith(Element element, String annotationFqn) {
         return findAnnotation(element, annotationFqn) != null;
+    }
+
+    public static AnnotationMirror getAnnotation(Element element, String annotationFqn) {//temp replica
+        return findAnnotation(element, annotationFqn);
     }
 
     public static AnnotationMirror findAnnotation(Element element, String annotationFqn) {
@@ -211,6 +215,19 @@ public class JavaSourceParserUtil {
             }
         }
         return superclass;
+    }
+
+    public static TypeElement getAttributeTypeElement(VariableElement variableElement) {
+        TypeElement attribute = null;
+        TypeMirror attributeMirror = variableElement.asType();
+        if (attributeMirror.getKind() == TypeKind.DECLARED) {
+            DeclaredType attributeDeclaredType = (DeclaredType) attributeMirror;
+            Element attributeElement = attributeDeclaredType.asElement();
+            if (attributeElement.getKind() == ElementKind.CLASS && (attributeElement instanceof TypeElement)) {
+                attribute = (TypeElement) attributeElement;
+            }
+        }
+        return attribute;
     }
 
     public static String findAnnotationValueAsString(AnnotationMirror annotation, String annotationKey) {
@@ -291,8 +308,29 @@ public class JavaSourceParserUtil {
         return makeFirstLower ? name.substring(3, 4).toLowerCase() + name.substring(4) : name.substring(3);
     }
 
-    public static boolean isEmbeddableClass(TypeElement typeElement) {
+    public static boolean isEmbeddableClass(Element typeElement) {//TypeElement
         if (JavaSourceParserUtil.isAnnotatedWith(typeElement, "javax.persistence.Embeddable")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isMappedSuperClass(Element typeElement) {//TypeElement
+        if (JavaSourceParserUtil.isAnnotatedWith(typeElement, "javax.persistence.MappedSuperclass")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isEntityClass(Element typeElement) {//TypeElement
+        if (JavaSourceParserUtil.isAnnotatedWith(typeElement, "javax.persistence.Entity")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNonEntityClass(TypeElement typeElement) {
+        if (!isEntityClass(typeElement) && !isMappedSuperClass(typeElement) && !isEmbeddableClass(typeElement)) {
             return true;
         }
         return false;
@@ -339,7 +377,7 @@ public class JavaSourceParserUtil {
         if (persistenceAnnotation != null) {
             mappedBy = JavaSourceParserUtil.findAnnotationValueAsString(persistenceAnnotation, "mappedBy");  //NOI18N
         }
-        for (ExecutableElement method : JavaSourceParserUtil.getEntityMethods(passedReturnTypeStrippedElement)) {
+        for (ExecutableElement method : JavaSourceParserUtil.getMethods(passedReturnTypeStrippedElement)) {
             if (mappedBy != null && mappedBy.length() > 0) {
                 String tail = mappedBy.length() > 1 ? mappedBy.substring(1) : "";
                 String getterName = "get" + mappedBy.substring(0, 1).toUpperCase() + tail;
@@ -472,7 +510,7 @@ public class JavaSourceParserUtil {
     }
 
     public static ExecutableElement getIdGetter(final boolean isFieldAccess, final TypeElement typeElement) {
-        ExecutableElement[] methods = JavaSourceParserUtil.getEntityMethods(typeElement);
+        ExecutableElement[] methods = JavaSourceParserUtil.getMethods(typeElement);
         for (ExecutableElement method : methods) {
             String methodName = method.getSimpleName().toString();
             if (methodName.startsWith("get")) {
@@ -551,15 +589,20 @@ public class JavaSourceParserUtil {
      * Returns all methods in class and its super classes which are entity
      * classes or mapped superclasses.
      */
-    public static ExecutableElement[] getEntityMethods(TypeElement entityTypeElement) {
+//    public static ExecutableElement[] getEntityMethods(TypeElement entityTypeElement) {
+//        List<ExecutableElement> result = new LinkedList<ExecutableElement>();
+//        TypeElement typeElement = entityTypeElement;
+//        while (typeElement != null) {
+//            if (isAnnotatedWith(typeElement, "javax.persistence.Entity") || isAnnotatedWith(typeElement, "javax.persistence.MappedSuperclass")) { // NOI18N
+//                result.addAll(ElementFilter.methodsIn(typeElement.getEnclosedElements()));
+//            }
+//            typeElement = getSuperclassTypeElement(typeElement);
+//        }
+//        return result.toArray(new ExecutableElement[result.size()]);
+//    }
+    public static ExecutableElement[] getMethods(TypeElement typeElement) {
         List<ExecutableElement> result = new LinkedList<ExecutableElement>();
-        TypeElement typeElement = entityTypeElement;
-        while (typeElement != null) {
-            if (isAnnotatedWith(typeElement, "javax.persistence.Entity") || isAnnotatedWith(typeElement, "javax.persistence.MappedSuperclass")) { // NOI18N
-                result.addAll(ElementFilter.methodsIn(typeElement.getEnclosedElements()));
-            }
-            typeElement = getSuperclassTypeElement(typeElement);
-        }
+        result.addAll(ElementFilter.methodsIn(typeElement.getEnclosedElements()));
         return result.toArray(new ExecutableElement[result.size()]);
     }
 
@@ -597,260 +640,259 @@ public class JavaSourceParserUtil {
     }
 
     // ----------------------------------------------------------------------------------------- Nested Classes
-    public static class EmbeddedPkSupport {
-
-        private Map<TypeElement, EmbeddedPkSupportInfo> typeToInfo = new HashMap<TypeElement, EmbeddedPkSupportInfo>();
-
-        public Set<ExecutableElement> getPkAccessorMethods(TypeElement type) {
-            EmbeddedPkSupportInfo info = getInfo(type);
-            return info.getPkAccessorMethods();
-        }
-
-        public boolean getPkSetterMethodExist(TypeElement type, ExecutableElement getter) {
-            EmbeddedPkSupportInfo info = getInfo(type);
-            String column = info.getReferencedColumnName(getter);
-            return info.getSetterString(column) != null;
-        }
-
-        public String getCodeToPopulatePkField(TypeElement type, ExecutableElement pkAccessorMethod) {
-            EmbeddedPkSupportInfo info = getInfo(type);
-            String code = info.getCodeToPopulatePkField(pkAccessorMethod);
-            if (code != null) {
-                return code;
-            }
-
-            code = "";
-            ExecutableElement relationshipMethod = info.getRelationshipMethod(pkAccessorMethod);
-            String referencedColumnName = info.getReferencedColumnName(pkAccessorMethod);
-            if (relationshipMethod == null || referencedColumnName == null) {
-                info.putCodeToPopulatePkField(pkAccessorMethod, code);
-                return code;
-            }
-
-            TypeMirror relationshipTypeMirror = relationshipMethod.getReturnType();
-            if (TypeKind.DECLARED != relationshipTypeMirror.getKind()) {
-                info.putCodeToPopulatePkField(pkAccessorMethod, code);
-                return code;
-            }
-            DeclaredType declaredType = (DeclaredType) relationshipTypeMirror;
-            TypeElement relationshipType = (TypeElement) declaredType.asElement();
-
-            EmbeddedPkSupportInfo relatedInfo = getInfo(relationshipType);
-            String accessorString = relatedInfo.getAccessorString(referencedColumnName);
-            if (accessorString == null) {
-                info.putCodeToPopulatePkField(pkAccessorMethod, code);
-                return code;
-            }
-
-            code = relationshipMethod.getSimpleName().toString() + "()." + accessorString;
-            info.putCodeToPopulatePkField(pkAccessorMethod, code);
-            return code;
-        }
-
-        public boolean isRedundantWithRelationshipField(TypeElement type, ExecutableElement pkAccessorMethod) {
-            return getCodeToPopulatePkField(type, pkAccessorMethod).length() > 0;
-        }
-
-        public boolean isRedundantWithPkFields(TypeElement type, ExecutableElement relationshipMethod) {
-            EmbeddedPkSupportInfo info = getInfo(type);
-            return info.isRedundantWithPkFields(relationshipMethod);
-        }
-
-        private EmbeddedPkSupportInfo getInfo(TypeElement type) {
-            EmbeddedPkSupportInfo info = typeToInfo.get(type);
-            if (info == null) {
-                info = new EmbeddedPkSupportInfo(type);
-                typeToInfo.put(type, info);
-            }
-            return info;
-        }
-    }
-
-    private static class EmbeddedPkSupportInfo {
-
-        private Map<String, ExecutableElement> joinColumnNameToRelationshipMethod = new HashMap<String, ExecutableElement>();
-        private Map<ExecutableElement, List<String>> relationshipMethodToJoinColumnNames = new HashMap<ExecutableElement, List<String>>(); //used only in isRedundantWithPkFields
-        private Map<String, String> joinColumnNameToReferencedColumnName = new HashMap<String, String>();
-        private Map<String, String> columnNameToAccessorString = new HashMap<String, String>();
-        private Map<String, String> columnNameToSetterString = new HashMap<String, String>();
-        private Map<ExecutableElement, String> pkAccessorMethodToColumnName = new HashMap<ExecutableElement, String>();
-        private Map<ExecutableElement, String> pkSetterMethodToColumnName = new HashMap<ExecutableElement, String>();
-        private Map<ExecutableElement, String> pkAccessorMethodToPopulationCode = new HashMap<ExecutableElement, String>(); //derived
-        private boolean isFieldAccess;
-
-        public Set<ExecutableElement> getPkAccessorMethods() {
-            return pkAccessorMethodToColumnName.keySet();
-        }
-
-        public ExecutableElement getRelationshipMethod(ExecutableElement pkAccessorMethod) {
-            String columnName = pkAccessorMethodToColumnName.get(pkAccessorMethod);
-            if (columnName == null) {
-                return null;
-            }
-            return joinColumnNameToRelationshipMethod.get(columnName);
-        }
-
-        public String getReferencedColumnName(ExecutableElement pkAccessorMethod) {
-            String columnName = pkAccessorMethodToColumnName.get(pkAccessorMethod);
-            if (columnName == null) {
-                return null;
-            }
-            return joinColumnNameToReferencedColumnName.get(columnName);
-        }
-
-        public String getAccessorString(String columnName) {
-            return columnNameToAccessorString.get(columnName);
-        }
-
-        public String getSetterString(String columnName) {
-            return columnNameToSetterString.get(columnName);
-        }
-
-        public String getCodeToPopulatePkField(ExecutableElement pkAccessorMethod) {
-            return pkAccessorMethodToPopulationCode.get(pkAccessorMethod);
-        }
-
-        public void putCodeToPopulatePkField(ExecutableElement pkAccessorMethod, String code) {
-            pkAccessorMethodToPopulationCode.put(pkAccessorMethod, code);
-        }
-
-        public boolean isRedundantWithPkFields(ExecutableElement relationshipMethod) {
-            List<String> joinColumnNameList = relationshipMethodToJoinColumnNames.get(relationshipMethod);
-            if (joinColumnNameList == null) {
-                return false;
-            }
-            Collection<String> pkColumnNames = pkAccessorMethodToColumnName.values();
-            for (String columnName : joinColumnNameList) {
-                if (!pkColumnNames.contains(columnName)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        EmbeddedPkSupportInfo(TypeElement type) {
-            isFieldAccess = isFieldAccess(type);
-            for (ExecutableElement method : getEntityMethods(type)) {
-                String methodName = method.getSimpleName().toString();
-                if (methodName.startsWith("get")) {
-                    Element f = isFieldAccess ? guessField(method) : method;
-                    if (f != null) {
-                        int a = -1;
-                        AnnotationMirror columnAnnotation = null;
-                        String[] columnAnnotationFqns = {"javax.persistence.EmbeddedId", "javax.persistence.JoinColumns", "javax.persistence.JoinColumn", "javax.persistence.Column"}; //NOI18N
-                        for (int i = 0; i < columnAnnotationFqns.length; i++) {
-                            String columnAnnotationFqn = columnAnnotationFqns[i];
-                            AnnotationMirror columnAnnotationMirror = findAnnotation(f, columnAnnotationFqn);
-                            if (columnAnnotationMirror != null) {
-                                a = i;
-                                columnAnnotation = columnAnnotationMirror;
-                                break;
-                            }
-                        }
-                        if (a == 0) {
-                            //populate pkAccessorMethodToColumnName and columnNameToAccessorString
-                            populateMapsForEmbedded(method);
-                        } else if ((a == 1 || a == 2)
-                                && (isAnnotatedWith(f, "javax.persistence.OneToOne")
-                                || isAnnotatedWith(f, "javax.persistence.ManyToOne"))) {
-                            //populate joinColumnNameToRelationshipMethod, relationshipMethodToJoinColumnNames, and joinColumnNameToReferencedColumnName
-                            populateJoinColumnNameMaps(method, columnAnnotationFqns[a], columnAnnotation);
-                        } else if (a == 3) {
-                            //populate columnNameToAccessorString
-                            String columnName = findAnnotationValueAsString(columnAnnotation, "name"); //NOI18N
-                            if (columnName != null) {
-                                columnNameToAccessorString.put(columnName, method.getSimpleName().toString() + "()");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void populateMapsForEmbedded(ExecutableElement idGetterElement) {
-            TypeMirror idType = idGetterElement.getReturnType();
-            if (TypeKind.DECLARED != idType.getKind()) {
-                return;
-            }
-            DeclaredType declaredType = (DeclaredType) idType;
-            TypeElement idClass = (TypeElement) declaredType.asElement();
-
-            for (ExecutableElement pkMethod : ElementFilter.methodsIn(idClass.getEnclosedElements())) {
-                String pkMethodName = pkMethod.getSimpleName().toString();
-                if (pkMethodName.startsWith("get")) {
-                    String columnName = guessColumnName(pkMethod);
-                    if (columnName != null && columnName.length() > 0) {
-                        pkAccessorMethodToColumnName.put(pkMethod, columnName);
-                        columnNameToAccessorString.put(columnName,
-                                idGetterElement.getSimpleName().toString() + "()."
-                                + pkMethod.getSimpleName() + "()");
-                    }
-                } else if (pkMethodName.startsWith("set")) {
-                    Element pkFieldElement = isFieldAccess ? guessField(pkMethod) : guessGetter(pkMethod);
-                    if (pkFieldElement != null) {//we do not need setters not associated with fields/properties
-                        String columnName = guessColumnName(pkMethod);
-                        if (columnName != null && columnName.length() > 0) {
-                            pkSetterMethodToColumnName.put(pkMethod, columnName);
-                            columnNameToSetterString.put(columnName,
-                                    idGetterElement.getSimpleName().toString() + "()."
-                                    + pkMethod.getSimpleName() + "()");
-                        }
-                    }
-                }
-            }
-        }
-
-        private String guessColumnName(ExecutableElement pkMethod) {
-            Element pkFieldvariable = guessField(pkMethod);
-            Element pkFieldElement = isFieldAccess ? pkFieldvariable : guessGetter(pkMethod);
-            if (pkFieldElement == null) {
-                return null;
-            }//something is missed, may be getter name do not match variable name, see #190854
-            String pkMethodName = pkMethod.getSimpleName().toString();
-            String columnName = null;
-            AnnotationMirror columnAnnotation = findAnnotation(pkFieldElement, "javax.persistence.Column"); //NOI18N
-            if (columnAnnotation != null) {
-                columnName = findAnnotationValueAsString(columnAnnotation, "name"); //NOI18N
-            }
-            if (columnName == null) {
-                //it's not necessary to annotate with @Column and have name also, it;s optional in JPA1.0/2.0 and may be later
-                if (pkFieldvariable.getModifiers().contains(Modifier.TRANSIENT)) {
-                    return null;
-                }//do not store transient fields
-                if (isFieldAccess) {
-                    columnName = pkFieldvariable.getSimpleName().toString().toUpperCase();
-                } else {
-                    columnName = pkMethodName.substring(3).toUpperCase();
-                }
-            }
-            return columnName;
-        }
-
-        private void populateJoinColumnNameMaps(ExecutableElement m, String columnAnnotationFqn, AnnotationMirror columnAnnotation) {
-            List<AnnotationMirror> joinColumnAnnotations;
-            if ("javax.persistence.JoinColumn".equals(columnAnnotationFqn)) {
-                joinColumnAnnotations = new ArrayList<AnnotationMirror>();
-                joinColumnAnnotations.add(columnAnnotation);
-            } else {  //columnAnnotation is a javax.persistence.JoinColumns
-                joinColumnAnnotations = findNestedAnnotations(columnAnnotation, "javax.persistence.JoinColumn"); //NOI18N
-            }
-            for (AnnotationMirror joinColumnAnnotation : joinColumnAnnotations) {
-                String columnName = findAnnotationValueAsString(joinColumnAnnotation, "name"); //NOI18N
-                if (columnName != null) {
-                    String referencedColumnName = findAnnotationValueAsString(joinColumnAnnotation, "referencedColumnName"); //NOI18N
-                    joinColumnNameToRelationshipMethod.put(columnName, m);
-                    joinColumnNameToReferencedColumnName.put(columnName, referencedColumnName);
-                    List<String> joinColumnNameList = relationshipMethodToJoinColumnNames.get(m);
-                    if (joinColumnNameList == null) {
-                        joinColumnNameList = new ArrayList<String>();
-                        relationshipMethodToJoinColumnNames.put(m, joinColumnNameList);
-                    }
-                    joinColumnNameList.add(columnName);
-                }
-            }
-        }
-    }
-
+//    public static class EmbeddedPkSupport {
+//
+//        private Map<TypeElement, EmbeddedPkSupportInfo> typeToInfo = new HashMap<TypeElement, EmbeddedPkSupportInfo>();
+//
+//        public Set<ExecutableElement> getPkAccessorMethods(TypeElement type) {
+//            EmbeddedPkSupportInfo info = getInfo(type);
+//            return info.getPkAccessorMethods();
+//        }
+//
+//        public boolean getPkSetterMethodExist(TypeElement type, ExecutableElement getter) {
+//            EmbeddedPkSupportInfo info = getInfo(type);
+//            String column = info.getReferencedColumnName(getter);
+//            return info.getSetterString(column) != null;
+//        }
+//
+//        public String getCodeToPopulatePkField(TypeElement type, ExecutableElement pkAccessorMethod) {
+//            EmbeddedPkSupportInfo info = getInfo(type);
+//            String code = info.getCodeToPopulatePkField(pkAccessorMethod);
+//            if (code != null) {
+//                return code;
+//            }
+//
+//            code = "";
+//            ExecutableElement relationshipMethod = info.getRelationshipMethod(pkAccessorMethod);
+//            String referencedColumnName = info.getReferencedColumnName(pkAccessorMethod);
+//            if (relationshipMethod == null || referencedColumnName == null) {
+//                info.putCodeToPopulatePkField(pkAccessorMethod, code);
+//                return code;
+//            }
+//
+//            TypeMirror relationshipTypeMirror = relationshipMethod.getReturnType();
+//            if (TypeKind.DECLARED != relationshipTypeMirror.getKind()) {
+//                info.putCodeToPopulatePkField(pkAccessorMethod, code);
+//                return code;
+//            }
+//            DeclaredType declaredType = (DeclaredType) relationshipTypeMirror;
+//            TypeElement relationshipType = (TypeElement) declaredType.asElement();
+//
+//            EmbeddedPkSupportInfo relatedInfo = getInfo(relationshipType);
+//            String accessorString = relatedInfo.getAccessorString(referencedColumnName);
+//            if (accessorString == null) {
+//                info.putCodeToPopulatePkField(pkAccessorMethod, code);
+//                return code;
+//            }
+//
+//            code = relationshipMethod.getSimpleName().toString() + "()." + accessorString;
+//            info.putCodeToPopulatePkField(pkAccessorMethod, code);
+//            return code;
+//        }
+//
+//        public boolean isRedundantWithRelationshipField(TypeElement type, ExecutableElement pkAccessorMethod) {
+//            return getCodeToPopulatePkField(type, pkAccessorMethod).length() > 0;
+//        }
+//
+//        public boolean isRedundantWithPkFields(TypeElement type, ExecutableElement relationshipMethod) {
+//            EmbeddedPkSupportInfo info = getInfo(type);
+//            return info.isRedundantWithPkFields(relationshipMethod);
+//        }
+//
+//        private EmbeddedPkSupportInfo getInfo(TypeElement type) {
+//            EmbeddedPkSupportInfo info = typeToInfo.get(type);
+//            if (info == null) {
+//                info = new EmbeddedPkSupportInfo(type);
+//                typeToInfo.put(type, info);
+//            }
+//            return info;
+//        }
+//    }
+//
+//    private static class EmbeddedPkSupportInfo {
+//
+//        private Map<String, ExecutableElement> joinColumnNameToRelationshipMethod = new HashMap<String, ExecutableElement>();
+//        private Map<ExecutableElement, List<String>> relationshipMethodToJoinColumnNames = new HashMap<ExecutableElement, List<String>>(); //used only in isRedundantWithPkFields
+//        private Map<String, String> joinColumnNameToReferencedColumnName = new HashMap<String, String>();
+//        private Map<String, String> columnNameToAccessorString = new HashMap<String, String>();
+//        private Map<String, String> columnNameToSetterString = new HashMap<String, String>();
+//        private Map<ExecutableElement, String> pkAccessorMethodToColumnName = new HashMap<ExecutableElement, String>();
+//        private Map<ExecutableElement, String> pkSetterMethodToColumnName = new HashMap<ExecutableElement, String>();
+//        private Map<ExecutableElement, String> pkAccessorMethodToPopulationCode = new HashMap<ExecutableElement, String>(); //derived
+//        private boolean isFieldAccess;
+//
+//        public Set<ExecutableElement> getPkAccessorMethods() {
+//            return pkAccessorMethodToColumnName.keySet();
+//        }
+//
+//        public ExecutableElement getRelationshipMethod(ExecutableElement pkAccessorMethod) {
+//            String columnName = pkAccessorMethodToColumnName.get(pkAccessorMethod);
+//            if (columnName == null) {
+//                return null;
+//            }
+//            return joinColumnNameToRelationshipMethod.get(columnName);
+//        }
+//
+//        public String getReferencedColumnName(ExecutableElement pkAccessorMethod) {
+//            String columnName = pkAccessorMethodToColumnName.get(pkAccessorMethod);
+//            if (columnName == null) {
+//                return null;
+//            }
+//            return joinColumnNameToReferencedColumnName.get(columnName);
+//        }
+//
+//        public String getAccessorString(String columnName) {
+//            return columnNameToAccessorString.get(columnName);
+//        }
+//
+//        public String getSetterString(String columnName) {
+//            return columnNameToSetterString.get(columnName);
+//        }
+//
+//        public String getCodeToPopulatePkField(ExecutableElement pkAccessorMethod) {
+//            return pkAccessorMethodToPopulationCode.get(pkAccessorMethod);
+//        }
+//
+//        public void putCodeToPopulatePkField(ExecutableElement pkAccessorMethod, String code) {
+//            pkAccessorMethodToPopulationCode.put(pkAccessorMethod, code);
+//        }
+//
+//        public boolean isRedundantWithPkFields(ExecutableElement relationshipMethod) {
+//            List<String> joinColumnNameList = relationshipMethodToJoinColumnNames.get(relationshipMethod);
+//            if (joinColumnNameList == null) {
+//                return false;
+//            }
+//            Collection<String> pkColumnNames = pkAccessorMethodToColumnName.values();
+//            for (String columnName : joinColumnNameList) {
+//                if (!pkColumnNames.contains(columnName)) {
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
+//
+//        EmbeddedPkSupportInfo(TypeElement type) {
+//            isFieldAccess = isFieldAccess(type);
+//            for (ExecutableElement method : getMethods(type)) {
+//                String methodName = method.getSimpleName().toString();
+//                if (methodName.startsWith("get")) {
+//                    Element f = isFieldAccess ? guessField(method) : method;
+//                    if (f != null) {
+//                        int a = -1;
+//                        AnnotationMirror columnAnnotation = null;
+//                        String[] columnAnnotationFqns = {"javax.persistence.EmbeddedId", "javax.persistence.JoinColumns", "javax.persistence.JoinColumn", "javax.persistence.Column"}; //NOI18N
+//                        for (int i = 0; i < columnAnnotationFqns.length; i++) {
+//                            String columnAnnotationFqn = columnAnnotationFqns[i];
+//                            AnnotationMirror columnAnnotationMirror = findAnnotation(f, columnAnnotationFqn);
+//                            if (columnAnnotationMirror != null) {
+//                                a = i;
+//                                columnAnnotation = columnAnnotationMirror;
+//                                break;
+//                            }
+//                        }
+//                        if (a == 0) {
+//                            //populate pkAccessorMethodToColumnName and columnNameToAccessorString
+//                            populateMapsForEmbedded(method);
+//                        } else if ((a == 1 || a == 2)
+//                                && (isAnnotatedWith(f, "javax.persistence.OneToOne")
+//                                || isAnnotatedWith(f, "javax.persistence.ManyToOne"))) {
+//                            //populate joinColumnNameToRelationshipMethod, relationshipMethodToJoinColumnNames, and joinColumnNameToReferencedColumnName
+//                            populateJoinColumnNameMaps(method, columnAnnotationFqns[a], columnAnnotation);
+//                        } else if (a == 3) {
+//                            //populate columnNameToAccessorString
+//                            String columnName = findAnnotationValueAsString(columnAnnotation, "name"); //NOI18N
+//                            if (columnName != null) {
+//                                columnNameToAccessorString.put(columnName, method.getSimpleName().toString() + "()");
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        private void populateMapsForEmbedded(ExecutableElement idGetterElement) {
+//            TypeMirror idType = idGetterElement.getReturnType();
+//            if (TypeKind.DECLARED != idType.getKind()) {
+//                return;
+//            }
+//            DeclaredType declaredType = (DeclaredType) idType;
+//            TypeElement idClass = (TypeElement) declaredType.asElement();
+//
+//            for (ExecutableElement pkMethod : ElementFilter.methodsIn(idClass.getEnclosedElements())) {
+//                String pkMethodName = pkMethod.getSimpleName().toString();
+//                if (pkMethodName.startsWith("get")) {
+//                    String columnName = guessColumnName(pkMethod);
+//                    if (columnName != null && columnName.length() > 0) {
+//                        pkAccessorMethodToColumnName.put(pkMethod, columnName);
+//                        columnNameToAccessorString.put(columnName,
+//                                idGetterElement.getSimpleName().toString() + "()."
+//                                + pkMethod.getSimpleName() + "()");
+//                    }
+//                } else if (pkMethodName.startsWith("set")) {
+//                    Element pkFieldElement = isFieldAccess ? guessField(pkMethod) : guessGetter(pkMethod);
+//                    if (pkFieldElement != null) {//we do not need setters not associated with fields/properties
+//                        String columnName = guessColumnName(pkMethod);
+//                        if (columnName != null && columnName.length() > 0) {
+//                            pkSetterMethodToColumnName.put(pkMethod, columnName);
+//                            columnNameToSetterString.put(columnName,
+//                                    idGetterElement.getSimpleName().toString() + "()."
+//                                    + pkMethod.getSimpleName() + "()");
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        private String guessColumnName(ExecutableElement pkMethod) {
+//            Element pkFieldvariable = guessField(pkMethod);
+//            Element pkFieldElement = isFieldAccess ? pkFieldvariable : guessGetter(pkMethod);
+//            if (pkFieldElement == null) {
+//                return null;
+//            }//something is missed, may be getter name do not match variable name, see #190854
+//            String pkMethodName = pkMethod.getSimpleName().toString();
+//            String columnName = null;
+//            AnnotationMirror columnAnnotation = findAnnotation(pkFieldElement, "javax.persistence.Column"); //NOI18N
+//            if (columnAnnotation != null) {
+//                columnName = findAnnotationValueAsString(columnAnnotation, "name"); //NOI18N
+//            }
+//            if (columnName == null) {
+//                //it's not necessary to annotate with @Column and have name also, it;s optional in JPA1.0/2.0 and may be later
+//                if (pkFieldvariable.getModifiers().contains(Modifier.TRANSIENT)) {
+//                    return null;
+//                }//do not store transient fields
+//                if (isFieldAccess) {
+//                    columnName = pkFieldvariable.getSimpleName().toString().toUpperCase();
+//                } else {
+//                    columnName = pkMethodName.substring(3).toUpperCase();
+//                }
+//            }
+//            return columnName;
+//        }
+//
+//        private void populateJoinColumnNameMaps(ExecutableElement m, String columnAnnotationFqn, AnnotationMirror columnAnnotation) {
+//            List<AnnotationMirror> joinColumnAnnotations;
+//            if ("javax.persistence.JoinColumn".equals(columnAnnotationFqn)) {
+//                joinColumnAnnotations = new ArrayList<AnnotationMirror>();
+//                joinColumnAnnotations.add(columnAnnotation);
+//            } else {  //columnAnnotation is a javax.persistence.JoinColumns
+//                joinColumnAnnotations = findNestedAnnotations(columnAnnotation, "javax.persistence.JoinColumn"); //NOI18N
+//            }
+//            for (AnnotationMirror joinColumnAnnotation : joinColumnAnnotations) {
+//                String columnName = findAnnotationValueAsString(joinColumnAnnotation, "name"); //NOI18N
+//                if (columnName != null) {
+//                    String referencedColumnName = findAnnotationValueAsString(joinColumnAnnotation, "referencedColumnName"); //NOI18N
+//                    joinColumnNameToRelationshipMethod.put(columnName, m);
+//                    joinColumnNameToReferencedColumnName.put(columnName, referencedColumnName);
+//                    List<String> joinColumnNameList = relationshipMethodToJoinColumnNames.get(m);
+//                    if (joinColumnNameList == null) {
+//                        joinColumnNameList = new ArrayList<String>();
+//                        relationshipMethodToJoinColumnNames.put(m, joinColumnNameList);
+//                    }
+//                    joinColumnNameList.add(columnName);
+//                }
+//            }
+//        }
+//    }
     public static class TypeInfo {
 
         private String rawType;
@@ -905,140 +947,396 @@ public class JavaSourceParserUtil {
         }
     }
 
-    public static class MethodInfo {
-
-        private String name;
-        private int modifiers;
-        private TypeInfo returnType;
-        private TypeInfo[] exceptionTypes;
-        private TypeInfo[] parameterTypes;
-        private String[] parameterNames;
-        private String methodBodyText;
-        private AnnotationInfo[] annotations;
-        private String commentText;
-
-        /**
-         * Constructs a MethodInfo with the specified name, modifiers,
-         * returnType, parameterTypes, parameterNames, methodBody, and
-         * commentText.
-         *
-         * @param name The method name for this MethodInfo
-         * @param modifiers The method {@link Modifier} bits
-         * @param returnType The return type for this MethodInfo
-         * @param exceptionsThrown The exceptions the method throws
-         * @param parameterTypes The parameter types for this MethodInfo
-         * @param parameterNames The parameter names for this MethodInfo
-         * @param methodBodyText The Java source code for the body of this
-         * MethodInfo
-         * @param annotations The annotation for this MethodInfo
-         * @param commentText The comment text for this MethodInfo
-         */
-        public MethodInfo(String name, int modifiers, TypeInfo returnType, TypeInfo[] exceptionTypes,
-                TypeInfo[] parameterTypes, String[] parameterNames, String methodBodyText, AnnotationInfo[] annotations,
-                String commentText) {
-
-            this.name = name;
-            this.modifiers = modifiers;
-            this.returnType = returnType;
-            this.exceptionTypes = exceptionTypes;
-            this.parameterTypes = parameterTypes;
-            this.parameterNames = parameterNames;
-            this.methodBodyText = methodBodyText;
-            this.annotations = annotations;
-            this.commentText = commentText;
-        }
-
-        public MethodInfo(String name, int modifiers, String returnType, String[] exceptionTypes,
-                String[] parameterTypes, String[] parameterNames, String methodBodyText, AnnotationInfo[] annotations,
-                String commentText) {
-
-            this.name = name;
-            this.modifiers = modifiers;
-            this.returnType = new TypeInfo(returnType);
-            this.exceptionTypes = TypeInfo.fromStrings(exceptionTypes);
-            this.parameterTypes = TypeInfo.fromStrings(parameterTypes);
-            this.parameterNames = parameterNames;
-            this.methodBodyText = methodBodyText;
-            this.annotations = annotations;
-            this.commentText = commentText;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getModifiers() {
-            return modifiers;
-        }
-
-        public TypeInfo getReturnType() {
-            return returnType;
-        }
-
-        public TypeInfo[] getExceptionTypes() {
-            return exceptionTypes;
-        }
-
-        public String getMethodBodyText() {
-            return methodBodyText;
-        }
-
-        public TypeInfo[] getParameterTypes() {
-            return parameterTypes;
-        }
-
-        public String[] getParameterNames() {
-            return parameterNames;
-        }
-
-        public AnnotationInfo[] getAnnotations() {
-            return annotations;
-        }
-
-        public String getCommentText() {
-            return commentText;
-        }
-    }
-
-    public static class AnnotationInfo {
-
-        private String type;
-        private String[] argNames;
-        private Object[] argValues;
-
-        public AnnotationInfo(String type) {
-            if (type == null) {
-                throw new IllegalArgumentException();
-            }
-            this.type = type;
-        }
-
-        public AnnotationInfo(String type, String[] argNames, Object[] argValues) {
-            if (type == null) {
-                throw new IllegalArgumentException();
-            }
-            this.type = type;
-            if (argNames == null) {
-                if (argValues != null) {
-                    throw new IllegalArgumentException();
-                }
-            } else if (argValues == null || argValues.length != argNames.length) {
-                throw new IllegalArgumentException();
-            }
-            this.argNames = argNames;
-            this.argValues = argValues;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String[] getArgNames() {
-            return argNames;
-        }
-
-        public Object[] getArgValues() {
-            return argValues;
-        }
-    }
+//    public static class MethodInfo {
+//
+//        private String name;
+//        private int modifiers;
+//        private TypeInfo returnType;
+//        private TypeInfo[] exceptionTypes;
+//        private TypeInfo[] parameterTypes;
+//        private String[] parameterNames;
+//        private String methodBodyText;
+//        private AnnotationInfo[] annotations;
+//        private String commentText;
+//
+//        /**
+//         * Constructs a MethodInfo with the specified name, modifiers,
+//         * returnType, parameterTypes, parameterNames, methodBody, and
+//         * commentText.
+//         *
+//         * @param name The method name for this MethodInfo
+//         * @param modifiers The method {@link Modifier} bits
+//         * @param returnType The return type for this MethodInfo
+//         * @param exceptionsThrown The exceptions the method throws
+//         * @param parameterTypes The parameter types for this MethodInfo
+//         * @param parameterNames The parameter names for this MethodInfo
+//         * @param methodBodyText The Java source code for the body of this
+//         * MethodInfo
+//         * @param annotations The annotation for this MethodInfo
+//         * @param commentText The comment text for this MethodInfo
+//         */
+//        public MethodInfo(String name, int modifiers, TypeInfo returnType, TypeInfo[] exceptionTypes,
+//                TypeInfo[] parameterTypes, String[] parameterNames, String methodBodyText, AnnotationInfo[] annotations,
+//                String commentText) {
+//
+//            this.name = name;
+//            this.modifiers = modifiers;
+//            this.returnType = returnType;
+//            this.exceptionTypes = exceptionTypes;
+//            this.parameterTypes = parameterTypes;
+//            this.parameterNames = parameterNames;
+//            this.methodBodyText = methodBodyText;
+//            this.annotations = annotations;
+//            this.commentText = commentText;
+//        }
+//
+//        public MethodInfo(String name, int modifiers, String returnType, String[] exceptionTypes,
+//                String[] parameterTypes, String[] parameterNames, String methodBodyText, AnnotationInfo[] annotations,
+//                String commentText) {
+//
+//            this.name = name;
+//            this.modifiers = modifiers;
+//            this.returnType = new TypeInfo(returnType);
+//            this.exceptionTypes = TypeInfo.fromStrings(exceptionTypes);
+//            this.parameterTypes = TypeInfo.fromStrings(parameterTypes);
+//            this.parameterNames = parameterNames;
+//            this.methodBodyText = methodBodyText;
+//            this.annotations = annotations;
+//            this.commentText = commentText;
+//        }
+//
+//        public String getName() {
+//            return name;
+//        }
+//
+//        public int getModifiers() {
+//            return modifiers;
+//        }
+//
+//        public TypeInfo getReturnType() {
+//            return returnType;
+//        }
+//
+//        public TypeInfo[] getExceptionTypes() {
+//            return exceptionTypes;
+//        }
+//
+//        public String getMethodBodyText() {
+//            return methodBodyText;
+//        }
+//
+//        public TypeInfo[] getParameterTypes() {
+//            return parameterTypes;
+//        }
+//
+//        public String[] getParameterNames() {
+//            return parameterNames;
+//        }
+//
+//        public AnnotationInfo[] getAnnotations() {
+//            return annotations;
+//        }
+//
+//        public String getCommentText() {
+//            return commentText;
+//        }
+//    }
+//
+//    public static class AnnotationInfo {
+//
+//        private String type;
+//        private String[] argNames;
+//        private Object[] argValues;
+//
+//        public AnnotationInfo(String type) {
+//            if (type == null) {
+//                throw new IllegalArgumentException();
+//            }
+//            this.type = type;
+//        }
+//
+//        public AnnotationInfo(String type, String[] argNames, Object[] argValues) {
+//            if (type == null) {
+//                throw new IllegalArgumentException();
+//            }
+//            this.type = type;
+//            if (argNames == null) {
+//                if (argValues != null) {
+//                    throw new IllegalArgumentException();
+//                }
+//            } else if (argValues == null || argValues.length != argNames.length) {
+//                throw new IllegalArgumentException();
+//            }
+//            this.argNames = argNames;
+//            this.argValues = argValues;
+//        }
+//
+//        public String getType() {
+//            return type;
+//        }
+//
+//        public String[] getArgNames() {
+//            return argNames;
+//        }
+//
+//        public Object[] getArgValues() {
+//            return argValues;
+//        }
+//    }
+//    public static class TreeMakerUtils {
+//
+//        public static ClassTree addVariable(ClassTree classTree, WorkingCopy wc, String name, TypeInfo type, int modifiers, Object initializer, AnnotationInfo[] annotations) {
+//            Tree typeTree = createType(wc, type);
+//            ModifiersTree modTree = createModifiers(wc, modifiers, annotations);
+//            TreeMaker make = wc.getTreeMaker();
+//            VariableTree tree = make.Variable(modTree, name, typeTree, make.Literal(initializer));
+//            return make.addClassMember(classTree, tree);
+//        }
+//
+//        public static ClassTree addVariable(ClassTree classTree, WorkingCopy wc, String name, String type, int modifiers, Object initializer, AnnotationInfo[] annotations) {
+//            return addVariable(classTree, wc, name, new TypeInfo(type), modifiers, initializer, annotations);
+//        }
+//
+//        /*
+//         * Creates a new variable tree for a given name and type
+//         */
+//        private static VariableTree createVariable(WorkingCopy wc, String name, TypeInfo type) {
+//            return createVariable(wc, name, createType(wc, type));
+//        }
+//
+//        /*
+//         * Creates a new variable tree for a given name and type
+//         */
+//        private static VariableTree createVariable(WorkingCopy wc, String name, Tree type) {
+//            TreeMaker make = wc.getTreeMaker();
+//            return make.Variable(createModifiers(wc), name, type, null);
+//        }
+//
+//        public static ClassTree addMethod(ClassTree classTree, WorkingCopy wc, MethodInfo mInfo) {
+//            MethodTree tree = createMethod(wc, mInfo);
+//            return wc.getTreeMaker().addClassMember(classTree, tree);
+//        }
+//
+//        public static ClassTree modifyDefaultConstructor(ClassTree classTree, ClassTree modifiedClassTree, WorkingCopy wc, MethodInfo modifiedConstructorInfo) {
+//            if (!"<init>".equals(modifiedConstructorInfo.getName())) {
+//                throw new IllegalArgumentException("modifiedConstructorInfo name must be <init>");
+//            }
+//
+//            MethodTree modifiedConstructor = createMethod(wc, modifiedConstructorInfo);
+//            MethodTree constructor = null;
+//            for (Tree tree : modifiedClassTree.getMembers()) {
+//                if (Tree.Kind.METHOD == tree.getKind()) {
+//                    MethodTree mtree = (MethodTree) tree;
+//                    List<? extends VariableTree> mTreeParameters = mtree.getParameters();
+//                    if (mtree.getName().toString().equals("<init>")
+//                            && (mTreeParameters == null || mTreeParameters.isEmpty())
+//                            && !wc.getTreeUtilities().isSynthetic(wc.getTrees().getPath(wc.getCompilationUnit(), classTree))) {
+//                        constructor = mtree;
+//                        break;
+//                    }
+//                }
+//            }
+//            if (constructor == null) {
+//                modifiedClassTree = wc.getTreeMaker().addClassMember(modifiedClassTree, modifiedConstructor);
+//            } else {
+//                wc.rewrite(constructor, modifiedConstructor);
+//            }
+//            return modifiedClassTree;
+//        }
+//
+//        /*
+//         * Creates a method given context method and return type name
+//         */
+//        private static MethodTree createMethod(WorkingCopy wc, MethodInfo mInfo) {
+//            TreeMaker make = wc.getTreeMaker();
+//            TypeInfo[] pTypes = mInfo.getParameterTypes();
+//            String[] pNames = mInfo.getParameterNames();
+//            List<VariableTree> params = new ArrayList<VariableTree>();
+//            for (int i = 0; pTypes != null && i < pTypes.length; i++) {
+//                VariableTree vtree = createVariable(wc, pNames[i], pTypes[i]);
+//                params.add(vtree);
+//            }
+//
+//            TypeInfo[] excepTypes = mInfo.getExceptionTypes();
+//            List<ExpressionTree> throwsList = new ArrayList<ExpressionTree>();
+//            for (int i = 0; excepTypes != null && i < excepTypes.length; i++) {
+//                throwsList.add((ExpressionTree) createType(wc, excepTypes[i]));
+//            }
+//
+//            String body = mInfo.getMethodBodyText();
+//            if (body == null) {
+//                body = "";
+//            }
+//
+//            MethodTree mtree = make.Method(createModifiers(wc, mInfo.getModifiers(), mInfo.getAnnotations()),
+//                    mInfo.getName(),
+//                    createType(wc, mInfo.getReturnType()),
+//                    Collections.<TypeParameterTree>emptyList(),
+//                    params,
+//                    throwsList,
+//                    "{" + body + "}",
+//                    null
+//            );
+//
+//            //         if(mInfo.getCommentText() != null) {
+//            //             Comment comment = Comment.create(Comment.Style.JAVADOC, -2,
+//            //                     -2, -2, mInfo.getCommentText());
+//            //             make.addComment(mtree, comment, true);
+//            //         }
+//            return mtree;
+//        }
+//
+//        /*
+//         * Returns a tree for a given type in string format
+//         * Note that import for type is handled by make.QualIdent()
+//         */
+//        private static Tree createType(WorkingCopy wc, TypeInfo type) {
+//            if (type == null) {
+//                return null;
+//            }
+//            String rawType = type.getRawType();
+//
+//            TreeMaker make = wc.getTreeMaker();
+//            if (rawType.endsWith("[]")) { // NOI18N
+//                String rawTypeName = rawType.substring(0, rawType.length() - 2);
+//                TypeInfo scalarTypeInfo = new TypeInfo(rawTypeName, type.getDeclaredTypeParameters());
+//                return make.ArrayType(createType(wc, scalarTypeInfo));
+//            }
+//
+//            TypeKind primitiveTypeKind = null;
+//            if ("boolean".equals(rawType)) {           // NOI18N
+//                primitiveTypeKind = TypeKind.BOOLEAN;
+//            } else if ("byte".equals(rawType)) {       // NOI18N
+//                primitiveTypeKind = TypeKind.BYTE;
+//            } else if ("short".equals(rawType)) {      // NOI18N
+//                primitiveTypeKind = TypeKind.SHORT;
+//            } else if ("int".equals(rawType)) {        // NOI18N
+//                primitiveTypeKind = TypeKind.INT;
+//            } else if ("long".equals(rawType)) {       // NOI18N
+//                primitiveTypeKind = TypeKind.LONG;
+//            } else if ("char".equals(rawType)) {       // NOI18N
+//                primitiveTypeKind = TypeKind.CHAR;
+//            } else if ("float".equals(rawType)) {      // NOI18N
+//                primitiveTypeKind = TypeKind.FLOAT;
+//            } else if ("double".equals(rawType)) {     // NOI18N
+//                primitiveTypeKind = TypeKind.DOUBLE;
+//            } else if ("void".equals(rawType)) {
+//                primitiveTypeKind = TypeKind.VOID;
+//            }
+//            if (primitiveTypeKind != null) {
+//                return make.PrimitiveType(primitiveTypeKind);
+//            }
+//
+//            TypeInfo[] declaredTypeParameters = type.getDeclaredTypeParameters();
+//            if (declaredTypeParameters == null || declaredTypeParameters.length == 0) {
+//                TypeElement typeElement = wc.getElements().getTypeElement(rawType);
+//                if (typeElement == null) {
+//                    throw new IllegalArgumentException("Type " + rawType + " cannot be found"); // NOI18N
+//                }
+//                return make.QualIdent(typeElement);
+//            } else {
+//                TypeMirror typeMirror = getTypeMirror(wc, type);
+//                return make.Type(typeMirror);
+//            }
+//        }
+//
+//        private static TypeMirror getTypeMirror(WorkingCopy wc, TypeInfo type) {
+//            TreeMaker make = wc.getTreeMaker();
+//            String rawType = type.getRawType();
+//            TypeElement rawTypeElement = wc.getElements().getTypeElement(rawType);
+//            if (rawTypeElement == null) {
+//                throw new IllegalArgumentException("Type " + rawType + " cannot be found"); // NOI18N
+//            }
+//            TypeInfo[] declaredTypeParameters = type.getDeclaredTypeParameters();
+//            if (declaredTypeParameters == null || declaredTypeParameters.length == 0) {
+//                make.QualIdent(rawTypeElement);
+//                return rawTypeElement.asType();
+//            } else {
+//                TypeMirror[] declaredTypeMirrors = new TypeMirror[declaredTypeParameters.length];
+//                for (int i = 0; i < declaredTypeParameters.length; i++) {
+//                    declaredTypeMirrors[i] = getTypeMirror(wc, declaredTypeParameters[i]);
+//                }
+//                DeclaredType declaredType = wc.getTypes().getDeclaredType(rawTypeElement, declaredTypeMirrors);
+//                return declaredType;
+//            }
+//        }
+//
+//        private static ModifiersTree createModifiers(WorkingCopy wc) {
+//            return wc.getTreeMaker().Modifiers(Collections.<Modifier>emptySet(), Collections.<AnnotationTree>emptyList());
+//        }
+//
+//        private static ModifiersTree createModifiers(WorkingCopy wc, long flags, AnnotationInfo[] annotations) {
+//            if (annotations == null || annotations.length == 0) {
+//                return wc.getTreeMaker().Modifiers(flags, Collections.<AnnotationTree>emptyList());
+//            }
+////            GenerationUtils generationUtils = GenerationUtils.newInstance(wc);
+//            List<AnnotationTree> annotationTrees = new ArrayList<AnnotationTree>();
+////            for (AnnotationInfo annotation : annotations) {
+////                //append an AnnotationTree
+////                String[] argNames = annotation.getArgNames();
+////                if (argNames != null && argNames.length > 0) {
+////                    //one or more args in this annotation
+////                    Object[] argValues = annotation.getArgValues();
+////                    List<ExpressionTree> argTrees = new ArrayList<ExpressionTree>();
+////                    for (int i = 0; i < argNames.length; i++) {
+////                        ExpressionTree argTree = generationUtils.createAnnotationArgument(argNames[i], argValues[i]);
+////                        argTrees.add(argTree);
+////                    }
+////                    AnnotationTree annotationTree = generationUtils.createAnnotation(annotation.getType(), argTrees);
+////                    annotationTrees.add(annotationTree);
+////                } else {
+////                    //no args in this annotation
+////                    AnnotationTree annotationTree = generationUtils.createAnnotation(annotation.getType());
+////                    annotationTrees.add(annotationTree);
+////                }
+////            }
+//            return wc.getTreeMaker().Modifiers(flags, annotationTrees);
+//        }
+//
+//        public static CompilationUnitTree createImport(WorkingCopy wc, CompilationUnitTree modifiedCut, String fq) {
+//            if (modifiedCut == null) {
+//                modifiedCut = wc.getCompilationUnit();  //use committed cut as modifiedCut
+//            }
+//            List<? extends ImportTree> imports = modifiedCut.getImports();
+//            boolean found = false;
+//            for (ImportTree imp : imports) {
+//                if (fq.equals(imp.getQualifiedIdentifier().toString())) {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                TreeMaker make = wc.getTreeMaker();
+//                CompilationUnitTree newCut = make.addCompUnitImport(
+//                        modifiedCut,
+//                        make.Import(make.Identifier(fq), false)
+//                );                                              //create a newCut from modifiedCut
+//                wc.rewrite(wc.getCompilationUnit(), newCut);    //replace committed cut with newCut in change map
+//                return newCut;                                  //return the newCut we just created
+//            }
+//            return modifiedCut; //no newCut created from modifiedCut, so just return modifiedCut
+//        }
+//    }
+//    private static String getPersistenceVersion(Project project) throws IOException {
+//        String version = Persistence.VERSION_1_0;
+//        PersistenceScope persistenceScopes[] = PersistenceUtils.getPersistenceScopes(project);
+//        if (persistenceScopes.length > 0) {
+//            FileObject persXml = persistenceScopes[0].getPersistenceXml();
+//            if (persXml != null) {
+//                Persistence persistence = PersistenceMetadata.getDefault().getRoot(persXml);
+//                version = persistence.getVersion();
+//            }
+//        }
+//        return version;
+//    }
+//
+//    static boolean isId(ExecutableElement method, boolean isFieldAccess) {
+//        Element element = isFieldAccess ? JavaSourceParserUtil.guessField(method) : method;
+//        if (element != null) {
+//            if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id") || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) { // NOI18N
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 }

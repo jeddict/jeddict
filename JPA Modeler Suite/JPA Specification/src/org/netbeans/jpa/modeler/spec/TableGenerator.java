@@ -90,8 +90,8 @@ public class TableGenerator {
     @XmlAttribute(name = "allocation-size")
     protected Integer allocationSize;
 
-    public static TableGenerator load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
+    public static TableGenerator load(Element element) {
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.TableGenerator");
         TableGenerator tableGenerator = null;
         if (annotationMirror != null) {
             tableGenerator = new TableGenerator();
@@ -99,7 +99,7 @@ public class TableGenerator {
             List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
             if (uniqueConstraintsAnnot != null) {
                 for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
-                    tableGenerator.getUniqueConstraint().add(UniqueConstraint.load(element, variableElement, (AnnotationMirror) uniqueConstraintsObj));
+                    tableGenerator.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
                 }
             }
             tableGenerator.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");

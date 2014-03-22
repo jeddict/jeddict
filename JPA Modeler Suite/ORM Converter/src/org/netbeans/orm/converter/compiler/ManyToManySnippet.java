@@ -24,6 +24,7 @@ import java.util.List;
 public class ManyToManySnippet extends AbstractRelationDefSnippet
         implements RelationDefSnippet {
 
+    private String collectionType;
     private String mappedBy = null;
 
     public String getMappedBy() {
@@ -102,5 +103,19 @@ public class ManyToManySnippet extends AbstractRelationDefSnippet
         }
 
         return importSnippets;
+    }
+
+    /**
+     * @return the collectionType
+     */
+    public String getCollectionType() {
+        return collectionType;
+    }
+
+    /**
+     * @param collectionType the collectionType to set
+     */
+    public void setCollectionType(String collectionType) {
+        this.collectionType = collectionType;
     }
 }

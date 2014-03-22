@@ -59,7 +59,7 @@ public class UniqueConstraint {
     @XmlAttribute
     protected String name;
 
-    public static UniqueConstraint load(Element element, VariableElement variableElement, AnnotationMirror annotationMirror) {
+    public static UniqueConstraint load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.UniqueConstraint");
         }
