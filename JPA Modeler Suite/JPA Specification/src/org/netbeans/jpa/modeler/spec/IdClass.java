@@ -8,6 +8,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -53,7 +54,8 @@ public class IdClass {
         IdClass idClass = null;
         if (annotationMirror != null) {
             idClass = new IdClass();
-            idClass.clazz = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+            DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+            idClass.clazz = declaredType.asElement().getSimpleName().toString();
         }
         return idClass;
     }
