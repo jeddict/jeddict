@@ -25,9 +25,7 @@ import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.component.IModelerPanel;
 import org.netbeans.modeler.component.ModelerPanelTopComponent;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.specification.Vendor;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
-import org.netbeans.modeler.specification.model.DiagramModel;
 import org.netbeans.modeler.specification.model.ModelerSpecificationDiagramModel;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
 import org.openide.awt.ActionID;
@@ -40,7 +38,7 @@ import org.openide.util.NbBundle.Messages;
         id = "jpa.file.JPAFileActionListener")
 @ActionRegistration(
         displayName = "#CTL_JPAFileActionListener")
-@ActionReference(path = "Loaders/text/jpa+xml/Actions", position = 0, separatorAfter = +50)
+@ActionReference(path = "Loaders/text/jpa+xml/Actions", position = 0, separatorAfter = +50) // Issue Fix #5846
 @Messages("CTL_JPAFileActionListener=Edit in Modeler")
 @ModelerConfig(palette = "org/netbeans/jpa/modeler/resource/document/PaletteConfig.xml",
         document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
