@@ -12,6 +12,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -104,6 +105,7 @@ public class Attributes implements IPersistenceAttributes {
 
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
 
+        VariableElement embeddedIdVariableElement = null;
         for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {
             String methodName = method.getSimpleName().toString();
             if (methodName.startsWith("get")) {
@@ -135,7 +137,8 @@ public class Attributes implements IPersistenceAttributes {
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
                         this.getManyToMany().add(ManyToMany.load(element, variableElement));
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
-                        //Not Supported Currently
+                        this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
+                        embeddedIdVariableElement = variableElement;
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
                         this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
                     } else {
@@ -143,6 +146,12 @@ public class Attributes implements IPersistenceAttributes {
                     }
 
                 }
+            }
+        }
+
+        if (this.getEmbeddedId() != null) {
+            for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
+                this.getId().add(Id.load(variableElement, variableElement));
             }
         }
 

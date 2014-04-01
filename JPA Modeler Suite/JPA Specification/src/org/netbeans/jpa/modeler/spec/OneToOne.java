@@ -9,7 +9,6 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
@@ -145,7 +144,9 @@ public class OneToOne extends RelationAttribute implements JoinColumnHandler {
         oneToOne.name = variableElement.getSimpleName().toString();
         DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetEntity");
         if (declaredType == null) {
-            declaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
+            // Issue Fix #5925 Start
+            declaredType = (DeclaredType) variableElement.asType();
+            // Issue Fix #5925 End
         }
         oneToOne.targetEntity = declaredType.asElement().getSimpleName().toString();
         Object fetchObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fetch");

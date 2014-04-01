@@ -133,7 +133,9 @@ public class ManyToOne extends RelationAttribute implements JoinColumnHandler {
         manyToOne.name = variableElement.getSimpleName().toString();
         DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetEntity");
         if (declaredType == null) {
-            declaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
+            // Issue Fix #5925 Start
+            declaredType = (DeclaredType) variableElement.asType();
+            // Issue Fix #5925 End
         }
         manyToOne.targetEntity = declaredType.asElement().getSimpleName().toString();
 
