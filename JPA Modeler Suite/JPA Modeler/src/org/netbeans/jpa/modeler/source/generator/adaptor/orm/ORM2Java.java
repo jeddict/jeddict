@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -36,6 +38,7 @@ import org.netbeans.orm.converter.compiler.LifecycleListenerSnippet;
 import org.netbeans.orm.converter.compiler.WritableSnippet;
 import org.netbeans.orm.converter.generator.DefaultClassGenerator;
 import org.netbeans.orm.converter.generator.EmbeddableGenerator;
+import org.netbeans.orm.converter.generator.EmbeddableIdClassGenerator;
 import org.netbeans.orm.converter.generator.EntityGenerator;
 import org.netbeans.orm.converter.generator.LifecycleCallbackGenerator;
 import org.netbeans.orm.converter.generator.PersistenceXMLGenerator;
@@ -44,6 +47,7 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ClassType;
 import org.netbeans.orm.converter.util.ClassesRepository;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import org.openide.filesystems.FileUtil;
 
 /**
  *
@@ -57,13 +61,16 @@ public class ORM2Java {
     private EntityMappings parsedEntityMappings = null;
     private File destDir;
     private ITaskSupervisor task;
+    private Project project;
+    private SourceGroup sourceGroup;
 
-    public void generateSource(ITaskSupervisor task, EntityMappings parsedEntityMappings, File destDir) {
+    public void generateSource(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
         try {
             this.task = task;
-//            this.ormFile = ormFile;
-            this.destDir = destDir;
-//            ORMConvParser parser = new ORMConvParser();
+            this.project = project;
+            this.sourceGroup = sourceGroup;
+            destDir = FileUtil.toFile(sourceGroup.getRootFolder());
+
             this.parsedEntityMappings = parsedEntityMappings;// parser.parseContent(ormFile);
             this.packageName = parsedEntityMappings.getPackage();
 
@@ -101,6 +108,7 @@ public class ORM2Java {
 //                    parsedEntityMappings.addIdclass(_class);
 //                }
 //            }
+            generateEmbededIdClasses();
             generateIdClasses();
             generateSuperClasses();
             generateEntityClasses();
@@ -200,8 +208,7 @@ public class ORM2Java {
                 = new PersistenceXMLGenerator(classDefs);
         persistenceXMLGenerator.setPUName(parsedEntityMappings.getPersistenceUnitName());
 
-        persistenceXMLGenerator.generatePersistenceXML(
-                destDir.getAbsolutePath());
+        persistenceXMLGenerator.generatePersistenceXML(project, sourceGroup);
 
     }
 
@@ -245,6 +252,20 @@ public class ORM2Java {
 //            }
 //        }
 //    }
+    private void generateEmbededIdClasses() throws InvalidDataException, IOException {
+
+        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getEmbeddedIdClass();
+        if (parsedDefaultClasses == null) {
+            return;
+        }
+        for (DefaultClass defaultClass : parsedDefaultClasses) {
+            task.log("Generating EmbeddedId Class : " + defaultClass.getClazz(), true);
+            ClassDefSnippet classDef = new EmbeddableIdClassGenerator(defaultClass, packageName).getClassDef();
+            classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
+            writeSnippet(classDef);
+        }
+    }
+
     private void generateIdClasses() throws InvalidDataException, IOException {
 
         List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getIdClass();
@@ -257,7 +278,7 @@ public class ORM2Java {
             ClassDefSnippet classDef = new DefaultClassGenerator(defaultClass, packageName).getClassDef();
 
             classesRepository.addWritableSnippet(
-                    ClassType.SUPER_CLASS, classDef);
+                    ClassType.SERIALIZER_CLASS, classDef);
 
             writeSnippet(classDef);
         }
@@ -283,24 +304,21 @@ public class ORM2Java {
 
     private List<ClassDefSnippet> getPUXMLEntries() {
 
-        List<WritableSnippet> results = new ArrayList<WritableSnippet>();
-
+//        List<WritableSnippet> results = new ArrayList<WritableSnippet>();
         List<WritableSnippet> entitySnippets
                 = classesRepository.getWritableSnippets(ClassType.ENTITY_CLASS);
 
-        List<WritableSnippet> superClassSnippets
-                = classesRepository.getWritableSnippets(ClassType.SUPER_CLASS);
-
-        List<WritableSnippet> embededSnippets
-                = classesRepository.getWritableSnippets(ClassType.EMBEDED_CLASS);
-
-        results.addAll(entitySnippets);
-        results.addAll(superClassSnippets);
-        results.addAll(embededSnippets);
-
+//        List<WritableSnippet> superClassSnippets
+//                = classesRepository.getWritableSnippets(ClassType.SUPER_CLASS);
+//
+//        List<WritableSnippet> embededSnippets
+//                = classesRepository.getWritableSnippets(ClassType.EMBEDED_CLASS);
+//        results.addAll(entitySnippets);
+//        results.addAll(superClassSnippets);
+//        results.addAll(embededSnippets);
         List<ClassDefSnippet> classDefs = new ArrayList<ClassDefSnippet>();
 
-        for (WritableSnippet writableSnippet : results) {
+        for (WritableSnippet writableSnippet : entitySnippets) {
             classDefs.add((ClassDefSnippet) writableSnippet);
         }
 

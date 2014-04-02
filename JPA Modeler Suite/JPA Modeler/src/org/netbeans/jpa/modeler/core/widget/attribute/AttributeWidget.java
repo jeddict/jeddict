@@ -29,8 +29,10 @@ import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -47,10 +49,11 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.modeler.widget.properties.generic.ElementCustomPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
-import org.netbeans.modules.db.api.sql.SQLKeywords;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.netbeans.orm.converter.util.ClassHelper;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 
@@ -140,6 +143,11 @@ public class AttributeWidget extends FlowPinWidget {
         printError();
     }
 
+    public void throwError(String key, String message) {
+        errorList.put(key, message);
+        printError();
+    }
+
     public void clearError(String key) {
         errorList.remove(key);
         printError();
@@ -175,10 +183,18 @@ public class AttributeWidget extends FlowPinWidget {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", getFieldTypeProperty());
-//        if (this.getBaseElementSpec() instanceof AccessTypeHandler) {
-//            set.put("BASIC_PROP", JPAModelerUtil.getAccessTypeProperty(this.getModelerScene(), (AccessTypeHandler) this.getBaseElementSpec()));
-//        }
+        if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
+            set.put("BASIC_PROP", getFieldTypeProperty());
+        } else {
+            try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
+                set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
+                        "compositePrimaryKeyClass", "Field Type", "", null));
+            } catch (NoSuchMethodException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (NoSuchFieldException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
     }
 
     private EmbeddedPropertySupport getFieldTypeProperty() {
@@ -187,7 +203,7 @@ public class AttributeWidget extends FlowPinWidget {
         if (this.getBaseElementSpec() instanceof BaseAttribute) {
             if (this.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) this.getBaseElementSpec()).getConnectedClassId() != null) {//SingleValueEmbeddableFlowWidget
                 entity.setEntityEditor(null);
-            } else if (this.getBaseElementSpec() instanceof Embedded) {
+            } else if (this.getBaseElementSpec() instanceof Embedded) {//to Disable it
                 entity.setEntityEditor(null);
             } else {
                 entity.setEntityEditor(new FieldTypePanel(this.getModelerScene().getModelerFile()));
@@ -251,7 +267,7 @@ public class AttributeWidget extends FlowPinWidget {
                     } else {
                         displayName = persistenceClassWidget.getName();
                     }
-                    // Issue Fix #5851 Start
+                    // Issue Fix #5851 End
 
                 }
                 return displayName;
@@ -271,8 +287,8 @@ public class AttributeWidget extends FlowPinWidget {
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem delete;
 
+        JMenuItem delete;
         delete = new JMenuItem("Delete");
         delete.setIcon(ImageUtil.getInstance().getIcon("delete.png"));
         delete.addActionListener(new ActionListener() {

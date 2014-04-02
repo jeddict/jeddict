@@ -17,6 +17,8 @@ package org.netbeans.jpa.modeler.source.generator.task;
 
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType;
@@ -24,19 +26,21 @@ import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinit
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm.ORMInputDefiniton;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.task.AbstractNBTask;
-import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 
 public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     private ModelerFile modelerFile;
-    private FileObject targetDir;
+    private Project project;
+    private SourceGroup sourceGroup;
+
     private final static int SUBTASK_TOT = 1;
 
-    public SourceCodeGeneratorTask(ModelerFile modelerFile, FileObject targetDir) {
+    public SourceCodeGeneratorTask(ModelerFile modelerFile, Project project, SourceGroup sourceGroup) {
         this.modelerFile = modelerFile;
-        this.targetDir = targetDir;
+        this.project = project;
+        this.sourceGroup = sourceGroup;
     }
 
     @Override
@@ -58,7 +62,9 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         // Issue Fix #5847 Start
         if (!modelerFile.getModelerPanelTopComponent().isPersistenceState()) {
             this.log("Saving " + modelerFile.getName() + " File..\n");
-            modelerFile.save();
+//            modelerFile.save();//asynchronous : causes to generate code before saving
+            modelerFile.getModelerUtil().saveModelerFile(modelerFile);//synchronous
+            modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);//remove * from header
         }
         // Issue Fix #5847 End
         exportCode();
@@ -77,7 +83,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
         InputDefinition definiton = new ORMInputDefiniton();
         definiton.setModelerFile(modelerFile);
-        sourceGenerator.generate(this, targetDir, definiton);
+        sourceGenerator.generate(this, project, sourceGroup, definiton);
     }
 
     private static String getBundleMessage(String key) {

@@ -39,13 +39,24 @@ public class BasicAttributeWidget extends BaseAttributeWidget {
             @Override
             public boolean isVisible() {
                 Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
-                if ("String".equals(basicAttribute.getAttributeType())) {
-                    return true;
-                }
-                return false;
+                return "String".equals(basicAttribute.getAttributeType());
             }
-
         });
+        this.addPropertyVisibilityHandler("precision", new PropertyVisibilityHandler<String>() {
+            @Override
+            public boolean isVisible() {
+                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
+                return basicAttribute.isPrecisionAttributeType();
+            }
+        });
+        this.addPropertyVisibilityHandler("scale", new PropertyVisibilityHandler<String>() {
+            @Override
+            public boolean isVisible() {
+                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
+                return basicAttribute.isScaleAttributeType();
+            }
+        });
+
     }
 
     public void createPropertySet(ElementPropertySet set) {

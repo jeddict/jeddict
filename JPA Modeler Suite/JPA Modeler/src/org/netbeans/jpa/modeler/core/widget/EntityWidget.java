@@ -15,13 +15,11 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
@@ -176,61 +174,6 @@ public class EntityWidget extends PersistenceClassWidget {
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
 
-//    @Override
-//    protected List<JMenuItem> getPopupMenuItemList() {
-//        List<JMenuItem> menuList = super.getPopupMenuItemList();
-//        JMenuItem addIdAttr = new JMenuItem("Add Id Attribute");
-//        addIdAttr.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                addNewIdAttribute(getNextAttributeName("id"));
-//                EntityWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-//            }
-//        });
-//
-//        JMenuItem addBasicAttr = new JMenuItem("Add Basic Attribute");
-//        addBasicAttr.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                addNewBasicAttribute(getNextAttributeName());
-//                EntityWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-//
-//            }
-//        });
-//        JMenuItem addBasicCollectionAttr = new JMenuItem("Add Basic Collection Attribute");
-//        addBasicCollectionAttr.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                addNewBasicCollectionAttribute(getNextAttributeName());
-//                EntityWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-//
-//            }
-//        });
-//        JMenuItem addTransientAttr = new JMenuItem("Add Transient Attribute");
-//        addTransientAttr.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                addNewTransientAttribute(getNextAttributeName());
-//                EntityWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-//            }
-//        });
-//        JMenuItem addVersionAttr = new JMenuItem("Add Version Attribute");
-//        addVersionAttr.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                addNewVersionAttribute(getNextAttributeName());
-//                EntityWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-//            }
-//        });
-//        menuList.add(0, addIdAttr);
-//        menuList.add(1, addBasicAttr);
-//        menuList.add(2, addBasicCollectionAttr);
-//        menuList.add(3, addTransientAttr);
-//        menuList.add(4, addVersionAttr);
-//        menuList.add(5, null);
-//
-//        return menuList;
-//    }
     public String getInheritenceState() {
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = EntityWidget.this.getOutgoingGeneralizationFlowWidget();
         List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = EntityWidget.this.getIncomingGeneralizationFlowWidgets();
@@ -252,31 +195,7 @@ public class EntityWidget extends PersistenceClassWidget {
         return type;
     }
 
-    public List<IdAttributeWidget> getAllIdAttributeWidgets() {
-        List<IdAttributeWidget> idAttributeWidgets = new ArrayList<IdAttributeWidget>(this.getIdAttributeWidgets());
-        List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
-        for (JavaClassWidget classWidget : classWidgets) {
-            if (classWidget instanceof PersistenceClassWidget) {
-                idAttributeWidgets.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
-            }
-        }
-        return idAttributeWidgets;
-    }
-
 //    @Override
-    public void scanInheritenceError() {
-        if ("SINGLETON".equals(this.getInheritenceState()) || "ROOT".equals(this.getInheritenceState())) {
-            for (IdAttributeWidget attributeWidget : this.getIdAttributeWidgets()) {
-                attributeWidget.clearError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
-            }
-        } else {
-            for (IdAttributeWidget attributeWidget : this.getIdAttributeWidgets()) {
-                attributeWidget.throwError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
-            }
-        }
-
-    }
-
     public void scanPrimaryKeyError() {
         if ("SINGLETON".equals(this.getInheritenceState()) || "ROOT".equals(this.getInheritenceState())) {
             if (this.getIdAttributeWidgets().isEmpty()) {
@@ -284,6 +203,8 @@ public class EntityWidget extends PersistenceClassWidget {
             } else {
                 clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
             }
+        } else {
+            clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
         }
     }
 

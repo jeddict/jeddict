@@ -6,15 +6,16 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -83,7 +84,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "postLoad",
     "attributes"
 })
-public class MappedSuperclass extends JavaClass {
+public class MappedSuperclass extends JavaClass implements PrimaryKeyContainer {
 
     protected String description;
     @XmlElement(name = "id-class")
@@ -115,6 +116,10 @@ public class MappedSuperclass extends JavaClass {
     protected AccessType access;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;//RENENG PENDING
+    @XmlAttribute
+    private CompositePrimaryKeyType compositePrimaryKeyType;//custom added
+    @XmlAttribute
+    private String compositePrimaryKeyClass;//custom added
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
 //        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.MappedSuperclass");
@@ -142,6 +147,17 @@ public class MappedSuperclass extends JavaClass {
             this.getAttributes().load(entityMappings, element, fieldAccess);
             this.clazz = element.getSimpleName().toString();
             this.access = AccessType.load(element);
+
+            if (this.getAttributes().getEmbeddedId() != null) {
+                this.setCompositePrimaryKeyClass(this.getAttributes().getEmbeddedId().getAttributeType());
+                this.setCompositePrimaryKeyType(CompositePrimaryKeyType.EMBEDDEDID);
+            } else if (idClass != null) {
+                this.setCompositePrimaryKeyClass(this.getIdClass().getClazz());
+                this.setCompositePrimaryKeyType(CompositePrimaryKeyType.IDCLASS);
+            } else {
+                this.setCompositePrimaryKeyClass(null);
+                this.setCompositePrimaryKeyType(null);
+            }
         }
     }
 
@@ -183,17 +199,6 @@ public class MappedSuperclass extends JavaClass {
      */
     public void setIdClass(IdClass value) {
         this.idClass = value;
-    }
-
-    public String getIdClassProxy() {
-        if (idClass == null) {
-            return null;
-        }
-        return idClass.getClazz();
-    }
-
-    public void setIdClassProxy(String value) {
-        this.idClass = new IdClass(value);
     }
 
     /**
@@ -492,6 +497,54 @@ public class MappedSuperclass extends JavaClass {
     @Override
     public void setAttributes(IAttributes attributes) {
         this.attributes = (Attributes) attributes;
+    }
+
+    /**
+     * @return the compositePrimaryKeyType
+     */
+    public CompositePrimaryKeyType getCompositePrimaryKeyType() {
+        return compositePrimaryKeyType;
+    }
+
+    /**
+     * @param compositePrimaryKeyType the compositePrimaryKeyType to set
+     */
+    public void setCompositePrimaryKeyType(CompositePrimaryKeyType compositePrimaryKeyType) {
+        this.compositePrimaryKeyType = compositePrimaryKeyType;
+        manageCompositePrimaryKeyClass();
+    }
+
+    /**
+     * @return the compositePrimaryKeyClass
+     */
+    public String getCompositePrimaryKeyClass() {
+        return compositePrimaryKeyClass;
+    }
+
+    /**
+     * @param compositePrimaryKeyClass the compositePrimaryKeyClass to set
+     */
+    public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
+        this.compositePrimaryKeyClass = compositePrimaryKeyClass;
+        manageCompositePrimaryKeyClass();
+    }
+
+    public void manageCompositePrimaryKeyClass() {
+        if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
+            compositePrimaryKeyClass = this.getClazz() + "PK";
+        }
+        if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+            this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass);
+            this.idClass = null;
+        } else if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+            this.idClass = new IdClass(compositePrimaryKeyClass);
+        } else {
+            this.idClass = null;
+            compositePrimaryKeyClass = null;
+            if (getCompositePrimaryKeyType() == null) {
+                setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
+            }
+        }
     }
 
 }

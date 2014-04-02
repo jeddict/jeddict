@@ -247,6 +247,9 @@ public class Column {
      *
      */
     public Integer getLength() {
+        if (length == null) {
+            length = 255;
+        }
         return length;
     }
 
@@ -267,6 +270,9 @@ public class Column {
      *
      */
     public Integer getPrecision() {
+        if (precision == null) {
+            precision = 0;
+        }
         return precision;
     }
 
@@ -287,6 +293,9 @@ public class Column {
      *
      */
     public Integer getScale() {
+        if (scale == null) {
+            scale = 0;
+        }
         return scale;
     }
 

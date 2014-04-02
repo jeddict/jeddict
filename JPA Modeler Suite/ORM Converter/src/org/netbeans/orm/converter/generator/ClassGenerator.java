@@ -782,20 +782,14 @@ public abstract class ClassGenerator {
         }
     }
 
-    protected void processEmbeddedId(Attributes parsedAttributes) {
-
-        if (parsedAttributes == null) {
-            return;
-        }
-
-        EmbeddedId parsedEmbeddedId = parsedAttributes.getEmbeddedId();
-
+    protected void processEmbeddedId(EmbeddedId parsedEmbeddedId) {
         if (parsedEmbeddedId == null) {
             return;
         }
 
         VariableDefSnippet variableDef = getVariableDef(parsedEmbeddedId.getName());
         variableDef.setEmbeddedId(true);
+        variableDef.setType(parsedEmbeddedId.getAttributeType());
 
         List<AttributeOverride> attributedOverrrides
                 = parsedEmbeddedId.getAttributeOverride();

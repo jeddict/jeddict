@@ -20,6 +20,8 @@ import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
+import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
@@ -169,18 +171,29 @@ public class GeneralizationFlowWidget extends PEdgeWidget implements IFlowEdgeWi
 //    }
     @Override
     public void init() {
-        if (this.getSubclassWidget() instanceof EntityWidget) {
-            ((EntityWidget) this.getSubclassWidget()).scanInheritenceError();
-            ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
 
+        if (this.getSubclassWidget() instanceof EntityWidget) {
+            AttributeValidator.scanInheritenceError((EntityWidget) this.getSubclassWidget());
+            ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
+            AttributeValidator.validateMultipleEmbeddedIdFound((EntityWidget) this.getSubclassWidget());
+            AttributeValidator.validateEmbeddedIdAndIdFound((EntityWidget) this.getSubclassWidget());
+        } else if (this.getSubclassWidget() instanceof MappedSuperclassWidget) {
+            AttributeValidator.validateMultipleEmbeddedIdFound((MappedSuperclassWidget) this.getSubclassWidget());
+            AttributeValidator.validateEmbeddedIdAndIdFound((MappedSuperclassWidget) this.getSubclassWidget());
         }
+
     }
 
     @Override
     public void destroy() {
         if (this.getSubclassWidget() instanceof EntityWidget) {
-            ((EntityWidget) this.getSubclassWidget()).scanInheritenceError();
+            AttributeValidator.scanInheritenceError((EntityWidget) this.getSubclassWidget());
             ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
+            AttributeValidator.validateMultipleEmbeddedIdFound((EntityWidget) this.getSubclassWidget());
+            AttributeValidator.validateEmbeddedIdAndIdFound((EntityWidget) this.getSubclassWidget());
+        } else if (this.getSubclassWidget() instanceof MappedSuperclassWidget) {
+            AttributeValidator.validateMultipleEmbeddedIdFound((MappedSuperclassWidget) this.getSubclassWidget());
+            AttributeValidator.validateEmbeddedIdAndIdFound((MappedSuperclassWidget) this.getSubclassWidget());
         }
         this.setSubclassWidget(null);
         this.setSuperclassWidget(null);

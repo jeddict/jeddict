@@ -25,6 +25,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
@@ -36,9 +37,11 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttrib
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
@@ -46,11 +49,18 @@ import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.Version;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.modeler.core.NBModelerUtil;
+import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
+import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ActionHandler;
+import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ComboBoxListener;
+import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
@@ -61,6 +71,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<RelationFlowWidget>();
+    private EmbeddedIdAttributeWidget embeddedIdAttributeWidget;
     private final List<IdAttributeWidget> idAttributeWidgets = new ArrayList<IdAttributeWidget>();
     private final List<VersionAttributeWidget> versionAttributeWidgets = new ArrayList<VersionAttributeWidget>();
     private final List<BasicAttributeWidget> basicAttributeWidgets = new ArrayList<BasicAttributeWidget>();
@@ -76,13 +87,129 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     public PersistenceClassWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
-        this.addPropertyVisibilityHandler("idclass", new PropertyVisibilityHandler<String>() {
+        this.addPropertyVisibilityHandler("compositePrimaryKeyType", new PropertyVisibilityHandler<String>() {
             @Override
             public boolean isVisible() {
-                return PersistenceClassWidget.this.getIdAttributeWidgets().size() > 1;
+                return PersistenceClassWidget.this.isCompositePKPropertyAllow();
+            }
+        });
+        this.addPropertyVisibilityHandler("compositePrimaryKeyClass", new PropertyVisibilityHandler<String>() {
+            @Override
+            public boolean isVisible() {
+//                if (PersistenceClassWidget.this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
+//                    PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) PersistenceClassWidget.this.getBaseElementSpec();
+//                }
+                return PersistenceClassWidget.this.isCompositePKPropertyAllow();
             }
         });
 
+    }
+
+    public boolean isCompositePKPropertyAllow() {
+        if (this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
+            PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) this.getBaseElementSpec();
+            String inheritenceState = this.getInheritenceState();
+            boolean visible = false;
+            if (this instanceof EntityWidget) {
+                visible = getIdAttributeWidgets().size() > 1 && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState));
+            } else if (this instanceof MappedSuperclassWidget) {
+                visible = getIdAttributeWidgets().size() > 1;
+            }
+            if (visible) {
+                if ((primaryKeyContainerSpec.getCompositePrimaryKeyClass() == null || primaryKeyContainerSpec.getCompositePrimaryKeyClass().trim().isEmpty())
+                        && (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID || primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
+                    primaryKeyContainerSpec.manageCompositePrimaryKeyClass();
+                    getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
+                }
+            }
+            return visible;
+        }
+        return false;
+    }
+
+    public List<IdAttributeWidget> getAllIdAttributeWidgets() {
+        List<IdAttributeWidget> idAttributeWidgets = new ArrayList<IdAttributeWidget>(this.getIdAttributeWidgets());
+        List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
+        for (JavaClassWidget classWidget : classWidgets) {
+            if (classWidget instanceof PersistenceClassWidget) {
+                idAttributeWidgets.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
+            }
+        }
+        return idAttributeWidgets;
+    }
+
+    public List<EmbeddedIdAttributeWidget> getAllEmbeddedIdAttributeWidgets() {
+        List<EmbeddedIdAttributeWidget> embeddedIdAttributeWidgets = new ArrayList<EmbeddedIdAttributeWidget>();
+        embeddedIdAttributeWidgets.add(this.getEmbeddedIdAttributeWidget());
+        List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
+        for (JavaClassWidget classWidget : classWidgets) {
+            if (classWidget instanceof PersistenceClassWidget) {
+                PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) classWidget;
+                if (persistenceClassWidget.getEmbeddedIdAttributeWidget() != null) {
+                    embeddedIdAttributeWidgets.add(persistenceClassWidget.getEmbeddedIdAttributeWidget());
+                }
+            }
+        }
+        return embeddedIdAttributeWidgets;
+    }
+
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        if (this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
+            set.put("BASIC_PROP", getCompositePrimaryKeyProperty());
+        }
+
+    }
+
+    private ComboBoxPropertySupport getCompositePrimaryKeyProperty() {
+        final JavaClassWidget javaClassWidget = this;
+        final PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) javaClassWidget.getBaseElementSpec();
+        ComboBoxListener comboBoxListener = new ComboBoxListener() {
+            @Override
+            public void setItem(ComboBoxValue value) {
+                CompositePrimaryKeyType compositePrimaryKeyType = (CompositePrimaryKeyType) value.getValue();
+                if (compositePrimaryKeyType == CompositePrimaryKeyType.EMBEDDEDID) {
+                    PersistenceClassWidget.this.addNewEmbeddedIdAttribute(getNextAttributeName(PersistenceClassWidget.this.getName() + "EmbeddedId"));
+                } else {
+                    if (embeddedIdAttributeWidget != null) {
+                        embeddedIdAttributeWidget.remove();
+                    }
+                }
+                primaryKeyContainerSpec.setCompositePrimaryKeyType(compositePrimaryKeyType);
+            }
+
+            @Override
+            public ComboBoxValue getItem() {
+                if (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                    return new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id");
+                } else if (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                    return new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class");
+                } else {
+                    return new ComboBoxValue(CompositePrimaryKeyType.NONE, "None");
+                }
+            }
+
+            @Override
+            public List<ComboBoxValue> getItemList() {
+                List<ComboBoxValue> values = new ArrayList<ComboBoxValue>();
+                values.add(new ComboBoxValue(CompositePrimaryKeyType.NONE, "None"));
+                values.add(new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class"));
+                values.add(new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id"));
+                return values;
+            }
+
+            @Override
+            public String getDefaultText() {
+                return "None";
+            }
+
+            @Override
+            public ActionHandler getActionHandler() {
+                return null;
+            }
+        };
+        return new ComboBoxPropertySupport(this.getModelerScene().getModelerFile(), "compositePrimaryKeyType", "Composite PrimaryKey Type", "", comboBoxListener);
     }
 
     public RelationAttributeWidget findRelationAttributeWidget(String id, Class<? extends RelationAttributeWidget>... relationAttributeWidgetClasses) {
@@ -126,9 +253,18 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     public void deleteAttribute(AttributeWidget attributeWidget) {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
         IAttributes attributes = (IAttributes) javaClass.getAttributes();
+        if (attributeWidget == null) {
+            return;
+        }
         if (attributeWidget instanceof IdAttributeWidget) {
             getIdAttributeWidgets().remove((IdAttributeWidget) attributeWidget);
             ((IPersistenceAttributes) attributes).getId().remove((Id) ((IdAttributeWidget) attributeWidget).getBaseElementSpec());
+            AttributeValidator.validateEmbeddedIdAndIdFound(this);
+        } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
+            embeddedIdAttributeWidget = null;
+            ((IPersistenceAttributes) attributes).setEmbeddedId(null);
+            AttributeValidator.validateMultipleEmbeddedIdFound(this);
+            AttributeValidator.validateEmbeddedIdAndIdFound(this);
         } else if (attributeWidget instanceof VersionAttributeWidget) {
             versionAttributeWidgets.remove((VersionAttributeWidget) attributeWidget);
             ((IPersistenceAttributes) attributes).getVersion().remove((Version) ((VersionAttributeWidget) attributeWidget).getBaseElementSpec());
@@ -187,8 +323,32 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         sortAttributes();
     }
 
+    public EmbeddedIdAttributeWidget addNewEmbeddedIdAttribute(String name) {
+        return addNewEmbeddedIdAttribute(name, null);
+    }
+
+    public EmbeddedIdAttributeWidget addNewEmbeddedIdAttribute(String name, EmbeddedId embeddedId) {
+        JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
+        if (embeddedId == null) {
+            embeddedId = new EmbeddedId();
+            embeddedId.setId(NBModelerUtil.getAutoGeneratedStringId());
+            embeddedId.setName(name);
+            ((IPersistenceAttributes) javaClass.getAttributes()).setEmbeddedId(embeddedId);
+        }
+
+        EmbeddedIdAttributeWidget attributeWidget = (EmbeddedIdAttributeWidget) PersistenceClassWidget.this.createPinWidget(EmbeddedIdAttributeWidget.create(embeddedId.getId(), name));
+        setEmbeddedIdAttributeWidget(attributeWidget);
+        attributeWidget.setBaseElementSpec(embeddedId);
+        sortAttributes();
+        AttributeValidator.validateMultipleEmbeddedIdFound(this);
+        AttributeValidator.validateEmbeddedIdAndIdFound(this);
+        return attributeWidget;
+    }
+
     public IdAttributeWidget addNewIdAttribute(String name) {
-        return addNewIdAttribute(name, null);
+        IdAttributeWidget idAttributeWidget = addNewIdAttribute(name, null);
+        isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+        return idAttributeWidget;
     }
 
     public IdAttributeWidget addNewIdAttribute(String name, Id id) {
@@ -209,8 +369,8 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         getIdAttributeWidgets().add(attributeWidget);
         attributeWidget.setBaseElementSpec(id);
         sortAttributes();
+        AttributeValidator.validateEmbeddedIdAndIdFound(this);
         return attributeWidget;
-//        attributeWidget.getParentWidget()
     }
 
     public VersionAttributeWidget addNewVersionAttribute(String name) {
@@ -464,6 +624,11 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     @Override//sortAttributes() method should be called only onec in case of loadDocument
     public void sortAttributes() {
         Map<String, List<Widget>> categories = new LinkedHashMap<String, List<Widget>>();
+        if (embeddedIdAttributeWidget != null) {
+            List<Widget> embeddedIdAttributeCatWidget = new ArrayList<Widget>();
+            embeddedIdAttributeCatWidget.add(embeddedIdAttributeWidget);
+            categories.put("Embedded Id", embeddedIdAttributeCatWidget);
+        }
         if (!idAttributeWidgets.isEmpty()) {
             List<Widget> idAttributeCatWidget = new ArrayList<Widget>();
             for (IdAttributeWidget idAttributeWidget : getIdAttributeWidgets()) {
@@ -608,4 +773,17 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     }
 
 //    public abstract void scanError();
+    /**
+     * @return the embeddedIdAttributeWidget
+     */
+    public EmbeddedIdAttributeWidget getEmbeddedIdAttributeWidget() {
+        return embeddedIdAttributeWidget;
+    }
+
+    /**
+     * @param embeddedIdAttributeWidget the embeddedIdAttributeWidget to set
+     */
+    public void setEmbeddedIdAttributeWidget(EmbeddedIdAttributeWidget embeddedIdAttributeWidget) {
+        this.embeddedIdAttributeWidget = embeddedIdAttributeWidget;
+    }
 }

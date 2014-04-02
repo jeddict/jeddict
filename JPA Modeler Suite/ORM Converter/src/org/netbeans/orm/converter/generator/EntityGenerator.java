@@ -83,20 +83,22 @@ public class EntityGenerator extends ClassGenerator {
         Attributes parsedAttributes = entity.getAttributes();
 
         if (parsedAttributes != null) {
+            processEmbeddedId(parsedAttributes.getEmbeddedId());
+            if (parsedAttributes.getEmbeddedId() == null) {
+                processId(parsedAttributes.getId());
+            }
             processBasic(parsedAttributes.getBasic());
             processTransient(parsedAttributes.getTransient());
             processElementCollection(parsedAttributes.getElementCollection());
 
             processEmbedded(parsedAttributes.getEmbedded());
-            processId(parsedAttributes.getId());
+
             processManyToMany(parsedAttributes.getManyToMany());
             processManyToOne(parsedAttributes.getManyToOne());
             processOneToMany(parsedAttributes.getOneToMany());
             processOneToOne(parsedAttributes.getOneToOne());
             processVersion(parsedAttributes.getVersion());
         }
-
-        processEmbeddedId(parsedAttributes);
 
         // Classlevel annotations - Special case
         // processTableGenerator() && processSequenceGenerator()

@@ -45,6 +45,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
@@ -81,11 +82,10 @@ import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
-import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
@@ -100,12 +100,14 @@ import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
@@ -262,6 +264,14 @@ public class JPAModelerUtil implements PModelerUtil {
                             for (Id id : ((IPersistenceAttributes) entity.getAttributes()).getId()) {
                                 entityWidget.addNewIdAttribute(id.getName(), id);
                             }
+                            EmbeddedId embeddedId = ((IPersistenceAttributes) entity.getAttributes()).getEmbeddedId();
+                            if (embeddedId != null) {
+                                entityWidget.addNewEmbeddedIdAttribute(embeddedId.getName(), embeddedId);
+                            }
+
+                            for (Version version : ((IPersistenceAttributes) entity.getAttributes()).getVersion()) {
+                                entityWidget.addNewVersionAttribute(version.getName(), version);
+                            }
                         }
                         for (Basic basic : entity.getAttributes().getBasic()) {
                             entityWidget.addNewBasicAttribute(basic.getName(), basic);
@@ -269,11 +279,7 @@ public class JPAModelerUtil implements PModelerUtil {
                         for (Transient _transient : entity.getAttributes().getTransient()) {
                             entityWidget.addNewTransientAttribute(_transient.getName(), _transient);
                         }
-                        if (entity.getAttributes() instanceof IPersistenceAttributes) {
-                            for (Version version : ((IPersistenceAttributes) entity.getAttributes()).getVersion()) {
-                                entityWidget.addNewVersionAttribute(version.getName(), version);
-                            }
-                        }
+
                         for (Embedded embedded : entity.getAttributes().getEmbedded()) {
                             entityWidget.addNewSingleValueEmbeddedAttribute(embedded.getName(), embedded);
                         }
@@ -492,6 +498,7 @@ public class JPAModelerUtil implements PModelerUtil {
             IModelerScene scene = file.getModelerScene();
             EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
             entityMappings.getIdClass().clear();
+            entityMappings.getEmbeddedIdClass().clear();
             for (IBaseElementWidget baseElementWidget : scene.getBaseElements()) {
                 if (baseElementWidget instanceof FlowNodeWidget) {
                     FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
@@ -505,9 +512,11 @@ public class JPAModelerUtil implements PModelerUtil {
                             JavaClass superJavaClass = (JavaClass) superJavaClassWidget.getBaseElementSpec();
                             javaClass.setSuperclass(superJavaClass.getClazz());
                         }
+
                         if (baseElementWidget instanceof PersistenceClassWidget) {
-                            if (baseElementWidget instanceof EntityWidget) {
-                                EntityWidget entityWidget = (EntityWidget) baseElementWidget;
+                            PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
+                            if (persistenceClassWidget instanceof EntityWidget) {
+                                EntityWidget entityWidget = (EntityWidget) persistenceClassWidget;
                                 InheritenceHandler classSpec = (InheritenceHandler) entityWidget.getBaseElementSpec();
                                 String inheritenceState = entityWidget.getInheritenceState();
                                 if (inheritenceState.equals("LEAF") || inheritenceState.equals("SINGLETON")) {
@@ -516,46 +525,35 @@ public class JPAModelerUtil implements PModelerUtil {
                                 } else if (inheritenceState.equals("ROOT")) {
                                     classSpec.setDiscriminatorValue(null);
                                 }
-//IdClass
-                                Entity entitySpec = (Entity) baseElementWidget.getBaseElementSpec();
-                                List<IdAttributeWidget> allIdAttributeWidgets = entityWidget.getAllIdAttributeWidgets();
-                                if (allIdAttributeWidgets.size() > 1 && ("ROOT".equals(entityWidget.getInheritenceState()) || "SINGLETON".equals(entityWidget.getInheritenceState()))) {
-                                    if (entitySpec.getIdClass() == null) {
-                                        IdClass idClass = new IdClass();
-                                        idClass.setClazz(entitySpec.getClazz() + "IdClass");
-                                        entitySpec.setIdClass(idClass);
-                                    }
-
+                            }
+//IDCLASS,EMBEDDEDID start
+                            if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
+                                PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) persistenceClassWidget.getBaseElementSpec();
+                                if (persistenceClassWidget.isCompositePKPropertyAllow()
+                                        && (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
+                                        || pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
+                                    List<IdAttributeWidget> idAttributeWidgets = null;
                                     DefaultClass _class = new DefaultClass();
-                                    IdClass idClass = entitySpec.getIdClass();
-                                    _class.setClazz(idClass.getClazz());
-                                    for (IdAttributeWidget idAttributeWidget : allIdAttributeWidgets) {
+                                    _class.setClazz(pkContainerSpec.getCompositePrimaryKeyClass());
+
+                                    if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                                        idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
+                                        entityMappings.addEmbeddedIdClass(_class);
+                                    } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                                        idAttributeWidgets = persistenceClassWidget.getAllIdAttributeWidgets();
+                                        entityMappings.addIdClass(_class);
+                                    }
+                                    for (IdAttributeWidget idAttributeWidget : idAttributeWidgets) {
                                         Id idSpec = (Id) idAttributeWidget.getBaseElementSpec();
                                         DefaultAttribute attribute = new DefaultAttribute();
                                         attribute.setAttributeType(idSpec.getAttributeType());
                                         attribute.setName(idSpec.getName());
                                         _class.addAttribute(attribute);
                                     }
-                                    entityMappings.addIdClass(_class);
 
-                                } else {
-                                    entitySpec.setIdClass(null);
                                 }
                             }
-//                            else if (baseElementWidget instanceof MappedSuperclassWidget) {
-//                                MappedSuperclassWidget classWidget = (MappedSuperclassWidget) baseElementWidget;
-//                                //IdClass
-//                                MappedSuperclass classSpec = (MappedSuperclass) baseElementWidget.getBaseElementSpec();
-//                                if (classWidget.getIdAttributeWidgets().size() > 1) {
-//                                    if (classSpec.getIdClass() == null) {
-//                                        IdClass idClass = new IdClass();
-//                                        idClass.setClazz(classSpec.getClazz() + "IdClass");
-//                                        classSpec.setIdClass(idClass);
-//                                    }
-//                                } else {
-//                                    classSpec.setIdClass(null);
-//                                }
-//                            }
+//IDCLASS,EMBEDDEDID End
 
                             PersistenceClassWidget entityWidget = (PersistenceClassWidget) baseElementWidget;
                             //Entity entity = (Entity) entityWidget.getBaseElementSpec();
@@ -817,6 +815,8 @@ public class JPAModelerUtil implements PModelerUtil {
         IPinWidget widget = null;
         if (widgetInfo.getDocumentId().equals(IdAttributeWidget.class.getSimpleName())) {
             widget = new IdAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedIdAttributeWidget.class.getSimpleName())) {
+            widget = new EmbeddedIdAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(BasicAttributeWidget.class.getSimpleName())) {
             widget = new BasicAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(BasicCollectionAttributeWidget.class.getSimpleName())) {

@@ -28,7 +28,7 @@ public class ColumnDefSnippet implements Snippet {
 
     private int precision = 0;
     private int scale = 0;
-    private int length = 0;
+    private int length = 255;
 
     private String columnDefinition = null;
     private String table = null;
@@ -40,7 +40,7 @@ public class ColumnDefSnippet implements Snippet {
                 && (table == null || table.trim().isEmpty())
                 && (columnDefinition == null || columnDefinition.trim().isEmpty())
                 && unique == false && updatable == true && insertable == true && nullable == true
-                && length <= 0 && scale <= 0 && precision <= 0) {
+                && length == 255 && scale == 0 && precision == 0) {
             empty = true;
         }
 
@@ -165,19 +165,19 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("nullable=false,");
         }
 
-        if (length > 0) {
+        if (length != 255) {
             builder.append("length=");
             builder.append(length);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (scale > 0) {
+        if (scale != 0) {
             builder.append("scale=");
             builder.append(scale);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (precision > 0) {
+        if (precision != 0) {
             builder.append("precision=");
             builder.append(precision);
             builder.append(ORMConverterUtil.COMMA);

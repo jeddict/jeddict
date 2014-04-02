@@ -33,6 +33,50 @@ public abstract class BaseAttribute extends Attribute {
         return attributeType;
     }
 
+    public boolean isPrecisionAttributeType() {
+//        if (attributeType.equals("byte") || attributeType.equals("Byte")) {
+//            return true;
+//        } else if (attributeType.equals("short") || attributeType.equals("Short")) {
+//            return true;
+//        } else if (attributeType.equals("int") || attributeType.equals("Integer")) {
+//            return true;
+//        } else if (attributeType.equals("long") || attributeType.equals("Long")) {
+//            return true;
+//        } else if (attributeType.equals("float") || attributeType.equals("Float")) {
+//            return true;
+//        } else if (attributeType.equals("double") || attributeType.equals("Double")) {
+//            return true;
+//        } else if (attributeType.equals("java.math.BigInteger") || attributeType.equals("java.math.BigDecimal")) {
+//            return true;
+//        }
+
+        if (attributeType.equals("java.math.BigDecimal")) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isScaleAttributeType() {
+//        if (attributeType.equals("float") || attributeType.equals("Float")) {
+//            return true;
+//        } else if (attributeType.equals("double") || attributeType.equals("Double")) {
+//            return true;
+//        } else if (attributeType.equals("java.math.BigDecimal")) {
+//            return true;
+//        }
+        if (attributeType.equals("java.math.BigDecimal")) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isTextAttributeType() {
+        if (attributeType.equals("String")) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @param attributeType the attributeType to set
      */

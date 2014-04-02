@@ -21,6 +21,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.Lob;
@@ -110,7 +111,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
             }
 
         } else if (baseAttribute instanceof Transient) {
-            Transient _transient = (Transient) baseAttribute;
+//            Transient _transient = (Transient) baseAttribute;
 
         } else if (baseAttribute instanceof Version) {
             Version version = (Version) baseAttribute;

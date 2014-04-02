@@ -26,12 +26,12 @@ import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
+import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
-import org.netbeans.modules.db.api.sql.SQLKeywords;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
@@ -163,15 +163,52 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
         while (exist) {
             JavaClassWidget superclassWidget_Nest = generalizationFlowWidget_TMP.getSuperclassWidget();
             superclassWidgetList.add(superclassWidget_Nest);
-            if (superclassWidget_Nest.getOutgoingGeneralizationFlowWidget() != null) {
-                generalizationFlowWidget_TMP = superclassWidget_Nest.getOutgoingGeneralizationFlowWidget();
-            } else {
+            generalizationFlowWidget_TMP = superclassWidget_Nest.getOutgoingGeneralizationFlowWidget();
+            if (generalizationFlowWidget_TMP == null) {
                 exist = false;
             }
         }
         return superclassWidgetList;
     }
 
+    public List<JavaClassWidget> getSubclassWidgets() {
+        List<JavaClassWidget> subclassWidgetList = new LinkedList<JavaClassWidget>();
+        for (GeneralizationFlowWidget generalizationFlowWidget_TMP : this.incomingGeneralizationFlowWidgets) {
+            JavaClassWidget subclassWidget_Nest = generalizationFlowWidget_TMP.getSubclassWidget();
+            subclassWidgetList.add(subclassWidget_Nest);
+        }
+        return subclassWidgetList;
+    }
+
+    public List<JavaClassWidget> getAllSubclassWidgets() {
+        List<JavaClassWidget> subclassWidgetList = new LinkedList<JavaClassWidget>();
+        for (GeneralizationFlowWidget generalizationFlowWidget_TMP : this.incomingGeneralizationFlowWidgets) {
+            JavaClassWidget subclassWidget_Nest = generalizationFlowWidget_TMP.getSubclassWidget();
+            subclassWidgetList.add(subclassWidget_Nest);
+            subclassWidgetList.addAll(subclassWidget_Nest.getAllSubclassWidgets());
+        }
+        return subclassWidgetList;
+    }
+
+//    public List<JavaClassWidget> getAllSubclassWidget() {
+//        List<JavaClassWidget> subclassWidgetList = new LinkedList<JavaClassWidget>();
+//        boolean exist = true;
+//        for (GeneralizationFlowWidget generalizationFlowWidget_TMP : this.incomingGeneralizationFlowWidgets) {
+////        ;List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<GeneralizationFlowWidget>()
+////        if (generalizationFlowWidget_TMP != null) {
+////            exist = true;
+////        }
+//            while (exist) {
+//                JavaClassWidget subclassWidget_Nest = generalizationFlowWidget_TMP.getSubclassWidget();
+//                subclassWidgetList.add(subclassWidget_Nest);
+//                generalizationFlowWidget_TMP = subclassWidget_Nest.getOutgoingGeneralizationFlowWidget();
+//                if (generalizationFlowWidget_TMP == null) {
+//                    exist = false;
+//                }
+//            }
+//        }
+//        return subclassWidgetList;
+//    }
     /**
      * @return the outgoingGeneralizationFlowWidget
      */
@@ -202,4 +239,5 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
         incomingGeneralizationFlowWidgets.remove(generalizationFlowWidget);
     }
 
+    public abstract String getInheritenceState();
 }

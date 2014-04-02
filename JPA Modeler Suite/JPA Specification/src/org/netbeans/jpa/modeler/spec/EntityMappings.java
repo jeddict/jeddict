@@ -103,6 +103,7 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
     "namedNativeQuery",
     "sqlResultSetMapping",
     "idClass",
+    "embeddedIdClass",
     "mappedSuperclass",
     "entity",
     "embeddable",
@@ -132,6 +133,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     @XmlElement(name = "idclass")
     private List<DefaultClass> idClass;
+    @XmlElement(name = "embeddedidclass")
+    private List<DefaultClass> embeddedIdClass;
     @XmlElement(name = "mapped-superclass")
     protected List<MappedSuperclass> mappedSuperclass;
     protected List<Entity> entity;
@@ -869,6 +872,30 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
             }
         }
+    }
+
+    /**
+     * @return the embeddedIdClass
+     */
+    public List<DefaultClass> getEmbeddedIdClass() {
+        if (embeddedIdClass == null) {
+            embeddedIdClass = new ArrayList<DefaultClass>();
+        }
+        return embeddedIdClass;
+    }
+
+    /**
+     * @param embeddedIdClass the embeddedIdClass to set
+     */
+    public void setEmbeddedIdClass(List<DefaultClass> embeddedIdClass) {
+        this.embeddedIdClass = embeddedIdClass;
+    }
+
+    public void addEmbeddedIdClass(DefaultClass embeddedIdClass) {
+        if (this.embeddedIdClass == null) {
+            this.embeddedIdClass = new ArrayList<DefaultClass>();
+        }
+        this.embeddedIdClass.add(embeddedIdClass);
     }
 
 }

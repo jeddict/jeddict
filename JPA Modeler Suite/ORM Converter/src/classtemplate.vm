@@ -10,6 +10,9 @@ import java.util.Objects;
 $importStatement
 #end
 
+#if($classDef.getEntityString())
+$classDef.getEntityString()
+#end
 public class $classDef.getClassName() implements Serializable {
 #####################member variables ###############################
 #foreach( $varDef in $classDef.getVariableDefs() )

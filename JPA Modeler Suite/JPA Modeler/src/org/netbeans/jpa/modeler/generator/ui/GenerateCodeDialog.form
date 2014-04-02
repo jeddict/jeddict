@@ -53,12 +53,12 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="srcFolder" alignment="0" max="32767" attributes="1"/>
-                                      <Component id="targetProject" alignment="0" min="-2" max="-2" attributes="1"/>
+                                      <Component id="sourceFolder_Label" alignment="0" max="32767" attributes="1"/>
+                                      <Component id="targetProject_Label" alignment="0" min="-2" max="-2" attributes="1"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="srcFolderCombo" alignment="0" max="32767" attributes="2"/>
+                                      <Component id="sourceFolderCombo" alignment="0" max="32767" attributes="2"/>
                                       <Component id="targetProjectCombo" alignment="0" max="32767" attributes="2"/>
                                   </Group>
                               </Group>
@@ -74,13 +74,13 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="targetProject" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="targetProject_Label" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="targetProjectCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="srcFolder" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="srcFolderCombo" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="sourceFolder_Label" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="sourceFolderCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="backupSourcesCheck" min="-2" max="-2" attributes="0"/>
@@ -111,25 +111,25 @@
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="targetProjectComboItemStateChanged"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JComboBox" name="srcFolderCombo">
+        <Component class="javax.swing.JComboBox" name="sourceFolderCombo">
           <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="srcFolderComboItemStateChanged"/>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="sourceFolderComboItemStateChanged"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="targetProject">
+        <Component class="javax.swing.JLabel" name="targetProject_Label">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/generator/ui/Bundle.properties" key="GenerateCodeDialog.targetProject.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/netbeans/jpa/modeler/generator/ui/Bundle.properties" key="GenerateCodeDialog.targetProject_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <AuxValues>
             <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="srcFolder">
+        <Component class="javax.swing.JLabel" name="sourceFolder_Label">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/generator/ui/Bundle.properties" key="GenerateCodeDialog.srcFolder.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/netbeans/jpa/modeler/generator/ui/Bundle.properties" key="GenerateCodeDialog.sourceFolder_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <AuxValues>

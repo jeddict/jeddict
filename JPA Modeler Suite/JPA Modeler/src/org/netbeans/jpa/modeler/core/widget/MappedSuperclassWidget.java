@@ -102,4 +102,8 @@ public class MappedSuperclassWidget extends PersistenceClassWidget {
 //
 //        return menuList;
 //    }
+    @Override
+    public String getInheritenceState() {
+        return "NONE";//Not implemented yet
+    }
 }

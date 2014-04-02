@@ -48,7 +48,6 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.modeler.core.NBModelerUtil;
-import org.netbeans.modules.j2ee.core.api.support.wizard.DelegatingWizardDescriptorPanel;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;

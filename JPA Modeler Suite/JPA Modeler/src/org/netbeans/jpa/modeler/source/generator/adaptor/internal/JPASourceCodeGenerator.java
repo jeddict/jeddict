@@ -15,12 +15,12 @@
  */
 package org.netbeans.jpa.modeler.source.generator.adaptor.internal;
 
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.source.generator.adaptor.orm.ORM2Java;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.task.ITaskSupervisor;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 
 /**
  *
@@ -31,11 +31,11 @@ public class JPASourceCodeGenerator implements JavaSourceCodeGenerator {
 //    private FileObject targetRepository;
 //    private InputDefinition inputDefinition;
     @Override
-    public void generate(ITaskSupervisor task, FileObject targetRepository, InputDefinition inputDefinition) {
+    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, InputDefinition inputDefinition) {
 //        this.targetRepository = targetRepository;
 //        this.inputDefinition = inputDefinition;
         ORM2Java conv = new ORM2Java();
-        conv.generateSource(task, (EntityMappings) inputDefinition.getModelerFile().getDefinitionElement(), FileUtil.toFile(targetRepository));
+        conv.generateSource(task, project, sourceGroup, (EntityMappings) inputDefinition.getModelerFile().getDefinitionElement());
 
     }
 

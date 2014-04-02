@@ -91,7 +91,7 @@ public class VariableDefSnippet implements Snippet {
     }
 
     public void setEmbeddedId(boolean embeddedId) {
-        this.embedded = embeddedId;
+        this.embeddedId = embeddedId;
     }
 
     public boolean isLob() {

@@ -10,6 +10,9 @@
         <group id="JOIN_COLUMN_PROP" name="Join Column Properties"/>
         <group id="JOIN_TABLE_PROP" name="Join Table Properties"/>
         <group id="COLLECTION_TABLE_PROP" name="Collection Table Properties"/>
+        <!--<group id="COMPOSITE_PK_PROP" name="Composite PrimaryKey"/>-->
+        
+        
 
     </groups>
     <elements>
@@ -77,6 +80,9 @@
                 <attribute id="scale" groupId="COLUMN_PROP" class="java.lang.Integer" name="scale">
                     <display-name>Scale</display-name>
                 </attribute>
+                 <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
 
             </attributes>
         </element>
@@ -84,12 +90,12 @@
             <attributes>
                 <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
-                </attribute>
-                <attribute id="idclass" groupId="BASIC_PROP" class="java.lang.String" name="idClassProxy">
-                    <display-name>Id Class</display-name>
-                </attribute>
+                </attribute>                
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
+                </attribute>
+                <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                    <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
             </attributes>
         </element>
@@ -99,9 +105,7 @@
                 <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
                 </attribute>
-                <attribute id="idclass" groupId="BASIC_PROP" class="java.lang.String" name="idClassProxy">
-                    <display-name>Id Class</display-name>
-                </attribute>
+               
                       <attribute id="entity_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
@@ -114,6 +118,9 @@
                 <attribute id="metadataComplete" groupId="BASIC_PROP" class="java.lang.Boolean" name="metadataComplete">
                     <display-name>MetadataComplete</display-name>
                 </attribute>-->
+                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                    <display-name>Composite PrimaryKey Class</display-name>
+                </attribute>
             </attributes>
         </element>
            <element id="Embeddable" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Embeddable">
@@ -181,6 +188,13 @@
                 <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
+            </attributes>
+        </element>  
+        <element id="EmbeddedId" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.EmbeddedId">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>                
             </attributes>
         </element>
 

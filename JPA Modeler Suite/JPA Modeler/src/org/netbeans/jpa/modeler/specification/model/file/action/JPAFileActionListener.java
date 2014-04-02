@@ -15,13 +15,13 @@
  */
 package org.netbeans.jpa.modeler.specification.model.file.action;
 
-import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.jpa.modeler.specification.JPASpecification;
 import org.netbeans.jpa.modeler.specification.model.JPADefaultDiagramModel;
 import org.netbeans.jpa.modeler.specification.model.engine.JPADiagramEngine;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.component.IModelerPanel;
 import org.netbeans.modeler.component.ModelerPanelTopComponent;
 import org.netbeans.modeler.core.ModelerFile;
@@ -55,7 +55,6 @@ public class JPAFileActionListener extends ModelerFileActionListener {
     @Override
     public void initSpecification(ModelerFile modelerFile) {
         modelerFile.setModelerVendorSpecification(new JPASpecification());
-
         ModelerSpecificationDiagramModel diagramModel = new JPADefaultDiagramModel();
         modelerFile.getVendorSpecification().setModelerSpecificationDiagramModel(diagramModel);
 

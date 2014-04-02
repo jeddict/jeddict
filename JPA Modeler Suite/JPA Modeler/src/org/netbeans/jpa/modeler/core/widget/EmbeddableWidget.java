@@ -110,4 +110,9 @@ public class EmbeddableWidget extends PersistenceClassWidget {
         this.incomingEmbeddableFlowWidgets.remove(incomingEmbeddableFlowWidget);
     }
 
+    @Override
+    public String getInheritenceState() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

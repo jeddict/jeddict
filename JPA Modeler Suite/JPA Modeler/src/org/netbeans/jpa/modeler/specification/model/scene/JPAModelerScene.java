@@ -406,7 +406,7 @@ public class JPAModelerScene extends PModelerScene {
                 dialog.setVisible(true);
                 if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
                     RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
-                    SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(JPAModelerScene.this.getModelerFile(), dialog.getSourceGroup().getRootFolder());
+                    SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(JPAModelerScene.this.getModelerFile(), dialog.getTargetPoject(), dialog.getSourceGroup());
                     processor.post(task);
                 }
 

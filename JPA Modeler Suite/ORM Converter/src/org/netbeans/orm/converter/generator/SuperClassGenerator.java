@@ -60,24 +60,25 @@ public class SuperClassGenerator extends ClassGenerator {
                 mappedSuperclass.getExcludeSuperclassListeners());
 
         //Attributes -- Method level annotations
-        Attributes attributes = mappedSuperclass.getAttributes();
+        Attributes parsedAttributes = mappedSuperclass.getAttributes();
 
-        if (attributes != null) {
-            processBasic(attributes.getBasic());
-            processTransient(attributes.getTransient());
+        if (parsedAttributes != null) {
+            processEmbeddedId(parsedAttributes.getEmbeddedId());
+            if (parsedAttributes.getEmbeddedId() == null) {
+                processId(parsedAttributes.getId());
+            }
+            processBasic(parsedAttributes.getBasic());
+            processTransient(parsedAttributes.getTransient());
+            processElementCollection(parsedAttributes.getElementCollection());
 
-            processElementCollection(attributes.getElementCollection());
+            processEmbedded(parsedAttributes.getEmbedded());
 
-            processEmbedded(attributes.getEmbedded());
-            processId(attributes.getId());
-            processManyToMany(attributes.getManyToMany());
-            processManyToOne(attributes.getManyToOne());
-            processOneToMany(attributes.getOneToMany());
-            processOneToOne(attributes.getOneToOne());
-            processVersion(attributes.getVersion());
+            processManyToMany(parsedAttributes.getManyToMany());
+            processManyToOne(parsedAttributes.getManyToOne());
+            processOneToMany(parsedAttributes.getOneToMany());
+            processOneToOne(parsedAttributes.getOneToOne());
+            processVersion(parsedAttributes.getVersion());
         }
-
-        processEmbeddedId(attributes);
 
         //Class decorations
         ClassHelper classHelper = new ClassHelper(mappedSuperclass.getClazz());

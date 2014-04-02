@@ -16,11 +16,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -119,7 +120,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "associationOverride",
     "attributes"
 })
-public class Entity extends JavaClass implements AccessTypeHandler, InheritenceHandler {
+public class Entity extends JavaClass implements AccessTypeHandler, InheritenceHandler, PrimaryKeyContainer {
 
     protected String description;
     protected Table table;
@@ -179,11 +180,13 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
     protected Boolean cacheable;//RENENG PENDING
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;//RENENG PENDING
+    @XmlAttribute
+    private CompositePrimaryKeyType compositePrimaryKeyType;//custom added
+    @XmlAttribute
+    private String compositePrimaryKeyClass;//custom added
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.Entity");
-//JavaSourceParserUtil.getSuperclassTypeElement(element).getQualifiedName().toString()
-
         if (entityMappings.findEntity(element.getSimpleName().toString()) == null) {
             TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
             if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
@@ -223,6 +226,18 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
             }
             this.clazz = element.getSimpleName().toString();
             this.access = AccessType.load(element);
+
+            if (this.getAttributes().getEmbeddedId() != null) {
+                this.setCompositePrimaryKeyClass(this.getAttributes().getEmbeddedId().getAttributeType());
+                this.setCompositePrimaryKeyType(CompositePrimaryKeyType.EMBEDDEDID);
+            } else if (idClass != null) {
+                this.setCompositePrimaryKeyClass(this.getIdClass().getClazz());
+                this.setCompositePrimaryKeyType(CompositePrimaryKeyType.IDCLASS);
+            } else {
+                this.setCompositePrimaryKeyClass(null);
+                this.setCompositePrimaryKeyType(null);
+            }
+
         }
     }
 
@@ -348,17 +363,6 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
      */
     public void setIdClass(IdClass value) {
         this.idClass = value;
-    }
-
-    public String getIdClassProxy() {
-        if (idClass == null) {
-            return null;
-        }
-        return idClass.getClazz();
-    }
-
-    public void setIdClassProxy(String value) {
-        this.idClass = new IdClass(value);
     }
 
     /**
@@ -937,6 +941,54 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
     @Override
     public String toString() {
         return "Entity{" + "description=" + description + ", table=" + table + ", secondaryTable=" + secondaryTable + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn + ", idClass=" + idClass + ", inheritance=" + inheritance + ", discriminatorValue=" + discriminatorValue + ", discriminatorColumn=" + discriminatorColumn + ", sequenceGenerator=" + sequenceGenerator + ", tableGenerator=" + tableGenerator + ", namedQuery=" + namedQuery + ", namedNativeQuery=" + namedNativeQuery + ", sqlResultSetMapping=" + sqlResultSetMapping + ", excludeDefaultListeners=" + excludeDefaultListeners + ", excludeSuperclassListeners=" + excludeSuperclassListeners + ", entityListeners=" + entityListeners + ", prePersist=" + prePersist + ", postPersist=" + postPersist + ", preRemove=" + preRemove + ", postRemove=" + postRemove + ", preUpdate=" + preUpdate + ", postUpdate=" + postUpdate + ", postLoad=" + postLoad + ", attributeOverride=" + attributeOverride + ", associationOverride=" + associationOverride + ", attributes=" + attributes + ", name=" + name + ", clazz=" + clazz + ", access=" + access + ", cacheable=" + cacheable + ", metadataComplete=" + metadataComplete + '}';
+    }
+
+    /**
+     * @return the compositePrimaryKeyType
+     */
+    public CompositePrimaryKeyType getCompositePrimaryKeyType() {
+        return compositePrimaryKeyType;
+    }
+
+    /**
+     * @param compositePrimaryKeyType the compositePrimaryKeyType to set
+     */
+    public void setCompositePrimaryKeyType(CompositePrimaryKeyType compositePrimaryKeyType) {
+        this.compositePrimaryKeyType = compositePrimaryKeyType;
+        manageCompositePrimaryKeyClass();
+    }
+
+    /**
+     * @return the compositePrimaryKeyClass
+     */
+    public String getCompositePrimaryKeyClass() {
+        return compositePrimaryKeyClass;
+    }
+
+    /**
+     * @param compositePrimaryKeyClass the compositePrimaryKeyClass to set
+     */
+    public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
+        this.compositePrimaryKeyClass = compositePrimaryKeyClass;
+        manageCompositePrimaryKeyClass();
+    }
+
+    public void manageCompositePrimaryKeyClass() {
+        if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
+            compositePrimaryKeyClass = this.getClazz() + "PK";
+        }
+        if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+            this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass);
+            this.idClass = null;
+        } else if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+            this.idClass = new IdClass(compositePrimaryKeyClass);
+        } else {
+            this.idClass = null;
+            compositePrimaryKeyClass = null;
+            if (getCompositePrimaryKeyType() == null) {
+                setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
+            }
+        }
     }
 
 }
