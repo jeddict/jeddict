@@ -817,6 +817,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 //        }
 //
 //    }
+    // Issue Fix #5949 Start
     public void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
         org.netbeans.jpa.modeler.spec.Entity targetEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());
         if (targetEntity != null) {
@@ -824,7 +825,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                 ManyToMany sourceAttribute = (ManyToMany) relationAttribute_Owner;
                 ManyToMany targetAttribute = null;
                 for (ManyToMany targetManyToMany : targetEntity.getAttributes().getManyToMany()) {
-                    if (sourceAttribute.getName().equals(targetManyToMany.getMappedBy())) {
+                    if (sourceAttribute.getName().equals(targetManyToMany.getMappedBy()) && sourceJavaClass.getClazz().equals(targetManyToMany.getTargetEntity())) {
                         targetAttribute = targetManyToMany;
                         break;
                     }
@@ -842,7 +843,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                 ManyToOne sourceAttribute = (ManyToOne) relationAttribute_Owner;
                 OneToMany targetAttribute = null;
                 for (OneToMany targetOneToMany : targetEntity.getAttributes().getOneToMany()) {
-                    if (sourceAttribute.getName().equals(targetOneToMany.getMappedBy())) {
+                    if (sourceAttribute.getName().equals(targetOneToMany.getMappedBy()) && sourceJavaClass.getClazz().equals(targetOneToMany.getTargetEntity())) {
                         targetAttribute = targetOneToMany;
                         break;
                     }
@@ -858,7 +859,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                 OneToOne sourceAttribute = (OneToOne) relationAttribute_Owner;
                 OneToOne targetAttribute = null;
                 for (OneToOne targetOneToOne : targetEntity.getAttributes().getOneToOne()) {
-                    if (sourceAttribute.getName().equals(targetOneToOne.getMappedBy())) {
+                    if (sourceAttribute.getName().equals(targetOneToOne.getMappedBy()) && sourceJavaClass.getClazz().equals(targetOneToOne.getTargetEntity())) {
                         targetAttribute = targetOneToOne;
                         break;
                     }
@@ -873,6 +874,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         }
     }
+    // Issue Fix #5949 End
 
     /**
      * @return the embeddedIdClass
