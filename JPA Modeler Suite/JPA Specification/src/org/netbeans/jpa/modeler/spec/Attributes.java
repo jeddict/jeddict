@@ -111,6 +111,12 @@ public class Attributes implements IPersistenceAttributes {
             if (methodName.startsWith("get")) {
                 Element element;
                 VariableElement variableElement = JavaSourceParserUtil.guessField(method);
+                // skip processing if the method is not joined with field
+                // might be transient method or method implementation 
+                // from some interface
+                if( variableElement == null){
+                    continue;
+                }
                 if (fieldAccess) {
                     element = variableElement;
                 } else {
