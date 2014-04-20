@@ -125,6 +125,12 @@ public #if ($classDef.isMappedSuperClass())abstract#end class $classDef.getClass
 #if($varDef.getEnumerated())
     $varDef.getEnumerated().getSnippet()
 #end
+#if ($varDef.getAssociationOverrides())
+$varDef.getAssociationOverrides().getSnippet()
+#end
+#if ($varDef.getAttributeOverrides())
+$varDef.getAttributeOverrides().getSnippet()
+#end
 ## $varDef.type => $varDef.getTypeIdentifier().getVariableType() ## to resolve problem Collection => Collection<Entity>
     private $varDef.type $varDef.name;
 #end

@@ -24,7 +24,6 @@ import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -36,7 +35,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget {
 
     public MultiValueEmbeddedAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/multi-value-embedded.gif"));
+        this.setIcon(JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE);
     }
 
     @Override

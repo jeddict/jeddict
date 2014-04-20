@@ -24,7 +24,6 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -34,7 +33,7 @@ public class BasicAttributeWidget extends BaseAttributeWidget {
 
     public BasicAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/basic-attribute.png"));
+        this.setIcon(JPAModelerUtil.BASIC_ATTRIBUTE);
         this.addPropertyVisibilityHandler("length", new PropertyVisibilityHandler<String>() {
             @Override
             public boolean isVisible() {

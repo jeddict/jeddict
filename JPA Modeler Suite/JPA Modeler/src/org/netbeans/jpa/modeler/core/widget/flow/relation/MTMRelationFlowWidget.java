@@ -15,9 +15,9 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
-import org.netbeans.modeler.anchorshape.IconAnchorShape;
+import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.AnchorShapeFactory;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTMRelationAttributeWidget;
+import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.openide.util.ImageUtilities;
@@ -26,13 +26,15 @@ import org.openide.util.ImageUtilities;
  *
  * @author Gaurav Gupta
  */
-public class MTMRelationFlowWidget extends RelationFlowWidget {
+public abstract class MTMRelationFlowWidget extends RelationFlowWidget {
+
+    private static final AnchorShape SOURCE_ANCHOR_SHAPE = AnchorShapeFactory.createImageAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many.gif"), true);
+    private static final AnchorShape TARGET_ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png"), true);
 
     public MTMRelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
-        setSourceAnchorShape(AnchorShapeFactory.createImageAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many.gif"), true));
-        setTargetAnchorShape(new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png"), true));
-
+        setSourceAnchorShape(SOURCE_ANCHOR_SHAPE);
+        setTargetAnchorShape(TARGET_ANCHOR_SHAPE);
     }
 
 }

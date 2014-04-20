@@ -29,6 +29,8 @@ import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.modeler.core.scene.vmd.PModelerScene;
+import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
@@ -150,7 +152,10 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     }
 
     public JavaClassWidget getSuperclassWidget() {
-        return outgoingGeneralizationFlowWidget.getSuperclassWidget();
+        if (outgoingGeneralizationFlowWidget != null) {
+            return outgoingGeneralizationFlowWidget.getSuperclassWidget();
+        }
+        return null;
     }
 
     public List<JavaClassWidget> getAllSuperclassWidget() {
@@ -240,4 +245,90 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     }
 
     public abstract String getInheritenceState();
+
+////    private static final Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25) ,2, new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25));
+    public void showInheritencePath() {
+//        Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25), 1, new Color(255, 225, 225), new Color(255, 255, 255), new Color(255, 225, 225), new Color(255, 255, 255), new Color(255, 225, 225));
+        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        colorScheme.highlightUI(this);
+        this.setHighlightStatus(true);
+//        this.setBorder(colorScheme.);
+        if (this.getOutgoingGeneralizationFlowWidget() != null) {
+            this.getOutgoingGeneralizationFlowWidget().setHighlightStatus(true);
+            colorScheme.highlightUI(this.getOutgoingGeneralizationFlowWidget());
+//            this.getOutgoingGeneralizationFlowWidget().setForeground(Color.red);
+            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().showInheritencePath();
+        }
+    }
+
+    public void hideInheritencePath() {
+        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        this.setHighlightStatus(false);
+        colorScheme.updateUI(this, this.getState(), this.getState());
+        if (this.getOutgoingGeneralizationFlowWidget() != null) {
+            this.getOutgoingGeneralizationFlowWidget().setHighlightStatus(false);
+            colorScheme.updateUI(this.getOutgoingGeneralizationFlowWidget(), this.getOutgoingGeneralizationFlowWidget().getState(), this.getOutgoingGeneralizationFlowWidget().getState());
+            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().hideInheritencePath();
+        }
+    }
+
+    public void showCompositionPath() {
+        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        colorScheme.highlightUI(this);
+        this.setHighlightStatus(true);
+//        if (this.getEmbeddableFlowWidget() != null) {
+//            this.getEmbeddableFlowWidget().setHighlightStatus(true);
+//            colorScheme.highlightUI(this.getEmbeddableFlowWidget());
+//            this.getEmbeddableFlowWidget().getTargetEmbeddableWidget().showCompositionPath();
+//        }
+    }
+
+    public void hideCompositionPath() {
+        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        this.setHighlightStatus(false);
+        colorScheme.updateUI(this, this.getState(), this.getState());
+//        if (this.getEmbeddableFlowWidget() != null) {
+//            this.getEmbeddableFlowWidget().setHighlightStatus(false);
+//            colorScheme.updateUI(this.getEmbeddableFlowWidget(), this.getEmbeddableFlowWidget().getState(), this.getEmbeddableFlowWidget().getState());
+//            this.getEmbeddableFlowWidget().getTargetEmbeddableWidget().hideCompositionPath();
+//        }
+    }
+//    private LayerWidget preLayerWidget;
+//
+//    public void showInheritencePath() {
+//        JPAModelerScene modelerScene = (JPAModelerScene) this.getModelerScene();
+//        preLayerWidget = (LayerWidget) this.getParentWidget();
+//        this.removeFromParent();
+//        modelerScene.getWidgetHighlightLayer().addChild(this);
+//        if (this.getOutgoingGeneralizationFlowWidget() != null) {
+//            this.getOutgoingGeneralizationFlowWidget().setPreLayerWidget((LayerWidget) this.getOutgoingGeneralizationFlowWidget().getParentWidget());
+//            this.getOutgoingGeneralizationFlowWidget().removeFromParent();
+//            modelerScene.getBoundaryWidgetLayer().addChild(this.getOutgoingGeneralizationFlowWidget());
+//            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().showInheritencePath();
+//        }
+//    }
+//
+//    public void hideInheritencePath() {
+//        this.removeFromParent();
+//        preLayerWidget.addChild(this);
+//        if (this.getOutgoingGeneralizationFlowWidget() != null) {
+//            this.getOutgoingGeneralizationFlowWidget().removeFromParent();
+//            this.getOutgoingGeneralizationFlowWidget().getPreLayerWidget().addChild(this.getOutgoingGeneralizationFlowWidget());
+//            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().hideInheritencePath();
+//        }
+//    }
+//
+//    /**
+//     * @return the preLayerWidget
+//     */
+//    public LayerWidget getPreLayerWidget() {
+//        return preLayerWidget;
+//    }
+//
+//    /**
+//     * @param preLayerWidget the preLayerWidget to set
+//     */
+//    public void setPreLayerWidget(LayerWidget preLayerWidget) {
+//        this.preLayerWidget = preLayerWidget;
+//    }
 }

@@ -6,13 +6,14 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -111,12 +112,6 @@ public class Attributes implements IPersistenceAttributes {
             if (methodName.startsWith("get")) {
                 Element element;
                 VariableElement variableElement = JavaSourceParserUtil.guessField(method);
-                // skip processing if the method is not joined with field
-                // might be transient method or method implementation 
-                // from some interface
-                if( variableElement == null){
-                    continue;
-                }
                 if (fieldAccess) {
                     element = variableElement;
                 } else {
@@ -124,7 +119,9 @@ public class Attributes implements IPersistenceAttributes {
                 }
 
                 if (element != null) {
-                    if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")) {
+                    if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")
+                            && !(JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")
+                            || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne"))) {
                         this.getId().add(Id.load(element, variableElement));
                     } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
                         this.getBasic().add(Basic.load(element, variableElement));
@@ -370,6 +367,16 @@ public class Attributes implements IPersistenceAttributes {
         return this.id;
     }
 
+    public void addId(Id id) {
+        this.getId().add(id);
+        notifyListeners(id, "addAttribute", null, null);
+    }
+
+    public void removeId(Id id) {
+        this.getId().remove(id);
+        notifyListeners(id, "removeAttribute", null, null);
+    }
+
     /**
      * Gets the value of the embeddedId property.
      *
@@ -390,6 +397,12 @@ public class Attributes implements IPersistenceAttributes {
     @Override
     public void setEmbeddedId(EmbeddedId value) {
         this.embeddedId = value;
+        if (value == null) {
+            notifyListeners(null, "removeAttribute", null, null);
+        } else {
+            notifyListeners(embeddedId, "addAttribute", null, null);
+        }
+
     }
 
     /**
@@ -413,12 +426,36 @@ public class Attributes implements IPersistenceAttributes {
      *
      *
      */
+    public List<Attribute> getAllAttribute() {
+        List<Attribute> attributes = new ArrayList<Attribute>();
+        attributes.addAll(this.getId());
+        attributes.add(this.getEmbeddedId());
+        attributes.addAll(this.getVersion());
+        attributes.addAll(this.getBasic());
+        attributes.addAll(this.getEmbedded());
+        attributes.addAll(this.getElementCollection());
+        attributes.addAll(this.getRelationAttributes());
+        attributes.addAll(this.getTransient());
+        return attributes;
+    }
+
     @Override
     public List<Basic> getBasic() {
         if (basic == null) {
             basic = new ArrayList<Basic>();
         }
         return this.basic;
+    }
+
+    @Override
+    public void addBasic(Basic basic) {
+        this.getBasic().add(basic);
+        notifyListeners(basic, "addAttribute", null, null);
+    }
+
+    public void removeBasic(Basic basic) {
+        this.getBasic().remove(basic);
+        notifyListeners(basic, "removeAttribute", null, null);
     }
 
     /**
@@ -448,6 +485,18 @@ public class Attributes implements IPersistenceAttributes {
             version = new ArrayList<Version>();
         }
         return this.version;
+    }
+
+    @Override
+    public void addVersion(Version version) {
+        this.getVersion().add(version);
+        notifyListeners(version, "addAttribute", null, null);
+    }
+
+    @Override
+    public void removeVersion(Version version) {
+        this.getVersion().remove(version);
+        notifyListeners(version, "removeAttribute", null, null);
     }
 
     /**
@@ -600,6 +649,18 @@ public class Attributes implements IPersistenceAttributes {
         return this.elementCollection;
     }
 
+    @Override
+    public void addElementCollection(ElementCollection elementCollection) {
+        this.getElementCollection().add(elementCollection);
+        notifyListeners(elementCollection, "addAttribute", null, null);
+    }
+
+    @Override
+    public void removeElementCollection(ElementCollection elementCollection) {
+        this.getElementCollection().remove(elementCollection);
+        notifyListeners(elementCollection, "removeAttribute", null, null);
+    }
+
     /**
      * Gets the value of the embedded property.
      *
@@ -628,6 +689,18 @@ public class Attributes implements IPersistenceAttributes {
             embedded = new ArrayList<Embedded>();
         }
         return this.embedded;
+    }
+
+    @Override
+    public void addEmbedded(Embedded embedded) {
+        this.getEmbedded().add(embedded);
+        notifyListeners(embedded, "addAttribute", null, null);
+    }
+
+    @Override
+    public void removeEmbedded(Embedded embedded) {
+        this.getEmbedded().remove(embedded);
+        notifyListeners(embedded, "removeAttribute", null, null);
     }
 
     /**
@@ -660,15 +733,31 @@ public class Attributes implements IPersistenceAttributes {
         return this._transient;
     }
 
+    @Override
+    public void addTransient(Transient _transient) {
+        this.getTransient().add(_transient);
+        notifyListeners(_transient, "addAttribute", null, null);
+    }
+
+    @Override
+    public void removeTransient(Transient _transient) {
+        this.getTransient().remove(_transient);
+        notifyListeners(_transient, "removeAttribute", null, null);
+    }
+
     public void removeRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
             this.getManyToMany().remove((ManyToMany) relationAttribute);
+            notifyListeners(relationAttribute, "removeAttribute", null, null);
         } else if (relationAttribute instanceof OneToMany) {
             this.getOneToMany().remove((OneToMany) relationAttribute);
+            notifyListeners(relationAttribute, "removeAttribute", null, null);
         } else if (relationAttribute instanceof ManyToOne) {
             this.getManyToOne().remove((ManyToOne) relationAttribute);
+            notifyListeners(relationAttribute, "removeAttribute", null, null);
         } else if (relationAttribute instanceof OneToOne) {
             this.getOneToOne().remove((OneToOne) relationAttribute);
+            notifyListeners(relationAttribute, "removeAttribute", null, null);
         } else {
             throw new IllegalStateException("Invalid Type Relation Attribute");
         }
@@ -677,12 +766,16 @@ public class Attributes implements IPersistenceAttributes {
     public void addRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
             this.getManyToMany().add((ManyToMany) relationAttribute);
+            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof OneToMany) {
             this.getOneToMany().add((OneToMany) relationAttribute);
+            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof ManyToOne) {
             this.getManyToOne().add((ManyToOne) relationAttribute);
+            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof OneToOne) {
             this.getOneToOne().add((OneToOne) relationAttribute);
+            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else {
             throw new IllegalStateException("Invalid Type Relation Attribute");
         }
@@ -694,6 +787,23 @@ public class Attributes implements IPersistenceAttributes {
         relationAttributes.addAll(this.getManyToOne());
         relationAttributes.addAll(this.getManyToMany());
         return relationAttributes;
+    }
+
+    //does not need to extends BaseElement (id field hide)
+    private transient List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
+
+    public void notifyListeners(Object object, String property, String oldValue, String newValue) {
+        for (PropertyChangeListener propertyChangeListener : listener) {
+            propertyChangeListener.propertyChange(new PropertyChangeEvent(object, property, oldValue, newValue));
+        }
+    }
+
+    public void addChangeListener(PropertyChangeListener newListener) {
+        listener.add(newListener);
+    }
+
+    public void removeChangeListener(PropertyChangeListener newListener) {
+        listener.remove(newListener);
     }
 
 }

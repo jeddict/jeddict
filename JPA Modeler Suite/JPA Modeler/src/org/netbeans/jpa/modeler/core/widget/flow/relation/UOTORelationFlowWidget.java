@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.core.widget.flow.relation;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 
 /**
@@ -46,6 +47,11 @@ public class UOTORelationFlowWidget extends OTORelationFlowWidget implements Uni
     @Override
     public void setTargetEntityWidget(EntityWidget targetEntityWidget) {
         this.targetEntityWidget = targetEntityWidget;
+    }
+
+    @Override
+    public IFlowElementWidget getTargetWidget() {
+        return targetEntityWidget;
     }
 
 }

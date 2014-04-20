@@ -15,15 +15,19 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
+import org.netbeans.jpa.modeler.spec.Version;
 
 /**
  *
@@ -226,5 +230,31 @@ public interface IAttributes {
 
     //UPDATE ELEMENT
     boolean isAttributeExist(String name);
+
+    void addBasic(Basic basic);
+
+    void removeBasic(Basic basic);
+
+    void addTransient(Transient _transient);
+
+    void removeTransient(Transient _transient);
+
+    void addEmbedded(Embedded embedded);
+
+    void removeEmbedded(Embedded embedded);
+
+    void addElementCollection(ElementCollection elementCollection);
+
+    void removeElementCollection(ElementCollection elementCollection);
+
+    void removeRelationAttribute(RelationAttribute relationAttribute);
+
+    void addRelationAttribute(RelationAttribute relationAttribute);
+
+    void notifyListeners(Object source, String property, String oldValue, String newValue);
+
+    void addChangeListener(PropertyChangeListener newListener);
+
+    void removeChangeListener(PropertyChangeListener newListener);
 
 }

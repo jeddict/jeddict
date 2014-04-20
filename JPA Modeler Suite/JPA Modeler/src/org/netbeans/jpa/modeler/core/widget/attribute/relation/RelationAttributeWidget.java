@@ -15,7 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
-import javax.swing.JOptionPane;
+import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
@@ -367,4 +367,8 @@ public abstract class RelationAttributeWidget extends AttributeWidget {
     }
 
     public abstract RelationFlowWidget getRelationFlowWidget();
+
+    public abstract String getIconPath();
+
+    public abstract Image getIcon();
 }

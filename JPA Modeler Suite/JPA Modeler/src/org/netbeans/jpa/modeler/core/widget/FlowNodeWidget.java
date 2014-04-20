@@ -18,7 +18,7 @@ package org.netbeans.jpa.modeler.core.widget;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.jpa.modeler.core.widget.context.ContextModel;
+import org.netbeans.jpa.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
@@ -50,6 +50,7 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
                 setLabel(value);
             }
         });
+        setAnchorGap(4);
     }
 
     @Override
@@ -159,9 +160,14 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
         }
     }
 
+    private ContextPaletteModel contextPaletteModel;
+
     @Override
     public ContextPaletteModel getContextPaletteModel() {
-        return ContextModel.getContextPaletteModel(this);
+        if (contextPaletteModel == null) {
+            contextPaletteModel = NodeContextModel.getContextPaletteModel(this);
+        }
+        return contextPaletteModel;
     }
 
 }

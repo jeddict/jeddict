@@ -40,7 +40,7 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
-public class EntityWidget extends PersistenceClassWidget {
+public class EntityWidget extends PrimaryKeyContainerWidget {
 
     public EntityWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
@@ -174,6 +174,7 @@ public class EntityWidget extends PersistenceClassWidget {
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
 
+    @Override
     public String getInheritenceState() {
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = EntityWidget.this.getOutgoingGeneralizationFlowWidget();
         List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = EntityWidget.this.getIncomingGeneralizationFlowWidgets();
@@ -222,5 +223,4 @@ public class EntityWidget extends PersistenceClassWidget {
             scanPrimaryKeyError();
         }
     }
-
 }

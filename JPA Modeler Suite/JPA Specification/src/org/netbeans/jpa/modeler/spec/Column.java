@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -57,7 +58,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column")
-public class Column {
+public class Column extends BaseElement {
 
     @XmlAttribute
     protected String name;
@@ -80,8 +81,12 @@ public class Column {
     @XmlAttribute
     protected Integer scale;
 
-    public static Column load(Element element, VariableElement variableElement) {
+    public static Column load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
+        return Column.load(element, annotationMirror);
+    }
+
+    public static Column load(Element element, AnnotationMirror annotationMirror) {
         Column column = null;
         if (annotationMirror != null) {
             column = new Column();

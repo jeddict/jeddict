@@ -9,7 +9,6 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,10 +16,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
-import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
@@ -57,7 +55,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlType(name = "embedded-id", propOrder = {
     "attributeOverride"
 })
-public class EmbeddedId extends CompositionAttribute {
+public class EmbeddedId extends CompositionAttribute implements AttributeOverrideHandler {
 
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;
@@ -144,6 +142,19 @@ public class EmbeddedId extends CompositionAttribute {
      */
     public void setAccess(AccessType value) {
         this.access = value;
+    }
+
+    public AttributeOverride getAttributeOverride(String attributePath) {
+        List<AttributeOverride> attributeOverrides = getAttributeOverride();
+        for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
+            if (attributeOverride_TMP.getName().equals(attributePath)) {
+                return attributeOverride_TMP;
+            }
+        }
+        AttributeOverride attributeOverride_TMP = new AttributeOverride();
+        attributeOverride_TMP.setName(attributePath);
+        attributeOverrides.add(attributeOverride_TMP);
+        return attributeOverride_TMP;
     }
 
 }

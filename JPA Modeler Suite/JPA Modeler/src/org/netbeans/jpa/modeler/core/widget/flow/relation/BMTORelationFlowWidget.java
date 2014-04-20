@@ -15,10 +15,10 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 
 /**
@@ -50,4 +50,8 @@ public class BMTORelationFlowWidget extends MTORelationFlowWidget implements Bid
         this.targetRelationAttributeWidget = targetRelationAttributeWidget;
     }
 
+    @Override
+    public IFlowElementWidget getTargetWidget() {
+        return targetRelationAttributeWidget;
+    }
 }

@@ -8,6 +8,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -17,6 +18,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -57,7 +61,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "attributeOverride",
     "associationOverride"
 })
-public class Embedded extends CompositionAttribute {
+public class Embedded extends CompositionAttribute implements AttributeOverrideHandler, AssociationOverrideHandler {
 
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;//RENENG PENDING
@@ -90,6 +94,37 @@ public class Embedded extends CompositionAttribute {
             entityMappings.addEmbeddable(embeddableClassSpec);
         }
         embedded.setConnectedClassId(embeddableClassSpec.getId());
+
+        AnnotationMirror attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AttributeOverrides");
+        if (attributeOverridesMirror != null) {
+            List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
+            if (attributeOverridesMirrorList != null) {
+                for (Object attributeOverrideObj : attributeOverridesMirrorList) {
+                    embedded.getAttributeOverride().add(AttributeOverride.load(element, (AnnotationMirror) attributeOverrideObj));
+                }
+            }
+        } else {
+            attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AttributeOverride");
+            if (attributeOverridesMirror != null) {
+                embedded.getAttributeOverride().add(AttributeOverride.load(element, attributeOverridesMirror));
+            }
+        }
+
+        AnnotationMirror associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AssociationOverrides");
+        if (associationOverridesMirror != null) {
+            List associationOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(associationOverridesMirror, "value");
+            if (associationOverridesMirrorList != null) {
+                for (Object associationOverrideObj : associationOverridesMirrorList) {
+                    embedded.getAssociationOverride().add(AssociationOverride.load(element, (AnnotationMirror) associationOverrideObj));
+                }
+            }
+        } else {
+            associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AssociationOverride");
+            if (associationOverridesMirror != null) {
+                embedded.getAssociationOverride().add(AssociationOverride.load(element, associationOverridesMirror));
+            }
+        }
+
         return embedded;
     }
 
@@ -189,6 +224,33 @@ public class Embedded extends CompositionAttribute {
      */
     public void setAccess(AccessType value) {
         this.access = value;
+    }
+
+    public AttributeOverride getAttributeOverride(String attributePath) {
+        List<AttributeOverride> attributeOverrides = getAttributeOverride();
+        for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
+            if (attributeOverride_TMP.getName().equals(attributePath)) {
+                return attributeOverride_TMP;
+            }
+        }
+        AttributeOverride attributeOverride_TMP = new AttributeOverride();
+        attributeOverride_TMP.setName(attributePath);
+        attributeOverrides.add(attributeOverride_TMP);
+        return attributeOverride_TMP;
+    }
+
+    @Override
+    public AssociationOverride getAssociationOverride(String attributePath) {
+        List<AssociationOverride> associationOverrides = getAssociationOverride();
+        for (AssociationOverride associationOverride_TMP : associationOverrides) {
+            if (associationOverride_TMP.getName().equals(attributePath)) {
+                return associationOverride_TMP;
+            }
+        }
+        AssociationOverride attributeOverride_TMP = new AssociationOverride();
+        attributeOverride_TMP.setName(attributePath);
+        associationOverrides.add(attributeOverride_TMP);
+        return attributeOverride_TMP;
     }
 
 }

@@ -11,11 +11,13 @@ import javax.xml.bind.annotation.XmlType;
 //created by gaurav gupta
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "class", propOrder = {
+    "embeddable",
     "description",
     "attributes"
 })
 public class DefaultClass {
 
+    private boolean embeddable;
     private String description;
     @XmlElement(name = "attribute")
     private List<DefaultAttribute> attributes;
@@ -69,5 +71,19 @@ public class DefaultClass {
      */
     public void setClazz(String clazz) {
         this.clazz = clazz;
+    }
+
+    /**
+     * @return the embeddable
+     */
+    public boolean isEmbeddable() {
+        return embeddable;
+    }
+
+    /**
+     * @param embeddable the embeddable to set
+     */
+    public void setEmbeddable(boolean embeddable) {
+        this.embeddable = embeddable;
     }
 }

@@ -15,17 +15,17 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class AssociationOverrideSnippet implements Snippet {
 
     private String name = null;
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
+    private JoinTableSnippet joinTable;
 
     public String getName() {
         return name;
@@ -67,18 +67,24 @@ public class AssociationOverrideSnippet implements Snippet {
         builder.append("name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
 
-        builder.append("joinColumns={");
-
-        for (JoinColumnSnippet joinColumn : joinColumns) {
-            builder.append(joinColumn.getSnippet());
+        if (!joinColumns.isEmpty()) {
             builder.append(ORMConverterUtil.COMMA);
+            builder.append("joinColumns={");
+            for (JoinColumnSnippet joinColumn : joinColumns) {
+                builder.append(joinColumn.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
         }
 
-        builder.deleteCharAt(builder.length() - 1);
+        if (joinTable != null) {
+            builder.append(ORMConverterUtil.COMMA);
+            builder.append("joinTable=");
+            builder.append(joinTable.getSnippet());
+        }
 
-        builder.append(ORMConverterUtil.CLOSE_BRACES);
         builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
 
         return builder.toString();
@@ -88,8 +94,27 @@ public class AssociationOverrideSnippet implements Snippet {
         List<String> importSnippets = new ArrayList<String>();
 
         importSnippets.add("javax.persistence.AssociationOverride");
-        importSnippets.addAll(joinColumns.get(0).getImportSnippets());
+        if (joinColumns != null && !joinColumns.isEmpty()) {
+            importSnippets.addAll(joinColumns.get(0).getImportSnippets());
+        }
+        if (joinTable != null) {
+            importSnippets.addAll(joinTable.getImportSnippets());
+        }
 
         return importSnippets;
+    }
+
+    /**
+     * @return the joinTable
+     */
+    public JoinTableSnippet getJoinTable() {
+        return joinTable;
+    }
+
+    /**
+     * @param joinTable the joinTable to set
+     */
+    public void setJoinTable(JoinTableSnippet joinTable) {
+        this.joinTable = joinTable;
     }
 }

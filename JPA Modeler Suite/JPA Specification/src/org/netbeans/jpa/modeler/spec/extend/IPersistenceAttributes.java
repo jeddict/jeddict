@@ -104,4 +104,12 @@ public interface IPersistenceAttributes extends IAttributes {
      */
     List<Version> getVersion();
 
+    public void addId(Id id);
+
+    public void removeId(Id id);
+
+    void addVersion(Version version);
+
+    void removeVersion(Version version);
+
 }

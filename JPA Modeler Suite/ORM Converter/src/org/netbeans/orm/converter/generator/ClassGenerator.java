@@ -24,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
-import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
@@ -103,6 +102,8 @@ import org.netbeans.orm.converter.compiler.TableDefSnippet;
 import org.netbeans.orm.converter.compiler.TableGeneratorSnippet;
 import org.netbeans.orm.converter.compiler.UniqueConstraintSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
+import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
+import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public abstract class ClassGenerator {
@@ -265,28 +266,10 @@ public abstract class ClassGenerator {
             if (parsedLob != null) {
                 variableDef.setLob(true);
             }
-            List<AttributeOverride> attributedOverrrides
-                    = parsedElementCollection.getAttributeOverride();
 
-            if (attributedOverrrides != null
-                    && !attributedOverrrides.isEmpty()
-                    && classDef.getAttributeOverrides() == null) {
+            processInternalAttributeOverride(classDef, parsedElementCollection.getAttributeOverride());
+            processInternalAssociationOverride(classDef, parsedElementCollection.getAssociationOverride());
 
-                classDef.setAttributeOverrides(new AttributeOverridesSnippet());
-            }
-
-            for (AttributeOverride parsedAttributeOverride : attributedOverrrides) {
-                AttributeOverrideSnippet attributeOverride = new AttributeOverrideSnippet();
-
-                ColumnDefSnippet columnDefAttributeOverride = getColumnDef(
-                        parsedAttributeOverride.getColumn());
-
-                attributeOverride.setColumnDef(columnDefAttributeOverride);
-                attributeOverride.setName(parsedAttributeOverride.getName());
-
-                classDef.getAttributeOverrides().addAttributeOverrides(
-                        attributeOverride);
-            }
         }
     }
 
@@ -596,16 +579,22 @@ public abstract class ClassGenerator {
 
         for (AssociationOverride parsedAssociationOverride : parsedAssociationOverrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(
-                    parsedAssociationOverride.getJoinColumn());
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
+            JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
+            if (joinTable.isEmpty() && joinColumnsList.isEmpty()) {
+                continue;
+            }
             AssociationOverrideSnippet associationOverride = new AssociationOverrideSnippet();
-
             associationOverride.setName(parsedAssociationOverride.getName());
             associationOverride.setJoinColumns(joinColumnsList);
+            associationOverride.setJoinTable(joinTable);
 
             classDef.getAssociationOverrides().addAssociationOverride(
                     associationOverride);
+        }
+        if (classDef.getAssociationOverrides() != null && classDef.getAssociationOverrides().getAssociationOverrides().isEmpty()) {
+            classDef.setAssociationOverrides(null);
         }
     }
 
@@ -622,7 +611,9 @@ public abstract class ClassGenerator {
 
             ColumnDefSnippet columnDef = getColumnDef(
                     parsedAttributeOverride.getColumn());
-
+            if (columnDef == null) {
+                continue;
+            }
             AttributeOverrideSnippet attributeOverride = new AttributeOverrideSnippet();
 
             attributeOverride.setColumnDef(columnDef);
@@ -630,6 +621,10 @@ public abstract class ClassGenerator {
 
             classDef.getAttributeOverrides().addAttributeOverrides(
                     attributeOverride);
+        }
+
+        if (classDef.getAttributeOverrides().getAttributeOverrides().isEmpty()) {
+            classDef.setAttributeOverrides(null);
         }
     }
 
@@ -749,36 +744,62 @@ public abstract class ClassGenerator {
         if (parsedEmbeddeds == null) {
             return;
         }
-//
-//        List<ParsedEmbedded> parsedEmbeddeds = parsedAttributes.getEmbedded();
         for (Embedded parsedEmbeded : parsedEmbeddeds) {
             VariableDefSnippet variableDef = getVariableDef(parsedEmbeded.getName());
 
             variableDef.setEmbedded(true);
             variableDef.setType(parsedEmbeded.getAttributeType());
 
-            List<AttributeOverride> attributedOverrrides
-                    = parsedEmbeded.getAttributeOverride();
+            processInternalAttributeOverride(variableDef, parsedEmbeded.getAttributeOverride());
+            processInternalAssociationOverride(variableDef, parsedEmbeded.getAssociationOverride());
+        }
+    }
 
-            if (attributedOverrrides != null
-                    && !attributedOverrrides.isEmpty()
-                    && classDef.getAttributeOverrides() == null) {
-
-                classDef.setAttributeOverrides(new AttributeOverridesSnippet());
+    private void processInternalAttributeOverride(AttributeOverridesHandler attrHandler, List<AttributeOverride> attributeOverrrides) {
+        if (attributeOverrrides != null && !attributeOverrrides.isEmpty()
+                && attrHandler.getAttributeOverrides() == null) {
+            attrHandler.setAttributeOverrides(new AttributeOverridesSnippet());
+        }
+        for (AttributeOverride parsedAttributeOverride : attributeOverrrides) {
+            AttributeOverrideSnippet attributeOverride = new AttributeOverrideSnippet();
+            ColumnDefSnippet columnDef = getColumnDef(parsedAttributeOverride.getColumn());
+            if (columnDef == null) {
+                continue;
             }
+            attributeOverride.setColumnDef(columnDef);
+            attributeOverride.setName(parsedAttributeOverride.getName());
+            attrHandler.getAttributeOverrides().addAttributeOverrides(attributeOverride);
+        }
+        if (attrHandler.getAttributeOverrides() != null && attrHandler.getAttributeOverrides().getAttributeOverrides().isEmpty()) {
+            attrHandler.setAttributeOverrides(null);
+        }
+    }
 
-            for (AttributeOverride parsedAttributeOverride : attributedOverrrides) {
-                AttributeOverrideSnippet attributeOverride = new AttributeOverrideSnippet();
+    private void processInternalAssociationOverride(AssociationOverridesHandler assoHandler, List<AssociationOverride> associationOverrrides) {
 
-                ColumnDefSnippet columnDef = getColumnDef(
-                        parsedAttributeOverride.getColumn());
+        if (associationOverrrides != null && !associationOverrrides.isEmpty()
+                && assoHandler.getAssociationOverrides() == null) {
+            assoHandler.setAssociationOverrides(new AssociationOverridesSnippet());
+        }
 
-                attributeOverride.setColumnDef(columnDef);
-                attributeOverride.setName(parsedAttributeOverride.getName());
+        for (AssociationOverride parsedAssociationOverride : associationOverrrides) {
 
-                classDef.getAttributeOverrides().addAttributeOverrides(
-                        attributeOverride);
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
+            JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
+
+            if (joinTable.isEmpty() && joinColumnsList.isEmpty()) {
+                continue;
             }
+            AssociationOverrideSnippet associationOverride = new AssociationOverrideSnippet();
+            associationOverride.setName(parsedAssociationOverride.getName());
+            associationOverride.setJoinColumns(joinColumnsList);
+            associationOverride.setJoinTable(joinTable);
+
+            assoHandler.getAssociationOverrides().addAssociationOverride(
+                    associationOverride);
+        }
+        if (assoHandler.getAssociationOverrides() != null && assoHandler.getAssociationOverrides().getAssociationOverrides().isEmpty()) {
+            assoHandler.setAssociationOverrides(null);
         }
     }
 
@@ -791,28 +812,7 @@ public abstract class ClassGenerator {
         variableDef.setEmbeddedId(true);
         variableDef.setType(parsedEmbeddedId.getAttributeType());
 
-        List<AttributeOverride> attributedOverrrides
-                = parsedEmbeddedId.getAttributeOverride();
-
-        if (attributedOverrrides != null
-                && !attributedOverrrides.isEmpty()
-                && classDef.getAttributeOverrides() == null) {
-
-            classDef.setAttributeOverrides(new AttributeOverridesSnippet());
-        }
-
-        for (AttributeOverride parsedAttributeOverride : attributedOverrrides) {
-
-            AttributeOverrideSnippet attributeOverride = new AttributeOverrideSnippet();
-
-            ColumnDefSnippet columnDef = getColumnDef(parsedAttributeOverride.getColumn());
-
-            attributeOverride.setColumnDef(columnDef);
-            attributeOverride.setName(parsedAttributeOverride.getName());
-
-            classDef.getAttributeOverrides().addAttributeOverrides(
-                    attributeOverride);
-        }
+        processInternalAttributeOverride(variableDef, parsedEmbeddedId.getAttributeOverride());
     }
 
     protected void processId(List<Id> parsedIds) {
@@ -989,6 +989,8 @@ public abstract class ClassGenerator {
             if (parsedManyToOne.getFetch() != null) {
                 manyToOne.setFetchType(parsedManyToOne.getFetch().value());
             }
+            manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
+            manyToOne.setMapsId(parsedManyToOne.getMapsId());
 
             VariableDefSnippet variableDef = getVariableDef(parsedManyToOne.getName());
 
@@ -1078,6 +1080,8 @@ public abstract class ClassGenerator {
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());
             }
+            oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
+            oneToOne.setMapsId(parsedOneToOne.getMapsId());
 
             VariableDefSnippet variableDef = getVariableDef(parsedOneToOne.getName());
 

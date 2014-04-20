@@ -16,20 +16,14 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.ManyToMany;
-import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -39,7 +33,7 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget {
 
     public BasicCollectionAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/basic-collection-attribute.png"));
+        this.setIcon(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE);
 
     }
 
@@ -51,7 +45,6 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget {
         ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
         elementConfigFactory.createPropertySet(set, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
-
     }
 //
 //      private PropertySupport getCollectionTableColumnProperty() {

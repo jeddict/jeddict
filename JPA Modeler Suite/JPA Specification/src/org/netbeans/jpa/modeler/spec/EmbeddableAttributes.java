@@ -6,6 +6,8 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.Element;
@@ -520,6 +522,70 @@ public class EmbeddableAttributes implements IAttributes {
         relationAttributes.addAll(this.getManyToOne());
         relationAttributes.addAll(this.getManyToMany());
         return relationAttributes;
+    }
+
+    @Override
+    public void addBasic(Basic basic) {
+        this.getBasic().add(basic);
+        notifyListeners(basic, "addAttribute", null, null);
+    }
+
+    public void removeBasic(Basic basic) {
+        this.getBasic().remove(basic);
+        notifyListeners(basic, "removeAttribute", null, null);
+    }
+
+    @Override
+    public void addTransient(Transient _transient) {
+        this.getTransient().add(_transient);
+        notifyListeners(_transient, "addAttribute", null, null);
+    }
+
+    @Override
+    public void removeTransient(Transient _transient) {
+        this.getTransient().remove(_transient);
+        notifyListeners(_transient, "removeAttribute", null, null);
+    }
+
+    @Override
+    public void addEmbedded(Embedded embedded) {
+        this.getEmbedded().add(embedded);
+        notifyListeners(embedded, "addAttribute", null, null);
+    }
+
+    @Override
+    public void removeEmbedded(Embedded embedded) {
+        this.getEmbedded().remove(embedded);
+        notifyListeners(embedded, "removeAttribute", null, null);
+    }
+
+    @Override
+    public void addElementCollection(ElementCollection elementCollection) {
+        this.getElementCollection().add(elementCollection);
+        notifyListeners(elementCollection, "addAttribute", null, null);
+    }
+
+    @Override
+    public void removeElementCollection(ElementCollection elementCollection) {
+        this.getElementCollection().remove(elementCollection);
+        notifyListeners(elementCollection, "removeAttribute", null, null);
+    }
+
+    //does not need to extends BaseElement (id field hide)
+    private transient List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
+
+    public void notifyListeners(Object object, String property, String oldValue, String newValue) {
+        for (PropertyChangeListener propertyChangeListener : listener) {
+            propertyChangeListener.propertyChange(new PropertyChangeEvent(object, property, oldValue, newValue));
+        }
+    }
+
+    public void addChangeListener(PropertyChangeListener newListener) {
+        listener.add(newListener);
+    }
+
+    public void removeChangeListener(PropertyChangeListener newListener) {
+        listener.remove(newListener);
     }
 
 }

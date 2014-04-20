@@ -52,13 +52,18 @@ public class RelationValidator implements IRelationValidator {
         if (proxy.getEdgeType().contains("RELATION") && (proxy.getEdgeType().charAt(0) == 'U' || proxy.getEdgeType().charAt(0) == 'B')) {
             if (proxy.getTarget() instanceof MappedSuperclassWidget) {
                 return false;
-            } else if (proxy.getTarget() instanceof EmbeddableWidget && proxy.getEdgeType().contains("RELATION")) {
+            } else if (proxy.getTarget() instanceof EmbeddableWidget) {
                 return false;
             }
         } else if (proxy.getEdgeType().equals("GENERALIZATION")) {
             if (!(proxy.getSource() instanceof JavaClassWidget) || !(proxy.getTarget() instanceof JavaClassWidget)) {
                 return false;
-
+            } else if (proxy.getSource() == proxy.getTarget()) {
+                return false;
+            } else if ((proxy.getSource() instanceof EmbeddableWidget) && !(proxy.getTarget() instanceof EmbeddableWidget)) {
+                return false;
+            } else if (!(proxy.getSource() instanceof EmbeddableWidget) && (proxy.getTarget() instanceof EmbeddableWidget)) {
+                return false;
             }
             //Prevent Cyclic inheritence
             JavaClassWidget sourceJavaClassWidget = (JavaClassWidget) proxy.getSource();

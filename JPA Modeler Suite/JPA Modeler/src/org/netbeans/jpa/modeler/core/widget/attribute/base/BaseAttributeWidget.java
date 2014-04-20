@@ -62,7 +62,7 @@ public class BaseAttributeWidget extends AttributeWidget {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        super.createPropertySet(set);
+//        super.createPropertySet(set);
         if (this.getBaseElementSpec() instanceof PersistenceBaseAttribute) {
             PersistenceBaseAttribute persistenceBaseAttribute = (PersistenceBaseAttribute) this.getBaseElementSpec();
             if (persistenceBaseAttribute.getColumn() == null) {

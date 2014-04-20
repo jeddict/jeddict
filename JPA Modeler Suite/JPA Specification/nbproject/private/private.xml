@@ -11,11 +11,6 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/JBP_BEBUG/Modeler%20Project/JPA%20Modeler%20Suite/JPA%20Specification/src/org/netbeans/jpa/source/JavaSourceParserUtil.java</file>
-            <file>file:/C:/JBP_BEBUG/Modeler%20Project/JPA%20Modeler%20Suite/JPA%20Specification/src/org/netbeans/jpa/modeler/spec/ManyToOne.java</file>
-            <file>file:/C:/JBP_BEBUG/Modeler%20Project/JPA%20Modeler%20Suite/JPA%20Specification/src/org/netbeans/jpa/modeler/spec/OneToOne.java</file>
-            <file>file:/C:/JBP_BEBUG/Modeler%20Project/JPA%20Modeler%20Suite/JPA%20Specification/src/org/netbeans/jpa/modeler/spec/Attributes.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

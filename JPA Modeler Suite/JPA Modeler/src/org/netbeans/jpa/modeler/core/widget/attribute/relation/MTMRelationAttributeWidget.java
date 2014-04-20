@@ -15,14 +15,15 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
+import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.MTMRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -55,10 +56,22 @@ public class MTMRelationAttributeWidget extends RelationAttributeWidget {
      */
     public void setManyToManyRelationFlowWidget(MTMRelationFlowWidget manyToManyRelationFlowWidget) {
         this.manyToManyRelationFlowWidget = manyToManyRelationFlowWidget;
+        this.setIcon(this.getIcon());
+    }
+
+    public String getIconPath() {
         if (manyToManyRelationFlowWidget instanceof Unidirectional) {
-            this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/umtm-attribute.png"));
+            return JPAModelerUtil.UMTM_ATTRIBUTE_ICON_PATH;
         } else {
-            this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/bmtm-attribute.png"));
+            return JPAModelerUtil.BMTM_ATTRIBUTE_ICON_PATH;
+        }
+    }
+
+    public Image getIcon() {
+        if (manyToManyRelationFlowWidget instanceof Unidirectional) {
+            return JPAModelerUtil.UMTM_ATTRIBUTE;
+        } else {
+            return JPAModelerUtil.BMTM_ATTRIBUTE;
         }
     }
 

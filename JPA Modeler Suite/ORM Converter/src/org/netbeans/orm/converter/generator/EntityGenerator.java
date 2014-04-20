@@ -47,13 +47,6 @@ public class EntityGenerator extends ClassGenerator {
 
     public ClassDefSnippet getClassDef() {
 
-        //--BEGIN ---- TODOs:
-        /*
-         * Commented -- revist for Phase 3
-         ParsedAccessType accessType = parsedEntity.getAccess();
-
-         */
-        //----END TODO ---------
         //Classlevel annotations
         processDiscriminatorColumn();
         processDiscriminatorValue();

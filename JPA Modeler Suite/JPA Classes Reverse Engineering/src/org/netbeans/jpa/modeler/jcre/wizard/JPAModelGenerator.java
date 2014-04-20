@@ -44,12 +44,14 @@ public class JPAModelGenerator {
 //                ElementHandle<TypeElement> elementHandle = ElementHandle.create(jc);
 //                arrEntityClassFO[0] = org.netbeans.api.java.source.SourceUtils.getFile(elementHandle, controller.getClasspathInfo());
                 fieldAccess[0] = JavaSourceParserUtil.isFieldAccess(jc);
-                org.netbeans.jpa.modeler.spec.Entity entitySpec = new org.netbeans.jpa.modeler.spec.Entity();
-                entitySpec.load(entityMappings, jc, fieldAccess[0]);
-                entityMappings.addEntity(entitySpec);
+                if (entityMappings.findEntity(jc.getSimpleName().toString()) == null) {
+                    org.netbeans.jpa.modeler.spec.Entity entitySpec = new org.netbeans.jpa.modeler.spec.Entity();
+                    entitySpec.load(entityMappings, jc, fieldAccess[0]);
+                    entityMappings.addEntity(entitySpec);
+                }
 
             }
         }, true);
- }
+    }
 
 }

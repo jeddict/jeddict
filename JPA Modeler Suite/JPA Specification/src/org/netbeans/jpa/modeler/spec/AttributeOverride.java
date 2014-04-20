@@ -6,11 +6,17 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -56,6 +62,20 @@ public class AttributeOverride {
     @XmlAttribute(required = true)
     protected String name;
 
+    public static AttributeOverride load(Element element, AnnotationMirror annotationMirror) {
+        AttributeOverride attributeOverride = null;
+        if (annotationMirror != null) {
+            attributeOverride = new AttributeOverride();
+            attributeOverride.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+
+            AnnotationMirror columnsAnnot = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "column");
+            if (columnsAnnot != null) {
+                attributeOverride.column = Column.load(element, columnsAnnot);
+            }
+        }
+        return attributeOverride;
+    }
+
     /**
      * Gets the value of the description property.
      *
@@ -83,6 +103,9 @@ public class AttributeOverride {
      *
      */
     public Column getColumn() {
+        if (column == null) {
+            column = new Column();
+        }
         return column;
     }
 

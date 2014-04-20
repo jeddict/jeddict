@@ -18,10 +18,12 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
+import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class VariableDefSnippet implements Snippet {
+public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
     public static final String TEMPORAL_DATE = "TemporalType.DATE";
     public static final String TEMPORAL_TIME = "TemporalType.TIME";
@@ -57,6 +59,8 @@ public class VariableDefSnippet implements Snippet {
     private TableGeneratorSnippet tableGenerator = null;
     private SequenceGeneratorSnippet sequenceGenerator = null;
     private EnumeratedSnippet enumerated = null;
+    private AssociationOverridesSnippet associationOverrides = null;
+    private AttributeOverridesSnippet attributeOverrides = null;
 
     private TypeIdentifierSnippet typeIdentifier = null;
 
@@ -421,6 +425,13 @@ public class VariableDefSnippet implements Snippet {
             importSnippets.add("javax.persistence.Version");
         }
 
+        if (this.getAttributeOverrides() != null) {
+            importSnippets.addAll(this.getAttributeOverrides().getImportSnippets());
+        }
+        if (this.getAssociationOverrides() != null) {
+            importSnippets.addAll(this.getAssociationOverrides().getImportSnippets());
+        }
+
 //        if (importSnippets.contains("java.util.Date")) {  //BUG : remove date
 //            importSnippets.remove("java.util.Date");
 //        }
@@ -476,5 +487,33 @@ public class VariableDefSnippet implements Snippet {
      */
     public void setCollectionTable(CollectionTableSnippet collectionTable) {
         this.collectionTable = collectionTable;
+    }
+
+    /**
+     * @return the associationOverrides
+     */
+    public AssociationOverridesSnippet getAssociationOverrides() {
+        return associationOverrides;
+    }
+
+    /**
+     * @param associationOverrides the associationOverrides to set
+     */
+    public void setAssociationOverrides(AssociationOverridesSnippet associationOverrides) {
+        this.associationOverrides = associationOverrides;
+    }
+
+    /**
+     * @return the attributeOverrides
+     */
+    public AttributeOverridesSnippet getAttributeOverrides() {
+        return attributeOverrides;
+    }
+
+    /**
+     * @param attributeOverrides the attributeOverrides to set
+     */
+    public void setAttributeOverrides(AttributeOverridesSnippet attributeOverrides) {
+        this.attributeOverrides = attributeOverrides;
     }
 }

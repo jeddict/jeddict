@@ -15,8 +15,9 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
-import org.netbeans.modeler.anchorshape.IconAnchorShape;
+import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.AnchorShapeFactory;
+import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.openide.util.ImageUtilities;
@@ -25,13 +26,15 @@ import org.openide.util.ImageUtilities;
  *
  * @author Gaurav Gupta
  */
-public class OTORelationFlowWidget extends RelationFlowWidget {
+public abstract class OTORelationFlowWidget extends RelationFlowWidget {
+
+    private static final AnchorShape SOURCE_ANCHOR_SHAPE = AnchorShapeFactory.createImageAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one.gif"), true);
+    private static final AnchorShape TARGET_ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png"), true);
 
     public OTORelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
-        setSourceAnchorShape(AnchorShapeFactory.createImageAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one.gif"), true));
-        setTargetAnchorShape(new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png"), true));
-
+        setSourceAnchorShape(SOURCE_ANCHOR_SHAPE);
+        setTargetAnchorShape(TARGET_ANCHOR_SHAPE);
     }
 
 }

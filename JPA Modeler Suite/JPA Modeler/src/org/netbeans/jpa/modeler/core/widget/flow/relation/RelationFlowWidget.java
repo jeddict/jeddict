@@ -16,25 +16,18 @@
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
 import java.awt.Color;
-import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
-import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
-import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
-import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.openide.nodes.Sheet;
 
-public abstract class RelationFlowWidget extends PEdgeWidget implements IFlowEdgeWidget {
+public abstract class RelationFlowWidget extends AbstractEdgeWidget {
 
     private RelationAttributeWidget sourceRelationAttributeWidget;
-    private IBaseElement baseElementSpec;
-    private Widget flowElementsContainer;
 
     public RelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
@@ -45,6 +38,7 @@ public abstract class RelationFlowWidget extends PEdgeWidget implements IFlowEdg
                 RelationFlowWidget.this.setLabel(name);
             }
         });
+        setAnchorGap(4);
     }
 
     @Override
@@ -66,76 +60,10 @@ public abstract class RelationFlowWidget extends PEdgeWidget implements IFlowEdg
         this.sourceRelationAttributeWidget = sourceRelationAttributeWidget;
     }
 
-    /**
-     * @return the sourceNode
-     */
-//    public IFlowNodeWidget getSourceNode() {
-//        return sourceNode;
-//    }
-    /**
-     * @param sourceNode the sourceNode to set
-     */
-    public void setSourceNode(FlowNodeWidget sourceNode) {
-
-    }
-
-    /**
-     * @return the targetNode
-     */
-//    public IFlowNodeWidget getTargetNode() {
-//        return targetNode;
-//    }
-    /**
-     * @param targetNode the targetNode to set
-     */
-    public void setTargetNode(FlowNodeWidget targetNode) {
-
-    }
-    protected String id;
-    protected String name;
-    protected String documentation;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-//        if (name != null && !name.trim().isEmpty()) {
-//            this.getSequenceFlowSpec().setName(name);
-//        } else {
-//            this.getSequenceFlowSpec().setName(null);
-//        }
-    }
-
-    public String getDocumentation() {
-        return documentation;
-    }
-
-    public void setDocumentation(String documentation) {
-        this.documentation = documentation;
-    }
-
-    /**
-     * @return the flowElementsContainer
-     */
-    public Widget getFlowElementsContainer() {
-        return flowElementsContainer;
-    }
-
-    /**
-     * @param flowElementsContainer the flowElementsContainer to set
-     */
-    public void setFlowElementsContainer(Widget flowElementsContainer) {
-        this.flowElementsContainer = flowElementsContainer;
+//
+    @Override
+    public RelationAttributeWidget getSourceWidget() {
+        return sourceRelationAttributeWidget;
     }
     private Color color;
     // private Float size;
@@ -160,42 +88,12 @@ public abstract class RelationFlowWidget extends PEdgeWidget implements IFlowEdg
         this.setLineColor(color);
     }
 
-    /**
-     * @return the baseElementSpec
-     */
-    public IBaseElement getBaseElementSpec() {
-        return baseElementSpec;
-    }
-
-    /**
-     * @param baseElementSpec the baseElementSpec to set
-     */
-    public void setBaseElementSpec(IBaseElement baseElementSpec) {
-        this.baseElementSpec = baseElementSpec;
-    }
-
-    /**
-     * @return the sequenceFlowSpec
-     */
-//    public TSequenceFlow getSequenceFlowSpec() {
-//        return (TSequenceFlow) baseElementSpec;
-//    }
     @Override
     public void init() {
     }
 
     @Override
     public void destroy() {
-    }
-
-    @Override
-    public IFlowNodeWidget getSourceFlowNodeWidget() {
-        throw new UnsupportedOperationException("Not supported yet."); //  return sourceNode;
-    }
-
-    @Override
-    public IFlowNodeWidget getTargetFlowNodeWidget() {
-        throw new UnsupportedOperationException("Not supported yet."); //  return targetNode;
     }
 
 }

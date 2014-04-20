@@ -8,11 +8,14 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -64,6 +67,28 @@ public class AssociationOverride {
     protected JoinTable joinTable;
     @XmlAttribute(required = true)
     protected String name;
+
+    public static AssociationOverride load(Element element, AnnotationMirror annotationMirror) {
+        AssociationOverride associationOverride = null;
+        if (annotationMirror != null) {
+            associationOverride = new AssociationOverride();
+            associationOverride.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+
+            List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
+            if (joinColumnsAnnot != null) {
+                for (Object joinColumnObj : joinColumnsAnnot) {
+                    associationOverride.getJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) joinColumnObj));
+                }
+            }
+
+            AnnotationMirror joinTableAnnot = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinTable");
+            if (joinTableAnnot != null) {
+                associationOverride.joinTable = JoinTable.load(element, joinTableAnnot);
+            }
+
+        }
+        return associationOverride;
+    }
 
     /**
      * Gets the value of the description property.

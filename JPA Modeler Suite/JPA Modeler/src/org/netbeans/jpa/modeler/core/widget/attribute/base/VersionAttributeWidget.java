@@ -16,10 +16,10 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -29,7 +29,7 @@ public class VersionAttributeWidget extends BaseAttributeWidget {
 
     public VersionAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/version-attribute.png"));
+        this.setIcon(JPAModelerUtil.VERSION_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

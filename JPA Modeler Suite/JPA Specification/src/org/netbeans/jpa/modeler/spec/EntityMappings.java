@@ -102,12 +102,12 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
     "namedQuery",
     "namedNativeQuery",
     "sqlResultSetMapping",
-    "idClass",
-    "embeddedIdClass",
+    "defaultClass",
     "mappedSuperclass",
     "entity",
     "embeddable",
-    "jpaDiagram"
+    "jpaDiagram",
+    "theme"
 })
 @XmlRootElement(name = "entity-mappings")
 public class EntityMappings extends BaseElement implements IDefinitionElement, IRootElement {
@@ -131,10 +131,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     @XmlElement(name = "sql-result-set-mapping")
     protected List<SqlResultSetMapping> sqlResultSetMapping;
 
-    @XmlElement(name = "idclass")
-    private List<DefaultClass> idClass;
-    @XmlElement(name = "embeddedidclass")
-    private List<DefaultClass> embeddedIdClass;
+    @XmlElement(name = "default-class")
+    private List<DefaultClass> defaultClass;
     @XmlElement(name = "mapped-superclass")
     protected List<MappedSuperclass> mappedSuperclass;
     protected List<Entity> entity;
@@ -146,9 +144,15 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private Diagram jpaDiagram;//Custom Added
     @XmlAttribute
     private String status;//GENERATED (DBRE,JCRE)
+    @XmlAttribute
+    private String theme;
 
     @XmlAttribute
     private String persistenceUnitName;
+
+    public EntityMappings() {
+        System.out.println("");
+    }
 
     //UPDATE ELEMENT
     public boolean isClassExist(String _class) {
@@ -702,27 +706,68 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     /**
-     * @return the idClass
+     * @return the defaultClass
      */
-    public List<DefaultClass> getIdClass() {
-        if (this.idClass == null) {
-            this.idClass = new ArrayList<DefaultClass>();
+    public List<DefaultClass> getDefaultClass() {
+        if (this.defaultClass == null) {
+            this.defaultClass = new ArrayList<DefaultClass>();
         }
-        return idClass;
+        return defaultClass;
     }
 
-    /**
-     * @param idClass the idClass to set
-     */
-    public void setIdClass(List<DefaultClass> idClass) {
-        this.idClass = idClass;
+    public DefaultClass addDefaultClass(String _class) {
+        if (this.defaultClass == null) {
+            this.defaultClass = new ArrayList<DefaultClass>();
+        }
+        DefaultClass existDefaultClass = findDefaultClass(_class);
+//        if (existDefaultClass != null) {//if same IdClass is used by other entity or used as EmbeddedId in other entity class
+//            if (!existDefaultClass.isEmbeddable()) {
+//                existDefaultClass.setEmbeddable(defaultClass.isEmbeddable());
+//            }
+//            if (existDefaultClass.getAttributes() == null || existDefaultClass.getAttributes().isEmpty()) {
+//                existDefaultClass.setAttributes(defaultClass.getAttributes());
+//            }
+//
+//        } else
+
+        if (existDefaultClass == null) {
+            existDefaultClass = new DefaultClass();
+            existDefaultClass.setClazz(_class);
+            this.defaultClass.add(existDefaultClass);
+        }
+        return existDefaultClass;
+
     }
 
-    public void addIdClass(DefaultClass idClass) {
-        if (this.idClass == null) {
-            this.idClass = new ArrayList<DefaultClass>();
+//    public void addDefaultClass(DefaultClass defaultClass) {
+//
+//        if (this.defaultClass == null) {
+//            this.defaultClass = new ArrayList<DefaultClass>();
+//        }
+//
+//        DefaultClass existDefaultClass = findDefaultClass(defaultClass.getClazz());
+//        if (existDefaultClass != null) {//if same IdClass is used by other entity or used as EmbeddedId in other entity class
+//            if (!existDefaultClass.isEmbeddable()) {
+//                existDefaultClass.setEmbeddable(defaultClass.isEmbeddable());
+//            }
+//            if (existDefaultClass.getAttributes() == null || existDefaultClass.getAttributes().isEmpty()) {
+//                existDefaultClass.setAttributes(defaultClass.getAttributes());
+//            }
+//
+//        } else {
+//            this.defaultClass.add(defaultClass);
+//        }
+//
+//    }
+    public DefaultClass findDefaultClass(String _class) {
+        if (this.defaultClass != null) {
+            for (DefaultClass defaultClass_TMP : defaultClass) {
+                if (defaultClass_TMP.getClazz().equals(_class)) {
+                    return defaultClass_TMP;
+                }
+            }
         }
-        this.idClass.add(idClass);
+        return null;
     }
 
     /**
@@ -875,29 +920,18 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         }
     }
     // Issue Fix #5949 End
-
     /**
-     * @return the embeddedIdClass
+     * @return the theme
      */
-    public List<DefaultClass> getEmbeddedIdClass() {
-        if (embeddedIdClass == null) {
-            embeddedIdClass = new ArrayList<DefaultClass>();
-        }
-        return embeddedIdClass;
+    public String getTheme() {
+        return theme;
     }
 
     /**
-     * @param embeddedIdClass the embeddedIdClass to set
+     * @param theme the theme to set
      */
-    public void setEmbeddedIdClass(List<DefaultClass> embeddedIdClass) {
-        this.embeddedIdClass = embeddedIdClass;
-    }
-
-    public void addEmbeddedIdClass(DefaultClass embeddedIdClass) {
-        if (this.embeddedIdClass == null) {
-            this.embeddedIdClass = new ArrayList<DefaultClass>();
-        }
-        this.embeddedIdClass.add(embeddedIdClass);
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
 }

@@ -15,16 +15,17 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ManyToOneSnippet extends AbstractRelationDefSnippet
         implements RelationDefSnippet {
 
     private boolean optional = false;
+    private String mapsId;
+    private boolean primaryKey;
 
     public boolean isOptional() {
         return optional;
@@ -35,17 +36,25 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
     }
 
     public String getSnippet() throws InvalidDataException {
-
+        StringBuilder builder = new StringBuilder();
+        if (isPrimaryKey()) {
+            if (mapsId == null) {
+                builder.append("@Id");
+            } else if (mapsId.trim().isEmpty()) {
+                builder.append("@MapsId");
+            } else {
+                builder.append("@MapsId(\"").append(mapsId).append("\")");
+            }
+        }
+        builder.append("@ManyToOne");
         if (optional == true
                 && getTargetEntity() == null
                 && getFetchType() == null
                 && getCascadeTypes().isEmpty()) {
-
-            return "@ManyToOne";
+            return builder.toString();
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("@ManyToOne(");
+        builder.append("(");
 
         if (optional == false) {
             builder.append("optional=false,");
@@ -80,13 +89,19 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
     public List<String> getImportSnippets() throws InvalidDataException {
 
         if (getFetchType() == null
-                && getCascadeTypes().isEmpty()) {
+                && getCascadeTypes().isEmpty() && !isPrimaryKey()) {
 
             return Collections.singletonList("javax.persistence.ManyToOne");
         }
 
         List<String> importSnippets = new ArrayList<String>();
-
+        if (isPrimaryKey()) {
+            if (mapsId == null) {
+                importSnippets.add("javax.persistence.Id");
+            } else {
+                importSnippets.add("javax.persistence.MapsId");
+            }
+        }
         importSnippets.add("javax.persistence.ManyToOne");
 
         if (getFetchType() != null) {
@@ -98,5 +113,33 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
         }
 
         return importSnippets;
+    }
+
+    /**
+     * @return the primaryKey
+     */
+    public boolean isPrimaryKey() {
+        return primaryKey;
+    }
+
+    /**
+     * @param primaryKey the primaryKey to set
+     */
+    public void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+    /**
+     * @return the mapsId
+     */
+    public String getMapsId() {
+        return mapsId;
+    }
+
+    /**
+     * @param mapsId the mapsId to set
+     */
+    public void setMapsId(String mapsId) {
+        this.mapsId = mapsId;
     }
 }

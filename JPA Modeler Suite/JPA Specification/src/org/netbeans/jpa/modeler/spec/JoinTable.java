@@ -77,8 +77,12 @@ public class JoinTable {
     @XmlAttribute
     protected String schema;
 
-    public static JoinTable load(Element element, VariableElement variableElement) {
+    public static JoinTable load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinTable");
+        return JoinTable.load(element, annotationMirror);
+    }
+
+    public static JoinTable load(Element element, AnnotationMirror annotationMirror) {
 
         JoinTable joinTable = null;
         if (annotationMirror != null) {
@@ -87,13 +91,13 @@ public class JoinTable {
             List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
             if (joinColumnsAnnot != null) {
                 for (Object joinColumnObj : joinColumnsAnnot) {
-                    joinTable.getJoinColumn().add(JoinColumn.load(element, variableElement, (AnnotationMirror) joinColumnObj));
+                    joinTable.getJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) joinColumnObj));
                 }
             }
             List inverseJoinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "inverseJoinColumns");
             if (inverseJoinColumnsAnnot != null) {
                 for (Object inverseJoinColumnsObj : inverseJoinColumnsAnnot) {
-                    joinTable.getInverseJoinColumn().add(JoinColumn.load(element, variableElement, (AnnotationMirror) inverseJoinColumnsObj));
+                    joinTable.getInverseJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) inverseJoinColumnsObj));
                 }
             }
             List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");

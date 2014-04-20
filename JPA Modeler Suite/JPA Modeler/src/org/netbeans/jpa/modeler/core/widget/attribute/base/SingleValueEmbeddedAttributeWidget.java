@@ -17,10 +17,10 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -32,7 +32,7 @@ public class SingleValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget 
 
     public SingleValueEmbeddedAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/single-value-embedded.gif"));
+        this.setIcon(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

@@ -15,8 +15,6 @@
  */
 package org.netbeans.jpa.modeler.source.generator.adaptor;
 
-import java.util.ServiceLoader;
-
 /**
  *
  * @author Gaurav Gupta

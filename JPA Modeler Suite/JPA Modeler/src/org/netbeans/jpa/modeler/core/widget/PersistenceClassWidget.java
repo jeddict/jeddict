@@ -61,6 +61,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.list
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
@@ -69,6 +70,29 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
  * @author Gaurav_Gupta
  */
 public abstract class PersistenceClassWidget extends JavaClassWidget {
+
+    public List<AttributeWidget> getAllAttributeWidgets() {
+        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>(this.getIdAttributeWidgets());
+        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (classWidget instanceof PersistenceClassWidget) {
+            attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllAttributeWidgets());
+        }
+        attributeWidgets.addAll(idAttributeWidgets);
+        if (embeddedIdAttributeWidget != null) {
+            attributeWidgets.add(embeddedIdAttributeWidget);
+        }
+        attributeWidgets.addAll(getVersionAttributeWidgets());
+        attributeWidgets.addAll(getBasicAttributeWidgets());
+        attributeWidgets.addAll(getBasicCollectionAttributeWidgets());
+        attributeWidgets.addAll(singleValueEmbeddedAttributeWidgets);
+        attributeWidgets.addAll(multiValueEmbeddedAttributeWidgets);
+        attributeWidgets.addAll(oneToOneRelationAttributeWidgets);
+        attributeWidgets.addAll(oneToManyRelationAttributeWidgets);
+        attributeWidgets.addAll(manyToOneRelationAttributeWidgets);
+        attributeWidgets.addAll(manyToManyRelationAttributeWidgets);
+        attributeWidgets.addAll(transientAttributeWidgets);
+        return attributeWidgets;
+    }
 
     private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<RelationFlowWidget>();
     private EmbeddedIdAttributeWidget embeddedIdAttributeWidget;
@@ -81,7 +105,6 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     private final List<OTMRelationAttributeWidget> oneToManyRelationAttributeWidgets = new ArrayList<OTMRelationAttributeWidget>();
     private final List<MTORelationAttributeWidget> manyToOneRelationAttributeWidgets = new ArrayList<MTORelationAttributeWidget>();
     private final List<MTMRelationAttributeWidget> manyToManyRelationAttributeWidgets = new ArrayList<MTMRelationAttributeWidget>();
-
     private final List<SingleValueEmbeddedAttributeWidget> singleValueEmbeddedAttributeWidgets = new ArrayList<SingleValueEmbeddedAttributeWidget>();
     private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<MultiValueEmbeddedAttributeWidget>();
 
@@ -90,31 +113,58 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         this.addPropertyVisibilityHandler("compositePrimaryKeyType", new PropertyVisibilityHandler<String>() {
             @Override
             public boolean isVisible() {
-                return PersistenceClassWidget.this.isCompositePKPropertyAllow();
+                CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
+                return property == CompositePKProperty.ALL || property == CompositePKProperty.TYPE || property == CompositePKProperty.AUTO_CLASS;
             }
         });
         this.addPropertyVisibilityHandler("compositePrimaryKeyClass", new PropertyVisibilityHandler<String>() {
             @Override
             public boolean isVisible() {
-//                if (PersistenceClassWidget.this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
-//                    PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) PersistenceClassWidget.this.getBaseElementSpec();
-//                }
-                return PersistenceClassWidget.this.isCompositePKPropertyAllow();
+                CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
+                return property == CompositePKProperty.ALL || property == CompositePKProperty.CLASS;
             }
         });
 
     }
 
-    public boolean isCompositePKPropertyAllow() {
+    public CompositePKProperty isCompositePKPropertyAllow() {
         if (this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) this.getBaseElementSpec();
             String inheritenceState = this.getInheritenceState();
+            CompositePKProperty property = CompositePKProperty.NONE;
             boolean visible = false;
             if (this instanceof EntityWidget) {
-                visible = getIdAttributeWidgets().size() > 1 && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState));
+                visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1 && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState));
             } else if (this instanceof MappedSuperclassWidget) {
-                visible = getIdAttributeWidgets().size() > 1;
+                visible = getIdAttributeWidgets().size() + +getDerivedRelationAttributeWidgets().size() > 1;
             }
+
+//                2.4.1.3 Examples of Derived Identities
+//                Example 5: The parent entity uses IdClass. The dependent's primary key class is of same type as that of the parent entity.
+//                Case (a): The dependent entity uses IdClass:
+//            CompositePKProperty.FIXED_CLASS
+            if (!visible && getDerivedRelationAttributeWidgets().size() == 1) {//check for parent entity pk count
+                if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState)))) {
+                    RelationAttributeWidget relationAttributeWidget = getDerivedRelationAttributeWidgets().get(0);
+                    IFlowElementWidget targetElementWidget = (EntityWidget) relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
+                    EntityWidget targetEntityWidget = null;
+                    if (targetElementWidget instanceof EntityWidget) {
+                        targetEntityWidget = (EntityWidget) targetElementWidget;
+                    } else if (targetElementWidget instanceof RelationAttributeWidget) {
+                        RelationAttributeWidget targetRelationAttributeWidget = (RelationAttributeWidget) targetElementWidget;
+                        targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
+                    }
+                    if (targetEntityWidget.isCompositePKPropertyAllow() == CompositePKProperty.NONE) {
+                        visible = false;
+                    } else {
+                        visible = true;
+                    }
+                    if (visible) {
+                        property = CompositePKProperty.AUTO_CLASS;
+                    }
+                }
+            }
+
             if (visible) {
                 if ((primaryKeyContainerSpec.getCompositePrimaryKeyClass() == null || primaryKeyContainerSpec.getCompositePrimaryKeyClass().trim().isEmpty())
                         && (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID || primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
@@ -122,9 +172,13 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
                     getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
                 }
             }
-            return visible;
+            if (visible && property == CompositePKProperty.NONE) {
+                property = CompositePKProperty.ALL;
+            }
+
+            return property;
         }
-        return false;
+        return CompositePKProperty.NONE;
     }
 
     public List<IdAttributeWidget> getAllIdAttributeWidgets() {
@@ -266,13 +320,13 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             AttributeValidator.validateMultipleEmbeddedIdFound(this);
             AttributeValidator.validateEmbeddedIdAndIdFound(this);
         } else if (attributeWidget instanceof VersionAttributeWidget) {
-            versionAttributeWidgets.remove((VersionAttributeWidget) attributeWidget);
+            getVersionAttributeWidgets().remove((VersionAttributeWidget) attributeWidget);
             ((IPersistenceAttributes) attributes).getVersion().remove((Version) ((VersionAttributeWidget) attributeWidget).getBaseElementSpec());
         } else if (attributeWidget instanceof BasicAttributeWidget) {
-            basicAttributeWidgets.remove((BasicAttributeWidget) attributeWidget);
+            getBasicAttributeWidgets().remove((BasicAttributeWidget) attributeWidget);
             attributes.getBasic().remove((Basic) ((BasicAttributeWidget) attributeWidget).getBaseElementSpec());
         } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
-            basicCollectionAttributeWidgets.remove((BasicCollectionAttributeWidget) attributeWidget);
+            getBasicCollectionAttributeWidgets().remove((BasicCollectionAttributeWidget) attributeWidget);
             attributes.getElementCollection().remove((ElementCollection) ((BasicCollectionAttributeWidget) attributeWidget).getBaseElementSpec());
         } else if (attributeWidget instanceof TransientAttributeWidget) {
             transientAttributeWidgets.remove((TransientAttributeWidget) attributeWidget);
@@ -361,7 +415,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             id.setId(NBModelerUtil.getAutoGeneratedStringId());
             id.setAttributeType("Long");
             id.setName(name);
-            ((IPersistenceAttributes) javaClass.getAttributes()).getId().add(id);
+            ((IPersistenceAttributes) javaClass.getAttributes()).addId(id);
 
         }
 
@@ -387,12 +441,12 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             version.setId(NBModelerUtil.getAutoGeneratedStringId());
             version.setAttributeType("int");
             version.setName(name);
-            ((IPersistenceAttributes) javaClass.getAttributes()).getVersion().add(version);
+            ((IPersistenceAttributes) javaClass.getAttributes()).addVersion(version);
 
         }
 
         VersionAttributeWidget attributeWidget = (VersionAttributeWidget) PersistenceClassWidget.this.createPinWidget(VersionAttributeWidget.create(version.getId(), name));
-        versionAttributeWidgets.add(attributeWidget);
+        getVersionAttributeWidgets().add(attributeWidget);
         attributeWidget.setBaseElementSpec(version);
         sortAttributes();
         return attributeWidget;
@@ -410,10 +464,10 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             basic.setId(NBModelerUtil.getAutoGeneratedStringId());
             basic.setAttributeType("String");
             basic.setName(name);
-            javaClass.getAttributes().getBasic().add(basic);
+            javaClass.getAttributes().addBasic(basic);
         }
         BasicAttributeWidget attributeWidget = (BasicAttributeWidget) PersistenceClassWidget.this.createPinWidget(BasicAttributeWidget.create(basic.getId(), name));
-        basicAttributeWidgets.add(attributeWidget);
+        getBasicAttributeWidgets().add(attributeWidget);
         attributeWidget.setBaseElementSpec(basic);
         sortAttributes();
         return attributeWidget;
@@ -431,10 +485,10 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             elementCollection.setId(NBModelerUtil.getAutoGeneratedStringId());
             elementCollection.setAttributeType("String");
             elementCollection.setName(name);
-            javaClass.getAttributes().getElementCollection().add(elementCollection);
+            javaClass.getAttributes().addElementCollection(elementCollection);
         }
         BasicCollectionAttributeWidget attributeWidget = (BasicCollectionAttributeWidget) PersistenceClassWidget.this.createPinWidget(BasicCollectionAttributeWidget.create(elementCollection.getId(), name));
-        basicCollectionAttributeWidgets.add(attributeWidget);
+        getBasicCollectionAttributeWidgets().add(attributeWidget);
         attributeWidget.setBaseElementSpec(elementCollection);
         sortAttributes();
         return attributeWidget;
@@ -454,7 +508,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             _transient.setId(NBModelerUtil.getAutoGeneratedStringId());
             _transient.setAttributeType("String");
             _transient.setName(name);
-            javaClass.getAttributes().getTransient().add(_transient);
+            javaClass.getAttributes().addTransient(_transient);
         }
         TransientAttributeWidget attributeWidget = (TransientAttributeWidget) PersistenceClassWidget.this.createPinWidget(TransientAttributeWidget.create(_transient.getId(), name));
         getTransientAttributeWidgets().add(attributeWidget);
@@ -476,7 +530,8 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             oneToOne = new OneToOne();
             oneToOne.setId(NBModelerUtil.getAutoGeneratedStringId());
             oneToOne.setName(name);
-            javaClass.getAttributes().getOneToOne().add(oneToOne);
+
+            javaClass.getAttributes().addRelationAttribute(oneToOne);
         }
 
         OTORelationAttributeWidget attributeWidget = (OTORelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(OTORelationAttributeWidget.create(oneToOne.getId(), name));
@@ -499,7 +554,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             oneToMany = new OneToMany();
             oneToMany.setId(NBModelerUtil.getAutoGeneratedStringId());
             oneToMany.setName(name);
-            javaClass.getAttributes().getOneToMany().add(oneToMany);
+            javaClass.getAttributes().addRelationAttribute(oneToMany);
         }
         OTMRelationAttributeWidget attributeWidget = (OTMRelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(OTMRelationAttributeWidget.create(oneToMany.getId(), name));
         getOneToManyRelationAttributeWidgets().add(attributeWidget);
@@ -521,7 +576,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             manyToOne = new ManyToOne();
             manyToOne.setId(NBModelerUtil.getAutoGeneratedStringId());
             manyToOne.setName(name);
-            javaClass.getAttributes().getManyToOne().add(manyToOne);
+            javaClass.getAttributes().addRelationAttribute(manyToOne);
         }
         MTORelationAttributeWidget attributeWidget = (MTORelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(MTORelationAttributeWidget.create(manyToOne.getId(), name));
         getManyToOneRelationAttributeWidgets().add(attributeWidget);
@@ -543,7 +598,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             manyToMany = new ManyToMany();
             manyToMany.setId(NBModelerUtil.getAutoGeneratedStringId());
             manyToMany.setName(name);
-            javaClass.getAttributes().getManyToMany().add(manyToMany);
+            javaClass.getAttributes().addRelationAttribute(manyToMany);
         }
         MTMRelationAttributeWidget attributeWidget = (MTMRelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(MTMRelationAttributeWidget.create(manyToMany.getId(), name));
         getManyToManyRelationAttributeWidgets().add(attributeWidget);
@@ -565,7 +620,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             embedded = new Embedded();
             embedded.setId(NBModelerUtil.getAutoGeneratedStringId());
             embedded.setName(name);
-            javaClass.getAttributes().getEmbedded().add(embedded);
+            javaClass.getAttributes().addEmbedded(embedded);
         }
         SingleValueEmbeddedAttributeWidget attributeWidget = (SingleValueEmbeddedAttributeWidget) PersistenceClassWidget.this.createPinWidget(SingleValueEmbeddedAttributeWidget.create(embedded.getId(), name));
         singleValueEmbeddedAttributeWidgets.add(attributeWidget);
@@ -585,7 +640,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             elementCollection = new ElementCollection();
             elementCollection.setId(NBModelerUtil.getAutoGeneratedStringId());
             elementCollection.setName(name);
-            javaClass.getAttributes().getElementCollection().add(elementCollection);
+            javaClass.getAttributes().addElementCollection(elementCollection);
         }
         MultiValueEmbeddedAttributeWidget attributeWidget = (MultiValueEmbeddedAttributeWidget) PersistenceClassWidget.this.createPinWidget(MultiValueEmbeddedAttributeWidget.create(elementCollection.getId(), name));
         multiValueEmbeddedAttributeWidgets.add(attributeWidget);
@@ -638,10 +693,10 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         }
 
         List<Widget> basicAttributeCatWidget = new ArrayList<Widget>();
-        for (BasicAttributeWidget basicAttributeWidget : basicAttributeWidgets) {
+        for (BasicAttributeWidget basicAttributeWidget : getBasicAttributeWidgets()) {
             basicAttributeCatWidget.add(basicAttributeWidget);
         }
-        for (BasicCollectionAttributeWidget basicCollectionAttributeWidget : basicCollectionAttributeWidgets) {
+        for (BasicCollectionAttributeWidget basicCollectionAttributeWidget : getBasicCollectionAttributeWidgets()) {
             basicAttributeCatWidget.add(basicCollectionAttributeWidget);
         }
         if (!basicAttributeCatWidget.isEmpty()) {
@@ -671,7 +726,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         }
         if (!versionAttributeWidgets.isEmpty()) {
             List<Widget> versionAttributeCatWidget = new ArrayList<Widget>();
-            for (VersionAttributeWidget versionAttributeWidget : versionAttributeWidgets) {
+            for (VersionAttributeWidget versionAttributeWidget : getVersionAttributeWidgets()) {
                 versionAttributeCatWidget.add(versionAttributeWidget);
             }
             categories.put("Version", versionAttributeCatWidget);
@@ -720,6 +775,21 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
      */
     public List<MTORelationAttributeWidget> getManyToOneRelationAttributeWidgets() {
         return manyToOneRelationAttributeWidgets;
+    }
+
+    public List<RelationAttributeWidget> getDerivedRelationAttributeWidgets() {
+        List<RelationAttributeWidget> relationAttributeWidget = new ArrayList<RelationAttributeWidget>();
+        for (OTORelationAttributeWidget oneToOneRelationAttributeWidget : oneToOneRelationAttributeWidgets) {
+            if (((OneToOne) oneToOneRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey()) {
+                relationAttributeWidget.add(oneToOneRelationAttributeWidget);
+            }
+        }
+        for (MTORelationAttributeWidget manyToOneRelationAttributeWidget : manyToOneRelationAttributeWidgets) {
+            if (((ManyToOne) manyToOneRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey()) {
+                relationAttributeWidget.add(manyToOneRelationAttributeWidget);
+            }
+        }
+        return relationAttributeWidget;
     }
 
     /**
@@ -786,4 +856,28 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     public void setEmbeddedIdAttributeWidget(EmbeddedIdAttributeWidget embeddedIdAttributeWidget) {
         this.embeddedIdAttributeWidget = embeddedIdAttributeWidget;
     }
+
+    /**
+     * @return the versionAttributeWidgets
+     */
+    public List<VersionAttributeWidget> getVersionAttributeWidgets() {
+        return versionAttributeWidgets;
+    }
+
+    /**
+     * @return the basicAttributeWidgets
+     */
+    public List<BasicAttributeWidget> getBasicAttributeWidgets() {
+        return basicAttributeWidgets;
+    }
+
+    /**
+     * @return the basicCollectionAttributeWidgets
+     */
+    public List<BasicCollectionAttributeWidget> getBasicCollectionAttributeWidgets() {
+        return basicCollectionAttributeWidgets;
+    }
+
+    public abstract List<AttributeWidget> getAttributeOverrideWidgets();
+
 }

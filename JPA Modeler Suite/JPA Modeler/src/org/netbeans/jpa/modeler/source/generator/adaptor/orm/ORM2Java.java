@@ -22,14 +22,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.editor.BaseDocument;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.modeler.task.ITaskSupervisor;
+import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.CompilerConfig;
 import org.netbeans.orm.converter.compiler.CompilerConfigManager;
@@ -47,7 +51,12 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ClassType;
 import org.netbeans.orm.converter.util.ClassesRepository;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import org.openide.cookies.EditorCookie;
+import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -108,8 +117,13 @@ public class ORM2Java {
 //                    parsedEntityMappings.addIdclass(_class);
 //                }
 //            }
-            generateEmbededIdClasses();
-            generateIdClasses();
+            for (DefaultClass defaultClass : parsedEntityMappings.getDefaultClass()) {
+                if (defaultClass.isEmbeddable()) {
+                    generateEmbededIdClasses(defaultClass);
+                } else {
+                    generateIdClasses(defaultClass);
+                }
+            }
             generateSuperClasses();
             generateEntityClasses();
             generateEmbededClasses();
@@ -252,36 +266,18 @@ public class ORM2Java {
 //            }
 //        }
 //    }
-    private void generateEmbededIdClasses() throws InvalidDataException, IOException {
-
-        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getEmbeddedIdClass();
-        if (parsedDefaultClasses == null) {
-            return;
-        }
-        for (DefaultClass defaultClass : parsedDefaultClasses) {
-            task.log("Generating EmbeddedId Class : " + defaultClass.getClazz(), true);
-            ClassDefSnippet classDef = new EmbeddableIdClassGenerator(defaultClass, packageName).getClassDef();
-            classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
-            writeSnippet(classDef);
-        }
+    private void generateEmbededIdClasses(DefaultClass defaultClass) throws InvalidDataException, IOException {
+        task.log("Generating EmbeddedId Class : " + defaultClass.getClazz(), true);
+        ClassDefSnippet classDef = new EmbeddableIdClassGenerator(defaultClass, packageName).getClassDef();
+        classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
+        writeSnippet(classDef);
     }
 
-    private void generateIdClasses() throws InvalidDataException, IOException {
-
-        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getIdClass();
-        if (parsedDefaultClasses == null) {
-            return;
-        }
-
-        for (DefaultClass defaultClass : parsedDefaultClasses) {
-            task.log("Generating IdClass Class : " + defaultClass.getClazz(), true);
-            ClassDefSnippet classDef = new DefaultClassGenerator(defaultClass, packageName).getClassDef();
-
-            classesRepository.addWritableSnippet(
-                    ClassType.SERIALIZER_CLASS, classDef);
-
-            writeSnippet(classDef);
-        }
+    private void generateIdClasses(DefaultClass defaultClass) throws InvalidDataException, IOException {
+        task.log("Generating IdClass Class : " + defaultClass.getClazz(), true);
+        ClassDefSnippet classDef = new DefaultClassGenerator(defaultClass, packageName).getClassDef();
+        classesRepository.addWritableSnippet(ClassType.SERIALIZER_CLASS, classDef);
+        writeSnippet(classDef);
     }
 
     private void generateSuperClasses()
@@ -348,9 +344,59 @@ public class ORM2Java {
                 writableSnippet.getClassHelper().getClassNameWithSourceSuffix());
 
         ORMConverterUtil.writeContent(content, sourceFile);
+        formatFile(sourceFile);
 
         System.out.println(
                 "Java: Generated file :" + sourceFile.getAbsolutePath());
+    }
+
+    private void formatFile(File file) {
+        final FileObject fo = FileUtil.toFileObject(file);
+        try {
+            DataObject dobj = DataObject.find(fo);
+            EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
+            if (ec == null) {
+                return;
+            }
+            ec.close();
+            StyledDocument document = ec.getDocument();
+            if (document instanceof BaseDocument) {
+                final BaseDocument doc = (BaseDocument) document;
+                final Reformat f = Reformat.get(doc);
+                f.lock();
+                try {
+                    doc.runAtomic(new Runnable() {
+                        public void run() {
+                            try {
+                                f.reformat(0, doc.getLength());
+                            } catch (BadLocationException ex) {
+                                Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
+                                Exceptions.printStackTrace(ex);
+                            }
+
+                        }
+                    });
+                } finally {
+                    f.unlock();
+                }
+                try {
+                    ec.saveDocument();
+//                    SaveCookie save = dobj.getLookup().lookup(SaveCookie.class);
+//                    if (save != null) {
+//                        save.save();
+//                    }
+                } catch (IOException ex) {
+                    Exceptions.attachMessage(ex, "Failure while formatting and saving " + FileUtil.getFileDisplayName(fo));
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        } catch (DataObjectNotFoundException ex) {
+            Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
+            Exceptions.printStackTrace(ex);
+        }
     }
 
 }

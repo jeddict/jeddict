@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.specification.model.util;
 
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
@@ -35,6 +36,7 @@ import org.apache.commons.io.FileUtils;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -83,6 +85,7 @@ import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.Id;
@@ -132,6 +135,7 @@ import org.netbeans.modeler.specification.model.document.IPModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
+import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
 import org.netbeans.modeler.validation.jaxb.ValidateJAXB;
@@ -147,10 +151,60 @@ import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.openide.nodes.PropertySupport;
 import org.openide.util.Exceptions;
+import org.openide.util.ImageUtilities;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 
 public class JPAModelerUtil implements PModelerUtil {
+
+    public final static String ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/element/java/ENTITY.png";
+
+    public final static String ID_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/id-attribute.png";
+    public final static String BASIC_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/basic-attribute.png";
+    public final static String BASIC_COLLECTION_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/basic-collection-attribute.png";
+    public final static String EMBEDDED_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/embedded-attribute.gif";
+    public final static String EMBEDDED_ID_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/embedded-id-attribute.png";
+    public final static String MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/multi-value-embedded.gif";
+    public final static String SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/single-value-embedded.gif";
+    public final static String TRANSIENT_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/transient-attribute.png";
+    public final static String VERSION_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/version-attribute.png";
+    public final static String MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/multi-value-embedded.gif";
+    public final static String UMTM_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/umtm-attribute.png";
+    public final static String BMTM_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/bmtm-attribute.png";
+    public final static String UMTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/umto-attribute.png";
+    public final static String BMTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/bmto-attribute.png";
+    public final static String PK_UMTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-umto-attribute.png";
+    public final static String PK_BMTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-bmto-attribute.png";
+    public final static String UOTM_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/uotm-attribute.png";
+    public final static String BOTM_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/botm-attribute.png";
+    public final static String UOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/uoto-attribute.png";
+    public final static String BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/boto-attribute.png";
+    public final static String PK_UOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-uoto-attribute.png";
+    public final static String PK_BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-boto-attribute.png";
+
+    public final static Image ID_ATTRIBUTE = ImageUtilities.loadImage(ID_ATTRIBUTE_ICON_PATH);
+    public final static Image BASIC_ATTRIBUTE = ImageUtilities.loadImage(BASIC_ATTRIBUTE_ICON_PATH);
+    public final static Image BASIC_COLLECTION_ATTRIBUTE = ImageUtilities.loadImage(BASIC_COLLECTION_ATTRIBUTE_ICON_PATH);
+    public final static Image EMBEDDED_ATTRIBUTE = ImageUtilities.loadImage(EMBEDDED_ATTRIBUTE_ICON_PATH);
+    public final static Image EMBEDDED_ID_ATTRIBUTE = ImageUtilities.loadImage(EMBEDDED_ID_ATTRIBUTE_ICON_PATH);
+    public final static Image MULTI_VALUE_EMBEDDED_ATTRIBUTE = ImageUtilities.loadImage(MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
+    public final static Image SINGLE_VALUE_EMBEDDED_ATTRIBUTE = ImageUtilities.loadImage(SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
+    public final static Image TRANSIENT_ATTRIBUTE = ImageUtilities.loadImage(TRANSIENT_ATTRIBUTE_ICON_PATH);
+    public final static Image VERSION_ATTRIBUTE = ImageUtilities.loadImage(VERSION_ATTRIBUTE_ICON_PATH);
+    public final static Image MULTIVALUE_EMBEDDED_ATTRIBUTE = ImageUtilities.loadImage(MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
+    public final static Image UMTM_ATTRIBUTE = ImageUtilities.loadImage(UMTM_ATTRIBUTE_ICON_PATH);
+    public final static Image BMTM_ATTRIBUTE = ImageUtilities.loadImage(BMTM_ATTRIBUTE_ICON_PATH);
+    public final static Image UMTO_ATTRIBUTE = ImageUtilities.loadImage(UMTO_ATTRIBUTE_ICON_PATH);
+    public final static Image BMTO_ATTRIBUTE = ImageUtilities.loadImage(BMTO_ATTRIBUTE_ICON_PATH);
+    public final static Image PK_UMTO_ATTRIBUTE = ImageUtilities.loadImage(PK_UMTO_ATTRIBUTE_ICON_PATH);
+    public final static Image PK_BMTO_ATTRIBUTE = ImageUtilities.loadImage(PK_BMTO_ATTRIBUTE_ICON_PATH);
+    public final static Image UOTM_ATTRIBUTE = ImageUtilities.loadImage(UOTM_ATTRIBUTE_ICON_PATH);
+    public final static Image BOTM_ATTRIBUTE = ImageUtilities.loadImage(BOTM_ATTRIBUTE_ICON_PATH);
+    public final static Image UOTO_ATTRIBUTE = ImageUtilities.loadImage(UOTO_ATTRIBUTE_ICON_PATH);
+    public final static Image BOTO_ATTRIBUTE = ImageUtilities.loadImage(BOTO_ATTRIBUTE_ICON_PATH);
+    public final static Image PK_UOTO_ATTRIBUTE = ImageUtilities.loadImage(PK_UOTO_ATTRIBUTE_ICON_PATH);
+    public final static Image PK_BOTO_ATTRIBUTE = ImageUtilities.loadImage(PK_BOTO_ATTRIBUTE_ICON_PATH);
+
 
     /*---------------------------------Load File Start---------------------------------*/
 //    public static void loadJPA(final JPAFile file) {
@@ -497,8 +551,8 @@ public class JPAModelerUtil implements PModelerUtil {
 
             IModelerScene scene = file.getModelerScene();
             EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
-            entityMappings.getIdClass().clear();
-            entityMappings.getEmbeddedIdClass().clear();
+            entityMappings.getDefaultClass().clear();
+
             for (IBaseElementWidget baseElementWidget : scene.getBaseElements()) {
                 if (baseElementWidget instanceof FlowNodeWidget) {
                     FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
@@ -526,34 +580,115 @@ public class JPAModelerUtil implements PModelerUtil {
                                     classSpec.setDiscriminatorValue(null);
                                 }
                             }
-//IDCLASS,EMBEDDEDID start
+//Start : IDCLASS,EMBEDDEDID
                             if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
                                 PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) persistenceClassWidget.getBaseElementSpec();
-                                if (persistenceClassWidget.isCompositePKPropertyAllow()
+                                CompositePKProperty compositePKProperty = persistenceClassWidget.isCompositePKPropertyAllow();
+                                if (compositePKProperty != CompositePKProperty.NONE
                                         && (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
                                         || pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
-                                    List<IdAttributeWidget> idAttributeWidgets = null;
-                                    DefaultClass _class = new DefaultClass();
-                                    _class.setClazz(pkContainerSpec.getCompositePrimaryKeyClass());
+                                    if (compositePKProperty == CompositePKProperty.AUTO_CLASS) {
+                                        RelationAttributeWidget relationAttributeWidget = persistenceClassWidget.getDerivedRelationAttributeWidgets().get(0);
+                                        RelationAttribute relationAttribute = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
+                                        IFlowElementWidget targetElementWidget = (EntityWidget) relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
+                                        EntityWidget targetEntityWidget = null;
+                                        if (targetElementWidget instanceof EntityWidget) {
+                                            targetEntityWidget = (EntityWidget) targetElementWidget;
+                                        } else if (targetElementWidget instanceof RelationAttributeWidget) {
+                                            RelationAttributeWidget targetRelationAttributeWidget = (RelationAttributeWidget) targetElementWidget;
+                                            targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
+                                        }
+                                        Entity targetPKConatinerSpec = (Entity) targetEntityWidget.getBaseElementSpec();
+                                        if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
+                                                && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                                            // when Enity E1 class use IdClass IC1 and
+                                            //another Enity E2 class use EmbeddedId is also IC1
+                                            //then register IdClass name here to append @Embeddable annotation
+                                            DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
+                                            _class.setEmbeddable(true);
+//                                            _class.setAttributes(null);//attribute will be added in parent Entity DefaultClass creation process
+                                            if (relationAttribute instanceof OneToOne) {
+                                                ((OneToOne) relationAttribute).setMapsId("");
+                                            } else if (relationAttribute instanceof ManyToOne) {
+                                                ((ManyToOne) relationAttribute).setMapsId("");
+                                            }
+                                        } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS
+                                                && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                                            if (relationAttribute instanceof OneToOne) {
+                                                ((OneToOne) relationAttribute).setMapsId(null);
+                                            } else if (relationAttribute instanceof ManyToOne) {
+                                                ((ManyToOne) relationAttribute).setMapsId(null);
+                                            }
+                                        }
+                                        //set derived entity IdClass/EmbeddedId class type same as of parent entity IdClass/EmbeddedId class type
+                                        pkContainerSpec.setCompositePrimaryKeyClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
+                                    } else { //not CompositePKProperty.NONE
+                                        List<IdAttributeWidget> idAttributeWidgets = null;
+                                        DefaultClass _class = entityMappings.addDefaultClass(pkContainerSpec.getCompositePrimaryKeyClass());
+                                        if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                                            idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
+                                            _class.setEmbeddable(true);
+                                        } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                                            idAttributeWidgets = persistenceClassWidget.getAllIdAttributeWidgets();
+                                        }
 
-                                    if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-                                        idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
-                                        entityMappings.addEmbeddedIdClass(_class);
-                                    } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-                                        idAttributeWidgets = persistenceClassWidget.getAllIdAttributeWidgets();
-                                        entityMappings.addIdClass(_class);
-                                    }
-                                    for (IdAttributeWidget idAttributeWidget : idAttributeWidgets) {
-                                        Id idSpec = (Id) idAttributeWidget.getBaseElementSpec();
-                                        DefaultAttribute attribute = new DefaultAttribute();
-                                        attribute.setAttributeType(idSpec.getAttributeType());
-                                        attribute.setName(idSpec.getName());
-                                        _class.addAttribute(attribute);
-                                    }
+                                        for (IdAttributeWidget idAttributeWidget : idAttributeWidgets) {
+                                            Id idSpec = (Id) idAttributeWidget.getBaseElementSpec();
+                                            DefaultAttribute attribute = new DefaultAttribute();
+                                            attribute.setAttributeType(idSpec.getAttributeType());
+                                            attribute.setName(idSpec.getName());
+                                            _class.addAttribute(attribute);
+                                        }
+                                        for (RelationAttributeWidget relationAttributeWidget : persistenceClassWidget.getDerivedRelationAttributeWidgets()) {
+                                            RelationAttribute relationAttributeSpec = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
+                                            Entity targetEntitySpec;
+                                            IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
+                                            EntityWidget targetEntityWidget = null;
+                                            if (targetElementWidget instanceof EntityWidget) {
+                                                targetEntityWidget = (EntityWidget) targetElementWidget;
+                                            } else if (targetElementWidget instanceof RelationAttributeWidget) {
+                                                RelationAttributeWidget targetRelationAttributeWidget = (RelationAttributeWidget) targetElementWidget;
+                                                targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
+                                            }
+                                            targetEntitySpec = (Entity) targetEntityWidget.getBaseElementSpec();
+                                            List<IdAttributeWidget> targetIdAttributeWidgets = targetEntityWidget.getAllIdAttributeWidgets();
+                                            DefaultAttribute attribute = new DefaultAttribute();
+                                            if (targetIdAttributeWidgets.size() == 1) {
+                                                Id idSpec = (Id) targetIdAttributeWidgets.get(0).getBaseElementSpec();
+                                                attribute.setAttributeType(idSpec.getAttributeType());
+                                                attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute
+                                            } else {
+                                                attribute.setAttributeType(targetEntitySpec.getCompositePrimaryKeyClass());
+                                                attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute
 
+                                                if (targetEntitySpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                                                } else if (targetEntitySpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                                                } else {
+                                                    throw new UnsupportedOperationException("Not Supported Currently");
+                                                }
+                                            }
+                                            _class.addAttribute(attribute);
+                                            //Start : if dependent class is Embedded that add @MapsId to Derived PK
+                                            if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                                                if (relationAttributeSpec instanceof OneToOne) {
+                                                    ((OneToOne) relationAttributeSpec).setMapsId(null);
+                                                } else if (relationAttributeSpec instanceof ManyToOne) {
+                                                    ((ManyToOne) relationAttributeSpec).setMapsId(null);
+                                                }
+                                            } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                                                if (relationAttributeSpec instanceof OneToOne) {
+                                                    ((OneToOne) relationAttributeSpec).setMapsId(attribute.getName());
+                                                } else if (relationAttributeSpec instanceof ManyToOne) {
+                                                    ((ManyToOne) relationAttributeSpec).setMapsId(attribute.getName());
+                                                }
+                                            }
+                                            //End : if dependent class is Embedded that add @MapsId to Derived PK
+
+                                        }
+                                    }
                                 }
                             }
-//IDCLASS,EMBEDDEDID End
+//End : IDCLASS,EMBEDDEDID
 
                             PersistenceClassWidget entityWidget = (PersistenceClassWidget) baseElementWidget;
                             //Entity entity = (Entity) entityWidget.getBaseElementSpec();
@@ -919,15 +1054,15 @@ public class JPAModelerUtil implements PModelerUtil {
 
     public IEdgeWidget getEdgeWidget(IModelerScene scene, EdgeWidgetInfo edgeWidgetInfo) {
         IEdgeWidget edgeWidget = null;
-        if (edgeWidgetInfo.getType().equals("UOTO_RELATION")) {
+        if (edgeWidgetInfo.getType().equals("UOTO_RELATION") || edgeWidgetInfo.getType().equals("PKUOTO_RELATION")) {
             edgeWidget = new UOTORelationFlowWidget(scene, edgeWidgetInfo);
-        } else if (edgeWidgetInfo.getType().equals("BOTO_RELATION")) {
+        } else if (edgeWidgetInfo.getType().equals("BOTO_RELATION") || edgeWidgetInfo.getType().equals("PKBOTO_RELATION")) {
             edgeWidget = new BOTORelationFlowWidget(scene, edgeWidgetInfo);
         } else if (edgeWidgetInfo.getType().equals("UOTM_RELATION")) {
             edgeWidget = new UOTMRelationFlowWidget(scene, edgeWidgetInfo);
-        } else if (edgeWidgetInfo.getType().equals("UMTO_RELATION")) {
+        } else if (edgeWidgetInfo.getType().equals("UMTO_RELATION") || edgeWidgetInfo.getType().equals("PKUMTO_RELATION")) {
             edgeWidget = new UMTORelationFlowWidget(scene, edgeWidgetInfo);
-        } else if (edgeWidgetInfo.getType().equals("BMTO_RELATION")) {
+        } else if (edgeWidgetInfo.getType().equals("BMTO_RELATION") || edgeWidgetInfo.getType().equals("PKBMTO_RELATION")) {
             edgeWidget = new BMTORelationFlowWidget(scene, edgeWidgetInfo);
         } else if (edgeWidgetInfo.getType().equals("UMTM_RELATION")) {
             edgeWidget = new UMTMRelationFlowWidget(scene, edgeWidgetInfo);
@@ -974,13 +1109,17 @@ public class JPAModelerUtil implements PModelerUtil {
             RelationFlowWidget relationFlowWidget = (RelationFlowWidget) edgeWidget;
             RelationAttributeWidget relationAttributeWidget = null;
             if (relationFlowWidget instanceof OTORelationFlowWidget) {
+                OTORelationFlowWidget otoRelationFlowWidget = (OTORelationFlowWidget) relationFlowWidget;
                 OTORelationAttributeWidget otoRelationAttributeWidget;
                 if (sourceAttributeWidget == null) {
                     otoRelationAttributeWidget = sourcePersistenceWidget.addNewOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
                 } else {
                     otoRelationAttributeWidget = (OTORelationAttributeWidget) sourceAttributeWidget;
                 }
-                otoRelationAttributeWidget.setOneToOneRelationFlowWidget((OTORelationFlowWidget) relationFlowWidget);
+                if (otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUOTO_RELATION") || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBOTO_RELATION")) {
+                    ((OneToOne) otoRelationAttributeWidget.getBaseElementSpec()).setPrimaryKey(Boolean.TRUE);
+                }
+                otoRelationAttributeWidget.setOneToOneRelationFlowWidget(otoRelationFlowWidget);
                 relationAttributeWidget = otoRelationAttributeWidget;
             } else if (relationFlowWidget instanceof OTMRelationFlowWidget) {
                 OTMRelationAttributeWidget otmRelationAttributeWidget;
@@ -992,13 +1131,17 @@ public class JPAModelerUtil implements PModelerUtil {
                 otmRelationAttributeWidget.setHierarchicalRelationFlowWidget((OTMRelationFlowWidget) relationFlowWidget);
                 relationAttributeWidget = otmRelationAttributeWidget;
             } else if (relationFlowWidget instanceof MTORelationFlowWidget) {
+                MTORelationFlowWidget mtoRelationFlowWidget = (MTORelationFlowWidget) relationFlowWidget;
                 MTORelationAttributeWidget mtoRelationAttributeWidget;
                 if (sourceAttributeWidget == null) {
                     mtoRelationAttributeWidget = sourcePersistenceWidget.addNewManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
                 } else {
                     mtoRelationAttributeWidget = (MTORelationAttributeWidget) sourceAttributeWidget;
                 }
-                mtoRelationAttributeWidget.setManyToOneRelationFlowWidget((MTORelationFlowWidget) relationFlowWidget);
+                if (mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION")) {
+                    ((ManyToOne) mtoRelationAttributeWidget.getBaseElementSpec()).setPrimaryKey(Boolean.TRUE);
+                }
+                mtoRelationAttributeWidget.setManyToOneRelationFlowWidget(mtoRelationFlowWidget);
                 relationAttributeWidget = mtoRelationAttributeWidget;
 
             } else if (relationFlowWidget instanceof MTMRelationFlowWidget) {

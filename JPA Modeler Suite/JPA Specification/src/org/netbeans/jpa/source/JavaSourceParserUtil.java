@@ -547,21 +547,10 @@ public class JavaSourceParserUtil {
 
     public static VariableElement[] getFields(TypeElement typeElement) {
         List<VariableElement> result = new LinkedList<VariableElement>();
-        final List<VariableElement> fieldsIn = ElementFilter.fieldsIn(typeElement.getEnclosedElements());
-        result.addAll(removeSerialVersionUid(fieldsIn));
+        result.addAll(ElementFilter.fieldsIn(typeElement.getEnclosedElements()));
         return result.toArray(new VariableElement[result.size()]);
     }
 
-    private static List<VariableElement> removeSerialVersionUid(List<VariableElement> fieldsIn){
-        List<VariableElement> result = new LinkedList<VariableElement>();
-        for (VariableElement variableElement : fieldsIn) {
-            if( !variableElement.getSimpleName().toString().equals( "serialVersionUID" ) ){
-                result.add( variableElement );
-            }
-        }
-        return result;
-    }
-    
     public static VariableElement guessField(ExecutableElement getter) {
         String name = getter.getSimpleName().toString().substring(3);
         String guessFieldName = name.substring(0, 1).toLowerCase() + name.substring(1);

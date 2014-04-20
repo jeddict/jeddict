@@ -19,10 +19,12 @@ import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.core.scene.vmd.PModelerScene;
+import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -34,7 +36,7 @@ public class EmbeddedAttributeWidget extends BaseAttributeWidget {
 
     public EmbeddedAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/embedded-attribute.gif"));
+        this.setIcon(JPAModelerUtil.EMBEDDED_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {
@@ -60,6 +62,28 @@ public class EmbeddedAttributeWidget extends BaseAttributeWidget {
     public void setConnectedSibling(EmbeddableWidget embeddableWidget) {
         CompositionAttribute compositionAttribute = (CompositionAttribute) this.getBaseElementSpec();
         compositionAttribute.setConnectedClassId(embeddableWidget.getId());
+    }
+
+    public void showCompositionPath() {
+        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        colorScheme.highlightUI(this);
+        this.setHighlightStatus(true);
+        if (this.getEmbeddableFlowWidget() != null) {
+            this.getEmbeddableFlowWidget().setHighlightStatus(true);
+            colorScheme.highlightUI(this.getEmbeddableFlowWidget());
+            this.getEmbeddableFlowWidget().getTargetEmbeddableWidget().showCompositionPath();
+        }
+    }
+
+    public void hideCompositionPath() {
+        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        this.setHighlightStatus(false);
+        colorScheme.updateUI(this, this.getState(), this.getState());
+        if (this.getEmbeddableFlowWidget() != null) {
+            this.getEmbeddableFlowWidget().setHighlightStatus(false);
+            colorScheme.updateUI(this.getEmbeddableFlowWidget(), this.getEmbeddableFlowWidget().getState(), this.getEmbeddableFlowWidget().getState());
+            this.getEmbeddableFlowWidget().getTargetEmbeddableWidget().hideCompositionPath();
+        }
     }
 
 }

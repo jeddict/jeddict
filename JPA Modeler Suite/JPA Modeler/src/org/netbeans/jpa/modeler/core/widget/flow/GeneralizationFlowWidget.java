@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.core.widget.flow;
 
 import java.awt.Color;
-import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
@@ -24,12 +23,9 @@ import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
-import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
-import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
@@ -38,17 +34,16 @@ import org.openide.util.ImageUtilities;
  *
  * @author Gaurav_Gupta
  */
-public class GeneralizationFlowWidget extends PEdgeWidget implements IFlowEdgeWidget {
+public class GeneralizationFlowWidget extends AbstractEdgeWidget {
 
     private JavaClassWidget superclassWidget;
     private JavaClassWidget subclassWidget;
-    private IBaseElement baseElementSpec;
-    private Widget flowElementsContainer;
+    private static final IconAnchorShape GENERALIZATION_ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/generalization-anchor.png"), true);
 
     public GeneralizationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
-        setTargetAnchorShape(new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/generalization-anchor.png"), true));
-
+        setTargetAnchorShape(GENERALIZATION_ANCHOR_SHAPE);
+        setAnchorGap(4);
     }
 
     @Override
@@ -80,52 +75,7 @@ public class GeneralizationFlowWidget extends PEdgeWidget implements IFlowEdgeWi
     public void setTargetNode(FlowNodeWidget targetNode) {
 
     }
-    protected String id;
-    protected String name;
-    protected String documentation;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-//        if (name != null && !name.trim().isEmpty()) {
-//            this.getSequenceFlowSpec().setName(name);
-//        } else {
-//            this.getSequenceFlowSpec().setName(null);
-//        }
-    }
-
-    public String getDocumentation() {
-        return documentation;
-    }
-
-    public void setDocumentation(String documentation) {
-        this.documentation = documentation;
-    }
-
-    /**
-     * @return the flowElementsContainer
-     */
-    public Widget getFlowElementsContainer() {
-        return flowElementsContainer;
-    }
-
-    /**
-     * @param flowElementsContainer the flowElementsContainer to set
-     */
-    public void setFlowElementsContainer(Widget flowElementsContainer) {
-        this.flowElementsContainer = flowElementsContainer;
-    }
     private Color color;
     // private Float size;
 
@@ -147,20 +97,6 @@ public class GeneralizationFlowWidget extends PEdgeWidget implements IFlowEdgeWi
     public void setColor(Color color) {
         this.color = color;
         this.setLineColor(color);
-    }
-
-    /**
-     * @return the baseElementSpec
-     */
-    public IBaseElement getBaseElementSpec() {
-        return baseElementSpec;
-    }
-
-    /**
-     * @param baseElementSpec the baseElementSpec to set
-     */
-    public void setBaseElementSpec(IBaseElement baseElementSpec) {
-        this.baseElementSpec = baseElementSpec;
     }
 
     /**
@@ -201,12 +137,12 @@ public class GeneralizationFlowWidget extends PEdgeWidget implements IFlowEdgeWi
     }
 
     @Override
-    public IFlowNodeWidget getSourceFlowNodeWidget() {
+    public IFlowNodeWidget getSourceWidget() {
         return getSubclassWidget();
     }
 
     @Override
-    public IFlowNodeWidget getTargetFlowNodeWidget() {
+    public IFlowNodeWidget getTargetWidget() {
         return getSuperclassWidget();
     }
 

@@ -15,6 +15,10 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -76,6 +80,22 @@ public class BaseElement implements IBaseElement {
      */
     public void setExtensionElement(ExtensionElements extensionElement) {
         this.extensionElement = extensionElement;
+    }
+
+    private transient List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
+
+    protected void notifyListeners(String property, String oldValue, String newValue) {
+        for (PropertyChangeListener propertyChangeListener : listener) {
+            propertyChangeListener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
+        }
+    }
+
+    public void addChangeListener(PropertyChangeListener newListener) {
+        listener.add(newListener);
+    }
+
+    public void removeChangeListener(PropertyChangeListener newListener) {
+        listener.remove(newListener);
     }
 
 }

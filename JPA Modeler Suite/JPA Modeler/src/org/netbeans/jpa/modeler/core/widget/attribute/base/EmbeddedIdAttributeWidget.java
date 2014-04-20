@@ -15,16 +15,13 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.modeler.resource.toolbar.ImageUtil;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -34,7 +31,7 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget {
 
     public EmbeddedIdAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/embedded-id-attribute.png"));
+        this.setIcon(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

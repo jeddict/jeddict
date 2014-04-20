@@ -73,7 +73,7 @@ public class JoinColumn {
     @XmlAttribute
     protected String table;
 
-    public static JoinColumn load(Element element, VariableElement variableElement, AnnotationMirror annotationMirror) {
+    public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
         }

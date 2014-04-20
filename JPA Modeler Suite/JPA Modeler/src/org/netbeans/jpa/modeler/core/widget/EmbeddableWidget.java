@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.core.widget;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
@@ -113,6 +114,35 @@ public class EmbeddableWidget extends PersistenceClassWidget {
     @Override
     public String getInheritenceState() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+//    An embeddable class (including an embeddable class within another embeddable class) that is contained within an element collection must not contain an element collection, nor may it contain a relationship to an entity other than a many-to-one or one-to-one relationship
+    public List<AttributeWidget> getAttributeOverrideWidgets() {
+        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (classWidget instanceof EmbeddableWidget) {
+            attributeWidgets.addAll(((EmbeddableWidget) classWidget).getAttributeOverrideWidgets());
+        }
+        attributeWidgets.addAll(getBasicAttributeWidgets());
+        attributeWidgets.addAll(getBasicCollectionAttributeWidgets());
+        attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
+        attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
+        return attributeWidgets;
+    }
+
+    public List<AttributeWidget> getAssociationOverrideWidgets() {
+        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (classWidget instanceof EmbeddableWidget) {
+            attributeWidgets.addAll(((EmbeddableWidget) classWidget).getAssociationOverrideWidgets());
+        }
+        attributeWidgets.addAll(this.getOneToOneRelationAttributeWidgets());
+        attributeWidgets.addAll(this.getOneToManyRelationAttributeWidgets());
+        attributeWidgets.addAll(this.getManyToOneRelationAttributeWidgets());
+        attributeWidgets.addAll(this.getManyToManyRelationAttributeWidgets());
+        attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
+        attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
+        return attributeWidgets;
     }
 
 }

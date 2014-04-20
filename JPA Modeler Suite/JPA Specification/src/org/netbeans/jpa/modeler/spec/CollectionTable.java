@@ -81,7 +81,7 @@ public class CollectionTable {
             List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
             if (joinColumnsAnnot != null) {
                 for (Object joinColumnObj : joinColumnsAnnot) {
-                    collectionTable.getJoinColumn().add(JoinColumn.load(element, variableElement, (AnnotationMirror) joinColumnObj));
+                    collectionTable.getJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) joinColumnObj));
                 }
             }
 

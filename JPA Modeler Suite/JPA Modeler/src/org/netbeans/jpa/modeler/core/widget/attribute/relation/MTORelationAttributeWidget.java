@@ -15,14 +15,16 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
+import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.MTORelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -54,12 +56,39 @@ public class MTORelationAttributeWidget extends RelationAttributeWidget {
      */
     public void setManyToOneRelationFlowWidget(MTORelationFlowWidget manyToOneRelationFlowWidget) {
         this.manyToOneRelationFlowWidget = manyToOneRelationFlowWidget;
-        if (manyToOneRelationFlowWidget instanceof Unidirectional) {
-            this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/umto-attribute.png"));
-        } else {
-            this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/bmto-attribute.png"));
-        }
+        this.setIcon(this.getIcon());
+    }
 
+    public String getIconPath() {
+        if (((ManyToOne) getBaseElementSpec()).isPrimaryKey()) {
+            if (manyToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.PK_UMTO_ATTRIBUTE_ICON_PATH;
+            } else {
+                return JPAModelerUtil.PK_BMTO_ATTRIBUTE_ICON_PATH;
+            }
+        } else {
+            if (manyToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.UMTO_ATTRIBUTE_ICON_PATH;
+            } else {
+                return JPAModelerUtil.BMTO_ATTRIBUTE_ICON_PATH;
+            }
+        }
+    }
+
+    public Image getIcon() {
+        if (((ManyToOne) getBaseElementSpec()).isPrimaryKey()) {
+            if (manyToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.PK_UMTO_ATTRIBUTE;
+            } else {
+                return JPAModelerUtil.PK_BMTO_ATTRIBUTE;
+            }
+        } else {
+            if (manyToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.UMTO_ATTRIBUTE;
+            } else {
+                return JPAModelerUtil.BMTO_ATTRIBUTE;
+            }
+        }
     }
 
     @Override

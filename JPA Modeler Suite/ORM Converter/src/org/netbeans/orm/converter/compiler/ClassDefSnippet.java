@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.TreeSet;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
+import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class ClassDefSnippet implements WritableSnippet {
+public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
     private static final String JPA_TEMPLATE_FILENAME = "jpatemplate.vm";
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";

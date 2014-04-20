@@ -19,8 +19,8 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
-import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.core.NBModelerUtil;
 
 public class JPADefaultDiagramModel extends JPADiagramModel {
 

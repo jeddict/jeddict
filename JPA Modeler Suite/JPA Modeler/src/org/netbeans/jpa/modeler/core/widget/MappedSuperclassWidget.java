@@ -25,7 +25,7 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
  *
  * @author Gaurav_Gupta
  */
-public class MappedSuperclassWidget extends PersistenceClassWidget {
+public class MappedSuperclassWidget extends PrimaryKeyContainerWidget {
 
     public MappedSuperclassWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);

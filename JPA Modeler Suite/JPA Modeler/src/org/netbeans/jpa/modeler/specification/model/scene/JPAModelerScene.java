@@ -36,6 +36,7 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.generator.ui.GenerateCodeDialog;
+import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -43,8 +44,10 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
+import org.netbeans.modeler.core.ModelerCore;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.PModelerScene;
+import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
@@ -52,25 +55,32 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
+import org.netbeans.modeler.widget.node.IWidget;
+import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 import org.openide.util.RequestProcessor;
 
 public class JPAModelerScene extends PModelerScene {
 
+//    private final LayerWidget widgetHighlightLayer;
     public JPAModelerScene() {
+//        widgetHighlightLayer = new LayerWidget(this);
+//        widgetHighlightLayer.setOpaque(false);
+//        addChild(widgetHighlightLayer);
 
     }
 
     private List<IFlowElementWidget> flowElements = new ArrayList<IFlowElementWidget>(); // Linked hashmap to preserve order of inserted elements
 
-//    @Override
-//    public void setEdgeWidgetSource(EdgeWidgetInfo edge, NodeWidgetInfo node) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public void setEdgeWidgetTarget(EdgeWidgetInfo edge, NodeWidgetInfo node) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
+    public List<EntityWidget> getEntityWidgets() {
+        List<EntityWidget> entityWidgets = new ArrayList<EntityWidget>();
+        for (IFlowElementWidget flowElement : flowElements) {
+            if (flowElement instanceof EntityWidget) {
+                entityWidgets.add((EntityWidget) flowElement);
+            }
+        }
+        return entityWidgets;
+    }
+
     /**
      * @return the flowElements
      */
@@ -387,16 +397,30 @@ public class JPAModelerScene extends PModelerScene {
 
     @Override
     public void init() {
+        super.init();
+        OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
+        System.out.println("");
+
+        if (!window.isOpened()) {
+            window.open();
+
+        }
+        window.requestActive();
 
     }
 
     @Override
     public void destroy() {
-
+        OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
+        System.out.println("");
+        if (ModelerCore.getModelerFiles().size() == 1) {
+            window.close();
+        }
     }
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
+//        final EntityMappings entityMappings = ((EntityMappings) this.getBaseElementSpec());
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         JMenuItem generateCode = new JMenuItem("Generate Source Code");
         generateCode.addActionListener(new ActionListener() {
@@ -460,4 +484,48 @@ public class JPAModelerScene extends PModelerScene {
         return nextClassName;
     }
 
+    @Override
+    public IColorScheme getColorScheme() {
+        EntityMappings entityMappings = ((EntityMappings) this.getBaseElementSpec());
+        if (entityMappings.getTheme() == null) {
+            return PFactory.getMacScheme();
+        } else if (entityMappings.getTheme().equals("CLASSIC")) {
+            return PFactory.getNetBeans60Scheme();
+        } else if (entityMappings.getTheme().equals("METRO")) {
+            return PFactory.getMetroScheme();
+        } else if (entityMappings.getTheme().equals("MAC")) {
+            return PFactory.getMacScheme();
+        } else {
+            return PFactory.getMacScheme();
+        }
+    }
+
+    public void setColorScheme(IColorScheme scheme) {
+        EntityMappings entityMappings = ((EntityMappings) this.getBaseElementSpec());
+        entityMappings.setTheme(scheme.getId());
+    }
+
+    public List<IColorScheme> getColorSchemes() {
+        List<IColorScheme> colorSchemes = new ArrayList<IColorScheme>();
+        colorSchemes.add(PFactory.getNetBeans60Scheme());
+        colorSchemes.add(PFactory.getMetroScheme());
+        colorSchemes.add(PFactory.getMacScheme());
+        return colorSchemes;
+    }
+
+    private IWidget highlightedWidget;
+
+    /**
+     * @return the highlightedWidget
+     */
+    public IWidget getHighlightedWidget() {
+        return highlightedWidget;
+    }
+
+    /**
+     * @param highlightedWidget the highlightedWidget to set
+     */
+    public void setHighlightedWidget(IWidget highlightedWidget) {
+        this.highlightedWidget = highlightedWidget;
+    }
 }

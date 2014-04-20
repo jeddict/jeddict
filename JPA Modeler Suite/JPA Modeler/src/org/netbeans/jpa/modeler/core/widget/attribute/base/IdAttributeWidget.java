@@ -20,6 +20,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
@@ -28,7 +29,6 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -38,7 +38,7 @@ public class IdAttributeWidget extends BaseAttributeWidget {
 
     public IdAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/id-attribute.png"));
+        this.setIcon(JPAModelerUtil.ID_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

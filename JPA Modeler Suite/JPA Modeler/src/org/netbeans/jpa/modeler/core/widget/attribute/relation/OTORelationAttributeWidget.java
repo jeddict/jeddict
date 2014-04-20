@@ -15,14 +15,16 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
+import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.OTORelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.spec.OneToOne;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -54,10 +56,38 @@ public class OTORelationAttributeWidget extends RelationAttributeWidget {
      */
     public void setOneToOneRelationFlowWidget(OTORelationFlowWidget oneToOneRelationFlowWidget) {
         this.oneToOneRelationFlowWidget = oneToOneRelationFlowWidget;
-        if (oneToOneRelationFlowWidget instanceof Unidirectional) {
-            this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/uoto-attribute.png"));
+        this.setIcon(this.getIcon());
+    }
+
+    public String getIconPath() {
+        if (((OneToOne) getBaseElementSpec()).isPrimaryKey()) {
+            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.PK_UOTO_ATTRIBUTE_ICON_PATH;
+            } else {
+                return JPAModelerUtil.PK_BOTO_ATTRIBUTE_ICON_PATH;
+            }
         } else {
-            this.setIcon(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/boto-attribute.png"));
+            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.UOTO_ATTRIBUTE_ICON_PATH;
+            } else {
+                return JPAModelerUtil.BOTO_ATTRIBUTE_ICON_PATH;
+            }
+        }
+    }
+
+    public Image getIcon() {
+        if (((OneToOne) getBaseElementSpec()).isPrimaryKey()) {
+            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.PK_UOTO_ATTRIBUTE;
+            } else {
+                return JPAModelerUtil.PK_BOTO_ATTRIBUTE;
+            }
+        } else {
+            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+                return JPAModelerUtil.UOTO_ATTRIBUTE;
+            } else {
+                return JPAModelerUtil.BOTO_ATTRIBUTE;
+            }
         }
     }
 

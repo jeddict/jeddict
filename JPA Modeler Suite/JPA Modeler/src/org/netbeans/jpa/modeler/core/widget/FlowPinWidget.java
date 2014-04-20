@@ -16,12 +16,14 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.jpa.modeler.core.widget.context.PinContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowPinWidget;
+import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.PinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -124,6 +126,16 @@ public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
 
     @Override
     public void destroy() {
+    }
+
+    private ContextPaletteModel contextPaletteModel;
+
+    @Override
+    public ContextPaletteModel getContextPaletteModel() {
+        if (contextPaletteModel == null) {
+            contextPaletteModel = PinContextModel.getContextPaletteModel(this);
+        }
+        return contextPaletteModel;
     }
 
 }

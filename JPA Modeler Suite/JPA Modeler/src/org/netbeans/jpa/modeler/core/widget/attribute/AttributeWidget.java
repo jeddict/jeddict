@@ -63,6 +63,7 @@ import org.openide.util.NbBundle;
  */
 public class AttributeWidget extends FlowPinWidget {
 
+//    private boolean selectedView;
     public AttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("name", new PropertyChangeListener<String>() {
@@ -132,6 +133,11 @@ public class AttributeWidget extends FlowPinWidget {
     private static Image errorIcon = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/error_small_icon.gif");
 
     protected void setIcon(Image image) {
+        this.icon = image;
+        this.setPinImage(image);
+    }
+
+    protected void setHoverIcon(Image image) {
         this.icon = image;
         this.setPinImage(image);
     }
@@ -386,4 +392,17 @@ public class AttributeWidget extends FlowPinWidget {
         return (JavaClassWidget) this.getPNodeWidget();
     }
 
+//    /**
+//     * @return the selectedView
+//     */
+//    public boolean isSelectedView() {
+//        return selectedView;
+//    }
+//
+//    /**
+//     * @param selectedView the selectedView to set
+//     */
+//    public void setSelectedView(boolean selectedView) {
+//        this.selectedView = selectedView;
+//    }
 }
