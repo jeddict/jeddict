@@ -174,10 +174,11 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
 
     private void initDataTypeComboBox() {
         String[] dataType = null;
-        setDataTypeNonEditable();
+// Issue Fix #5845 Start
+        setDataTypeEditable();
         if (baseAttribute instanceof Basic) {
             if ("Enumerated".equals(type_ComboBox.getSelectedItem())) {
-                setDataTypeEditable();
+                //skip
             } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
                 dataType = new String[]{"java.util.Date", "java.util.Calendar"};
             } else {
@@ -186,7 +187,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
             }
         } else if (baseAttribute instanceof ElementCollection) {
             if ("Enumerated".equals(type_ComboBox.getSelectedItem())) {
-                setDataTypeEditable();
+                //skip
             } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
                 dataType = new String[]{"java.util.Date", "java.util.Calendar"};
             } else {
@@ -204,12 +205,12 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
         } else if (baseAttribute instanceof Version) {
             dataType = new String[]{"int", "Integer", "short", "Short", "long", "Long", "java.sql.Timestamp"};
         } else if (baseAttribute instanceof Transient) {
-            setDataTypeEditable();
+            //skip
         }
         if (dataType == null) {
             dataType = new String[]{""};
         }
-
+// Issue Fix #5845 End
         dataType_ComboBox.removeAllItems();
         dataType_ComboBox.setModel(new DefaultComboBoxModel(dataType));
         dataType_ComboBox.setSelectedItem(dataType[0]);
