@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,6 +44,7 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.WorkingCopy;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Utilities;
@@ -123,6 +123,15 @@ public class JavaSourceParserUtil {
 
     public static AnnotationMirror getAnnotation(Element element, String annotationFqn) {//temp replica
         return findAnnotation(element, annotationFqn);
+    }
+
+    public static void addOtherAnnotation(Attribute attribute, Element element) {
+        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
+            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
+            if (!annotationQualifiedName.contains("javax.")) {
+                attribute.addAnnotation(annotationQualifiedName.toString());
+            }
+        }
     }
 
     public static AnnotationMirror findAnnotation(Element element, String annotationFqn) {
@@ -544,12 +553,31 @@ public class JavaSourceParserUtil {
         result.addAll(ElementFilter.methodsIn(typeElement.getEnclosedElements()));
         return result.toArray(new ExecutableElement[result.size()]);
     }
+    // Issue Fix #5977 Start
 
+    /**
+     * #5977 FIX fixed serialVersionUID in output reversed model (class)
+     *
+     * @author georgeeb <georgeeb@java.net>
+     * @since Thu, 17 Apr 2014 15:04:13 +0000
+     */
     public static VariableElement[] getFields(TypeElement typeElement) {
         List<VariableElement> result = new LinkedList<VariableElement>();
-        result.addAll(ElementFilter.fieldsIn(typeElement.getEnclosedElements()));
+        final List<VariableElement> fieldsIn = ElementFilter.fieldsIn(typeElement.getEnclosedElements());
+        result.addAll(removeSerialVersionUid(fieldsIn));
         return result.toArray(new VariableElement[result.size()]);
     }
+
+    private static List<VariableElement> removeSerialVersionUid(List<VariableElement> fieldsIn) {
+        List<VariableElement> result = new LinkedList<VariableElement>();
+        for (VariableElement variableElement : fieldsIn) {
+            if (!variableElement.getSimpleName().toString().equals("serialVersionUID")) {
+                result.add(variableElement);
+            }
+        }
+        return result;
+    }
+    // Issue Fix #5977 End
 
     public static VariableElement guessField(ExecutableElement getter) {
         String name = getter.getSimpleName().toString().substring(3);
@@ -583,7 +611,6 @@ public class JavaSourceParserUtil {
         Logger.getLogger(JavaSourceParserUtil.class.getName()).log(Level.INFO, "Cannot detect setter associated with getter: {0}", guessGetterName);
         return null;
     }
-
 
     public static class TypeInfo {
 
