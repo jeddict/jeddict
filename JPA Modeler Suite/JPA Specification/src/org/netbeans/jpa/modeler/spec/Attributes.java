@@ -112,6 +112,20 @@ public class Attributes implements IPersistenceAttributes {
             if (methodName.startsWith("get")) {
                 Element element;
                 VariableElement variableElement = JavaSourceParserUtil.guessField(method);
+
+                // Issue Fix #5976 Start
+                /**
+                 * georgeeb@java.net Subject: #5976 FIX fixed NPE when method is
+                 * not attached to field @Transient or in Date: Thu, 17 Apr 2014
+                 * 14:07:11 +0000
+                 */
+                // skip processing if the method is not joined with field
+                // might be transient method or method implementation from some interface
+                if (variableElement == null) {
+                    continue;
+                }
+                // Issue Fix #5976 End
+
                 if (fieldAccess) {
                     element = variableElement;
                 } else {
