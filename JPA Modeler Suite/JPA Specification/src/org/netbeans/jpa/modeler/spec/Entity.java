@@ -204,8 +204,11 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
                 super.setSuperclassId(entitySuperclassSpec.getId());
                 entityMappings.addEntity(entitySuperclassSpec);
             } else if (JavaSourceParserUtil.isMappedSuperClass(superClassElement)) {
-                org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclassSpec = new org.netbeans.jpa.modeler.spec.MappedSuperclass();
-                mappedSuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
+                org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclassSpec = entityMappings.findMappedSuperclass(superClassElement.getSimpleName().toString());
+                if (mappedSuperclassSpec == null) {
+                    mappedSuperclassSpec = new org.netbeans.jpa.modeler.spec.MappedSuperclass();
+                    mappedSuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
+                }
                 super.setSuperclass(mappedSuperclassSpec.getClazz());
                 super.setSuperclassId(mappedSuperclassSpec.getId());
                 entityMappings.addMappedSuperclass(mappedSuperclassSpec);

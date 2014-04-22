@@ -115,17 +115,17 @@ public class ManyToOne extends RelationAttribute implements JoinColumnHandler {
             CascadeType cascadeType = new CascadeType();
             manyToOne.cascade = cascadeType;
             for (Object cascadeObj : cascadeList) {
-                if (cascadeObj.equals("ALL")) {
+                if (cascadeObj.toString().equals("javax.persistence.CascadeType.ALL")) {
                     cascadeType.setCascadeAll(new EmptyType());
-                } else if (cascadeObj.equals("PERSIST")) {
+                } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.PERSIST")) {
                     cascadeType.setCascadePersist(new EmptyType());
-                } else if (cascadeObj.equals("MERGE")) {
+                } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.MERGE")) {
                     cascadeType.setCascadeMerge(new EmptyType());
-                } else if (cascadeObj.equals("REMOVE")) {
+                } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.REMOVE")) {
                     cascadeType.setCascadeMerge(new EmptyType());
-                } else if (cascadeObj.equals("REFRESH")) {
+                } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.REFRESH")) {
                     cascadeType.setCascadeRefresh(new EmptyType());
-                } else if (cascadeObj.equals("DETACH")) {
+                } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.DETACH")) {
                     cascadeType.setCascadeDetach(new EmptyType());
                 } else {
                     throw new IllegalStateException("Unknown Cascade Type : " + cascadeObj.toString());

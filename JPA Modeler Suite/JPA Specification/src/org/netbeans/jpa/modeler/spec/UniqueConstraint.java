@@ -69,7 +69,7 @@ public class UniqueConstraint {
             List columnNameList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnNames");
             if (columnNameList != null) {
                 for (Object object : columnNameList) {
-                    uniqueConstraint.getColumnName().add((String) object);
+                    uniqueConstraint.getColumnName().add(object.toString());
                 }
             }
             uniqueConstraint.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");

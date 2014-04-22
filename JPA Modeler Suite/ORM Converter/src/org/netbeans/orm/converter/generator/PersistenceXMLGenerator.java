@@ -77,8 +77,9 @@ public class PersistenceXMLGenerator {
 
         try {
             // Issue Fix #5915 Start
-            String version = PersistenceUtils.getJPAVersion(project);
-            PUDataObject pud = ProviderUtil.getPUDataObject(project, version);
+//            String version = PersistenceUtils.getJPAVersion(project);
+            PUDataObject pud = ProviderUtil.getPUDataObject(project);
+            String version = pud.getPersistence().getVersion();
             boolean existFile = false;
             PersistenceUnit punit = null;
             if (pud.getPersistence().sizePersistenceUnit() != 0) {
