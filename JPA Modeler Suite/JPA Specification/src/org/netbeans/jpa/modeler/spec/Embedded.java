@@ -124,7 +124,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
                 embedded.getAssociationOverride().add(AssociationOverride.load(element, associationOverridesMirror));
             }
         }
-
+        JavaSourceParserUtil.addNonEEAnnotation(embedded, element);
         return embedded;
     }
 

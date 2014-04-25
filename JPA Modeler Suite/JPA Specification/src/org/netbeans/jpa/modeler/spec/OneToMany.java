@@ -190,7 +190,7 @@ public class OneToMany extends RelationAttribute implements JoinColumnHandler {
         oneToMany.access = AccessType.load(element);
         oneToMany.mappedBy = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mappedBy");
         oneToMany.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "orphanRemoval");
-
+        JavaSourceParserUtil.addNonEEAnnotation(oneToMany, element);
         return oneToMany;
     }
 

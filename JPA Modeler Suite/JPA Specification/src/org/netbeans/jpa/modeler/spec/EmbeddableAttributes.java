@@ -518,6 +518,7 @@ public class EmbeddableAttributes implements IAttributes {
 
     public List<RelationAttribute> getRelationAttributes() {
         List<RelationAttribute> relationAttributes = new ArrayList<RelationAttribute>(this.getOneToOne());
+        relationAttributes.addAll(this.getOneToOne());
         relationAttributes.addAll(this.getOneToMany());
         relationAttributes.addAll(this.getManyToOne());
         relationAttributes.addAll(this.getManyToMany());
@@ -586,6 +587,16 @@ public class EmbeddableAttributes implements IAttributes {
 
     public void removeChangeListener(PropertyChangeListener newListener) {
         listener.remove(newListener);
+    }
+
+    public List<Attribute> getAllAttribute() {
+        List<Attribute> attributes = new ArrayList<Attribute>();
+        attributes.addAll(this.getBasic());
+        attributes.addAll(this.getEmbedded());
+        attributes.addAll(this.getElementCollection());
+        attributes.addAll(this.getRelationAttributes());
+        attributes.addAll(this.getTransient());
+        return attributes;
     }
 
 }

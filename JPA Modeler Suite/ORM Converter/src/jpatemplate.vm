@@ -58,10 +58,17 @@ $classDef.getNamedQueries().getSnippet()
 #if ($classDef.getNamedNativeQueries() )
 $classDef.getNamedNativeQueries().getSnippet()
 #end
+#foreach($annotation in $classDef.getAnnotation() )
+    $annotation
+#end
 public #if ($classDef.isMappedSuperClass())abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end implements Serializable {
 #####################member variables ###############################
 #foreach( $varDef in $classDef.getVariableDefs() )
 
+
+#foreach($annotation in $varDef.getAnnotation() )
+    $annotation
+#end
 #if($varDef.getColumnDef())
     $varDef.getColumnDef().getSnippet()
 #end

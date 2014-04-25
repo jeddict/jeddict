@@ -15,6 +15,9 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Gaurav Gupta
@@ -24,5 +27,38 @@ public abstract class Attribute extends FlowPin {
     public abstract String getName();
 
     public abstract void setName(String value);
+
+    private List<String> annotation;
+
+    /**
+     * @return the annotation
+     */
+    public List<String> getAnnotation() {
+        if (annotation == null) {
+            annotation = new ArrayList<String>();
+        }
+        return annotation;
+    }
+
+    /**
+     * @param annotation the annotation to set
+     */
+    public void setAnnotation(List<String> annotation) {
+        this.annotation = annotation;
+    }
+
+    public void addAnnotation(String annotation_In) {
+        if (annotation == null) {
+            annotation = new ArrayList<String>();
+        }
+        this.annotation.add(annotation_In);
+    }
+
+    public void removeAnnotation(String annotation_In) {
+        if (annotation == null) {
+            annotation = new ArrayList<String>();
+        }
+        this.annotation.remove(annotation_In);
+    }
 
 }

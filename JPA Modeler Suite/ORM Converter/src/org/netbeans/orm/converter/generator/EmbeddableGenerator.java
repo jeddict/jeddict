@@ -64,12 +64,11 @@ public class EmbeddableGenerator extends ClassGenerator {
         ClassHelper classHelper = new ClassHelper(embeddable.getClazz());
         classHelper.setPackageName(packageName);
 
-        classDef.setVariableDefs(
-                new ArrayList<VariableDefSnippet>(variables.values()));
+        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
         classDef.setPackageName(classHelper.getPackageName());
         classDef.setEmbeddable(true);
-
+        classDef.setAnnotation(embeddable.getAnnotation());
         return classDef;
     }
 }

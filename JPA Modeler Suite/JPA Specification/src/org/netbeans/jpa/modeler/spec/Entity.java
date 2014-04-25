@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
@@ -198,20 +197,23 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
         TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
         if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
             if (JavaSourceParserUtil.isEntityClass(superClassElement)) {
-                org.netbeans.jpa.modeler.spec.Entity entitySuperclassSpec = new org.netbeans.jpa.modeler.spec.Entity();
-                entitySuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
+                org.netbeans.jpa.modeler.spec.Entity entitySuperclassSpec = entityMappings.findEntity(superClassElement.getSimpleName().toString());
+                if (entitySuperclassSpec == null) {
+                    entitySuperclassSpec = new org.netbeans.jpa.modeler.spec.Entity();
+                    entitySuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
+                    entityMappings.addEntity(entitySuperclassSpec);
+                }
                 super.setSuperclass(entitySuperclassSpec.getClazz());
                 super.setSuperclassId(entitySuperclassSpec.getId());
-                entityMappings.addEntity(entitySuperclassSpec);
             } else if (JavaSourceParserUtil.isMappedSuperClass(superClassElement)) {
                 org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclassSpec = entityMappings.findMappedSuperclass(superClassElement.getSimpleName().toString());
                 if (mappedSuperclassSpec == null) {
                     mappedSuperclassSpec = new org.netbeans.jpa.modeler.spec.MappedSuperclass();
                     mappedSuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
+                    entityMappings.addMappedSuperclass(mappedSuperclassSpec);
                 }
                 super.setSuperclass(mappedSuperclassSpec.getClazz());
                 super.setSuperclassId(mappedSuperclassSpec.getId());
-                entityMappings.addMappedSuperclass(mappedSuperclassSpec);
             } else {
                 //Skip
             }
@@ -231,6 +233,7 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
         this.tableGenerator = TableGenerator.load(element);
         this.sequenceGenerator = SequenceGenerator.load(element);
         this.getAttributes().load(entityMappings, element, fieldAccess);
+
         if (annotationMirror != null) {
             this.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
         }
@@ -277,6 +280,8 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
                 this.getAssociationOverride().add(AssociationOverride.load(element, associationOverridesMirror));
             }
         }
+
+        JavaSourceParserUtil.addNonEEAnnotation(this, element);
 
     }
 

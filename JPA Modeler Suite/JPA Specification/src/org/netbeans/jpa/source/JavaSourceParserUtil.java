@@ -45,6 +45,7 @@ import javax.lang.model.util.Types;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.WorkingCopy;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Utilities;
@@ -125,11 +126,22 @@ public class JavaSourceParserUtil {
         return findAnnotation(element, annotationFqn);
     }
 
-    public static void addOtherAnnotation(Attribute attribute, Element element) {
+    public static final String JEE_PACKAGE = "javax.persis";
+
+    public static void addNonEEAnnotation(JavaClass _class, Element element) {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            if (!annotationQualifiedName.contains("javax.")) {
-                attribute.addAnnotation(annotationQualifiedName.toString());
+            if (!annotationQualifiedName.contains(JEE_PACKAGE)) {
+                _class.addAnnotation(annotationMirror.toString());
+            }
+        }
+    }
+
+    public static void addNonEEAnnotation(Attribute attribute, Element element) {
+        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
+            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
+            if (!annotationQualifiedName.contains(JEE_PACKAGE)) {
+                attribute.addAnnotation(annotationMirror.toString());
             }
         }
     }

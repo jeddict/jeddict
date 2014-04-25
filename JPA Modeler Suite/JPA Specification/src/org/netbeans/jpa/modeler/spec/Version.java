@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
@@ -69,6 +70,7 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
         version.name = variableElement.getSimpleName().toString();
         version.access = AccessType.load(element);
         version.setAttributeType(variableElement.asType().toString());
+        JavaSourceParserUtil.addNonEEAnnotation(version, element);
         return version;
     }
 

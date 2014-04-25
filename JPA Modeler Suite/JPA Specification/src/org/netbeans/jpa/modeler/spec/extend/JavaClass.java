@@ -32,6 +32,8 @@ public abstract class JavaClass extends FlowNode {
     @XmlAttribute
     private String superclassId;
 
+    private List<String> annotation;
+
     public abstract String getClazz();
 
     public abstract void setClazz(String value);
@@ -66,6 +68,37 @@ public abstract class JavaClass extends FlowNode {
      */
     public void setSuperclassId(String superclassId) {
         this.superclassId = superclassId;
+    }
+
+    /**
+     * @return the annotation
+     */
+    public List<String> getAnnotation() {
+        if (annotation == null) {
+            annotation = new ArrayList<String>();
+        }
+        return annotation;
+    }
+
+    /**
+     * @param annotation the annotation to set
+     */
+    public void setAnnotation(List<String> annotation) {
+        this.annotation = annotation;
+    }
+
+    public void addAnnotation(String annotation_In) {
+        if (annotation == null) {
+            annotation = new ArrayList<String>();
+        }
+        this.annotation.add(annotation_In);
+    }
+
+    public void removeAnnotation(String annotation_In) {
+        if (annotation == null) {
+            annotation = new ArrayList<String>();
+        }
+        this.annotation.remove(annotation_In);
     }
 
 }

@@ -36,6 +36,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     private static VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
 
+    private List<String> annotation = new ArrayList<String>();
+
     static {
         AUTO_GENERATE.setName("id");
         AUTO_GENERATE.setType("String");
@@ -448,5 +450,19 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setDefaultClass(boolean defaultClass) {
         this.defaultClass = defaultClass;
+    }
+
+    /**
+     * @return the annotation
+     */
+    public List<String> getAnnotation() {
+        return annotation;
+    }
+
+    /**
+     * @param annotation the annotation to set
+     */
+    public void setAnnotation(List<String> annotation) {
+        this.annotation = annotation;
     }
 }

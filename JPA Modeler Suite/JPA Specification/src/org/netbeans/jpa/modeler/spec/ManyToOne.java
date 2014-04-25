@@ -148,7 +148,7 @@ public class ManyToOne extends RelationAttribute implements JoinColumnHandler {
         }
         manyToOne.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "optional");
         manyToOne.access = AccessType.load(element);
-
+        JavaSourceParserUtil.addNonEEAnnotation(manyToOne, element);
         return manyToOne;
     }
 

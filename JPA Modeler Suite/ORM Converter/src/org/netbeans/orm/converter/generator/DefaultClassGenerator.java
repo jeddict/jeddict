@@ -37,7 +37,7 @@ public class DefaultClassGenerator extends ClassGenerator {
 
     public ClassDefSnippet getClassDef() {
         for (DefaultAttribute defaultAttribute : defaultClass.getAttributes()) {
-            VariableDefSnippet variableDef = getVariableDef(defaultAttribute.getName());
+            VariableDefSnippet variableDef = getVariableDef(defaultAttribute);
             variableDef.setType(defaultAttribute.getAttributeType());
         }
         //Class decorations

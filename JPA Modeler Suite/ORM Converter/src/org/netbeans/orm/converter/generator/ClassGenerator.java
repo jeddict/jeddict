@@ -62,6 +62,7 @@ import org.netbeans.jpa.modeler.spec.TemporalType;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.orm.converter.compiler.AssociationOverrideSnippet;
 import org.netbeans.orm.converter.compiler.AssociationOverridesSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverrideSnippet;
@@ -155,18 +156,26 @@ public abstract class ClassGenerator {
         return columnDef;
     }
 
-    protected VariableDefSnippet getVariableDef(String name) {
-        VariableDefSnippet variableDef = variables.get(name);
-
+    protected VariableDefSnippet getVariableDef(Attribute attr) {
+        VariableDefSnippet variableDef = variables.get(attr.getName());
         if (variableDef == null) {
             variableDef = new VariableDefSnippet();
-            variableDef.setName(name);
-            variables.put(name, variableDef);
+            variableDef.setName(attr.getName());
+            variableDef.setAnnotation(attr.getAnnotation());
+            variables.put(attr.getName(), variableDef);
         }
-
         return variableDef;
     }
 
+//    protected VariableDefSnippet getVariableDef(String name) {
+//        VariableDefSnippet variableDef = variables.get(name);
+//        if (variableDef == null) {
+//            variableDef = new VariableDefSnippet();
+//            variableDef.setName(name);
+//            variables.put(name, variableDef);
+//        }
+//        return variableDef;
+//    }
     protected void processBasic(List<Basic> parsedBasics) {
         if (parsedBasics == null) {
             return;
@@ -201,7 +210,7 @@ public abstract class ClassGenerator {
             TemporalType parsedTemporal = parsedBasic.getTemporal();
             Lob parsedLob = parsedBasic.getLob();
 
-            VariableDefSnippet variableDef = getVariableDef(parsedBasic.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedBasic);
 
             variableDef.setBasic(basic);
             variableDef.setColumnDef(columnDef);
@@ -251,7 +260,7 @@ public abstract class ClassGenerator {
             TemporalType parsedTemporal = parsedElementCollection.getTemporal();
             Lob parsedLob = parsedElementCollection.getLob();
 
-            VariableDefSnippet variableDef = getVariableDef(parsedElementCollection.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedElementCollection);
             variableDef.setElementCollection(elementCollection);
             variableDef.setCollectionTable(collectionTable);
             variableDef.setColumnDef(columnDef);
@@ -277,8 +286,7 @@ public abstract class ClassGenerator {
             List<Transient> parsedTransients) {
 
         for (Transient parsedTransient : parsedTransients) {
-            VariableDefSnippet variableDef = getVariableDef(
-                    parsedTransient.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedTransient);
             variableDef.setType(parsedTransient.getAttributeType());
             variableDef.setTranzient(true);
         }
@@ -745,7 +753,7 @@ public abstract class ClassGenerator {
             return;
         }
         for (Embedded parsedEmbeded : parsedEmbeddeds) {
-            VariableDefSnippet variableDef = getVariableDef(parsedEmbeded.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedEmbeded);
 
             variableDef.setEmbedded(true);
             variableDef.setType(parsedEmbeded.getAttributeType());
@@ -808,7 +816,7 @@ public abstract class ClassGenerator {
             return;
         }
 
-        VariableDefSnippet variableDef = getVariableDef(parsedEmbeddedId.getName());
+        VariableDefSnippet variableDef = getVariableDef(parsedEmbeddedId);
         variableDef.setEmbeddedId(true);
         variableDef.setType(parsedEmbeddedId.getAttributeType());
 
@@ -823,7 +831,7 @@ public abstract class ClassGenerator {
 //
 //        List<ParsedId> parsedIds = parsedAttributes.getId();
         for (Id parsedId : parsedIds) {
-            VariableDefSnippet variableDef = getVariableDef(parsedId.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedId);
             variableDef.setType(parsedId.getAttributeType());
 
             variableDef.setPrimaryKey(true);
@@ -940,8 +948,7 @@ public abstract class ClassGenerator {
             //http://www.oracle.com/technology/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html
             //manyToMany.setOrderBy(parsedManyToMany.getOrderBy());
 
-            VariableDefSnippet variableDef = getVariableDef(
-                    parsedManyToMany.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedManyToMany);
 
             variableDef.setRelationDef(manyToMany);
             variableDef.setJoinTable(joinTable);
@@ -992,7 +999,7 @@ public abstract class ClassGenerator {
             manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
             manyToOne.setMapsId(parsedManyToOne.getMapsId());
 
-            VariableDefSnippet variableDef = getVariableDef(parsedManyToOne.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedManyToOne);
 
             variableDef.setRelationDef(manyToOne);
             variableDef.setJoinTable(joinTable);
@@ -1035,7 +1042,7 @@ public abstract class ClassGenerator {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }
 
-            VariableDefSnippet variableDef = getVariableDef(parsedOneToMany.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
 
             variableDef.setRelationDef(oneToMany);
             variableDef.setJoinTable(joinTable);
@@ -1083,7 +1090,7 @@ public abstract class ClassGenerator {
             oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
             oneToOne.setMapsId(parsedOneToOne.getMapsId());
 
-            VariableDefSnippet variableDef = getVariableDef(parsedOneToOne.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedOneToOne);
 
             variableDef.setRelationDef(oneToOne);
             variableDef.setJoinTable(joinTable);
@@ -1093,14 +1100,11 @@ public abstract class ClassGenerator {
     }
 
     protected void processVersion(List<Version> parsedVersions) {
-
-//        if (parsedAttributes == null) {
-//            return;
-//        }
-//
-//        List<ParsedVersion> parsedVersions = parsedAttributes.getVersion();
+        if (parsedVersions == null) {
+            return;
+        }
         for (Version parsedVersion : parsedVersions) {
-            VariableDefSnippet variableDef = getVariableDef(parsedVersion.getName());
+            VariableDefSnippet variableDef = getVariableDef(parsedVersion);
 
             ColumnDefSnippet columnDef = getColumnDef(parsedVersion.getColumn());
             variableDef.setType(parsedVersion.getAttributeType());

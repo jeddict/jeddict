@@ -171,7 +171,7 @@ public class ManyToMany extends RelationAttribute {
         }
         manyToMany.access = AccessType.load(element);
         manyToMany.mappedBy = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mappedBy");
-
+        JavaSourceParserUtil.addNonEEAnnotation(manyToMany, element);
         return manyToMany;
     }
 

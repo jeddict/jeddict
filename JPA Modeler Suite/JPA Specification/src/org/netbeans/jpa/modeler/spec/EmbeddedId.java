@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
@@ -72,6 +73,7 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         embeddedId.name = variableElement.getSimpleName().toString();
         embeddedId.access = AccessType.load(element);
         embeddedId.setAttributeType(((DeclaredType) variableElement.asType()).asElement().getSimpleName().toString());
+        JavaSourceParserUtil.addNonEEAnnotation(embeddedId, element);
         return embeddedId;
     }
 

@@ -197,6 +197,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         } else {
             elementCollection.setAttributeType("java.lang.String");//elementCollection.targetClass
         }
+        JavaSourceParserUtil.addNonEEAnnotation(elementCollection, element);
 
         return elementCollection;
     }

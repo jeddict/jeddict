@@ -115,9 +115,11 @@ public class Attributes implements IPersistenceAttributes {
 
                 // Issue Fix #5976 Start
                 /**
-                 * georgeeb@java.net Subject: #5976 FIX fixed NPE when method is
-                 * not attached to field @Transient or in Date: Thu, 17 Apr 2014
-                 * 14:07:11 +0000
+                 * #5976 FIX fixed NPE when method is not attached to field
+                 * Transient or in
+                 *
+                 * @author Juraj Balaz <georgeeb@java.net>
+                 * @since Thu, 17 Apr 2014 14:07:11 +0000
                  */
                 // skip processing if the method is not joined with field
                 // might be transient method or method implementation from some interface
@@ -132,37 +134,35 @@ public class Attributes implements IPersistenceAttributes {
                     element = method;
                 }
 
-                if (element != null) {
-                    if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")
-                            && !(JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")
-                            || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne"))) {
-                        this.getId().add(Id.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
-                        this.getBasic().add(Basic.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
-                        this.getTransient().add(Transient.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Version")) {
-                        this.getVersion().add(Version.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
-                        this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
-                        this.getOneToOne().add(OneToOne.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
-                        this.getManyToOne().add(ManyToOne.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
-                        this.getOneToMany().add(OneToMany.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
-                        this.getManyToMany().add(ManyToMany.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
-                        this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
-                        embeddedIdVariableElement = variableElement;
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
-                        this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
-                    } else {
-                        this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
-                    }
-
+                if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")
+                        && !(JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")
+                        || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne"))) {
+                    this.getId().add(Id.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
+                    this.getBasic().add(Basic.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
+                    this.getTransient().add(Transient.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Version")) {
+                    this.getVersion().add(Version.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
+                    this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
+                    this.getOneToOne().add(OneToOne.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
+                    this.getManyToOne().add(ManyToOne.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
+                    this.getOneToMany().add(OneToMany.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
+                    this.getManyToMany().add(ManyToMany.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
+                    this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
+                    embeddedIdVariableElement = variableElement;
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
+                    this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
+                } else {
+                    this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
                 }
+
             }
         }
 

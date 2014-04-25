@@ -31,6 +31,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     private static final List<String> temporalTypes = getTemporalTypes();
 
+    private List<String> annotation = new ArrayList<String>();
+
     private boolean autoGenerate = false;
     private boolean embedded = false;
     private boolean embeddedId = false;
@@ -515,5 +517,19 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setAttributeOverrides(AttributeOverridesSnippet attributeOverrides) {
         this.attributeOverrides = attributeOverrides;
+    }
+
+    /**
+     * @return the annotation
+     */
+    public List<String> getAnnotation() {
+        return annotation;
+    }
+
+    /**
+     * @param annotation the annotation to set
+     */
+    public void setAnnotation(List<String> annotation) {
+        this.annotation = annotation;
     }
 }

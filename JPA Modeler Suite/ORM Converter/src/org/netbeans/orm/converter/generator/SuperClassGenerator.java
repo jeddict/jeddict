@@ -92,7 +92,7 @@ public class SuperClassGenerator extends ClassGenerator {
         classDef.setPackageName(classHelper.getPackageName());
 
         classDef.setMappedSuperClass(true);
-
+        classDef.setAnnotation(mappedSuperclass.getAnnotation());
         return classDef;
     }
 }

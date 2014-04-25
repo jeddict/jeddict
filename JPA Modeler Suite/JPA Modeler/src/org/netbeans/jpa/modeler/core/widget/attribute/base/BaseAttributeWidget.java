@@ -71,77 +71,70 @@ public class BaseAttributeWidget extends AttributeWidget {
             ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
             elementConfigFactory.createPropertySet(set, persistenceBaseAttribute.getColumn(), getPropertyChangeListeners(), this.getPropertyVisibilityHandlers());
         }
+//        set.put("BASIC_PROP", getValidationProperty());
+
     }
 
-//    protected ComboBoxPropertySupport getTemporalTypeProperty() {
-//        final BaseAttributeWidget attributeWidget = this;
-//        final Basic basicSpec = (Basic) attributeWidget.getBaseElementSpec();
-//        ComboBoxListener comboBoxListener = new ComboBoxListener() {
+//    public PropertySupport getValidationProperty() {
+//
+//        final List<JoinColumn> joinColumnsSpec = null;
+//
+//        final NAttributeEntity attributeEntity = new NAttributeEntity("VALIDATION_PROPERTY", "Validation", "");
+//        attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
+//
+//        List<org.netbeans.modeler.properties.nentity.Column> columns = new ArrayList<org.netbeans.modeler.properties.nentity.Column>();
+//        columns.add(new org.netbeans.modeler.properties.nentity.Column("OBJECT", false, true, Object.class));
+//        columns.add(new org.netbeans.modeler.properties.nentity.Column("Column Name", false, String.class));
+//        columns.add(new org.netbeans.modeler.properties.nentity.Column("Referenced Column Name", false, String.class));
+//        attributeEntity.setColumns(columns);
+//        attributeEntity.setCustomDialog(new JoinColumnPanel());
+//
+//        attributeEntity.setTableDataListener(new NEntityDataListener() {
+//            List<Object[]> data;
+//            int count;
+//
 //            @Override
-//            public void setItem(ComboBoxValue value) {
-//                basicSpec.setTemporal((TemporalType) value.getValue());
+//            public void initCount() {
+//                count = joinColumnsSpec.size();
 //            }
 //
 //            @Override
-//            public ComboBoxValue getItem() {
-//                return new ComboBoxValue(basicSpec.getTemporal(), basicSpec.getTemporal().value());
+//            public int getCount() {
+//                return count;
 //            }
 //
 //            @Override
-//            public List<ComboBoxValue> getItemList() {
-//                ComboBoxValue[] values = new ComboBoxValue[]{
-//                    new ComboBoxValue(TemporalType.DATE, "Date"),
-//                    new ComboBoxValue(TemporalType.TIME, "Time"),
-//                    new ComboBoxValue(TemporalType.TIMESTAMP, "TimeStamp")};
-//                return Arrays.asList(values);
+//            public void initData() {
+//                List<JoinColumn> joinColumns = joinColumnsSpec;
+//                List<Object[]> data_local = new LinkedList<Object[]>();
+//                Iterator<JoinColumn> itr = joinColumns.iterator();
+//                while (itr.hasNext()) {
+//                    JoinColumn joinColumn = itr.next();
+//                    Object[] row = new Object[attributeEntity.getColumns().size()];
+//                    row[0] = joinColumn;
+//                    row[1] = joinColumn.getName();
+//                    row[2] = joinColumn.getReferencedColumnName();
+//                    data_local.add(row);
+//                }
+//                this.data = data_local;
 //            }
 //
 //            @Override
-//            public String getDefaultText() {
-//                return "Date";
+//            public List<Object[]> getData() {
+//                return data;
 //            }
 //
 //            @Override
-//            public ActionHandler getActionHandler() {
-//                return null;
-//            }
-//        };
-//        return new ComboBoxPropertySupport(this.getModelerScene().getModelerFile(), "temporalType", "Temporal Type", "", comboBoxListener);
-//    }
-//
-//    protected ComboBoxPropertySupport getEnumTypeProperty() {
-//        final BaseAttributeWidget attributeWidget = this;
-//        final Basic basicSpec = (Basic) attributeWidget.getBaseElementSpec();
-//        ComboBoxListener comboBoxListener = new ComboBoxListener() {
-//            @Override
-//            public void setItem(ComboBoxValue value) {
-//                basicSpec.setEnumerated((EnumType) value.getValue());
+//            public void setData(List data) {
+//                joinColumnsSpec.clear();
+//                for (Object[] row : (List<Object[]>) data) {
+//                    joinColumnsSpec.add((JoinColumn) row[0]);
+//                }
+//                this.data = data;
 //            }
 //
-//            @Override
-//            public ComboBoxValue getItem() {
-//                return new ComboBoxValue(basicSpec.getEnumerated(), basicSpec.getEnumerated() != null ? basicSpec.getEnumerated().value() : null);
-//            }
+//        });
 //
-//            @Override
-//            public List<ComboBoxValue> getItemList() {
-//                ComboBoxValue[] values = new ComboBoxValue[]{
-//                    new ComboBoxValue(null, null),
-//                    new ComboBoxValue(EnumType.ORDINAL, "Ordinal"),
-//                    new ComboBoxValue(EnumType.STRING, "String")};
-//                return Arrays.asList(values);
-//            }
-//
-//            @Override
-//            public String getDefaultText() {
-//                return "Ordinal";
-//            }
-//
-//            @Override
-//            public ActionHandler getActionHandler() {
-//                return null;
-//            }
-//        };
-//        return new ComboBoxPropertySupport(this.getModelerScene().getModelerFile(), "enumType", "Enum Type", "", comboBoxListener);
+//        return new NEntityPropertySupport(this.getModelerScene().getModelerFile(), attributeEntity);
 //    }
 }

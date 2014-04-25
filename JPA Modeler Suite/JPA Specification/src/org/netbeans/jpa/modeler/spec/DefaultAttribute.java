@@ -3,10 +3,11 @@ package org.netbeans.jpa.modeler.spec;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 //created by gaurav gupta
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DefaultAttribute {
+public class DefaultAttribute extends Attribute {
 
     @XmlAttribute(required = true)
     protected String name;

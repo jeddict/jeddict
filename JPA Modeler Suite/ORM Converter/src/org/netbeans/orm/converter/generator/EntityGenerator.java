@@ -115,6 +115,7 @@ public class EntityGenerator extends ClassGenerator {
             classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()
         }
         classDef.setEntity(true);
+        classDef.setAnnotation(entity.getAnnotation());
 
         return classDef;
     }

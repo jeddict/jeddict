@@ -6,6 +6,7 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -97,7 +98,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         }
         basic.access = AccessType.load(element);
         basic.setAttributeType(variableElement.asType().toString());
-
+        JavaSourceParserUtil.addNonEEAnnotation(basic, element);
         return basic;
     }
 
