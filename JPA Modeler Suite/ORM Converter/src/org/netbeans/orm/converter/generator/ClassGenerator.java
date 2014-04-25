@@ -1083,6 +1083,9 @@ public abstract class ClassGenerator {
             oneToOne.setCascadeTypes(cascadeTypes);
             oneToOne.setTargetEntity(parsedOneToOne.getTargetEntity());
             oneToOne.setMappedBy(parsedOneToOne.getMappedBy());
+            if (parsedOneToOne.getOptional() != null) {
+                oneToOne.setOptional(parsedOneToOne.getOptional());
+            }
 
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());

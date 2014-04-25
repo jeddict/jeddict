@@ -349,6 +349,9 @@ public class OneToOne extends RelationAttribute implements JoinColumnHandler {
      *
      */
     public Boolean getOptional() {//isOptional()
+        if (optional == null) {
+            optional = true;
+        }
         return optional;
     }
 
