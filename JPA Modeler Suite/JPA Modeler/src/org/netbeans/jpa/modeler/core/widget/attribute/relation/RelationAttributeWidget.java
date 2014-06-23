@@ -23,6 +23,7 @@ import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
 import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.OneToMany;
+import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -78,6 +79,8 @@ public abstract class RelationAttributeWidget extends AttributeWidget {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         set.put("BASIC_PROP", getCascadeProperty());
+        set.put("BASIC_PROP", JPAModelerUtil.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
+
         RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
 
         if (owner) {
