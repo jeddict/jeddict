@@ -30,6 +30,7 @@ import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.Table;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
@@ -90,9 +91,10 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
         elementConfigFactory.createPropertySet(set, entity.getTable(), getPropertyChangeListeners());
 
-        if (this.getBaseElementSpec() instanceof InheritenceHandler) {
+        if (entity instanceof InheritenceHandler) {
             set.put("BASIC_PROP", getInheritenceProperty());
         }
+        set.put("BASIC_PROP", JPAModelerUtil.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity.getNamedQuery()));
 
     }
 
@@ -199,11 +201,13 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
 //    @Override
     public void scanPrimaryKeyError() {
         if ("SINGLETON".equals(this.getInheritenceState()) || "ROOT".equals(this.getInheritenceState())) {
-            if (this.getIdAttributeWidgets().isEmpty()) {
+            // Issue Fix #6041 Start
+            if (this.getAllIdAttributeWidgets().isEmpty()) {
                 throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
                 clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
             }
+            // Issue Fix #6041 End
         } else {
             clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
         }
