@@ -742,6 +742,7 @@ public abstract class ClassGenerator {
             namedQuery.setQuery(parsedNamedQuery.getQuery());
             namedQuery.setAttributeType(parsedNamedQuery.getAttributeType());
             namedQuery.setQueryHints(queryHints);
+            namedQuery.setLockMode(parsedNamedQuery.getLockMode());
 
             classDef.getNamedQueries().addNamedQuery(namedQuery);
         }

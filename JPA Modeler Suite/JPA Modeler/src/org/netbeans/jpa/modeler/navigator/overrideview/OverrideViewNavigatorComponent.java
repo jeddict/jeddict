@@ -135,10 +135,12 @@ public final class OverrideViewNavigatorComponent extends TopComponent implement
     }//GEN-LAST:event_overrideViewTypeComboBoxActionPerformed
 
     private void overrideViewTypeComboBoxActionPerformed() {
-        if (overrideViewTypeComboBox.getSelectedItem().equals("Attribute Override")) {
-            explorerManager.setRootContext(new OverrideAttributeRootNode(entityWidget));
-        } else {
-            explorerManager.setRootContext(new OverrideAssociationRootNode(entityWidget));
+        if (entityWidget != null) {
+            if (overrideViewTypeComboBox.getSelectedItem().equals("Attribute Override")) {
+                explorerManager.setRootContext(new OverrideAttributeRootNode(entityWidget));
+            } else {
+                explorerManager.setRootContext(new OverrideAssociationRootNode(entityWidget));
+            }
         }
     }
 

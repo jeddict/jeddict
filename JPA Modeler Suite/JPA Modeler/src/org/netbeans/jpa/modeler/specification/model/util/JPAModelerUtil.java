@@ -78,6 +78,7 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
+import org.netbeans.jpa.modeler.properties.namedquery.NamedQueryPanel;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;
@@ -92,6 +93,7 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
@@ -1351,12 +1353,19 @@ public class JPAModelerUtil implements PModelerUtil {
 
             @Override
             public ComboBoxValue getItem() {
-                return new ComboBoxValue(fetchTypeHandlerSpec.getFetch(), fetchTypeHandlerSpec.getFetch() != null ? fetchTypeHandlerSpec.getFetch().value() : null);
+                if (fetchTypeHandlerSpec.getFetch() == FetchType.EAGER) {
+                    return new ComboBoxValue(FetchType.EAGER, "Eager");
+                } else if (fetchTypeHandlerSpec.getFetch() == FetchType.LAZY) {
+                    return new ComboBoxValue(FetchType.LAZY, "Lazy");
+                } else {
+                    return new ComboBoxValue(null, "Default(Eager)");
+                }
             }
 
             @Override
             public List<ComboBoxValue> getItemList() {
                 ComboBoxValue[] values = new ComboBoxValue[]{
+                    new ComboBoxValue(null, "Default(Eager)"),
                     new ComboBoxValue(FetchType.EAGER, "Eager"),
                     new ComboBoxValue(FetchType.LAZY, "Lazy")};
                 return Arrays.asList(values);
@@ -1426,6 +1435,68 @@ public class JPAModelerUtil implements PModelerUtil {
                 joinColumnsSpec.clear();
                 for (Object[] row : (List<Object[]>) data) {
                     joinColumnsSpec.add((JoinColumn) row[0]);
+                }
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
+    public static PropertySupport getNamedQueryProperty(String id, String name, String desc, IModelerScene modelerScene, final List<NamedQuery> namedQueriesSpec) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        attributeEntity.setCountDisplay(new String[]{"No NamedQueries exist", "One NamedQuery exist", "NamedQueries exist"});
+
+        List<Column> columns = new ArrayList<Column>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Name", false, String.class));
+        columns.add(new Column("Query", false, String.class));
+        columns.add(new Column("Lock Mode Type", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new NamedQueryPanel());
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = namedQueriesSpec.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<NamedQuery> joinColumns = namedQueriesSpec;
+                List<Object[]> data_local = new LinkedList<Object[]>();
+                Iterator<NamedQuery> itr = joinColumns.iterator();
+                while (itr.hasNext()) {
+                    NamedQuery namedQuery = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = namedQuery;
+                    row[1] = namedQuery.getName();
+                    row[2] = namedQuery.getQuery();
+                    row[3] = namedQuery.getLockMode();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List data) {
+                namedQueriesSpec.clear();
+                for (Object[] row : (List<Object[]>) data) {
+                    namedQueriesSpec.add((NamedQuery) row[0]);
                 }
                 this.data = data;
             }

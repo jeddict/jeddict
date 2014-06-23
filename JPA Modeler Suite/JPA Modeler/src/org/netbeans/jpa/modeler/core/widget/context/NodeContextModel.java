@@ -23,7 +23,6 @@ import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextActionType;

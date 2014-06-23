@@ -30,15 +30,32 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum FetchType {
 
-    LAZY,
-    EAGER;
+    LAZY("Lazy"),
+    EAGER("Eager");
+
+    private final String value;
+
+    FetchType(String v) {
+        value = v;
+    }
 
     public String value() {
         return name();
     }
 
     public static FetchType fromValue(String v) {
-        return valueOf(v);
+        for (FetchType c : FetchType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
     }
+//    public String value() {
+//        return name();
+//    }
 
+//    public static FetchType fromValue(String v) {
+//        return valueOf(v);
+//    }
 }

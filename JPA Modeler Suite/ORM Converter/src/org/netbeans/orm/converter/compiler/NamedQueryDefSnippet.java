@@ -15,17 +15,18 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.jpa.modeler.spec.LockModeType;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class NamedQueryDefSnippet implements Snippet {
 
     protected String attributeType = null;
     protected String query = null;
     protected String name = null;
+    private LockModeType lockMode;
 
     protected List<QueryHintSnippet> queryHints = Collections.EMPTY_LIST;
 
@@ -95,6 +96,12 @@ public class NamedQueryDefSnippet implements Snippet {
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
 
+        if (lockMode != null) {
+            builder.append("lockMode=LockModeType.");
+            builder.append(lockMode);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
         if (!queryHints.isEmpty()) {
             builder.append("hints={");
 
@@ -114,16 +121,28 @@ public class NamedQueryDefSnippet implements Snippet {
     }
 
     public List<String> getImportSnippets() throws InvalidDataException {
-
-        if (queryHints.isEmpty()) {
-            return Collections.singletonList("javax.persistence.NamedQuery");
-        }
-
         List<String> importSnippets = new ArrayList<String>();
-
         importSnippets.add("javax.persistence.NamedQuery");
-        importSnippets.addAll(queryHints.get(0).getImportSnippets());
-
+        if (lockMode != null) {
+            importSnippets.add("javax.persistence.LockModeType");
+        }
+        if (!queryHints.isEmpty()) {
+            importSnippets.addAll(queryHints.get(0).getImportSnippets());
+        }
         return importSnippets;
+    }
+
+    /**
+     * @return the lockMode
+     */
+    public LockModeType getLockMode() {
+        return lockMode;
+    }
+
+    /**
+     * @param lockMode the lockMode to set
+     */
+    public void setLockMode(LockModeType lockMode) {
+        this.lockMode = lockMode;
     }
 }
