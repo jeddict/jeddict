@@ -110,12 +110,17 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget {
 
         if (this.getSubclassWidget() instanceof EntityWidget) {
             AttributeValidator.scanInheritenceError((EntityWidget) this.getSubclassWidget());
-            ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
             AttributeValidator.validateMultipleEmbeddedIdFound((EntityWidget) this.getSubclassWidget());
             AttributeValidator.validateEmbeddedIdAndIdFound((EntityWidget) this.getSubclassWidget());
         } else if (this.getSubclassWidget() instanceof MappedSuperclassWidget) {
             AttributeValidator.validateMultipleEmbeddedIdFound((MappedSuperclassWidget) this.getSubclassWidget());
             AttributeValidator.validateEmbeddedIdAndIdFound((MappedSuperclassWidget) this.getSubclassWidget());
+        }
+        if ((this.getSuperclassWidget() instanceof EntityWidget)
+                || (this.getSuperclassWidget() instanceof MappedSuperclassWidget)
+                || (this.getSubclassWidget() instanceof EntityWidget)
+                || (this.getSubclassWidget() instanceof MappedSuperclassWidget)) {
+            ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
         }
 
     }
@@ -124,12 +129,17 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget {
     public void destroy() {
         if (this.getSubclassWidget() instanceof EntityWidget) {
             AttributeValidator.scanInheritenceError((EntityWidget) this.getSubclassWidget());
-            ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
             AttributeValidator.validateMultipleEmbeddedIdFound((EntityWidget) this.getSubclassWidget());
             AttributeValidator.validateEmbeddedIdAndIdFound((EntityWidget) this.getSubclassWidget());
         } else if (this.getSubclassWidget() instanceof MappedSuperclassWidget) {
             AttributeValidator.validateMultipleEmbeddedIdFound((MappedSuperclassWidget) this.getSubclassWidget());
             AttributeValidator.validateEmbeddedIdAndIdFound((MappedSuperclassWidget) this.getSubclassWidget());
+        }
+        if ((this.getSuperclassWidget() instanceof EntityWidget)
+                || (this.getSuperclassWidget() instanceof MappedSuperclassWidget)
+                || (this.getSubclassWidget() instanceof EntityWidget)
+                || (this.getSubclassWidget() instanceof MappedSuperclassWidget)) {
+            ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
         }
         this.setSubclassWidget(null);
         this.setSuperclassWidget(null);

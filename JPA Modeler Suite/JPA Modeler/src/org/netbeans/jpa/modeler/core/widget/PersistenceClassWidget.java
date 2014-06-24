@@ -314,6 +314,15 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             getIdAttributeWidgets().remove((IdAttributeWidget) attributeWidget);
             ((IPersistenceAttributes) attributes).getId().remove((Id) ((IdAttributeWidget) attributeWidget).getBaseElementSpec());
             AttributeValidator.validateEmbeddedIdAndIdFound(this);
+            if (this instanceof EntityWidget) {
+                ((EntityWidget) this).scanPrimaryKeyError();
+            }
+            for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
+                if (classWidget instanceof EntityWidget) {
+                    ((EntityWidget) classWidget).scanPrimaryKeyError();
+                }
+            }
+
         } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
             embeddedIdAttributeWidget = null;
             ((IPersistenceAttributes) attributes).setEmbeddedId(null);
@@ -424,6 +433,14 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         attributeWidget.setBaseElementSpec(id);
         sortAttributes();
         AttributeValidator.validateEmbeddedIdAndIdFound(this);
+        if (this instanceof EntityWidget) {
+            ((EntityWidget) this).scanPrimaryKeyError();
+        }
+        for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
+            if (classWidget instanceof EntityWidget) {
+                ((EntityWidget) classWidget).scanPrimaryKeyError();
+            }
+        }
         return attributeWidget;
     }
 

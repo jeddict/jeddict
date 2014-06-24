@@ -16,15 +16,12 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.util.List;
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.Table;
@@ -200,7 +197,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
 
 //    @Override
     public void scanPrimaryKeyError() {
-        if ("SINGLETON".equals(this.getInheritenceState()) || "ROOT".equals(this.getInheritenceState())) {
+        String inheritenceState = this.getInheritenceState();
+        if ("SINGLETON".equals(inheritenceState) || "ROOT".equals(inheritenceState)) {
             // Issue Fix #6041 Start
             if (this.getAllIdAttributeWidgets().isEmpty()) {
                 throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
@@ -213,18 +211,4 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         }
     }
 
-    @Override
-    public IdAttributeWidget addNewIdAttribute(String name, Id id) { // override for scanning error in case of entity
-        IdAttributeWidget idAttributeWidget = super.addNewIdAttribute(name, id);
-        scanPrimaryKeyError();
-        return idAttributeWidget;
-    }
-
-    @Override
-    public void deleteAttribute(AttributeWidget attributeWidget) {// override for scanning error in case of entity
-        super.deleteAttribute(attributeWidget);
-        if (attributeWidget instanceof IdAttributeWidget) {
-            scanPrimaryKeyError();
-        }
-    }
 }
