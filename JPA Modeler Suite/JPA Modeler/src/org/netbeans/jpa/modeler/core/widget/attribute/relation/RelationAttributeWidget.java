@@ -79,8 +79,9 @@ public abstract class RelationAttributeWidget extends AttributeWidget {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         set.put("BASIC_PROP", getCascadeProperty());
+        // Issue Fix #6153 Start
         set.put("BASIC_PROP", JPAModelerUtil.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
-
+        // Issue Fix #6153 End
         RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
 
         if (owner) {
