@@ -714,7 +714,7 @@ public abstract class ClassGenerator {
             namedNativeQuery.setResultSetMapping(
                     parsedNamedNativeQuery.getResultSetMapping());
             namedNativeQuery.setQueryHints(queryHints);
-            namedNativeQuery.setAttributeType(parsedNamedNativeQuery.getAttributeType());
+//            namedNativeQuery.setAttributeType(parsedNamedNativeQuery.getAttributeType());
 
             classDef.getNamedNativeQueries().addNamedQuery(namedNativeQuery);
         }
@@ -740,7 +740,7 @@ public abstract class ClassGenerator {
 
             namedQuery.setName(parsedNamedQuery.getName());
             namedQuery.setQuery(parsedNamedQuery.getQuery());
-            namedQuery.setAttributeType(parsedNamedQuery.getAttributeType());
+//            namedQuery.setAttributeType(parsedNamedQuery.getAttributeType());
             namedQuery.setQueryHints(queryHints);
             namedQuery.setLockMode(parsedNamedQuery.getLockMode());
 

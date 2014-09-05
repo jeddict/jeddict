@@ -229,17 +229,14 @@ public class JPAModelerUtil implements PModelerUtil {
 //        theTask.schedule(0);
 //    }
 //
-    private JAXBContext jpaModelContext;
-    private Unmarshaller jpaModelUnmarshaller;
-    private Marshaller jpaModelMarshaller;
-    private InputOutput io = IOProvider.getDefault().getIO("JPA Modeler Console", false);
+    private static JAXBContext jpaModelContext;
+    private static Unmarshaller jpaModelUnmarshaller;
+    private static Marshaller jpaModelMarshaller;
+    private static InputOutput io = IOProvider.getDefault().getIO("JPA Modeler Console", false);
 
-    @Override
-    public void loadModelerFile(ModelerFile file) {
+    public static EntityMappings getEntityMapping(File file) {
+        EntityMappings definition_Load = null;
         try {
-            IModelerScene scene = file.getModelerScene();
-
-            File savedFile = file.getFile();
             if (jpaModelContext == null) {
                 jpaModelContext = JAXBContext.newInstance(new Class<?>[]{ShapeDesign.class, EntityMappings.class});
             }
@@ -247,7 +244,25 @@ public class JPAModelerUtil implements PModelerUtil {
                 jpaModelUnmarshaller = jpaModelContext.createUnmarshaller();
             }
             jpaModelUnmarshaller.setEventHandler(new ValidateJAXB());
-            EntityMappings definition_Load = jpaModelUnmarshaller.unmarshal(new StreamSource(savedFile), EntityMappings.class).getValue();
+            definition_Load = jpaModelUnmarshaller.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
+        } catch (JAXBException ex) {
+            io.getOut().println("Exception: " + ex.toString());
+            ex.printStackTrace();
+            System.out.println("Document XML Not Exist");
+        }
+        return definition_Load;
+    }
+
+    @Override
+    public void loadModelerFile(ModelerFile file) {
+        try {
+            IModelerScene scene = file.getModelerScene();
+
+            File savedFile = file.getFile();
+            EntityMappings definition_Load = getEntityMapping(savedFile);
+            if (definition_Load == null) {
+                throw new IllegalStateException("Document XML Not Exist");
+            }
 
             scene.setRootElementSpec(definition_Load);
 
@@ -256,49 +271,53 @@ public class JPAModelerUtil implements PModelerUtil {
             file.getModelerDiagramModel().setRootElement(definition_Load);
             file.getModelerDiagramModel().setDiagramElement(diagram);
 
-            for (IFlowNode flowNode_Load : new CopyOnWriteArrayList<IFlowNode>(definition_Load.getMappedSuperclass())) {
-                loadFlowNode(scene, (Widget) scene, flowNode_Load);
-            }
             for (IFlowNode flowNode_Load : new CopyOnWriteArrayList<IFlowNode>(definition_Load.getEntity())) {
                 loadFlowNode(scene, (Widget) scene, flowNode_Load);
             }
-
+            for (IFlowNode flowNode_Load : new CopyOnWriteArrayList<IFlowNode>(definition_Load.getMappedSuperclass())) {
+                loadFlowNode(scene, (Widget) scene, flowNode_Load);
+            }
             for (IFlowNode flowNode_Load : new CopyOnWriteArrayList<IFlowNode>(definition_Load.getEmbeddable())) {
                 loadFlowNode(scene, (Widget) scene, flowNode_Load);
             }
-//            for (IFlowNode flowNode_Load : new CopyOnWriteArrayList<IFlowNode>(definition_Load.getEntity())) {
             loadFlowEdge(scene);
-//            }
             for (DiagramElement diagramElement_Tmp : diagram.getJPAPlane().getDiagramElement()) {
                 loadDiagram(scene, diagram, diagramElement_Tmp);
+            }
+
+            if (definition_Load.getEntity().size() + definition_Load.getMappedSuperclass().size()
+                    + definition_Load.getEmbeddable().size() != definition_Load.getJPADiagram().getJPAPlane().getDiagramElement().size()) {
+                scene.autoLayout();
             }
 
             if (definition_Load.isGenerated()) {
                 scene.autoLayout();
                 definition_Load.setStatus(null);
             }
-
-        } catch (JAXBException e) {
-            io.getOut().println("Exception: " + e.toString());
-            e.printStackTrace();
-//            Exceptions.printStackTrace(e);
-            System.out.println("Document XML Not Exist");
+        } catch (IllegalStateException ex) {
+            io.getOut().println("Exception: " + ex.toString());
+            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
-
     }
 
     private void loadFlowNode(IModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
         IModelerDocument document = null;
         ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getVendorSpecification().getModelerDocumentFactory();
         if (flowElement instanceof FlowNode) {
+            FlowNode flowNode = (FlowNode) flowElement;
+            if (flowElement instanceof JavaClass) { //skip class creation in case of hidden visibility
+                JavaClass _class = (JavaClass) flowElement;
+                if (!_class.isVisibile()) {
+                    return;
+                }
+            }
             try {
                 document = modelerDocumentFactory.getModelerDocument(flowElement);
             } catch (ModelerException ex) {
                 Exceptions.printStackTrace(ex);
             }
-
             SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
-
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
             nodeWidgetInfo.setName(flowElement.getName());
             nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
@@ -307,71 +326,86 @@ public class JPAModelerUtil implements PModelerUtil {
             if (flowElement.getName() != null) {
                 nodeWidget.setLabel(flowElement.getName());
             }
-            if (flowElement instanceof FlowNode) {
-                FlowNode flowNode = (FlowNode) flowElement;
-                if (flowNode.isMinimized()) {
-                    ((PNodeWidget) nodeWidget).setMinimized(true);
-                }
-                if (flowElement instanceof JavaClass) {
-                    JavaClass entity = (JavaClass) flowElement;
-                    PersistenceClassWidget entityWidget = (PersistenceClassWidget) nodeWidget;
-                    if (entity.getAttributes() != null) {
-                        if (entity.getAttributes() instanceof IPersistenceAttributes) {
-                            for (Id id : ((IPersistenceAttributes) entity.getAttributes()).getId()) {
-                                entityWidget.addNewIdAttribute(id.getName(), id);
-                            }
-                            EmbeddedId embeddedId = ((IPersistenceAttributes) entity.getAttributes()).getEmbeddedId();
-                            if (embeddedId != null) {
-                                entityWidget.addNewEmbeddedIdAttribute(embeddedId.getName(), embeddedId);
-                            }
-
-                            for (Version version : ((IPersistenceAttributes) entity.getAttributes()).getVersion()) {
-                                entityWidget.addNewVersionAttribute(version.getName(), version);
-                            }
+            if (flowNode.isMinimized()) {
+                ((PNodeWidget) nodeWidget).setMinimized(true);
+            }
+            if (flowElement instanceof JavaClass) {
+                JavaClass _class = (JavaClass) flowElement;
+                PersistenceClassWidget entityWidget = (PersistenceClassWidget) nodeWidget;
+                if (_class.getAttributes() != null) {
+                    if (_class.getAttributes() instanceof IPersistenceAttributes) {
+                        for (Id id : ((IPersistenceAttributes) _class.getAttributes()).getId()) {
+                            entityWidget.addNewIdAttribute(id.getName(), id);
                         }
-                        for (Basic basic : entity.getAttributes().getBasic()) {
-                            entityWidget.addNewBasicAttribute(basic.getName(), basic);
-                        }
-                        for (Transient _transient : entity.getAttributes().getTransient()) {
-                            entityWidget.addNewTransientAttribute(_transient.getName(), _transient);
+                        EmbeddedId embeddedId = ((IPersistenceAttributes) _class.getAttributes()).getEmbeddedId();
+                        if (embeddedId != null && embeddedId.isVisibile()) {
+                            entityWidget.addNewEmbeddedIdAttribute(embeddedId.getName(), embeddedId);
                         }
 
-                        for (Embedded embedded : entity.getAttributes().getEmbedded()) {
-                            entityWidget.addNewSingleValueEmbeddedAttribute(embedded.getName(), embedded);
+                        for (Version version : ((IPersistenceAttributes) _class.getAttributes()).getVersion()) {
+                            entityWidget.addNewVersionAttribute(version.getName(), version);
                         }
-                        for (ElementCollection elementCollection : entity.getAttributes().getElementCollection()) {
-                            if (elementCollection.getConnectedClassId() != null) {
-                                entityWidget.addNewMultiValueEmbeddedAttribute(elementCollection.getName(), elementCollection);
-                            } else {
-                                entityWidget.addNewBasicCollectionAttribute(elementCollection.getName(), elementCollection);
-                            }
-                        }
-                        for (OneToOne oneToOne : entity.getAttributes().getOneToOne()) {
-                            OTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToOneRelationAttribute(oneToOne.getName(), oneToOne);
-                            if (oneToOne.getMappedBy() == null) {
-                                relationAttributeWidget.setOwner(true);
-                            }
-                        }
-                        for (OneToMany oneToMany : entity.getAttributes().getOneToMany()) {
-                            OTMRelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToManyRelationAttribute(oneToMany.getName(), oneToMany);
-                            if (oneToMany.getMappedBy() == null) {
-                                relationAttributeWidget.setOwner(true);
-                            }
-                        }
-                        for (ManyToOne manyToOne : entity.getAttributes().getManyToOne()) {
-                            MTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToOneRelationAttribute(manyToOne.getName(), manyToOne);
-                            relationAttributeWidget.setOwner(true);//always
-                        }
-                        for (ManyToMany manyToMany : entity.getAttributes().getManyToMany()) {
-                            MTMRelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToManyRelationAttribute(manyToMany.getName(), manyToMany);
-                            if (manyToMany.getMappedBy() == null) {
-                                relationAttributeWidget.setOwner(true);
-                            }
-                        }
-                        entityWidget.sortAttributes();
+                    }
+                    for (Basic basic : _class.getAttributes().getBasic()) {
+                        entityWidget.addNewBasicAttribute(basic.getName(), basic);
+                    }
+                    for (Transient _transient : _class.getAttributes().getTransient()) {
+                        entityWidget.addNewTransientAttribute(_transient.getName(), _transient);
                     }
 
+                    for (Embedded embedded : _class.getAttributes().getEmbedded()) {
+                        if (!embedded.isVisibile()) {
+                            continue;
+                        }
+                        entityWidget.addNewSingleValueEmbeddedAttribute(embedded.getName(), embedded);
+                    }
+                    for (ElementCollection elementCollection : _class.getAttributes().getElementCollection()) {
+                        if (elementCollection.getConnectedClassId() != null) {
+                            if (!elementCollection.isVisibile()) {
+                                continue;
+                            }
+                            entityWidget.addNewMultiValueEmbeddedAttribute(elementCollection.getName(), elementCollection);
+                        } else {
+                            entityWidget.addNewBasicCollectionAttribute(elementCollection.getName(), elementCollection);
+                        }
+                    }
+                    for (OneToOne oneToOne : _class.getAttributes().getOneToOne()) {
+                        if (!oneToOne.isVisibile()) {
+                            continue;
+                        }
+                        OTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToOneRelationAttribute(oneToOne.getName(), oneToOne);
+                        if (oneToOne.getMappedBy() == null) {
+                            relationAttributeWidget.setOwner(true);
+                        }
+                    }
+                    for (OneToMany oneToMany : _class.getAttributes().getOneToMany()) {
+                        if (!oneToMany.isVisibile()) {
+                            continue;
+                        }
+                        OTMRelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToManyRelationAttribute(oneToMany.getName(), oneToMany);
+                        if (oneToMany.getMappedBy() == null) {
+                            relationAttributeWidget.setOwner(true);
+                        }
+                    }
+                    for (ManyToOne manyToOne : _class.getAttributes().getManyToOne()) {
+                        if (!manyToOne.isVisibile()) {
+                            continue;
+                        }
+                        MTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToOneRelationAttribute(manyToOne.getName(), manyToOne);
+                        relationAttributeWidget.setOwner(true);//always
+                    }
+                    for (ManyToMany manyToMany : _class.getAttributes().getManyToMany()) {
+                        if (!manyToMany.isVisibile()) {
+                            continue;
+                        }
+                        MTMRelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToManyRelationAttribute(manyToMany.getName(), manyToMany);
+                        if (manyToMany.getMappedBy() == null) {
+                            relationAttributeWidget.setOwner(true);
+                        }
+                    }
+                    entityWidget.sortAttributes();
                 }
+
             }
 //            nodeWidget.i
             //clear incomming & outgoing it will added on sequenceflow auto connection
@@ -481,7 +515,6 @@ public class JPAModelerUtil implements PModelerUtil {
     }
 
     private void loadDiagram(IModelerScene scene, Diagram diagram, DiagramElement diagramElement) {
-//       JPAProcessUtil util = new JPAProcessUtil();
         if (diagramElement instanceof Shape) {
             Shape shape = (Shape) diagramElement;
             Bounds bounds = shape.getBounds();
@@ -548,11 +581,11 @@ public class JPAModelerUtil implements PModelerUtil {
 //
     @Override
     public void saveModelerFile(ModelerFile file) {
-        try {
-            updateJPADiagram(file);
+        updateJPADiagram(file);
 
             IModelerScene scene = file.getModelerScene();
             EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
+            
             entityMappings.getDefaultClass().clear();
 
             for (IBaseElementWidget baseElementWidget : scene.getBaseElements()) {
@@ -756,34 +789,41 @@ public class JPAModelerUtil implements PModelerUtil {
             }
 
             File savedFile = file.getFile();
+            
+            saveFile(entityMappings , savedFile);
+    }
+
+    
+    public static void saveFile(EntityMappings entityMappings,  File file){
+         try {
             if (jpaModelContext == null) {
                 jpaModelContext = JAXBContext.newInstance(new Class<?>[]{ShapeDesign.class, EntityMappings.class});
             }
             if (jpaModelMarshaller == null) {
                 jpaModelMarshaller = jpaModelContext.createMarshaller();
             }
-
             // output pretty printed
             jpaModelMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jpaModelMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
 
             jpaModelMarshaller.setEventHandler(new ValidateJAXB());
 
-            jpaModelMarshaller.marshal(file.getDefinitionElement(), System.out);
+            jpaModelMarshaller.marshal(entityMappings, System.out);
             StringWriter sw = new StringWriter();
-            jpaModelMarshaller.marshal(file.getDefinitionElement(), sw);
+            jpaModelMarshaller.marshal(entityMappings, sw);
 
-            FileUtils.writeStringToFile(savedFile, sw.toString());
+            FileUtils.writeStringToFile(file, sw.toString());
 
         } catch (JAXBException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-
-        // file.get
     }
-
+    
+    
+    
+    
     public static ShapeDesign getJPAShapeDesign(INodeWidget nodeWidget) {
 //        ShapeDesign shapeDesign = new ShapeDesign();
 //        shapeDesign.setOuterShapeContext(new OuterShapeContext(

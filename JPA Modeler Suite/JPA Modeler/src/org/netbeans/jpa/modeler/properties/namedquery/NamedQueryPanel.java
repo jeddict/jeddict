@@ -83,7 +83,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
             query_TextArea.setText(namedQuery.getQuery());
             setLockModeType(namedQuery.getLockMode());
         }
-        
+
         initCustomNAttributeEditor();
         attributeEntity = getQueryHint();
         customNAttributeClientEditor.setAttributeEntity(attributeEntity);
@@ -257,7 +257,9 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
         );
         queryHint_LayeredPaneLayout.setVerticalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
+                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addContainerGap())
         );
         queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -440,7 +442,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
     private javax.swing.JLayeredPane name_LayeredPane;
     private javax.swing.JTextField name_TextField;
     private javax.swing.JLayeredPane queryHint_LayeredPane;
-   private javax.swing.JLabel query_Label;
+    private javax.swing.JLabel query_Label;
     private javax.swing.JLayeredPane query_LayeredPane;
     private javax.swing.JScrollPane query_ScrollPane;
     private javax.swing.JTextArea query_TextArea;

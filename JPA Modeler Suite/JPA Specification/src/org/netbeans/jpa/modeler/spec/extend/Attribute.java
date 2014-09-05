@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
@@ -24,11 +25,9 @@ import java.util.List;
  */
 public abstract class Attribute extends FlowPin {
 
-    public abstract String getName();
-
-    public abstract void setName(String value);
-
     private List<String> annotation;
+    @XmlAttribute
+    private boolean visibile = true;
 
     /**
      * @return the annotation
@@ -59,6 +58,20 @@ public abstract class Attribute extends FlowPin {
             annotation = new ArrayList<String>();
         }
         this.annotation.remove(annotation_In);
+    }
+
+    /**
+     * @return the visibile
+     */
+    public boolean isVisibile() {
+        return visibile;
+    }
+
+    /**
+     * @param visibile the visibile to set
+     */
+    public void setVisibile(boolean visibile) {
+        this.visibile = visibile;
     }
 
 }

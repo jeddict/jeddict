@@ -34,6 +34,7 @@ import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.jpa.modeler.core.widget.ui.GenericDialog;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
@@ -56,12 +57,10 @@ public class GenerateCodeDialog extends GenericDialog
         this.modelerFileObject = fileObject;
         initComponents();
         propertyChangeSupport = new PropertyChangeSupport(this);
-
         populateExistingProjectElementGroup();
-        backupSourcesCheck.setSelected(true);
+        generateDefaultValue.setSelected(GeneratorUtil.isGenerateDefaultValue());
         getPropertyChangeSupport().addPropertyChangeListener(this);
         this.setTitle("Generate Source Code");
-        backupSourcesCheck.setVisible(false);
     }
 
     /**
@@ -74,7 +73,7 @@ public class GenerateCodeDialog extends GenericDialog
     private void initComponents() {
 
         jLayeredPane1 = new javax.swing.JLayeredPane();
-        backupSourcesCheck = new javax.swing.JCheckBox();
+        generateDefaultValue = new javax.swing.JCheckBox();
         targetProjectCombo = new javax.swing.JComboBox();
         sourceFolderCombo = new javax.swing.JComboBox();
         targetProject_Label = new javax.swing.JLabel();
@@ -85,10 +84,14 @@ public class GenerateCodeDialog extends GenericDialog
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        backupSourcesCheck.setSelected(true);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/netbeans/jpa/modeler/generator/ui/Bundle"); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(backupSourcesCheck, bundle.getString("GenerateCodeDialog.backupSourcesCheck.text")); // NOI18N
-        backupSourcesCheck.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        org.openide.awt.Mnemonics.setLocalizedText(generateDefaultValue, bundle.getString("GenerateCodeDialog.generateDefaultValue.text")); // NOI18N
+        generateDefaultValue.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        generateDefaultValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateDefaultValueActionPerformed(evt);
+            }
+        });
 
         targetProjectCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -149,7 +152,7 @@ public class GenerateCodeDialog extends GenericDialog
                 .addGap(36, 36, 36)
                 .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jLayeredPane1Layout.createSequentialGroup()
-                        .addComponent(backupSourcesCheck, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+                        .addComponent(generateDefaultValue, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
                         .addGap(67, 67, 67))
                     .addGroup(jLayeredPane1Layout.createSequentialGroup()
                         .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -178,12 +181,12 @@ public class GenerateCodeDialog extends GenericDialog
                     .addComponent(sourceFolder_Label)
                     .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(backupSourcesCheck)
+                .addComponent(generateDefaultValue)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLayeredPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
-        jLayeredPane1.setLayer(backupSourcesCheck, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(generateDefaultValue, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(targetProjectCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(sourceFolderCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(targetProject_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -247,6 +250,10 @@ public class GenerateCodeDialog extends GenericDialog
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cencelGenerateCodeActionPerformed
 
+    private void generateDefaultValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateDefaultValueActionPerformed
+           GeneratorUtil.setGenerateDefaultValue(generateDefaultValue.isSelected());
+    }//GEN-LAST:event_generateDefaultValueActionPerformed
+
     public String getSelectedFolderName() {
         try {
             if (getSourceGroup() != null && getSourceGroup().getRootFolder() != null) {
@@ -258,10 +265,7 @@ public class GenerateCodeDialog extends GenericDialog
         return null;
     }
 
-    public boolean isBackupSources() {
-        return backupSourcesCheck != null ? backupSourcesCheck.isSelected() : true;
-    }
-
+ 
     public void propertyChange(PropertyChangeEvent event) {
         String propName = "";
 
@@ -637,8 +641,8 @@ public class GenerateCodeDialog extends GenericDialog
         return propertyChangeSupport;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox backupSourcesCheck;
     private javax.swing.JButton cencelGenerateCode;
+    private javax.swing.JCheckBox generateDefaultValue;
     private javax.swing.JButton generateSourceCode;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;

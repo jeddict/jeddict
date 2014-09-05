@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class JoinColumnSnippet implements Snippet {
@@ -96,7 +97,7 @@ public class JoinColumnSnippet implements Snippet {
     }
 
     public String getSnippet() throws InvalidDataException {
-
+if (!GeneratorUtil.isGenerateDefaultValue()) {
         if (insertable == true
                 && nullable == true
                 && unique == false
@@ -108,6 +109,7 @@ public class JoinColumnSnippet implements Snippet {
 
             return "@JoinColumn";
         }
+}
 
         StringBuilder builder = new StringBuilder();
 
@@ -141,32 +143,54 @@ public class JoinColumnSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-//        if (insertable == true) {
-        builder.append("insertable=");
-        builder.append(insertable);
-        builder.append(ORMConverterUtil.COMMA);
-//        }
-
-//        if (nullable == true) {
-        builder.append("nullable=");
-        builder.append(nullable);
-        builder.append(ORMConverterUtil.COMMA);
-//        }
-
-//        if (unique == false) {
-        builder.append("unique=");
-        builder.append(unique);
-        builder.append(ORMConverterUtil.COMMA);
-//        }
-
-//        if (updatable == true) {
-        builder.append("updatable=");
-        builder.append(updatable);
-        builder.append(ORMConverterUtil.COMMA);
-//        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            builder.append("insertable=");
+            builder.append(insertable);
+            builder.append(ORMConverterUtil.COMMA);
+        } else {
+            if (insertable == false) {
+                builder.append("insertable=");
+                builder.append(insertable);
+                builder.append(ORMConverterUtil.COMMA);
+            }
+        }
+        
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            builder.append("nullable=");
+            builder.append(nullable);
+            builder.append(ORMConverterUtil.COMMA);
+        } else {
+            if (nullable == false) {
+                builder.append("nullable=");
+                builder.append(nullable);
+                builder.append(ORMConverterUtil.COMMA);
+            }
+        }
+        
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+                builder.append("unique=");
+                builder.append(unique);
+                builder.append(ORMConverterUtil.COMMA);
+        } else {
+            if (unique == true) {
+                builder.append("unique=");
+                builder.append(unique);
+                builder.append(ORMConverterUtil.COMMA);
+            }
+        }
+        
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            builder.append("updatable=");
+            builder.append(updatable);
+            builder.append(ORMConverterUtil.COMMA);
+        } else {
+            if (updatable == false) {
+                builder.append("updatable=");
+                builder.append(updatable);
+                builder.append(ORMConverterUtil.COMMA);
+            }
+        } 
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     public List<String> getImportSnippets() throws InvalidDataException {

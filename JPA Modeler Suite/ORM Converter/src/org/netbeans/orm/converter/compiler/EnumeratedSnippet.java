@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 
 public class EnumeratedSnippet implements Snippet {
 
@@ -52,17 +53,24 @@ public class EnumeratedSnippet implements Snippet {
     }
 
     public String getSnippet() throws InvalidDataException {
-
-        if (value == null || value.equals(TYPE_ORDINAL)) {
-            return "@Enumerated";
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            if (value == null || value.equals(TYPE_ORDINAL)) {
+                return "@Enumerated(EnumType.ORDINAL)";
+            } else {
+                return "@Enumerated(EnumType.STRING)";
+            }
+        } else {
+            if (value == null || value.equals(TYPE_ORDINAL)) {
+                return "@Enumerated";
+            } else {
+                return "@Enumerated(EnumType.STRING)";
+            }
         }
-
-        return "@Enumerated(EnumType.STRING)";
     }
 
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        if (value == null || value.equals(TYPE_ORDINAL)) {
+        if ((value == null || value.equals(TYPE_ORDINAL)) && !GeneratorUtil.isGenerateDefaultValue()) {
             return Collections.singleton("javax.persistence.Enumerated");
         }
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -43,8 +44,12 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
+import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
+import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.ModelerCore;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.PModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -390,8 +395,7 @@ public class JPAModelerScene extends PModelerScene {
     }
 
     @Override
-    public void createVisualPropertySet(ElementPropertySet elementPropertySet
-    ) {
+    public void createVisualPropertySet(ElementPropertySet elementPropertySet) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -399,14 +403,10 @@ public class JPAModelerScene extends PModelerScene {
     public void init() {
         super.init();
         OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
-        System.out.println("");
-
         if (!window.isOpened()) {
             window.open();
-
         }
         window.requestActive();
-
     }
 
     @Override
@@ -437,6 +437,14 @@ public class JPAModelerScene extends PModelerScene {
             }
         });
 
+        JMenuItem manageVisibility = new JMenuItem("Manage Entity Visibility");
+        manageVisibility.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fireEntityVisibilityAction(JPAModelerScene.this.getModelerFile());
+            }
+        });
+
 //        JMenuItem generateCodeFromDB = new JMenuItem("Generate DB code");
 //        generateCodeFromDB.addActionListener(new ActionListener() {
 //            @Override
@@ -452,13 +460,31 @@ public class JPAModelerScene extends PModelerScene {
 //            }
 //        });
 //
-//        menuList.add(0, generateCodeFromDB);
         menuList.add(0, generateCode);
         menuList.add(1, null);
+        menuList.add(2, manageVisibility);
+        menuList.add(3, null);
 
         return menuList;
     }
 
+    
+    public static void fireEntityVisibilityAction(ModelerFile file) {
+        ClassWidgetVisibilityController dialog = new ClassWidgetVisibilityController((EntityMappings) file.getDefinitionElement());
+        dialog.setVisible(true);
+        if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
+            file.getModelerPanelTopComponent().changePersistenceState(false);
+            file.save();
+            int option = JOptionPane.showConfirmDialog(null, "Are you want to reload diagram now ?", "Reload Diagram", JOptionPane.YES_NO_OPTION);
+            if (option == javax.swing.JOptionPane.OK_OPTION) {
+                file.getModelerPanelTopComponent().close();
+                JPAFileActionListener fileListener = new JPAFileActionListener((JPAFileDataObject) file.getModelerFileDataObject());
+                fileListener.actionPerformed(null);
+            }
+        }
+    }
+    
+    
     public String getNextClassName() {
         return getNextClassName(null);
     }

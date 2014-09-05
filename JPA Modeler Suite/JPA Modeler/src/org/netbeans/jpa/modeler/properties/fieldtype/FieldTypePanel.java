@@ -182,7 +182,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
             } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
                 dataType = new String[]{"java.util.Date", "java.util.Calendar"};
             } else {
-                dataType = new String[]{"String", "char", "boolean", "byte", "short", "int", "long", "float", "double", "Character", "Boolean", "Byte", "Short", "Integer", "Long", "Float", "Double", "java.math.BigInteger", "java.math.BigDecimal", "java.util.Date", "java.util.Calendar",
+                dataType = new String[]{"String", "char", "boolean", "byte", "short", "int", "long", "float", "double", "Character", "Boolean", "Byte", "Short", "Integer", "Long", "Float", "Double", "java.math.BigInteger", "java.math.BigDecimal",
+                    //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
+                    /*"java.util.Date", "java.util.Calendar",*/
                     "java.sql.Date", "java.sql.Time", "java.sql.Timestamp", "byte[]", "Byte[]", "char[]", "Character[]"};
             }
         } else if (baseAttribute instanceof ElementCollection) {
@@ -192,7 +194,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
                 dataType = new String[]{"java.util.Date", "java.util.Calendar"};
             } else {
                 dataType = new String[]{"String", "Character", "Boolean", "Byte", "Short", "Integer", "Long", "Float", "Double",
-                    "java.math.BigInteger", "java.math.BigDecimal", "java.util.Date", "java.util.Calendar",
+                    "java.math.BigInteger", "java.math.BigDecimal",
+                    //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
+                    /*"java.util.Date", "java.util.Calendar",*/
                     "java.sql.Date", "java.sql.Time", "java.sql.Timestamp", "byte[]", "Byte[]", "char[]", "Character[]"};
             }
         } else if (baseAttribute instanceof Id) {

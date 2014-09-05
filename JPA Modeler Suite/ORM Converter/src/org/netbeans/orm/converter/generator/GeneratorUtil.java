@@ -24,6 +24,8 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.EntityListener;
 
 public class GeneratorUtil {
+    
+    private static boolean generateDefaultValue = false;
 
     public static List<EntityListenerSnippet> processEntityListeners(
             List<EntityListener> parsedEntityListeners,
@@ -94,5 +96,19 @@ public class GeneratorUtil {
         }
 
         return entityListeners;
+    }
+
+    /**
+     * @return the generateDefaultValue
+     */
+    public static boolean isGenerateDefaultValue() {
+        return generateDefaultValue;
+    }
+
+    /**
+     * @param aGenerateDefaultValue the generateDefaultValue to set
+     */
+    public static void setGenerateDefaultValue(boolean aGenerateDefaultValue) {
+        generateDefaultValue = aGenerateDefaultValue;
     }
 }

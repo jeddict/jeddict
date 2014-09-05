@@ -18,6 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class OneToOneSnippet extends AbstractRelationDefSnippet
@@ -56,6 +57,7 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
             }
         }
         builder.append("@OneToOne");
+        if (!GeneratorUtil.isGenerateDefaultValue()) {
         if (mappedBy == null
                 && optional == true
                 && getTargetEntity() == null
@@ -63,11 +65,12 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
                 && getCascadeTypes().isEmpty()) {
             return builder.toString();
         }
+        }
 
         builder.append("(");
 
-        if (optional == false) {
-            builder.append("optional=false,");
+        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+                builder.append("optional=").append(optional).append(",");
         }
 
         if (!getCascadeTypes().isEmpty()) {

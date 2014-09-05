@@ -83,6 +83,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
             sequenceGenerator.setSchema(seqgen_schema_TextField.getText());
             sequenceGenerator.setCatalog(seqgen_catalog_TextField.getText());
             idAttributeSpec.setSequenceGenerator(sequenceGenerator);
+            idAttributeSpec.setTableGenerator(null);
             idAttributeSpec.getGeneratedValue().setGenerator(sequenceGenerator.getName());
         } else if (generationType == GenerationType.TABLE) {
             TableGenerator tableGenerator = new TableGenerator();
@@ -107,6 +108,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
             }
             tableGenerator.setAllocationSize((Integer) tabgen_valuecol_allocationSize_Spinner.getValue());
             idAttributeSpec.setTableGenerator(tableGenerator);
+            idAttributeSpec.setSequenceGenerator(null);
             idAttributeSpec.getGeneratedValue().setGenerator(tableGenerator.getName());
         } else {
             idAttributeSpec.setSequenceGenerator(null);

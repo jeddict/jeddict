@@ -18,6 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ManyToOneSnippet extends AbstractRelationDefSnippet
@@ -47,18 +48,22 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
             }
         }
         builder.append("@ManyToOne");
-        if (optional == true
-                && getTargetEntity() == null
-                && getFetchType() == null
-                && getCascadeTypes().isEmpty()) {
-            return builder.toString();
+       
+        if (!GeneratorUtil.isGenerateDefaultValue()) {
+            if (optional == true
+                    && getTargetEntity() == null
+                    && getFetchType() == null
+                    && getCascadeTypes().isEmpty()) {
+                return builder.toString();
+            }
         }
 
         builder.append("(");
 
-        if (optional == false) {
-            builder.append("optional=false,");
+         if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+                builder.append("optional=").append(optional).append(",");
         }
+        
 
         if (!getCascadeTypes().isEmpty()) {
             builder.append("cascade={");

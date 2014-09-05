@@ -15,8 +15,6 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,6 +29,8 @@ public abstract class JavaClass extends FlowNode {
     private String superclass;
     @XmlAttribute
     private String superclassId;
+    @XmlAttribute
+    private boolean visibile = true;
 
     private List<String> annotation;
 
@@ -99,6 +99,20 @@ public abstract class JavaClass extends FlowNode {
             annotation = new ArrayList<String>();
         }
         this.annotation.remove(annotation_In);
+    }
+
+    /**
+     * @return the visibile
+     */
+    public boolean isVisibile() {
+        return visibile;
+    }
+
+    /**
+     * @param visibile the visibile to set
+     */
+    public void setVisibile(boolean visibile) {
+        this.visibile = visibile;
     }
 
 }

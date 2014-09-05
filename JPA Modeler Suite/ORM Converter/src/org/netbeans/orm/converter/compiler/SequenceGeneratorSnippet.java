@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class SequenceGeneratorSnippet implements Snippet {
@@ -73,11 +74,11 @@ public class SequenceGeneratorSnippet implements Snippet {
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
-
-        if (sequenceName == null && allocationSize == 50 && initialValue == 1) {
-
-            return builder.substring(0, builder.length() - 1)
-                    + ORMConverterUtil.CLOSE_PARANTHESES;
+        
+        if (!GeneratorUtil.isGenerateDefaultValue()) {
+            if (sequenceName == null && allocationSize == 50 && initialValue == 1) {
+                return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+            }
         }
 
         if (sequenceName != null && !sequenceName.isEmpty()) {
@@ -87,13 +88,13 @@ public class SequenceGeneratorSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (allocationSize != 50) {
+        if (GeneratorUtil.isGenerateDefaultValue() ||  allocationSize != 50) {
             builder.append("allocationSize=");
             builder.append(allocationSize);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (initialValue != 1) {
+        if (GeneratorUtil.isGenerateDefaultValue() ||  initialValue != 1) {
             builder.append("initialValue=");
             builder.append(initialValue);
             builder.append(ORMConverterUtil.COMMA);

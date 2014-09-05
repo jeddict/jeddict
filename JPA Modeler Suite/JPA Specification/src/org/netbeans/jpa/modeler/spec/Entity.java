@@ -142,9 +142,9 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
     @XmlElement(name = "table-generator")
     protected TableGenerator tableGenerator;
     @XmlElement(name = "named-query")
-    protected List<NamedQuery> namedQuery;//RENENG PENDING
+    protected List<NamedQuery> namedQuery;
     @XmlElement(name = "named-native-query")
-    protected List<NamedNativeQuery> namedNativeQuery;//RENENG PENDING
+    protected List<NamedNativeQuery> namedNativeQuery;
     @XmlElement(name = "sql-result-set-mapping")
     protected List<SqlResultSetMapping> sqlResultSetMapping;//RENENG PENDING
     @XmlElement(name = "exclude-default-listeners")
@@ -231,6 +231,37 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
         }
         this.discriminatorColumn = DiscriminatorColumn.load(element);
         this.tableGenerator = TableGenerator.load(element);
+        
+        AnnotationMirror namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedQueries");
+        if (namedQueriesMirror != null) {
+            List namedQueriesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedQueriesMirror, "value");
+            if (namedQueriesMirrorList != null) {
+                for (Object namedQueryObj : namedQueriesMirrorList) {
+                    this.getNamedQuery().add(NamedQuery.load(element, (AnnotationMirror) namedQueryObj));
+                }
+            }
+        } else {
+            namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedQuery");
+            if (namedQueriesMirror != null) {
+                this.getNamedQuery().add(NamedQuery.load(element, namedQueriesMirror));
+            }
+        }
+        AnnotationMirror namedNativeQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedNativeQueries");
+        if (namedNativeQueriesMirror != null) {
+            List namedNativeQueriesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedNativeQueriesMirror, "value");
+            if (namedNativeQueriesMirrorList != null) {
+                for (Object namedNativeQueryObj : namedNativeQueriesMirrorList) {
+                    this.getNamedNativeQuery().add(NamedNativeQuery.load(element, (AnnotationMirror) namedNativeQueryObj));
+                }
+            }
+        } else {
+            namedNativeQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedNativeQuery");
+            if (namedNativeQueriesMirror != null) {
+                this.getNamedNativeQuery().add(NamedNativeQuery.load(element, namedNativeQueriesMirror));
+            }
+        }
+        
+        
         this.sequenceGenerator = SequenceGenerator.load(element);
         this.getAttributes().load(entityMappings, element, fieldAccess);
 
@@ -1062,5 +1093,4 @@ public class Entity extends JavaClass implements AccessTypeHandler, InheritenceH
         associationOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
     }
-
 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TableGeneratorSnippet implements Snippet {
@@ -172,13 +173,13 @@ public class TableGeneratorSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (allocationSize != 50) {
+        if (GeneratorUtil.isGenerateDefaultValue() ||  allocationSize != 50) {
             builder.append("allocationSize=");
             builder.append(allocationSize);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
+        if (GeneratorUtil.isGenerateDefaultValue() ||  initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
             builder.append("initialValue=");
             builder.append(initialValue);
             builder.append(ORMConverterUtil.COMMA);

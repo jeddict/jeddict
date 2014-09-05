@@ -8,11 +8,14 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -69,8 +72,25 @@ public class NamedNativeQuery {
     @XmlAttribute(name = "result-set-mapping")
     protected String resultSetMapping;
 
-    @XmlAttribute(name = "attribute-type", required = true)
-    private String attributeType;//custom added
+    public static NamedNativeQuery load(Element element, AnnotationMirror annotationMirror) {
+        NamedNativeQuery namedNativeQuery = null;
+        if (annotationMirror != null) {
+            namedNativeQuery = new NamedNativeQuery();
+            namedNativeQuery.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            namedNativeQuery.query = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "query");
+            namedNativeQuery.resultClass = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultClass");
+            namedNativeQuery.resultSetMapping = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultSetMapping");
+
+            List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
+            if (hintsAnnot != null) {
+                for (Object hintObj : hintsAnnot) {
+                    namedNativeQuery.getHint().add(QueryHint.load(element, (AnnotationMirror) hintObj));
+                }
+            }
+        }
+        return namedNativeQuery;
+    }
+    
 
     /**
      * Gets the value of the description property.
@@ -201,18 +221,6 @@ public class NamedNativeQuery {
         this.resultSetMapping = value;
     }
 
-    /**
-     * @return the attributeType
-     */
-    public String getAttributeType() {
-        return attributeType;
-    }
-
-    /**
-     * @param attributeType the attributeType to set
-     */
-    public void setAttributeType(String attributeType) {
-        this.attributeType = attributeType;
-    }
+  
 
 }

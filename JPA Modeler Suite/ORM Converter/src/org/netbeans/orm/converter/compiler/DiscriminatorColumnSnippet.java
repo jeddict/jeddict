@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class DiscriminatorColumnSnippet implements Snippet {
@@ -27,7 +28,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
     private String name = null;
     private DiscriminatorType discriminatorType = null;
     private String columnDefinition = null;
-    private int length = 30;
+    private int length = 31;
 
     public String getName() {
         return name;
@@ -66,9 +67,11 @@ public class DiscriminatorColumnSnippet implements Snippet {
 
         stringBuilder.append("@DiscriminatorColumn(");
 
-        stringBuilder.append("length=");
-        stringBuilder.append(length);
-        stringBuilder.append(ORMConverterUtil.COMMA);
+        if (GeneratorUtil.isGenerateDefaultValue() || length != 31) {
+            stringBuilder.append("length=");
+            stringBuilder.append(length);
+            stringBuilder.append(ORMConverterUtil.COMMA);
+        }
 
         if (name != null && !name.isEmpty()) {
             stringBuilder.append("name=\"");

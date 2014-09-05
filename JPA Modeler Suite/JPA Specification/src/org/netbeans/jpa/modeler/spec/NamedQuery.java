@@ -8,11 +8,14 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -66,9 +69,29 @@ public class NamedQuery {
     @XmlAttribute(required = true)
     protected String name;
 
-    @XmlAttribute(name = "attribute-type", required = true)
-    private String attributeType;//custom added
+    
+    public static NamedQuery load(Element element, AnnotationMirror annotationMirror) {
+        NamedQuery namedQuery = null;
+        if (annotationMirror != null) {
+            namedQuery = new NamedQuery();
+            namedQuery.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            namedQuery.query = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "query");
 
+            Object lockModeObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "lockMode");
+            if (lockModeObj != null) {
+                namedQuery.lockMode = LockModeType.valueOf(lockModeObj.toString());
+            }  
+            List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
+            if (hintsAnnot != null) {
+                for (Object hintObj : hintsAnnot) {
+                    namedQuery.getHint().add(QueryHint.load(element, (AnnotationMirror) hintObj));
+                }
+            }
+        }
+        return namedQuery;
+    }
+    
+    
     /**
      * Gets the value of the description property.
      *
@@ -178,18 +201,6 @@ public class NamedQuery {
         this.name = value;
     }
 
-    /**
-     * @return the attributeType
-     */
-    public String getAttributeType() {
-        return attributeType;
-    }
-
-    /**
-     * @param attributeType the attributeType to set
-     */
-    public void setAttributeType(String attributeType) {
-        this.attributeType = attributeType;
-    }
+    
 
 }

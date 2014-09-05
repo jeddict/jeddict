@@ -146,7 +146,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private String status;//GENERATED (DBRE,JCRE)
     @XmlAttribute
     private String theme;
-
     @XmlAttribute
     private String persistenceUnitName;
 
@@ -607,6 +606,28 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return null;
     }
 
+    public Entity getEntity(String id) {
+        if (entity != null) {
+            for (Entity entity_In : entity) {
+                if (id.equals(entity_In.getId())) {
+                    return entity_In;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Embeddable getEmbedded(String id) {
+        if (embeddable != null) {
+            for (Embeddable embeddable_In : embeddable) {
+                if (id.equals(embeddable_In.getId())) {
+                    return embeddable_In;
+                }
+            }
+        }
+        return null;
+    }
+
     public List<Entity> findAllEntity(String entityName) {
         List<Entity> entities = new ArrayList<Entity>();
         if (entity != null) {
@@ -919,6 +940,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         }
     }
+
     // Issue Fix #5949 End
     /**
      * @return the theme
@@ -932,6 +954,44 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      */
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public List<JavaClass> getJavaClass() {
+        List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
+        javaClassList.addAll(this.getMappedSuperclass());
+        javaClassList.addAll(this.getEmbeddable());
+        return javaClassList;
+    }
+
+    public List<JavaClass> getSubClass(String classId) {
+        List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
+        for (JavaClass javaClass : this.getJavaClass()) {
+            if (classId.equals(javaClass.getSuperclassId())) {
+                javaClassList.add(javaClass);
+            }
+        }
+        return javaClassList;
+    }
+
+    public List<JavaClass> getAllSubClass(String classId) {
+        List<JavaClass> javaClassList = new ArrayList<JavaClass>();
+        for (JavaClass javaClass : this.getJavaClass()) {
+            if (classId.equals(javaClass.getSuperclassId())) {
+                javaClassList.add(javaClass);
+                javaClassList.addAll(this.getAllSubClass(javaClass.getId()));
+            }
+        }
+        return javaClassList;
+    }
+
+    @Override
+    public String getName() {
+        return persistenceUnitName;
+    }
+
+    @Override
+    public void setName(String value) {
+        this.persistenceUnitName = persistenceUnitName;
     }
 
 }

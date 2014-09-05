@@ -74,7 +74,7 @@ public class Embeddable extends JavaClass {
     protected Boolean metadataComplete;//RENENG PENDING
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
-        if (entityMappings.findMappedSuperclass(element.getSimpleName().toString()) == null) {
+        if (entityMappings.findMappedSuperclass(element.getSimpleName().toString()) == null) { // BUG : https://java.net/bugzilla/show_bug.cgi?id=6192 NullPointerException when reverse engineering from JPA classes revisited
             TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
             if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
                 //Not Supported Currently

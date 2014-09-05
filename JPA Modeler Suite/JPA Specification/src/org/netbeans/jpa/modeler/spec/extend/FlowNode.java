@@ -39,17 +39,17 @@ public abstract class FlowNode extends BaseElement implements IFlowNode {
     }
 
     /**
-     * @return the minimized
+     * @return the visible
      */
     public boolean isMinimized() {
         return minimized;
     }
 
     /**
-     * @param minimized the minimized to set
+     * @param visible the visible to set
      */
-    public void setMinimized(boolean minimized) {
-        this.minimized = minimized;
+    public void setMinimized(boolean visible) {
+        this.minimized = visible;
     }
 
 }

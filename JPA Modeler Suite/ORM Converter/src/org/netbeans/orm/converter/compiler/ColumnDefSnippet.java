@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ColumnDefSnippet implements Snippet {
@@ -36,14 +37,15 @@ public class ColumnDefSnippet implements Snippet {
 
     public boolean isEmptyObject() {
         boolean empty = false;
-        if ((name == null || name.trim().isEmpty())
+        if(!GeneratorUtil.isGenerateDefaultValue()){
+              if ((name == null || name.trim().isEmpty())
                 && (table == null || table.trim().isEmpty())
                 && (columnDefinition == null || columnDefinition.trim().isEmpty())
                 && unique == false && updatable == true && insertable == true && nullable == true
                 && length == 255 && scale == 0 && precision == 0) {
             empty = true;
+         } 
         }
-
         return empty;
     }
 
@@ -149,35 +151,67 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("\",");
         }
 
-        if (unique == true) {
-            builder.append("unique=true,");
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            if (unique == true) {
+                builder.append("unique=true,");
+            } else {
+                builder.append("unique=false,");
+            }
+        } else {
+            if (unique == true) {
+                builder.append("unique=true,");
+            }
         }
-
-        if (updatable == false) {
+        
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            if (updatable == true) {
+                builder.append("updatable=true,");
+            } else {
+                builder.append("updatable=false,");
+            }
+        } else {
+            if (updatable == false) {
             builder.append("updatable=false,");
+            }
         }
-
-        if (insertable == false) {
+        
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            if (insertable == true) {
+                builder.append("insertable=true,");
+            } else {
+                builder.append("insertable=false,");
+            }
+        } else {
+            if (insertable == false) {
             builder.append("insertable=false,");
         }
-
-        if (nullable == false) {
-            builder.append("nullable=false,");
+        }
+        
+        if (GeneratorUtil.isGenerateDefaultValue()) {
+            if (nullable == true) {
+                builder.append("nullable=true,");
+            } else {
+                builder.append("nullable=false,");
+            }
+        } else {
+            if (nullable == false) {
+                builder.append("nullable=false,");
+            }
         }
 
-        if (length != 255) {
-            builder.append("length=");
-            builder.append(length);
-            builder.append(ORMConverterUtil.COMMA);
+        if (GeneratorUtil.isGenerateDefaultValue() || length != 255) {
+                builder.append("length=");
+                builder.append(length);
+                builder.append(ORMConverterUtil.COMMA);
         }
-
-        if (scale != 0) {
+        
+        if (GeneratorUtil.isGenerateDefaultValue() || scale != 0) {
             builder.append("scale=");
             builder.append(scale);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (precision != 0) {
+        if (GeneratorUtil.isGenerateDefaultValue() || precision != 0) {
             builder.append("precision=");
             builder.append(precision);
             builder.append(ORMConverterUtil.COMMA);

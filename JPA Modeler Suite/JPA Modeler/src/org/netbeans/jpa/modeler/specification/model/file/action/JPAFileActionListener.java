@@ -49,7 +49,6 @@ public class JPAFileActionListener extends ModelerFileActionListener {
 
     public JPAFileActionListener(JPAFileDataObject context) {
         super(context);
-//        context.getPrimaryFile().ge
     }
 
     @Override
