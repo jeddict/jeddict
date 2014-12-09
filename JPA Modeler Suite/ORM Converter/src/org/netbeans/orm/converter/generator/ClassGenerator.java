@@ -107,7 +107,7 @@ import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public abstract class ClassGenerator {
+public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private static final String TEMPORAL_TYPE_PREFIX = "TemporalType.";
 
@@ -115,12 +115,20 @@ public abstract class ClassGenerator {
 
     protected String packageName = null;
 
-    protected ClassDefSnippet classDef = new ClassDefSnippet();
+    protected T classDef;
+
+    public ClassGenerator(T classDef) {
+//        if(classDef==null){
+//            this.classDef = ;
+//        } else {
+            this.classDef=classDef;
+//        }
+    }
 
     protected Map<String, VariableDefSnippet> variables
             = new HashMap<String, VariableDefSnippet>();
 
-    public abstract ClassDefSnippet getClassDef();
+    public abstract T getClassDef();
 
     protected ColumnDefSnippet getColumnDef(Column column) {
 
@@ -166,6 +174,7 @@ public abstract class ClassGenerator {
         }
         return variableDef;
     }
+
 
 //    protected VariableDefSnippet getVariableDef(String name) {
 //        VariableDefSnippet variableDef = variables.get(name);

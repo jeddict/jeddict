@@ -24,13 +24,14 @@ import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class DefaultClassGenerator extends ClassGenerator {
+public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
 
     private static Logger logger = ORMConvLogger.getLogger(DefaultClassGenerator.class);
 
     private DefaultClass defaultClass = null;
 
     public DefaultClassGenerator(DefaultClass parsedDefaultClass, String packageName) {
+        super(new ClassDefSnippet());
         this.defaultClass = parsedDefaultClass;
         this.packageName = packageName;
     }

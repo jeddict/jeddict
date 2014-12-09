@@ -32,6 +32,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
     private static final String JPA_TEMPLATE_FILENAME = "jpatemplate.vm";
+    private static final String STATIC_METAMODEL_TEMPLATE_FILENAME = "staticmetamodel.vm";
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
     private static VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
@@ -46,6 +47,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     }
 
     private boolean embeddable = false;
+    private boolean staticMetamodel = false;
     private boolean generateId = false;
     private boolean excludeDefaultListener = false;
     private boolean excludeSuperClassListener = false;
@@ -302,7 +304,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             Template template = null;
             if (defaultClass) {
                 template = ORMConverterUtil.getTemplate(DEFAULT_TEMPLATE_FILENAME);
-            } else {
+            } else if(staticMetamodel){
+                template = ORMConverterUtil.getTemplate(STATIC_METAMODEL_TEMPLATE_FILENAME);
+            }else {
                 template = ORMConverterUtil.getTemplate(JPA_TEMPLATE_FILENAME);
             }
 
@@ -464,5 +468,19 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setAnnotation(List<String> annotation) {
         this.annotation = annotation;
+    }
+
+    /**
+     * @return the staticMetamodel
+     */
+    public boolean isStaticMetamodel() {
+        return staticMetamodel;
+    }
+
+    /**
+     * @param staticMetamodel the staticMetamodel to set
+     */
+    public void setStaticMetamodel(boolean staticMetamodel) {
+        this.staticMetamodel = staticMetamodel;
     }
 }

@@ -122,7 +122,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "associationOverride",
     "attributes"
 })
-public class Entity extends JavaClass implements AccessTypeHandler, InheritenceHandler, PrimaryKeyContainer, AttributeOverrideHandler, AssociationOverrideHandler {
+public class Entity extends IdentifiableClass implements AccessTypeHandler, InheritenceHandler, AttributeOverrideHandler, AssociationOverrideHandler {
 
     protected String description;
     protected Table table;

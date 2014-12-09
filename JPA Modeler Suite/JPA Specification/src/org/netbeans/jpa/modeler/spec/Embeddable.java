@@ -62,7 +62,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "description",
     "attributes"
 })
-public class Embeddable extends JavaClass {
+public class Embeddable extends ManagedClass {
 
     protected String description;
     protected EmbeddableAttributes attributes;

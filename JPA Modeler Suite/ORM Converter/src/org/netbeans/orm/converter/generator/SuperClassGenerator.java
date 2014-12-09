@@ -24,7 +24,7 @@ import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class SuperClassGenerator extends ClassGenerator {
+public class SuperClassGenerator extends ClassGenerator<ClassDefSnippet> {
 
     private static Logger logger = ORMConvLogger.getLogger(
             SuperClassGenerator.class);
@@ -34,7 +34,7 @@ public class SuperClassGenerator extends ClassGenerator {
     public SuperClassGenerator(
             MappedSuperclass parsedMappedSuperclass,
             String packageName) {
-
+        super(new ClassDefSnippet());
         this.mappedSuperclass = parsedMappedSuperclass;
         this.packageName = packageName;
     }

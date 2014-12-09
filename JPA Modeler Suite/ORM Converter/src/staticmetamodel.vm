@@ -1,0 +1,21 @@
+#####################Package Name definition ###########################
+#if ($classDef.getPackageName())
+package $classDef.getPackageName();
+#end
+
+#####################import statements #################################
+import javax.persistence.metamodel.StaticMetamodel;
+#foreach ( $importStatement in $classDef.getImportSnippets() )
+$importStatement
+#end
+
+#set( $class = ".class" )
+@StaticMetamodel($classDef.getValue()$class)
+public class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end  {
+
+#foreach( $varDef in $classDef.getVariableDefs() )
+  public static volatile $varDef.attributeType<$classDef.getValue(),$varDef.type> $varDef.name;
+#end
+
+}
+

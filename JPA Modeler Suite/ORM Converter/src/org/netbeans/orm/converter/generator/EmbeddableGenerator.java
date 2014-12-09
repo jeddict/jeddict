@@ -24,16 +24,15 @@ import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class EmbeddableGenerator extends ClassGenerator {
+public class EmbeddableGenerator extends ClassGenerator<ClassDefSnippet> {
 
     private static Logger logger = ORMConvLogger.getLogger(
             EmbeddableGenerator.class);
 
     private Embeddable embeddable = null;
 
-    public EmbeddableGenerator(
-            Embeddable parsedEmbeddable, String packageName) {
-
+    public EmbeddableGenerator(Embeddable parsedEmbeddable, String packageName) {
+        super(new ClassDefSnippet());
         this.packageName = packageName;
         this.embeddable = parsedEmbeddable;
     }

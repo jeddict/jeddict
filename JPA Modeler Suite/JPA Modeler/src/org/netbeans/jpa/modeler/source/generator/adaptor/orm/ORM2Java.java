@@ -46,6 +46,7 @@ import org.netbeans.orm.converter.generator.EmbeddableIdClassGenerator;
 import org.netbeans.orm.converter.generator.EntityGenerator;
 import org.netbeans.orm.converter.generator.LifecycleCallbackGenerator;
 import org.netbeans.orm.converter.generator.PersistenceXMLGenerator;
+import org.netbeans.orm.converter.generator.staticmetamodel.StaticMetamodelGenerator;
 import org.netbeans.orm.converter.generator.SuperClassGenerator;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ClassType;
@@ -158,6 +159,14 @@ public class ORM2Java {
                     ClassType.EMBEDED_CLASS, classDef);
 
             writeSnippet(classDef);
+            
+             ClassDefSnippet staticMetamodelClassDef = new StaticMetamodelGenerator(
+                    parsedEmbeddable, packageName).getClassDef();
+
+            classesRepository.addWritableSnippet(
+                    ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
+
+            writeSnippet(staticMetamodelClassDef);
         }
     }
 
@@ -175,6 +184,14 @@ public class ORM2Java {
                     ClassType.ENTITY_CLASS, classDef);
 
             writeSnippet(classDef);
+            
+            ClassDefSnippet staticMetamodelClassDef = new StaticMetamodelGenerator(
+                    parsedEntity, packageName).getClassDef();
+
+            classesRepository.addWritableSnippet(
+                    ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
+
+            writeSnippet(staticMetamodelClassDef);
         }
     }
 
@@ -295,6 +312,14 @@ public class ORM2Java {
                     ClassType.SUPER_CLASS, classDef);
 
             writeSnippet(classDef);
+            
+            ClassDefSnippet staticMetamodelClassDef = new StaticMetamodelGenerator(
+                    parsedMappedSuperclass, packageName).getClassDef();
+
+            classesRepository.addWritableSnippet(
+                    ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
+
+            writeSnippet(staticMetamodelClassDef);
         }
     }
 

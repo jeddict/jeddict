@@ -85,7 +85,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "postLoad",
     "attributes"
 })
-public class MappedSuperclass extends JavaClass implements PrimaryKeyContainer {
+public class MappedSuperclass extends IdentifiableClass {
 
     protected String description;
     @XmlElement(name = "id-class")

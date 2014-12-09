@@ -34,13 +34,14 @@ import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class EntityGenerator extends ClassGenerator {
+public class EntityGenerator extends ClassGenerator<ClassDefSnippet>{
 
     private static Logger logger = ORMConvLogger.getLogger(EntityGenerator.class);
 
     private Entity entity = null;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
+        super(new ClassDefSnippet());
         this.entity = parsedEntity;
         this.packageName = packageName;
     }
