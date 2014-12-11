@@ -130,14 +130,12 @@ public class MappedSuperclass extends IdentifiableClass {
                 if (JavaSourceParserUtil.isEntityClass(superClassElement)) {
                     org.netbeans.jpa.modeler.spec.Entity entitySuperclassSpec = new org.netbeans.jpa.modeler.spec.Entity();
                     entitySuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
-                    super.setSuperclass(entitySuperclassSpec.getClazz());
-                    super.setSuperclassId(entitySuperclassSpec.getId());
+                    super.addSuperclass(entitySuperclassSpec);
                     entityMappings.addEntity(entitySuperclassSpec);
                 } else if (JavaSourceParserUtil.isMappedSuperClass(superClassElement)) {
                     org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclassSpec = new org.netbeans.jpa.modeler.spec.MappedSuperclass();
                     mappedSuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
-                    super.setSuperclass(mappedSuperclassSpec.getClazz());
-                    super.setSuperclassId(mappedSuperclassSpec.getId());
+                    super.addSuperclass(mappedSuperclassSpec);
                     entityMappings.addMappedSuperclass(mappedSuperclassSpec);
                 } else {
                     //Skip

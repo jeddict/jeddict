@@ -24,6 +24,7 @@ import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
@@ -39,6 +40,8 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
     private static Logger logger = ORMConvLogger.getLogger(StaticMetamodelGenerator.class);
 
     private ManagedClass managedClass = null;
+
+
 
     public StaticMetamodelGenerator(ManagedClass managedClass, String packageName) {
         super(new StaticMetamodelClassDefSnippet());
@@ -104,6 +107,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
     }
     
     
+    @Override
     public StaticMetamodelClassDefSnippet getClassDef() {
       
         //Attributes -- Method level annotations
@@ -136,7 +140,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         classHelper.setPackageName(packageName);
 //The name of the metamodel class is derived from the name of the managed class by appending "_" to the name of the managed class.
        if(managedClass.getSuperclass()!=null){
-        ClassHelper superClassHelper = new ClassHelper(managedClass.getSuperclass() + "_");//If class X extends another class S, where S is the most derived managed class (i.e., entity or mapped superclass) extended by X, then class X_ must extend class S_, where S_ is the metamodel class created for S.
+        ClassHelper superClassHelper = new ClassHelper(managedClass.getSuperclass().getClazz() + "_");//If class X extends another class S, where S is the most derived managed class (i.e., entity or mapped superclass) extended by X, then class X_ must extend class S_, where S_ is the metamodel class created for S.
         superClassHelper.setPackageName(packageName);
         classDef.setSuperClassName(superClassHelper.getFQClassName());
        }
@@ -152,6 +156,55 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
 
         return classDef;
     }
+    
+//    public boolean isManagedSuperClassExist(){
+//        return managedClass.getSuperclass()!=null;
+//    }
+//    public String getManagedSuperClass(){
+//        return managedClass.getSuperclass().getClazz();
+//    }
+    public ManagedClass getManagedClass(){
+        return managedClass;
+    }
 
+    
+        @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + (this.managedClass.getId() != null ? this.managedClass.getId().hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final StaticMetamodelGenerator other = (StaticMetamodelGenerator) obj;
+        if (this.managedClass.getId() != other.managedClass.getId() && (this.managedClass.getId() == null || !this.managedClass.getId().equals(other.managedClass.getId()))) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj == null) {
+//            return false;
+//        }
+//        if (getClass() != obj.getClass()) {
+//            return false;
+//        }
+//        final BaseElement other = (BaseElement) obj;
+//        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+//            return false;
+//        }
+//        return true;
+//    }
   
 }

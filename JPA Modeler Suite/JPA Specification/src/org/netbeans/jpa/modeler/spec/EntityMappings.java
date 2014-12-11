@@ -152,6 +152,16 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public EntityMappings() {
         System.out.println("");
     }
+    
+    public void initJavaInheritenceMapping(){
+        List<JavaClass> javaClassList = this.getJavaClass();
+        for(JavaClass javaClass : javaClassList){
+            if(javaClass.getSuperclassId()!=null){
+               JavaClass javaSuperclass = findJavaClass(javaClass.getSuperclassId());
+               javaClass.addSuperclass(javaSuperclass);
+            }            
+        }            
+    }
 
     //UPDATE ELEMENT
     public boolean isClassExist(String _class) {
@@ -962,11 +972,25 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         javaClassList.addAll(this.getEmbeddable());
         return javaClassList;
     }
+    
+    public JavaClass findJavaClass(String classId) {
+        List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
+        javaClassList.addAll(this.getMappedSuperclass());
+        javaClassList.addAll(this.getEmbeddable());
+        for(JavaClass javaClass : javaClassList){
+            if(javaClass.getId().equals(classId)){
+                return javaClass;
+            }
+        }
+        return null;
+    }
+    
+    
 
     public List<JavaClass> getSubClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
         for (JavaClass javaClass : this.getJavaClass()) {
-            if (classId.equals(javaClass.getSuperclassId())) {
+            if (classId.equals(javaClass.getSuperclass().getId())) {
                 javaClassList.add(javaClass);
             }
         }
@@ -976,13 +1000,14 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public List<JavaClass> getAllSubClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<JavaClass>();
         for (JavaClass javaClass : this.getJavaClass()) {
-            if (classId.equals(javaClass.getSuperclassId())) {
+            if (classId.equals(javaClass.getSuperclass().getId())) {
                 javaClassList.add(javaClass);
                 javaClassList.addAll(this.getAllSubClass(javaClass.getId()));
             }
         }
         return javaClassList;
     }
+
 
     @Override
     public String getName() {

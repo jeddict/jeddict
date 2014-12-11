@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
@@ -31,6 +33,7 @@ import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.modeler.task.ITaskSupervisor;
 import org.netbeans.modules.editor.indent.api.Reformat;
@@ -74,6 +77,8 @@ public class ORM2Java {
     private Project project;
     private SourceGroup sourceGroup;
 
+    private Set<StaticMetamodelGenerator> staticMetamodelClass;//Required Generation based on inheritence means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
+
     public void generateSource(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
         try {
             this.task = task;
@@ -83,6 +88,7 @@ public class ORM2Java {
 
             this.parsedEntityMappings = parsedEntityMappings;// parser.parseContent(ormFile);
             this.packageName = parsedEntityMappings.getPackage();
+            this.staticMetamodelClass = new HashSet<StaticMetamodelGenerator>();
 
             CompilerConfig compilerConfig = new CompilerConfig(packageName);
 
@@ -125,9 +131,10 @@ public class ORM2Java {
                     generateIdClasses(defaultClass);
                 }
             }
-            generateSuperClasses();
+            generateMappedSuperClasses();
             generateEntityClasses();
             generateEmbededClasses();
+            flushStaticMetamodel();
             generateLifeCycleClasses();
 
 //            generateJavaSingleton();
@@ -159,14 +166,9 @@ public class ORM2Java {
                     ClassType.EMBEDED_CLASS, classDef);
 
             writeSnippet(classDef);
-            
-             ClassDefSnippet staticMetamodelClassDef = new StaticMetamodelGenerator(
-                    parsedEmbeddable, packageName).getClassDef();
 
-            classesRepository.addWritableSnippet(
-                    ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
+            generateStaticMetamodel(parsedEmbeddable);
 
-            writeSnippet(staticMetamodelClassDef);
         }
     }
 
@@ -184,17 +186,66 @@ public class ORM2Java {
                     ClassType.ENTITY_CLASS, classDef);
 
             writeSnippet(classDef);
-            
-            ClassDefSnippet staticMetamodelClassDef = new StaticMetamodelGenerator(
-                    parsedEntity, packageName).getClassDef();
 
-            classesRepository.addWritableSnippet(
-                    ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
+            generateStaticMetamodel(parsedEntity);
 
-            writeSnippet(staticMetamodelClassDef);
         }
     }
 
+    private void generateMappedSuperClasses()
+            throws InvalidDataException, IOException {
+
+        List<MappedSuperclass> parsedMappedSuperclasses
+                = parsedEntityMappings.getMappedSuperclass();
+
+        for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
+            task.log("Generating MappedSuperclass Class : " + parsedMappedSuperclass.getClazz(), true);
+            ClassDefSnippet classDef = new SuperClassGenerator(
+                    parsedMappedSuperclass, packageName).getClassDef();
+
+            classesRepository.addWritableSnippet(
+                    ClassType.SUPER_CLASS, classDef);
+
+            writeSnippet(classDef);
+
+            generateStaticMetamodel(parsedMappedSuperclass);
+        }
+    }
+
+    private void generateStaticMetamodel(ManagedClass managedClass) throws InvalidDataException, IOException {
+        if (managedClass.getGenerateStaticMetamodel()) {
+            StaticMetamodelGenerator staticMetamodel = new StaticMetamodelGenerator(managedClass, packageName);
+            ClassDefSnippet staticMetamodelClassDef = staticMetamodel.getClassDef();
+            classesRepository.addWritableSnippet(ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
+            writeSnippet(staticMetamodelClassDef);
+
+            if (staticMetamodelClass.contains(staticMetamodel)) {
+                staticMetamodelClass.remove(staticMetamodel);
+            }
+            if (managedClass.getSuperclass() != null) {
+                StaticMetamodelGenerator staticMetamodelSuperClass = new StaticMetamodelGenerator(managedClass, packageName);
+                staticMetamodelClass.add(staticMetamodelSuperClass);
+            }
+        }
+    }
+    private void flushStaticMetamodel() throws InvalidDataException, IOException{
+        for( StaticMetamodelGenerator staticMetamodel : staticMetamodelClass){
+            flushStaticMetamodel(staticMetamodel);
+        }
+        staticMetamodelClass = null;
+    }
+        private void flushStaticMetamodel(StaticMetamodelGenerator staticMetamodel) throws InvalidDataException, IOException{
+            ClassDefSnippet staticMetamodelClassDef = staticMetamodel.getClassDef();
+            classesRepository.addWritableSnippet(ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
+            writeSnippet(staticMetamodelClassDef);            
+            
+            if (staticMetamodel.getManagedClass().getSuperclass() != null) {
+                StaticMetamodelGenerator staticMetamodelSuperClass = new StaticMetamodelGenerator((ManagedClass)staticMetamodel.getManagedClass().getSuperclass(), packageName);
+                flushStaticMetamodel(staticMetamodelSuperClass);
+            }
+    }
+    
+    
 //    //Generate A abstract class for global named queries,
 //    //sqlresultsets etc
 //    private void generateJavaSingleton()
@@ -295,32 +346,6 @@ public class ORM2Java {
         ClassDefSnippet classDef = new DefaultClassGenerator(defaultClass, packageName).getClassDef();
         classesRepository.addWritableSnippet(ClassType.SERIALIZER_CLASS, classDef);
         writeSnippet(classDef);
-    }
-
-    private void generateSuperClasses()
-            throws InvalidDataException, IOException {
-
-        List<MappedSuperclass> parsedMappedSuperclasses
-                = parsedEntityMappings.getMappedSuperclass();
-
-        for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
-            task.log("Generating MappedSuperclass Class : " + parsedMappedSuperclass.getClazz(), true);
-            ClassDefSnippet classDef = new SuperClassGenerator(
-                    parsedMappedSuperclass, packageName).getClassDef();
-
-            classesRepository.addWritableSnippet(
-                    ClassType.SUPER_CLASS, classDef);
-
-            writeSnippet(classDef);
-            
-            ClassDefSnippet staticMetamodelClassDef = new StaticMetamodelGenerator(
-                    parsedMappedSuperclass, packageName).getClassDef();
-
-            classesRepository.addWritableSnippet(
-                    ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
-
-            writeSnippet(staticMetamodelClassDef);
-        }
     }
 
     private List<ClassDefSnippet> getPUXMLEntries() {

@@ -203,8 +203,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
                     entitySuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
                     entityMappings.addEntity(entitySuperclassSpec);
                 }
-                super.setSuperclass(entitySuperclassSpec.getClazz());
-                super.setSuperclassId(entitySuperclassSpec.getId());
+                super.addSuperclass(entitySuperclassSpec);
             } else if (JavaSourceParserUtil.isMappedSuperClass(superClassElement)) {
                 org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclassSpec = entityMappings.findMappedSuperclass(superClassElement.getSimpleName().toString());
                 if (mappedSuperclassSpec == null) {
@@ -212,8 +211,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
                     mappedSuperclassSpec.load(entityMappings, superClassElement, fieldAccess);
                     entityMappings.addMappedSuperclass(mappedSuperclassSpec);
                 }
-                super.setSuperclass(mappedSuperclassSpec.getClazz());
-                super.setSuperclassId(mappedSuperclassSpec.getId());
+                super.addSuperclass(mappedSuperclassSpec);
             } else {
                 //Skip
             }

@@ -182,8 +182,7 @@ public class JPAModelerScene extends PModelerScene {
     }
 
     @Override
-    public void deleteBaseElement(IBaseElementWidget baseElementWidget
-    ) {
+    public void deleteBaseElement(IBaseElementWidget baseElementWidget) {
         EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getRootElement();
         if (baseElementWidget instanceof IFlowElementWidget) {
             if (baseElementWidget instanceof FlowNodeWidget) { //reverse ref
@@ -270,8 +269,8 @@ public class JPAModelerScene extends PModelerScene {
                     generalizationFlowWidget.getSubclassWidget().setOutgoingGeneralizationFlowWidget(null);
                     generalizationFlowWidget.getSuperclassWidget().removeIncomingGeneralizationFlowWidget(generalizationFlowWidget);
                     JavaClass javaSubclass = (JavaClass) generalizationFlowWidget.getSubclassWidget().getBaseElementSpec();
-                    javaSubclass.setSuperclassId(null);
-                    javaSubclass.setSuperclass(null);
+                    JavaClass javaSuperclass = (JavaClass) generalizationFlowWidget.getSuperclassWidget().getBaseElementSpec();
+                    javaSubclass.removeSuperclass(javaSuperclass);
 //                    generalizationFlowWidget.setSubclassWidget(null); // moved to destroy
 //                    generalizationFlowWidget.setSuperclassWidget(null);
 

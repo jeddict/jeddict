@@ -82,13 +82,15 @@ public class SuperClassGenerator extends ClassGenerator<ClassDefSnippet> {
 
         //Class decorations
         ClassHelper classHelper = new ClassHelper(mappedSuperclass.getClazz());
-        ClassHelper superClassHelper = new ClassHelper(
-                mappedSuperclass.getSuperclass());
+        if(mappedSuperclass.getSuperclass()!=null){
+        ClassHelper superClassHelper = new ClassHelper(mappedSuperclass.getSuperclass().getClazz());
+        classDef.setSuperClassName(superClassHelper.getFQClassName());
+        }
         classHelper.setPackageName(packageName);
 
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
-        classDef.setSuperClassName(superClassHelper.getFQClassName());
+        
         classDef.setPackageName(classHelper.getPackageName());
 
         classDef.setMappedSuperClass(true);

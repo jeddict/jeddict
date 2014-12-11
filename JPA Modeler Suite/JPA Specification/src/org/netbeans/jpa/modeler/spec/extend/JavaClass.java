@@ -16,19 +16,28 @@
 package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Gaurav Gupta
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class JavaClass extends FlowNode {
 
     @XmlAttribute
-    private String superclass;
-    @XmlAttribute
     private String superclassId;
+    @XmlTransient
+    private JavaClass superclass;
+    @XmlTransient
+    private Set<JavaClass> subclassList;
+
     @XmlAttribute
     private boolean visibile = true;
 
@@ -41,34 +50,6 @@ public abstract class JavaClass extends FlowNode {
     public abstract IAttributes getAttributes();
 
     public abstract void setAttributes(IAttributes attributes);
-
-    /**
-     * @return the superclass
-     */
-    public String getSuperclass() {
-        return superclass;
-    }
-
-    /**
-     * @param superclass the superclass to set
-     */
-    public void setSuperclass(String superclass) {
-        this.superclass = superclass;
-    }
-
-    /**
-     * @return the superclassId
-     */
-    public String getSuperclassId() {
-        return superclassId;
-    }
-
-    /**
-     * @param superclassId the superclassId to set
-     */
-    public void setSuperclassId(String superclassId) {
-        this.superclassId = superclassId;
-    }
 
     /**
      * @return the annotation
@@ -113,6 +94,79 @@ public abstract class JavaClass extends FlowNode {
      */
     public void setVisibile(boolean visibile) {
         this.visibile = visibile;
+    }
+
+    /**
+     * @return the superclassRef
+     */
+    public JavaClass getSuperclass() {
+        return superclass;
+    }
+
+    /**
+     * @param superclassRef the superclassRef to set
+     */
+    public void addSuperclass(JavaClass superclassRef) {
+        if(this.superclass==superclassRef){
+            return;
+        }
+        if(this.superclass != null){
+            throw new RuntimeException("JavaClass.addSuperclass > superclass is already exist [remove it first to add the new one]");
+        }
+        this.superclass = superclassRef;
+        if (this.superclass != null) {
+            this.superclassId = this.superclass.getId();
+            this.superclass.addSubclass(this);
+        } else {
+            throw new RuntimeException("JavaClass.addSuperclass > superclassRef is null");
+        }
+    }
+    public void removeSuperclass(JavaClass superclassRef) {
+        
+        if (superclassRef != null) {
+            superclassRef.removeSubclass(this);
+        } else {
+            throw new RuntimeException("JavaClass.removeSuperclass > superclassRef is null");
+        }
+        this.superclassId = null;
+        this.superclass = null;
+    }
+
+    /**
+     * @return the subclassList
+     */
+    public Set<JavaClass> getSubclassList() {
+        return subclassList;
+    }
+
+    /**
+     * @param subclassList the subclassList to set
+     */
+    public void setSubclassList(Set<JavaClass> subclassList) {
+        if(this.subclassList == null){
+            this.subclassList = new HashSet<JavaClass>();
+        }
+        this.subclassList = subclassList;
+    }
+    
+    public void addSubclass(JavaClass subclass) {
+        if(this.subclassList == null){
+            this.subclassList = new HashSet<JavaClass>();
+        }
+        this.subclassList.add(subclass);
+    }
+    public void removeSubclass(JavaClass subclass) {
+        if(this.subclassList == null){
+            this.subclassList = new HashSet<JavaClass>();
+        }
+        this.subclassList.remove(subclass);
+    }
+
+    /**
+     * @return the superclassId
+     */
+    public String getSuperclassId() {
+        return superclassId;
     }
 
 }

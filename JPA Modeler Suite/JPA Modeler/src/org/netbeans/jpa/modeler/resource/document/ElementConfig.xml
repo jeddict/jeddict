@@ -10,6 +10,8 @@
         <group id="JOIN_COLUMN_PROP" name="Join Column Properties"/>
         <group id="JOIN_TABLE_PROP" name="Join Table Properties"/>
         <group id="COLLECTION_TABLE_PROP" name="Collection Table Properties"/>
+        <group id="GENERATE_SOURCECODE_PROP" name="Genarate"/>
+        
         <!--<group id="COMPOSITE_PK_PROP" name="Composite PrimaryKey"/>-->
         
         
@@ -99,9 +101,16 @@
                 </attribute>
             </attributes>
         </element>
+          <element id="ManagedClass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ManagedClass">
+            <attributes>
+                <attribute id="generateStaticMetamodel" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="generateStaticMetamodel">
+                    <display-name>StaticMetamodel</display-name>
+                </attribute>
+                 </attributes>
+        </element>
+               
         <element id="Entity" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Entity">
             <attributes>
-
                 <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
                 </attribute>
