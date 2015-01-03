@@ -17,11 +17,22 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import org.apache.commons.lang.ClassUtils;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -32,6 +43,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private static final List<String> temporalTypes = getTemporalTypes();
 
     private List<String> annotation = new ArrayList<String>();
+
+    private JaxbVariableType jaxbVariableType;
+    private JaxbXmlAttribute jaxbXmlAttribute;
+    private JaxbXmlElement jaxbXmlElement;
+    private List<JaxbXmlElement> jaxbXmlElementList;
 
     private boolean autoGenerate = false;
     private boolean embedded = false;
@@ -449,6 +465,13 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 //        if (importSnippets.contains("java.lang.Integer")) {  //BUG : remove String
 //            importSnippets.remove("java.lang.Integer");
 //        }
+//        if(getJaxbVariableType().equals("Attribute")){
+//             importSnippets.add("javax.xml.bind.annotation.XmlAttribute");
+//        } else if(getJaxbVariableType().equals("Element")){
+//             importSnippets.add("javax.xml.bind.annotation.XmlElement");
+//        } else if(getJaxbVariableType().equals("Value")){
+//             importSnippets.add("javax.xml.bind.annotation.XmlValue");
+//        }
         return importSnippets;
     }
 
@@ -466,17 +489,34 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.elementCollection = elementCollection;
     }
 
-//    public boolean isPremitive() {
-//        String type = getType();
-//        if ("boolean".equals(type) || "byte".equals(type)
-//                || "short".equals(type) || "char".equals(type)
-//                || "int".equals(type) || "long".equals(type)
-//                || "float".equals(type) || "double".equals(type)) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
+    public boolean isPrimitive(String type) {
+        return "boolean".equals(type) || "byte".equals(type)
+                || "short".equals(type) || "char".equals(type)
+                || "int".equals(type) || "long".equals(type)
+                || "float".equals(type) || "double".equals(type);
+    }
+
+    public boolean isArray(String type) {
+        int length = type.length();
+        return type.charAt(length - 2) == '[' && type.charAt(length -1) == ']';
+    }
+    
+    public boolean isPrimitiveArray(String type) {
+        int length = type.length();
+        if (isArray(type)) {
+            String premitiveType = type.substring(0, length - 2);
+            return isPrimitive(premitiveType);
+        } else {
+            return false;
+        }
+    }
+    
+    
+
+    public Class getWrapper(String premitive) throws ClassNotFoundException {
+        return ClassUtils.primitiveToWrapper(ClassUtils.getClass(premitive));
+    }
+
     /**
      * @return the collectionTable
      */
@@ -532,4 +572,145 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public void setAnnotation(List<String> annotation) {
         this.annotation = annotation;
     }
+
+    /**
+     * @return the jaxbVariableType
+     */
+    public JaxbVariableType getJaxbVariableType() {
+//        System.out.println("jaxbVariableType==null?\"\":jaxbVariableType.getType() : " + jaxbVariableType==null?"":jaxbVariableType.getType());
+        return jaxbVariableType;//==null?"":jaxbVariableType.getType();
+    }
+
+    /**
+     * @param jaxbVariableType the jaxbVariableType to set
+     */
+    public void setJaxbVariableType(JaxbVariableType jaxbVariableType) {
+        this.jaxbVariableType = jaxbVariableType;
+    }
+
+    /**
+     * @return the jaxbXmlAttribute
+     */
+    public JaxbXmlAttribute getJaxbXmlAttribute() {
+        return jaxbXmlAttribute;
+    }
+
+    /**
+     * @param jaxbXmlAttribute the jaxbXmlAttribute to set
+     */
+    public void setJaxbXmlAttribute(JaxbXmlAttribute jaxbXmlAttribute) {
+        this.jaxbXmlAttribute = jaxbXmlAttribute;
+    }
+
+    /**
+     * @return the jaxbXmlElement
+     */
+    public JaxbXmlElement getJaxbXmlElement() {
+        return jaxbXmlElement;
+    }
+
+    /**
+     * @param jaxbXmlElement the jaxbXmlElement to set
+     */
+    public void setJaxbXmlElement(JaxbXmlElement jaxbXmlElement) {
+        this.jaxbXmlElement = jaxbXmlElement;
+    }
+
+    /**
+     * @return the jaxbXmlElementList
+     */
+    public List<JaxbXmlElement> getJaxbXmlElementList() {
+        return jaxbXmlElementList;
+    }
+
+    /**
+     * @param jaxbXmlElementList the jaxbXmlElementList to set
+     */
+    public void setJaxbXmlElementList(List<JaxbXmlElement> jaxbXmlElementList) {
+        this.jaxbXmlElementList = jaxbXmlElementList;
+    }
+
+    public String getJaxbAnnotationSnippet() {
+        
+        StringBuilder snippet = new StringBuilder();
+        if(isPrimaryKey()){
+//            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+        } else if(getRelationDef()!=null){
+            if(getRelationDef() instanceof OneToOneSnippet){
+                  OneToOneSnippet otoSnippet = (OneToOneSnippet)getRelationDef();
+                  if(otoSnippet.getMappedBy()!=null && !otoSnippet.getMappedBy().trim().isEmpty()){
+                      snippet.append("@XmlTransient");
+                  } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                  }
+                } else if(getRelationDef() instanceof OneToManySnippet){
+                  OneToManySnippet otmSnippet = (OneToManySnippet)getRelationDef();
+                  if(otmSnippet.getMappedBy()!=null && !otmSnippet.getMappedBy().trim().isEmpty()){
+                      snippet.append("@XmlTransient");
+                  } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                  }
+                } else if(getRelationDef() instanceof ManyToOneSnippet){
+//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                } else if(getRelationDef() instanceof ManyToManySnippet){
+                  ManyToManySnippet mtmSnippet = (ManyToManySnippet)getRelationDef();
+                  if(mtmSnippet.getMappedBy()!=null && !mtmSnippet.getMappedBy().trim().isEmpty()){
+                      snippet.append("@XmlTransient");
+                  } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                  }
+                }
+        }
+        
+        if (getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE ) {
+            if(getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE){
+            snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+            }
+            snippet.append("@XmlAttribute");
+            JaxbXmlAttribute attr = this.getJaxbXmlAttribute();
+            if ((attr.getName() != null && !attr.getName().isEmpty()) || (attr.getRequired() != null && attr.getRequired())) {
+                snippet.append("(");
+                if (attr.getName() != null && !attr.getName().isEmpty()) {
+                    snippet.append("name = \"").append(attr.getName()).append("\", ");
+                }
+                if (attr.getRequired() != null) {
+                    snippet.append("required = ").append(attr.getRequired()).append(", ");
+                }
+                snippet.setLength(snippet.length() - 2);
+                snippet.append(")");
+            }
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT ) {
+            if(getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT){
+            snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+            }
+            snippet.append("@XmlElement");
+            JaxbXmlElement ele = this.getJaxbXmlElement();
+            if ((ele.getName() != null && !ele.getName().isEmpty()) || (ele.getRequired() != null && ele.getRequired())) {
+                snippet.append("(");
+                if (ele.getName() != null && !ele.getName().isEmpty()) {
+                    snippet.append("name = \"").append(ele.getName()).append("\", ");
+                }
+                if (ele.getRequired() != null) {
+                    snippet.append("required = ").append(ele.getRequired()).append(", ");
+                }
+                snippet.setLength(snippet.length() - 2);
+                snippet.append(")");
+            }
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENTS) { //pending
+            snippet.append("@XmlElements");
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_VALUE || getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE ) {
+             if(getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE){
+            snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+            }
+            snippet.append("@XmlValue");
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT && getRelationDef()==null) { 
+            snippet.append("@XmlTransient");
+        }
+        int snippetLength = snippet.length(); //Remove NEW_LINE and TAB
+        if(snippetLength > 6 && snippet.charAt(snippetLength-5) == '\n'){
+            snippet.setLength(snippetLength-5);
+        }
+        return snippet.toString();
+    }
+
 }

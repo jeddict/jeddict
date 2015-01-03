@@ -94,8 +94,8 @@ public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-        elementConfigFactory.createPropertySet(set, this.getBaseElementSpec(), getPropertyChangeListeners());
+        
+        set.createPropertySet( this , this.getBaseElementSpec(), getPropertyChangeListeners());
     }
 
     @Override

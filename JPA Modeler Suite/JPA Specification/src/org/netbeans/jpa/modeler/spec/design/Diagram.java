@@ -36,7 +36,7 @@ import org.netbeans.modeler.specification.model.document.IDiagramElement;
  *
  *
  */
-@XmlRootElement(name = "diagram") // J
+@XmlRootElement(name = "diagram")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "diagram", propOrder = {
     "plane",

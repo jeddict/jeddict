@@ -57,6 +57,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
             }
 
         });
+        
 
     }
 
@@ -85,8 +86,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         if (entity.getTable() == null) {
             entity.setTable(new Table());
         }
-        ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-        elementConfigFactory.createPropertySet(set, entity.getTable(), getPropertyChangeListeners());
+        
+        set.createPropertySet( this , entity.getTable(), getPropertyChangeListeners());
 
         if (entity instanceof InheritenceHandler) {
             set.put("BASIC_PROP", getInheritenceProperty());

@@ -16,18 +16,37 @@
 package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public abstract class Attribute extends FlowPin {
+public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandler {
 
     private List<String> annotation;
     @XmlAttribute
     private boolean visibile = true;
+
+    @XmlAttribute(name = "jaxb-variable-type", required = true)
+    private JaxbVariableType jaxbVariableType;
+    @XmlElement(name = "jaxb-xml-attribute")
+    private JaxbXmlAttribute jaxbXmlAttribute;
+    @XmlElement(name = "jaxb-xml-element")
+    private JaxbXmlElement jaxbXmlElement;
+    @XmlElement(name = "jaxb-xml-element")
+    @XmlElementWrapper(name = "jaxb-xml-element-list")
+    private List<JaxbXmlElement> jaxbXmlElementList;
+//    @XmlAttribute(name = "jaxb-xml-list")
+//    private Boolean jaxbXmlList;
 
     /**
      * @return the annotation
@@ -74,4 +93,79 @@ public abstract class Attribute extends FlowPin {
         this.visibile = visibile;
     }
 
+    /**
+     * @return the jaxbVariableType
+     */
+    public JaxbVariableType getJaxbVariableType() {
+        return jaxbVariableType;
+    }
+
+    /**
+     * @param jaxbVariableType the jaxbVariableType to set
+     */
+    public void setJaxbVariableType(JaxbVariableType jaxbVariableType) {
+        this.jaxbVariableType = jaxbVariableType;
+    }
+
+    /**
+     * @return the jaxbXmlAttribute
+     */
+    public JaxbXmlAttribute getJaxbXmlAttribute() {
+        return jaxbXmlAttribute;
+    }
+
+    /**
+     * @param jaxbXmlAttribute the jaxbXmlAttribute to set
+     */
+    public void setJaxbXmlAttribute(JaxbXmlAttribute jaxbXmlAttribute) {
+        this.jaxbXmlAttribute = jaxbXmlAttribute;
+    }
+
+    /**
+     * @return the jaxbXmlElement
+     */
+    public JaxbXmlElement getJaxbXmlElement() {
+        return jaxbXmlElement;
+    }
+
+    /**
+     * @param jaxbXmlElement the jaxbXmlElement to set
+     */
+    public void setJaxbXmlElement(JaxbXmlElement jaxbXmlElement) {
+        this.jaxbXmlElement = jaxbXmlElement;
+    }
+
+    /**
+     * @return the jaxbXmlElementList
+     */
+    public List<JaxbXmlElement> getJaxbXmlElementList() {
+        return jaxbXmlElementList;
+    }
+
+    /**
+     * @param jaxbXmlElementList the jaxbXmlElementList to set
+     */
+    public void setJaxbXmlElementList(List<JaxbXmlElement> jaxbXmlElementList) {
+        this.jaxbXmlElementList = jaxbXmlElementList;
+    }
+
+//    /**
+//     * @return the jaxbXmlList
+//     */
+//    public Boolean getJaxbXmlList() {
+//        return jaxbXmlList;
+//    }
+//
+//    /**
+//     * @param jaxbXmlList the jaxbXmlList to set
+//     */
+//    public void setJaxbXmlList(Boolean jaxbXmlList) {
+//        this.jaxbXmlList = jaxbXmlList;
+//    }
+    
+    
+    @Override
+    public List<JaxbVariableType> getJaxbVariableList(){
+        return Arrays.asList(JaxbVariableType.values());
+    }
 }

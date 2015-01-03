@@ -80,5 +80,9 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
         attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
+    
+    
+    
+    
 
 }

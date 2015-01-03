@@ -73,8 +73,8 @@ public class OverrideAssociationChildFactory extends ChildFactory<AttributeWidge
                         if (attributeSpec instanceof JoinColumnHandler) {
                             set.put("JOIN_COLUMN_PROP", JPAModelerUtil.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinColumn()));
                         }
-                        ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-                        elementConfigFactory.createPropertySet(set, associationOverride.getJoinTable());
+                        
+                        set.createPropertySet( attributeWidget , associationOverride.getJoinTable());
                         set.put("JOIN_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("JoinTable_JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getJoinColumn()));
                         set.put("JOIN_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("JoinTable_InverseJoinColumns", "Inverse Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getInverseJoinColumn()));
 

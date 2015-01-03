@@ -22,10 +22,9 @@ public class $classDef.getClassName() implements Serializable {
 #end
 
 #####################Constructor #################################
-    public $classDef.getClassName()(){
+    public $classDef.getClassName()() {
 
     }
-
 
 #####################hash code ###############################
     @Override
@@ -79,27 +78,23 @@ if (!Objects.equals(this.$varDef.name, other.$varDef.name)) {
     return true;
     }
 
-
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
 #set($method = $varDef.getMethodName())
-
-
 #if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
+    
     public $varDef.type is$method() {
         return this.$varDef.name;
     }
 #else
+
    public $varDef.type get$method() {
         return this.$varDef.name;
     }
 #end
 
-
-  public void set$method ($varDef.type $varDef.name) {
+    public void set$method ($varDef.type $varDef.name) {
         this.$varDef.name = $varDef.name;
     }
-
 #end
 }
-

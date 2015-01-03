@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -377,5 +378,7 @@ public class ManyToOne extends RelationAttribute implements JoinColumnHandler {
     public void setPrimaryKey(boolean primaryKey) {
         this.primaryKey = primaryKey;
     }
+    
+  
 
 }

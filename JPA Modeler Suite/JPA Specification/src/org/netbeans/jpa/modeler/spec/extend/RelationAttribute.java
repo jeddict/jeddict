@@ -15,9 +15,13 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.JoinTable;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 
 /**
  *
@@ -70,4 +74,11 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
 
     public abstract void setJoinTable(JoinTable value);
 
+    @Override
+    public List<JaxbVariableType> getJaxbVariableList() {
+        List<JaxbVariableType> jaxbVariableTypeList = new ArrayList<JaxbVariableType>();
+        jaxbVariableTypeList.add(JaxbVariableType.XML_ELEMENT);
+        jaxbVariableTypeList.add(JaxbVariableType.XML_TRANSIENT);
+        return jaxbVariableTypeList;
+    }  
 }

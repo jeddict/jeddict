@@ -387,7 +387,7 @@ public class JPAModelerScene extends PModelerScene {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         ElementConfigFactory elementConfigFactory = this.getModelerFile().getVendorSpecification().getElementConfigFactory();
-        elementConfigFactory.createPropertySet(set, this.getBaseElementSpec(), getPropertyChangeListeners());
+        set.createPropertySet( this , this.getBaseElementSpec(), getPropertyChangeListeners());
 //        if (this.getBaseElementSpec() instanceof AccessTypeHandler) {
 //            set.put("BASIC_PROP", JPAModelerUtil.getAccessTypeProperty(this, (AccessTypeHandler) this.getBaseElementSpec()));
 //        }

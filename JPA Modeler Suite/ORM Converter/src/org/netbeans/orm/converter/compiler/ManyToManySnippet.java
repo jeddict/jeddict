@@ -59,19 +59,19 @@ public class ManyToManySnippet extends AbstractRelationDefSnippet
         }
 
         if (getFetchType() != null) {
-            builder.append("fetch=");
+            builder.append("fetch = ");
             builder.append(getFetchType());
             builder.append(ORMConverterUtil.COMMA);
         }
 
         if (getTargetEntity() != null) {
-            builder.append("targetEntity=");
+            builder.append("targetEntity = ");
             builder.append(getTargetEntity());
             builder.append(ORMConverterUtil.COMMA);
         }
 
         if (mappedBy != null) {
-            builder.append("mappedBy=");
+            builder.append("mappedBy = ");
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(mappedBy);
             builder.append(ORMConverterUtil.QUOTE);

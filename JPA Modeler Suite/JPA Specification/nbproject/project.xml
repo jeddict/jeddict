@@ -118,6 +118,7 @@
                 <package>org.netbeans.jpa.modeler.spec</package>
                 <package>org.netbeans.jpa.modeler.spec.design</package>
                 <package>org.netbeans.jpa.modeler.spec.extend</package>
+                <package>org.netbeans.jpa.modeler.spec.jaxb</package>
                 <package>org.netbeans.jpa.source</package>
             </friend-packages>
         </data>

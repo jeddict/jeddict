@@ -25,28 +25,28 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.JOINED;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.TABLE_PER_CLASS;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorColumnSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorValueSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet.Type;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
+import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class EntityGenerator extends ClassGenerator<ClassDefSnippet>{
+public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
 
     private static Logger logger = ORMConvLogger.getLogger(EntityGenerator.class);
 
     private Entity entity = null;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
-        super(new ClassDefSnippet());
+        super(new ManagedClassDefSnippet());
         this.entity = parsedEntity;
         this.packageName = packageName;
     }
 
-    public ClassDefSnippet getClassDef() {
+    public ManagedClassDefSnippet getClassDef() {
 
         //Classlevel annotations
         processDiscriminatorColumn();
@@ -119,6 +119,8 @@ public class EntityGenerator extends ClassGenerator<ClassDefSnippet>{
         }
         classDef.setEntity(true);
         classDef.setAnnotation(entity.getAnnotation());
+        
+        classDef.setXmlRootElement(entity.getXmlRootElement());
 
         return classDef;
     }

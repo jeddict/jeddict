@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -534,4 +535,12 @@ public class ManyToMany extends RelationAttribute {
         this.collectionType = collectionType;
     }
 
+    @Override
+    public List<JaxbVariableType> getJaxbVariableList() {
+        if(mappedBy!=null && !mappedBy.trim().isEmpty()){
+            return null;
+        } else {
+            return super.getJaxbVariableList();
+        }
+    }
 }

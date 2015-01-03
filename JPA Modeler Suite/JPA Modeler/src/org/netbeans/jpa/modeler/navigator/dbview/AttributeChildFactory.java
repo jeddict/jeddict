@@ -98,7 +98,6 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
 
     @Override
     protected Node createNodeForKey(final ColumnDef columnDef) {
-//        Attribute attribute = (Attribute) columnDef.getAttributeWidget().getBaseElementSpec();
         AbstractNode node = new PropertyNode(columnDef.getAttributeWidget().getModelerScene(), Children.LEAF, Lookups.singleton(columnDef)) {
 
             @Override
@@ -108,8 +107,7 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
                     if (persistenceBaseAttribute.getColumn() == null) {
                         persistenceBaseAttribute.setColumn(new Column());
                     }
-                    ElementConfigFactory elementConfigFactory = columnDef.getAttributeWidget().getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-                    elementConfigFactory.createPropertySet(set, persistenceBaseAttribute.getColumn(), columnDef.getAttributeWidget().getPropertyChangeListeners(), columnDef.getAttributeWidget().getPropertyVisibilityHandlers());
+                    set.createPropertySet( columnDef.getAttributeWidget() , persistenceBaseAttribute.getColumn(), columnDef.getAttributeWidget().getPropertyChangeListeners(), columnDef.getAttributeWidget().getPropertyVisibilityHandlers());
                 }
             }
 

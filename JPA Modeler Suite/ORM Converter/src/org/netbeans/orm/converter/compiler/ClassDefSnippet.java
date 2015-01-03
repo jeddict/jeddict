@@ -32,7 +32,6 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
     private static final String JPA_TEMPLATE_FILENAME = "jpatemplate.vm";
-    private static final String STATIC_METAMODEL_TEMPLATE_FILENAME = "staticmetamodel.vm";
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
     private static VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
@@ -47,7 +46,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     }
 
     private boolean embeddable = false;
-    private boolean staticMetamodel = false;
     private boolean generateId = false;
     private boolean excludeDefaultListener = false;
     private boolean excludeSuperClassListener = false;
@@ -299,17 +297,19 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         return variableDefs;
     }
 
+    
+    protected String getTemplateName() {
+         if (defaultClass) {
+                return DEFAULT_TEMPLATE_FILENAME;
+            }else {
+                return JPA_TEMPLATE_FILENAME;
+            }
+    }
+    
     public String getSnippet() throws InvalidDataException {
         try {
-            Template template = null;
-            if (defaultClass) {
-                template = ORMConverterUtil.getTemplate(DEFAULT_TEMPLATE_FILENAME);
-            } else if(staticMetamodel){
-                template = ORMConverterUtil.getTemplate(STATIC_METAMODEL_TEMPLATE_FILENAME);
-            }else {
-                template = ORMConverterUtil.getTemplate(JPA_TEMPLATE_FILENAME);
-            }
-
+            Template template = ORMConverterUtil.getTemplate(getTemplateName());
+            
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("classDef", this);
 
@@ -470,17 +470,4 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         this.annotation = annotation;
     }
 
-    /**
-     * @return the staticMetamodel
-     */
-    public boolean isStaticMetamodel() {
-        return staticMetamodel;
-    }
-
-    /**
-     * @param staticMetamodel the staticMetamodel to set
-     */
-    public void setStaticMetamodel(boolean staticMetamodel) {
-        this.staticMetamodel = staticMetamodel;
-    }
 }

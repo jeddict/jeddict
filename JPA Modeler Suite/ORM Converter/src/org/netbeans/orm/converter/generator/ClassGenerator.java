@@ -63,6 +63,7 @@ import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.orm.converter.compiler.AssociationOverrideSnippet;
 import org.netbeans.orm.converter.compiler.AssociationOverridesSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverrideSnippet;
@@ -170,21 +171,22 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef = new VariableDefSnippet();
             variableDef.setName(attr.getName());
             variableDef.setAnnotation(attr.getAnnotation());
+            
+            variableDef.setJaxbVariableType(attr.getJaxbVariableType());
+            if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
+                variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
+            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT) {
+                variableDef.setJaxbXmlElement(attr.getJaxbXmlElement());
+            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENTS) {
+//            variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
+            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_VALUE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
+//        variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
+            }
             variables.put(attr.getName(), variableDef);
         }
         return variableDef;
     }
 
-
-//    protected VariableDefSnippet getVariableDef(String name) {
-//        VariableDefSnippet variableDef = variables.get(name);
-//        if (variableDef == null) {
-//            variableDef = new VariableDefSnippet();
-//            variableDef.setName(name);
-//            variables.put(name, variableDef);
-//        }
-//        return variableDef;
-//    }
     protected void processBasic(List<Basic> parsedBasics) {
         if (parsedBasics == null) {
             return;

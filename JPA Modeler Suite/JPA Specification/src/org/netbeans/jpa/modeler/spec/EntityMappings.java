@@ -148,9 +148,16 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private String theme;
     @XmlAttribute
     private String persistenceUnitName;
+    
+    
+    /** JAXB Attributes Start **/
+    @XmlAttribute(name="jaxb-support")
+    private Boolean jaxbSupport = false;
+    @XmlAttribute(name="jaxb-namespace")
+    private String jaxbNameSpace;
+        /** JAXB Attributes End **/
 
     public EntityMappings() {
-        System.out.println("");
     }
     
     public void initJavaInheritenceMapping(){
@@ -1017,6 +1024,34 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     @Override
     public void setName(String value) {
         this.persistenceUnitName = persistenceUnitName;
+    }
+
+    /**
+     * @return the jaxbSupport
+     */
+    public Boolean getJaxbSupport() {
+        return jaxbSupport;
+    }
+
+    /**
+     * @param jaxbSupport the jaxbSupport to set
+     */
+    public void setJaxbSupport(Boolean jaxbSupport) {
+        this.jaxbSupport = jaxbSupport;
+    }
+
+    /**
+     * @return the jaxbNameSpace
+     */
+    public String getJaxbNameSpace() {
+        return jaxbNameSpace;
+    }
+
+    /**
+     * @param jaxbNameSpace the jaxbNameSpace to set
+     */
+    public void setJaxbNameSpace(String jaxbNameSpace) {
+        this.jaxbNameSpace = jaxbNameSpace;
     }
 
 }

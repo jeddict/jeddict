@@ -24,7 +24,6 @@ import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
-import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
@@ -150,7 +149,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         classDef.setClassName(classHelper.getFQClassName());
        
         classDef.setPackageName(classHelper.getPackageName());
-        classDef.setStaticMetamodel(true);
+//        classDef.setStaticMetamodel(true);
         
         classDef.setValue(managedClass.getClazz());//@StaticMetamodel( Person.class )
 

@@ -43,8 +43,8 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget {
         super.createPropertySet(set);
 
         ElementCollection elementCollectionSpec = (ElementCollection) this.getBaseElementSpec();
-        ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-        elementConfigFactory.createPropertySet(set, elementCollectionSpec.getCollectionTable());
+        
+        set.createPropertySet( this , elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
 
     }

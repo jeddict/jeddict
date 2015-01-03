@@ -28,9 +28,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
+import org.netbeans.editor.BaseDocument;
+import org.netbeans.modules.editor.indent.api.Reformat;
+import org.netbeans.orm.converter.compiler.InvalidDataException;
+import org.netbeans.orm.converter.compiler.WritableSnippet;
+import org.openide.cookies.EditorCookie;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 
 public class ORMConverterUtil {
 
@@ -45,6 +57,7 @@ public class ORMConverterUtil {
     public static final String IMPORT = "import ";
     public static final String LESS_THAN = "<";
     public static final String NEW_LINE = "\n";
+    public static final String TAB = "    ";
     public static final String OPEN_PARANTHESES = "(";
     public static final String QUESTION = "?";
     public static final String QUOTE = "\"";
@@ -52,6 +65,7 @@ public class ORMConverterUtil {
     public static final String SOURCE_SUFFIX = ".java";
     public static final String SPACE = " ";
     public static final String UNDERSCORE = "_";
+    
 
     public static File createFile(String parentDir, String childDir,
             String fileName) throws IOException {
@@ -219,4 +233,71 @@ public class ORMConverterUtil {
         fos.write(content.getBytes(charset));
         fos.close();
     }
+    
+       public static void writeSnippet(WritableSnippet writableSnippet , File destDir)
+            throws InvalidDataException, IOException {
+
+        String content = writableSnippet.getSnippet();
+
+        File sourceFile = ORMConverterUtil.createFile(
+                destDir.getAbsolutePath(),
+                writableSnippet.getClassHelper().getSourcePath(),
+                writableSnippet.getClassHelper().getClassNameWithSourceSuffix());
+
+        ORMConverterUtil.writeContent(content, sourceFile);
+        formatFile(sourceFile);
+
+        System.out.println(
+                "Java: Generated file :" + sourceFile.getAbsolutePath());
+    }
+
+    public static void formatFile(File file) {
+        final FileObject fo = FileUtil.toFileObject(file);
+        try {
+            DataObject dobj = DataObject.find(fo);
+            EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
+            if (ec == null) {
+                return;
+            }
+            ec.close();
+            StyledDocument document = ec.getDocument();
+            if (document instanceof BaseDocument) {
+                final BaseDocument doc = (BaseDocument) document;
+                final Reformat f = Reformat.get(doc);
+                f.lock();
+                try {
+                    doc.runAtomic(new Runnable() {
+                        public void run() {
+                            try {
+                                f.reformat(0, doc.getLength());
+                            } catch (BadLocationException ex) {
+                                Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
+                                Exceptions.printStackTrace(ex);
+                            }
+
+                        }
+                    });
+                } finally {
+                    f.unlock();
+                }
+                try {
+                    ec.saveDocument();
+//                    SaveCookie save = dobj.getLookup().lookup(SaveCookie.class);
+//                    if (save != null) {
+//                        save.save();
+//                    }
+                } catch (IOException ex) {
+                    Exceptions.attachMessage(ex, "Failure while formatting and saving " + FileUtil.getFileDisplayName(fo));
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        } catch (DataObjectNotFoundException ex) {
+            Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
 }

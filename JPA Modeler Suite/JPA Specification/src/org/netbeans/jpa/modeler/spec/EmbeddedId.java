@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -158,5 +158,7 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         attributeOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
     }
+    
+  
 
 }

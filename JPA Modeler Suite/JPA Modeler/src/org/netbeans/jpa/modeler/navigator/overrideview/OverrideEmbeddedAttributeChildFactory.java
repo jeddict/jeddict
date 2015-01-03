@@ -90,8 +90,7 @@ public class OverrideEmbeddedAttributeChildFactory extends ChildFactory<Attribut
                         } else {
                             attributeOverride = attributeOverrideHandler.getAttributeOverride(prefixAttributePath + "." + attributeSpec.getName());
                         }
-                        ElementConfigFactory elementConfigFactory = attributeWidget.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-                        elementConfigFactory.createPropertySet(set, attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
+                        set.createPropertySet( attributeWidget , attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
                     }
                 }
 

@@ -40,6 +40,8 @@ import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
@@ -107,7 +109,6 @@ public class AttributeWidget extends FlowPinWidget {
                 }
             }
         });
-
     }
 
 //    private static SelectProvider selectProvider = new SelectProvider() {
@@ -201,6 +202,7 @@ public class AttributeWidget extends FlowPinWidget {
                 Exceptions.printStackTrace(ex);
             }
         }
+          JPAModelerUtil.getJaxbVarTypeProperty(set , this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
     }
 
     private EmbeddedPropertySupport getFieldTypeProperty() {

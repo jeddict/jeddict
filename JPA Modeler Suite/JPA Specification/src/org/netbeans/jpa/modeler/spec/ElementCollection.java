@@ -7,6 +7,7 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -23,6 +24,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -697,4 +699,12 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         return attributeOverride_TMP;
     }
 
+    @Override
+    public List<JaxbVariableType> getJaxbVariableList() {
+        if (this.getConnectedClassId() != null && !this.getConnectedClassId().trim().isEmpty()) { //Embedded //Complex
+            return super.getJaxbVariableList();
+        } else { //Basic //Simple
+            return Arrays.asList(JaxbVariableType.values());
+        }
+    }
 }

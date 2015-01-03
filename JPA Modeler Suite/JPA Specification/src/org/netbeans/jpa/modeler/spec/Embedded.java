@@ -22,6 +22,7 @@ import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -252,5 +253,6 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
         associationOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
     }
+
 
 }

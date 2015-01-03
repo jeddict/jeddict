@@ -79,7 +79,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
      *
      */
     private void exportCode() {
-        ISourceCodeGeneratorFactory sourceGeneratorFactory = (ISourceCodeGeneratorFactory) Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
+        ISourceCodeGeneratorFactory sourceGeneratorFactory = Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
         ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
         InputDefinition definiton = new ORMInputDefiniton();
         definiton.setModelerFile(modelerFile);

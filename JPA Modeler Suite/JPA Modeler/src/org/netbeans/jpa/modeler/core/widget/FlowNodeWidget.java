@@ -55,8 +55,7 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-        elementConfigFactory.createPropertySet(set, this.getBaseElementSpec(), getPropertyChangeListeners(), this.getPropertyVisibilityHandlers());
+        set.createPropertySet( this , this.getBaseElementSpec(), getPropertyChangeListeners(), this.getPropertyVisibilityHandlers());
 
     }
 

@@ -68,8 +68,8 @@ public class BaseAttributeWidget extends AttributeWidget {
             if (persistenceBaseAttribute.getColumn() == null) {
                 persistenceBaseAttribute.setColumn(new Column());
             }
-            ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-            elementConfigFactory.createPropertySet(set, persistenceBaseAttribute.getColumn(), getPropertyChangeListeners(), this.getPropertyVisibilityHandlers());
+            
+            set.createPropertySet( this , persistenceBaseAttribute.getColumn(), getPropertyChangeListeners(), getPropertyVisibilityHandlers());
         }
 //        set.put("BASIC_PROP", getValidationProperty());
 

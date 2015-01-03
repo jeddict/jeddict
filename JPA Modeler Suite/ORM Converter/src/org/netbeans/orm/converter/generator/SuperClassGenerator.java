@@ -21,25 +21,24 @@ import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
+import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class SuperClassGenerator extends ClassGenerator<ClassDefSnippet> {
+public class SuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
     private static Logger logger = ORMConvLogger.getLogger(
             SuperClassGenerator.class);
 
     private MappedSuperclass mappedSuperclass = null;
 
-    public SuperClassGenerator(
-            MappedSuperclass parsedMappedSuperclass,
-            String packageName) {
-        super(new ClassDefSnippet());
+    public SuperClassGenerator(MappedSuperclass parsedMappedSuperclass,String packageName) {
+        super(new ManagedClassDefSnippet());
         this.mappedSuperclass = parsedMappedSuperclass;
         this.packageName = packageName;
     }
 
-    public ClassDefSnippet getClassDef() {
+    public ManagedClassDefSnippet getClassDef() {
 
         //--BEGIN ---- TODOs:
         /*
@@ -95,6 +94,8 @@ public class SuperClassGenerator extends ClassGenerator<ClassDefSnippet> {
 
         classDef.setMappedSuperClass(true);
         classDef.setAnnotation(mappedSuperclass.getAnnotation());
+        
+        classDef.setXmlRootElement(mappedSuperclass.getXmlRootElement());
         return classDef;
     }
 }

@@ -6,6 +6,8 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -16,6 +18,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -233,4 +236,10 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
         this.access = value;
     }
 
+//    @Override
+//    public List<JaxbVariableType> getJaxbVariableList(){
+//       List<JaxbVariableType> jaxbVariableTypeList = super.getJaxbVariableList();
+////                jaxbVariableTypeList.add(JaxbVariableType.);
+//        return jaxbVariableTypeList;
+//    }
 }

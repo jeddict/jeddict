@@ -34,27 +34,27 @@ public class BasicAttributeWidget extends BaseAttributeWidget {
     public BasicAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setIcon(JPAModelerUtil.BASIC_ATTRIBUTE);
-        this.addPropertyVisibilityHandler("length", new PropertyVisibilityHandler<String>() {
-            @Override
-            public boolean isVisible() {
-                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
-                return "String".equals(basicAttribute.getAttributeType());
-            }
-        });
-        this.addPropertyVisibilityHandler("precision", new PropertyVisibilityHandler<String>() {
-            @Override
-            public boolean isVisible() {
-                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
-                return basicAttribute.isPrecisionAttributeType();
-            }
-        });
-        this.addPropertyVisibilityHandler("scale", new PropertyVisibilityHandler<String>() {
-            @Override
-            public boolean isVisible() {
-                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
-                return basicAttribute.isScaleAttributeType();
-            }
-        });
+//        this.addPropertyVisibilityHandler("length", new PropertyVisibilityHandler<String>() {
+//            @Override
+//            public boolean isVisible() {
+//                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
+//                return "String".equals(basicAttribute.getAttributeType());
+//            }
+//        });
+//        this.addPropertyVisibilityHandler("precision", new PropertyVisibilityHandler<String>() {
+//            @Override
+//            public boolean isVisible() {
+//                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
+//                return basicAttribute.isPrecisionAttributeType();
+//            }
+//        });
+//        this.addPropertyVisibilityHandler("scale", new PropertyVisibilityHandler<String>() {
+//            @Override
+//            public boolean isVisible() {
+//                Basic basicAttribute = (Basic) BasicAttributeWidget.this.getBaseElementSpec();
+//                return basicAttribute.isScaleAttributeType();
+//            }
+//        });
 
     }
 

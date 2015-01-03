@@ -91,8 +91,8 @@ public abstract class RelationAttributeWidget extends AttributeWidget {
                 set.put("JOIN_COLUMN_PROP", JPAModelerUtil.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), joinColumnHandlerSpec.getJoinColumn()));
 
             }
-            ElementConfigFactory elementConfigFactory = this.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-            elementConfigFactory.createPropertySet(set, relationAttributeSpec.getJoinTable());
+            
+            set.createPropertySet( this , relationAttributeSpec.getJoinTable());
 
             set.put("JOIN_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("JoinTable_JoinColumns", "Join Columns", "", this.getModelerScene(), relationAttributeSpec.getJoinTable().getJoinColumn()));
             set.put("JOIN_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("JoinTable_InverseJoinColumns", "Inverse Join Columns", "", this.getModelerScene(), relationAttributeSpec.getJoinTable().getInverseJoinColumn()));

@@ -76,13 +76,13 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
         }
 
         if (getFetchType() != null) {
-            builder.append("fetch=");
+            builder.append("fetch = ");
             builder.append(getFetchType());
             builder.append(ORMConverterUtil.COMMA);
         }
 
         if (getTargetEntity() != null) {
-            builder.append("targetEntity=");
+            builder.append("targetEntity = ");
             builder.append(getTargetEntity());
             builder.append(ORMConverterUtil.COMMA);
         }

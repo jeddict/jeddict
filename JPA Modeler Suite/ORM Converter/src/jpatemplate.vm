@@ -5,11 +5,21 @@ package $classDef.getPackageName();
 
 #####################import statements #################################
 import java.io.Serializable;
-
 #foreach ( $importStatement in $classDef.getImportSnippets() )
 $importStatement
 #end
+#####################jaxb annotations ###############################
+#if($classDef.isJaxbSupport())
+import javax.xml.bind.annotation.*;
+#end
 
+#####################jaxb annotations ###############################
+#if($classDef.isJaxbSupport())
+@XmlAccessorType(XmlAccessType.FIELD)
+#if($classDef.isXmlRootElement())
+@XmlRootElement
+#end
+#end
 #####################class annotations ###############################
 $classDef.getEntityString()
 #if ($classDef.getTableDef())
@@ -61,11 +71,17 @@ $classDef.getNamedNativeQueries().getSnippet()
 #foreach($annotation in $classDef.getAnnotation() )
     $annotation
 #end
-public #if ($classDef.isMappedSuperClass())abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end implements Serializable {
+public#if($classDef.isMappedSuperClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end implements Serializable {
+
 #####################member variables ###############################
 #foreach( $varDef in $classDef.getVariableDefs() )
-
-
+#####################jaxb annotations ###############################
+#if($classDef.isJaxbSupport())
+#set($jaxbAnnotationSnippet = $varDef.getJaxbAnnotationSnippet())
+#if($jaxbAnnotationSnippet != "")
+    $jaxbAnnotationSnippet
+#end
+#end
 #foreach($annotation in $varDef.getAnnotation() )
     $annotation
 #end
@@ -143,29 +159,26 @@ $varDef.getAttributeOverrides().getSnippet()
 #end
 
 #####################Constructor #################################
-    public $classDef.getClassName()(){
+    public $classDef.getClassName()() {
 
     }
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
 #set($method = $varDef.getMethodName())
-
-
 #if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
+    
     public $varDef.type is$method() {
         return this.$varDef.name;
     }
 #else
-   public $varDef.type get$method() {
+   
+    public $varDef.type get$method() {
         return this.$varDef.name;
     }
 #end
 
-
-  public void set$method ($varDef.type $varDef.name) {
+    public void set$method($varDef.type $varDef.name) {
         this.$varDef.name = $varDef.name;
     }
-
 #end
 }
-

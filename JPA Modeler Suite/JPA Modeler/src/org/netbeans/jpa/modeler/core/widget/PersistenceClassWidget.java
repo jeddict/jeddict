@@ -124,6 +124,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
                 return property == CompositePKProperty.ALL || property == CompositePKProperty.CLASS;
             }
         });
+        
 
     }
 
@@ -136,7 +137,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             if (this instanceof EntityWidget) {
                 visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1 && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState));
             } else if (this instanceof MappedSuperclassWidget) {
-                visible = getIdAttributeWidgets().size() + +getDerivedRelationAttributeWidgets().size() > 1;
+                visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1;
             }
 
 //                2.4.1.3 Examples of Derived Identities
@@ -322,7 +323,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
                     ((EntityWidget) classWidget).scanPrimaryKeyError();
                 }
             }
-
+            isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute        
         } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
             embeddedIdAttributeWidget = null;
             ((IPersistenceAttributes) attributes).setEmbeddedId(null);
@@ -410,7 +411,6 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     public IdAttributeWidget addNewIdAttribute(String name) {
         IdAttributeWidget idAttributeWidget = addNewIdAttribute(name, null);
-        isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
         return idAttributeWidget;
     }
 
@@ -441,6 +441,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
                 ((EntityWidget) classWidget).scanPrimaryKeyError();
             }
         }
+        isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute        
         return attributeWidget;
     }
 

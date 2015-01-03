@@ -93,8 +93,7 @@ public class OverrideAttributeChildFactory extends ChildFactory<AttributeWidget>
                         Attribute attributeSpec = (Attribute) attributeWidget.getBaseElementSpec();
                         AttributeOverrideHandler attributeOverrideHandler = (AttributeOverrideHandler) entityWidget.getBaseElementSpec();
                         AttributeOverride attributeOverride = attributeOverrideHandler.getAttributeOverride(attributeSpec.getName());
-                        ElementConfigFactory elementConfigFactory = attributeWidget.getModelerScene().getModelerFile().getVendorSpecification().getElementConfigFactory();
-                        elementConfigFactory.createPropertySet(set, attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
+                        set.createPropertySet( attributeWidget , attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
                     }
                 }
 

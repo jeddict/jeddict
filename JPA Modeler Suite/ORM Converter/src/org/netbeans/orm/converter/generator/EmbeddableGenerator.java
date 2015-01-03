@@ -21,10 +21,11 @@ import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
+import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class EmbeddableGenerator extends ClassGenerator<ClassDefSnippet> {
+public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
     private static Logger logger = ORMConvLogger.getLogger(
             EmbeddableGenerator.class);
@@ -32,12 +33,12 @@ public class EmbeddableGenerator extends ClassGenerator<ClassDefSnippet> {
     private Embeddable embeddable = null;
 
     public EmbeddableGenerator(Embeddable parsedEmbeddable, String packageName) {
-        super(new ClassDefSnippet());
+        super(new ManagedClassDefSnippet());
         this.packageName = packageName;
         this.embeddable = parsedEmbeddable;
     }
 
-    public ClassDefSnippet getClassDef() {
+    public ManagedClassDefSnippet getClassDef() {
 
         //Commented -- revist for Phase 3
         //ParsedAccessType accessType = parsedEmbeddable.getAccess();
