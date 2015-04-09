@@ -99,12 +99,6 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget {
         this.setLineColor(color);
     }
 
-    /**
-     * @return the sequenceFlowSpec
-     */
-//    public TSequenceFlow getSequenceFlowSpec() {
-//        return (TSequenceFlow) baseElementSpec;
-//    }
     @Override
     public void init() {
 
@@ -116,10 +110,8 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget {
             AttributeValidator.validateMultipleEmbeddedIdFound((MappedSuperclassWidget) this.getSubclassWidget());
             AttributeValidator.validateEmbeddedIdAndIdFound((MappedSuperclassWidget) this.getSubclassWidget());
         }
-        if ((this.getSuperclassWidget() instanceof EntityWidget)
-                || (this.getSuperclassWidget() instanceof MappedSuperclassWidget)
-                || (this.getSubclassWidget() instanceof EntityWidget)
-                || (this.getSubclassWidget() instanceof MappedSuperclassWidget)) {
+        //BUG : https://java.net/bugzilla/show_bug.cgi?id=6756 - Diagram collapses on reload when using MappedSuperClass hierarchy
+        if (this.getSubclassWidget() instanceof EntityWidget) {
             ((EntityWidget) this.getSubclassWidget()).scanPrimaryKeyError();
         }
 
