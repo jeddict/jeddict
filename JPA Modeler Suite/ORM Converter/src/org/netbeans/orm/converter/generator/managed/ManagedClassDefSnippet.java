@@ -15,11 +15,7 @@
  */
 package org.netbeans.orm.converter.generator.managed;
 
-import java.util.Collection;
-import java.util.TreeSet;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
-import org.netbeans.orm.converter.compiler.InvalidDataException;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *

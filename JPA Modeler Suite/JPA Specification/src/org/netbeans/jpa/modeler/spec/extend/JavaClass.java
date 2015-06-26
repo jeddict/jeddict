@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
 public abstract class JavaClass extends FlowNode {
 
     @XmlAttribute
+    private Boolean _abstract = false;
+    @XmlAttribute
     private String superclassId;
     @XmlTransient
     private JavaClass superclass;
@@ -167,6 +169,20 @@ public abstract class JavaClass extends FlowNode {
      */
     public String getSuperclassId() {
         return superclassId;
+    }
+
+    /**
+     * @return the _abstract
+     */
+    public Boolean getAbstract() {
+        return _abstract;
+    }
+
+    /**
+     * @param _abstract the _abstract to set
+     */
+    public void setAbstract(Boolean _abstract) {
+        this._abstract = _abstract;
     }
 
 }

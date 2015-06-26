@@ -52,6 +52,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private boolean mappedSuperClass = false;
     private boolean entity = false;
     private boolean defaultClass = false;
+    private boolean abstractClass = false;
 
     private ClassHelper classHelper = new ClassHelper();
     private ClassHelper superClassHelper = new ClassHelper();
@@ -468,6 +469,20 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setAnnotation(List<String> annotation) {
         this.annotation = annotation;
+    }
+
+    /**
+     * @return the abstractClass
+     */
+    public boolean isAbstractClass() {
+        return abstractClass;
+    }
+
+    /**
+     * @param abstractClass the abstractClass to set
+     */
+    public void setAbstractClass(boolean abstractClass) {
+        this.abstractClass = abstractClass;
     }
 
 }

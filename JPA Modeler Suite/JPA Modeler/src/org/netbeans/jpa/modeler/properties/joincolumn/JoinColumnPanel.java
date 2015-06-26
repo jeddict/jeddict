@@ -308,10 +308,10 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
             JOptionPane.showMessageDialog(this, "Parameter column name can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
-        if (this.referencedColumnName_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, "Parameter referenced column name can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return false;
-        }//I18n
+//        if (this.referencedColumnName_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+//            JOptionPane.showMessageDialog(this, "Parameter referenced column name can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+//            return false;
+//        }//I18n
         return true;
     }
 
