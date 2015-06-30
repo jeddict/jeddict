@@ -156,8 +156,8 @@ $varDef.getAttributeOverrides().getSnippet()
 #end
 ## $varDef.type => $varDef.getTypeIdentifier().getVariableType() ## to resolve problem Collection => Collection<Entity>
     private $varDef.type $varDef.name;
-#end
 
+#end
 #####################Constructor #################################
     public $classDef.getClassName()() {
 

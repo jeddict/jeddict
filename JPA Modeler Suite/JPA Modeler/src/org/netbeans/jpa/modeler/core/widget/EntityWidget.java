@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Image;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
@@ -36,7 +37,9 @@ import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
+import org.openide.util.ImageUtilities;
 
 public class EntityWidget extends PrimaryKeyContainerWidget {
 
@@ -58,6 +61,13 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
 
         });
         
+       this.addPropertyChangeListener("abstract", new PropertyChangeListener<Boolean>() {
+            @Override
+            public void changePerformed(Boolean _abstract) {
+                changeAbstractionIcon(_abstract);
+            }
+        });
+        
 
     }
 
@@ -75,8 +85,23 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         }
         setName(entity.getClazz());
         setLabel(entity.getClazz());
-
+        changeAbstractionIcon(entity.getAbstract());
         scanPrimaryKeyError();
+//        
+    }
+    
+    private void changeAbstractionIcon(Boolean _abstract){
+        System.out.println(EntityWidget.this.getName() + " + ABSTRACT  : " + _abstract);
+        if(_abstract){
+            System.out.println("JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH" + ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
+                    EntityWidget.this.setNodeImage(ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
+                } else {
+            System.out.println("JPAModelerUtil.ENTITY_ICON_PATH" + ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
+                   EntityWidget.this.setNodeImage(ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
+//                 this.getNodeWidgetInfo().getModelerDocument().setImage();
+        
+        }
+       
     }
 
     @Override

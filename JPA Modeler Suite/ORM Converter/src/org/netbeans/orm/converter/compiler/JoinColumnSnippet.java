@@ -129,7 +129,7 @@ if (!GeneratorUtil.isGenerateDefaultValue()) {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (referencedColumnName != null) {
+        if (referencedColumnName != null && !referencedColumnName.trim().isEmpty()) {
             builder.append("referencedColumnName=\"");
             builder.append(referencedColumnName);
             builder.append(ORMConverterUtil.QUOTE);

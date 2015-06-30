@@ -79,7 +79,7 @@ public class AssociationOverrideSnippet implements Snippet {
             builder.append(ORMConverterUtil.CLOSE_BRACES);
         }
 
-        if (joinTable != null) {
+        if (joinTable != null && joinTable.getSnippet() != null) {
             builder.append(ORMConverterUtil.COMMA);
             builder.append("joinTable=");
             builder.append(joinTable.getSnippet());

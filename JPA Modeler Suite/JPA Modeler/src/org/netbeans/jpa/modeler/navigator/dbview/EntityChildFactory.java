@@ -20,6 +20,7 @@ import java.util.List;
 import javax.swing.Action;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.nodes.AbstractNode;
@@ -74,7 +75,7 @@ public class EntityChildFactory extends ChildFactory<EntityWidget> {
         };
         node.setDisplayName(entityWidget.getNodeName());
         node.setShortDescription(entityWidget.getNodeName());
-        node.setIconBaseWithExtension("org/netbeans/jpa/modeler/resource/element/java/ENTITY.png");
+        node.setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);
         return node;
     }
 

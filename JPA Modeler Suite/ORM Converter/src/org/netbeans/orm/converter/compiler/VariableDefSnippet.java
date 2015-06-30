@@ -181,9 +181,16 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      * getNickname()
      */
     public String getMethodName() {
-        char ch = Character.toUpperCase(name.charAt(0));
+        if(name.charAt(0) == '_'){
+            char ch = Character.toUpperCase(name.charAt(1));
+
+            return Character.toString(ch) + name.substring(2);
+        } else {
+            char ch = Character.toUpperCase(name.charAt(0));
 
         return Character.toString(ch) + name.substring(1);
+        }
+        
     }
 
 //    public String getGetterName() {
