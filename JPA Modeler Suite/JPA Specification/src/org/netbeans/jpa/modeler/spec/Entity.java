@@ -188,7 +188,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     private String compositePrimaryKeyClass;//custom added
 
     public Entity() {
-        System.out.println("");
     }
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
