@@ -16,10 +16,10 @@
 package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 
 /**
  *
@@ -83,11 +83,16 @@ public abstract class BaseAttribute extends Attribute {
         return false;
     }
 
+    
     /**
      * @param attributeType the attributeType to set
      */
     public void setAttributeType(String attributeType) {
-        this.attributeType = attributeType;
+        if (attributeType.indexOf(LANG_PACKAGE) == 0) {
+            this.attributeType = attributeType.substring(LANG_PACKAGE.length()+1);
+        } else {
+            this.attributeType = attributeType;
+        }
     }
 
     

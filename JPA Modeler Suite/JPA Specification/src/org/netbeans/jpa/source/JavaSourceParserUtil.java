@@ -48,6 +48,7 @@ import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.WorkingCopy;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import static org.netbeans.jpa.source.Package.JEE_PACKAGE;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Utilities;
@@ -128,7 +129,7 @@ public class JavaSourceParserUtil {
         return findAnnotation(element, annotationFqn);
     }
 
-    private static final String JEE_PACKAGE = "javax.persistence";//"javax.persistence|javax.xml.bind.annotation"
+  //"javax.persistence|javax.xml.bind.annotation"
     private static final Pattern JEE_PACKAGE_PATTERN = Pattern.compile(JEE_PACKAGE);
 
     public static void addNonEEAnnotation(JavaClass _class, Element element) {
