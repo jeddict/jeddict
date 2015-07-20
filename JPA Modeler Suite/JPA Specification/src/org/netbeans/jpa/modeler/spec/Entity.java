@@ -9,6 +9,7 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,8 +23,6 @@ import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -267,6 +266,13 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         }
         this.clazz = element.getSimpleName().toString();
         this.access = AccessType.load(element);
+        
+        if (element.getModifiers().contains(Modifier.ABSTRACT)) {
+            this.setAbstract(true);
+        }        
+                
+                
+                
 
         if (this.getAttributes().getEmbeddedId() != null) {
             this.setCompositePrimaryKeyClass(this.getAttributes().getEmbeddedId().getAttributeType());
