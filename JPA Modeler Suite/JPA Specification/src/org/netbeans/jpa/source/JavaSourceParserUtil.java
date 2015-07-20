@@ -124,11 +124,11 @@ public class JavaSourceParserUtil {
         return findAnnotation(element, annotationFqn) != null;
     }
 
-    public static AnnotationMirror getAnnotation(Element element, String annotationFqn) {//temp replica
+    public static AnnotationMirror getAnnotation(Element element, String annotationFqn) {
         return findAnnotation(element, annotationFqn);
     }
 
-    private static final String JEE_PACKAGE = "javax.persistence|javax.xml.bind.annotation";
+    private static final String JEE_PACKAGE = "javax.persistence";//"javax.persistence|javax.xml.bind.annotation"
     private static final Pattern JEE_PACKAGE_PATTERN = Pattern.compile(JEE_PACKAGE);
 
     public static void addNonEEAnnotation(JavaClass _class, Element element) {
