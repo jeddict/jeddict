@@ -601,7 +601,10 @@ public class JavaSourceParserUtil {
         String guessFieldName = name.substring(0, 1).toLowerCase() + name.substring(1);
         TypeElement typeElement = (TypeElement) getter.getEnclosingElement();
         for (VariableElement variableElement : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
-            if (variableElement.getSimpleName().contentEquals(guessFieldName)) {
+            //BUG : handling of field name for reserved sql keyword e.g : _size
+            if(variableElement.getSimpleName().charAt(0) == '_' && variableElement.getSimpleName().contentEquals('_'+guessFieldName)){
+                return variableElement;
+            } else if (variableElement.getSimpleName().contentEquals(guessFieldName)) {
                 return variableElement;
             }
         }
