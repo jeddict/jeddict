@@ -121,6 +121,11 @@ public class OneToOne extends RelationAttribute implements JoinColumnHandler {
                 }
             }
         }
+        
+        AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
+        if (joinColumnAnnotationMirror != null) {
+            oneToOne.getJoinColumn().add(JoinColumn.load(element, joinColumnAnnotationMirror));
+        }
 
         List cascadeList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "cascade");
         if (cascadeList != null) {
