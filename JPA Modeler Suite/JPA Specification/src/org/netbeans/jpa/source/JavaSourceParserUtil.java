@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
@@ -126,12 +128,14 @@ public class JavaSourceParserUtil {
         return findAnnotation(element, annotationFqn);
     }
 
-    public static final String JEE_PACKAGE = "javax.persis";
+    private static final String JEE_PACKAGE = "javax.persistence|javax.xml.bind.annotation";
+    private static final Pattern JEE_PACKAGE_PATTERN = Pattern.compile(JEE_PACKAGE);
 
     public static void addNonEEAnnotation(JavaClass _class, Element element) {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            if (!annotationQualifiedName.contains(JEE_PACKAGE)) {
+            Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
+            if(!matcher.find()){
                 _class.addAnnotation(annotationMirror.toString());
             }
         }
@@ -140,7 +144,8 @@ public class JavaSourceParserUtil {
     public static void addNonEEAnnotation(Attribute attribute, Element element) {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            if (!annotationQualifiedName.contains(JEE_PACKAGE)) {
+            Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
+            if(!matcher.find()){
                 attribute.addAnnotation(annotationMirror.toString());
             }
         }
