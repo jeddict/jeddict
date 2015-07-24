@@ -48,6 +48,7 @@ import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.WorkingCopy;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import static org.netbeans.jpa.source.Package.JEE_PACKAGE;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
@@ -147,7 +148,14 @@ public class JavaSourceParserUtil {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
             Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
             if(!matcher.find()){
-                attribute.addAnnotation(annotationMirror.toString());
+//                attribute.addAnnotation(annotationMirror.toString());
+                
+//                annotationMirror.getAnnotationType().getTypeArguments()
+                Annotation annotation = new Annotation();
+                annotation.setName(annotationMirror.getAnnotationType().toString());
+               attribute.addAnnotation(annotation); 
+                
+//                attribute.addAnnotationMirror(annotationMirror);
             }
         }
     }

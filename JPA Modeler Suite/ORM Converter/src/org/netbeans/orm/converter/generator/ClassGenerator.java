@@ -170,7 +170,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (variableDef == null) {
             variableDef = new VariableDefSnippet();
             variableDef.setName(attr.getName());
-            variableDef.setAnnotation(attr.getAnnotation());
+//            variableDef.setAnnotation(attr.getAnnotation());
             
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
             if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {

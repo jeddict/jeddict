@@ -572,6 +572,13 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public List<String> getAnnotation() {
         return annotation;
     }
+    
+    /**
+     * @return the annotation
+     */
+    public List<String> getAnnotationSimpleName() {
+        return annotation;
+    }
 
     /**
      * @param annotation the annotation to set

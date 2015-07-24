@@ -102,15 +102,15 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
 
         //Class decorations
         ClassHelper classHelper = new ClassHelper(entity.getClazz());
-        System.out.println("entity.getAbstract() " + entity.getAbstract());
-        classDef.setAbstractClass(entity.getAbstract());
+        classHelper.setPackageName(packageName);
+        classDef.setAbstract(entity.getAbstract());
+        classDef.setInterfaces(entity.getInterfaces());
         if(entity.getSuperclass()!=null){
         ClassHelper superClassHelper = new ClassHelper(entity.getSuperclass().getClazz());
         superClassHelper.setPackageName(packageName);
                 classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
 
-        classHelper.setPackageName(packageName);
 
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());

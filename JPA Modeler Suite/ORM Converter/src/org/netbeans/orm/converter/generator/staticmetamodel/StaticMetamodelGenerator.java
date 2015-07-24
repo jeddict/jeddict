@@ -54,7 +54,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         if (variableDef == null) {
             variableDef = new MetamodelVariableDefSnippet();
             variableDef.setName(attr.getName());
-            variableDef.setAnnotation(attr.getAnnotation());
+//            variableDef.setAnnotation(attr.getAnnotation());
             variables.put(attr.getName(), variableDef);
         }
         return variableDef;

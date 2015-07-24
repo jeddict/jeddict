@@ -147,7 +147,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             if (!visible && getDerivedRelationAttributeWidgets().size() == 1) {//check for parent entity pk count
                 if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState)))) {
                     RelationAttributeWidget relationAttributeWidget = getDerivedRelationAttributeWidgets().get(0);
-                    IFlowElementWidget targetElementWidget = (EntityWidget) relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
+                    IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
                     EntityWidget targetEntityWidget = null;
                     if (targetElementWidget instanceof EntityWidget) {
                         targetEntityWidget = (EntityWidget) targetElementWidget;
@@ -183,14 +183,14 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     }
 
     public List<IdAttributeWidget> getAllIdAttributeWidgets() {
-        List<IdAttributeWidget> idAttributeWidgets = new ArrayList<IdAttributeWidget>(this.getIdAttributeWidgets());
+        List<IdAttributeWidget> idAttributeWidgets_TMP = new ArrayList<IdAttributeWidget>(this.getIdAttributeWidgets());
         List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
         for (JavaClassWidget classWidget : classWidgets) {
             if (classWidget instanceof PersistenceClassWidget) {
-                idAttributeWidgets.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
+                idAttributeWidgets_TMP.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
             }
         }
-        return idAttributeWidgets;
+        return idAttributeWidgets_TMP;
     }
 
     public List<EmbeddedIdAttributeWidget> getAllEmbeddedIdAttributeWidgets() {

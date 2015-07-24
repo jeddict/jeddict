@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
@@ -32,7 +33,8 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
  */
 public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandler {
 
-    private List<String> annotation;
+//    private List<String> annotation;
+    private List<Annotation> annotation;
     @XmlAttribute
     private boolean visibile = true;
 
@@ -51,9 +53,9 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @return the annotation
      */
-    public List<String> getAnnotation() {
+    public List<Annotation> getAnnotation() {
         if (annotation == null) {
-            annotation = new ArrayList<String>();
+            annotation = new ArrayList<Annotation>();
         }
         return annotation;
     }
@@ -61,20 +63,20 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<String> annotation) {
+    public void setAnnotation(List<Annotation> annotation) {
         this.annotation = annotation;
     }
 
-    public void addAnnotation(String annotation_In) {
+    public void addAnnotation(Annotation annotation_In) {
         if (annotation == null) {
-            annotation = new ArrayList<String>();
+            annotation = new ArrayList<Annotation>();
         }
         this.annotation.add(annotation_In);
     }
 
-    public void removeAnnotation(String annotation_In) {
+    public void removeAnnotation(Annotation annotation_In) {
         if (annotation == null) {
-            annotation = new ArrayList<String>();
+            annotation = new ArrayList<Annotation>();
         }
         this.annotation.remove(annotation_In);
     }

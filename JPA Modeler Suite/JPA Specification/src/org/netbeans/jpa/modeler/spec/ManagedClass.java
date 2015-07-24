@@ -15,13 +15,23 @@
  */
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 public abstract class ManagedClass extends JavaClass{
+    
+    @XmlAttribute
+    protected AccessType access;
+    
     @XmlAttribute(name="static-metamodel")
     private Boolean generateStaticMetamodel = false;
     
+    
+    public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
+        super.load(entityMappings, element, fieldAccess);
+        this.access = AccessType.load(element);
+    }
 
     /**
      * @return the generateStaticMetamodel
@@ -35,5 +45,25 @@ public abstract class ManagedClass extends JavaClass{
      */
     public void setGenerateStaticMetamodel(Boolean generateStaticMetamodel) {
         this.generateStaticMetamodel = generateStaticMetamodel;
+    }
+    
+        /**
+     * Gets the value of the access property.
+     *
+     * @return possible object is {@link AccessType }
+     *
+     */
+    public AccessType getAccess() {
+        return access;
+    }
+
+    /**
+     * Sets the value of the access property.
+     *
+     * @param value allowed object is {@link AccessType }
+     *
+     */
+    public void setAccess(AccessType value) {
+        this.access = value;
     }
 }

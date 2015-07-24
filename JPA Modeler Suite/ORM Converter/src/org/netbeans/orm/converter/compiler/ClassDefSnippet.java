@@ -52,7 +52,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private boolean mappedSuperClass = false;
     private boolean entity = false;
     private boolean defaultClass = false;
-    private boolean abstractClass = false;
+    private boolean _abstract = false;
+    private List<String> interfaces;
+    
 
     private ClassHelper classHelper = new ClassHelper();
     private ClassHelper superClassHelper = new ClassHelper();
@@ -474,15 +476,29 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the abstractClass
      */
-    public boolean isAbstractClass() {
-        return abstractClass;
+    public boolean isAbstract() {
+        return _abstract;
     }
 
     /**
-     * @param abstractClass the abstractClass to set
+     * @param _abstract the abstractClass to set
      */
-    public void setAbstractClass(boolean abstractClass) {
-        this.abstractClass = abstractClass;
+    public void setAbstract(boolean _abstract) {
+        this._abstract = _abstract;
+    }
+
+    /**
+     * @return the interfaces
+     */
+    public List<String> getInterfaces() {
+        return interfaces;
+    }
+
+    /**
+     * @param interfaces the interfaces to set
+     */
+    public void setInterfaces(List<String> interfaces) {
+        this.interfaces = interfaces;
     }
 
 }

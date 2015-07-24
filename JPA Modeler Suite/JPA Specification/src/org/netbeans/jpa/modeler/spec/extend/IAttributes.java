@@ -15,25 +15,23 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
-import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
-import org.netbeans.jpa.modeler.spec.Version;
+import org.netbeans.jpa.source.ReverseEngineeringController;
 
 /**
  *
  * @author Gaurav_Gupta
  */
-public interface IAttributes {
+public interface IAttributes extends ReverseEngineeringController {
 
     /**
      * Gets the value of the basic property.

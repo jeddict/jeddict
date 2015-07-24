@@ -37,7 +37,7 @@ import org.netbeans.orm.converter.generator.EmbeddableGenerator;
 import org.netbeans.orm.converter.generator.EmbeddableIdClassGenerator;
 import org.netbeans.orm.converter.generator.EntityGenerator;
 import org.netbeans.orm.converter.generator.LifecycleCallbackGenerator;
-import org.netbeans.orm.converter.generator.SuperClassGenerator;
+import org.netbeans.orm.converter.generator.MappedSuperClassGenerator;
 import org.netbeans.orm.converter.generator.identifiable.IdentifiableClassDefSnippet;
 import org.netbeans.orm.converter.spec.ModuleGenerator;
 import org.netbeans.orm.converter.util.ClassType;
@@ -109,7 +109,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         List<MappedSuperclass> parsedMappedSuperclasses = parsedEntityMappings.getMappedSuperclass();
         for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
             task.log("Generating MappedSuperclass Class : " + parsedMappedSuperclass.getClazz(), true);
-            ManagedClassDefSnippet classDef = new SuperClassGenerator(parsedMappedSuperclass, packageName).getClassDef();
+            ManagedClassDefSnippet classDef = new MappedSuperClassGenerator(parsedMappedSuperclass, packageName).getClassDef();
             classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport()); 
             
             classesRepository.addWritableSnippet(ClassType.SUPER_CLASS, classDef);

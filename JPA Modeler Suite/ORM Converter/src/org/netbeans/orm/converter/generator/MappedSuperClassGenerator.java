@@ -25,14 +25,13 @@ import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class SuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> {
+public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
-    private static Logger logger = ORMConvLogger.getLogger(
-            SuperClassGenerator.class);
+    private static Logger logger = ORMConvLogger.getLogger(MappedSuperClassGenerator.class);
 
     private MappedSuperclass mappedSuperclass = null;
 
-    public SuperClassGenerator(MappedSuperclass parsedMappedSuperclass,String packageName) {
+    public MappedSuperClassGenerator(MappedSuperclass parsedMappedSuperclass,String packageName) {
         super(new ManagedClassDefSnippet());
         this.mappedSuperclass = parsedMappedSuperclass;
         this.packageName = packageName;
@@ -81,12 +80,13 @@ public class SuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> 
 
         //Class decorations
         ClassHelper classHelper = new ClassHelper(mappedSuperclass.getClazz());
-        classDef.setAbstractClass(mappedSuperclass.getAbstract());
+        classHelper.setPackageName(packageName);
+        classDef.setAbstract(mappedSuperclass.getAbstract());
+        classDef.setInterfaces(mappedSuperclass.getInterfaces());
         if(mappedSuperclass.getSuperclass()!=null){
         ClassHelper superClassHelper = new ClassHelper(mappedSuperclass.getSuperclass().getClazz());
         classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
-        classHelper.setPackageName(packageName);
 
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
