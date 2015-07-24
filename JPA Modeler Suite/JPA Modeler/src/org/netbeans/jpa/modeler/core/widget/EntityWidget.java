@@ -226,7 +226,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         String inheritenceState = this.getInheritenceState();
         if ("SINGLETON".equals(inheritenceState) || "ROOT".equals(inheritenceState)) {
             // Issue Fix #6041 Start
-            if (this.getAllIdAttributeWidgets().isEmpty()) {
+            if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE) {
                 throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
                 clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
