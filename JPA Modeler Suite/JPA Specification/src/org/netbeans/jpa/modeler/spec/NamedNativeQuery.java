@@ -78,8 +78,10 @@ public class NamedNativeQuery {
             namedNativeQuery = new NamedNativeQuery();
             namedNativeQuery.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             namedNativeQuery.query = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "query");
-            namedNativeQuery.resultClass = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultClass");
-            namedNativeQuery.resultSetMapping = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultSetMapping");
+            Object resultClass = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultClass");
+            namedNativeQuery.resultClass = resultClass==null?null:resultClass.toString();
+            Object resultSetMapping = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultSetMapping");
+            namedNativeQuery.resultSetMapping = resultSetMapping==null?null:resultSetMapping.toString();
 
             List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
             if (hintsAnnot != null) {

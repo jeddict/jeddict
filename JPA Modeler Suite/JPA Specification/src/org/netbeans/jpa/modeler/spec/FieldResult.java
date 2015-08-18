@@ -6,10 +6,13 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -47,6 +50,16 @@ public class FieldResult {
     protected String name;
     @XmlAttribute(required = true)
     protected String column;
+
+    public static FieldResult load(Element element, AnnotationMirror annotationMirror) {
+        FieldResult fieldResult = null;
+        if (annotationMirror != null) {
+            fieldResult = new FieldResult();
+            fieldResult.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            fieldResult.column = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "column");
+        }
+        return fieldResult;
+    }
 
     /**
      * Gets the value of the name property.

@@ -6,6 +6,8 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -45,6 +47,11 @@ public class ColumnResult {
     @XmlAttribute(required = true)
     protected String name;
 
+    
+    
+     public static ColumnResult load(Element element, AnnotationMirror annotationMirror) {
+       return null;
+     }
     /**
      * Gets the value of the name property.
      *

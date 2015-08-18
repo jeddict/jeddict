@@ -68,6 +68,8 @@ $classDef.getNamedQueries().getSnippet()
 #if ($classDef.getNamedNativeQueries() )
 $classDef.getNamedNativeQueries().getSnippet()
 #end
+
+
 #foreach($annotation in $classDef.getAnnotation() )
 $annotation
 #end

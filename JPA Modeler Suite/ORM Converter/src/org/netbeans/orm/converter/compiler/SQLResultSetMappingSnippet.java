@@ -27,6 +27,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
     private String name = null;
 
     private List<EntityResultSnippet> entityResults = Collections.EMPTY_LIST;
+    private List<ConstructorResultSnippet> constructorResults = Collections.EMPTY_LIST;
     private List<ColumnResultSnippet> columnResults = Collections.EMPTY_LIST;
 
     public void addColumnResult(ColumnResultSnippet columnResult) {
@@ -46,6 +47,15 @@ public class SQLResultSetMappingSnippet implements Snippet {
 
         entityResults.add(entityResult);
     }
+    
+    public void addConstructorResult(ConstructorResultSnippet constructorResult) {
+
+        if (constructorResults.isEmpty()) {
+            constructorResults = new ArrayList<ConstructorResultSnippet>();
+        }
+
+        constructorResults.add(constructorResult);
+    }
 
     public String getName() {
         return name;
@@ -62,6 +72,16 @@ public class SQLResultSetMappingSnippet implements Snippet {
     public void setEntityResults(List<EntityResultSnippet> entityResults) {
         if (entityResults != null) {
             this.entityResults = entityResults;
+        }
+    }
+    
+     public List<ConstructorResultSnippet> getConstructorResults() {
+        return constructorResults;
+    }
+
+    public void setConstructorResults(List<ConstructorResultSnippet> constructorResults) {
+        if (constructorResults != null) {
+            this.constructorResults = constructorResults;
         }
     }
 
@@ -103,6 +123,21 @@ public class SQLResultSetMappingSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
+        
+         if (!constructorResults.isEmpty()) {
+            builder.append("classes={");
+
+            for (ConstructorResultSnippet constructorResult : constructorResults) {
+                builder.append(constructorResult.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
+
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+         
         if (!columnResults.isEmpty()) {
             builder.append("columns={");
 
@@ -122,7 +157,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
 
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        if (entityResults.isEmpty() && columnResults.isEmpty()) {
+        if (entityResults.isEmpty() && constructorResults.isEmpty() && columnResults.isEmpty()) {
 
             return Collections.singletonList(""
                     + "javax.persistence.SqlResultSetMapping");
@@ -137,7 +172,13 @@ public class SQLResultSetMappingSnippet implements Snippet {
                 importSnippets.addAll(entityResult.getImportSnippets());
             }
         }
-
+        
+        if (constructorResults != null) {
+            for (ConstructorResultSnippet constructorResult : constructorResults) {
+                importSnippets.addAll(constructorResult.getImportSnippets());
+            }
+        }
+        
         if (columnResults != null) {
             for (ColumnResultSnippet columnResult : columnResults) {
                 importSnippets.addAll(columnResult.getImportSnippets());

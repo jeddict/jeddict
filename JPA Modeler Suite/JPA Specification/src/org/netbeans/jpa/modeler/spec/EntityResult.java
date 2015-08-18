@@ -8,11 +8,14 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -51,13 +54,31 @@ import javax.xml.bind.annotation.XmlType;
     "fieldResult"
 })
 public class EntityResult {
-
+    
     @XmlElement(name = "field-result")
     protected List<FieldResult> fieldResult;
     @XmlAttribute(name = "entity-class", required = true)
     protected String entityClass;
     @XmlAttribute(name = "discriminator-column")
     protected String discriminatorColumn;
+    
+    
+     public static EntityResult load(Element element, AnnotationMirror annotationMirror) {
+         EntityResult entityResult = null;
+        if (annotationMirror != null) {
+            entityResult = new EntityResult();
+            entityResult.discriminatorColumn = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "discriminatorColumn");
+            Object entityClass = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "entityClass");
+            entityResult.entityClass = entityClass==null?null:entityClass.toString();
+            List fieldResultList = (List)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fields");
+            if (fieldResultList != null) {
+                for (Object fieldResultObj : fieldResultList) {
+                    entityResult.getFieldResult().add(FieldResult.load(element, (AnnotationMirror) fieldResultObj));
+                }
+            }
+        }
+       return entityResult;
+     }
 
     /**
      * Gets the value of the fieldResult property.

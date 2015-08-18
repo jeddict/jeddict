@@ -249,6 +249,12 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
                 this.getNamedNativeQuery().add(NamedNativeQuery.load(element, namedNativeQueriesMirror));
             }
         }
+        AnnotationMirror sqlResultSetMappingMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SqlResultSetMapping");
+        if (sqlResultSetMappingMirror != null) {
+            this.getSqlResultSetMapping().add(SqlResultSetMapping.load(element, sqlResultSetMappingMirror));
+        }
+        
+        
         this.sequenceGenerator = SequenceGenerator.load(element);
 
         if (annotationMirror != null) {
