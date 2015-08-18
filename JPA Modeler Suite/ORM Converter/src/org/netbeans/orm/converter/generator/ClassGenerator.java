@@ -29,6 +29,7 @@ import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ColumnResult;
+import org.netbeans.jpa.modeler.spec.ConstructorResult;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
@@ -73,6 +74,7 @@ import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.CollectionTableSnippet;
 import org.netbeans.orm.converter.compiler.ColumnDefSnippet;
 import org.netbeans.orm.converter.compiler.ColumnResultSnippet;
+import org.netbeans.orm.converter.compiler.ConstructorResultSnippet;
 import org.netbeans.orm.converter.compiler.ElementCollectionSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
@@ -122,7 +124,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 //        if(classDef==null){
 //            this.classDef = ;
 //        } else {
-            this.classDef=classDef;
+        this.classDef = classDef;
 //        }
     }
 
@@ -171,7 +173,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef = new VariableDefSnippet();
             variableDef.setName(attr.getName());
 //            variableDef.setAnnotation(attr.getAnnotation());
-            
+
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
             if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
                 variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
@@ -358,6 +360,27 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
 
         return columnResults;
+    }
+
+    protected List<ConstructorResultSnippet> getConstructorResults(
+            List<ConstructorResult> parsedConstructorResults) {
+
+        if (parsedConstructorResults == null || parsedConstructorResults.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<ConstructorResultSnippet> constructorResults = new ArrayList<ConstructorResultSnippet>();
+
+        for (ConstructorResult parsedConstructorResult : parsedConstructorResults) {
+            ConstructorResultSnippet constructorResult = new ConstructorResultSnippet();
+            List<ColumnResultSnippet> columnResults = getColumnResults(parsedConstructorResult.getColumn());
+            constructorResult.setColumnResults(columnResults);
+            constructorResult.setTargetClass(parsedConstructorResult.getTargetClass());
+            constructorResult.setPackageName(packageName);
+            constructorResults.add(constructorResult);
+        }
+
+        return constructorResults;
     }
 
     protected List<EntityResultSnippet> getEntityResults(
@@ -1251,8 +1274,12 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             List<EntityResultSnippet> entityResults = getEntityResults(
                     parsedSqlResultSetMapping.getEntityResult());
 
+            List<ConstructorResultSnippet> constructorResults = getConstructorResults(
+                    parsedSqlResultSetMapping.getConstructorResult());
+
             sqlResultSetMapping.setColumnResults(columnResults);
             sqlResultSetMapping.setEntityResults(entityResults);
+            sqlResultSetMapping.setConstructorResults(constructorResults);
             sqlResultSetMapping.setName(parsedSqlResultSetMapping.getName());
 
             classDef.getSQLResultSetMappings().addSQLResultSetMapping(

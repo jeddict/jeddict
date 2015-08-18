@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.spec.ColumnResult;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -63,7 +62,8 @@ public class ConstructorResult {
         ConstructorResult constructorResult = null;
         if (annotationMirror != null) {
             constructorResult = new ConstructorResult();
-            constructorResult.targetClass = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetClass");
+            Object targetClass = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetClass");
+            constructorResult.targetClass = targetClass == null ? null : targetClass.toString();
             List columnResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columns");
             if (columnResultList != null) {
                 for (Object columnResultObj : columnResultList) {
