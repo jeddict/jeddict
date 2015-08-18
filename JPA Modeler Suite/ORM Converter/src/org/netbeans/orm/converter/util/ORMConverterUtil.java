@@ -26,14 +26,19 @@ import java.nio.charset.Charset;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
 import org.netbeans.editor.BaseDocument;
+import org.netbeans.editor.GuardedDocument;
+import org.netbeans.lib.editor.util.swing.PositionRegion;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.WritableSnippet;
@@ -42,7 +47,9 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
+import org.openide.util.UserQuestionException;
 
 public class ORMConverterUtil {
 
@@ -259,45 +266,111 @@ public class ORMConverterUtil {
             if (ec == null) {
                 return;
             }
-            ec.close();
-            StyledDocument document = ec.getDocument();
-            if (document instanceof BaseDocument) {
-                final BaseDocument doc = (BaseDocument) document;
-                final Reformat f = Reformat.get(doc);
-                f.lock();
-                try {
-                    doc.runAtomic(new Runnable() {
-                        public void run() {
-                            try {
-                                f.reformat(0, doc.getLength());
-                            } catch (BadLocationException ex) {
-                                Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
-                                Exceptions.printStackTrace(ex);
-                            }
+            
+                                StyledDocument sd;
+                    try {
+                        sd = ec.openDocument();
+                    } catch (UserQuestionException uqe) {
+                        uqe.confirmed();
+                        sd = ec.openDocument();
+                    }
+                    final StyledDocument doc = sd;
+                    final Reformat reformat = Reformat.get(doc);
 
-                        }
-                    });
-                } finally {
-                    f.unlock();
-                }
-                try {
+                    reformat.lock();
+
+                    try {
+                        NbDocument.runAtomic(doc, new Runnable() {
+                            @Override public void run() {
+                                try {
+                                    reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
+                                } catch (BadLocationException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                            }
+                        });
+                    } finally {
+                        reformat.unlock();
+                    }
+
                     ec.saveDocument();
-//                    SaveCookie save = dobj.getLookup().lookup(SaveCookie.class);
-//                    if (save != null) {
-//                        save.save();
-//                    }
-                } catch (IOException ex) {
-                    Exceptions.attachMessage(ex, "Failure while formatting and saving " + FileUtil.getFileDisplayName(fo));
+            
+////            ec.close();
+//            StyledDocument document = ec.openDocument();
+//            if (document instanceof BaseDocument) {
+//                final BaseDocument doc = (BaseDocument) document;
+//                final Reformat f = Reformat.get(doc);
+//                f.lock();
+//                try {
+//                    doc.runAtomic(new Runnable() {
+//                        public void run() {
+//                            try {
+//                                f.reformat(0, doc.getLength());
+//                            } catch (BadLocationException ex) {
+//                                Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
+//                                Exceptions.printStackTrace(ex);
+//                            }
+//
+//                        }
+//                    });
+//                } finally {
+//                    f.unlock();
+//                }
+//                try {
+//                    ec.saveDocument();
+////                    SaveCookie save = dobj.getLookup().lookup(SaveCookie.class);
+////                    if (save != null) {
+////                        save.save();
+////                    }
+//                } catch (IOException ex) {
+//                    Exceptions.attachMessage(ex, "Failure while formatting and saving " + FileUtil.getFileDisplayName(fo));
+//                    Exceptions.printStackTrace(ex);
+//                }
+//            }
+        }  catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
+    }
+    
+      //TODO: copied from org.netbeans.editor.ActionFactory:
+    static void reformat(Reformat formatter, Document doc, int startPos, int endPos, AtomicBoolean canceled) throws BadLocationException {
+        final GuardedDocument gdoc = (doc instanceof GuardedDocument)
+                ? (GuardedDocument) doc : null;
+
+        int pos = startPos;
+        if (gdoc != null) {
+            pos = gdoc.getGuardedBlockChain().adjustToBlockEnd(pos);
+        }
+
+        LinkedList<PositionRegion> regions = new LinkedList<PositionRegion>();
+        while (pos < endPos) {
+            int stopPos = endPos;
+            if (gdoc != null) { // adjust to start of the next guarded block
+                stopPos = gdoc.getGuardedBlockChain().adjustToNextBlockStart(pos);
+                if (stopPos == -1 || stopPos > endPos) {
+                    stopPos = endPos;
+                }
             }
-        } catch (DataObjectNotFoundException ex) {
-            Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
-            Exceptions.printStackTrace(ex);
-        } catch (IOException ex) {
-            Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
-            Exceptions.printStackTrace(ex);
+
+            if (pos < stopPos) {
+                regions.addFirst(new PositionRegion(doc, pos, stopPos));
+                pos = stopPos;
+            } else {
+                pos++; //ensure to make progress
+            }
+
+            if (gdoc != null) { // adjust to end of current block
+                pos = gdoc.getGuardedBlockChain().adjustToBlockEnd(pos);
+            }
+        }
+
+        if (canceled.get()) return;
+        // Once we start formatting, the task can't be canceled
+
+        for (PositionRegion region : regions) {
+            formatter.reformat(region.getStartOffset(), region.getEndOffset());
         }
     }
+
 
 }

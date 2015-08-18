@@ -104,6 +104,7 @@ public class Attributes implements IPersistenceAttributes {
     @XmlElement(name = "transient")
     protected List<Transient> _transient;
 
+    @Override
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
 
         VariableElement embeddedIdVariableElement = null;
@@ -113,6 +114,7 @@ public class Attributes implements IPersistenceAttributes {
                 Element element;
                 VariableElement variableElement = JavaSourceParserUtil.guessField(method);
 
+//                method.getEnclosingElement()
                 // Issue Fix #5976 Start
                 /**
                  * #5976 FIX fixed NPE when method is not attached to field
@@ -164,6 +166,8 @@ public class Attributes implements IPersistenceAttributes {
                 }
 
             }
+//            else if (!methodName.startsWith("set")) {
+//            }
         }
 
         if (this.getEmbeddedId() != null) {
