@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.jpa.modeler.spec.ColumnResult;
 
 public class ConstructorResultSnippet implements Snippet {
 
@@ -105,7 +106,9 @@ public class ConstructorResultSnippet implements Snippet {
         List<String> importSnippets = new ArrayList<String>();
 
         importSnippets.add("javax.persistence.ConstructorResult");
-        importSnippets.addAll(columnResults.get(0).getImportSnippets());
+        for(ColumnResultSnippet columnResult : columnResults){
+            importSnippets.addAll(columnResult.getImportSnippets());
+        }
         importSnippets.add(classHelper.getFQClassName());
 
         return importSnippets;

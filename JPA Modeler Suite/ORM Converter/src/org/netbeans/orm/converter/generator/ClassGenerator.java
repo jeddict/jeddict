@@ -356,6 +356,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ColumnResultSnippet columnResult = new ColumnResultSnippet();
 
             columnResult.setName(parsedColumnResult.getName());
+            columnResult.setType(parsedColumnResult.getClazz());
             columnResults.add(columnResult);
         }
 

@@ -75,7 +75,6 @@ public class NamedNativeQuerySnippet extends NamedQueryDefSnippet implements Sni
             builder.append("resultClass=");
             builder.append(getResultClass());
             builder.append(ORMConverterUtil.COMMA);
-
         }
 
         if (resultSetMapping != null) {
