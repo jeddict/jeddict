@@ -73,7 +73,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
                     generateIdClasses(defaultClass);
                 }
             }
-            generateLifeCycleClasses();
+           // generateLifeCycleClasses(); // TODO 
         } catch (InvalidDataException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {

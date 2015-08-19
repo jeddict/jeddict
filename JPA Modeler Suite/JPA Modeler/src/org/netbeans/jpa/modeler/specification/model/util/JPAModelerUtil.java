@@ -93,6 +93,7 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
@@ -1551,6 +1552,70 @@ public class JPAModelerUtil implements PModelerUtil {
                 namedQueriesSpec.clear();
                 for (Object[] row : (List<Object[]>) data) {
                     namedQueriesSpec.add((NamedQuery) row[0]);
+                }
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+    
+    public static PropertySupport getNamedNativeQueryProperty(String id, String name, String desc, IModelerScene modelerScene, final List<NamedNativeQuery> namedNativeQueriesSpec) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        attributeEntity.setCountDisplay(new String[]{"No Named Native Queries exist", "One Named Native Query exist", "Named Native Queries exist"});
+
+        List<Column> columns = new ArrayList<Column>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Name", false, String.class));
+        columns.add(new Column("Query", false, String.class));
+        columns.add(new Column("Result Class", false, String.class));
+        columns.add(new Column("ResultSet Mapping", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new NamedQueryPanel());
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = namedNativeQueriesSpec.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<NamedNativeQuery> namedNativeQueries = namedNativeQueriesSpec;
+                List<Object[]> data_local = new LinkedList<Object[]>();
+                Iterator<NamedNativeQuery> itr = namedNativeQueries.iterator();
+                while (itr.hasNext()) {
+                    NamedNativeQuery namedNativeQuery = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = namedNativeQuery;
+                    row[1] = namedNativeQuery.getName();
+                    row[2] = namedNativeQuery.getQuery();
+                    row[3] = namedNativeQuery.getResultClass();
+                    row[4] = namedNativeQuery.getResultSetMapping();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List data) {
+                namedNativeQueriesSpec.clear();
+                for (Object[] row : (List<Object[]>) data) {
+                    namedNativeQueriesSpec.add((NamedNativeQuery) row[0]);
                 }
                 this.data = data;
             }

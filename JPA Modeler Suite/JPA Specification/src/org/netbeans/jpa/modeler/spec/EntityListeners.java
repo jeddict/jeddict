@@ -8,10 +8,13 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -51,6 +54,19 @@ public class EntityListeners {
     @XmlElement(name = "entity-listener")
     protected List<EntityListener> entityListener;
 
+      public static EntityListeners load(Element element, AnnotationMirror annotationMirror) {
+        EntityListeners entityListeners = null;
+         List entityListenersMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+            if (entityListenersMirrorList != null) {
+                entityListeners = new EntityListeners();
+                for (Object entityListenerObj : entityListenersMirrorList) {
+                    entityListeners.getEntityListener().add(new EntityListener(entityListenerObj.toString()));
+                }
+            }
+        return entityListeners;
+    }
+    
+    
     /**
      * Gets the value of the entityListener property.
      *

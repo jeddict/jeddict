@@ -6,11 +6,15 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -80,6 +84,16 @@ public class EntityListener {
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
 
+    public EntityListener(String clazz) {
+        this.clazz = clazz;
+    }
+
+    public EntityListener() {
+    }
+
+    
+      
+    
     /**
      * Gets the value of the description property.
      *

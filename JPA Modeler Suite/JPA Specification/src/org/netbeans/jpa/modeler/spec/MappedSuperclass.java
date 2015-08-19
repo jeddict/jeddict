@@ -72,43 +72,23 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "mapped-superclass", propOrder = {
     "description",
-    "excludeDefaultListeners",
-    "excludeSuperclassListeners",
-    "entityListeners",
-    "prePersist",
-    "postPersist",
-    "preRemove",
-    "postRemove",
-    "preUpdate",
-    "postUpdate",
-    "postLoad",
+//    "excludeDefaultListeners",
+//    "excludeSuperclassListeners",
+//    "entityListeners",
+//    "prePersist",
+//    "postPersist",
+//    "preRemove",
+//    "postRemove",
+//    "preUpdate",
+//    "postUpdate",
+//    "postLoad",
 //    "attributes"
 })
 public class MappedSuperclass extends IdentifiableClass {
 
     protected String description;
   
-    @XmlElement(name = "exclude-default-listeners")
-    protected EmptyType excludeDefaultListeners;//RENENG PENDING
-    @XmlElement(name = "exclude-superclass-listeners")
-    protected EmptyType excludeSuperclassListeners;//RENENG PENDING
-    @XmlElement(name = "entity-listeners")
-    protected EntityListeners entityListeners;//RENENG PENDING
-    @XmlElement(name = "pre-persist")
-    protected PrePersist prePersist;//RENENG PENDING
-    @XmlElement(name = "post-persist")
-    protected PostPersist postPersist;//RENENG PENDING
-    @XmlElement(name = "pre-remove")
-    protected PreRemove preRemove;//RENENG PENDING
-    @XmlElement(name = "post-remove")
-    protected PostRemove postRemove;//RENENG PENDING
-    @XmlElement(name = "pre-update")
-    protected PreUpdate preUpdate;//RENENG PENDING
-    @XmlElement(name = "post-update")
-    protected PostUpdate postUpdate;//RENENG PENDING
-    @XmlElement(name = "post-load")
-    protected PostLoad postLoad;//RENENG PENDING   
-   
+
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;//RENENG PENDING
     @XmlAttribute
@@ -160,208 +140,6 @@ public class MappedSuperclass extends IdentifiableClass {
      */
     public void setDescription(String value) {
         this.description = value;
-    }
-
-
-
-    /**
-     * Gets the value of the excludeDefaultListeners property.
-     *
-     * @return possible object is {@link EmptyType }
-     *
-     */
-    public EmptyType getExcludeDefaultListeners() {
-        return excludeDefaultListeners;
-    }
-
-    /**
-     * Sets the value of the excludeDefaultListeners property.
-     *
-     * @param value allowed object is {@link EmptyType }
-     *
-     */
-    public void setExcludeDefaultListeners(EmptyType value) {
-        this.excludeDefaultListeners = value;
-    }
-
-    /**
-     * Gets the value of the excludeSuperclassListeners property.
-     *
-     * @return possible object is {@link EmptyType }
-     *
-     */
-    public EmptyType getExcludeSuperclassListeners() {
-        return excludeSuperclassListeners;
-    }
-
-    /**
-     * Sets the value of the excludeSuperclassListeners property.
-     *
-     * @param value allowed object is {@link EmptyType }
-     *
-     */
-    public void setExcludeSuperclassListeners(EmptyType value) {
-        this.excludeSuperclassListeners = value;
-    }
-
-    /**
-     * Gets the value of the entityListeners property.
-     *
-     * @return possible object is {@link EntityListeners }
-     *
-     */
-    public EntityListeners getEntityListeners() {
-        return entityListeners;
-    }
-
-    /**
-     * Sets the value of the entityListeners property.
-     *
-     * @param value allowed object is {@link EntityListeners }
-     *
-     */
-    public void setEntityListeners(EntityListeners value) {
-        this.entityListeners = value;
-    }
-
-    /**
-     * Gets the value of the prePersist property.
-     *
-     * @return possible object is {@link PrePersist }
-     *
-     */
-    public PrePersist getPrePersist() {
-        return prePersist;
-    }
-
-    /**
-     * Sets the value of the prePersist property.
-     *
-     * @param value allowed object is {@link PrePersist }
-     *
-     */
-    public void setPrePersist(PrePersist value) {
-        this.prePersist = value;
-    }
-
-    /**
-     * Gets the value of the postPersist property.
-     *
-     * @return possible object is {@link PostPersist }
-     *
-     */
-    public PostPersist getPostPersist() {
-        return postPersist;
-    }
-
-    /**
-     * Sets the value of the postPersist property.
-     *
-     * @param value allowed object is {@link PostPersist }
-     *
-     */
-    public void setPostPersist(PostPersist value) {
-        this.postPersist = value;
-    }
-
-    /**
-     * Gets the value of the preRemove property.
-     *
-     * @return possible object is {@link PreRemove }
-     *
-     */
-    public PreRemove getPreRemove() {
-        return preRemove;
-    }
-
-    /**
-     * Sets the value of the preRemove property.
-     *
-     * @param value allowed object is {@link PreRemove }
-     *
-     */
-    public void setPreRemove(PreRemove value) {
-        this.preRemove = value;
-    }
-
-    /**
-     * Gets the value of the postRemove property.
-     *
-     * @return possible object is {@link PostRemove }
-     *
-     */
-    public PostRemove getPostRemove() {
-        return postRemove;
-    }
-
-    /**
-     * Sets the value of the postRemove property.
-     *
-     * @param value allowed object is {@link PostRemove }
-     *
-     */
-    public void setPostRemove(PostRemove value) {
-        this.postRemove = value;
-    }
-
-    /**
-     * Gets the value of the preUpdate property.
-     *
-     * @return possible object is {@link PreUpdate }
-     *
-     */
-    public PreUpdate getPreUpdate() {
-        return preUpdate;
-    }
-
-    /**
-     * Sets the value of the preUpdate property.
-     *
-     * @param value allowed object is {@link PreUpdate }
-     *
-     */
-    public void setPreUpdate(PreUpdate value) {
-        this.preUpdate = value;
-    }
-
-    /**
-     * Gets the value of the postUpdate property.
-     *
-     * @return possible object is {@link PostUpdate }
-     *
-     */
-    public PostUpdate getPostUpdate() {
-        return postUpdate;
-    }
-
-    /**
-     * Sets the value of the postUpdate property.
-     *
-     * @param value allowed object is {@link PostUpdate }
-     *
-     */
-    public void setPostUpdate(PostUpdate value) {
-        this.postUpdate = value;
-    }
-
-    /**
-     * Gets the value of the postLoad property.
-     *
-     * @return possible object is {@link PostLoad }
-     *
-     */
-    public PostLoad getPostLoad() {
-        return postLoad;
-    }
-
-    /**
-     * Sets the value of the postLoad property.
-     *
-     * @param value allowed object is {@link PostLoad }
-     *
-     */
-    public void setPostLoad(PostLoad value) {
-        this.postLoad = value;
     }
 
 

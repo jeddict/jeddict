@@ -15,12 +15,15 @@
  */
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 public abstract class IdentifiableClass extends ManagedClass implements PrimaryKeyContainer {
 
@@ -30,6 +33,34 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @XmlElement(name = "id-class")
     protected IdClass idClass;
     protected Attributes attributes;
+    
+    @XmlElement(name = "named-query")
+    protected List<NamedQuery> namedQuery;
+    @XmlElement(name = "named-native-query")
+    protected List<NamedNativeQuery> namedNativeQuery;
+    @XmlElement(name = "sql-result-set-mapping")
+    protected List<SqlResultSetMapping> sqlResultSetMapping;
+    
+    @XmlElement(name = "exclude-default-listeners")
+    protected EmptyType excludeDefaultListeners;
+    @XmlElement(name = "exclude-superclass-listeners")
+    protected EmptyType excludeSuperclassListeners;
+    @XmlElement(name = "entity-listeners")
+    protected EntityListeners entityListeners;
+    @XmlElement(name = "pre-persist")
+    protected PrePersist prePersist;//RENENG PENDING
+    @XmlElement(name = "post-persist")
+    protected PostPersist postPersist;//RENENG PENDING
+    @XmlElement(name = "pre-remove")
+    protected PreRemove preRemove;//RENENG PENDING
+    @XmlElement(name = "post-remove")
+    protected PostRemove postRemove;//RENENG PENDING
+    @XmlElement(name = "pre-update")
+    protected PreUpdate preUpdate;//RENENG PENDING
+    @XmlElement(name = "post-update")
+    protected PostUpdate postUpdate;//RENENG PENDING
+    @XmlElement(name = "post-load")
+    protected PostLoad postLoad;//RENENG PENDING
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
@@ -44,6 +75,54 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
         } else {
             this.setCompositePrimaryKeyClass(null);
             this.setCompositePrimaryKeyType(null);
+        }
+        
+          AnnotationMirror entityListenersMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.EntityListeners");
+        if (entityListenersMirror != null) {
+            this.setEntityListeners(EntityListeners.load(element, entityListenersMirror));
+        }
+        
+        AnnotationMirror excludeDefaultListenersMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ExcludeDefaultListeners");
+        if (excludeDefaultListenersMirror != null) {
+            this.setExcludeDefaultListeners(new EmptyType());
+        }
+        
+        AnnotationMirror excludeSuperclassListenersMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ExcludeSuperclassListeners");
+        if (excludeSuperclassListenersMirror != null) {
+            this.setExcludeSuperclassListeners(new EmptyType());
+        }
+        
+            AnnotationMirror namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedQueries");
+        if (namedQueriesMirror != null) {
+            List namedQueriesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedQueriesMirror, "value");
+            if (namedQueriesMirrorList != null) {
+                for (Object namedQueryObj : namedQueriesMirrorList) {
+                    this.getNamedQuery().add(NamedQuery.load(element, (AnnotationMirror) namedQueryObj));
+                }
+            }
+        } else {
+            namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedQuery");
+            if (namedQueriesMirror != null) {
+                this.getNamedQuery().add(NamedQuery.load(element, namedQueriesMirror));
+            }
+        }
+        AnnotationMirror namedNativeQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedNativeQueries");
+        if (namedNativeQueriesMirror != null) {
+            List namedNativeQueriesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedNativeQueriesMirror, "value");
+            if (namedNativeQueriesMirrorList != null) {
+                for (Object namedNativeQueryObj : namedNativeQueriesMirrorList) {
+                    this.getNamedNativeQuery().add(NamedNativeQuery.load(element, (AnnotationMirror) namedNativeQueryObj));
+                }
+            }
+        } else {
+            namedNativeQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedNativeQuery");
+            if (namedNativeQueriesMirror != null) {
+                this.getNamedNativeQuery().add(NamedNativeQuery.load(element, namedNativeQueriesMirror));
+            }
+        }
+        AnnotationMirror sqlResultSetMappingMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SqlResultSetMapping");
+        if (sqlResultSetMappingMirror != null) {
+            this.getSqlResultSetMapping().add(SqlResultSetMapping.load(element, sqlResultSetMappingMirror));
         }
     }
 
@@ -106,5 +185,294 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     public void setAttributes(Attributes value) {
         this.attributes = value;
     }
+    
+    
+    /**
+     * Gets the value of the excludeDefaultListeners property.
+     *
+     * @return possible object is {@link EmptyType }
+     *
+     */
+    public EmptyType getExcludeDefaultListeners() {
+        return excludeDefaultListeners;
+    }
+
+    /**
+     * Sets the value of the excludeDefaultListeners property.
+     *
+     * @param value allowed object is {@link EmptyType }
+     *
+     */
+    public void setExcludeDefaultListeners(EmptyType value) {
+        this.excludeDefaultListeners = value;
+    }
+
+    /**
+     * Gets the value of the excludeSuperclassListeners property.
+     *
+     * @return possible object is {@link EmptyType }
+     *
+     */
+    public EmptyType getExcludeSuperclassListeners() {
+        return excludeSuperclassListeners;
+    }
+
+    /**
+     * Sets the value of the excludeSuperclassListeners property.
+     *
+     * @param value allowed object is {@link EmptyType }
+     *
+     */
+    public void setExcludeSuperclassListeners(EmptyType value) {
+        this.excludeSuperclassListeners = value;
+    }
+
+    /**
+     * Gets the value of the entityListeners property.
+     *
+     * @return possible object is {@link EntityListeners }
+     *
+     */
+    public EntityListeners getEntityListeners() {
+        return entityListeners;
+    }
+
+    /**
+     * Sets the value of the entityListeners property.
+     *
+     * @param value allowed object is {@link EntityListeners }
+     *
+     */
+    public void setEntityListeners(EntityListeners value) {
+        this.entityListeners = value;
+    }
+
+    /**
+     * Gets the value of the prePersist property.
+     *
+     * @return possible object is {@link PrePersist }
+     *
+     */
+    public PrePersist getPrePersist() {
+        return prePersist;
+    }
+
+    /**
+     * Sets the value of the prePersist property.
+     *
+     * @param value allowed object is {@link PrePersist }
+     *
+     */
+    public void setPrePersist(PrePersist value) {
+        this.prePersist = value;
+    }
+
+    /**
+     * Gets the value of the postPersist property.
+     *
+     * @return possible object is {@link PostPersist }
+     *
+     */
+    public PostPersist getPostPersist() {
+        return postPersist;
+    }
+
+    /**
+     * Sets the value of the postPersist property.
+     *
+     * @param value allowed object is {@link PostPersist }
+     *
+     */
+    public void setPostPersist(PostPersist value) {
+        this.postPersist = value;
+    }
+
+    /**
+     * Gets the value of the preRemove property.
+     *
+     * @return possible object is {@link PreRemove }
+     *
+     */
+    public PreRemove getPreRemove() {
+        return preRemove;
+    }
+
+    /**
+     * Sets the value of the preRemove property.
+     *
+     * @param value allowed object is {@link PreRemove }
+     *
+     */
+    public void setPreRemove(PreRemove value) {
+        this.preRemove = value;
+    }
+
+    /**
+     * Gets the value of the postRemove property.
+     *
+     * @return possible object is {@link PostRemove }
+     *
+     */
+    public PostRemove getPostRemove() {
+        return postRemove;
+    }
+
+    /**
+     * Sets the value of the postRemove property.
+     *
+     * @param value allowed object is {@link PostRemove }
+     *
+     */
+    public void setPostRemove(PostRemove value) {
+        this.postRemove = value;
+    }
+
+    /**
+     * Gets the value of the preUpdate property.
+     *
+     * @return possible object is {@link PreUpdate }
+     *
+     */
+    public PreUpdate getPreUpdate() {
+        return preUpdate;
+    }
+
+    /**
+     * Sets the value of the preUpdate property.
+     *
+     * @param value allowed object is {@link PreUpdate }
+     *
+     */
+    public void setPreUpdate(PreUpdate value) {
+        this.preUpdate = value;
+    }
+
+    /**
+     * Gets the value of the postUpdate property.
+     *
+     * @return possible object is {@link PostUpdate }
+     *
+     */
+    public PostUpdate getPostUpdate() {
+        return postUpdate;
+    }
+
+    /**
+     * Sets the value of the postUpdate property.
+     *
+     * @param value allowed object is {@link PostUpdate }
+     *
+     */
+    public void setPostUpdate(PostUpdate value) {
+        this.postUpdate = value;
+    }
+
+    /**
+     * Gets the value of the postLoad property.
+     *
+     * @return possible object is {@link PostLoad }
+     *
+     */
+    public PostLoad getPostLoad() {
+        return postLoad;
+    }
+
+    /**
+     * Sets the value of the postLoad property.
+     *
+     * @param value allowed object is {@link PostLoad }
+     *
+     */
+    public void setPostLoad(PostLoad value) {
+        this.postLoad = value;
+    }
+
+    /**
+     * Gets the value of the namedQuery property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the namedQuery property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getNamedQuery().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link NamedQuery }
+     *
+     *
+     */
+    public List<NamedQuery> getNamedQuery() {
+        if (namedQuery == null) {
+            namedQuery = new ArrayList<NamedQuery>();
+        }
+        return this.namedQuery;
+    }
+
+    /**
+     * Gets the value of the namedNativeQuery property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the namedNativeQuery property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getNamedNativeQuery().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link NamedNativeQuery }
+     *
+     *
+     */
+    public List<NamedNativeQuery> getNamedNativeQuery() {
+        if (namedNativeQuery == null) {
+            namedNativeQuery = new ArrayList<NamedNativeQuery>();
+        }
+        return this.namedNativeQuery;
+    }
+
+    /**
+     * Gets the value of the sqlResultSetMapping property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the sqlResultSetMapping property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getSqlResultSetMapping().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link SqlResultSetMapping }
+     *
+     *
+     */
+    public List<SqlResultSetMapping> getSqlResultSetMapping() {
+        if (sqlResultSetMapping == null) {
+            sqlResultSetMapping = new ArrayList<SqlResultSetMapping>();
+        }
+        return this.sqlResultSetMapping;
+    }
+
 
 }

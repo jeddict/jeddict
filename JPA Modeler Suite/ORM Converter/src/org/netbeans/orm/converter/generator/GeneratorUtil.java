@@ -24,7 +24,7 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.EntityListener;
 
 public class GeneratorUtil {
-    
+
     private static boolean generateDefaultValue = false;
 
     public static List<EntityListenerSnippet> processEntityListeners(
@@ -83,15 +83,14 @@ public class GeneratorUtil {
                         entityListener.getPreUpdate().getMethodName()));
             }
 
+            EntityListenerSnippet entityListenerSnippet = new EntityListenerSnippet();
+
+            entityListenerSnippet.setClassName(entityListener.getClazz());
+            entityListenerSnippet.setPackageName(packageName);
+            entityListeners.add(entityListenerSnippet);
             //TODO: Is this check required ?
             if (!callbacks.isEmpty()) {
-                EntityListenerSnippet entityListenerSnippet = new EntityListenerSnippet();
-
-                entityListenerSnippet.setClassName(entityListener.getClazz());
-                entityListenerSnippet.setPackageName(packageName);
                 entityListenerSnippet.setCallbacks(callbacks);
-
-                entityListeners.add(entityListenerSnippet);
             }
         }
 
