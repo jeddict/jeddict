@@ -118,7 +118,9 @@ import org.netbeans.modeler.core.NBModelerUtil;
 //    "postUpdate",
 //    "postLoad",
     "attributeOverride",
-    "associationOverride"
+    "associationOverride",
+    "convert",
+    "namedEntityGraph"
 //    "attributes",
 //    "interfaces"
 })
@@ -130,6 +132,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected List<SecondaryTable> secondaryTable;//RENENG PENDING
     @XmlElement(name = "primary-key-join-column")
     protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//RENENG PENDING
+    @XmlElement(name = "primary-key-foreign-key")
+    protected ForeignKey primaryKeyForeignKey;//RENENG PENDING JPA 2.1
+    @XmlElement(name = "id-class")
     protected Inheritance inheritance;
     @XmlElement(name = "discriminator-value")
     protected String discriminatorValue;
@@ -145,6 +150,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
     protected List<AssociationOverride> associationOverride;
+       protected List<Convert> convert;//RENENG PENDING JPA 2.1
+    @XmlElement(name = "named-entity-graph")
+    protected List<NamedEntityGraph> namedEntityGraph;//RENENG PENDING JPA 2.1
     @XmlAttribute
     protected String name;    
     @XmlAttribute
@@ -341,7 +349,29 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return this.primaryKeyJoinColumn;
     }
 
+    /**
+     * Gets the value of the primaryKeyForeignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getPrimaryKeyForeignKey() {
+        return primaryKeyForeignKey;
+    }
 
+    /**
+     * Sets the value of the primaryKeyForeignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setPrimaryKeyForeignKey(ForeignKey value) {
+        this.primaryKeyForeignKey = value;
+    }
 
     /**
      * Gets the value of the inheritance property.
@@ -665,4 +695,66 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 //        this.clazz = value;
         notifyListeners("clazz", this.clazz, this.clazz = value);
     }
+    
+    
+    
+    /**
+     * Gets the value of the convert property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the convert property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConvert().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Convert }
+     * 
+     * 
+     */
+    public List<Convert> getConvert() {
+        if (convert == null) {
+            convert = new ArrayList<Convert>();
+        }
+        return this.convert;
+    }
+
+    /**
+     * Gets the value of the namedEntityGraph property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the namedEntityGraph property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getNamedEntityGraph().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link NamedEntityGraph }
+     * 
+     * 
+     */
+    public List<NamedEntityGraph> getNamedEntityGraph() {
+        if (namedEntityGraph == null) {
+            namedEntityGraph = new ArrayList<NamedEntityGraph>();
+        }
+        return this.namedEntityGraph;
+    }
+
+    
 }

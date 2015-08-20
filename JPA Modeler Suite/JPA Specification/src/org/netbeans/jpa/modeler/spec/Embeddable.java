@@ -22,22 +22,21 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- * Defines the settings and mappings for embeddable objects. Is allowed to be
- * sparsely populated and used in conjunction with the annotations.
- * Alternatively, the metadata-complete attribute can be used to indicate that
- * no annotations are to be processed in the class. If this is the case then the
- * defaulting rules will be recursively applied.
+ *         Defines the settings and mappings for embeddable objects. Is 
+ *         allowed to be sparsely populated and used in conjunction with 
+ *         the annotations. Alternatively, the metadata-complete attribute 
+ *         can be used to indicate that no annotations are to be processed 
+ *         in the class. If this is the case then the defaulting rules will 
+ *         be recursively applied.
  *
- * @Target({TYPE}) @Retention(RUNTIME) public @interface Embeddable {}
+ *         @Target({TYPE}) @Retention(RUNTIME)
+ *         public @interface Embeddable {}
  *
  *
  *
- * <p>
- * Java class for embeddable complex type.
+ * <p>Java class for embeddable complex type.
  *
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="embeddable">
@@ -45,10 +44,10 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="attributes" type="{http://java.sun.com/xml/ns/persistence/orm}embeddable-attributes" minOccurs="0"/>
+ *         &lt;element name="attributes" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}embeddable-attributes" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="access" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}access-type" />
  *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>

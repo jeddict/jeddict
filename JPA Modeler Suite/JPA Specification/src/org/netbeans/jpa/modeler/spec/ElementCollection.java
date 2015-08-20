@@ -19,8 +19,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
@@ -31,18 +31,17 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface
- * ElementCollection { Class targetClass() default void.class; FetchType fetch()
- * default LAZY; }
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface ElementCollection {
+ *           Class targetClass() default void.class;
+ *           FetchType fetch() default LAZY;
+ *         }
  *
  *
  *
- * <p>
- * Java class for element-collection complex type.
+ * <p>Java class for element-collection complex type.
  *
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="element-collection">
@@ -50,44 +49,51 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;choice>
- *           &lt;element name="order-by" type="{http://java.sun.com/xml/ns/persistence/orm}order-by" minOccurs="0"/>
- *           &lt;element name="order-column" type="{http://java.sun.com/xml/ns/persistence/orm}order-column" minOccurs="0"/>
+ *           &lt;element name="order-by" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}order-by" minOccurs="0"/>
+ *           &lt;element name="order-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}order-column" minOccurs="0"/>
  *         &lt;/choice>
  *         &lt;choice>
- *           &lt;element name="map-key" type="{http://java.sun.com/xml/ns/persistence/orm}map-key" minOccurs="0"/>
+ *           &lt;element name="map-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key" minOccurs="0"/>
  *           &lt;sequence>
- *             &lt;element name="map-key-class" type="{http://java.sun.com/xml/ns/persistence/orm}map-key-class" minOccurs="0"/>
+ *             &lt;element name="map-key-class" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key-class" minOccurs="0"/>
  *             &lt;choice>
- *               &lt;element name="map-key-temporal" type="{http://java.sun.com/xml/ns/persistence/orm}temporal" minOccurs="0"/>
- *               &lt;element name="map-key-enumerated" type="{http://java.sun.com/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
- *               &lt;element name="map-key-attribute-override" type="{http://java.sun.com/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *               &lt;element name="map-key-temporal" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}temporal" minOccurs="0"/>
+ *               &lt;element name="map-key-enumerated" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
+ *               &lt;sequence>
+ *                 &lt;element name="map-key-attribute-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *                 &lt;element name="map-key-convert" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}convert" maxOccurs="unbounded" minOccurs="0"/>
+ *               &lt;/sequence>
  *             &lt;/choice>
  *             &lt;choice>
- *               &lt;element name="map-key-column" type="{http://java.sun.com/xml/ns/persistence/orm}map-key-column" minOccurs="0"/>
- *               &lt;element name="map-key-join-column" type="{http://java.sun.com/xml/ns/persistence/orm}map-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *               &lt;element name="map-key-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key-column" minOccurs="0"/>
+ *               &lt;sequence>
+ *                 &lt;element name="map-key-join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *                 &lt;element name="map-key-foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *               &lt;/sequence>
  *             &lt;/choice>
  *           &lt;/sequence>
  *         &lt;/choice>
  *         &lt;choice>
  *           &lt;sequence>
- *             &lt;element name="column" type="{http://java.sun.com/xml/ns/persistence/orm}column" minOccurs="0"/>
+ *             &lt;element name="column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}column" minOccurs="0"/>
  *             &lt;choice>
- *               &lt;element name="temporal" type="{http://java.sun.com/xml/ns/persistence/orm}temporal" minOccurs="0"/>
- *               &lt;element name="enumerated" type="{http://java.sun.com/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
- *               &lt;element name="lob" type="{http://java.sun.com/xml/ns/persistence/orm}lob" minOccurs="0"/>
+ *               &lt;element name="temporal" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}temporal" minOccurs="0"/>
+ *               &lt;element name="enumerated" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
+ *               &lt;element name="lob" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}lob" minOccurs="0"/>
  *             &lt;/choice>
  *           &lt;/sequence>
  *           &lt;sequence>
- *             &lt;element name="attribute-override" type="{http://java.sun.com/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
- *             &lt;element name="association-override" type="{http://java.sun.com/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
+ *             &lt;element name="attribute-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *             &lt;element name="association-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
+ *             &lt;element name="convert" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}convert" maxOccurs="unbounded" minOccurs="0"/>
  *           &lt;/sequence>
  *         &lt;/choice>
- *         &lt;element name="collection-table" type="{http://java.sun.com/xml/ns/persistence/orm}collection-table" minOccurs="0"/>
+ *         &lt;element name="collection-table" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}collection-table" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="target-class" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
- *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="fetch" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}fetch-type" />
+ *       &lt;attribute name="access" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}access-type" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -104,20 +110,23 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "mapKeyTemporal",
     "mapKeyEnumerated",
     "mapKeyAttributeOverride",
+    "mapKeyConvert",
     "mapKeyColumn",
     "mapKeyJoinColumn",
+    "mapKeyForeignKey",
     "column",
     "temporal",
     "enumerated",
     "lob",
     "attributeOverride",
     "associationOverride",
+    "convert",
     "collectionTable"
 })
 public class ElementCollection extends CompositionAttribute implements FetchTypeHandler, AttributeOverrideHandler, AssociationOverrideHandler { //CompositionAttribute/BaseAttributes
 
     @XmlElement(name = "order-by")
-    protected String orderBy;//RENENG PENDING
+    protected String orderBy;
     @XmlElement(name = "order-column")
     protected OrderColumn orderColumn;//RENENG PENDING
     @XmlElement(name = "map-key")
@@ -130,10 +139,14 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     protected EnumType mapKeyEnumerated;//RENENG PENDING
     @XmlElement(name = "map-key-attribute-override")
     protected List<AttributeOverride> mapKeyAttributeOverride;//RENENG PENDING
+    @XmlElement(name = "map-key-convert")
+    protected List<Convert> mapKeyConvert;//RENENG PENDING
     @XmlElement(name = "map-key-column")
     protected MapKeyColumn mapKeyColumn;//RENENG PENDING
     @XmlElement(name = "map-key-join-column")
     protected List<MapKeyJoinColumn> mapKeyJoinColumn;//RENENG PENDING
+    @XmlElement(name = "map-key-foreign-key")
+    protected ForeignKey mapKeyForeignKey;//RENENG PENDING
     protected Column column;
     protected TemporalType temporal;
     protected EnumType enumerated;
@@ -142,15 +155,16 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     protected List<AttributeOverride> attributeOverride;//RENENG PENDING
     @XmlElement(name = "association-override")
     protected List<AssociationOverride> associationOverride;//RENENG PENDING
+    protected List<Convert> convert;//RENENG PENDING
     @XmlElement(name = "collection-table")
     protected CollectionTable collectionTable;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "name", required = true)
     protected String name;
     @XmlAttribute(name = "target-class")
     protected String targetClass;
-    @XmlAttribute
+    @XmlAttribute(name = "fetch")
     protected FetchType fetch;
-    @XmlAttribute
+    @XmlAttribute(name = "access")
     protected AccessType access;
 
     @XmlAttribute(name = "collection-type")
@@ -166,6 +180,13 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         elementCollection.lob = Lob.load(element, variableElement);
         elementCollection.collectionTable = CollectionTable.load(element, variableElement);
         elementCollection.name = variableElement.getSimpleName().toString();
+        
+        AnnotationMirror orderByMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OrderBy");
+        if (orderByMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(orderByMirror, "value");
+            elementCollection.orderBy = value==null?StringUtils.EMPTY:value.toString();
+        }
+        
         Object fetchObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fetch");
         if (fetchObj != null) {
             elementCollection.fetch = FetchType.valueOf(fetchObj.toString());
@@ -355,6 +376,35 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     }
 
     /**
+     * Gets the value of the mapKeyConvert property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the mapKeyConvert property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getMapKeyConvert().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Convert }
+     * 
+     * 
+     */
+    public List<Convert> getMapKeyConvert() {
+        if (mapKeyConvert == null) {
+            mapKeyConvert = new ArrayList<Convert>();
+        }
+        return this.mapKeyConvert;
+    }
+
+    /**
      * Gets the value of the mapKeyColumn property.
      *
      * @return possible object is {@link MapKeyColumn }
@@ -401,6 +451,30 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             mapKeyJoinColumn = new ArrayList<MapKeyJoinColumn>();
         }
         return this.mapKeyJoinColumn;
+    }
+
+    /**
+     * Gets the value of the mapKeyForeignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getMapKeyForeignKey() {
+        return mapKeyForeignKey;
+    }
+
+    /**
+     * Sets the value of the mapKeyForeignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setMapKeyForeignKey(ForeignKey value) {
+        this.mapKeyForeignKey = value;
     }
 
     /**
@@ -539,6 +613,35 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             associationOverride = new ArrayList<AssociationOverride>();
         }
         return this.associationOverride;
+    }
+
+    /**
+     * Gets the value of the convert property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the convert property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConvert().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Convert }
+     * 
+     * 
+     */
+    public List<Convert> getConvert() {
+        if (convert == null) {
+            convert = new ArrayList<Convert>();
+        }
+        return this.convert;
     }
 
     /**

@@ -23,34 +23,35 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface Basic {
- * FetchType fetch() default EAGER; boolean optional() default true; }
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface Basic {
+ *           FetchType fetch() default EAGER;
+ *           boolean optional() default true;
+ *         }
  *
  *
  *
- * <p>
- * Java class for basic complex type.
+ * <p>Java class for basic complex type.
  *
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="basic">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="column" type="{http://java.sun.com/xml/ns/persistence/orm}column" minOccurs="0"/>
+ *         &lt;element name="column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}column" minOccurs="0"/>
  *         &lt;choice>
- *           &lt;element name="lob" type="{http://java.sun.com/xml/ns/persistence/orm}lob" minOccurs="0"/>
- *           &lt;element name="temporal" type="{http://java.sun.com/xml/ns/persistence/orm}temporal" minOccurs="0"/>
- *           &lt;element name="enumerated" type="{http://java.sun.com/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
+ *           &lt;element name="lob" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}lob" minOccurs="0"/>
+ *           &lt;element name="temporal" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}temporal" minOccurs="0"/>
+ *           &lt;element name="enumerated" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
+ *           &lt;element name="convert" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}convert" minOccurs="0"/>
  *         &lt;/choice>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
+ *       &lt;attribute name="fetch" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}fetch-type" />
  *       &lt;attribute name="optional" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="access" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}access-type" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -63,7 +64,8 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "column",
     "lob",
     "temporal",
-    "enumerated"
+    "enumerated",
+    "convert"
 })
 public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler, FetchTypeHandler {
 
@@ -71,13 +73,14 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
     protected Lob lob;
     protected TemporalType temporal;
     protected EnumType enumerated;
-    @XmlAttribute(required = true)
+    protected Convert convert;//RENENF PENDING
+    @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute
+    @XmlAttribute(name = "fetch")
     protected FetchType fetch;
-    @XmlAttribute
+    @XmlAttribute(name = "optional")
     protected Boolean optional;
-    @XmlAttribute
+    @XmlAttribute(name = "access")
     protected AccessType access;
 
     public static Basic load(Element element, VariableElement variableElement) {
@@ -180,6 +183,30 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      */
     public void setEnumerated(EnumType value) {
         this.enumerated = value;
+    }
+
+    /**
+     * Gets the value of the convert property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Convert }
+     *     
+     */
+    public Convert getConvert() {
+        return convert;
+    }
+
+    /**
+     * Sets the value of the convert property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Convert }
+     *     
+     */
+    public void setConvert(Convert value) {
+        this.convert = value;
     }
 
     /**

@@ -26,19 +26,21 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface OneToOne {
- * Class targetEntity() default void.class; CascadeType[] cascade() default {};
- * FetchType fetch() default EAGER; boolean optional() default true; String
- * mappedBy() default ""; boolean orphanRemoval() default false; }
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface OneToOne {
+ *           Class targetEntity() default void.class;
+ *           CascadeType[] cascade() default {};
+ *           FetchType fetch() default EAGER;
+ *           boolean optional() default true;
+ *           String mappedBy() default "";
+ *           boolean orphanRemoval() default false;
+ *         }
  *
  *
  *
- * <p>
- * Java class for one-to-one complex type.
+ * <p>Java class for one-to-one complex type.
  *
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="one-to-one">
@@ -46,17 +48,23 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;choice>
- *           &lt;element name="primary-key-join-column" type="{http://java.sun.com/xml/ns/persistence/orm}primary-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
- *           &lt;element name="join-column" type="{http://java.sun.com/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
- *           &lt;element name="join-table" type="{http://java.sun.com/xml/ns/persistence/orm}join-table" minOccurs="0"/>
+ *           &lt;sequence>
+ *             &lt;element name="primary-key-join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}primary-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *             &lt;element name="primary-key-foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *           &lt;/sequence>
+ *           &lt;sequence>
+ *             &lt;element name="join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *             &lt;element name="foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *           &lt;/sequence>
+ *           &lt;element name="join-table" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}join-table" minOccurs="0"/>
  *         &lt;/choice>
- *         &lt;element name="cascade" type="{http://java.sun.com/xml/ns/persistence/orm}cascade-type" minOccurs="0"/>
+ *         &lt;element name="cascade" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}cascade-type" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="target-entity" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
+ *       &lt;attribute name="fetch" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}fetch-type" />
  *       &lt;attribute name="optional" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="access" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}access-type" />
  *       &lt;attribute name="mapped-by" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="orphan-removal" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="maps-id" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -71,7 +79,9 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "one-to-one", propOrder = {
     "primaryKeyJoinColumn",
+    "primaryKeyForeignKey",
     "joinColumn",
+    "foreignKey",
     "joinTable",
     "cascade"
 })
@@ -79,20 +89,24 @@ public class OneToOne extends RelationAttribute implements JoinColumnHandler {
 
     @XmlElement(name = "primary-key-join-column")
     protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//RENENG PENDING
+    @XmlElement(name = "primary-key-foreign-key")
+    protected ForeignKey primaryKeyForeignKey;//RENENG PENDING
     @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
+    @XmlElement(name = "foreign-key")
+    protected ForeignKey foreignKey;
     @XmlElement(name = "join-table")
     protected JoinTable joinTable;
     protected CascadeType cascade;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "name", required = true)
     protected String name;
     @XmlAttribute(name = "target-entity")
     protected String targetEntity;
-    @XmlAttribute
+    @XmlAttribute(name = "fetch")
     protected FetchType fetch;
-    @XmlAttribute
+    @XmlAttribute(name = "optional")
     protected Boolean optional;
-    @XmlAttribute
+    @XmlAttribute(name = "access")
     protected AccessType access;
     @XmlAttribute(name = "mapped-by")
     protected String mappedBy;
@@ -200,6 +214,30 @@ public class OneToOne extends RelationAttribute implements JoinColumnHandler {
     }
 
     /**
+     * Gets the value of the primaryKeyForeignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getPrimaryKeyForeignKey() {
+        return primaryKeyForeignKey;
+    }
+
+    /**
+     * Sets the value of the primaryKeyForeignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setPrimaryKeyForeignKey(ForeignKey value) {
+        this.primaryKeyForeignKey = value;
+    }
+
+    /**
      * Gets the value of the joinColumn property.
      *
      * <p>
@@ -242,6 +280,29 @@ public class OneToOne extends RelationAttribute implements JoinColumnHandler {
             joinColumn = new ArrayList<JoinColumn>();
         }
         joinColumn.remove(joinColumn_In);
+    }
+   /**
+     * Gets the value of the foreignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * Sets the value of the foreignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setForeignKey(ForeignKey value) {
+        this.foreignKey = value;
     }
 
     /**

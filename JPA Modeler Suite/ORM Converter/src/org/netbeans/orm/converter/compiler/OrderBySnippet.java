@@ -15,11 +15,13 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.ArrayList;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 import java.util.Collections;
 
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 public class OrderBySnippet implements Snippet {
 
@@ -29,6 +31,17 @@ public class OrderBySnippet implements Snippet {
         return orderList;
     }
 
+    public OrderBySnippet() {
+    }
+
+    public OrderBySnippet(String orderBy) {
+        if (!StringUtils.EMPTY.equals(orderBy)) {
+            orderList = new ArrayList<String>();
+            orderList.add(orderBy);
+        }
+    }
+
+    
     public void setOrderList(List<String> orderList) {
         if (orderList != null) {
             this.orderList = orderList;

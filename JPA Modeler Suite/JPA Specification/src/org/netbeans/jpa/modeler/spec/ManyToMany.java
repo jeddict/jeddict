@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -25,18 +26,19 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface ManyToMany {
- * Class targetEntity() default void.class; CascadeType[] cascade() default {};
- * FetchType fetch() default LAZY; String mappedBy() default ""; }
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface ManyToMany {
+ *           Class targetEntity() default void.class;
+ *           CascadeType[] cascade() default {};
+ *           FetchType fetch() default LAZY;
+ *           String mappedBy() default "";
+ *         }
  *
  *
  *
- * <p>
- * Java class for many-to-many complex type.
+ * <p>Java class for many-to-many complex type.
  *
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="many-to-many">
@@ -44,31 +46,37 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;choice>
- *           &lt;element name="order-by" type="{http://java.sun.com/xml/ns/persistence/orm}order-by" minOccurs="0"/>
- *           &lt;element name="order-column" type="{http://java.sun.com/xml/ns/persistence/orm}order-column" minOccurs="0"/>
+ *           &lt;element name="order-by" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}order-by" minOccurs="0"/>
+ *           &lt;element name="order-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}order-column" minOccurs="0"/>
  *         &lt;/choice>
  *         &lt;choice>
- *           &lt;element name="map-key" type="{http://java.sun.com/xml/ns/persistence/orm}map-key" minOccurs="0"/>
+ *           &lt;element name="map-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key" minOccurs="0"/>
  *           &lt;sequence>
- *             &lt;element name="map-key-class" type="{http://java.sun.com/xml/ns/persistence/orm}map-key-class" minOccurs="0"/>
+ *             &lt;element name="map-key-class" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key-class" minOccurs="0"/>
  *             &lt;choice>
- *               &lt;element name="map-key-temporal" type="{http://java.sun.com/xml/ns/persistence/orm}temporal" minOccurs="0"/>
- *               &lt;element name="map-key-enumerated" type="{http://java.sun.com/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
- *               &lt;element name="map-key-attribute-override" type="{http://java.sun.com/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *               &lt;element name="map-key-temporal" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}temporal" minOccurs="0"/>
+ *               &lt;element name="map-key-enumerated" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
+ *               &lt;sequence>
+ *                 &lt;element name="map-key-attribute-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *                 &lt;element name="map-key-convert" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}convert" maxOccurs="unbounded" minOccurs="0"/>
+ *               &lt;/sequence>
  *             &lt;/choice>
  *             &lt;choice>
- *               &lt;element name="map-key-column" type="{http://java.sun.com/xml/ns/persistence/orm}map-key-column" minOccurs="0"/>
- *               &lt;element name="map-key-join-column" type="{http://java.sun.com/xml/ns/persistence/orm}map-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *               &lt;element name="map-key-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key-column" minOccurs="0"/>
+ *               &lt;sequence>
+ *                 &lt;element name="map-key-join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}map-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *                 &lt;element name="map-key-foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *               &lt;/sequence>
  *             &lt;/choice>
  *           &lt;/sequence>
  *         &lt;/choice>
- *         &lt;element name="join-table" type="{http://java.sun.com/xml/ns/persistence/orm}join-table" minOccurs="0"/>
- *         &lt;element name="cascade" type="{http://java.sun.com/xml/ns/persistence/orm}cascade-type" minOccurs="0"/>
+ *         &lt;element name="join-table" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}join-table" minOccurs="0"/>
+ *         &lt;element name="cascade" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}cascade-type" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="target-entity" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
- *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="fetch" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}fetch-type" />
+ *       &lt;attribute name="access" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}access-type" />
  *       &lt;attribute name="mapped-by" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -86,15 +94,17 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "mapKeyTemporal",
     "mapKeyEnumerated",
     "mapKeyAttributeOverride",
+    "mapKeyConvert",
     "mapKeyColumn",
     "mapKeyJoinColumn",
+    "mapKeyForeignKey",
     "joinTable",
     "cascade"
 })
 public class ManyToMany extends RelationAttribute {
 
     @XmlElement(name = "order-by")
-    protected String orderBy;//RENENG PENDING
+    protected String orderBy;
     @XmlElement(name = "order-column")
     protected OrderColumn orderColumn;//RENENG PENDING
     @XmlElement(name = "map-key")
@@ -107,20 +117,24 @@ public class ManyToMany extends RelationAttribute {
     protected EnumType mapKeyEnumerated;//RENENG PENDING
     @XmlElement(name = "map-key-attribute-override")
     protected List<AttributeOverride> mapKeyAttributeOverride;//RENENG PENDING
-    @XmlElement(name = "map-key-column")
+      @XmlElement(name = "map-key-convert")
+    protected List<Convert> mapKeyConvert;//RENENG PENDING
+      @XmlElement(name = "map-key-column")
     protected MapKeyColumn mapKeyColumn;//RENENG PENDING
     @XmlElement(name = "map-key-join-column")
     protected List<MapKeyJoinColumn> mapKeyJoinColumn;//RENENG PENDING
+    @XmlElement(name = "map-key-foreign-key")
+    protected ForeignKey mapKeyForeignKey;//RENENG PENDING
     @XmlElement(name = "join-table")
     protected JoinTable joinTable;
     protected CascadeType cascade;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "name", required = true)
     protected String name;
     @XmlAttribute(name = "target-entity")
     protected String targetEntity;
-    @XmlAttribute
+    @XmlAttribute(name = "fetch")
     protected FetchType fetch;
-    @XmlAttribute
+    @XmlAttribute(name = "access")
     protected AccessType access;
     @XmlAttribute(name = "mapped-by")
     protected String mappedBy;
@@ -133,6 +147,12 @@ public class ManyToMany extends RelationAttribute {
         manyToMany.setId(NBModelerUtil.getAutoGeneratedStringId());
         manyToMany.joinTable = JoinTable.load(element);
 
+        AnnotationMirror orderByMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OrderBy");
+        if (orderByMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(orderByMirror, "value");
+            manyToMany.orderBy = value==null?StringUtils.EMPTY:value.toString();
+        }
+        
         List cascadeList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "cascade");
         if (cascadeList != null) {
             CascadeType cascadeType = new CascadeType();
@@ -326,6 +346,35 @@ public class ManyToMany extends RelationAttribute {
     }
 
     /**
+     * Gets the value of the mapKeyConvert property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the mapKeyConvert property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getMapKeyConvert().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Convert }
+     * 
+     * 
+     */
+    public List<Convert> getMapKeyConvert() {
+        if (mapKeyConvert == null) {
+            mapKeyConvert = new ArrayList<Convert>();
+        }
+        return this.mapKeyConvert;
+    }
+
+    /**
      * Gets the value of the mapKeyColumn property.
      *
      * @return possible object is {@link MapKeyColumn }
@@ -372,6 +421,30 @@ public class ManyToMany extends RelationAttribute {
             mapKeyJoinColumn = new ArrayList<MapKeyJoinColumn>();
         }
         return this.mapKeyJoinColumn;
+    }
+
+    /**
+     * Gets the value of the mapKeyForeignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getMapKeyForeignKey() {
+        return mapKeyForeignKey;
+    }
+
+    /**
+     * Sets the value of the mapKeyForeignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setMapKeyForeignKey(ForeignKey value) {
+        this.mapKeyForeignKey = value;
     }
 
     /**

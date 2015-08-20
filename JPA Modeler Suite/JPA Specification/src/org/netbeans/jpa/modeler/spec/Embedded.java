@@ -60,7 +60,8 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "embedded", propOrder = {
     "attributeOverride",
-    "associationOverride"
+    "associationOverride",
+    "convert"
 })
 public class Embedded extends CompositionAttribute implements AttributeOverrideHandler, AssociationOverrideHandler {
 
@@ -68,7 +69,8 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
     protected List<AttributeOverride> attributeOverride;//RENENG PENDING
     @XmlElement(name = "association-override")
     protected List<AssociationOverride> associationOverride;//RENENG PENDING
-    @XmlAttribute(required = true)
+    protected List<Convert> convert;//RENENG PENDING
+    @XmlAttribute(name = "name", required = true)
     protected String name;
     @XmlAttribute
     protected AccessType access;
@@ -185,6 +187,35 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
             associationOverride = new ArrayList<AssociationOverride>();
         }
         return this.associationOverride;
+    }
+
+    /**
+     * Gets the value of the convert property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the convert property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConvert().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Convert }
+     * 
+     * 
+     */
+    public List<Convert> getConvert() {
+        if (convert == null) {
+            convert = new ArrayList<Convert>();
+        }
+        return this.convert;
     }
 
     /**

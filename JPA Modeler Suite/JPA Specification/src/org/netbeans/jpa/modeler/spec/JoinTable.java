@@ -22,29 +22,38 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface JoinTable {
- * String name() default ""; String catalog() default ""; String schema()
- * default ""; JoinColumn[] joinColumns() default {}; JoinColumn[]
- * inverseJoinColumns() default {}; UniqueConstraint[] uniqueConstraints()
- * default {}; }
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface JoinTable {
+ *           String name() default "";
+ *           String catalog() default "";
+ *           String schema() default "";
+ *           JoinColumn[] joinColumns() default {};
+ *           JoinColumn[] inverseJoinColumns() default {};
+ *           UniqueConstraint[] uniqueConstraints() default {};
+ *           Index[] indexes() default {};
+ *         }
  *
  *
  *
- * <p>
- * Java class for join-table complex type.
+ * <p>Java class for join-table complex type.
  *
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="join-table">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="join-column" type="{http://java.sun.com/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="inverse-join-column" type="{http://java.sun.com/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="unique-constraint" type="{http://java.sun.com/xml/ns/persistence/orm}unique-constraint" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;sequence>
+ *           &lt;element name="join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *           &lt;element name="foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *         &lt;/sequence>
+ *         &lt;sequence>
+ *           &lt;element name="inverse-join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *           &lt;element name="inverse-foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *         &lt;/sequence>
+ *         &lt;element name="unique-constraint" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}unique-constraint" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="index" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}index" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -59,22 +68,30 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "join-table", propOrder = {
     "joinColumn",
+    "foreignKey",
     "inverseJoinColumn",
-    "uniqueConstraint"
+    "inverseForeignKey",
+    "uniqueConstraint",
+    "index"
 })
 public class JoinTable {
 
     @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
+    @XmlElement(name = "foreign-key")
+    protected ForeignKey foreignKey;//REVENG PENDING
     @XmlElement(name = "inverse-join-column")
     protected List<JoinColumn> inverseJoinColumn;
+    @XmlElement(name = "inverse-foreign-key")
+    protected ForeignKey inverseForeignKey;//REVENG PENDING
     @XmlElement(name = "unique-constraint")
     protected List<UniqueConstraint> uniqueConstraint;
-    @XmlAttribute
+    protected List<Index> index;//REVENG PENDING
+    @XmlAttribute(name = "name")
     protected String name;
-    @XmlAttribute
+    @XmlAttribute(name = "catalog")
     protected String catalog;
-    @XmlAttribute
+    @XmlAttribute(name = "schema")
     protected String schema;
 
     public static JoinTable load(Element element) {
@@ -145,6 +162,30 @@ public class JoinTable {
     }
 
     /**
+     * Gets the value of the foreignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * Sets the value of the foreignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setForeignKey(ForeignKey value) {
+        this.foreignKey = value;
+    }
+
+    /**
      * Gets the value of the inverseJoinColumn property.
      *
      * <p>
@@ -174,6 +215,30 @@ public class JoinTable {
     }
 
     /**
+     * Gets the value of the inverseForeignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getInverseForeignKey() {
+        return inverseForeignKey;
+    }
+
+    /**
+     * Sets the value of the inverseForeignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setInverseForeignKey(ForeignKey value) {
+        this.inverseForeignKey = value;
+    }
+
+    /**
      * Gets the value of the uniqueConstraint property.
      *
      * <p>
@@ -200,6 +265,35 @@ public class JoinTable {
             uniqueConstraint = new ArrayList<UniqueConstraint>();
         }
         return this.uniqueConstraint;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the index property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getIndex().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Index }
+     * 
+     * 
+     */
+    public List<Index> getIndex() {
+        if (index == null) {
+            index = new ArrayList<Index>();
+        }
+        return this.index;
     }
 
     /**

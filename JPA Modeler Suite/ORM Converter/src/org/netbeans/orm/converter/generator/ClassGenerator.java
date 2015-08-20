@@ -94,6 +94,7 @@ import org.netbeans.orm.converter.compiler.NamedQueriesSnippet;
 import org.netbeans.orm.converter.compiler.NamedQueryDefSnippet;
 import org.netbeans.orm.converter.compiler.OneToManySnippet;
 import org.netbeans.orm.converter.compiler.OneToOneSnippet;
+import org.netbeans.orm.converter.compiler.OrderBySnippet;
 import org.netbeans.orm.converter.compiler.PrimaryKeyJoinColumnSnippet;
 import org.netbeans.orm.converter.compiler.PrimaryKeyJoinColumnsSnippet;
 import org.netbeans.orm.converter.compiler.QueryHintSnippet;
@@ -278,7 +279,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setCollectionTable(collectionTable);
             variableDef.setColumnDef(columnDef);
             variableDef.setEnumerated(enumerated);
-
+            if(parsedElementCollection.getOrderBy()!=null){
+            variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
+            }
             if (parsedTemporal != null) {
                 variableDef.setTemporal(true);
                 variableDef.setTemporalType(
@@ -982,12 +985,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
             //TODO: Checked this error - The ORM.xsd has this but NOT the
             //http://www.oracle.com/technology/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html
-            //manyToMany.setOrderBy(parsedManyToMany.getOrderBy());
+//            manyToMany.setOrderBy(parsedManyToMany.getOrderBy());
 
             VariableDefSnippet variableDef = getVariableDef(parsedManyToMany);
 
             variableDef.setRelationDef(manyToMany);
             variableDef.setJoinTable(joinTable);
+            if(parsedManyToMany.getOrderBy()!=null){
+            variableDef.setOrderBy(new OrderBySnippet(parsedManyToMany.getOrderBy()));
+            }
 //            variableDef.setType(parsedManyToMany.getAttributeType());
 
             if (parsedManyToMany.getMapKey() != null) {
@@ -1083,6 +1089,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setRelationDef(oneToMany);
             variableDef.setJoinTable(joinTable);
             variableDef.setJoinColumns(joinColumns);
+            if(parsedOneToMany.getOrderBy()!=null){
+            variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
+            }
 //            variableDef.setType(parsedOneToMany.getAttributeType());
 
             if (parsedOneToMany.getMapKey() != null) {
