@@ -103,7 +103,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity", propOrder = {
-    "description",
+//    "description",
     "table",
     "secondaryTable",
     "primaryKeyJoinColumn",
@@ -248,6 +248,24 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
                 this.getAssociationOverride().add(AssociationOverride.load(element, associationOverridesMirror));
             }
         }
+        
+        
+        AnnotationMirror namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedEntityGraphs");
+        if (namedEntityGraphsMirror != null) {
+            List namedEntityGraphMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedEntityGraphsMirror, "value");
+            if (namedEntityGraphMirrorList != null) {
+                for (Object associationOverrideObj : namedEntityGraphMirrorList) {
+                    this.getNamedEntityGraph().add(NamedEntityGraph.load(element, (AnnotationMirror) associationOverrideObj));
+                }
+            }
+        } else {
+            namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedEntityGraph");
+            if (namedEntityGraphsMirror != null) {
+                this.getNamedEntityGraph().add(NamedEntityGraph.load(element, namedEntityGraphsMirror));
+            }
+        }
+        
+        
 
         
     }

@@ -10,11 +10,14 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 
 /**
@@ -70,7 +73,36 @@ public class NamedEntityGraph {
     protected String name;
     @XmlAttribute(name = "include-all-attributes")
     protected Boolean includeAllAttributes;
+    
+        public static NamedEntityGraph load(Element element, AnnotationMirror annotationMirror) {
+        NamedEntityGraph namedEntityGraph = null;
+        if (annotationMirror != null) {
+            namedEntityGraph = new NamedEntityGraph();
+            namedEntityGraph.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            namedEntityGraph.includeAllAttributes = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "includeAllAttributes");
 
+            List attributeNodesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "attributeNodes");
+            if (attributeNodesAnnot != null) {
+                for (Object attributeNodeObj : attributeNodesAnnot) {
+                    namedEntityGraph.getNamedAttributeNode().add(NamedAttributeNode.load(element, (AnnotationMirror) attributeNodeObj));
+                }
+            }
+            List subgraphsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "subgraphs");
+            if (subgraphsAnnot != null) {
+                for (Object subgraphObj : subgraphsAnnot) {
+                    namedEntityGraph.getSubgraph().add(NamedSubgraph.load(element, (AnnotationMirror) subgraphObj));
+                }
+            }
+            List subclassSubgraphsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "subclassSubgraphs");
+            if (subclassSubgraphsAnnot != null) {
+                for (Object subclassSubgraphObj : subclassSubgraphsAnnot) {
+                    namedEntityGraph.getSubclassSubgraph().add(NamedSubgraph.load(element, (AnnotationMirror) subclassSubgraphObj));
+                }
+            }
+        }
+        return namedEntityGraph;
+    }
+        
     /**
      * Gets the value of the namedAttributeNode property.
      * 

@@ -4,35 +4,36 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
- * 
- * 
- *         @Target({}) @Retention(RUNTIME)
- *         public @interface NamedSubgraph {
- *           String name();
- *           Class type() default void.class;
- *           NamedAttributeNode[] attributeNodes();
- *         }
- * 
- *       
- * 
- * <p>Java class for named-subgraph complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({}) @Retention(RUNTIME) public @interface NamedSubgraph { String
+ * name(); Class type() default void.class; NamedAttributeNode[]
+ * attributeNodes(); }
+ *
+ *
+ *
+ * <p>
+ * Java class for named-subgraph complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="named-subgraph">
  *   &lt;complexContent>
@@ -46,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-subgraph", propOrder = {
@@ -62,27 +63,47 @@ public class NamedSubgraph {
     @XmlAttribute(name = "class")
     protected String clazz;
 
+    public static NamedSubgraph load(Element element, AnnotationMirror annotationMirror) {
+        NamedSubgraph namedSubgraph = null;
+        if (annotationMirror != null) {
+            namedSubgraph = new NamedSubgraph();
+            namedSubgraph.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "type");
+            if (declaredType != null) {
+                namedSubgraph.clazz = declaredType.asElement().getSimpleName().toString();
+            }
+            List attributeNodesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "attributeNodes");
+            if (attributeNodesAnnot != null) {
+                for (Object attributeNodeObj : attributeNodesAnnot) {
+                    namedSubgraph.getNamedAttributeNode().add(NamedAttributeNode.load(element, (AnnotationMirror) attributeNodeObj));
+                }
+            }
+
+        }
+        return namedSubgraph;
+    }
+
     /**
      * Gets the value of the namedAttributeNode property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the namedAttributeNode property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the namedAttributeNode property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedAttributeNode().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedAttributeNode }
-     * 
-     * 
+     *
+     *
      */
     public List<NamedAttributeNode> getNamedAttributeNode() {
         if (namedAttributeNode == null) {
@@ -93,11 +114,9 @@ public class NamedSubgraph {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -105,11 +124,9 @@ public class NamedSubgraph {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -117,11 +134,9 @@ public class NamedSubgraph {
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getClazz() {
         return clazz;
@@ -129,11 +144,9 @@ public class NamedSubgraph {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setClazz(String value) {
         this.clazz = value;

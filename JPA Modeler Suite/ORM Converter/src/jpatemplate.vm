@@ -61,6 +61,9 @@ $classDef.getDiscriminatorValue().getSnippet()
 #if ($classDef.getDiscriminatorColumn())
 $classDef.getDiscriminatorColumn().getSnippet()
 #end
+#if ($classDef.getNamedQueries() )
+$classDef.getNamedQueries().getSnippet()
+#end
 #####################named queries ###############################
 #if ($classDef.getNamedQueries() )
 $classDef.getNamedQueries().getSnippet()
@@ -68,6 +71,11 @@ $classDef.getNamedQueries().getSnippet()
 #if ($classDef.getNamedNativeQueries() )
 $classDef.getNamedNativeQueries().getSnippet()
 #end
+#####################named entity graphs ###############################
+#if ($classDef.getNamedEntityGraphs() )
+$classDef.getNamedEntityGraphs().getSnippet()
+#end
+
 
 
 #foreach($annotation in $classDef.getAnnotation() )

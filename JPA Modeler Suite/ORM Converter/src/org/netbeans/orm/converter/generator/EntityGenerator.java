@@ -72,7 +72,12 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
         //Queries
         processNamedQueries(entity.getNamedQuery());
         processNamedNativeQueries(entity.getNamedNativeQuery());
+        
+        //EntityGraphs
+        processNamedEntityGraphs(entity.getNamedEntityGraph());
 
+        
+        
         //Attributes -- Method level annotations
         Attributes parsedAttributes = entity.getAttributes();
 

@@ -74,6 +74,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private NamedQueriesSnippet namedQueries = null;
     private NamedNativeQueriesSnippet namedNativeQueries = null;
     private SQLResultSetMappingsSnippet sqlResultSetMappings = null;
+    private NamedEntityGraphsSnippet namedEntityGraphs = null;
+    
 
     private List<VariableDefSnippet> variableDefs = new ArrayList<VariableDefSnippet>();
 
@@ -384,10 +386,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         if (namedNativeQueries != null) {
             importSnippets.addAll(namedNativeQueries.getImportSnippets());
         }
+        
+        if (namedEntityGraphs != null) {
+            importSnippets.addAll(namedEntityGraphs.getImportSnippets());
+        }
+        
+        
 
         if (sqlResultSetMappings != null) {
             importSnippets.addAll(sqlResultSetMappings.getImportSnippets());
         }
+        
+        
 
         if (entityListeners != null) {
             importSnippets.addAll(entityListeners.getImportSnippets());
@@ -499,6 +509,20 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setInterfaces(List<String> interfaces) {
         this.interfaces = interfaces;
+    }
+
+    /**
+     * @return the namedEntityGraphs
+     */
+    public NamedEntityGraphsSnippet getNamedEntityGraphs() {
+        return namedEntityGraphs;
+    }
+
+    /**
+     * @param namedEntityGraphs the namedEntityGraphs to set
+     */
+    public void setNamedEntityGraphs(NamedEntityGraphsSnippet namedEntityGraphs) {
+        this.namedEntityGraphs = namedEntityGraphs;
     }
 
 }

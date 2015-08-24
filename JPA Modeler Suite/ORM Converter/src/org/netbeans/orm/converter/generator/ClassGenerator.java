@@ -48,8 +48,11 @@ import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.Lob;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
+import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
+import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
@@ -88,10 +91,14 @@ import org.netbeans.orm.converter.compiler.JoinColumnsSnippet;
 import org.netbeans.orm.converter.compiler.JoinTableSnippet;
 import org.netbeans.orm.converter.compiler.ManyToManySnippet;
 import org.netbeans.orm.converter.compiler.ManyToOneSnippet;
+import org.netbeans.orm.converter.compiler.NamedAttributeNodeSnippet;
+import org.netbeans.orm.converter.compiler.NamedEntityGraphSnippet;
+import org.netbeans.orm.converter.compiler.NamedEntityGraphsSnippet;
 import org.netbeans.orm.converter.compiler.NamedNativeQueriesSnippet;
 import org.netbeans.orm.converter.compiler.NamedNativeQuerySnippet;
 import org.netbeans.orm.converter.compiler.NamedQueriesSnippet;
 import org.netbeans.orm.converter.compiler.NamedQueryDefSnippet;
+import org.netbeans.orm.converter.compiler.NamedSubgraphSnippet;
 import org.netbeans.orm.converter.compiler.OneToManySnippet;
 import org.netbeans.orm.converter.compiler.OneToOneSnippet;
 import org.netbeans.orm.converter.compiler.OrderBySnippet;
@@ -555,6 +562,44 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return primaryKeyJoinColumns;
     }
 
+    protected List<NamedAttributeNodeSnippet> getNamedAttributeNodes(
+            List<NamedAttributeNode> parsedNamedAttributeNodes) {
+
+        if (parsedNamedAttributeNodes == null || parsedNamedAttributeNodes.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<NamedAttributeNodeSnippet> namedAttributeNodes = new ArrayList<NamedAttributeNodeSnippet>();
+        for (NamedAttributeNode parsedNamedAttributeNode : parsedNamedAttributeNodes) {
+            NamedAttributeNodeSnippet namedAttributeNode = new NamedAttributeNodeSnippet();
+            namedAttributeNode.setName(parsedNamedAttributeNode.getName());
+            namedAttributeNode.setSubgraph(parsedNamedAttributeNode.getSubgraph());
+            namedAttributeNode.setKeySubgraph(parsedNamedAttributeNode.getKeySubgraph());
+            namedAttributeNodes.add(namedAttributeNode);
+        }
+        return namedAttributeNodes;
+    }
+
+    protected List<NamedSubgraphSnippet> getNamedSubgraphs(
+            List<NamedSubgraph> parsedNamedSubgraphs) {
+
+        if (parsedNamedSubgraphs == null || parsedNamedSubgraphs.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<NamedSubgraphSnippet> namedSubgraphs = new ArrayList<NamedSubgraphSnippet>();
+        for (NamedSubgraph parsedNamedSubgraph : parsedNamedSubgraphs) {
+            NamedSubgraphSnippet namedSubgraph = new NamedSubgraphSnippet();
+            namedSubgraph.setName(parsedNamedSubgraph.getName());
+            namedSubgraph.setNamedAttributeNode(getNamedAttributeNodes(parsedNamedSubgraph.getNamedAttributeNode()));
+            namedSubgraph.setType(parsedNamedSubgraph.getClazz());
+//            idClass.setPackageName(packageName);
+            namedSubgraphs.add(namedSubgraph);
+        }
+        return namedSubgraphs;
+    }    
+    
+    
     protected List<QueryHintSnippet> getQueryHints(
             List<QueryHint> parsedQueryHints) {
 
@@ -725,6 +770,33 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setIdClass(idClass);
     }
 
+    
+            
+      protected void processNamedEntityGraphs(
+            List<NamedEntityGraph> parsedNamedEntityGraphs) {
+
+        if (parsedNamedEntityGraphs == null
+                || parsedNamedEntityGraphs.isEmpty()) {
+            return;
+        }
+
+        NamedEntityGraphsSnippet namedEntityGraphs = new NamedEntityGraphsSnippet();
+
+        classDef.setNamedEntityGraphs(namedEntityGraphs);
+
+        for (NamedEntityGraph parsedNamedEntityGraph : parsedNamedEntityGraphs) {
+            NamedEntityGraphSnippet namedEntityGraph = new NamedEntityGraphSnippet();
+            namedEntityGraph.setName(parsedNamedEntityGraph.getName());
+            namedEntityGraph.setIncludeAllAttributes(parsedNamedEntityGraph.isIncludeAllAttributes());
+            namedEntityGraph.setNamedAttributeNodes(getNamedAttributeNodes(parsedNamedEntityGraph.getNamedAttributeNode()));
+            namedEntityGraph.setSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubgraph()));
+            namedEntityGraph.setSubclassSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubclassSubgraph()));
+
+            classDef.getNamedEntityGraphs().addNamedEntityGraph(namedEntityGraph);
+        }
+    }
+       
+            
     protected void processNamedNativeQueries(
             List<NamedNativeQuery> parsedNamedNativeQueries) {
 
