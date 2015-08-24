@@ -29,15 +29,18 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- * Defines the settings and mappings for an entity. Is allowed to be sparsely
- * populated and used in conjunction with the annotations. Alternatively, the
- * metadata-complete attribute can be used to indicate that no annotations on
- * the entity class (and its fields or properties) are to be processed. If this
- * is the case then the defaulting rules for the entity and its subelements will
- * be recursively applied.
+ *         Defines the settings and mappings for an entity. Is allowed to be
+ *         sparsely populated and used in conjunction with the annotations.
+ *         Alternatively, the metadata-complete attribute can be used to 
+ *         indicate that no annotations on the entity class (and its fields
+ *         or properties) are to be processed. If this is the case then 
+ *         the defaulting rules for the entity and its subelements will 
+ *         be recursively applied.
  *
- * @Target(TYPE) @Retention(RUNTIME) public @interface Entity { String name()
- * default ""; }
+ *         @Target(TYPE) @Retention(RUNTIME)
+ *           public @interface Entity {
+ *           String name() default "";
+ *         }
  *
  *
  *
@@ -54,31 +57,37 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="table" type="{http://java.sun.com/xml/ns/persistence/orm}table" minOccurs="0"/>
- *         &lt;element name="secondary-table" type="{http://java.sun.com/xml/ns/persistence/orm}secondary-table" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="primary-key-join-column" type="{http://java.sun.com/xml/ns/persistence/orm}primary-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="id-class" type="{http://java.sun.com/xml/ns/persistence/orm}id-class" minOccurs="0"/>
- *         &lt;element name="inheritance" type="{http://java.sun.com/xml/ns/persistence/orm}inheritance" minOccurs="0"/>
- *         &lt;element name="discriminator-value" type="{http://java.sun.com/xml/ns/persistence/orm}discriminator-value" minOccurs="0"/>
- *         &lt;element name="discriminator-column" type="{http://java.sun.com/xml/ns/persistence/orm}discriminator-column" minOccurs="0"/>
- *         &lt;element name="sequence-generator" type="{http://java.sun.com/xml/ns/persistence/orm}sequence-generator" minOccurs="0"/>
- *         &lt;element name="table-generator" type="{http://java.sun.com/xml/ns/persistence/orm}table-generator" minOccurs="0"/>
- *         &lt;element name="named-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="named-native-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-native-query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="sql-result-set-mapping" type="{http://java.sun.com/xml/ns/persistence/orm}sql-result-set-mapping" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="exclude-default-listeners" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
- *         &lt;element name="exclude-superclass-listeners" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
- *         &lt;element name="entity-listeners" type="{http://java.sun.com/xml/ns/persistence/orm}entity-listeners" minOccurs="0"/>
- *         &lt;element name="pre-persist" type="{http://java.sun.com/xml/ns/persistence/orm}pre-persist" minOccurs="0"/>
- *         &lt;element name="post-persist" type="{http://java.sun.com/xml/ns/persistence/orm}post-persist" minOccurs="0"/>
- *         &lt;element name="pre-remove" type="{http://java.sun.com/xml/ns/persistence/orm}pre-remove" minOccurs="0"/>
- *         &lt;element name="post-remove" type="{http://java.sun.com/xml/ns/persistence/orm}post-remove" minOccurs="0"/>
- *         &lt;element name="pre-update" type="{http://java.sun.com/xml/ns/persistence/orm}pre-update" minOccurs="0"/>
- *         &lt;element name="post-update" type="{http://java.sun.com/xml/ns/persistence/orm}post-update" minOccurs="0"/>
- *         &lt;element name="post-load" type="{http://java.sun.com/xml/ns/persistence/orm}post-load" minOccurs="0"/>
- *         &lt;element name="attribute-override" type="{http://java.sun.com/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="association-override" type="{http://java.sun.com/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributes" type="{http://java.sun.com/xml/ns/persistence/orm}attributes" minOccurs="0"/>
+ *         &lt;element name="table" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}table" minOccurs="0"/>
+ *         &lt;element name="secondary-table" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}secondary-table" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;sequence>
+ *           &lt;element name="primary-key-join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}primary-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *           &lt;element name="primary-key-foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *         &lt;/sequence>
+ *         &lt;element name="id-class" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}id-class" minOccurs="0"/>
+ *         &lt;element name="inheritance" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}inheritance" minOccurs="0"/>
+ *         &lt;element name="discriminator-value" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}discriminator-value" minOccurs="0"/>
+ *         &lt;element name="discriminator-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}discriminator-column" minOccurs="0"/>
+ *         &lt;element name="sequence-generator" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}sequence-generator" minOccurs="0"/>
+ *         &lt;element name="table-generator" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}table-generator" minOccurs="0"/>
+ *         &lt;element name="named-query" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}named-query" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="named-native-query" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}named-native-query" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="named-stored-procedure-query" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}named-stored-procedure-query" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="sql-result-set-mapping" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}sql-result-set-mapping" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="exclude-default-listeners" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
+ *         &lt;element name="exclude-superclass-listeners" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
+ *         &lt;element name="entity-listeners" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}entity-listeners" minOccurs="0"/>
+ *         &lt;element name="pre-persist" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}pre-persist" minOccurs="0"/>
+ *         &lt;element name="post-persist" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}post-persist" minOccurs="0"/>
+ *         &lt;element name="pre-remove" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}pre-remove" minOccurs="0"/>
+ *         &lt;element name="post-remove" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}post-remove" minOccurs="0"/>
+ *         &lt;element name="pre-update" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}pre-update" minOccurs="0"/>
+ *         &lt;element name="post-update" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}post-update" minOccurs="0"/>
+ *         &lt;element name="post-load" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}post-load" minOccurs="0"/>
+ *         &lt;element name="attribute-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="association-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="convert" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}convert" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="named-entity-graph" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}named-entity-graph" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributes" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}attributes" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -98,12 +107,14 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "table",
     "secondaryTable",
     "primaryKeyJoinColumn",
+    "primaryKeyForeignKey",
 //    "idClass",
     "inheritance",
     "discriminatorValue",
     "discriminatorColumn",
     "sequenceGenerator",
     "tableGenerator",
+    "namedStoredProcedureQuery",
 //    "namedQuery",
 //    "namedNativeQuery",
 //    "sqlResultSetMapping",
@@ -126,7 +137,6 @@ import org.netbeans.modeler.core.NBModelerUtil;
 })
 public class Entity extends IdentifiableClass implements AccessTypeHandler, InheritenceHandler, AttributeOverrideHandler, AssociationOverrideHandler {
 
-    protected String description;
     protected Table table;
     @XmlElement(name = "secondary-table")
     protected List<SecondaryTable> secondaryTable;//RENENG PENDING
@@ -146,6 +156,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected TableGenerator tableGenerator;
 
 
+    @XmlElement(name = "named-stored-procedure-query")
+    protected List<NamedStoredProcedureQuery> namedStoredProcedureQuery;
+    
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
@@ -157,12 +170,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected String name;    
     @XmlAttribute
     protected Boolean cacheable;//RENENG PENDING
-    @XmlAttribute(name = "metadata-complete")
-    protected Boolean metadataComplete;//RENENG PENDING
-    @XmlAttribute
-    private CompositePrimaryKeyType compositePrimaryKeyType;//custom added
-    @XmlAttribute
-    private String compositePrimaryKeyClass;//custom added
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
@@ -249,26 +256,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         if (NBModelerUtil.isEmptyObject(table)) {
             table = null;
         }
-    }
-
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setDescription(String value) {
-        this.description = value;
     }
 
     /**
@@ -372,7 +359,34 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     public void setPrimaryKeyForeignKey(ForeignKey value) {
         this.primaryKeyForeignKey = value;
     }
-
+ /**
+     * Gets the value of the namedStoredProcedureQuery property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the namedStoredProcedureQuery property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getNamedStoredProcedureQuery().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link NamedStoredProcedureQuery }
+     * 
+     * 
+     */
+    public List<NamedStoredProcedureQuery> getNamedStoredProcedureQuery() {
+        if (namedStoredProcedureQuery == null) {
+            namedStoredProcedureQuery = new ArrayList<NamedStoredProcedureQuery>();
+        }
+        return this.namedStoredProcedureQuery;
+    }
     /**
      * Gets the value of the inheritance property.
      *
@@ -580,26 +594,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         this.cacheable = value;
     }
 
-    /**
-     * Gets the value of the metadataComplete property.
-     *
-     * @return possible object is {@link Boolean }
-     *
-     */
-    public Boolean getMetadataComplete() {//isMetadataComplete()
-        return metadataComplete;
-    }
-
-    /**
-     * Sets the value of the metadataComplete property.
-     *
-     * @param value allowed object is {@link Boolean }
-     *
-     */
-    public void setMetadataComplete(Boolean value) {
-        this.metadataComplete = value;
-    }
-
     @Override
     public void setAttributes(IAttributes attributes) {
         this.attributes = (Attributes) attributes;
@@ -610,53 +604,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return "Entity{" + "description=" + description + ", table=" + table + ", secondaryTable=" + secondaryTable + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn + ", idClass=" + idClass + ", inheritance=" + inheritance + ", discriminatorValue=" + discriminatorValue + ", discriminatorColumn=" + discriminatorColumn + ", sequenceGenerator=" + sequenceGenerator + ", tableGenerator=" + tableGenerator + ", namedQuery=" + namedQuery + ", namedNativeQuery=" + namedNativeQuery + ", sqlResultSetMapping=" + sqlResultSetMapping + ", excludeDefaultListeners=" + excludeDefaultListeners + ", excludeSuperclassListeners=" + excludeSuperclassListeners + ", entityListeners=" + entityListeners + ", prePersist=" + prePersist + ", postPersist=" + postPersist + ", preRemove=" + preRemove + ", postRemove=" + postRemove + ", preUpdate=" + preUpdate + ", postUpdate=" + postUpdate + ", postLoad=" + postLoad + ", attributeOverride=" + attributeOverride + ", associationOverride=" + associationOverride + ", attributes=" + attributes + ", name=" + name + ", clazz=" + clazz + ", access=" + access + ", cacheable=" + cacheable + ", metadataComplete=" + metadataComplete + '}';
     }
 
-    /**
-     * @return the compositePrimaryKeyType
-     */
-    public CompositePrimaryKeyType getCompositePrimaryKeyType() {
-        return compositePrimaryKeyType;
-    }
 
-    /**
-     * @param compositePrimaryKeyType the compositePrimaryKeyType to set
-     */
-    public void setCompositePrimaryKeyType(CompositePrimaryKeyType compositePrimaryKeyType) {
-        this.compositePrimaryKeyType = compositePrimaryKeyType;
-        manageCompositePrimaryKeyClass();
-    }
-
-    /**
-     * @return the compositePrimaryKeyClass
-     */
-    public String getCompositePrimaryKeyClass() {
-        return compositePrimaryKeyClass;
-    }
-
-    /**
-     * @param compositePrimaryKeyClass the compositePrimaryKeyClass to set
-     */
-    public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
-        this.compositePrimaryKeyClass = compositePrimaryKeyClass;
-        manageCompositePrimaryKeyClass();
-    }
-
-    public void manageCompositePrimaryKeyClass() {
-        if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
-            compositePrimaryKeyClass = this.getClazz() + "PK";
-        }
-        if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-            this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass);
-            this.idClass = null;
-        } else if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-            this.idClass = new IdClass(compositePrimaryKeyClass);
-        } else {
-            this.idClass = null;
-            compositePrimaryKeyClass = null;
-            if (getCompositePrimaryKeyType() == null) {
-                setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
-            }
-        }
-    }
 
     public AttributeOverride getAttributeOverride(String attributePath) {
         List<AttributeOverride> attributeOverrides = getAttributeOverride();

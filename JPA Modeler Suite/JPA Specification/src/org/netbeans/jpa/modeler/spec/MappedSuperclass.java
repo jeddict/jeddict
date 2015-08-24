@@ -71,7 +71,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "mapped-superclass", propOrder = {
-    "description",
+//    "description",
 //    "excludeDefaultListeners",
 //    "excludeSuperclassListeners",
 //    "entityListeners",
@@ -86,15 +86,6 @@ import org.netbeans.modeler.core.NBModelerUtil;
 })
 public class MappedSuperclass extends IdentifiableClass {
 
-    protected String description;
-  
-
-    @XmlAttribute(name = "metadata-complete")
-    protected Boolean metadataComplete;//RENENG PENDING
-    @XmlAttribute
-    private CompositePrimaryKeyType compositePrimaryKeyType;//custom added
-    @XmlAttribute
-    private String compositePrimaryKeyClass;//custom added
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
 //        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.MappedSuperclass");
@@ -122,46 +113,8 @@ public class MappedSuperclass extends IdentifiableClass {
         }
     }
 
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
 
 
-    /**
-     * Gets the value of the metadataComplete property.
-     *
-     * @return possible object is {@link Boolean }
-     *
-     */
-    public Boolean isMetadataComplete() {
-        return metadataComplete;
-    }
-
-    /**
-     * Sets the value of the metadataComplete property.
-     *
-     * @param value allowed object is {@link Boolean }
-     *
-     */
-    public void setMetadataComplete(Boolean value) {
-        this.metadataComplete = value;
-    }
 
     @Override
     public String getName() {
@@ -178,52 +131,8 @@ public class MappedSuperclass extends IdentifiableClass {
         this.attributes = (Attributes) attributes;
     }
 
-    /**
-     * @return the compositePrimaryKeyType
-     */
-    public CompositePrimaryKeyType getCompositePrimaryKeyType() {
-        return compositePrimaryKeyType;
-    }
 
-    /**
-     * @param compositePrimaryKeyType the compositePrimaryKeyType to set
-     */
-    public void setCompositePrimaryKeyType(CompositePrimaryKeyType compositePrimaryKeyType) {
-        this.compositePrimaryKeyType = compositePrimaryKeyType;
-        manageCompositePrimaryKeyClass();
-    }
 
-    /**
-     * @return the compositePrimaryKeyClass
-     */
-    public String getCompositePrimaryKeyClass() {
-        return compositePrimaryKeyClass;
-    }
-
-    /**
-     * @param compositePrimaryKeyClass the compositePrimaryKeyClass to set
-     */
-    public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
-        this.compositePrimaryKeyClass = compositePrimaryKeyClass;
-        manageCompositePrimaryKeyClass();
-    }
-
-    public void manageCompositePrimaryKeyClass() {
-        if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
-            compositePrimaryKeyClass = this.getClazz() + "PK";
-        }
-        if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-            this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass);
-            this.idClass = null;
-        } else if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-            this.idClass = new IdClass(compositePrimaryKeyClass);
-        } else {
-            this.idClass = null;
-            compositePrimaryKeyClass = null;
-            if (getCompositePrimaryKeyType() == null) {
-                setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
-            }
-        }
-    }
+    
 
 }

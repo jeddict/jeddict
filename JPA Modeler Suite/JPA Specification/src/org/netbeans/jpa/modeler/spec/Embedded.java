@@ -29,7 +29,8 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface Embedded {}
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface Embedded {}
  *
  *
  *
@@ -45,8 +46,9 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="attribute-override" type="{http://java.sun.com/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="association-override" type="{http://java.sun.com/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attribute-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="association-override" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="convert" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}convert" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
@@ -72,7 +74,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
     protected List<Convert> convert;//RENENG PENDING
     @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute
+    @XmlAttribute(name = "access")
     protected AccessType access;
 
     public static Embedded load(EntityMappings entityMappings, Element element, VariableElement variableElement) {

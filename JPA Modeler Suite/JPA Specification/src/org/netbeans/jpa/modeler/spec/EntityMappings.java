@@ -40,17 +40,22 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
  * entity, mapped-superclass and embeddable elements defined in the same file in
  * which they occur.
  *
- * 3. The sequence-generator, table-generator, named-query, named-native-query
- * and sql-result-set-mapping elements are global to the persistence unit. It is
- * undefined to have more than one sequence-generator or table-generator of the
- * same name in the same or different mapping files in a persistence unit. It is
- * also undefined to have more than one named-query, named-native-query, or
- * result-set-mapping of the same name in the same or different mapping files in
- * a persistence unit.
+ *         3. The sequence-generator, table-generator, converter, named-query,
+ *         named-native-query, named-stored-procedure-query, and 
+ *         sql-result-set-mapping elements are global to the persistence
+ *         unit. It is undefined to have more than one sequence-generator
+ *         or table-generator of the same name in the same or different
+ *         mapping files in a persistence unit. It is undefined to have
+ *         more than one named-query, named-native-query, sql-result-set-mapping,
+ *         or named-stored-procedure-query of the same name in the same 
+ *         or different mapping files in a persistence unit.  It is also
+ *         undefined to have more than one converter for the same target
+ *         type in the same or different mapping files in a persistence unit.
  *
- * 4. The entity, mapped-superclass and embeddable elements each define the
- * mapping information for a managed persistent class. The mapping information
- * contained in these elements may be complete or it may be partial.
+ *         4. The entity, mapped-superclass and embeddable elements each define
+ *         the mapping information for a managed persistent class. The mapping
+ *         information contained in these elements may be complete or it may
+ *         be partial.
  *
  *
  *
@@ -71,15 +76,17 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
  *         &lt;element name="package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="schema" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" minOccurs="0"/>
- *         &lt;element name="sequence-generator" type="{http://java.sun.com/xml/ns/persistence/orm}sequence-generator" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="table-generator" type="{http://java.sun.com/xml/ns/persistence/orm}table-generator" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="named-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="named-native-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-native-query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="sql-result-set-mapping" type="{http://java.sun.com/xml/ns/persistence/orm}sql-result-set-mapping" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="mapped-superclass" type="{http://java.sun.com/xml/ns/persistence/orm}mapped-superclass" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="entity" type="{http://java.sun.com/xml/ns/persistence/orm}entity" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="embeddable" type="{http://java.sun.com/xml/ns/persistence/orm}embeddable" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="access" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}access-type" minOccurs="0"/>
+ *         &lt;element name="sequence-generator" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}sequence-generator" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="table-generator" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}table-generator" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="named-query" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}named-query" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="named-native-query" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}named-native-query" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="named-stored-procedure-query" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}named-stored-procedure-query" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="sql-result-set-mapping" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}sql-result-set-mapping" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="mapped-superclass" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}mapped-superclass" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="entity" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}entity" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="embeddable" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}embeddable" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="converter" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}converter" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/persistence/orm}versionType" fixed="2.0" />
  *     &lt;/restriction>
@@ -101,11 +108,13 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
     "tableGenerator",
     "namedQuery",
     "namedNativeQuery",
+    "namedStoredProcedureQuery",
     "sqlResultSetMapping",
     "defaultClass",
     "mappedSuperclass",
     "entity",
     "embeddable",
+    "converter",
     "jpaDiagram",
     "theme"
 })
@@ -128,6 +137,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected List<NamedQuery> namedQuery;
     @XmlElement(name = "named-native-query")
     protected List<NamedNativeQuery> namedNativeQuery;
+    @XmlElement(name = "named-stored-procedure-query")
+    protected List<NamedStoredProcedureQuery> namedStoredProcedureQuery; //REVENG PENDING
     @XmlElement(name = "sql-result-set-mapping")
     protected List<SqlResultSetMapping> sqlResultSetMapping;
 
@@ -137,7 +148,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected List<MappedSuperclass> mappedSuperclass;
     protected List<Entity> entity;
     protected List<Embeddable> embeddable;
-    @XmlAttribute(required = true)
+    protected List<Converter> converter;//REVENG PENDING
+    @XmlAttribute(name = "version", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
     @XmlElement(name = "diagram")
@@ -434,6 +446,35 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     /**
+     * Gets the value of the namedStoredProcedureQuery property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the namedStoredProcedureQuery property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getNamedStoredProcedureQuery().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link NamedStoredProcedureQuery }
+     * 
+     * 
+     */
+    public List<NamedStoredProcedureQuery> getNamedStoredProcedureQuery() {
+        if (namedStoredProcedureQuery == null) {
+            namedStoredProcedureQuery = new ArrayList<NamedStoredProcedureQuery>();
+        }
+        return this.namedStoredProcedureQuery;
+    }
+
+    /**
      * Gets the value of the sqlResultSetMapping property.
      *
      * <p>
@@ -546,6 +587,35 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             embeddable = new ArrayList<Embeddable>();
         }
         return this.embeddable;
+    }
+
+    /**
+     * Gets the value of the converter property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the converter property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getConverter().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Converter }
+     * 
+     * 
+     */
+    public List<Converter> getConverter() {
+        if (converter == null) {
+            converter = new ArrayList<Converter>();
+        }
+        return this.converter;
     }
 
     /**

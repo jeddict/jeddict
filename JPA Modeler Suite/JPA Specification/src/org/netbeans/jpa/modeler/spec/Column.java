@@ -19,12 +19,19 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface Column {
- * String name() default ""; boolean unique() default false; boolean nullable()
- * default true; boolean insertable() default true; boolean updatable() default
- * true; String columnDefinition() default ""; String table() default ""; int
- * length() default 255; int precision() default 0; // decimal precision int
- * scale() default 0; // decimal scale }
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface Column {
+ *           String name() default "";
+ *           boolean unique() default false;
+ *           boolean nullable() default true;
+ *           boolean insertable() default true;
+ *           boolean updatable() default true;
+ *           String columnDefinition() default "";
+ *           String table() default "";
+ *           int length() default 255;
+ *           int precision() default 0; // decimal precision
+ *           int scale() default 0; // decimal scale
+ *         }
  *
  *
  *
@@ -60,7 +67,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlType(name = "column")
 public class Column extends BaseElement {
 
-    @XmlAttribute
+    @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute
     protected Boolean unique = false;
@@ -72,13 +79,13 @@ public class Column extends BaseElement {
     protected Boolean updatable = true;
     @XmlAttribute(name = "column-definition")
     protected String columnDefinition;
-    @XmlAttribute
+    @XmlAttribute(name = "table")
     protected String table;
-    @XmlAttribute
+    @XmlAttribute(name = "length")
     protected Integer length;
-    @XmlAttribute
+    @XmlAttribute(name = "precision")
     protected Integer precision;
-    @XmlAttribute
+    @XmlAttribute(name = "scale")
     protected Integer scale;
 
     public static Column load(Element element) {

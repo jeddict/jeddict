@@ -26,7 +26,10 @@ public abstract class ManagedClass extends JavaClass{
     
     @XmlAttribute(name="static-metamodel")
     private Boolean generateStaticMetamodel = false;
+    @XmlAttribute(name = "metadata-complete")
+    protected Boolean metadataComplete;//RENENG PENDING
     
+    protected String description;
     
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
@@ -65,5 +68,45 @@ public abstract class ManagedClass extends JavaClass{
      */
     public void setAccess(AccessType value) {
         this.access = value;
+    }
+    
+        /**
+     * Gets the value of the metadataComplete property.
+     *
+     * @return possible object is {@link Boolean }
+     *
+     */
+    public Boolean isMetadataComplete() {
+        return metadataComplete;
+    }
+
+    /**
+     * Sets the value of the metadataComplete property.
+     *
+     * @param value allowed object is {@link Boolean }
+     *
+     */
+    public void setMetadataComplete(Boolean value) {
+        this.metadataComplete = value;
+    }
+    
+    /**
+     * Gets the value of the description property.
+     *
+     * @return possible object is {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value allowed object is {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
     }
 }

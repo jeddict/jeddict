@@ -17,10 +17,15 @@ import javax.xml.bind.annotation.XmlType;
 /**
  *
  *
- * @Target({TYPE}) @Retention(RUNTIME) public @interface SecondaryTable { String
- * name(); String catalog() default ""; String schema() default "";
- * PrimaryKeyJoinColumn[] pkJoinColumns() default {}; UniqueConstraint[]
- * uniqueConstraints() default {}; }
+ *         @Target({TYPE}) @Retention(RUNTIME)
+ *         public @interface SecondaryTable {
+ *           String name();
+ *           String catalog() default "";
+ *           String schema() default "";
+ *           PrimaryKeyJoinColumn[] pkJoinColumns() default {};
+ *           UniqueConstraint[] uniqueConstraints() default {};
+ *           Index[] indexes() default {};
+ *          }
  *
  *
  *
@@ -36,8 +41,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="primary-key-join-column" type="{http://java.sun.com/xml/ns/persistence/orm}primary-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="unique-constraint" type="{http://java.sun.com/xml/ns/persistence/orm}unique-constraint" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;sequence>
+ *           &lt;element name="primary-key-join-column" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}primary-key-join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *           &lt;element name="primary-key-foreign-key" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}foreign-key" minOccurs="0"/>
+ *         &lt;/sequence>
+ *         &lt;element name="unique-constraint" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}unique-constraint" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="index" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}index" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -52,19 +61,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "secondary-table", propOrder = {
     "primaryKeyJoinColumn",
-    "uniqueConstraint"
+    "primaryKeyForeignKey",
+    "uniqueConstraint",
+    "index"
 })
 public class SecondaryTable {
 
     @XmlElement(name = "primary-key-join-column")
     protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;
+    @XmlElement(name = "primary-key-foreign-key")
+    protected ForeignKey primaryKeyForeignKey;//REVENG PENDING
     @XmlElement(name = "unique-constraint")
     protected List<UniqueConstraint> uniqueConstraint;
-    @XmlAttribute(required = true)
+    protected List<Index> index;//REVENG PENDING
+    @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute
+    @XmlAttribute(name = "catalog")
     protected String catalog;
-    @XmlAttribute
+    @XmlAttribute(name = "schema")
     protected String schema;
 
     /**
@@ -97,6 +111,30 @@ public class SecondaryTable {
     }
 
     /**
+     * Gets the value of the primaryKeyForeignKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public ForeignKey getPrimaryKeyForeignKey() {
+        return primaryKeyForeignKey;
+    }
+
+    /**
+     * Sets the value of the primaryKeyForeignKey property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ForeignKey }
+     *     
+     */
+    public void setPrimaryKeyForeignKey(ForeignKey value) {
+        this.primaryKeyForeignKey = value;
+    }
+
+    /**
      * Gets the value of the uniqueConstraint property.
      *
      * <p>
@@ -123,6 +161,35 @@ public class SecondaryTable {
             uniqueConstraint = new ArrayList<UniqueConstraint>();
         }
         return this.uniqueConstraint;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the index property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getIndex().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Index }
+     * 
+     * 
+     */
+    public List<Index> getIndex() {
+        if (index == null) {
+            index = new ArrayList<Index>();
+        }
+        return this.index;
     }
 
     /**

@@ -21,12 +21,20 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 /**
  *
  *
- * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME) public @interface
- * TableGenerator { String name(); String table() default ""; String catalog()
- * default ""; String schema() default ""; String pkColumnName() default "";
- * String valueColumnName() default ""; String pkColumnValue() default ""; int
- * initialValue() default 0; int allocationSize() default 50; UniqueConstraint[]
- * uniqueConstraints() default {}; }
+ *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface TableGenerator {
+ *           String name();
+ *           String table() default "";
+ *           String catalog() default "";
+ *           String schema() default "";
+ *           String pkColumnName() default "";
+ *           String valueColumnName() default "";
+ *           String pkColumnValue() default "";
+ *           int initialValue() default 0;
+ *           int allocationSize() default 50;
+ *           UniqueConstraint[] uniqueConstraints() default {};
+ *           Indexes[] indexes() default {};
+ *         }
  *
  *
  *
@@ -43,7 +51,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="unique-constraint" type="{http://java.sun.com/xml/ns/persistence/orm}unique-constraint" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="unique-constraint" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}unique-constraint" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="index" type="{http://xmlns.jcp.org/xml/ns/persistence/orm}index" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="table" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -64,20 +73,22 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "table-generator", propOrder = {
     "description",
-    "uniqueConstraint"
+    "uniqueConstraint",
+    "index"
 })
 public class TableGenerator {
 
     protected String description;
     @XmlElement(name = "unique-constraint")
     protected List<UniqueConstraint> uniqueConstraint;
-    @XmlAttribute(required = true)
+    protected List<Index> index;//REVENG PENDING
+    @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute
+    @XmlAttribute(name = "table")
     protected String table;
-    @XmlAttribute
+    @XmlAttribute(name = "catalog")
     protected String catalog;
-    @XmlAttribute
+    @XmlAttribute(name = "schema")
     protected String schema;
     @XmlAttribute(name = "pk-column-name")
     protected String pkColumnName;
@@ -163,6 +174,35 @@ public class TableGenerator {
             uniqueConstraint = new ArrayList<UniqueConstraint>();
         }
         return this.uniqueConstraint;
+    }
+
+    /**
+     * Gets the value of the index property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the index property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getIndex().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Index }
+     * 
+     * 
+     */
+    public List<Index> getIndex() {
+        if (index == null) {
+            index = new ArrayList<Index>();
+        }
+        return this.index;
     }
 
     /**

@@ -61,6 +61,12 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     protected PostUpdate postUpdate;//RENENG PENDING
     @XmlElement(name = "post-load")
     protected PostLoad postLoad;//RENENG PENDING
+    
+    
+    @XmlAttribute
+    private CompositePrimaryKeyType compositePrimaryKeyType;//custom added
+    @XmlAttribute
+    private String compositePrimaryKeyClass;//custom added
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
@@ -474,5 +480,51 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
         return this.sqlResultSetMapping;
     }
 
+        /**
+     * @return the compositePrimaryKeyType
+     */
+    public CompositePrimaryKeyType getCompositePrimaryKeyType() {
+        return compositePrimaryKeyType;
+    }
+
+    /**
+     * @param compositePrimaryKeyType the compositePrimaryKeyType to set
+     */
+    public void setCompositePrimaryKeyType(CompositePrimaryKeyType compositePrimaryKeyType) {
+        this.compositePrimaryKeyType = compositePrimaryKeyType;
+        manageCompositePrimaryKeyClass();
+    }
+
+    /**
+     * @return the compositePrimaryKeyClass
+     */
+    public String getCompositePrimaryKeyClass() {
+        return compositePrimaryKeyClass;
+    }
+
+    /**
+     * @param compositePrimaryKeyClass the compositePrimaryKeyClass to set
+     */
+    public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
+        this.compositePrimaryKeyClass = compositePrimaryKeyClass;
+        manageCompositePrimaryKeyClass();
+    }
+        public void manageCompositePrimaryKeyClass() {
+        if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
+            compositePrimaryKeyClass = this.getClazz() + "PK";
+        }
+        if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+            this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass);
+            this.idClass = null;
+        } else if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+            this.idClass = new IdClass(compositePrimaryKeyClass);
+        } else {
+            this.idClass = null;
+            compositePrimaryKeyClass = null;
+            if (getCompositePrimaryKeyType() == null) {
+                setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
+            }
+        }
+    }
 
 }

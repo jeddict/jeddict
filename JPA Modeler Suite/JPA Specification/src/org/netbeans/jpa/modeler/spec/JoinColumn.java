@@ -18,11 +18,18 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 /**
  *
  *
- * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface JoinColumn {
- * String name() default ""; String referencedColumnName() default ""; boolean
- * unique() default false; boolean nullable() default true; boolean insertable()
- * default true; boolean updatable() default true; String columnDefinition()
- * default ""; String table() default ""; }
+ *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ *         public @interface JoinColumn {
+ *           String name() default "";
+ *           String referencedColumnName() default "";
+ *           boolean unique() default false;
+ *           boolean nullable() default true;
+ *           boolean insertable() default true;
+ *           boolean updatable() default true;
+ *           String columnDefinition() default "";
+ *           String table() default "";
+ *           ForeignKey foreignKey() default @ForeignKey();
+ *         }
  *
  *
  *
@@ -56,7 +63,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlType(name = "join-column")
 public class JoinColumn {
 
-    @XmlAttribute
+    @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "referenced-column-name")
     protected String referencedColumnName;
@@ -70,7 +77,7 @@ public class JoinColumn {
     protected Boolean updatable = true;
     @XmlAttribute(name = "column-definition")
     protected String columnDefinition;
-    @XmlAttribute
+    @XmlAttribute(name = "table")
     protected String table;
 
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {

@@ -58,17 +58,15 @@ import org.netbeans.modeler.core.NBModelerUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "embeddable", propOrder = {
-    "description",
+//    "description",
     "attributes",
 //    "interfaces"
 })
 public class Embeddable extends ManagedClass {
 
-    protected String description;
     protected EmbeddableAttributes attributes;
     
-    @XmlAttribute(name = "metadata-complete")
-    protected Boolean metadataComplete;//RENENG PENDING
+    
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -81,25 +79,6 @@ public class Embeddable extends ManagedClass {
         }
     }
 
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
 
     /**
      * Gets the value of the attributes property.
@@ -124,25 +103,7 @@ public class Embeddable extends ManagedClass {
         this.attributes = value;
     }
     
-    /**
-     * Gets the value of the metadataComplete property.
-     *
-     * @return possible object is {@link Boolean }
-     *
-     */
-    public Boolean isMetadataComplete() {
-        return metadataComplete;
-    }
 
-    /**
-     * Sets the value of the metadataComplete property.
-     *
-     * @param value allowed object is {@link Boolean }
-     *
-     */
-    public void setMetadataComplete(Boolean value) {
-        this.metadataComplete = value;
-    }
 
     @Override
     public String getName() {
