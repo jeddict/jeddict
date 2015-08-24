@@ -5,20 +5,24 @@
             <url>src/org/netbeans/orm/converter/generator/ClassGenerator.java</url>
             <bookmark id="1">
                 <name/>
-                <line>277</line>
+                <line>284</line>
                 <key/>
             </bookmark>
             <bookmark id="2">
                 <name/>
-                <line>636</line>
+                <line>681</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/generator/ClassGenerator.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/OrderBySnippet.java</file>
+            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/ClassDefSnippet.java</file>
+            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/NamedAttributeNodeSnippet.java</file>
+            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/NamedSubgraphSnippet.java</file>
+            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/JoinTableSnippet.java</file>
+            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/NamedEntityGraphSnippet.java</file>
+            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/NamedEntityGraphsSnippet.java</file>
         </group>
     </open-files>
 </project-private>
