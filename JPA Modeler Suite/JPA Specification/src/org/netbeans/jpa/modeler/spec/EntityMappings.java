@@ -18,9 +18,11 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
+import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
 import org.netbeans.modeler.specification.model.document.IRootElement;
@@ -40,22 +42,20 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
  * entity, mapped-superclass and embeddable elements defined in the same file in
  * which they occur.
  *
- *         3. The sequence-generator, table-generator, converter, named-query,
- *         named-native-query, named-stored-procedure-query, and 
- *         sql-result-set-mapping elements are global to the persistence
- *         unit. It is undefined to have more than one sequence-generator
- *         or table-generator of the same name in the same or different
- *         mapping files in a persistence unit. It is undefined to have
- *         more than one named-query, named-native-query, sql-result-set-mapping,
- *         or named-stored-procedure-query of the same name in the same 
- *         or different mapping files in a persistence unit.  It is also
- *         undefined to have more than one converter for the same target
- *         type in the same or different mapping files in a persistence unit.
+ * 3. The sequence-generator, table-generator, converter, named-query,
+ * named-native-query, named-stored-procedure-query, and sql-result-set-mapping
+ * elements are global to the persistence unit. It is undefined to have more
+ * than one sequence-generator or table-generator of the same name in the same
+ * or different mapping files in a persistence unit. It is undefined to have
+ * more than one named-query, named-native-query, sql-result-set-mapping, or
+ * named-stored-procedure-query of the same name in the same or different
+ * mapping files in a persistence unit. It is also undefined to have more than
+ * one converter for the same target type in the same or different mapping files
+ * in a persistence unit.
  *
- *         4. The entity, mapped-superclass and embeddable elements each define
- *         the mapping information for a managed persistent class. The mapping
- *         information contained in these elements may be complete or it may
- *         be partial.
+ * 4. The entity, mapped-superclass and embeddable elements each define the
+ * mapping information for a managed persistent class. The mapping information
+ * contained in these elements may be complete or it may be partial.
  *
  *
  *
@@ -160,26 +160,30 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private String theme;
     @XmlAttribute
     private String persistenceUnitName;
-    
-    
-    /** JAXB Attributes Start **/
-    @XmlAttribute(name="jaxb-support")
+
+    /**
+     * JAXB Attributes Start *
+     */
+    @XmlAttribute(name = "jaxb-support")
     private Boolean jaxbSupport = false;
-    @XmlAttribute(name="jaxb-namespace")
+    @XmlAttribute(name = "jaxb-namespace")
     private String jaxbNameSpace;
-        /** JAXB Attributes End **/
+
+    /**
+     * JAXB Attributes End *
+     */
 
     public EntityMappings() {
     }
-    
-    public void initJavaInheritenceMapping(){
+
+    public void initJavaInheritenceMapping() {
         List<JavaClass> javaClassList = this.getJavaClass();
-        for(JavaClass javaClass : javaClassList){
-            if(javaClass.getSuperclassId()!=null){
-               JavaClass javaSuperclass = findJavaClass(javaClass.getSuperclassId());
-               javaClass.addSuperclass(javaSuperclass);
-            }            
-        }            
+        for (JavaClass javaClass : javaClassList) {
+            if (javaClass.getSuperclassId() != null) {
+                JavaClass javaSuperclass = findJavaClass(javaClass.getSuperclassId());
+                javaClass.addSuperclass(javaSuperclass);
+            }
+        }
     }
 
     //UPDATE ELEMENT
@@ -447,25 +451,25 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     /**
      * Gets the value of the namedStoredProcedureQuery property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the namedStoredProcedureQuery property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the namedStoredProcedureQuery property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedStoredProcedureQuery().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedStoredProcedureQuery }
-     * 
-     * 
+     *
+     *
      */
     public List<NamedStoredProcedureQuery> getNamedStoredProcedureQuery() {
         if (namedStoredProcedureQuery == null) {
@@ -591,25 +595,25 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     /**
      * Gets the value of the converter property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the converter property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the converter property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConverter().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Converter }
-     * 
-     * 
+     *
+     *
      */
     public List<Converter> getConverter() {
         if (converter == null) {
@@ -970,8 +974,105 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 //        }
 //
 //    }
+    
+    
+    
+    public void manageSiblingAttribute(){
+        EntityMappings entityMappingsSpec = this ;
+                for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappingsSpec.getEntity()) {
+            for (ManyToMany manyToMany : new ArrayList<ManyToMany>(entity.getAttributes().getManyToMany())) {
+                if (manyToMany.getMappedBy() == null) {
+                    manageSiblingAttribute(entity, manyToMany);
+                }
+            }
+            for (OneToMany oneToMany : new ArrayList<OneToMany>(entity.getAttributes().getOneToMany())) {
+                if (oneToMany.getMappedBy() == null) {
+                    manageSiblingAttribute(entity, oneToMany);
+                }
+            }
+            for (ManyToOne manyToOne : new ArrayList<ManyToOne>(entity.getAttributes().getManyToOne())) {
+                manageSiblingAttribute(entity, manyToOne);
+            }
+            for (OneToOne oneToOne : new ArrayList<OneToOne>(entity.getAttributes().getOneToOne())) {
+                if (oneToOne.getMappedBy() == null) {
+                    manageSiblingAttribute(entity, oneToOne);
+                }
+            }
+
+            // If Include Referenced Classed Checkbox is Uncheked then remove attribute
+            for (RelationAttribute relationAttribute : new ArrayList<RelationAttribute>(entity.getAttributes().getRelationAttributes())) {
+                org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
+                if (targetEntity == null) {
+                    entity.getAttributes().removeRelationAttribute(relationAttribute);
+                }
+            }
+
+        }
+                
+        // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
+
+        for (org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclass : entityMappingsSpec.getMappedSuperclass()) {
+            for (ManyToMany manyToMany : new ArrayList<ManyToMany>(mappedSuperclass.getAttributes().getManyToMany())) {
+                if (manyToMany.getMappedBy() == null) {
+                    manageSiblingAttribute(mappedSuperclass, manyToMany);
+                }
+            }
+            for (OneToMany oneToMany : new ArrayList<OneToMany>(mappedSuperclass.getAttributes().getOneToMany())) {
+                if (oneToMany.getMappedBy() == null) {
+                    manageSiblingAttribute(mappedSuperclass, oneToMany);
+                }
+            }
+            for (ManyToOne manyToOne : new ArrayList<ManyToOne>(mappedSuperclass.getAttributes().getManyToOne())) {
+                manageSiblingAttribute(mappedSuperclass, manyToOne);
+            }
+            for (OneToOne oneToOne : new ArrayList<OneToOne>(mappedSuperclass.getAttributes().getOneToOne())) {
+                if (oneToOne.getMappedBy() == null) {
+                    manageSiblingAttribute(mappedSuperclass, oneToOne);
+                }
+            }
+
+            // If Include Referenced Classed Checkbox is Uncheked then remove attribute
+            for (RelationAttribute relationAttribute : new ArrayList<RelationAttribute>(mappedSuperclass.getAttributes().getRelationAttributes())) {
+                org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
+                if (targetEntity == null) {
+                    mappedSuperclass.getAttributes().removeRelationAttribute(relationAttribute);
+                }
+            }
+
+        }
+        for (org.netbeans.jpa.modeler.spec.Embeddable embeddable : entityMappingsSpec.getEmbeddable()) {
+            for (ManyToMany manyToMany : new ArrayList<ManyToMany>(embeddable.getAttributes().getManyToMany())) {
+                if (manyToMany.getMappedBy() == null) {
+                    manageSiblingAttribute(embeddable, manyToMany);
+                }
+            }
+            for (OneToMany oneToMany : new ArrayList<OneToMany>(embeddable.getAttributes().getOneToMany())) {
+                if (oneToMany.getMappedBy() == null) {
+                    manageSiblingAttribute(embeddable, oneToMany);
+                }
+            }
+            for (ManyToOne manyToOne : new ArrayList<ManyToOne>(embeddable.getAttributes().getManyToOne())) {
+                manageSiblingAttribute(embeddable, manyToOne);
+            }
+            for (OneToOne oneToOne : new ArrayList<OneToOne>(embeddable.getAttributes().getOneToOne())) {
+                if (oneToOne.getMappedBy() == null) {
+                    manageSiblingAttribute(embeddable, oneToOne);
+                }
+            }
+
+            // If Include Referenced Classed Checkbox is Uncheked then remove attribute
+            for (RelationAttribute relationAttribute : new ArrayList<RelationAttribute>(embeddable.getAttributes().getRelationAttributes())) {
+                org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
+                if (targetEntity == null) {
+                    embeddable.getAttributes().removeRelationAttribute(relationAttribute);
+                }
+            }
+        }
+    }
+    
+    
     // Issue Fix #5949 Start
-    public void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
+    private void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
         org.netbeans.jpa.modeler.spec.Entity targetEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());
         if (targetEntity != null) {
             if (relationAttribute_Owner instanceof ManyToMany) {
@@ -1049,20 +1150,18 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         javaClassList.addAll(this.getEmbeddable());
         return javaClassList;
     }
-    
+
     public JavaClass findJavaClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
         javaClassList.addAll(this.getMappedSuperclass());
         javaClassList.addAll(this.getEmbeddable());
-        for(JavaClass javaClass : javaClassList){
-            if(javaClass.getId().equals(classId)){
+        for (JavaClass javaClass : javaClassList) {
+            if (javaClass.getId().equals(classId)) {
                 return javaClass;
             }
         }
         return null;
     }
-    
-    
 
     public List<JavaClass> getSubClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
@@ -1077,14 +1176,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public List<JavaClass> getAllSubClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<JavaClass>();
         for (JavaClass javaClass : this.getJavaClass()) {
-            if (classId.equals(javaClass.getSuperclass().getId())) {
+            if (javaClass.getSuperclass() != null && classId.equals(javaClass.getSuperclass().getId())) {
                 javaClassList.add(javaClass);
                 javaClassList.addAll(this.getAllSubClass(javaClass.getId()));
             }
         }
         return javaClassList;
     }
-
 
     @Override
     public String getName() {
@@ -1124,4 +1222,19 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.jaxbNameSpace = jaxbNameSpace;
     }
 
+    public static EntityMappings getNewInstance() {
+
+        EntityMappings entityMappingsSpec = new EntityMappings();
+        entityMappingsSpec.setId(NBModelerUtil.getAutoGeneratedStringId());
+
+        Diagram diagram = new Diagram();
+        diagram.setId(NBModelerUtil.getAutoGeneratedStringId());
+        Plane plane = new Plane();
+        plane.setId(NBModelerUtil.getAutoGeneratedStringId() + "_p");
+        diagram.setJPAPlane(plane);
+        plane.setElementRef(entityMappingsSpec.getId());
+        entityMappingsSpec.setJPADiagram(diagram);
+
+        return entityMappingsSpec;
+    }
 }

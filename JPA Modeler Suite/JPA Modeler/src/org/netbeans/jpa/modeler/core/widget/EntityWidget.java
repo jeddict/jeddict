@@ -15,8 +15,10 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
@@ -27,9 +29,9 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.Table;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
+import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
@@ -236,6 +238,33 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         } else {
             clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
         }
+    }
+    
+    
+        @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuList = super.getPopupMenuItemList();
+
+        JMenuItem addEntityGraph;
+        addEntityGraph = new JMenuItem("Add Entity Graph");
+//        delete.setIcon(ImageUtil.getInstance().getIcon("delete.png"));
+        addEntityGraph.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+//                AttributeWidget.this.remove(true);
+            }
+        });
+        menuList.add(0, addEntityGraph);
+        return menuList;
+    }
+    
+    
+     public void openDiagram(String entityGraphId) {
+        String path = this.getModelerScene().getModelerPanelTopComponent().getToolTipText();
+        JPAFileActionListener fileAction = new JPAFileActionListener(this.getModelerScene().getModelerFile().getModelerFileDataObject());
+        fileAction.setMappingId(entityGraphId);
+        fileAction.setMappingName(entityGraphId);
+        fileAction.openModelerFile(entityGraphId,entityGraphId,entityGraphId + " > " + path);
     }
 
 }

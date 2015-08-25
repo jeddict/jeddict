@@ -25,6 +25,7 @@ import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.component.IModelerPanel;
 import org.netbeans.modeler.component.ModelerPanelTopComponent;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
 import org.netbeans.modeler.specification.model.ModelerSpecificationDiagramModel;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
@@ -47,12 +48,21 @@ import org.openide.util.NbBundle.Messages;
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "")
 public class JPAFileActionListener extends ModelerFileActionListener {
 
-    public JPAFileActionListener(JPAFileDataObject context) {
+    private String mappingId, mappingName, mappingTooltip;
+
+    
+    public JPAFileActionListener(IModelerFileDataObject context) {
         super(context);
     }
 
     @Override
     public void initSpecification(ModelerFile modelerFile) {
+        modelerFile.addAttribute("mappingId", this.getMappingId());
+        if (this.getMappingName()!= null) {
+            modelerFile.setName(this.getMappingName());
+            modelerFile.setTooltip(this.getMappingTooltip());
+        }
+        
         modelerFile.setModelerVendorSpecification(new JPASpecification());
         ModelerSpecificationDiagramModel diagramModel = new JPADefaultDiagramModel();
         modelerFile.getVendorSpecification().setModelerSpecificationDiagramModel(diagramModel);
@@ -63,5 +73,47 @@ public class JPAFileActionListener extends ModelerFileActionListener {
         diagramModel.setModelerPanelTopComponent((IModelerPanel) new ModelerPanelTopComponent());
         diagramModel.setRelationValidator(new RelationValidator());
 
+    }
+
+    /**
+     * @return the mappingId
+     */
+    public String getMappingId() {
+        return mappingId;
+    }
+
+    /**
+     * @param mappingId the mappingId to set
+     */
+    public void setMappingId(String mappingId) {
+        this.mappingId = mappingId;
+    }
+
+    /**
+     * @return the mappingName
+     */
+    public String getMappingName() {
+        return mappingName;
+    }
+
+    /**
+     * @param mappingName the mappingName to set
+     */
+    public void setMappingName(String mappingName) {
+        this.mappingName = mappingName;
+    }
+
+    /**
+     * @return the mappingTooltip
+     */
+    public String getMappingTooltip() {
+        return mappingTooltip;
+    }
+
+    /**
+     * @param mappingTooltip the mappingTooltip to set
+     */
+    public void setMappingTooltip(String mappingTooltip) {
+        this.mappingTooltip = mappingTooltip;
     }
 }
