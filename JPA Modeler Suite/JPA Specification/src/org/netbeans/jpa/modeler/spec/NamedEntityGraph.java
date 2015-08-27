@@ -74,7 +74,7 @@ public class NamedEntityGraph {
     @XmlAttribute(name = "include-all-attributes")
     protected Boolean includeAllAttributes;
     
-        public static NamedEntityGraph load(Element element, AnnotationMirror annotationMirror) {
+        private static NamedEntityGraph loadEntityGraph(Element element, AnnotationMirror annotationMirror) {
         NamedEntityGraph namedEntityGraph = null;
         if (annotationMirror != null) {
             namedEntityGraph = new NamedEntityGraph();
@@ -102,6 +102,27 @@ public class NamedEntityGraph {
         }
         return namedEntityGraph;
     }
+        
+    public static List<NamedEntityGraph> load(Element element) {
+        List<NamedEntityGraph> namedEntityGraphs = new ArrayList<NamedEntityGraph>();
+        
+        AnnotationMirror namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedEntityGraphs");
+        if (namedEntityGraphsMirror != null) {
+            List namedEntityGraphMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedEntityGraphsMirror, "value");
+            if (namedEntityGraphMirrorList != null) {
+                for (Object namedEntityGraphObj : namedEntityGraphMirrorList) {
+                   namedEntityGraphs.add(NamedEntityGraph.loadEntityGraph(element, (AnnotationMirror) namedEntityGraphObj));
+                }
+            }
+        } else {
+            namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedEntityGraph");
+            if (namedEntityGraphsMirror != null) {
+                namedEntityGraphs.add(NamedEntityGraph.loadEntityGraph(element, namedEntityGraphsMirror));
+            }
+        }  
+        return namedEntityGraphs;
+    }  
+        
         
     /**
      * Gets the value of the namedAttributeNode property.

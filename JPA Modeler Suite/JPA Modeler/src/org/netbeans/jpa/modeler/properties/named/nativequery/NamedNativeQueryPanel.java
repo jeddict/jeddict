@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.properties.namednativequery;
+package org.netbeans.jpa.modeler.properties.named.nativequery;
 
-import org.netbeans.jpa.modeler.properties.namedquery.*;
+import org.netbeans.jpa.modeler.properties.named.query.QueryHintPanel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

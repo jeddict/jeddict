@@ -6,8 +6,11 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  * <p>
@@ -34,6 +37,17 @@ public enum FetchType {
     EAGER("Eager");
 
     private final String value;
+    
+    public static FetchType load(Element element , AnnotationMirror annotationMirror ) {        
+        FetchType fetchType = null;
+        if (annotationMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fetch");
+            if (value != null) {
+                fetchType = FetchType.valueOf(value.toString());
+            }
+        }     
+        return fetchType;
+    }
 
     FetchType(String v) {
         value = v;

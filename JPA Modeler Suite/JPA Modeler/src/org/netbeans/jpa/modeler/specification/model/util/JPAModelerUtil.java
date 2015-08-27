@@ -76,7 +76,7 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
-import org.netbeans.jpa.modeler.properties.namedquery.NamedQueryPanel;
+import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;

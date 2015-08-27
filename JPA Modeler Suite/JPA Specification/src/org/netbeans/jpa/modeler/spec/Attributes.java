@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -72,37 +73,15 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "description",
     "id",
     "embeddedId",
-    "basic",
-    "version",
-    "manyToOne",
-    "oneToMany",
-    "oneToOne",
-    "manyToMany",
-    "elementCollection",
-    "embedded",
-    "_transient"
+        "version"
 })
-public class Attributes implements IPersistenceAttributes {
+public class Attributes extends BaseAttributes implements IPersistenceAttributes {
 
     protected String description;
     protected List<Id> id;
     @XmlElement(name = "embedded-id")
-    protected EmbeddedId embeddedId; //RENENG PENDING //findAllAttribute PENDING //isAttributeExist PENDING
-    protected List<Basic> basic;
+    protected EmbeddedId embeddedId; //REVENG PENDING //findAllAttribute PENDING //isAttributeExist PENDING
     protected List<Version> version;
-    @XmlElement(name = "many-to-one")
-    protected List<ManyToOne> manyToOne;
-    @XmlElement(name = "one-to-many")
-    protected List<OneToMany> oneToMany;
-    @XmlElement(name = "one-to-one")
-    protected List<OneToOne> oneToOne;
-    @XmlElement(name = "many-to-many")
-    protected List<ManyToMany> manyToMany;
-    @XmlElement(name = "element-collection")
-    protected List<ElementCollection> elementCollection;
-    protected List<Embedded> embedded;
-    @XmlElement(name = "transient")
-    protected List<Transient> _transient;
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
@@ -113,8 +92,6 @@ public class Attributes implements IPersistenceAttributes {
             if (methodName.startsWith("get")) {
                 Element element;
                 VariableElement variableElement = JavaSourceParserUtil.guessField(method);
-
-//                method.getEnclosingElement()
                 // Issue Fix #5976 Start
                 /**
                  * #5976 FIX fixed NPE when method is not attached to field
@@ -129,7 +106,6 @@ public class Attributes implements IPersistenceAttributes {
                     continue;
                 }
                 // Issue Fix #5976 End
-
                 if (fieldAccess) {
                     element = variableElement;
                 } else {
@@ -149,13 +125,21 @@ public class Attributes implements IPersistenceAttributes {
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
                     this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
-                    this.getOneToOne().add(OneToOne.load(element, variableElement));
+                    OneToOne oneToOneObj = new OneToOne();
+                    this.getOneToOne().add(oneToOneObj);
+                    oneToOneObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
-                    this.getManyToOne().add(ManyToOne.load(element, variableElement));
+                    ManyToOne manyToOneObj = new ManyToOne();
+                    this.getManyToOne().add(manyToOneObj);
+                    manyToOneObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
-                    this.getOneToMany().add(OneToMany.load(element, variableElement));
+                    OneToMany oneToManyObj = new OneToMany();
+                    this.getOneToMany().add(oneToManyObj);
+                    oneToManyObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
-                    this.getManyToMany().add(ManyToMany.load(element, variableElement));
+                    ManyToMany manyToManyObj = new ManyToMany();
+                    this.getManyToMany().add(manyToManyObj);
+                    manyToManyObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
                     this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
                     embeddedIdVariableElement = variableElement;
@@ -180,7 +164,7 @@ public class Attributes implements IPersistenceAttributes {
 
     @Override
     public List<Attribute> findAllAttribute(String name) {
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = super.findAllAttribute(name);
         if (id != null) {
             for (Id id_TMP : id) {
                 if (id_TMP.getName() != null && id_TMP.getName().equals(name)) {
@@ -195,70 +179,15 @@ public class Attributes implements IPersistenceAttributes {
                 }
             }
         }
-        if (basic != null) {
-            for (Basic basic_TMP : basic) {
-                if (basic_TMP.getName() != null && basic_TMP.getName().equals(name)) {
-                    attributes.add(basic_TMP);
-                }
-            }
-        }
-        if (elementCollection != null) {
-            for (ElementCollection elementCollection_TMP : elementCollection) {
-                if (elementCollection_TMP.getName() != null && elementCollection_TMP.getName().equals(name)) {
-                    attributes.add(elementCollection_TMP);
-                }
-            }
-        }
-
-        if (_transient != null) {
-            for (Transient transient_TMP : _transient) {
-                if (transient_TMP.getName() != null && transient_TMP.getName().equals(name)) {
-                    attributes.add(transient_TMP);
-                }
-            }
-        }
-        if (oneToOne != null) {
-            for (OneToOne oneToOne_TMP : oneToOne) {
-                if (oneToOne_TMP.getName() != null && oneToOne_TMP.getName().equals(name)) {
-                    attributes.add(oneToOne_TMP);
-                }
-            }
-        }
-        if (oneToMany != null) {
-            for (OneToMany oneToMany_TMP : oneToMany) {
-                if (oneToMany_TMP.getName() != null && oneToMany_TMP.getName().equals(name)) {
-                    attributes.add(oneToMany_TMP);
-                }
-            }
-        }
-        if (manyToOne != null) {
-            for (ManyToOne manyToOne_TMP : manyToOne) {
-                if (manyToOne_TMP.getName() != null && manyToOne_TMP.getName().equals(name)) {
-                    attributes.add(manyToOne_TMP);
-                }
-            }
-        }
-        if (manyToMany != null) {
-            for (ManyToMany manyToMany_TMP : manyToMany) {
-                if (manyToMany_TMP.getName() != null && manyToMany_TMP.getName().equals(name)) {
-                    attributes.add(manyToMany_TMP);
-                }
-            }
-        }
-        if (embedded != null) {
-            for (Embedded embedded_TMP : embedded) {
-                if (embedded_TMP.getName() != null && embedded_TMP.getName().equals(name)) {
-                    attributes.add(embedded_TMP);
-                }
-            }
-        }
-
+       
         return attributes;
     }
 
-    //UPDATE ELEMENT
     @Override
     public boolean isAttributeExist(String name) {
+        if(super.isAttributeExist(name)){
+            return true;
+        }
         if (id != null) {
             for (Id id_TMP : id) {
                 if (id_TMP.getName() != null && id_TMP.getName().equals(name)) {
@@ -273,65 +202,8 @@ public class Attributes implements IPersistenceAttributes {
                 }
             }
         }
-        if (basic != null) {
-            for (Basic basic_TMP : basic) {
-                if (basic_TMP.getName() != null && basic_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        if (elementCollection != null) {
-            for (ElementCollection elementCollection_TMP : elementCollection) {
-                if (elementCollection_TMP.getName() != null && elementCollection_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-
-        if (_transient != null) {
-            for (Transient transient_TMP : _transient) {
-                if (transient_TMP.getName() != null && transient_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        if (oneToOne != null) {
-            for (OneToOne oneToOne_TMP : oneToOne) {
-                if (oneToOne_TMP.getName() != null && oneToOne_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        if (oneToMany != null) {
-            for (OneToMany oneToMany_TMP : oneToMany) {
-                if (oneToMany_TMP.getName() != null && oneToMany_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        if (manyToOne != null) {
-            for (ManyToOne manyToOne_TMP : manyToOne) {
-                if (manyToOne_TMP.getName() != null && manyToOne_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        if (manyToMany != null) {
-            for (ManyToMany manyToMany_TMP : manyToMany) {
-                if (manyToMany_TMP.getName() != null && manyToMany_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        if (embedded != null) {
-            for (Embedded embedded_TMP : embedded) {
-                if (embedded_TMP.getName() != null && embedded_TMP.getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+      
+    return false;
     }
 
     /**
@@ -423,58 +295,6 @@ public class Attributes implements IPersistenceAttributes {
 
     }
 
-    /**
-     * Gets the value of the basic property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the basic property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getBasic().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link Basic }
-     *
-     *
-     */
-    public List<Attribute> getAllAttribute() {
-        List<Attribute> attributes = new ArrayList<Attribute>();
-        attributes.addAll(this.getId());
-        attributes.add(this.getEmbeddedId());
-        attributes.addAll(this.getVersion());
-        attributes.addAll(this.getBasic());
-        attributes.addAll(this.getEmbedded());
-        attributes.addAll(this.getElementCollection());
-        attributes.addAll(this.getRelationAttributes());
-        attributes.addAll(this.getTransient());
-        return attributes;
-    }
-
-    @Override
-    public List<Basic> getBasic() {
-        if (basic == null) {
-            basic = new ArrayList<Basic>();
-        }
-        return this.basic;
-    }
-
-    @Override
-    public void addBasic(Basic basic) {
-        this.getBasic().add(basic);
-        notifyListeners(basic, "addAttribute", null, null);
-    }
-
-    public void removeBasic(Basic basic) {
-        this.getBasic().remove(basic);
-        notifyListeners(basic, "removeAttribute", null, null);
-    }
 
     /**
      * Gets the value of the version property.
@@ -517,311 +337,13 @@ public class Attributes implements IPersistenceAttributes {
         notifyListeners(version, "removeAttribute", null, null);
     }
 
-    /**
-     * Gets the value of the manyToOne property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the manyToOne property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getManyToOne().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ManyToOne }
-     *
-     *
-     */
+    
     @Override
-    public List<ManyToOne> getManyToOne() {
-        if (manyToOne == null) {
-            manyToOne = new ArrayList<ManyToOne>();
-        }
-        return this.manyToOne;
+    public List<Attribute> getAllAttribute() {
+        List<Attribute> attributes = super.getAllAttribute();
+        attributes.addAll(this.getId());
+        attributes.add(this.getEmbeddedId());
+        attributes.addAll(this.getVersion());
+        return attributes;
     }
-
-    /**
-     * Gets the value of the oneToMany property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the oneToMany property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOneToMany().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link OneToMany }
-     *
-     *
-     */
-    @Override
-    public List<OneToMany> getOneToMany() {
-        if (oneToMany == null) {
-            oneToMany = new ArrayList<OneToMany>();
-        }
-        return this.oneToMany;
-    }
-
-    /**
-     * Gets the value of the oneToOne property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the oneToOne property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOneToOne().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link OneToOne }
-     *
-     *
-     */
-    @Override
-    public List<OneToOne> getOneToOne() {
-        if (oneToOne == null) {
-            oneToOne = new ArrayList<OneToOne>();
-        }
-        return this.oneToOne;
-    }
-
-    /**
-     * Gets the value of the manyToMany property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the manyToMany property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getManyToMany().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ManyToMany }
-     *
-     *
-     */
-    @Override
-    public List<ManyToMany> getManyToMany() {
-        if (manyToMany == null) {
-            manyToMany = new ArrayList<ManyToMany>();
-        }
-        return this.manyToMany;
-    }
-
-    /**
-     * Gets the value of the elementCollection property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the elementCollection property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getElementCollection().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ElementCollection }
-     *
-     *
-     */
-    @Override
-    public List<ElementCollection> getElementCollection() {
-        if (elementCollection == null) {
-            elementCollection = new ArrayList<ElementCollection>();
-        }
-        return this.elementCollection;
-    }
-
-    @Override
-    public void addElementCollection(ElementCollection elementCollection) {
-        this.getElementCollection().add(elementCollection);
-        notifyListeners(elementCollection, "addAttribute", null, null);
-    }
-
-    @Override
-    public void removeElementCollection(ElementCollection elementCollection) {
-        this.getElementCollection().remove(elementCollection);
-        notifyListeners(elementCollection, "removeAttribute", null, null);
-    }
-
-    /**
-     * Gets the value of the embedded property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the embedded property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getEmbedded().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Embedded }
-     *
-     *
-     */
-    @Override
-    public List<Embedded> getEmbedded() {
-        if (embedded == null) {
-            embedded = new ArrayList<Embedded>();
-        }
-        return this.embedded;
-    }
-
-    @Override
-    public void addEmbedded(Embedded embedded) {
-        this.getEmbedded().add(embedded);
-        notifyListeners(embedded, "addAttribute", null, null);
-    }
-
-    @Override
-    public void removeEmbedded(Embedded embedded) {
-        this.getEmbedded().remove(embedded);
-        notifyListeners(embedded, "removeAttribute", null, null);
-    }
-
-    /**
-     * Gets the value of the transient property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the transient property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTransient().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Transient }
-     *
-     *
-     */
-    @Override
-    public List<Transient> getTransient() {
-        if (_transient == null) {
-            _transient = new ArrayList<Transient>();
-        }
-        return this._transient;
-    }
-
-    @Override
-    public void addTransient(Transient _transient) {
-        this.getTransient().add(_transient);
-        notifyListeners(_transient, "addAttribute", null, null);
-    }
-
-    @Override
-    public void removeTransient(Transient _transient) {
-        this.getTransient().remove(_transient);
-        notifyListeners(_transient, "removeAttribute", null, null);
-    }
-
-    public void removeRelationAttribute(RelationAttribute relationAttribute) {
-        if (relationAttribute instanceof ManyToMany) {
-            this.getManyToMany().remove((ManyToMany) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
-        } else if (relationAttribute instanceof OneToMany) {
-            this.getOneToMany().remove((OneToMany) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
-        } else if (relationAttribute instanceof ManyToOne) {
-            this.getManyToOne().remove((ManyToOne) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
-        } else if (relationAttribute instanceof OneToOne) {
-            this.getOneToOne().remove((OneToOne) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
-        } else {
-            throw new IllegalStateException("Invalid Type Relation Attribute");
-        }
-    }
-
-    public void addRelationAttribute(RelationAttribute relationAttribute) {
-        if (relationAttribute instanceof ManyToMany) {
-            this.getManyToMany().add((ManyToMany) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
-        } else if (relationAttribute instanceof OneToMany) {
-            this.getOneToMany().add((OneToMany) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
-        } else if (relationAttribute instanceof ManyToOne) {
-            this.getManyToOne().add((ManyToOne) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
-        } else if (relationAttribute instanceof OneToOne) {
-            this.getOneToOne().add((OneToOne) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
-        } else {
-            throw new IllegalStateException("Invalid Type Relation Attribute");
-        }
-    }
-
-    public List<RelationAttribute> getRelationAttributes() {
-        List<RelationAttribute> relationAttributes = new ArrayList<RelationAttribute>(this.getOneToOne());
-        relationAttributes.addAll(this.getOneToMany());
-        relationAttributes.addAll(this.getManyToOne());
-        relationAttributes.addAll(this.getManyToMany());
-        return relationAttributes;
-    }
-
-    //does not need to extends BaseElement (id field hide)
-    private transient List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
-
-    public void notifyListeners(Object object, String property, String oldValue, String newValue) {
-        for (PropertyChangeListener propertyChangeListener : listener) {
-            propertyChangeListener.propertyChange(new PropertyChangeEvent(object, property, oldValue, newValue));
-        }
-    }
-
-    public void addChangeListener(PropertyChangeListener newListener) {
-        listener.add(newListener);
-    }
-
-    public void removeChangeListener(PropertyChangeListener newListener) {
-        listener.remove(newListener);
-    }
-
 }

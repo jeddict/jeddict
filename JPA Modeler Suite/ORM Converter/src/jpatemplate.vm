@@ -75,6 +75,10 @@ $classDef.getNamedNativeQueries().getSnippet()
 #if ($classDef.getNamedEntityGraphs() )
 $classDef.getNamedEntityGraphs().getSnippet()
 #end
+#####################named entity graphs ###############################
+#if ($classDef.getNamedStoredProcedureQueries() )
+$classDef.getNamedStoredProcedureQueries().getSnippet()
+#end
 
 
 

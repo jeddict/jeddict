@@ -37,7 +37,6 @@ public class NamedQueryDefSnippet implements Snippet {
 //    public void setAttributeType(String attributeType) {
 //        this.attributeType = attributeType;
 //    }
-
     public String getQuery() {
         return query;
     }

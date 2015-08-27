@@ -34,7 +34,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private static final String JPA_TEMPLATE_FILENAME = "jpatemplate.vm";
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
-    private static VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
+    private static final VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
 
     private List<String> annotation = new ArrayList<String>();
 
@@ -54,10 +54,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private boolean defaultClass = false;
     private boolean _abstract = false;
     private List<String> interfaces;
-    
 
-    private ClassHelper classHelper = new ClassHelper();
-    private ClassHelper superClassHelper = new ClassHelper();
+    private final ClassHelper classHelper = new ClassHelper();
+    private final ClassHelper superClassHelper = new ClassHelper();
     private String entityName = null;
 
     private TableDefSnippet tableDef = null;
@@ -75,7 +74,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private NamedNativeQueriesSnippet namedNativeQueries = null;
     private SQLResultSetMappingsSnippet sqlResultSetMappings = null;
     private NamedEntityGraphsSnippet namedEntityGraphs = null;
-    
+    private NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries = null;
 
     private List<VariableDefSnippet> variableDefs = new ArrayList<VariableDefSnippet>();
 
@@ -302,19 +301,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         return variableDefs;
     }
 
-    
     protected String getTemplateName() {
-         if (defaultClass) {
-                return DEFAULT_TEMPLATE_FILENAME;
-            }else {
-                return JPA_TEMPLATE_FILENAME;
-            }
+        if (defaultClass) {
+            return DEFAULT_TEMPLATE_FILENAME;
+        } else {
+            return JPA_TEMPLATE_FILENAME;
+        }
     }
-    
+
     public String getSnippet() throws InvalidDataException {
         try {
             Template template = ORMConverterUtil.getTemplate(getTemplateName());
-            
+
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("classDef", this);
 
@@ -386,18 +384,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         if (namedNativeQueries != null) {
             importSnippets.addAll(namedNativeQueries.getImportSnippets());
         }
-        
+
         if (namedEntityGraphs != null) {
             importSnippets.addAll(namedEntityGraphs.getImportSnippets());
         }
-        
-        
+
+        if (getNamedStoredProcedureQueries() != null) {
+            importSnippets.addAll(getNamedStoredProcedureQueries().getImportSnippets());
+        }
 
         if (sqlResultSetMappings != null) {
             importSnippets.addAll(sqlResultSetMappings.getImportSnippets());
         }
-        
-        
 
         if (entityListeners != null) {
             importSnippets.addAll(entityListeners.getImportSnippets());
@@ -523,6 +521,20 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setNamedEntityGraphs(NamedEntityGraphsSnippet namedEntityGraphs) {
         this.namedEntityGraphs = namedEntityGraphs;
+    }
+
+    /**
+     * @return the namedStoredProcedureQueries
+     */
+    public NamedStoredProcedureQueriesSnippet getNamedStoredProcedureQueries() {
+        return namedStoredProcedureQueries;
+    }
+
+    /**
+     * @param namedStoredProcedureQueries the namedStoredProcedureQueries to set
+     */
+    public void setNamedStoredProcedureQueries(NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries) {
+        this.namedStoredProcedureQueries = namedStoredProcedureQueries;
     }
 
 }

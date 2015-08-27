@@ -29,18 +29,15 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- *         Defines the settings and mappings for an entity. Is allowed to be
- *         sparsely populated and used in conjunction with the annotations.
- *         Alternatively, the metadata-complete attribute can be used to 
- *         indicate that no annotations on the entity class (and its fields
- *         or properties) are to be processed. If this is the case then 
- *         the defaulting rules for the entity and its subelements will 
- *         be recursively applied.
+ * Defines the settings and mappings for an entity. Is allowed to be sparsely
+ * populated and used in conjunction with the annotations. Alternatively, the
+ * metadata-complete attribute can be used to indicate that no annotations on
+ * the entity class (and its fields or properties) are to be processed. If this
+ * is the case then the defaulting rules for the entity and its subelements will
+ * be recursively applied.
  *
- *         @Target(TYPE) @Retention(RUNTIME)
- *           public @interface Entity {
- *           String name() default "";
- *         }
+ * @Target(TYPE) @Retention(RUNTIME) public @interface Entity { String name()
+ * default ""; }
  *
  *
  *
@@ -103,31 +100,31 @@ import org.netbeans.modeler.core.NBModelerUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity", propOrder = {
-//    "description",
+    //    "description",
     "table",
     "secondaryTable",
     "primaryKeyJoinColumn",
     "primaryKeyForeignKey",
-//    "idClass",
+    //    "idClass",
     "inheritance",
     "discriminatorValue",
     "discriminatorColumn",
     "sequenceGenerator",
     "tableGenerator",
     "namedStoredProcedureQuery",
-//    "namedQuery",
-//    "namedNativeQuery",
-//    "sqlResultSetMapping",
-//    "excludeDefaultListeners",
-//    "excludeSuperclassListeners",
-//    "entityListeners",
-//    "prePersist",
-//    "postPersist",
-//    "preRemove",
-//    "postRemove",
-//    "preUpdate",
-//    "postUpdate",
-//    "postLoad",
+    //    "namedQuery",
+    //    "namedNativeQuery",
+    //    "sqlResultSetMapping",
+    //    "excludeDefaultListeners",
+    //    "excludeSuperclassListeners",
+    //    "entityListeners",
+    //    "prePersist",
+    //    "postPersist",
+    //    "preRemove",
+    //    "postRemove",
+    //    "preUpdate",
+    //    "postUpdate",
+    //    "postLoad",
     "attributeOverride",
     "associationOverride",
     "convert",
@@ -139,11 +136,11 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     protected Table table;
     @XmlElement(name = "secondary-table")
-    protected List<SecondaryTable> secondaryTable;//RENENG PENDING
+    protected List<SecondaryTable> secondaryTable;//REVENG PENDING
     @XmlElement(name = "primary-key-join-column")
-    protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//RENENG PENDING
+    protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//REVENG PENDING
     @XmlElement(name = "primary-key-foreign-key")
-    protected ForeignKey primaryKeyForeignKey;//RENENG PENDING JPA 2.1
+    protected ForeignKey primaryKeyForeignKey;//REVENG PENDING JPA 2.1
     @XmlElement(name = "id-class")
     protected Inheritance inheritance;
     @XmlElement(name = "discriminator-value")
@@ -155,21 +152,19 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlElement(name = "table-generator")
     protected TableGenerator tableGenerator;
 
-
     @XmlElement(name = "named-stored-procedure-query")
     protected List<NamedStoredProcedureQuery> namedStoredProcedureQuery;
-    
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
     protected List<AssociationOverride> associationOverride;
-       protected List<Convert> convert;//RENENG PENDING JPA 2.1
+    protected List<Convert> convert;//REVENG PENDING JPA 2.1
     @XmlElement(name = "named-entity-graph")
-    protected List<NamedEntityGraph> namedEntityGraph;//RENENG PENDING JPA 2.1
+    protected List<NamedEntityGraph> namedEntityGraph;
     @XmlAttribute
-    protected String name;    
+    protected String name;
     @XmlAttribute
-    protected Boolean cacheable;//RENENG PENDING
+    protected Boolean cacheable;//REVENG PENDING
 
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
@@ -208,66 +203,17 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         }
         this.discriminatorColumn = DiscriminatorColumn.load(element);
         this.tableGenerator = TableGenerator.load(element);
-        
-    
-      
-        
-        
         this.sequenceGenerator = SequenceGenerator.load(element);
 
         if (annotationMirror != null) {
             this.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
         }
 
-        AnnotationMirror attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AttributeOverrides");
-        if (attributeOverridesMirror != null) {
-            List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
-            if (attributeOverridesMirrorList != null) {
-                for (Object attributeOverrideObj : attributeOverridesMirrorList) {
-                    this.getAttributeOverride().add(AttributeOverride.load(element, (AnnotationMirror) attributeOverrideObj));
-                }
-            }
-        } else {
-            attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AttributeOverride");
-            if (attributeOverridesMirror != null) {
-                this.getAttributeOverride().add(AttributeOverride.load(element, attributeOverridesMirror));
-            }
-        }
+        this.getAttributeOverride().addAll(AttributeOverride.load(element));
+        this.getAssociationOverride().addAll(AssociationOverride.load(element));
+        this.getNamedEntityGraph().addAll(NamedEntityGraph.load(element));
+        this.getNamedStoredProcedureQuery().addAll(NamedStoredProcedureQuery.load(element));
 
-        AnnotationMirror associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AssociationOverrides");
-        if (associationOverridesMirror != null) {
-            List associationOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(associationOverridesMirror, "value");
-            if (associationOverridesMirrorList != null) {
-                for (Object associationOverrideObj : associationOverridesMirrorList) {
-                    this.getAssociationOverride().add(AssociationOverride.load(element, (AnnotationMirror) associationOverrideObj));
-                }
-            }
-        } else {
-            associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AssociationOverride");
-            if (associationOverridesMirror != null) {
-                this.getAssociationOverride().add(AssociationOverride.load(element, associationOverridesMirror));
-            }
-        }
-        
-        
-        AnnotationMirror namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedEntityGraphs");
-        if (namedEntityGraphsMirror != null) {
-            List namedEntityGraphMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedEntityGraphsMirror, "value");
-            if (namedEntityGraphMirrorList != null) {
-                for (Object associationOverrideObj : namedEntityGraphMirrorList) {
-                    this.getNamedEntityGraph().add(NamedEntityGraph.load(element, (AnnotationMirror) associationOverrideObj));
-                }
-            }
-        } else {
-            namedEntityGraphsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedEntityGraph");
-            if (namedEntityGraphsMirror != null) {
-                this.getNamedEntityGraph().add(NamedEntityGraph.load(element, namedEntityGraphsMirror));
-            }
-        }
-        
-        
-
-        
     }
 
     void beforeMarshal(Marshaller marshaller) {
@@ -356,11 +302,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     /**
      * Gets the value of the primaryKeyForeignKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @return possible object is {@link ForeignKey }
+     *
      */
     public ForeignKey getPrimaryKeyForeignKey() {
         return primaryKeyForeignKey;
@@ -368,36 +312,35 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     /**
      * Sets the value of the primaryKeyForeignKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
      */
     public void setPrimaryKeyForeignKey(ForeignKey value) {
         this.primaryKeyForeignKey = value;
     }
- /**
+
+    /**
      * Gets the value of the namedStoredProcedureQuery property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the namedStoredProcedureQuery property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the namedStoredProcedureQuery property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedStoredProcedureQuery().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedStoredProcedureQuery }
-     * 
-     * 
+     *
+     *
      */
     public List<NamedStoredProcedureQuery> getNamedStoredProcedureQuery() {
         if (namedStoredProcedureQuery == null) {
@@ -405,6 +348,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         }
         return this.namedStoredProcedureQuery;
     }
+
     /**
      * Gets the value of the inheritance property.
      *
@@ -505,7 +449,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         this.tableGenerator = value;
     }
 
-    
     /**
      * Gets the value of the attributeOverride property.
      *
@@ -564,8 +507,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return this.associationOverride;
     }
 
-
-
     /**
      * Gets the value of the name property.
      *
@@ -587,10 +528,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     public void setName(String value) {
         this.name = value;
     }
-
-   
-
-
 
     /**
      * Gets the value of the cacheable property.
@@ -622,8 +559,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return "Entity{" + "description=" + description + ", table=" + table + ", secondaryTable=" + secondaryTable + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn + ", idClass=" + idClass + ", inheritance=" + inheritance + ", discriminatorValue=" + discriminatorValue + ", discriminatorColumn=" + discriminatorColumn + ", sequenceGenerator=" + sequenceGenerator + ", tableGenerator=" + tableGenerator + ", namedQuery=" + namedQuery + ", namedNativeQuery=" + namedNativeQuery + ", sqlResultSetMapping=" + sqlResultSetMapping + ", excludeDefaultListeners=" + excludeDefaultListeners + ", excludeSuperclassListeners=" + excludeSuperclassListeners + ", entityListeners=" + entityListeners + ", prePersist=" + prePersist + ", postPersist=" + postPersist + ", preRemove=" + preRemove + ", postRemove=" + postRemove + ", preUpdate=" + preUpdate + ", postUpdate=" + postUpdate + ", postLoad=" + postLoad + ", attributeOverride=" + attributeOverride + ", associationOverride=" + associationOverride + ", attributes=" + attributes + ", name=" + name + ", clazz=" + clazz + ", access=" + access + ", cacheable=" + cacheable + ", metadataComplete=" + metadataComplete + '}';
     }
 
-
-
     public AttributeOverride getAttributeOverride(String attributePath) {
         List<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
@@ -650,7 +585,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         associationOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
     }
-    
+
     /**
      * Sets the value of the clazz property.
      *
@@ -661,30 +596,27 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 //        this.clazz = value;
         notifyListeners("clazz", this.clazz, this.clazz = value);
     }
-    
-    
-    
+
     /**
      * Gets the value of the convert property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the convert property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the convert property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConvert().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Convert }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link Convert }
+     *
+     *
      */
     public List<Convert> getConvert() {
         if (convert == null) {
@@ -695,25 +627,25 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     /**
      * Gets the value of the namedEntityGraph property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the namedEntityGraph property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the namedEntityGraph property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedEntityGraph().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedEntityGraph }
-     * 
-     * 
+     *
+     *
      */
     public List<NamedEntityGraph> getNamedEntityGraph() {
         if (namedEntityGraph == null) {
@@ -722,5 +654,4 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return this.namedEntityGraph;
     }
 
-    
 }

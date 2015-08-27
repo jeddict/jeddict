@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.reveng.database.generator;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

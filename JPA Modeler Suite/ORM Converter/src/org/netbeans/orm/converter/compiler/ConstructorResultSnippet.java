@@ -106,7 +106,7 @@ public class ConstructorResultSnippet implements Snippet {
         List<String> importSnippets = new ArrayList<String>();
 
         importSnippets.add("javax.persistence.ConstructorResult");
-        for(ColumnResultSnippet columnResult : columnResults){
+        for (ColumnResultSnippet columnResult : columnResults) {
             importSnippets.addAll(columnResult.getImportSnippets());
         }
         importSnippets.add(classHelper.getFQClassName());

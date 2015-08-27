@@ -173,13 +173,13 @@ public class TableGeneratorSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() ||  allocationSize != 50) {
+        if (GeneratorUtil.isGenerateDefaultValue() || allocationSize != 50) {
             builder.append("allocationSize=");
             builder.append(allocationSize);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() ||  initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
+        if (GeneratorUtil.isGenerateDefaultValue() || initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
             builder.append("initialValue=");
             builder.append(initialValue);
             builder.append(ORMConverterUtil.COMMA);

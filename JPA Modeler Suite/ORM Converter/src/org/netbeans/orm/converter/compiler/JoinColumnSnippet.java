@@ -97,19 +97,19 @@ public class JoinColumnSnippet implements Snippet {
     }
 
     public String getSnippet() throws InvalidDataException {
-if (!GeneratorUtil.isGenerateDefaultValue()) {
-        if (insertable == true
-                && nullable == true
-                && unique == false
-                && updatable == true
-                && columnDefinition == null
-                && name == null
-                && referencedColumnName == null
-                && table == null) {
+        if (!GeneratorUtil.isGenerateDefaultValue()) {
+            if (insertable == true
+                    && nullable == true
+                    && unique == false
+                    && updatable == true
+                    && columnDefinition == null
+                    && name == null
+                    && referencedColumnName == null
+                    && table == null) {
 
-            return "@JoinColumn";
+                return "@JoinColumn";
+            }
         }
-}
 
         StringBuilder builder = new StringBuilder();
 
@@ -154,7 +154,7 @@ if (!GeneratorUtil.isGenerateDefaultValue()) {
                 builder.append(ORMConverterUtil.COMMA);
             }
         }
-        
+
         if (GeneratorUtil.isGenerateDefaultValue()) {
             builder.append("nullable=");
             builder.append(nullable);
@@ -166,11 +166,11 @@ if (!GeneratorUtil.isGenerateDefaultValue()) {
                 builder.append(ORMConverterUtil.COMMA);
             }
         }
-        
+
         if (GeneratorUtil.isGenerateDefaultValue()) {
-                builder.append("unique=");
-                builder.append(unique);
-                builder.append(ORMConverterUtil.COMMA);
+            builder.append("unique=");
+            builder.append(unique);
+            builder.append(ORMConverterUtil.COMMA);
         } else {
             if (unique == true) {
                 builder.append("unique=");
@@ -178,7 +178,7 @@ if (!GeneratorUtil.isGenerateDefaultValue()) {
                 builder.append(ORMConverterUtil.COMMA);
             }
         }
-        
+
         if (GeneratorUtil.isGenerateDefaultValue()) {
             builder.append("updatable=");
             builder.append(updatable);
@@ -189,7 +189,7 @@ if (!GeneratorUtil.isGenerateDefaultValue()) {
                 builder.append(updatable);
                 builder.append(ORMConverterUtil.COMMA);
             }
-        } 
+        }
         return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 

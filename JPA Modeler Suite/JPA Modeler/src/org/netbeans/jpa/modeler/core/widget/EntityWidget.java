@@ -15,10 +15,12 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
@@ -244,14 +246,14 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-
         JMenuItem addEntityGraph;
         addEntityGraph = new JMenuItem("Add Entity Graph");
-//        delete.setIcon(ImageUtil.getInstance().getIcon("delete.png"));
         addEntityGraph.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                AttributeWidget.this.remove(true);
+                Component parentComponent = (Component)EntityWidget.this.getModelerScene().getModelerPanelTopComponent();
+                String name = JOptionPane.showInputDialog(parentComponent, "Please enter entity graph name : ", null);
+                openDiagram(name);
             }
         });
         menuList.add(0, addEntityGraph);
@@ -262,8 +264,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
      public void openDiagram(String entityGraphId) {
         String path = this.getModelerScene().getModelerPanelTopComponent().getToolTipText();
         JPAFileActionListener fileAction = new JPAFileActionListener(this.getModelerScene().getModelerFile().getModelerFileDataObject());
-        fileAction.setMappingId(entityGraphId);
-        fileAction.setMappingName(entityGraphId);
         fileAction.openModelerFile(entityGraphId,entityGraphId,entityGraphId + " > " + path);
     }
 

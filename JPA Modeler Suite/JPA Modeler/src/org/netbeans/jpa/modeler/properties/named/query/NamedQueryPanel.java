@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.properties.namedquery;
+package org.netbeans.jpa.modeler.properties.named.query;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

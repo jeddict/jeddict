@@ -47,7 +47,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
 
         entityResults.add(entityResult);
     }
-    
+
     public void addConstructorResult(ConstructorResultSnippet constructorResult) {
 
         if (constructorResults.isEmpty()) {
@@ -74,8 +74,8 @@ public class SQLResultSetMappingSnippet implements Snippet {
             this.entityResults = entityResults;
         }
     }
-    
-     public List<ConstructorResultSnippet> getConstructorResults() {
+
+    public List<ConstructorResultSnippet> getConstructorResults() {
         return constructorResults;
     }
 
@@ -123,8 +123,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        
-         if (!constructorResults.isEmpty()) {
+        if (!constructorResults.isEmpty()) {
             builder.append("classes={");
 
             for (ConstructorResultSnippet constructorResult : constructorResults) {
@@ -137,7 +136,6 @@ public class SQLResultSetMappingSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-         
         if (!columnResults.isEmpty()) {
             builder.append("columns={");
 
@@ -172,13 +170,13 @@ public class SQLResultSetMappingSnippet implements Snippet {
                 importSnippets.addAll(entityResult.getImportSnippets());
             }
         }
-        
+
         if (constructorResults != null) {
             for (ConstructorResultSnippet constructorResult : constructorResults) {
                 importSnippets.addAll(constructorResult.getImportSnippets());
             }
         }
-        
+
         if (columnResults != null) {
             for (ColumnResultSnippet columnResult : columnResults) {
                 importSnippets.addAll(columnResult.getImportSnippets());

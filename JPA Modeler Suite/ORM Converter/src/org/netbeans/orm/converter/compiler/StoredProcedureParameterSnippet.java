@@ -17,17 +17,19 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
  * @author Shiwani Gupta
  */
-public class NamedAttributeNodeSnippet implements Snippet {
+public class StoredProcedureParameterSnippet implements Snippet {
 
+    private final ClassHelper classHelper = new ClassHelper();
     private String name;
-    private String subgraph;
-    private String keySubgraph;
+//    private String clazz;
+    private String mode;
 
     /**
      * @return the name
@@ -43,64 +45,32 @@ public class NamedAttributeNodeSnippet implements Snippet {
         this.name = name;
     }
 
-    /**
-     * @return the subgraph
-     */
-    public String getSubgraph() {
-        return subgraph;
-    }
-
-    /**
-     * @param subgraph the subgraph to set
-     */
-    public void setSubgraph(String subgraph) {
-        this.subgraph = subgraph;
-    }
-
-    /**
-     * @return the keySubgraph
-     */
-    public String getKeySubgraph() {
-        return keySubgraph;
-    }
-
-    /**
-     * @param keySubgraph the keySubgraph to set
-     */
-    public void setKeySubgraph(String keySubgraph) {
-        this.keySubgraph = keySubgraph;
-    }
-
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (getName() == null || getName().isEmpty()) {
-            return null;
-        }
 
+        if (classHelper.getClassName() == null) {
+            throw new InvalidDataException("Type required");
+        }
+        
         StringBuilder builder = new StringBuilder();
-        if (getSubgraph() != null && getKeySubgraph() != null) {
-            builder.append("@NamedAttributeNode(\"");
-            builder.append(getName());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        } else {
-            builder.append("@NamedAttributeNode(value=\"");
-            builder.append(getName());
+
+        builder.append("@StoredProcedureParameter(");
+        if (name != null) {
+            builder.append("name=\"");
+            builder.append(name);
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (getSubgraph() != null) {
-            builder.append("subgraph =\"");
-            builder.append(getSubgraph());
-            builder.append(ORMConverterUtil.QUOTE);
+        if (mode != null) {
+            builder.append("mode=ParameterMode.");
+            builder.append(mode);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (getKeySubgraph() != null) {
-            builder.append("keySubgraph =\"");
-            builder.append(getSubgraph());
-            builder.append(ORMConverterUtil.QUOTE);
+        if (classHelper.getClassName() != null) {
+            builder.append("type=");
+            builder.append(getType());
             builder.append(ORMConverterUtil.COMMA);
         }
 
@@ -111,8 +81,42 @@ public class NamedAttributeNodeSnippet implements Snippet {
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
-        importSnippets.add("javax.persistence.NamedAttributeNode");
+        importSnippets.add("javax.persistence.StoredProcedureParameter");
+
+        if (classHelper.getFQClassName() != null) {
+            importSnippets.add(classHelper.getFQClassName());
+        }
+        if (mode != null) {
+            importSnippets.add("javax.persistence.ParameterMode");
+        }
+
         return importSnippets;
+    }
+
+    public String getType() {
+        return classHelper.getClassNameWithClassSuffix();
+    }
+
+    public void setType(String resultClass) {
+        classHelper.setClassName(resultClass);
+    }
+
+    public void setPackageName(String packageName) {
+        classHelper.setPackageName(packageName);
+    }
+
+    /**
+     * @return the mode
+     */
+    public String getMode() {
+        return mode;
+    }
+
+    /**
+     * @param mode the mode to set
+     */
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }

@@ -75,6 +75,9 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
         
         //EntityGraphs
         processNamedEntityGraphs(entity.getNamedEntityGraph());
+        
+        //StoredProcedures
+        processNamedStoredProcedureQueries(entity.getNamedStoredProcedureQuery());
 
         
         

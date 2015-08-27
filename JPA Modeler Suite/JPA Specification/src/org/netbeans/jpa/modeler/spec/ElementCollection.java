@@ -128,34 +128,34 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     @XmlElement(name = "order-by")
     protected String orderBy;
     @XmlElement(name = "order-column")
-    protected OrderColumn orderColumn;//RENENG PENDING
+    protected OrderColumn orderColumn;//REVENG PENDING
     @XmlElement(name = "map-key")
-    protected MapKey mapKey;//RENENG PENDING
+    protected MapKey mapKey;//REVENG PENDING
     @XmlElement(name = "map-key-class")
-    protected MapKeyClass mapKeyClass;//RENENG PENDING
+    protected MapKeyClass mapKeyClass;//REVENG PENDING
     @XmlElement(name = "map-key-temporal")
-    protected TemporalType mapKeyTemporal;//RENENG PENDING
+    protected TemporalType mapKeyTemporal;//REVENG PENDING
     @XmlElement(name = "map-key-enumerated")
-    protected EnumType mapKeyEnumerated;//RENENG PENDING
+    protected EnumType mapKeyEnumerated;//REVENG PENDING
     @XmlElement(name = "map-key-attribute-override")
-    protected List<AttributeOverride> mapKeyAttributeOverride;//RENENG PENDING
+    protected List<AttributeOverride> mapKeyAttributeOverride;//REVENG PENDING
     @XmlElement(name = "map-key-convert")
-    protected List<Convert> mapKeyConvert;//RENENG PENDING
+    protected List<Convert> mapKeyConvert;//REVENG PENDING
     @XmlElement(name = "map-key-column")
-    protected MapKeyColumn mapKeyColumn;//RENENG PENDING
+    protected MapKeyColumn mapKeyColumn;//REVENG PENDING
     @XmlElement(name = "map-key-join-column")
-    protected List<MapKeyJoinColumn> mapKeyJoinColumn;//RENENG PENDING
+    protected List<MapKeyJoinColumn> mapKeyJoinColumn;//REVENG PENDING
     @XmlElement(name = "map-key-foreign-key")
-    protected ForeignKey mapKeyForeignKey;//RENENG PENDING
+    protected ForeignKey mapKeyForeignKey;//REVENG PENDING
     protected Column column;
     protected TemporalType temporal;
     protected EnumType enumerated;
     protected Lob lob;
     @XmlElement(name = "attribute-override")
-    protected List<AttributeOverride> attributeOverride;//RENENG PENDING
+    protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
-    protected List<AssociationOverride> associationOverride;//RENENG PENDING
-    protected List<Convert> convert;//RENENG PENDING
+    protected List<AssociationOverride> associationOverride; 
+    protected List<Convert> convert;//REVENG PENDING
     @XmlElement(name = "collection-table")
     protected CollectionTable collectionTable;
     @XmlAttribute(name = "name", required = true)
@@ -178,6 +178,12 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         elementCollection.temporal = TemporalType.load(element, variableElement);
         elementCollection.enumerated = EnumType.load(element, variableElement);
         elementCollection.lob = Lob.load(element, variableElement);
+        
+        
+        elementCollection.getAttributeOverride().addAll(AttributeOverride.load(element));
+       elementCollection.getAssociationOverride().addAll(AssociationOverride.load(element));
+         
+        
         elementCollection.collectionTable = CollectionTable.load(element, variableElement);
         elementCollection.name = variableElement.getSimpleName().toString();
         
@@ -187,14 +193,16 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             elementCollection.orderBy = value==null?StringUtils.EMPTY:value.toString();
         }
         
-        Object fetchObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fetch");
-        if (fetchObj != null) {
-            elementCollection.fetch = FetchType.valueOf(fetchObj.toString());
-        }
+        elementCollection.fetch = FetchType.load(element, annotationMirror);
         elementCollection.access = AccessType.load(element);
 
         elementCollection.collectionType = ((DeclaredType) variableElement.asType()).asElement().toString();
 
+        
+        
+        
+        
+        
         DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetClass");
         if (declaredType == null) {
             declaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);

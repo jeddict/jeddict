@@ -8,8 +8,11 @@
 
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 
 /**
@@ -38,6 +41,17 @@ public enum ParameterMode {
     OUT,
     REF_CURSOR;
 
+    public static ParameterMode load(Element element , AnnotationMirror annotationMirror ) {        
+        ParameterMode parameterMode = null;
+        if (annotationMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mode");
+            if (value != null) {
+                parameterMode = ParameterMode.valueOf(value.toString());
+            }
+        }     
+        return parameterMode;
+    }
+    
     public String value() {
         return name();
     }

@@ -74,7 +74,7 @@ public class AssociationOverride {
     @XmlAttribute(name = "name", required = true)
     protected String name;
 
-    public static AssociationOverride load(Element element, AnnotationMirror annotationMirror) {
+    private static AssociationOverride loadAssociation(Element element, AnnotationMirror annotationMirror) {
         AssociationOverride associationOverride = null;
         if (annotationMirror != null) {
             associationOverride = new AssociationOverride();
@@ -94,6 +94,28 @@ public class AssociationOverride {
 
         }
         return associationOverride;
+    }
+    
+    
+    public static List<AssociationOverride> load(Element element) {
+        List<AssociationOverride> associationOverrides = new ArrayList<AssociationOverride>();
+        
+        AnnotationMirror associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AssociationOverrides");
+        if (associationOverridesMirror != null) {
+            List associationOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(associationOverridesMirror, "value");
+            if (associationOverridesMirrorList != null) {
+                for (Object associationOverrideObj : associationOverridesMirrorList) {
+                    associationOverrides.add(AssociationOverride.loadAssociation(element, (AnnotationMirror) associationOverrideObj));
+                }
+            }
+        } else {
+            associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AssociationOverride");
+            if (associationOverridesMirror != null) {
+                associationOverrides.add(AssociationOverride.loadAssociation(element, associationOverridesMirror));
+            }
+        }
+            
+        return associationOverrides;
     }
 
     /**

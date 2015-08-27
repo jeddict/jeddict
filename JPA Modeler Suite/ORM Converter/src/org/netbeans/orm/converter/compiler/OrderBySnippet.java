@@ -41,7 +41,6 @@ public class OrderBySnippet implements Snippet {
         }
     }
 
-    
     public void setOrderList(List<String> orderList) {
         if (orderList != null) {
             this.orderList = orderList;

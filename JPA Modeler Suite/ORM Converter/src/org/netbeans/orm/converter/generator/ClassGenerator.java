@@ -52,6 +52,7 @@ import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
+import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
@@ -60,6 +61,7 @@ import org.netbeans.jpa.modeler.spec.QueryHint;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.SequenceGenerator;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
+import org.netbeans.jpa.modeler.spec.StoredProcedureParameter;
 import org.netbeans.jpa.modeler.spec.Table;
 import org.netbeans.jpa.modeler.spec.TableGenerator;
 import org.netbeans.jpa.modeler.spec.TemporalType;
@@ -98,6 +100,8 @@ import org.netbeans.orm.converter.compiler.NamedNativeQueriesSnippet;
 import org.netbeans.orm.converter.compiler.NamedNativeQuerySnippet;
 import org.netbeans.orm.converter.compiler.NamedQueriesSnippet;
 import org.netbeans.orm.converter.compiler.NamedQueryDefSnippet;
+import org.netbeans.orm.converter.compiler.NamedStoredProcedureQueriesSnippet;
+import org.netbeans.orm.converter.compiler.NamedStoredProcedureQuerySnippet;
 import org.netbeans.orm.converter.compiler.NamedSubgraphSnippet;
 import org.netbeans.orm.converter.compiler.OneToManySnippet;
 import org.netbeans.orm.converter.compiler.OneToOneSnippet;
@@ -110,6 +114,7 @@ import org.netbeans.orm.converter.compiler.SQLResultSetMappingsSnippet;
 import org.netbeans.orm.converter.compiler.SecondaryTableSnippet;
 import org.netbeans.orm.converter.compiler.SecondaryTablesSnippet;
 import org.netbeans.orm.converter.compiler.SequenceGeneratorSnippet;
+import org.netbeans.orm.converter.compiler.StoredProcedureParameterSnippet;
 import org.netbeans.orm.converter.compiler.TableDefSnippet;
 import org.netbeans.orm.converter.compiler.TableGeneratorSnippet;
 import org.netbeans.orm.converter.compiler.UniqueConstraintSnippet;
@@ -772,8 +777,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     
             
-      protected void processNamedEntityGraphs(
-            List<NamedEntityGraph> parsedNamedEntityGraphs) {
+      protected void processNamedEntityGraphs(List<NamedEntityGraph> parsedNamedEntityGraphs) {
 
         if (parsedNamedEntityGraphs == null
                 || parsedNamedEntityGraphs.isEmpty()) {
@@ -792,10 +796,55 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             namedEntityGraph.setSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubgraph()));
             namedEntityGraph.setSubclassSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubclassSubgraph()));
 
-            classDef.getNamedEntityGraphs().addNamedEntityGraph(namedEntityGraph);
+            namedEntityGraphs.addNamedEntityGraph(namedEntityGraph);
         }
     }
        
+      
+            protected void processNamedStoredProcedureQueries(List<NamedStoredProcedureQuery> parsedNamedStoredProcedureQueries) {
+
+        if (parsedNamedStoredProcedureQueries == null || parsedNamedStoredProcedureQueries.isEmpty()) {
+            return;
+        }
+
+        NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries = new NamedStoredProcedureQueriesSnippet();
+
+        classDef.setNamedStoredProcedureQueries(namedStoredProcedureQueries);
+
+        for (NamedStoredProcedureQuery parsedNamedStoredProcedureQuery : parsedNamedStoredProcedureQueries) {
+            NamedStoredProcedureQuerySnippet namedStoredProcedureQuery = new NamedStoredProcedureQuerySnippet();
+            namedStoredProcedureQuery.setName(parsedNamedStoredProcedureQuery.getName());
+            namedStoredProcedureQuery.setProcedureName(parsedNamedStoredProcedureQuery.getProcedureName());
+            namedStoredProcedureQuery.setQueryHints(getQueryHints(parsedNamedStoredProcedureQuery.getHint()));
+            namedStoredProcedureQuery.setResultClasses(parsedNamedStoredProcedureQuery.getResultClass());
+            namedStoredProcedureQuery.setResultSetMappings(parsedNamedStoredProcedureQuery.getResultSetMapping());
+            namedStoredProcedureQuery.setParameters(getStoredProcedureParameters(parsedNamedStoredProcedureQuery.getParameter()));
+
+            namedStoredProcedureQueries.addNamedStoredProcedureQuery(namedStoredProcedureQuery);
+        }
+    }
+     
+        protected List<StoredProcedureParameterSnippet> getStoredProcedureParameters(List<StoredProcedureParameter> parsedStoredProcedureParameters) {
+
+        if (parsedStoredProcedureParameters == null || parsedStoredProcedureParameters.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<StoredProcedureParameterSnippet> storedProcedureParameters = new ArrayList<StoredProcedureParameterSnippet>();
+
+        for (StoredProcedureParameter parsedStoredProcedureParameter : parsedStoredProcedureParameters) {
+            StoredProcedureParameterSnippet storedProcedureParameter = new StoredProcedureParameterSnippet();
+            storedProcedureParameter.setName(parsedStoredProcedureParameter.getName());
+            storedProcedureParameter.setType(parsedStoredProcedureParameter.getClazz());
+            if(parsedStoredProcedureParameter.getMode()!=null){
+            storedProcedureParameter.setMode(parsedStoredProcedureParameter.getMode().value());
+            }
+            storedProcedureParameters.add(storedProcedureParameter);
+        }
+        return storedProcedureParameters;
+    }
+     
+            
             
     protected void processNamedNativeQueries(
             List<NamedNativeQuery> parsedNamedNativeQueries) {

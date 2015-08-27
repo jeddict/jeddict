@@ -31,8 +31,6 @@ import org.netbeans.modeler.widget.node.INodeWidget;
 
 public class JPADiagramEngine extends ModelerDiagramEngine {
 
-    public JPADiagramEngine() {
-    }
     private static final MoveProvider MOVE_PROVIDER_DEFAULT = new MoveProvider() {
         private boolean locationChanged = false;
         private Point original;
@@ -67,35 +65,15 @@ public class JPADiagramEngine extends ModelerDiagramEngine {
 
     @Override
     public void setNodeWidgetAction(final INodeWidget nodeWidget) {
-//        IModelerScene modelerScene = nodeWidget.getModelerScene();
-//        WidgetAction doubleClickAction = new DoubleClickAction(new DoubleClickProvider() {
-//            @Override
-//            public void onDoubleClick(Widget widget, Point point, boolean bln) {
-//                nodeWidget.showProperties();
-//                nodeWidget.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-//            }
-//        });
         WidgetAction selectAction = ActionFactory.createSelectAction(new NodeWidgetSelectProvider(nodeWidget.getModelerScene()));
-//        WidgetAction moveAction = new MoveAction(nodeWidget,
-//                null, new MultiMoveProvider(nodeWidget.getModelerScene()),
-//                alignStrategyProvider, alignStrategyProvider);
-        WidgetAction moveAction = new MoveAction(nodeWidget,
-                null, MOVE_PROVIDER_DEFAULT,
-                alignStrategyProvider, alignStrategyProvider);
+        WidgetAction moveAction = new MoveAction(nodeWidget,null, MOVE_PROVIDER_DEFAULT,alignStrategyProvider, alignStrategyProvider);
         WidgetAction popupMenuAction = ActionFactory.createPopupMenuAction(nodeWidget.getPopupMenuProvider());
-//        NodeWidgetResizeProvider nodeWidgetResizeProvider = new NodeWidgetResizeProvider();
-//        WidgetAction resizeAction = ActionFactory.createResizeAction(nodeWidgetResizeProvider, nodeWidgetResizeProvider);
         WidgetAction snapMoveAction = ActionFactory.createMoveAction(ActionFactory.createSnapToGridMoveStrategy(5, 5), null);
-
         WidgetAction.Chain selectActionTool = nodeWidget.createActions(DesignerTools.SELECT);
-//        selectActionTool.addAction(doubleClickAction);
         selectActionTool.addAction(selectAction);
         selectActionTool.addAction(moveAction);
-//        selectActionTool.addAction(ActionFactory.createMoveAction());//BUG : above move interrupt gui view
         selectActionTool.addAction(getScene().createWidgetHoverAction());
         selectActionTool.addAction(popupMenuAction);
-//        selectActionTool.addAction(resizeAction);
         selectActionTool.addAction(snapMoveAction);
-
     }
 }

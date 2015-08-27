@@ -58,19 +58,19 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
         }
         builder.append("@OneToOne");
         if (!GeneratorUtil.isGenerateDefaultValue()) {
-        if (mappedBy == null
-                && optional == true
-                && getTargetEntity() == null
-                && getFetchType() == null
-                && getCascadeTypes().isEmpty()) {
-            return builder.toString();
-        }
+            if (mappedBy == null
+                    && optional == true
+                    && getTargetEntity() == null
+                    && getFetchType() == null
+                    && getCascadeTypes().isEmpty()) {
+                return builder.toString();
+            }
         }
 
         builder.append("(");
 
         if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
-                builder.append("optional=").append(optional).append(",");
+            builder.append("optional=").append(optional).append(",");
         }
 
         if (!getCascadeTypes().isEmpty()) {

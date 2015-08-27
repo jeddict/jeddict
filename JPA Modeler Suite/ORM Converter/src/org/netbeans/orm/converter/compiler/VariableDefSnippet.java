@@ -181,16 +181,16 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      * getNickname()
      */
     public String getMethodName() {
-        if(name.charAt(0) == '_'){
+        if (name.charAt(0) == '_') {
             char ch = Character.toUpperCase(name.charAt(1));
 
             return Character.toString(ch) + name.substring(2);
         } else {
             char ch = Character.toUpperCase(name.charAt(0));
 
-        return Character.toString(ch) + name.substring(1);
+            return Character.toString(ch) + name.substring(1);
         }
-        
+
     }
 
 //    public String getGetterName() {
@@ -505,9 +505,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public boolean isArray(String type) {
         int length = type.length();
-        return type.charAt(length - 2) == '[' && type.charAt(length -1) == ']';
+        return type.charAt(length - 2) == '[' && type.charAt(length - 1) == ']';
     }
-    
+
     public boolean isPrimitiveArray(String type) {
         int length = type.length();
         if (isArray(type)) {
@@ -517,8 +517,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             return false;
         }
     }
-    
-    
 
     public Class getWrapper(String premitive) throws ClassNotFoundException {
         return ClassUtils.primitiveToWrapper(ClassUtils.getClass(premitive));
@@ -572,7 +570,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public List<String> getAnnotation() {
         return annotation;
     }
-    
+
     /**
      * @return the annotation
      */
@@ -645,40 +643,40 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getJaxbAnnotationSnippet() {
-        
+
         StringBuilder snippet = new StringBuilder();
-        if(isPrimaryKey()){
+        if (isPrimaryKey()) {
 //            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-        } else if(getRelationDef()!=null){
-            if(getRelationDef() instanceof OneToOneSnippet){
-                  OneToOneSnippet otoSnippet = (OneToOneSnippet)getRelationDef();
-                  if(otoSnippet.getMappedBy()!=null && !otoSnippet.getMappedBy().trim().isEmpty()){
-                      snippet.append("@XmlTransient");
-                  } else {
+        } else if (getRelationDef() != null) {
+            if (getRelationDef() instanceof OneToOneSnippet) {
+                OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelationDef();
+                if (otoSnippet.getMappedBy() != null && !otoSnippet.getMappedBy().trim().isEmpty()) {
+                    snippet.append("@XmlTransient");
+                } else {
 //                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                  }
-                } else if(getRelationDef() instanceof OneToManySnippet){
-                  OneToManySnippet otmSnippet = (OneToManySnippet)getRelationDef();
-                  if(otmSnippet.getMappedBy()!=null && !otmSnippet.getMappedBy().trim().isEmpty()){
-                      snippet.append("@XmlTransient");
-                  } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                  }
-                } else if(getRelationDef() instanceof ManyToOneSnippet){
-//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                } else if(getRelationDef() instanceof ManyToManySnippet){
-                  ManyToManySnippet mtmSnippet = (ManyToManySnippet)getRelationDef();
-                  if(mtmSnippet.getMappedBy()!=null && !mtmSnippet.getMappedBy().trim().isEmpty()){
-                      snippet.append("@XmlTransient");
-                  } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                  }
                 }
+            } else if (getRelationDef() instanceof OneToManySnippet) {
+                OneToManySnippet otmSnippet = (OneToManySnippet) getRelationDef();
+                if (otmSnippet.getMappedBy() != null && !otmSnippet.getMappedBy().trim().isEmpty()) {
+                    snippet.append("@XmlTransient");
+                } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                }
+            } else if (getRelationDef() instanceof ManyToOneSnippet) {
+//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+            } else if (getRelationDef() instanceof ManyToManySnippet) {
+                ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelationDef();
+                if (mtmSnippet.getMappedBy() != null && !mtmSnippet.getMappedBy().trim().isEmpty()) {
+                    snippet.append("@XmlTransient");
+                } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                }
+            }
         }
-        
-        if (getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE ) {
-            if(getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE){
-            snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+
+        if (getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
+            if (getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
+                snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
             }
             snippet.append("@XmlAttribute");
             JaxbXmlAttribute attr = this.getJaxbXmlAttribute();
@@ -693,9 +691,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 snippet.setLength(snippet.length() - 2);
                 snippet.append(")");
             }
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT ) {
-            if(getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT){
-            snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT) {
+            if (getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT) {
+                snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
             }
             snippet.append("@XmlElement");
             JaxbXmlElement ele = this.getJaxbXmlElement();
@@ -712,17 +710,17 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             }
         } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENTS) { //pending
             snippet.append("@XmlElements");
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_VALUE || getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE ) {
-             if(getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE){
-            snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_VALUE || getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
+            if (getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
+                snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
             }
             snippet.append("@XmlValue");
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT && getRelationDef()==null) { 
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT && getRelationDef() == null) {
             snippet.append("@XmlTransient");
         }
         int snippetLength = snippet.length(); //Remove NEW_LINE and TAB
-        if(snippetLength > 6 && snippet.charAt(snippetLength-5) == '\n'){
-            snippet.setLength(snippetLength-5);
+        if (snippetLength > 6 && snippet.charAt(snippetLength - 5) == '\n') {
+            snippet.setLength(snippetLength - 5);
         }
         return snippet.toString();
     }

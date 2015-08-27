@@ -48,7 +48,7 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
             }
         }
         builder.append("@ManyToOne");
-       
+
         if (!GeneratorUtil.isGenerateDefaultValue()) {
             if (optional == true
                     && getTargetEntity() == null
@@ -60,10 +60,9 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
 
         builder.append("(");
 
-         if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
-                builder.append("optional=").append(optional).append(",");
+        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+            builder.append("optional=").append(optional).append(",");
         }
-        
 
         if (!getCascadeTypes().isEmpty()) {
             builder.append("cascade={");

@@ -92,11 +92,8 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         basic.temporal = TemporalType.load(element, variableElement);
         basic.enumerated = EnumType.load(element, variableElement);
         basic.name = variableElement.getSimpleName().toString();
+        basic.fetch = FetchType.load(element, annotationMirror);
         if (annotationMirror != null) {
-            Object fetchObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fetch");
-            if (fetchObj != null) {
-                basic.fetch = FetchType.valueOf(fetchObj.toString());
-            }
             basic.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "optional");
         }
         basic.access = AccessType.load(element);

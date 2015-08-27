@@ -48,19 +48,19 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @XmlElement(name = "entity-listeners")
     protected EntityListeners entityListeners;
     @XmlElement(name = "pre-persist")
-    protected PrePersist prePersist;//RENENG PENDING
+    protected PrePersist prePersist;//REVENG PENDING
     @XmlElement(name = "post-persist")
-    protected PostPersist postPersist;//RENENG PENDING
+    protected PostPersist postPersist;//REVENG PENDING
     @XmlElement(name = "pre-remove")
-    protected PreRemove preRemove;//RENENG PENDING
+    protected PreRemove preRemove;//REVENG PENDING
     @XmlElement(name = "post-remove")
-    protected PostRemove postRemove;//RENENG PENDING
+    protected PostRemove postRemove;//REVENG PENDING
     @XmlElement(name = "pre-update")
-    protected PreUpdate preUpdate;//RENENG PENDING
+    protected PreUpdate preUpdate;//REVENG PENDING
     @XmlElement(name = "post-update")
-    protected PostUpdate postUpdate;//RENENG PENDING
+    protected PostUpdate postUpdate;//REVENG PENDING
     @XmlElement(name = "post-load")
-    protected PostLoad postLoad;//RENENG PENDING
+    protected PostLoad postLoad;//REVENG PENDING
     
     
     @XmlAttribute

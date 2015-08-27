@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -62,7 +61,7 @@ public class AttributeOverride {
     @XmlAttribute(required = true)
     protected String name;
 
-    public static AttributeOverride load(Element element, AnnotationMirror annotationMirror) {
+    private static AttributeOverride loadAttribute(Element element, AnnotationMirror annotationMirror) {
         AttributeOverride attributeOverride = null;
         if (annotationMirror != null) {
             attributeOverride = new AttributeOverride();
@@ -74,6 +73,27 @@ public class AttributeOverride {
             }
         }
         return attributeOverride;
+    }
+    
+    public static List<AttributeOverride> load(Element element) {
+        List<AttributeOverride> attributeOverrides = new ArrayList<AttributeOverride>();
+            
+        AnnotationMirror attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AttributeOverrides");
+        if (attributeOverridesMirror != null) {
+            List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
+            if (attributeOverridesMirrorList != null) {
+                for (Object attributeOverrideObj : attributeOverridesMirrorList) {
+                    attributeOverrides.add(AttributeOverride.loadAttribute(element, (AnnotationMirror) attributeOverrideObj));
+                }
+            }
+        } else {
+            attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AttributeOverride");
+            if (attributeOverridesMirror != null) {
+                attributeOverrides.add(AttributeOverride.loadAttribute(element, attributeOverridesMirror));
+            }
+        }
+            
+        return attributeOverrides;
     }
 
     /**

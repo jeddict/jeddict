@@ -24,7 +24,7 @@ import java.util.List;
 import org.netbeans.orm.converter.util.ClassHelper;
 
 public class ColumnResultSnippet implements Snippet {
-    
+
     private ClassHelper classHelper = new ClassHelper();
     private String name = null;
 
@@ -43,7 +43,7 @@ public class ColumnResultSnippet implements Snippet {
     public String getPackageName() {
         return classHelper.getPackageName();
     }
-    
+
     public String getName() {
         return name;
     }
@@ -58,19 +58,19 @@ public class ColumnResultSnippet implements Snippet {
             throw new InvalidDataException("Name is null");
         }
 
-           StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
 
         builder.append("@ColumnResult(name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
-        
+
         if (classHelper.getClassName() != null) {
             builder.append("type=");
             builder.append(getType());
             builder.append(ORMConverterUtil.COMMA);
         }
-        
+
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
 //        return "@ColumnResult(name=\"" + name + ORMConverterUtil.QUOTE
@@ -81,8 +81,7 @@ public class ColumnResultSnippet implements Snippet {
 //    public Collection<String> getImportSnippets() throws InvalidDataException {
 //        return Collections.singletonList("javax.persistence.ColumnResult");
 //    }
-    
-      public Collection<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
         importSnippets.add("javax.persistence.ColumnResult");
         if (classHelper.getFQClassName() != null) {
