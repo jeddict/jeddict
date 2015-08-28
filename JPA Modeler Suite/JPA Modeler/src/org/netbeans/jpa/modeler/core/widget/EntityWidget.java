@@ -123,7 +123,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         }
         set.put("BASIC_PROP", JPAModelerUtil.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity.getNamedQuery()));
         set.put("BASIC_PROP", JPAModelerUtil.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity.getNamedNativeQuery()));
-
+        set.put("BASIC_PROP", JPAModelerUtil.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity.getNamedStoredProcedureQuery()));
+        
     }
 
     private EmbeddedPropertySupport getInheritenceProperty() {

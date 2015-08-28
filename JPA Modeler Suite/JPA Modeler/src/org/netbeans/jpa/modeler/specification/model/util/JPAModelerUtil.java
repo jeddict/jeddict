@@ -76,7 +76,9 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
+import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
+import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;
@@ -93,6 +95,7 @@ import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
+import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
@@ -1494,6 +1497,69 @@ public class JPAModelerUtil implements PModelerUtil {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
+    
+    public static PropertySupport getNamedStoredProcedureQueryProperty(String id, String name, String desc, IModelerScene modelerScene, final List<NamedStoredProcedureQuery> namedStoredProcedureQueriesSpec) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        attributeEntity.setCountDisplay(new String[]{"No NamedStoredProcedureQueries exist", "One NamedStoredProcedureQuery exist", "NamedStoredProcedureQueries exist"});
+
+        List<Column> columns = new ArrayList<Column>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Name", false, String.class));
+        columns.add(new Column("ProcedureName", false, String.class));
+        columns.add(new Column("Parameters", false, Integer.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new NamedStoredProcedureQueryPanel(modelerScene.getModelerFile()));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = namedStoredProcedureQueriesSpec.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<NamedStoredProcedureQuery> joinColumns = namedStoredProcedureQueriesSpec;
+                List<Object[]> data_local = new LinkedList<Object[]>();
+                Iterator<NamedStoredProcedureQuery> itr = joinColumns.iterator();
+                while (itr.hasNext()) {
+                    NamedStoredProcedureQuery namedStoredProcedureQuery = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = namedStoredProcedureQuery;
+                    row[1] = namedStoredProcedureQuery.getName();
+                    row[2] = namedStoredProcedureQuery.getProcedureName();
+                    row[3] = namedStoredProcedureQuery.getParameter().size();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List data) {
+                namedStoredProcedureQueriesSpec.clear();
+                for (Object[] row : (List<Object[]>) data) {
+                    namedStoredProcedureQueriesSpec.add((NamedStoredProcedureQuery) row[0]);
+                }
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
     public static PropertySupport getNamedQueryProperty(String id, String name, String desc, IModelerScene modelerScene, final List<NamedQuery> namedQueriesSpec) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No NamedQueries exist", "One NamedQuery exist", "NamedQueries exist"});
@@ -1567,7 +1633,7 @@ public class JPAModelerUtil implements PModelerUtil {
         columns.add(new Column("Result Class", false, String.class));
         columns.add(new Column("ResultSet Mapping", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedQueryPanel());
+        attributeEntity.setCustomDialog(new NamedNativeQueryPanel());
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
