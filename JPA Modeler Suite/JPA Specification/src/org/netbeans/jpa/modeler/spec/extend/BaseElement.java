@@ -23,6 +23,9 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 
 /**
@@ -30,9 +33,14 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
  * @author Gaurav Gupta
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BaseElement implements IBaseElement {
+public abstract class BaseElement implements IBaseElement {
 
-    @XmlAttribute
+//    @XmlTransient
+     @XmlAttribute @XmlIDREF
+    private EntityMappings rootElement;
+    
+    
+    @XmlAttribute @XmlID
     protected String id;
 
     private ExtensionElements extensionElement;
@@ -63,11 +71,14 @@ public class BaseElement implements IBaseElement {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public void setCustomAttributes(Map<String, String> customAttributes) {
+//    @Override
+//    public void setCustomAttributes(Map<String, String> customAttributes) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+@Override
+    public void setCustomAttributes(Map customAttributes) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
     /**
      * @return the extensionElement
      */
@@ -119,5 +130,22 @@ public class BaseElement implements IBaseElement {
         }
         return true;
     }
+
+//    @Override
+//    public void setCustomAttributes(Map customAttributes) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+
+    @Override
+    public Object getRootElement() {
+        return this.rootElement;
+    }
+
+    @Override
+    public void setRootElement(Object rootElement) {
+        this.rootElement = (EntityMappings)rootElement;
+    }
+
+    
 
 }

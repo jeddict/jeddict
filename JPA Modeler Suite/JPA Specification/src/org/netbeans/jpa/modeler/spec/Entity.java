@@ -166,6 +166,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlAttribute
     protected Boolean cacheable;//REVENG PENDING
 
+
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.Entity");

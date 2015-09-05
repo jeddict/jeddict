@@ -671,6 +671,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         } else {
             throw new InvalidElmentException("Invalid JPA Element");
         }
+        baseElement_In.setRootElement(this);
     }
 
     public void removeEntity(Entity entity_In) {
@@ -779,15 +780,15 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return null;
     }
 
-    @Override
-    public Map<String, String> getCustomAttributes() {
-        return null;
-    }
-
-    @Override
-    public void setCustomAttributes(Map<String, String> customAttributes) {
-
-    }
+//    @Override
+//    public Map<String, String> getCustomAttributes() {
+//        return null;
+//    }
+//
+//    @Override
+//    public void setCustomAttributes(Map<String, String> customAttributes) {
+//          throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
 
     /**
      * @return the jpaDiagram
@@ -1236,5 +1237,15 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         entityMappingsSpec.setJPADiagram(diagram);
 
         return entityMappingsSpec;
+    }
+    
+     public List<SqlResultSetMapping> getAllSqlResultSetMappings() {
+        List<IdentifiableClass> identifiableClasses = new ArrayList<IdentifiableClass>(this.getEntity());
+        identifiableClasses.addAll(this.getMappedSuperclass());
+        List<SqlResultSetMapping> sqlResultSetMappings = new ArrayList<SqlResultSetMapping>();
+        for(IdentifiableClass identifiableClass : identifiableClasses){
+            sqlResultSetMappings.addAll(identifiableClass.getSqlResultSetMapping());
+        }
+        return sqlResultSetMappings;
     }
 }

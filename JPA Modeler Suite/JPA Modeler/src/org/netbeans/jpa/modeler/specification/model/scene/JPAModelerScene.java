@@ -53,6 +53,7 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.PModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
@@ -337,7 +338,7 @@ public class JPAModelerScene extends PModelerScene {
 
         if (!isExist) {
 
-            EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getRootElement();
+            IRootElement rootElement = this.getModelerFile().getRootElement();
             IBaseElement baseElement = null;
             if (baseElementWidget instanceof IFlowElementWidget) {
                 if (baseElementWidget instanceof IFlowNodeWidget) {
@@ -361,7 +362,7 @@ public class JPAModelerScene extends PModelerScene {
             if (baseElement != null) {
                 baseElementWidget.setBaseElementSpec(baseElement);
                 baseElement.setId(baseElementId);
-                entityMappingsSpec.addBaseElement(baseElement);
+                rootElement.addBaseElement(baseElement);
                 ElementConfigFactory elementConfigFactory = this.getModelerFile().getVendorSpecification().getElementConfigFactory();
                 elementConfigFactory.initializeObjectValue(baseElement);
             }

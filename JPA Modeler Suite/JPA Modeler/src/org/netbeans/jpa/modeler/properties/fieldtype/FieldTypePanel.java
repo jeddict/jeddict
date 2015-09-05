@@ -166,11 +166,6 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
 
     }
 
-    private void setDataTypeNonEditable() {
-        dataType_ComboBox.setEditable(false);
-        dataType_Action.setVisible(false);
-
-    }
 
     private void initDataTypeComboBox() {
         String[] dataType = null;

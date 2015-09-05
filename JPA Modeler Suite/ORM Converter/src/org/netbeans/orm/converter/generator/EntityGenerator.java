@@ -21,6 +21,7 @@ import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.JOINED;
@@ -77,7 +78,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
         processNamedEntityGraphs(entity.getNamedEntityGraph());
         
         //StoredProcedures
-        processNamedStoredProcedureQueries(entity.getNamedStoredProcedureQuery());
+        processNamedStoredProcedureQueries((EntityMappings)entity.getRootElement(),entity.getNamedStoredProcedureQuery());
 
         
         

@@ -34,8 +34,10 @@ import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.EmptyType;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityListener;
 import org.netbeans.jpa.modeler.spec.EntityListeners;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.EntityResult;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.FetchType;
@@ -801,7 +803,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
        
       
-            protected void processNamedStoredProcedureQueries(List<NamedStoredProcedureQuery> parsedNamedStoredProcedureQueries) {
+   protected void processNamedStoredProcedureQueries(EntityMappings entityMappings ,List<NamedStoredProcedureQuery> parsedNamedStoredProcedureQueries) {
 
         if (parsedNamedStoredProcedureQueries == null || parsedNamedStoredProcedureQueries.isEmpty()) {
             return;
@@ -816,7 +818,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             namedStoredProcedureQuery.setName(parsedNamedStoredProcedureQuery.getName());
             namedStoredProcedureQuery.setProcedureName(parsedNamedStoredProcedureQuery.getProcedureName());
             namedStoredProcedureQuery.setQueryHints(getQueryHints(parsedNamedStoredProcedureQuery.getHint()));
-            namedStoredProcedureQuery.setResultClasses(parsedNamedStoredProcedureQuery.getResultClass());
+            namedStoredProcedureQuery.setResultClasses(getResultClasses(entityMappings, parsedNamedStoredProcedureQuery.getResultClass()));
             namedStoredProcedureQuery.setResultSetMappings(parsedNamedStoredProcedureQuery.getResultSetMapping());
             namedStoredProcedureQuery.setParameters(getStoredProcedureParameters(parsedNamedStoredProcedureQuery.getParameter()));
 
@@ -824,6 +826,28 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
      
+      protected List<String> getResultClasses(EntityMappings entityMappings , List<String> parsedgetResultClasses) {
+          List<String> newParsedgetResultClasses = new ArrayList<String>();
+          
+        for (String resultClass : parsedgetResultClasses) {
+            if(resultClass.charAt(0) == '{' && resultClass.charAt(resultClass.length()-1) == '}'){
+                String id = resultClass.substring(1, resultClass.length()-1);
+                Entity entity = entityMappings.getEntity(id);
+                if(entityMappings.getPackage()==null || entityMappings.getPackage().isEmpty()){
+                    newParsedgetResultClasses.add(entity.getClazz());
+                } else {
+                    newParsedgetResultClasses.add(entityMappings.getPackage() + "." + entity.getClazz());
+                }
+            } else {
+                newParsedgetResultClasses.add(resultClass);
+            }
+        }
+          
+          
+          
+         return newParsedgetResultClasses; 
+      }
+            
         protected List<StoredProcedureParameterSnippet> getStoredProcedureParameters(List<StoredProcedureParameter> parsedStoredProcedureParameters) {
 
         if (parsedStoredProcedureParameters == null || parsedStoredProcedureParameters.isEmpty()) {

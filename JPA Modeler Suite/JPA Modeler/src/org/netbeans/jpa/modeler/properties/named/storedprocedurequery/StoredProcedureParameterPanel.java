@@ -63,7 +63,12 @@ private final ModelerFile modelerFile;
             Object[] row = ((RowValue) entityValue).getRow();
             StoredProcedureParameter storedProcedureParameter = (StoredProcedureParameter) row[0];
             name_TextField.setText(storedProcedureParameter.getName());
+            
+            if(((DefaultComboBoxModel)type_jComboBox.getModel()).getIndexOf(storedProcedureParameter.getClazz()) == -1 ) {
+                ((DefaultComboBoxModel)type_jComboBox.getModel()).addElement(storedProcedureParameter.getClazz());
+            }
             type_jComboBox.setSelectedItem(storedProcedureParameter.getClazz());
+            
             setParameterMode(storedProcedureParameter.getMode());
         }
     }
@@ -204,6 +209,8 @@ private final ModelerFile modelerFile;
                 type_SearchActionActionPerformed(evt);
             }
         });
+
+        type_jComboBox.setEditable(true);
 
         javax.swing.GroupLayout type_LayeredPane1Layout = new javax.swing.GroupLayout(type_LayeredPane1);
         type_LayeredPane1.setLayout(type_LayeredPane1Layout);
