@@ -97,10 +97,10 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
     private void changeAbstractionIcon(Boolean _abstract){
         System.out.println(EntityWidget.this.getName() + " + ABSTRACT  : " + _abstract);
         if(_abstract){
-            System.out.println("JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH" + ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
+//            System.out.println("JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH" + ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
                     EntityWidget.this.setNodeImage(ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
                 } else {
-            System.out.println("JPAModelerUtil.ENTITY_ICON_PATH" + ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
+//            System.out.println("JPAModelerUtil.ENTITY_ICON_PATH" + ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
                    EntityWidget.this.setNodeImage(ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
 //                 this.getNodeWidgetInfo().getModelerDocument().setImage();
         
@@ -229,6 +229,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
 
 //    @Override
     public void scanPrimaryKeyError() {
+        
         String inheritenceState = this.getInheritenceState();
         if ("SINGLETON".equals(inheritenceState) || "ROOT".equals(inheritenceState)) {
             // Issue Fix #6041 Start

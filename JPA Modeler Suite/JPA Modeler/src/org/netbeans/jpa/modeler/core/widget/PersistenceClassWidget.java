@@ -72,10 +72,15 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     public List<AttributeWidget> getAllAttributeWidgets() {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>(this.getIdAttributeWidgets());
+        
+        return getAllAttributeWidgets(true);
+    }
+    
+    public List<AttributeWidget> getAllAttributeWidgets(boolean includeParentClassAttibute) {
+        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
-        if (classWidget instanceof PersistenceClassWidget) {
-            attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllAttributeWidgets());
+        if (includeParentClassAttibute && classWidget instanceof PersistenceClassWidget) {
+            attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllAttributeWidgets(includeParentClassAttibute));
         }
         attributeWidgets.addAll(idAttributeWidgets);
         if (embeddedIdAttributeWidget != null) {
@@ -344,11 +349,27 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         } else if (attributeWidget instanceof RelationAttributeWidget) {
             if (attributeWidget instanceof OTORelationAttributeWidget) {
                 OTORelationAttributeWidget otoRelationAttributeWidget = (OTORelationAttributeWidget) attributeWidget;
+                OneToOne oneToOneSpec = (OneToOne) ((OTORelationAttributeWidget) attributeWidget).getBaseElementSpec();
                 otoRelationAttributeWidget.setLocked(true);
                 otoRelationAttributeWidget.getOneToOneRelationFlowWidget().remove();
                 otoRelationAttributeWidget.setLocked(false);
                 oneToOneRelationAttributeWidgets.remove((OTORelationAttributeWidget) attributeWidget);
-                attributes.getOneToOne().remove((OneToOne) ((OTORelationAttributeWidget) attributeWidget).getBaseElementSpec());
+                
+                attributes.getOneToOne().remove(oneToOneSpec);
+                
+                if (oneToOneSpec.isPrimaryKey()) {
+                    if (this instanceof EntityWidget) {
+                        ((EntityWidget) this).scanPrimaryKeyError();
+                    }
+                    for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
+                        if (classWidget instanceof EntityWidget) {
+                            ((EntityWidget) classWidget).scanPrimaryKeyError();
+                        }
+                    }
+                    isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  
+                }
+                
+                
             } else if (attributeWidget instanceof OTMRelationAttributeWidget) {
                 OTMRelationAttributeWidget otmRelationAttributeWidget = (OTMRelationAttributeWidget) attributeWidget;
                 otmRelationAttributeWidget.setLocked(true);
@@ -358,11 +379,25 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
                 attributes.getOneToMany().remove((OneToMany) ((OTMRelationAttributeWidget) attributeWidget).getBaseElementSpec());
             } else if (attributeWidget instanceof MTORelationAttributeWidget) {
                 MTORelationAttributeWidget mtoRelationAttributeWidget = (MTORelationAttributeWidget) attributeWidget;
+                ManyToOne manyToOneSpec = (ManyToOne) ((MTORelationAttributeWidget) attributeWidget).getBaseElementSpec();
                 mtoRelationAttributeWidget.setLocked(true);
                 mtoRelationAttributeWidget.getManyToOneRelationFlowWidget().remove();
                 mtoRelationAttributeWidget.setLocked(false);
                 manyToOneRelationAttributeWidgets.remove((MTORelationAttributeWidget) attributeWidget);
-                attributes.getManyToOne().remove((ManyToOne) ((MTORelationAttributeWidget) attributeWidget).getBaseElementSpec());
+                attributes.getManyToOne().remove(manyToOneSpec);
+                
+                
+                 if (manyToOneSpec.isPrimaryKey()) {
+                    if (this instanceof EntityWidget) {
+                        ((EntityWidget) this).scanPrimaryKeyError();
+                    }
+                    for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
+                        if (classWidget instanceof EntityWidget) {
+                            ((EntityWidget) classWidget).scanPrimaryKeyError();
+                        }
+                    }
+                    isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  
+                }
             } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
                 MTMRelationAttributeWidget mtmRelationAttributeWidget = (MTMRelationAttributeWidget) attributeWidget;
                 mtmRelationAttributeWidget.setLocked(true);
@@ -541,9 +576,6 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     public OTORelationAttributeWidget addNewOneToOneRelationAttribute(String name, OneToOne oneToOne) {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
-//        if (javaClass.getAttributes() == null) {
-//            javaClass.setAttributes(new Attributes());
-//        }
         if (oneToOne == null) {
             oneToOne = new OneToOne();
             oneToOne.setId(NBModelerUtil.getAutoGeneratedStringId());
@@ -556,6 +588,17 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         oneToOneRelationAttributeWidgets.add(attributeWidget);
         attributeWidget.setBaseElementSpec(oneToOne);
         sortAttributes();
+//        if(oneToOne.isPrimaryKey()){
+//        if (this instanceof EntityWidget) {
+//            ((EntityWidget) this).scanPrimaryKeyError();
+//        }
+//        for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
+//            if (classWidget instanceof EntityWidget) {
+//                ((EntityWidget) classWidget).scanPrimaryKeyError();
+//            }
+//        }
+////        isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  //TODO : relation flow widget not added in this state NPE
+//        }
         return attributeWidget;
     }
 
@@ -600,6 +643,17 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         getManyToOneRelationAttributeWidgets().add(attributeWidget);
         attributeWidget.setBaseElementSpec(manyToOne);
         sortAttributes();
+//        if(manyToOne.isPrimaryKey()){
+//        if (this instanceof EntityWidget) {
+//            ((EntityWidget) this).scanPrimaryKeyError();
+//        }
+//        for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
+//            if (classWidget instanceof EntityWidget) {
+//                ((EntityWidget) classWidget).scanPrimaryKeyError();
+//            }
+//        }
+////        isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  //TODO : relation flow widget not added in this state NPE
+//        }
         return attributeWidget;
     }
 

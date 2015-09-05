@@ -23,6 +23,7 @@ import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextActionType;
@@ -105,7 +106,7 @@ public class NodeContextModel {
 //        setFocusModel.setMouseListener(PinContextModel.getFocusWidgetAction(nodeWidget));
         ContextPaletteButtonModel generalizationConnectionModel = new DefaultPaletteButtonModel();
         generalizationConnectionModel.setId("GENERALIZATION");
-        generalizationConnectionModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/generalization.png"));
+        generalizationConnectionModel.setImage(GENERALIZATION);
         generalizationConnectionModel.setTooltip("Generalization (Drag from Concrete to Abstract)");
         generalizationConnectionModel.setPaletteModel(contextPaletteModel);
         generalizationConnectionModel.setContextActionType(ContextActionType.CONNECT);

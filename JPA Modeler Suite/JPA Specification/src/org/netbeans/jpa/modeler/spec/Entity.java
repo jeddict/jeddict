@@ -141,7 +141,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//REVENG PENDING
     @XmlElement(name = "primary-key-foreign-key")
     protected ForeignKey primaryKeyForeignKey;//REVENG PENDING JPA 2.1
-    @XmlElement(name = "id-class")
+    
     protected Inheritance inheritance;
     @XmlElement(name = "discriminator-value")
     protected String discriminatorValue;

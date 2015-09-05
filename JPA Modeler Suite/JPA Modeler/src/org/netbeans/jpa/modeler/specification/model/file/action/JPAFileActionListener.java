@@ -16,9 +16,9 @@
 package org.netbeans.jpa.modeler.specification.model.file.action;
 
 import org.netbeans.jpa.modeler.specification.JPASpecification;
+import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
 import org.netbeans.jpa.modeler.specification.model.JPADefaultDiagramModel;
 import org.netbeans.jpa.modeler.specification.model.engine.JPADiagramEngine;
-import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
@@ -72,6 +72,8 @@ public class JPAFileActionListener extends ModelerFileActionListener {
                 }
             });
         }
+        diagramModel.setExportManager(new ExportManagerImpl());
+        
 
         diagramModel.setModelerScene(new JPAModelerScene());
 

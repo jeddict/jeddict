@@ -123,6 +123,7 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
+import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;
@@ -197,6 +198,7 @@ public class JPAModelerUtil implements PModelerUtil {
     public final static String BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/boto-attribute.png";
     public final static String PK_UOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-uoto-attribute.png";
     public final static String PK_BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-boto-attribute.png";
+    public final static String GENERALIZATION_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/generalization.png";
 
     public final static Image ID_ATTRIBUTE = ImageUtilities.loadImage(ID_ATTRIBUTE_ICON_PATH);
     public final static Image BASIC_ATTRIBUTE = ImageUtilities.loadImage(BASIC_ATTRIBUTE_ICON_PATH);
@@ -220,7 +222,24 @@ public class JPAModelerUtil implements PModelerUtil {
     public final static Image BOTO_ATTRIBUTE = ImageUtilities.loadImage(BOTO_ATTRIBUTE_ICON_PATH);
     public final static Image PK_UOTO_ATTRIBUTE = ImageUtilities.loadImage(PK_UOTO_ATTRIBUTE_ICON_PATH);
     public final static Image PK_BOTO_ATTRIBUTE = ImageUtilities.loadImage(PK_BOTO_ATTRIBUTE_ICON_PATH);
+    public final static Image GENERALIZATION = ImageUtilities.loadImage(GENERALIZATION_ICON_PATH);
+    
+    
+    public final static Image OTOR_SOURCE_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one.gif");
+    public final static Image OTOR_TARGET_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png");
 
+    public final static Image OTMR_SOURCE_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one.gif");
+    public final static Image OTMR_TARGET_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-many-arrow.png");
+
+
+       public final static Image MTOR_SOURCE_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-one.gif");
+    public final static Image MTOR_TARGET_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png");
+
+
+    public final static Image MTMR_SOURCE_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many.gif");
+    public final static Image MTMR_TARGET_ANCHOR_SHAPE = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png");
+
+    
     public final static JAXBContext MODELER_CONTEXT;
     public final static Unmarshaller MODELER_UNMARSHALLER;
     public final static Marshaller MODELER_MARSHALLER;

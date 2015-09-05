@@ -1043,13 +1043,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
                 if (parsedSequenceGenerator != null) {
                     SequenceGeneratorSnippet sequenceGenerator = new SequenceGeneratorSnippet();
-                    sequenceGenerator.setAllocationSize(
-                            parsedSequenceGenerator.getAllocationSize());
-                    sequenceGenerator.setInitialValue(
-                            parsedSequenceGenerator.getInitialValue());
+                    if(parsedSequenceGenerator.getAllocationSize()!=null){
+                        sequenceGenerator.setAllocationSize(parsedSequenceGenerator.getAllocationSize());
+                    }
+                    if(parsedSequenceGenerator.getInitialValue()!=null){
+                        sequenceGenerator.setInitialValue(parsedSequenceGenerator.getInitialValue());
+                    }
                     sequenceGenerator.setName(parsedSequenceGenerator.getName());
-                    sequenceGenerator.setSequenceName(
-                            parsedSequenceGenerator.getSequenceName());
+                    sequenceGenerator.setSequenceName(parsedSequenceGenerator.getSequenceName());
                     sequenceGenerator.setCatalog(parsedSequenceGenerator.getCatalog());
                     sequenceGenerator.setSchema(parsedSequenceGenerator.getSchema());
                     variableDef.setSequenceGenerator(sequenceGenerator);

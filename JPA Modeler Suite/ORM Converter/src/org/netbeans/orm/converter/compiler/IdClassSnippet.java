@@ -50,7 +50,9 @@ public class IdClassSnippet implements Snippet {
         List<String> importSnippets = new ArrayList<String>();
 
         importSnippets.add("javax.persistence.IdClass");
+        if (classHelper.getFQClassName() != null) {
         importSnippets.add(classHelper.getFQClassName());
+        }
 
         return importSnippets;
     }

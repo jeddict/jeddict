@@ -36,6 +36,7 @@ import javax.swing.SwingUtilities;
 import org.netbeans.api.db.explorer.ConnectionManager;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.db.explorer.support.DatabaseExplorerUIs;
+import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.jpa.modeler.spec.ParameterMode;
 import org.netbeans.jpa.modeler.spec.QueryHint;
@@ -64,6 +65,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
     private NAttributeEntity queryHintEntity;
     private NAttributeEntity parametersEntity;
+    private NAttributeEntity resultSetMappingsEntity;
     private final ModelerFile modelerFile;
     private final EntityMappings entityMappings;
 
@@ -79,8 +81,8 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     @Override
     public void init() {
         jTabbedPane.setSelectedIndex(0);
-        initResultSetMappingsModel();
         initResultClassesModel();
+        resultSetMappingTypeActionPerformed(null);
     }
 
     private DatabaseConnection getConnection() {
@@ -100,7 +102,6 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         }
         namedStoredProcedureQuery = null;
         name_TextField.setText("");
-        dbCon_jComboBox.setSelectedIndex(0);
 
         
         initQueryHintCustomNAttributeEditor();
@@ -109,6 +110,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         initParametersCustomNAttributeEditor();
         parametersEntity = getStoredProcedureParameter();
         parametersEditor.setAttributeEntity(parametersEntity);
+        initResultSetMappingsNAttributeEditor();
+        resultSetMappingsEntity = getResultSetMappings();
+        resultSetMappingsEditor.setAttributeEntity(resultSetMappingsEntity);
     }
 
     @Override
@@ -132,6 +136,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         initParametersCustomNAttributeEditor();
         parametersEntity = getStoredProcedureParameter();
         parametersEditor.setAttributeEntity(parametersEntity);
+         initResultSetMappingsNAttributeEditor();
+        resultSetMappingsEntity = getResultSetMappings();
+        resultSetMappingsEditor.setAttributeEntity(resultSetMappingsEntity);
         
         loadResultClassesList();
         
@@ -154,18 +161,18 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         setResultClassSelectedValues(resultClasses_jList, resultClasses_jListElement.toArray());
     }
 
-    private void initResultSetMappingsModel() {
-        EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-        DefaultListModel<SqlResultSetMapping> model = new DefaultListModel<SqlResultSetMapping>();
-//        model.copyInto(entityMappings.getAllSqlResultSetMappings().toArray());
-        for (SqlResultSetMapping sqlResultSetMapping : entityMappings.getAllSqlResultSetMappings()) {
-            model.addElement(sqlResultSetMapping);
-        }
-        resultClasses_jList.setSelectionModel(getMultiSelectionModel());
-        resultSetMappings_jList.setModel(model);
-        resultSetMappings_jList.setCellRenderer(new ResultSetMappingsRenderer());
-
-    }
+//    private void initResultSetMappingsModel() {
+//        EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
+//        DefaultListModel<SqlResultSetMapping> model = new DefaultListModel<SqlResultSetMapping>();
+////        model.copyInto(entityMappings.getAllSqlResultSetMappings().toArray());
+//        for (SqlResultSetMapping sqlResultSetMapping : entityMappings.getAllSqlResultSetMappings()) {
+//            model.addElement(sqlResultSetMapping);
+//        }
+//        resultSetMappings_jList.setSelectionModel(getMultiSelectionModel());
+//        resultSetMappings_jList.setModel(model);
+//        resultSetMappings_jList.setCellRenderer(new ResultSetMappingsRenderer());
+//
+//    }
 
     private void initResultClassesModel() {
         EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
@@ -181,16 +188,20 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     private void setResultClassSelectedValues(JList list, Object... values) {
         list.clearSelection();
         for (Object value : values) {
-            int index = getElementIndexinList(list.getModel(), value);
+            int index = getElementIndexInList(list.getModel(), value);
             if (index >= 0) {
                 list.addSelectionInterval(index, index);
             } else if (value instanceof String) {  //if external lib class not exists then add
-                ((DefaultListModel) list.getModel()).addElement(value);
-                index = getElementIndexinList(list.getModel(), value);
-                list.addSelectionInterval(index, index);
+                addAndSelectItemInList(list,value);
             }
         }
         list.ensureIndexIsVisible(list.getSelectedIndex());
+    }
+    
+    private void addAndSelectItemInList(JList list,Object value){
+        ((DefaultListModel) list.getModel()).addElement(value);
+               int index = getElementIndexInList(list.getModel(), value);
+                list.addSelectionInterval(index, index);
     }
 
 
@@ -231,7 +242,28 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
        
     }
+ 
+ 
 
+    private void initResultSetMappingsNAttributeEditor() {
+        resultSetMappings_jLayeredPane.removeAll();
+        resultSetMappingsEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
+        javax.swing.GroupLayout parameters_LayeredPaneLayout = new javax.swing.GroupLayout(resultSetMappings_jLayeredPane);
+        resultSetMappings_jLayeredPane.setLayout(parameters_LayeredPaneLayout);
+         parameters_LayeredPaneLayout.setHorizontalGroup(
+            parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(resultSetMappingsEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+        );
+        parameters_LayeredPaneLayout.setVerticalGroup(
+            parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(parameters_LayeredPaneLayout.createSequentialGroup()
+                .addComponent(resultSetMappingsEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        resultSetMappings_jLayeredPane.setLayer(resultSetMappingsEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+       
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -241,10 +273,6 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setting_PopupMenu = new javax.swing.JPopupMenu();
-        createItem_MenuItem = new javax.swing.JMenuItem();
-        editItem_MenuItem = new javax.swing.JMenuItem();
-        deleteItem_MenuItem = new javax.swing.JMenuItem();
         root_jLayeredPane = new javax.swing.JLayeredPane();
         jTabbedPane = new javax.swing.JTabbedPane();
         base_jLayeredPane = new javax.swing.JLayeredPane();
@@ -260,46 +288,21 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         parameters_LayeredPane = new javax.swing.JLayeredPane();
         parametersEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
         result_jLayeredPane = new javax.swing.JLayeredPane();
-        resultClasses_LayeredPane = new javax.swing.JLayeredPane();
+        resultSetMappingType_jLayeredPane = new javax.swing.JLayeredPane();
+        resultSetMappingType_jLabel = new javax.swing.JLabel();
+        resultSetMappingType_jComboBox = new javax.swing.JComboBox();
+        resultSet_jLayeredPane = new javax.swing.JLayeredPane();
+        resultClasses_jLayeredPane = new javax.swing.JLayeredPane();
         resultClasses_jScrollPane = new javax.swing.JScrollPane();
         resultClasses_jList = new javax.swing.JList();
         resultClasses_Action = new javax.swing.JButton();
-        resultSetMappings_LayeredPane = new javax.swing.JLayeredPane();
-        resultSetMappings_jScrollPane = new javax.swing.JScrollPane();
-        resultSetMappings_jList = new javax.swing.JList();
-        dataType_Action = new javax.swing.JButton();
+        resultSetMappings_jLayeredPane = new javax.swing.JLayeredPane();
+        resultSetMappingsEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
         queryHint_LayeredPane = new javax.swing.JLayeredPane();
         queryHintEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
         action_jLayeredPane = new javax.swing.JLayeredPane();
         Save = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
-
-        org.openide.awt.Mnemonics.setLocalizedText(createItem_MenuItem, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.createItem_MenuItem.text")); // NOI18N
-        createItem_MenuItem.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.createItem_MenuItem.toolTipText")); // NOI18N
-        createItem_MenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createItem_MenuItemActionPerformed(evt);
-            }
-        });
-        setting_PopupMenu.add(createItem_MenuItem);
-
-        org.openide.awt.Mnemonics.setLocalizedText(editItem_MenuItem, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.editItem_MenuItem.text")); // NOI18N
-        editItem_MenuItem.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.editItem_MenuItem.toolTipText")); // NOI18N
-        editItem_MenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editItem_MenuItemActionPerformed(evt);
-            }
-        });
-        setting_PopupMenu.add(editItem_MenuItem);
-
-        org.openide.awt.Mnemonics.setLocalizedText(deleteItem_MenuItem, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.deleteItem_MenuItem.text")); // NOI18N
-        deleteItem_MenuItem.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.deleteItem_MenuItem.toolTipText")); // NOI18N
-        deleteItem_MenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteItem_MenuItemActionPerformed(evt);
-            }
-        });
-        setting_PopupMenu.add(deleteItem_MenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -409,7 +412,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         parameters_LayeredPaneLayout.setVerticalGroup(
             parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(parameters_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(parametersEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                .addComponent(parametersEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                 .addContainerGap())
         );
         parameters_LayeredPane.setLayer(parametersEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -438,7 +441,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(procedureName_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                 .addContainerGap())
         );
         base_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -448,8 +451,47 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
         jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.base_jLayeredPane.TabConstraints.tabTitle"), base_jLayeredPane); // NOI18N
 
-        resultClasses_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.resultClasses_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
-        resultClasses_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
+        result_jLayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(resultSetMappingType_jLabel, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.resultSetMappingType_jLabel.text")); // NOI18N
+
+        resultSetMappingType_jComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Result Classes", "ResultSet Mappings" }));
+        resultSetMappingType_jComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resultSetMappingTypeActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout resultSetMappingType_jLayeredPaneLayout = new javax.swing.GroupLayout(resultSetMappingType_jLayeredPane);
+        resultSetMappingType_jLayeredPane.setLayout(resultSetMappingType_jLayeredPaneLayout);
+        resultSetMappingType_jLayeredPaneLayout.setHorizontalGroup(
+            resultSetMappingType_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultSetMappingType_jLayeredPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(resultSetMappingType_jLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resultSetMappingType_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        resultSetMappingType_jLayeredPaneLayout.setVerticalGroup(
+            resultSetMappingType_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, resultSetMappingType_jLayeredPaneLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(resultSetMappingType_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(resultSetMappingType_jLabel)
+                    .addComponent(resultSetMappingType_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        resultSetMappingType_jLayeredPane.setLayer(resultSetMappingType_jLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        resultSetMappingType_jLayeredPane.setLayer(resultSetMappingType_jComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        result_jLayeredPane.add(resultSetMappingType_jLayeredPane, java.awt.BorderLayout.NORTH);
+
+        resultSet_jLayeredPane.setPreferredSize(new java.awt.Dimension(1055, 400));
+        resultSet_jLayeredPane.setLayout(new java.awt.FlowLayout());
+
+        resultClasses_jLayeredPane.setFocusable(false);
+        resultClasses_jLayeredPane.setPreferredSize(new java.awt.Dimension(510, 400));
 
         resultClasses_jScrollPane.setViewportView(resultClasses_jList);
 
@@ -460,80 +502,55 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             }
         });
 
-        javax.swing.GroupLayout resultClasses_LayeredPaneLayout = new javax.swing.GroupLayout(resultClasses_LayeredPane);
-        resultClasses_LayeredPane.setLayout(resultClasses_LayeredPaneLayout);
-        resultClasses_LayeredPaneLayout.setHorizontalGroup(
-            resultClasses_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(resultClasses_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(resultClasses_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
+        javax.swing.GroupLayout resultClasses_jLayeredPaneLayout = new javax.swing.GroupLayout(resultClasses_jLayeredPane);
+        resultClasses_jLayeredPane.setLayout(resultClasses_jLayeredPaneLayout);
+        resultClasses_jLayeredPaneLayout.setHorizontalGroup(
+            resultClasses_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultClasses_jLayeredPaneLayout.createSequentialGroup()
+                .addComponent(resultClasses_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(resultClasses_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(resultClasses_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        resultClasses_LayeredPaneLayout.setVerticalGroup(
-            resultClasses_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(resultClasses_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-            .addGroup(resultClasses_LayeredPaneLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+        resultClasses_jLayeredPaneLayout.setVerticalGroup(
+            resultClasses_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultClasses_jLayeredPaneLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(resultClasses_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(resultClasses_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
-        resultClasses_LayeredPane.setLayer(resultClasses_jScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        resultClasses_LayeredPane.setLayer(resultClasses_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        resultClasses_jLayeredPane.setLayer(resultClasses_jScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        resultClasses_jLayeredPane.setLayer(resultClasses_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        resultSetMappings_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.resultSetMappings_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
-        resultSetMappings_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
+        resultSet_jLayeredPane.add(resultClasses_jLayeredPane);
 
-        resultSetMappings_jList.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                resultSetMappings_jListMouseClicked(evt);
-            }
-        });
-        resultSetMappings_jScrollPane.setViewportView(resultSetMappings_jList);
+        resultSetMappings_jLayeredPane.setPreferredSize(new java.awt.Dimension(530, 400));
 
-        dataType_Action.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jbpmn/modeler/widget/properties/operation/settings.png"))); // NOI18N
-        dataType_Action.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                dataType_ActionMousePressed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout resultSetMappings_LayeredPaneLayout = new javax.swing.GroupLayout(resultSetMappings_LayeredPane);
-        resultSetMappings_LayeredPane.setLayout(resultSetMappings_LayeredPaneLayout);
-        resultSetMappings_LayeredPaneLayout.setHorizontalGroup(
-            resultSetMappings_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(resultSetMappings_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(resultSetMappings_jScrollPane)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+        javax.swing.GroupLayout resultSetMappings_jLayeredPaneLayout = new javax.swing.GroupLayout(resultSetMappings_jLayeredPane);
+        resultSetMappings_jLayeredPane.setLayout(resultSetMappings_jLayeredPaneLayout);
+        resultSetMappings_jLayeredPaneLayout.setHorizontalGroup(
+            resultSetMappings_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 530, Short.MAX_VALUE)
+            .addGroup(resultSetMappings_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, resultSetMappings_jLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(resultSetMappingsEditor, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
-        resultSetMappings_LayeredPaneLayout.setVerticalGroup(
-            resultSetMappings_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(resultSetMappings_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-            .addGroup(resultSetMappings_LayeredPaneLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(dataType_Action))
+        resultSetMappings_jLayeredPaneLayout.setVerticalGroup(
+            resultSetMappings_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(resultSetMappings_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, resultSetMappings_jLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(resultSetMappingsEditor, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
-        resultSetMappings_LayeredPane.setLayer(resultSetMappings_jScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        resultSetMappings_LayeredPane.setLayer(dataType_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        resultSetMappings_jLayeredPane.setLayer(resultSetMappingsEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        javax.swing.GroupLayout result_jLayeredPaneLayout = new javax.swing.GroupLayout(result_jLayeredPane);
-        result_jLayeredPane.setLayout(result_jLayeredPaneLayout);
-        result_jLayeredPaneLayout.setHorizontalGroup(
-            result_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(resultClasses_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
-            .addComponent(resultSetMappings_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
-        );
-        result_jLayeredPaneLayout.setVerticalGroup(
-            result_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(result_jLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(resultClasses_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(resultSetMappings_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        result_jLayeredPane.setLayer(resultClasses_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        result_jLayeredPane.setLayer(resultSetMappings_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        resultSet_jLayeredPane.add(resultSetMappings_jLayeredPane);
+
+        result_jLayeredPane.add(resultSet_jLayeredPane, java.awt.BorderLayout.CENTER);
 
         jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.result_jLayeredPane.TabConstraints.tabTitle"), result_jLayeredPane); // NOI18N
 
@@ -541,12 +558,12 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
         queryHint_LayeredPaneLayout.setHorizontalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+            .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 1060, Short.MAX_VALUE)
         );
         queryHint_LayeredPaneLayout.setVerticalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+                .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                 .addContainerGap())
         );
         queryHint_LayeredPane.setLayer(queryHintEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -660,6 +677,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         }
 
         
+                resultSetMappingsEntity.getTableDataListener().setData(resultSetMappingsEditor.getSavedModel());
         queryHintEntity.getTableDataListener().setData(queryHintEditor.getSavedModel());
         saveActionPerformed(evt);
     }//GEN-LAST:event_SaveActionPerformed
@@ -799,83 +817,89 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
     private void resultClasses_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultClasses_ActionActionPerformed
         String dataType = NBModelerUtil.browseClass(modelerFile);
-        if (((DefaultListModel) resultClasses_jList.getModel()).indexOf(dataType) == -1) {
-            ((DefaultListModel) resultClasses_jList.getModel()).addElement(dataType);
+        if (getElementIndexInList(resultClasses_jList.getModel(), dataType)== -1) {
+            addAndSelectItemInList(resultClasses_jList,dataType);
         }
-//        resultClasses_jList.ad.setSelectedItem(dataType);
     }//GEN-LAST:event_resultClasses_ActionActionPerformed
 
-    private void dataType_ActionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dataType_ActionMousePressed
-//        actionPanelType = "dataType";
-        setting_PopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-    }//GEN-LAST:event_dataType_ActionMousePressed
-
-    private void createItem_MenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createItem_MenuItemActionPerformed
-//        EntityComponent itemComponent = getActionPanel();// actionHandler.getItemPanel();
-//
-//        itemComponent.init();
-//        itemComponent.createEntity(ComboBoxValue.class);
-//        itemComponent.setVisible(true);
-//
-//        if (itemComponent.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
-//            ComboBoxValue comboBoxValue = (ComboBoxValue) itemComponent.getEntity();
-//
-////            if ("dataType".equals(actionPanelType)) {
-//               ((DefaultListModel)resultSetMappings_jList.getModel()).addElement(comboBoxValue);
-////                dataType_ComboBox.setSelectedItem(comboBoxValue);
-////                definition.addItemDefinition((TItemDefinition) comboBoxValue.getValue());
-////            }
-//
-//        }
-    }//GEN-LAST:event_createItem_MenuItemActionPerformed
-
-//     private EntityComponent getActionPanel() {
-//            return new ItemDefinitionPanel(modelerFile);
-//    }
+    private void resultSetMappingTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultSetMappingTypeActionPerformed
+        if("Result Classes".equals(resultSetMappingType_jComboBox.getSelectedItem())){
+            resultClasses_jLayeredPane.setVisible(true);
+            resultSetMappings_jLayeredPane.setVisible(false);
+//            resultClasses_jLayeredPane.getSize()
+//        this.setSize(575, 385);
+        } else {
+            resultClasses_jLayeredPane.setVisible(false);
+            resultSetMappings_jLayeredPane.setVisible(true);
+        }
+    }//GEN-LAST:event_resultSetMappingTypeActionPerformed
     
     
+           
+    private NAttributeEntity getResultSetMappings() {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("ResultSetMappings", "ResultSet Mappings", "");
+        attributeEntity.setCountDisplay(new String[]{"No ResultSetMappings", "One ResultSetMapping", " ResultSetMappings"});
+        List<Column> columns = new ArrayList<Column>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Name", false, String.class));
+        columns.add(new Column("Value", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerFile));
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data = new LinkedList<Object[]>();
+            int count;
+
+            @Override
+            public void initCount() {
+//                entityMappings
+                
+                if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getHint() != null) {
+                    count = namedStoredProcedureQuery.getHint().size();
+                } else {
+                    count = 0;
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<Object[]>();
+                if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getHint() != null) {
+                    for (QueryHint queryHint : new CopyOnWriteArrayList<QueryHint>(namedStoredProcedureQuery.getHint())) {
+                        Object[] row = new Object[5];
+                        row[0] = queryHint;
+                        row[1] = queryHint.getName();
+                        row[2] = queryHint.getValue();
+                        data_local.add(row);
+                    }
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getHint() != null) {
+                    namedStoredProcedureQuery.getHint().clear();
+                }
+                for (Object[] row : data) {
+                    QueryHint queryHint = (QueryHint) row[0];
+                    namedStoredProcedureQuery.getHint().add(queryHint);
+                }
+                initData();
+            }
+        });
+        return attributeEntity;
+    }
     
-    private void editItem_MenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editItem_MenuItemActionPerformed
-//        ComboBoxValue comboBoxValue;
-//        try {
-//            comboBoxValue = (ComboBoxValue) resultSetMappings_jList.getSelectedItem();();// = (ComboBoxValue) interface_ComboBox.getSelectedItem();
-//
-//            if (comboBoxValue == null) {
-//                JOptionPane.showMessageDialog(null, "No element selected !", "", JOptionPane.INFORMATION_MESSAGE);
-//                return;
-//            }
-//            EntityComponent itemComponent = getActionPanel();
-//            itemComponent.init();
-//            itemComponent.updateEntity(comboBoxValue);
-//            itemComponent.setVisible(true);
-//        } catch (IllegalStateException ex) {
-//            System.out.println("EX : " + ex.toString());
-//        }
-    }//GEN-LAST:event_editItem_MenuItemActionPerformed
-
-    private void deleteItem_MenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteItem_MenuItemActionPerformed
-//        ComboBoxValue comboBoxValue;
-//        try {
-//            comboBoxValue = getSelectedActionItem();// = (ComboBoxValue) interface_ComboBox.getSelectedItem();
-//
-//            if (comboBoxValue == null) {
-//                JOptionPane.showMessageDialog(null, "No element selected !", "", JOptionPane.INFORMATION_MESSAGE);
-//                return;
-//            }
-//                int option = JOptionPane.showConfirmDialog(null, "Are you sue you want to delete this Data Type ?", "Delete Data Type", JOptionPane.OK_CANCEL_OPTION);
-//                if (option == JOptionPane.OK_OPTION) {
-//                    definition.removeRootElement((TItemDefinition) comboBoxValue.getValue());
-//                    dataType_ComboBox.removeItem(comboBoxValue);
-//                }
-//        } catch (IllegalStateException ex) {
-//            System.out.println("EX : " + ex.toString());
-//        }
-    }//GEN-LAST:event_deleteItem_MenuItemActionPerformed
-
-    private void resultSetMappings_jListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultSetMappings_jListMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_resultSetMappings_jListMouseClicked
-
     private NAttributeEntity getQueryHint() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
@@ -1007,13 +1031,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JLayeredPane base_jLayeredPane;
     private javax.swing.JButton cancel_Button;
-    private javax.swing.JMenuItem createItem_MenuItem;
-    private javax.swing.JButton dataType_Action;
     private javax.swing.JLabel dbCon_Label;
     private javax.swing.JLayeredPane dbCon_LayeredPane;
     private javax.swing.JComboBox dbCon_jComboBox;
-    private javax.swing.JMenuItem deleteItem_MenuItem;
-    private javax.swing.JMenuItem editItem_MenuItem;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JLabel name_Label;
     private javax.swing.JLayeredPane name_LayeredPane;
@@ -1026,15 +1046,17 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     private org.netbeans.modeler.properties.nentity.NEntityEditor queryHintEditor;
     private javax.swing.JLayeredPane queryHint_LayeredPane;
     private javax.swing.JButton resultClasses_Action;
-    private javax.swing.JLayeredPane resultClasses_LayeredPane;
+    private javax.swing.JLayeredPane resultClasses_jLayeredPane;
     private javax.swing.JList resultClasses_jList;
     private javax.swing.JScrollPane resultClasses_jScrollPane;
-    private javax.swing.JLayeredPane resultSetMappings_LayeredPane;
-    private javax.swing.JList resultSetMappings_jList;
-    private javax.swing.JScrollPane resultSetMappings_jScrollPane;
+    private javax.swing.JComboBox resultSetMappingType_jComboBox;
+    private javax.swing.JLabel resultSetMappingType_jLabel;
+    private javax.swing.JLayeredPane resultSetMappingType_jLayeredPane;
+    private org.netbeans.modeler.properties.nentity.NEntityEditor resultSetMappingsEditor;
+    private javax.swing.JLayeredPane resultSetMappings_jLayeredPane;
+    private javax.swing.JLayeredPane resultSet_jLayeredPane;
     private javax.swing.JLayeredPane result_jLayeredPane;
     private javax.swing.JLayeredPane root_jLayeredPane;
-    private javax.swing.JPopupMenu setting_PopupMenu;
     // End of variables declaration//GEN-END:variables
 
 
@@ -1078,26 +1100,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     }
 } 
  
-private class ResultSetMappingsRenderer extends JLabel implements ListCellRenderer<SqlResultSetMapping> {
-    public ResultSetMappingsRenderer() {
-        setOpaque(true);
-    }
-    @Override
-    public Component getListCellRendererComponent(JList<? extends SqlResultSetMapping> list, SqlResultSetMapping sqlResultSetMapping, int index,
-            boolean isSelected, boolean cellHasFocus) {
-        String _class = sqlResultSetMapping.getName();
-        setText(_class);
-        if (isSelected) {
-            setBackground(list.getSelectionBackground());
-            setForeground(list.getSelectionForeground());
-        } else {
-            setBackground(list.getBackground());
-            setForeground(list.getForeground());
-        }
-        return this;
-    }
-}  
-   private int getElementIndexinList(ListModel model, Object value) {
+   private int getElementIndexInList(ListModel model, Object value) {
     if (value == null) return -1;
     if (model instanceof DefaultListModel) {
         return ((DefaultListModel) model).indexOf(value);

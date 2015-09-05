@@ -15,12 +15,11 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
-import org.netbeans.api.visual.anchor.AnchorShape;
-import org.netbeans.api.visual.anchor.AnchorShapeFactory;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTOR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTOR_TARGET_ANCHOR_SHAPE;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
-import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -28,8 +27,8 @@ import org.openide.util.ImageUtilities;
  */
 public abstract class MTORelationFlowWidget extends HierarchicalRelationFlowWidget {
 
-    private static final AnchorShape SOURCE_ANCHOR_SHAPE = AnchorShapeFactory.createImageAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-one.gif"), true);
-    private static final AnchorShape TARGET_ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png"), true);
+    private static final IconAnchorShape SOURCE_ANCHOR_SHAPE = new IconAnchorShape(MTOR_SOURCE_ANCHOR_SHAPE, true);
+    private static final IconAnchorShape TARGET_ANCHOR_SHAPE = new IconAnchorShape(MTOR_TARGET_ANCHOR_SHAPE, true);
 
     public MTORelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
