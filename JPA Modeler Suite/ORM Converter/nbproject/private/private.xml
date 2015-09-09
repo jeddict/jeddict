@@ -5,28 +5,19 @@
             <url>src/org/netbeans/orm/converter/generator/ClassGenerator.java</url>
             <bookmark id="1">
                 <name/>
-                <line>291</line>
+                <line>292</line>
                 <key/>
             </bookmark>
             <bookmark id="2">
                 <name/>
-                <line>688</line>
+                <line>689</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/ClassDefSnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/IdClassSnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/generator/EntityGenerator.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/ConstructorResultSnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/EntityListenerSnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/EntityResultSnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/NamedNativeQuerySnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/NamedSubgraphSnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/compiler/StoredProcedureParameterSnippet.java</file>
-            <file>file:/D:/netbeans-example_jpa/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/generator/ClassGenerator.java</file>
+            <file>file:/G:/JPA%20Modeler%2014%20Aug/JPA%20Modeler%20Suite/ORM%20Converter/src/org/netbeans/orm/converter/generator/EntityGenerator.java</file>
         </group>
     </open-files>
 </project-private>

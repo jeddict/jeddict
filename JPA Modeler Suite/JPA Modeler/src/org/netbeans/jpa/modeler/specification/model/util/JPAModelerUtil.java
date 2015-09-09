@@ -1517,7 +1517,8 @@ public class JPAModelerUtil implements PModelerUtil {
     }
 
     
-    public static PropertySupport getNamedStoredProcedureQueryProperty(String id, String name, String desc, IModelerScene modelerScene, final List<NamedStoredProcedureQuery> namedStoredProcedureQueriesSpec) {
+    public static PropertySupport getNamedStoredProcedureQueryProperty(String id, String name, String desc, IModelerScene modelerScene,Entity entity) {
+        final List<NamedStoredProcedureQuery> namedStoredProcedureQueriesSpec = entity.getNamedStoredProcedureQuery();
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No NamedStoredProcedureQueries exist", "One NamedStoredProcedureQuery exist", "NamedStoredProcedureQueries exist"});
 
@@ -1527,7 +1528,7 @@ public class JPAModelerUtil implements PModelerUtil {
         columns.add(new Column("ProcedureName", false, String.class));
         columns.add(new Column("Parameters", false, Integer.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedStoredProcedureQueryPanel(modelerScene.getModelerFile()));
+        attributeEntity.setCustomDialog(new NamedStoredProcedureQueryPanel(modelerScene.getModelerFile(),entity));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;

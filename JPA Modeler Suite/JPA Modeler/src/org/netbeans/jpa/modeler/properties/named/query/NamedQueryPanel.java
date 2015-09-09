@@ -30,6 +30,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
+import org.netbeans.modeler.properties.nentity.NEntityEditor;
 
 public class NamedQueryPanel extends EntityComponent<NamedQuery> {
 
@@ -102,21 +103,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
     }
 
     void initCustomNAttributeEditor() {
-        queryHint_LayeredPane.removeAll();
-        customNAttributeClientEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
-        javax.swing.GroupLayout queryHint_LayeredPaneLayout = new javax.swing.GroupLayout(queryHint_LayeredPane);
-        queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
-        queryHint_LayeredPaneLayout.setHorizontalGroup(
-                queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
-        );
-        queryHint_LayeredPaneLayout.setVerticalGroup(
-                queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
-                        .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-        );
-        queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+          customNAttributeClientEditor = NEntityEditor.createInstance(queryHint_LayeredPane,602,249);
     }
 
     /**

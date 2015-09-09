@@ -50,6 +50,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
+import org.netbeans.modeler.properties.nentity.NEntityEditor;
 import org.netbeans.modules.db.metadata.model.api.Action;
 import org.netbeans.modules.db.metadata.model.api.Metadata;
 import org.netbeans.modules.db.metadata.model.api.MetadataModel;
@@ -68,11 +69,13 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     private NAttributeEntity resultSetMappingsEntity;
     private final ModelerFile modelerFile;
     private final EntityMappings entityMappings;
+    private org.netbeans.jpa.modeler.spec.Entity entity;
 
-    public NamedStoredProcedureQueryPanel(ModelerFile modelerFile) {
+    public NamedStoredProcedureQueryPanel(ModelerFile modelerFile , org.netbeans.jpa.modeler.spec.Entity entity) {
         super("", true);
         this.modelerFile = modelerFile;
-        this.entityMappings = (EntityMappings)modelerFile.getRootElement();
+        this.entity=entity;
+        this.entityMappings = (EntityMappings) modelerFile.getRootElement();
         initComponents();
         DatabaseExplorerUIs.connect(dbCon_jComboBox, ConnectionManager.getDefault());
 
@@ -103,7 +106,6 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         namedStoredProcedureQuery = null;
         name_TextField.setText("");
 
-        
         initQueryHintCustomNAttributeEditor();
         queryHintEntity = getQueryHint();
         queryHintEditor.setAttributeEntity(queryHintEntity);
@@ -123,11 +125,15 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             Object[] row = ((RowValue) entityValue).getRow();
             namedStoredProcedureQuery = (NamedStoredProcedureQuery) row[0];
             name_TextField.setText(namedStoredProcedureQuery.getName());
-            
-            if(((DefaultComboBoxModel)procedureName_jComboBox.getModel()).getIndexOf(namedStoredProcedureQuery.getProcedureName()) == -1 ) {
-                ((DefaultComboBoxModel)procedureName_jComboBox.getModel()).addElement(namedStoredProcedureQuery.getProcedureName());
+
+            if (((DefaultComboBoxModel) procedureName_jComboBox.getModel()).getIndexOf(namedStoredProcedureQuery.getProcedureName()) == -1) {
+                ((DefaultComboBoxModel) procedureName_jComboBox.getModel()).addElement(namedStoredProcedureQuery.getProcedureName());
             }
             procedureName_jComboBox.setSelectedItem(namedStoredProcedureQuery.getProcedureName());
+        }
+        
+        if(!namedStoredProcedureQuery.getResultSetMapping().isEmpty()){
+            resultSetMappingType_jComboBox.setSelectedIndex(1);//select second item "Resultset mapping"
         }
 
         initQueryHintCustomNAttributeEditor();
@@ -136,15 +142,14 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         initParametersCustomNAttributeEditor();
         parametersEntity = getStoredProcedureParameter();
         parametersEditor.setAttributeEntity(parametersEntity);
-         initResultSetMappingsNAttributeEditor();
+        initResultSetMappingsNAttributeEditor();
         resultSetMappingsEntity = getResultSetMappings();
         resultSetMappingsEditor.setAttributeEntity(resultSetMappingsEntity);
-        
+
         loadResultClassesList();
-        
+
     }
-    
-    
+
     private void loadResultClassesList() {
         List<Object> resultClasses_jListElement = new ArrayList<Object>();
         for (String resultClass : namedStoredProcedureQuery.getResultClass()) {
@@ -161,21 +166,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         setResultClassSelectedValues(resultClasses_jList, resultClasses_jListElement.toArray());
     }
 
-//    private void initResultSetMappingsModel() {
-//        EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-//        DefaultListModel<SqlResultSetMapping> model = new DefaultListModel<SqlResultSetMapping>();
-////        model.copyInto(entityMappings.getAllSqlResultSetMappings().toArray());
-//        for (SqlResultSetMapping sqlResultSetMapping : entityMappings.getAllSqlResultSetMappings()) {
-//            model.addElement(sqlResultSetMapping);
-//        }
-//        resultSetMappings_jList.setSelectionModel(getMultiSelectionModel());
-//        resultSetMappings_jList.setModel(model);
-//        resultSetMappings_jList.setCellRenderer(new ResultSetMappingsRenderer());
-//
-//    }
-
     private void initResultClassesModel() {
-        EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
         DefaultListModel model = new DefaultListModel();
         for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappings.getEntity()) {
             model.addElement(entity);
@@ -192,78 +183,18 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             if (index >= 0) {
                 list.addSelectionInterval(index, index);
             } else if (value instanceof String) {  //if external lib class not exists then add
-                addAndSelectItemInList(list,value);
+                addAndSelectItemInList(list, value);
             }
         }
         list.ensureIndexIsVisible(list.getSelectedIndex());
     }
-    
-    private void addAndSelectItemInList(JList list,Object value){
+
+    private void addAndSelectItemInList(JList list, Object value) {
         ((DefaultListModel) list.getModel()).addElement(value);
-               int index = getElementIndexInList(list.getModel(), value);
-                list.addSelectionInterval(index, index);
+        int index = getElementIndexInList(list.getModel(), value);
+        list.addSelectionInterval(index, index);
     }
 
-
-    private void initQueryHintCustomNAttributeEditor() {
-
-        queryHint_LayeredPane.removeAll();
-        queryHintEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
-        javax.swing.GroupLayout queryHint_LayeredPaneLayout = new javax.swing.GroupLayout(queryHint_LayeredPane);
-        queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
-        queryHint_LayeredPaneLayout.setHorizontalGroup(
-            queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
-        );
-        queryHint_LayeredPaneLayout.setVerticalGroup(
-            queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        queryHint_LayeredPane.setLayer(queryHintEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
-    }
- private void initParametersCustomNAttributeEditor() {
-        parameters_LayeredPane.removeAll();
-        parametersEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
-        javax.swing.GroupLayout parameters_LayeredPaneLayout = new javax.swing.GroupLayout(parameters_LayeredPane);
-        parameters_LayeredPane.setLayout(parameters_LayeredPaneLayout);
-         parameters_LayeredPaneLayout.setHorizontalGroup(
-            parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(parametersEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
-        );
-        parameters_LayeredPaneLayout.setVerticalGroup(
-            parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(parameters_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(parametersEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        parameters_LayeredPane.setLayer(parametersEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-       
-    }
- 
- 
-
-    private void initResultSetMappingsNAttributeEditor() {
-        resultSetMappings_jLayeredPane.removeAll();
-        resultSetMappingsEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
-        javax.swing.GroupLayout parameters_LayeredPaneLayout = new javax.swing.GroupLayout(resultSetMappings_jLayeredPane);
-        resultSetMappings_jLayeredPane.setLayout(parameters_LayeredPaneLayout);
-         parameters_LayeredPaneLayout.setHorizontalGroup(
-            parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(resultSetMappingsEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
-        );
-        parameters_LayeredPaneLayout.setVerticalGroup(
-            parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(parameters_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(resultSetMappingsEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        resultSetMappings_jLayeredPane.setLayer(resultSetMappingsEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-       
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -632,7 +563,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             JOptionPane.showMessageDialog(this, "Name field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
-        if (procedureName_jComboBox.getSelectedItem().toString().length() <= 0 ) {
+        if (procedureName_jComboBox.getSelectedItem().toString().length() <= 0) {
             JOptionPane.showMessageDialog(this, "Procedure field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
@@ -657,17 +588,24 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         namedStoredProcedureQuery.setProcedureName(procedureName_jComboBox.getSelectedItem().toString());
 
         parametersEntity.getTableDataListener().setData(parametersEditor.getSavedModel());
-        
+
         namedStoredProcedureQuery.getResultClass().clear();
-        for(Object obj : resultClasses_jList.getSelectedValuesList()){
-            if(obj instanceof org.netbeans.jpa.modeler.spec.Entity){
-                org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity)obj;
-            namedStoredProcedureQuery.getResultClass().add("{"+entity.getId()+"}");
-            } else {
-                namedStoredProcedureQuery.getResultClass().add((String)obj);
+        namedStoredProcedureQuery.getResultSetMapping().clear();
+        if ("Result Classes".equals(resultSetMappingType_jComboBox.getSelectedItem())) {
+            //ResultClass
+            for (Object obj : resultClasses_jList.getSelectedValuesList()) {
+                if (obj instanceof org.netbeans.jpa.modeler.spec.Entity) {
+                    org.netbeans.jpa.modeler.spec.Entity entityObj = (org.netbeans.jpa.modeler.spec.Entity) obj;
+                    namedStoredProcedureQuery.getResultClass().add("{" + entityObj.getId() + "}");
+                } else {
+                    namedStoredProcedureQuery.getResultClass().add((String) obj);
+                }
             }
+        } else {
+            resultSetMappingsEntity.getTableDataListener().setData(resultSetMappingsEditor.getSavedModel());
         }
         
+
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedStoredProcedureQuery;
@@ -675,9 +613,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             row[2] = namedStoredProcedureQuery.getProcedureName();
             row[3] = namedStoredProcedureQuery.getParameter().size();
         }
-
         
-                resultSetMappingsEntity.getTableDataListener().setData(resultSetMappingsEditor.getSavedModel());
+         
+
         queryHintEntity.getTableDataListener().setData(queryHintEditor.getSavedModel());
         saveActionPerformed(evt);
     }//GEN-LAST:event_SaveActionPerformed
@@ -687,7 +625,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
     private void dbCon_jComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_dbCon_jComboBoxItemStateChanged
-        Thread t = new Thread(new Runnable() {
+        Thread dbTask = new Thread(new Runnable() {
             @Override
             public void run() {
                 DatabaseConnection dbCon = getConnection();
@@ -698,113 +636,68 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                 if (jdbcConn == null) {
                     ConnectionManager connectionManager = ConnectionManager.getDefault();
                     connectionManager.showConnectionDialog(dbCon);
-                    //                    for (int i = 0; i < 60; i++) {//it's very ugly but how we can open or simulate a modal connect dialog
-                        //                        if ((jdbcConn = dbCon.getJDBCConnection(true)) != null)
-                        //                            break;
-                        //                        try {
-                            //                            Thread.sleep(1000);
-                            //                        } catch (InterruptedException e) {
-                            //                        }
-                        //                    }
                 }
-
-                //                if (dbCon.getJDBCConnection() == null) {
-                    //                    try {
-                        //                        org.netbeans.modules.db.explorer.DatabaseConnection dbMCon =  new org.netbeans.modules.db.explorer.DatabaseConnection(dbCon.getDriverClass(),dbCon.getDatabaseURL(),dbCon.getUser(),dbCon.getPassword());
-                        ////                dbMCon.getMetadataModel()
-                        //                        ConnectionManager.getDefault().connect(dbCon);
-                        //                    } catch (DatabaseException ex) {
-                        //                        Exceptions.printStackTrace(ex);
-                        //                    }
-                    //                }
                 MetadataModel metaDataModel = MetadataModels.createModel(jdbcConn, dbCon.getSchema());
-
                 if (metaDataModel != null) {
                     try {
                         metaDataModel.runReadAction(
-                            new Action<Metadata>() {
-                                @Override
-                                public void run(Metadata metaData) {
-                                    final Collection<Procedure> procedures = metaData.getDefaultSchema().getProcedures();
-                                    SwingUtilities.invokeLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            procedureName_jComboBox.removeAllItems();
-                                            for (Procedure procedure : procedures) {
-                                                //                                                    procedureName_jComboBox.addItem(procedure.getName());
-
-                                                procedureName_jComboBox.addItem(new ComboBoxValue(procedure, procedure.getName()));
-                                                System.out.println("procedure : " + procedure.getName());
+                                new Action<Metadata>() {
+                                    @Override
+                                    public void run(Metadata metaData) {
+                                        final Collection<Procedure> procedures = metaData.getDefaultSchema().getProcedures();
+                                        SwingUtilities.invokeLater(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                procedureName_jComboBox.removeAllItems();
+                                                for (Procedure procedure : procedures) {
+                                                    procedureName_jComboBox.addItem(new ComboBoxValue(procedure, procedure.getName()));
+                                                }
                                             }
-                                        }
-                                        //                            Procedure proc = procedureHandle.resolve(metaData);
-                                        //                            name = proc.getName();
-                                        //                            type = proc.getReturnValue() == null ? ProcedureNode.Type.Procedure : ProcedureNode.Type.Function;
-                                        //
-                                        //                            updateProperties(proc);
-                                        //                            schemaName = proc.getParent().getName();
-                                        //                            catalogName = proc.getParent().getParent().getName();
-                                    });
+                                        });
+                                    }
                                 }
-                            }
                         );
 
                     } catch (MetadataModelException e) {
                         e.printStackTrace();
-                        System.out.println("");
-                        //                NodeRegistry.handleMetadataModelException(this.getClass(), connection, e, true);
                     }
                 }
             }
         });
 
-        t.start();
+        dbTask.start();
 
     }//GEN-LAST:event_dbCon_jComboBoxItemStateChanged
 
     private String previousProcedureName;
     private void procedureName_jComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procedureName_jComboBoxActionPerformed
-        System.out.println("");
-        if(procedureName_jComboBox.getSelectedItem() instanceof ComboBoxValue) {
+        if (procedureName_jComboBox.getSelectedItem() instanceof ComboBoxValue) {
             ComboBoxValue comboBoxValue = (ComboBoxValue) procedureName_jComboBox.getSelectedItem();
+            Procedure procedure = (Procedure) comboBoxValue.getValue();
 
-            Procedure procedure = (Procedure)comboBoxValue.getValue();
-            
-            if (name_TextField.getText().trim().isEmpty() ||
-                    (previousProcedureName!=null && previousProcedureName.equalsIgnoreCase(name_TextField.getText().trim()))){
+            if (name_TextField.getText().trim().isEmpty()
+                    || (previousProcedureName != null && previousProcedureName.equalsIgnoreCase(name_TextField.getText().trim()))) {
                 name_TextField.setText(procedure.getName());
             }
-             previousProcedureName = procedure.getName();
-             
-            if(namedStoredProcedureQuery==null){
+            previousProcedureName = procedure.getName();
+
+            if (namedStoredProcedureQuery == null) {
                 namedStoredProcedureQuery = new NamedStoredProcedureQuery();
             }
             namedStoredProcedureQuery.getParameter().clear();
 
             for (Parameter parameter : procedure.getParameters()) {
-                System.out.println("parameter : " + parameter.getName() + " - " + parameter.getTypeName() + " - " + parameter.getDirection() + " - " + parameter.getType());
                 StoredProcedureParameter storedProcedureParameter = new StoredProcedureParameter();
                 storedProcedureParameter.setName(parameter.getName());
                 storedProcedureParameter.setClazz(SQLTypeMap.toClass(SQLType.getJavaSQLType(parameter.getType())).getName());
                 storedProcedureParameter.setMode(ParameterMode.valueOf(parameter.getDirection().toString()));
                 namedStoredProcedureQuery.getParameter().add(storedProcedureParameter);
             }
-           
-        initParametersCustomNAttributeEditor();
-        parametersEntity = getStoredProcedureParameter();
-        parametersEditor.setAttributeEntity(parametersEntity);
-            
-//            Object[] row = ((RowValue) attrDialog.getEntity()).getRow();
-//            dtm.addRow(row);
-//            parametersEditor.updateTableUI();
-//            for (org.netbeans.modules.db.metadata.model.api.Column column : procedure.getColumns()) {
-//                System.out.println("Column : " + column.getName() + " - " + column.getTypeName() + " - " + column.getType());
-//
-//            }
-//
-//            System.out.println("ReturnValue : " + procedure.getReturnValue());
+            initParametersCustomNAttributeEditor();
+            parametersEntity = getStoredProcedureParameter();
+            parametersEditor.setAttributeEntity(parametersEntity);
         } else {
-            String procedureName = (String)procedureName_jComboBox.getSelectedItem();
+            String procedureName = (String) procedureName_jComboBox.getSelectedItem();
             if (name_TextField.getText().trim().isEmpty()) {
                 name_TextField.setText(procedureName);
             }
@@ -817,32 +710,36 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
     private void resultClasses_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultClasses_ActionActionPerformed
         String dataType = NBModelerUtil.browseClass(modelerFile);
-        if (getElementIndexInList(resultClasses_jList.getModel(), dataType)== -1) {
-            addAndSelectItemInList(resultClasses_jList,dataType);
+        if (getElementIndexInList(resultClasses_jList.getModel(), dataType) == -1) {
+            addAndSelectItemInList(resultClasses_jList, dataType);
         }
     }//GEN-LAST:event_resultClasses_ActionActionPerformed
 
     private void resultSetMappingTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultSetMappingTypeActionPerformed
-        if("Result Classes".equals(resultSetMappingType_jComboBox.getSelectedItem())){
+        if ("Result Classes".equals(resultSetMappingType_jComboBox.getSelectedItem())) {
             resultClasses_jLayeredPane.setVisible(true);
             resultSetMappings_jLayeredPane.setVisible(false);
-//            resultClasses_jLayeredPane.getSize()
-//        this.setSize(575, 385);
         } else {
             resultClasses_jLayeredPane.setVisible(false);
             resultSetMappings_jLayeredPane.setVisible(true);
         }
     }//GEN-LAST:event_resultSetMappingTypeActionPerformed
+ 
+  
     
-    
-           
     private NAttributeEntity getResultSetMappings() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ResultSetMappings", "ResultSet Mappings", "");
-        attributeEntity.setCountDisplay(new String[]{"No ResultSetMappings", "One ResultSetMapping", " ResultSetMappings"});
+        attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});
         List<Column> columns = new ArrayList<Column>();
         columns.add(new Column("OBJECT", false, true, Object.class));
-        columns.add(new Column("Name", false, String.class));
-        columns.add(new Column("Value", false, String.class));
+        columns.add(new Column("ENTITY_OBJECT", false, true, org.netbeans.jpa.modeler.spec.Entity.class));
+        columns.add(new Column("Add ResultSet Mapping", true, Boolean.class));
+        columns.add(new Column("ResultSet Name", true, String.class));
+        columns.add(new Column("Entity", false, String.class));
+//        columns.add(new Column("Entity Result", false, Integer.class));
+//        columns.add(new Column("Constructor Result", false, Integer.class));
+//        columns.add(new Column("Column Result", false, Integer.class));
+
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
@@ -851,10 +748,8 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
             @Override
             public void initCount() {
-//                entityMappings
-                
                 if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getHint() != null) {
-                    count = namedStoredProcedureQuery.getHint().size();
+                    count = namedStoredProcedureQuery.getResultSetMapping().size();
                 } else {
                     count = 0;
                 }
@@ -868,15 +763,23 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             @Override
             public void initData() {
                 List<Object[]> data_local = new LinkedList<Object[]>();
-                if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getHint() != null) {
-                    for (QueryHint queryHint : new CopyOnWriteArrayList<QueryHint>(namedStoredProcedureQuery.getHint())) {
-                        Object[] row = new Object[5];
-                        row[0] = queryHint;
-                        row[1] = queryHint.getName();
-                        row[2] = queryHint.getValue();
-                        data_local.add(row);
+//                if (entityMappings.getSqlResultSetMapping() != null) {
+                    for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappings.getEntity()) {
+                        for (SqlResultSetMapping resultSetMapping : new CopyOnWriteArrayList<SqlResultSetMapping>(entity.getSqlResultSetMapping())) {
+                            Object[] row = new Object[8];
+                            row[0] = resultSetMapping;
+                            row[1] = entity;
+                            row[2] = namedStoredProcedureQuery.getResultSetMapping().contains(resultSetMapping.getName());//NamedStoredProcedureQueryPanel.this.entity == entity;
+                            row[3] = resultSetMapping.getName();
+                           row[4] = entity.getClazz();
+
+//                            row[5] = resultSetMapping.getEntityResult().size();
+//                            row[6] = resultSetMapping.getConstructorResult().size();
+//                            row[7] = resultSetMapping.getColumnResult().size();
+                            data_local.add(row);
+                        }
                     }
-                }
+//                }
                 this.data = data_local;
             }
 
@@ -887,19 +790,34 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
             @Override
             public void setData(List<Object[]> data) {
-                if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getHint() != null) {
-                    namedStoredProcedureQuery.getHint().clear();
+                namedStoredProcedureQuery.getResultSetMapping().clear();
+                if (entityMappings.getSqlResultSetMapping() != null) {
+                    entityMappings.getSqlResultSetMapping().clear();
                 }
+                 for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappings.getEntity()) {
+                     entity.getSqlResultSetMapping().clear();
+                 }
+                 
                 for (Object[] row : data) {
-                    QueryHint queryHint = (QueryHint) row[0];
-                    namedStoredProcedureQuery.getHint().add(queryHint);
+                    SqlResultSetMapping resultSetMapping = (SqlResultSetMapping) row[0];
+                    org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) row[1];
+                    Boolean selected = (Boolean)row[2];
+                    if(selected){
+                        namedStoredProcedureQuery.getResultSetMapping().add(resultSetMapping.getName());
+                    }
+                    resultSetMapping.setEntity(entity);
+                    if (entity == null) {
+                        entityMappings.getSqlResultSetMapping().add(resultSetMapping);
+                    } else {
+                        entity.getSqlResultSetMapping().add(resultSetMapping);
+                    }
                 }
                 initData();
             }
         });
         return attributeEntity;
     }
-    
+
     private NAttributeEntity getQueryHint() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
@@ -1059,56 +977,74 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     private javax.swing.JLayeredPane root_jLayeredPane;
     // End of variables declaration//GEN-END:variables
 
-
- private ListSelectionModel getMultiSelectionModel(){
-       return new DefaultListSelectionModel() {
-    @Override
-    public void setSelectionInterval(int index0, int index1) {
-        if (isSelectedIndex(index0))
-            super.removeSelectionInterval(index0, index1);
-        else
-            super.addSelectionInterval(index0, index1);
-    }
-};
+    private void initQueryHintCustomNAttributeEditor() {
+        queryHintEditor = NEntityEditor.createInstance(queryHint_LayeredPane,534,431);
     }
 
- private class ResultClassesRenderer extends JLabel implements ListCellRenderer {
-    public ResultClassesRenderer() {
-        setOpaque(true);
+    private void initParametersCustomNAttributeEditor() {
+        parametersEditor = NEntityEditor.createInstance(parameters_LayeredPane,500,276);
     }
-    @Override
-    public Component getListCellRendererComponent(JList list, Object object, int index,
-            boolean isSelected, boolean cellHasFocus) {
-        if (object instanceof org.netbeans.jpa.modeler.spec.Entity) {
-            org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) object;
-            String _class = entity.getClazz();
+
+    private void initResultSetMappingsNAttributeEditor() {
+         resultSetMappingsEditor = NEntityEditor.createInstance(resultSetMappings_jLayeredPane,500,276);
+    }
+
+    private ListSelectionModel getMultiSelectionModel() {
+        return new DefaultListSelectionModel() {
+            @Override
+            public void setSelectionInterval(int index0, int index1) {
+                if (isSelectedIndex(index0)) {
+                    super.removeSelectionInterval(index0, index1);
+                } else {
+                    super.addSelectionInterval(index0, index1);
+                }
+            }
+        };
+    }
+
+    private class ResultClassesRenderer extends JLabel implements ListCellRenderer {
+
+        public ResultClassesRenderer() {
+            setOpaque(true);
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object object, int index,
+                boolean isSelected, boolean cellHasFocus) {
+            if (object instanceof org.netbeans.jpa.modeler.spec.Entity) {
+                org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) object;
+                String _class = entity.getClazz();
 //        ImageIcon imageIcon = new ImageIcon(getClass().getResource("/images/" + _class + ".png"));
 //        setIcon(imageIcon);
-            setText(_class);
-        } else {
-            setText(object.toString());
+                setText(_class);
+            } else {
+                setText(object.toString());
+            }
+
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+            return this;
         }
-        
-        if (isSelected) {
-            setBackground(list.getSelectionBackground());
-            setForeground(list.getSelectionForeground());
-        } else {
-            setBackground(list.getBackground());
-            setForeground(list.getForeground());
+    }
+
+    private int getElementIndexInList(ListModel model, Object value) {
+        if (value == null) {
+            return -1;
         }
-        return this;
+        if (model instanceof DefaultListModel) {
+            return ((DefaultListModel) model).indexOf(value);
+        }
+        for (int i = 0; i < model.getSize(); i++) {
+            if (value.equals(model.getElementAt(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
-} 
- 
-   private int getElementIndexInList(ListModel model, Object value) {
-    if (value == null) return -1;
-    if (model instanceof DefaultListModel) {
-        return ((DefaultListModel) model).indexOf(value);
-    }
-    for (int i = 0; i < model.getSize(); i++) {
-        if (value.equals(model.getElementAt(i))) return i;
-    }
-    return -1;
-}
 
 }

@@ -16,7 +16,9 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,7 +41,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @XmlElement(name = "named-native-query")
     protected List<NamedNativeQuery> namedNativeQuery;
     @XmlElement(name = "sql-result-set-mapping")
-    protected List<SqlResultSetMapping> sqlResultSetMapping;
+    protected Set<SqlResultSetMapping> sqlResultSetMapping;
     
     @XmlElement(name = "exclude-default-listeners")
     protected EmptyType excludeDefaultListeners;
@@ -473,9 +475,9 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
      *
      *
      */
-    public List<SqlResultSetMapping> getSqlResultSetMapping() {
+    public Set<SqlResultSetMapping> getSqlResultSetMapping() {
         if (sqlResultSetMapping == null) {
-            sqlResultSetMapping = new ArrayList<SqlResultSetMapping>();
+            sqlResultSetMapping = new HashSet<SqlResultSetMapping>();
         }
         return this.sqlResultSetMapping;
     }

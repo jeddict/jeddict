@@ -16,9 +16,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.spec.ColumnResult;
-import org.netbeans.jpa.modeler.spec.EntityResult;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 
@@ -66,6 +65,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 })
 public class SqlResultSetMapping {
 
+    @XmlAttribute @XmlIDREF
+    private Entity entity;
     protected String description;
     @XmlElement(name = "entity-result")
     protected List<EntityResult> entityResult;
@@ -102,6 +103,28 @@ public class SqlResultSetMapping {
             }
         }
         return sqlResultSetMapping;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SqlResultSetMapping other = (SqlResultSetMapping) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        return true;
     }
     
     
@@ -238,6 +261,20 @@ public class SqlResultSetMapping {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * @return the entity
+     */
+    public Entity getEntity() {
+        return entity;
+    }
+
+    /**
+     * @param entity the entity to set
+     */
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
 }

@@ -61,9 +61,9 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
         if (!resultSetMappings.isEmpty()) {
             builder.append("resultSetMappings={");
             for (String resultSetMapping : resultSetMappings) {
-//            builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.QUOTE);
             builder.append(resultSetMapping);
-//            builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         }
             builder.deleteCharAt(builder.length() - 1);

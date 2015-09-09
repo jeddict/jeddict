@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
@@ -1412,7 +1413,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processSqlResultSetMapping(
-            List<SqlResultSetMapping> parsedSqlResultSetMappings) {
+            Set<SqlResultSetMapping> parsedSqlResultSetMappings) {
 
         if (parsedSqlResultSetMappings == null
                 || parsedSqlResultSetMappings.isEmpty()) {
