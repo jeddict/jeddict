@@ -15,16 +15,20 @@
  */
 package org.netbeans.jpa.modeler.properties.named.resultsetmapping;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.ColumnResult;
+import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
 
 public class ColumnResultPanel extends EntityComponent<ColumnResult> {
-
-    public ColumnResultPanel() {
+private final ModelerFile modelerFile;
+    public ColumnResultPanel(ModelerFile modelerFile) {
         super("", true);
+        this.modelerFile=modelerFile;
         initComponents();
     }
 
@@ -39,7 +43,7 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
             this.setEntity(new RowValue(new Object[4]));
         }
         name_TextField.setText("");
-        class_TextField.setText("");
+        class_ComboBox.setSelectedItem("");
     }
 
     @Override
@@ -50,7 +54,11 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
             Object[] row = ((RowValue) entityValue).getRow();
             ColumnResult columnResult = (ColumnResult) row[0];
             name_TextField.setText(columnResult.getName());
-            class_TextField.setText(columnResult.getClazz());
+            
+            if(((DefaultComboBoxModel)class_ComboBox.getModel()).getIndexOf(columnResult.getClazz()) == -1 ) {
+                ((DefaultComboBoxModel)class_ComboBox.getModel()).addElement(columnResult.getClazz());
+            }
+            class_ComboBox.setSelectedItem(columnResult.getClazz());
         }
     }
 
@@ -69,7 +77,8 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
         name_TextField = new javax.swing.JTextField();
         class_LayeredPane = new javax.swing.JLayeredPane();
         class_Label = new javax.swing.JLabel();
-        class_TextField = new javax.swing.JTextField();
+        class_SearchAction = new javax.swing.JButton();
+        class_ComboBox = new javax.swing.JComboBox();
         action_jLayeredPane = new javax.swing.JLayeredPane();
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
@@ -104,7 +113,20 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
 
         org.openide.awt.Mnemonics.setLocalizedText(class_Label, org.openide.util.NbBundle.getMessage(ColumnResultPanel.class, "ColumnResultPanel.class_Label.text")); // NOI18N
 
-        class_TextField.setText(org.openide.util.NbBundle.getMessage(ColumnResultPanel.class, "ColumnResultPanel.class_TextField.text")); // NOI18N
+        class_SearchAction.setBackground(new java.awt.Color(255, 255, 255));
+        class_SearchAction.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/searchbutton.png"))); // NOI18N
+        class_SearchAction.setToolTipText(org.openide.util.NbBundle.getMessage(ColumnResultPanel.class, "ColumnResultPanel.class_SearchAction.toolTipText")); // NOI18N
+        class_SearchAction.setAlignmentY(0.0F);
+        class_SearchAction.setBorderPainted(false);
+        class_SearchAction.setMargin(null);
+        class_SearchAction.setPreferredSize(new java.awt.Dimension(55, 22));
+        class_SearchAction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                class_SearchActionActionPerformed(evt);
+            }
+        });
+
+        class_ComboBox.setEditable(true);
 
         javax.swing.GroupLayout class_LayeredPaneLayout = new javax.swing.GroupLayout(class_LayeredPane);
         class_LayeredPane.setLayout(class_LayeredPaneLayout);
@@ -114,19 +136,24 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
                 .addContainerGap()
                 .addComponent(class_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(class_TextField)
+                .addComponent(class_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(class_SearchAction, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         class_LayeredPaneLayout.setVerticalGroup(
             class_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(class_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(class_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(class_Label)
-                    .addComponent(class_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(class_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(class_SearchAction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(class_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(class_Label)
+                        .addComponent(class_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         class_LayeredPane.setLayer(class_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        class_LayeredPane.setLayer(class_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        class_LayeredPane.setLayer(class_SearchAction, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        class_LayeredPane.setLayer(class_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(ColumnResultPanel.class, "ColumnResultPanel.save_Button.text")); // NOI18N
         save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(ColumnResultPanel.class, "ColumnResultPanel.save_Button.toolTipText")); // NOI18N
@@ -198,10 +225,10 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
             JOptionPane.showMessageDialog(this, "Name field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
-        if (this.class_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, "Value field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return false;
-        }//I18n
+//        if (this.class_ComboBox.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+//            JOptionPane.showMessageDialog(this, "Value field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+//            return false;
+//        }//I18n
         return true;
     }
 
@@ -219,7 +246,7 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
             }
         }
         columnResult.setName(name_TextField.getText());
-        columnResult.setClazz(class_TextField.getText());
+        columnResult.setClazz(class_ComboBox.getSelectedItem().toString());
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = columnResult;
@@ -233,12 +260,21 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
+    private void class_SearchActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_class_SearchActionActionPerformed
+        String dataType = NBModelerUtil.browseClass(modelerFile);
+        if (((DefaultComboBoxModel) class_ComboBox.getModel()).getIndexOf(dataType) == -1) {
+            ((DefaultComboBoxModel) class_ComboBox.getModel()).addElement(dataType);
+        }
+        class_ComboBox.setSelectedItem(dataType);
+    }//GEN-LAST:event_class_SearchActionActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JButton cancel_Button;
+    private javax.swing.JComboBox class_ComboBox;
     private javax.swing.JLabel class_Label;
     private javax.swing.JLayeredPane class_LayeredPane;
-    private javax.swing.JTextField class_TextField;
+    private javax.swing.JButton class_SearchAction;
     private javax.swing.JLabel name_Label;
     private javax.swing.JLayeredPane name_LayeredPane;
     private javax.swing.JTextField name_TextField;

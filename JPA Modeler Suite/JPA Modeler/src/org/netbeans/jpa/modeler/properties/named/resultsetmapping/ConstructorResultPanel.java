@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.netbeans.jpa.modeler.properties.named.query.QueryHintPanel;
+import javax.swing.DefaultComboBoxModel;
 import org.netbeans.jpa.modeler.spec.ColumnResult;
 import org.netbeans.jpa.modeler.spec.ConstructorResult;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
@@ -52,7 +53,7 @@ private ConstructorResult constructorResult;
         if (entityWrapperType == RowValue.class) {
             this.setEntity(new RowValue(new Object[5]));
         }
-        name_TextField.setText("");
+        targetClass_ComboBox.setSelectedItem("");
         
         initColumnResultNAttributeEditor();
         columnResultEntity = getColumnResult();
@@ -68,8 +69,10 @@ private ConstructorResult constructorResult;
             Object[] row = ((RowValue) entityValue).getRow();
             constructorResult = (ConstructorResult) row[0];
             
-            name_TextField.setText(constructorResult.getTargetClass());
-
+            if(((DefaultComboBoxModel)targetClass_ComboBox.getModel()).getIndexOf(constructorResult.getTargetClass()) == -1 ) {
+                ((DefaultComboBoxModel)targetClass_ComboBox.getModel()).addElement(constructorResult.getTargetClass());
+            }
+            targetClass_ComboBox.setSelectedItem(constructorResult.getTargetClass());
         }
         initColumnResultNAttributeEditor();
         columnResultEntity = getColumnResult();
@@ -84,9 +87,10 @@ private ConstructorResult constructorResult;
     private void initComponents() {
 
         root_LayeredPane = new javax.swing.JLayeredPane();
-        name_LayeredPane = new javax.swing.JLayeredPane();
-        name_Label = new javax.swing.JLabel();
-        name_TextField = new javax.swing.JTextField();
+        targetClass_LayeredPane = new javax.swing.JLayeredPane();
+        targetClass_Label = new javax.swing.JLabel();
+        targetClass_ComboBox = new javax.swing.JComboBox();
+        targetClass_SearchAction = new javax.swing.JButton();
         columnResult_LayeredPane = new javax.swing.JLayeredPane();
         columnResultEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
         action_jLayeredPane = new javax.swing.JLayeredPane();
@@ -95,37 +99,49 @@ private ConstructorResult constructorResult;
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(ConstructorResultPanel.class, "ConstructorResultPanel.name_Label.text_1")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(targetClass_Label, org.openide.util.NbBundle.getMessage(ConstructorResultPanel.class, "ConstructorResultPanel.targetClass_Label.text_1")); // NOI18N
 
-        name_TextField.setText(org.openide.util.NbBundle.getMessage(ConstructorResultPanel.class, "ConstructorResultPanel.name_TextField.text_1")); // NOI18N
-        name_TextField.setToolTipText(org.openide.util.NbBundle.getMessage(ConstructorResultPanel.class, "ConstructorResultPanel.name_TextField.toolTipText_1")); // NOI18N
-        name_TextField.addActionListener(new java.awt.event.ActionListener() {
+        targetClass_ComboBox.setEditable(true);
+
+        targetClass_SearchAction.setBackground(new java.awt.Color(255, 255, 255));
+        targetClass_SearchAction.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/searchbutton.png"))); // NOI18N
+        targetClass_SearchAction.setToolTipText(org.openide.util.NbBundle.getMessage(ConstructorResultPanel.class, "ConstructorResultPanel.targetClass_SearchAction.toolTipText")); // NOI18N
+        targetClass_SearchAction.setAlignmentY(0.0F);
+        targetClass_SearchAction.setBorderPainted(false);
+        targetClass_SearchAction.setMargin(null);
+        targetClass_SearchAction.setPreferredSize(new java.awt.Dimension(55, 22));
+        targetClass_SearchAction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                name_TextFieldActionPerformed(evt);
+                targetClass_SearchActionActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout name_LayeredPaneLayout = new javax.swing.GroupLayout(name_LayeredPane);
-        name_LayeredPane.setLayout(name_LayeredPaneLayout);
-        name_LayeredPaneLayout.setHorizontalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
+        javax.swing.GroupLayout targetClass_LayeredPaneLayout = new javax.swing.GroupLayout(targetClass_LayeredPane);
+        targetClass_LayeredPane.setLayout(targetClass_LayeredPaneLayout);
+        targetClass_LayeredPaneLayout.setHorizontalGroup(
+            targetClass_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(targetClass_LayeredPaneLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(targetClass_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name_TextField, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                .addComponent(targetClass_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(targetClass_SearchAction, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        name_LayeredPaneLayout.setVerticalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name_Label)
-                    .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        targetClass_LayeredPaneLayout.setVerticalGroup(
+            targetClass_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(targetClass_LayeredPaneLayout.createSequentialGroup()
+                .addGroup(targetClass_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(targetClass_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(targetClass_Label)
+                        .addComponent(targetClass_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(targetClass_SearchAction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
-        name_LayeredPane.setLayer(name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        name_LayeredPane.setLayer(name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        targetClass_LayeredPane.setLayer(targetClass_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        targetClass_LayeredPane.setLayer(targetClass_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        targetClass_LayeredPane.setLayer(targetClass_SearchAction, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         columnResult_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(""), org.openide.util.NbBundle.getMessage(ConstructorResultPanel.class, "ConstructorResultPanel.columnResult_LayeredPane.border.title"))); // NOI18N
         columnResult_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
@@ -167,9 +183,9 @@ private ConstructorResult constructorResult;
         root_LayeredPane.setLayout(root_LayeredPaneLayout);
         root_LayeredPaneLayout.setHorizontalGroup(
             root_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(name_LayeredPane)
+            .addComponent(targetClass_LayeredPane)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_LayeredPaneLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 382, Short.MAX_VALUE)
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(root_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(root_LayeredPaneLayout.createSequentialGroup()
@@ -181,8 +197,8 @@ private ConstructorResult constructorResult;
             root_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_LayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 372, Short.MAX_VALUE)
+                .addComponent(targetClass_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 367, Short.MAX_VALUE)
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(root_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_LayeredPaneLayout.createSequentialGroup()
@@ -190,7 +206,7 @@ private ConstructorResult constructorResult;
                     .addComponent(columnResult_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(39, Short.MAX_VALUE)))
         );
-        root_LayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_LayeredPane.setLayer(targetClass_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_LayeredPane.setLayer(columnResult_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_LayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -229,7 +245,7 @@ private ConstructorResult constructorResult;
                 constructorResult = (ConstructorResult) row[0];
             }
         }
-        constructorResult.setTargetClass(name_TextField.getText());
+        constructorResult.setTargetClass(targetClass_ComboBox.getSelectedItem().toString());
         
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -246,20 +262,25 @@ private ConstructorResult constructorResult;
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
-    private void name_TextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_name_TextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_name_TextFieldActionPerformed
+    private void targetClass_SearchActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_targetClass_SearchActionActionPerformed
+        String dataType = NBModelerUtil.browseClass(modelerFile);
+        if (((DefaultComboBoxModel) targetClass_ComboBox.getModel()).getIndexOf(dataType) == -1) {
+            ((DefaultComboBoxModel) targetClass_ComboBox.getModel()).addElement(dataType);
+        }
+        targetClass_ComboBox.setSelectedItem(dataType);
+    }//GEN-LAST:event_targetClass_SearchActionActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JButton cancel_Button;
     private org.netbeans.modeler.properties.nentity.NEntityEditor columnResultEditor;
     private javax.swing.JLayeredPane columnResult_LayeredPane;
-    private javax.swing.JLabel name_Label;
-    private javax.swing.JLayeredPane name_LayeredPane;
-    private javax.swing.JTextField name_TextField;
     private javax.swing.JLayeredPane root_LayeredPane;
     private javax.swing.JButton save_Button;
+    private javax.swing.JComboBox targetClass_ComboBox;
+    private javax.swing.JLabel targetClass_Label;
+    private javax.swing.JLayeredPane targetClass_LayeredPane;
+    private javax.swing.JButton targetClass_SearchAction;
     // End of variables declaration//GEN-END:variables
 
 
@@ -271,7 +292,7 @@ private ConstructorResult constructorResult;
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Class", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new ColumnResultPanel());
+        attributeEntity.setCustomDialog(new ColumnResultPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data = new LinkedList<Object[]>();
             int count;
