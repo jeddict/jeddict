@@ -24,7 +24,7 @@ public abstract class ManagedClass extends JavaClass{
     @XmlAttribute
     protected AccessType access;
     
-    @XmlAttribute(name="static-metamodel")
+    @XmlAttribute(name="sm")//(name="static-metamodel")
     private Boolean generateStaticMetamodel = false;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;//REVENG PENDING

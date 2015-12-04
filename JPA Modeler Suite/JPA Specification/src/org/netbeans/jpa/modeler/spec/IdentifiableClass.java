@@ -29,39 +29,39 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 public abstract class IdentifiableClass extends ManagedClass implements PrimaryKeyContainer {
 
-    @XmlAttribute(name = "jaxb-root-element")
+    @XmlAttribute(name = "xre")//(name = "jaxb-root-element")//
     private Boolean xmlRootElement = false;
 
     @XmlElement(name = "id-class")
     protected IdClass idClass;
     protected Attributes attributes;
     
-    @XmlElement(name = "named-query")
+    @XmlElement(name = "nq")//(name = "named-query")
     protected List<NamedQuery> namedQuery;
-    @XmlElement(name = "named-native-query")
+    @XmlElement(name = "nnq")//(name = "named-native-query")
     protected List<NamedNativeQuery> namedNativeQuery;
-    @XmlElement(name = "sql-result-set-mapping")
+    @XmlElement(name="srsm")//(name = "sql-result-set-mapping")
     protected Set<SqlResultSetMapping> sqlResultSetMapping;
     
-    @XmlElement(name = "exclude-default-listeners")
+    @XmlElement(name = "edl")//(name = "exclude-default-listeners")
     protected EmptyType excludeDefaultListeners;
-    @XmlElement(name = "exclude-superclass-listeners")
+    @XmlElement(name = "esl")//(name = "exclude-superclass-listeners")
     protected EmptyType excludeSuperclassListeners;
-    @XmlElement(name = "entity-listeners")
+    @XmlElement(name = "el")//(name = "entity-listeners")
     protected EntityListeners entityListeners;
-    @XmlElement(name = "pre-persist")
+    @XmlElement(name = "sp")//(name = "pre-persist")
     protected PrePersist prePersist;//REVENG PENDING
-    @XmlElement(name = "post-persist")
+    @XmlElement(name = "ep")//(name = "post-persist")
     protected PostPersist postPersist;//REVENG PENDING
-    @XmlElement(name = "pre-remove")
+    @XmlElement(name = "sr")//(name = "pre-remove")
     protected PreRemove preRemove;//REVENG PENDING
-    @XmlElement(name = "post-remove")
+    @XmlElement(name = "er")//(name = "post-remove")
     protected PostRemove postRemove;//REVENG PENDING
-    @XmlElement(name = "pre-update")
+    @XmlElement(name = "su")//(name = "pre-update")
     protected PreUpdate preUpdate;//REVENG PENDING
-    @XmlElement(name = "post-update")
+    @XmlElement(name = "eu")//(name = "post-update")
     protected PostUpdate postUpdate;//REVENG PENDING
-    @XmlElement(name = "post-load")
+    @XmlElement(name = "el")//(name = "post-load")
     protected PostLoad postLoad;//REVENG PENDING
     
     

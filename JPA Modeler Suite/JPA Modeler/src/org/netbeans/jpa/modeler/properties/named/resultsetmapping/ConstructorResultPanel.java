@@ -15,21 +15,15 @@
  */
 package org.netbeans.jpa.modeler.properties.named.resultsetmapping;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.DefaultComboBoxModel;
-import org.netbeans.jpa.modeler.spec.ColumnResult;
+import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.ConstructorResult;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
-import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
 
 public class ConstructorResultPanel extends EntityComponent<ConstructorResult> {
@@ -38,7 +32,7 @@ private NAttributeEntity columnResultEntity;
 private ConstructorResult constructorResult;
 
     public ConstructorResultPanel(ModelerFile modelerFile) {
-        super("", true);
+        
         this.modelerFile=modelerFile;
         initComponents();
     }
@@ -51,12 +45,13 @@ private ConstructorResult constructorResult;
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Create new Constructor Result");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[5]));
+            this.setEntity(new RowValue(new Object[3]));
+             constructorResult = new ConstructorResult();
         }
         targetClass_ComboBox.setSelectedItem("");
         
         initColumnResultNAttributeEditor();
-        columnResultEntity = getColumnResult();
+        columnResultEntity = ResultMappingUtil.getColumnResult(constructorResult.getColumn() , modelerFile);
         columnResultEditor.setAttributeEntity(columnResultEntity);
         
     }
@@ -75,7 +70,7 @@ private ConstructorResult constructorResult;
             targetClass_ComboBox.setSelectedItem(constructorResult.getTargetClass());
         }
         initColumnResultNAttributeEditor();
-        columnResultEntity = getColumnResult();
+        columnResultEntity = ResultMappingUtil.getColumnResult(constructorResult.getColumn() , modelerFile);
         columnResultEditor.setAttributeEntity(columnResultEntity);
         
     }
@@ -225,11 +220,14 @@ private ConstructorResult constructorResult;
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean validateField() {
-//        if (this.type_jComboBox.getSelectedItem().toString().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-//            JOptionPane.showMessageDialog(this, "Type can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
-//            return false;
-//        }//I18n
-      
+        if (targetClass_ComboBox.getSelectedItem().toString().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+            JOptionPane.showMessageDialog(this, "TargetClass can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return false;
+        }//I18n
+        if (columnResultEditor.getSavedModel().size() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+            JOptionPane.showMessageDialog(this, "Columns can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return false;
+        }//I18n
         return true;
     }
 
@@ -239,9 +237,7 @@ private ConstructorResult constructorResult;
         }
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
-            if (row[0] == null) {
-                constructorResult = new ConstructorResult();
-            } else {
+            if (row[0] != null) { // for update
                 constructorResult = (ConstructorResult) row[0];
             }
         }
@@ -284,69 +280,7 @@ private ConstructorResult constructorResult;
     // End of variables declaration//GEN-END:variables
 
 
-   private NAttributeEntity getColumnResult() {
-        final NAttributeEntity attributeEntity = new NAttributeEntity("ColumnResult", "Column Result", "");
-        attributeEntity.setCountDisplay(new String[]{"No Column Results", "One Column Result", " Column Results"});
-        List<Column> columns = new ArrayList<Column>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
-        columns.add(new Column("Name", false, String.class));
-        columns.add(new Column("Class", false, String.class));
-        attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new ColumnResultPanel(modelerFile));
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
-            int count;
-
-            @Override
-            public void initCount() {
-                if (constructorResult != null && constructorResult.getColumn()!= null) {
-                    count = constructorResult.getColumn().size();
-                } else {
-                    count = 0;
-                }
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
-                if (constructorResult != null && constructorResult.getColumn() != null) {
-                    for (ColumnResult constructorResult : new CopyOnWriteArrayList<ColumnResult>(constructorResult.getColumn())) {
-                        Object[] row = new Object[3];
-                        row[0] = constructorResult;
-                        row[1] = constructorResult.getName();
-                        row[2] = constructorResult.getClazz();
-                        data_local.add(row);
-                    }
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                if (constructorResult != null && constructorResult.getColumn() != null) {
-                    constructorResult.getColumn().clear();
-                }
-                for (Object[] row : data) {
-                    ColumnResult column = (ColumnResult) row[0];
-                    constructorResult.getColumn().add(column); 
-                }
-                initData();
-            }
-        });
-        return attributeEntity;
-    }
-
-    
+   
         private void initColumnResultNAttributeEditor() {
       columnResultEditor = NEntityEditor.createInstance(columnResult_LayeredPane,534,431);
    }

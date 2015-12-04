@@ -28,7 +28,7 @@ import org.netbeans.modeler.widget.properties.customattr.Property;
 public class BeanValidationPanel extends EntityComponent<JoinColumn> {
 
     public BeanValidationPanel() {
-        super("", true);
+        
         initComponents();
         validation_ComboBox.removeAllItems();
         Property[] validationProperties = new Property[]{

@@ -448,7 +448,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                 org.netbeans.jpa.modeler.spec.Column column = new org.netbeans.jpa.modeler.spec.Column();
                 column.setTable(m.getTableName());
                 String memberName = m.getMemberName();
-                String columnName = (String) dbMappings.getCMPFieldMapping().get(memberName);
+                String columnName = dbMappings.getCMPFieldMapping().get(memberName);
                 if (!useDefaults || !memberName.equalsIgnoreCase(columnName)) {
                     column.setName(columnName);
                 }
@@ -489,7 +489,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                     }
 
                     attributes.getId().add(idSpec);
-                    String pkColumnName = (String) dbMappings.getCMPFieldMapping().get(memberName);
+                    String pkColumnName = dbMappings.getCMPFieldMapping().get(memberName);
                     pkColumnNames.add(pkColumnName);
                 } else {
                     org.netbeans.jpa.modeler.spec.Basic basicSpec = new org.netbeans.jpa.modeler.spec.Basic();
@@ -561,7 +561,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                     RelationshipRole roleB = role.getParent().getRoleB();
                     relationAttribute.setTargetEntity(roleB.getEntityName());
                     if (role.isMany() && role.isToMany()) { // ManyToMany
-                        String jTN = (String) dbMappings.getJoinTableMapping().get(role.getFieldName());
+                        String jTN = dbMappings.getJoinTableMapping().get(role.getFieldName());
                         JoinTable joinTable = new JoinTable();
                         joinTable.setName(jTN);
                         ((ManyToMany) relationAttribute).setJoinTable(joinTable);
@@ -593,9 +593,9 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                         }
                         //joinTable schema , catalog remaing ?
                     } else { // ManyToOne, OneToMany, OneToOne
-                        ColumnData[] columns = (ColumnData[]) dbMappings.getCmrFieldMapping().get(role.getFieldName());
+                        ColumnData[] columns = dbMappings.getCmrFieldMapping().get(role.getFieldName());
                         CMPMappingModel relatedMappings = beanMap.get(role.getParent().getRoleB().getEntityName()).getCMPMapping();
-                        ColumnData[] invColumns = (ColumnData[]) relatedMappings.getCmrFieldMapping().get(role.getParent().getRoleB().getFieldName());
+                        ColumnData[] invColumns = relatedMappings.getCmrFieldMapping().get(role.getParent().getRoleB().getFieldName());
                         if (columns.length == 1) {
                             JoinColumn joinColumn = new JoinColumn();
                             joinColumn.setName(columns[0].getColumnName());

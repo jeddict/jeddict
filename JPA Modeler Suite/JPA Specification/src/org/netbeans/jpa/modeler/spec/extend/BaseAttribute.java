@@ -29,8 +29,6 @@ public abstract class BaseAttribute extends Attribute {
 
     @XmlAttribute(name = "attribute-type", required = true)
     private String attributeType;
-    
-
 
     /**
      * @return the attributeType

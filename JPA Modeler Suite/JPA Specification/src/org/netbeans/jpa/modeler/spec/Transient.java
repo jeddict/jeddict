@@ -47,8 +47,6 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlType(name = "transient")
 public class Transient extends BaseAttribute {
 
-    @XmlAttribute(required = true)
-    protected String name;
 
     public static Transient load(Element element, VariableElement variableElement) {
 //        AnnotationMirror annotationMirror = JpaControllerUtil.findAnnotation(element, "javax.persistence.Transient");
@@ -60,24 +58,6 @@ public class Transient extends BaseAttribute {
         return _transient;
     }
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
 
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
 
 }

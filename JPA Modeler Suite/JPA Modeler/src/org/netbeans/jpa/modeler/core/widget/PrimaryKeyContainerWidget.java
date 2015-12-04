@@ -33,8 +33,6 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getAttributeOverrideWidgetsImpl());
         }
-        attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
-        attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
 
@@ -50,8 +48,6 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
 //        }
         attributeWidgets.addAll(getBasicAttributeWidgets());
         attributeWidgets.addAll(getBasicCollectionAttributeWidgets());
-        attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
-        attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
 
@@ -61,8 +57,6 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getAssociationOverrideWidgetsImpl());
         }
-        attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
-        attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
 
@@ -76,6 +70,25 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
         attributeWidgets.addAll(this.getOneToManyRelationAttributeWidgets());
         attributeWidgets.addAll(this.getManyToOneRelationAttributeWidgets());
         attributeWidgets.addAll(this.getManyToManyRelationAttributeWidgets());
+        return attributeWidgets;
+    }
+      public List<AttributeWidget> getEmbeddedOverrideWidgets() {
+        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (classWidget instanceof PrimaryKeyContainerWidget) {
+            attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getEmbeddedOverrideWidgetsImpl());
+        }
+        attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
+        attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
+        return attributeWidgets;
+    }
+
+    private List<AttributeWidget> getEmbeddedOverrideWidgetsImpl() {//include self
+        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (classWidget instanceof PrimaryKeyContainerWidget) {
+            attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getEmbeddedOverrideWidgetsImpl());
+        }
         attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
         attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;

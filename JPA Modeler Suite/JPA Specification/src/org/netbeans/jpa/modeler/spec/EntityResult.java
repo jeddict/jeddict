@@ -55,11 +55,11 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 })
 public class EntityResult {
     
-    @XmlElement(name = "field-result")
+    @XmlElement(name = "fr")//(name = "field-result")
     protected List<FieldResult> fieldResult;
-    @XmlAttribute(name = "entity-class", required = true)
+    @XmlAttribute(name = "ec", required = true)//(name = "entity-class", required = true)
     protected String entityClass;
-    @XmlAttribute(name = "discriminator-column")
+    @XmlAttribute(name = "dcl")//(name = "discriminator-column")
     protected String discriminatorColumn;
     
     

@@ -67,21 +67,23 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class EntityListener {
 
     protected String description;
-    @XmlElement(name = "pre-persist")
-    protected PrePersist prePersist;
-    @XmlElement(name = "post-persist")
-    protected PostPersist postPersist;
-    @XmlElement(name = "pre-remove")
-    protected PreRemove preRemove;
-    @XmlElement(name = "post-remove")
-    protected PostRemove postRemove;
-    @XmlElement(name = "pre-update")
-    protected PreUpdate preUpdate;
-    @XmlElement(name = "post-update")
-    protected PostUpdate postUpdate;
-    @XmlElement(name = "post-load")
-    protected PostLoad postLoad;
-    @XmlAttribute(name = "class", required = true)
+      
+    @XmlElement(name = "sp")//(name = "pre-persist")
+    protected PrePersist prePersist;//REVENG PENDING
+    @XmlElement(name = "ep")//(name = "post-persist")
+    protected PostPersist postPersist;//REVENG PENDING
+    @XmlElement(name = "sr")//(name = "pre-remove")
+    protected PreRemove preRemove;//REVENG PENDING
+    @XmlElement(name = "er")//(name = "post-remove")
+    protected PostRemove postRemove;//REVENG PENDING
+    @XmlElement(name = "su")//(name = "pre-update")
+    protected PreUpdate preUpdate;//REVENG PENDING
+    @XmlElement(name = "eu")//(name = "post-update")
+    protected PostUpdate postUpdate;//REVENG PENDING
+    @XmlElement(name = "el")//(name = "post-load")
+    protected PostLoad postLoad;//REVENG PENDING
+    
+    @XmlAttribute(name = "c", required = true)//(name = "class", required = true)
     protected String clazz;
 
     public EntityListener(String clazz) {

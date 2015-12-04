@@ -118,7 +118,7 @@ public final class OverrideViewNavigatorComponent extends TopComponent implement
 
         rootLayeredPane.setLayout(new java.awt.BorderLayout());
 
-        overrideViewTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Attribute Override", "Association Override" }));
+        overrideViewTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Attribute & Association Override", "Attribute Override", "Association Override" }));
         overrideViewTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 overrideViewTypeComboBoxActionPerformed(evt);
@@ -137,9 +137,11 @@ public final class OverrideViewNavigatorComponent extends TopComponent implement
     private void overrideViewTypeComboBoxActionPerformed() {
         if (entityWidget != null) {
             if (overrideViewTypeComboBox.getSelectedItem().equals("Attribute Override")) {
-                explorerManager.setRootContext(new OverrideAttributeRootNode(entityWidget));
+                explorerManager.setRootContext(new OverrideRootNode(entityWidget , new OverrideAttributeChildFactory(entityWidget)));
+            } else if (overrideViewTypeComboBox.getSelectedItem().equals("Association Override")) {
+                explorerManager.setRootContext(new OverrideRootNode(entityWidget , new OverrideAssociationChildFactory(entityWidget)));
             } else {
-                explorerManager.setRootContext(new OverrideAssociationRootNode(entityWidget));
+                explorerManager.setRootContext(new OverrideRootNode(entityWidget , new OverrideAllChildFactory(entityWidget)));
             }
         }
     }

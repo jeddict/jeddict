@@ -35,17 +35,17 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class OverrideAssociationChildFactory extends ChildFactory<AttributeWidget> {
-
-    private EntityWidget entityWidget;
+public class OverrideAssociationChildFactory extends OverrideChildFactory {
 
     public OverrideAssociationChildFactory(EntityWidget entityWidget) {
-        this.entityWidget = entityWidget;
+        super(entityWidget);
     }
 
     @Override
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
         for (AttributeWidget attributeWidget : entityWidget.getAssociationOverrideWidgets()) {
+            attributeWidgets.add(attributeWidget);
+        }for (AttributeWidget attributeWidget : entityWidget.getEmbeddedOverrideWidgets()) {
             attributeWidgets.add(attributeWidget);
         }
 
@@ -58,7 +58,7 @@ public class OverrideAssociationChildFactory extends ChildFactory<AttributeWidge
         AbstractNode node;
         if (attributeWidget instanceof EmbeddedAttributeWidget) {
             EmbeddedAttributeWidget embeddedAttributeWidget = (EmbeddedAttributeWidget) attributeWidget;
-            node = new OverrideEmbeddedAssociationRootNode(Children.create(new OverrideEmbeddedAssociationChildFactory(entityWidget, "", embeddedAttributeWidget, embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget()), true));
+            node = new OverrideEmbeddedRootNode(Children.create(new OverrideEmbeddedAssociationChildFactory(entityWidget, "", embeddedAttributeWidget, embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget()), true));
         } else {
             node = new PropertyNode(entityWidget.getModelerScene(), Children.LEAF) {
 
@@ -69,7 +69,6 @@ public class OverrideAssociationChildFactory extends ChildFactory<AttributeWidge
                         Attribute attributeSpec = (Attribute) attributeWidget.getBaseElementSpec();
                         AssociationOverrideHandler associationOverrideHandler = (AssociationOverrideHandler) entityWidget.getBaseElementSpec();
                         AssociationOverride associationOverride = associationOverrideHandler.getAssociationOverride(attributeSpec.getName());
-
                         if (attributeSpec instanceof JoinColumnHandler) {
                             set.put("JOIN_COLUMN_PROP", JPAModelerUtil.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinColumn()));
                         }
@@ -95,19 +94,4 @@ public class OverrideAssociationChildFactory extends ChildFactory<AttributeWidge
         return node;
     }
 
-//    private static boolean deleteEntity(int customerId) {
-//        EntityManager entityManager = Persistence.createEntityManagerFactory("EntityDBAccessPU").createEntityManager();
-//        entityManager.getTransaction().begin();
-//        try {
-//            Entity toDelete = entityManager.find(Entity.class, customerId);
-//            entityManager.remove(toDelete);
-//            // so far so good
-//            entityManager.getTransaction().commit();
-//        } catch(Exception e) {
-//            Logger.getLogger(EntityChildFactory.class.getName()).log(
-//                    Level.WARNING, "Cannot delete a customer with id {0}, cause: {1}", new Object[]{customerId, e});
-//            entityManager.getTransaction().rollback();
-//        }
-//        return true;
-//    }
 }

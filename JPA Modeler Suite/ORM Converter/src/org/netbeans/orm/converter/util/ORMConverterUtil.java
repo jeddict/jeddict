@@ -253,20 +253,15 @@ public class ORMConverterUtil {
 
         ORMConverterUtil.writeContent(content, sourceFile);
         formatFile(sourceFile);
-
-        System.out.println(
-                "Java: Generated file :" + sourceFile.getAbsolutePath());
     }
 
     public static void formatFile(File file) {
         final FileObject fo = FileUtil.toFileObject(file);
+        
         try {
             DataObject dobj = DataObject.find(fo);
             EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
-            if (ec == null) {
-                return;
-            }
-            
+            ec.close();
                                 StyledDocument sd;
                     try {
                         sd = ec.openDocument();

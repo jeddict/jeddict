@@ -72,8 +72,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
     @XmlElement(name = "association-override")
     protected List<AssociationOverride> associationOverride;
     protected List<Convert> convert;//REVENG PENDING
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
+  
     @XmlAttribute(name = "access")
     protected AccessType access;
 
@@ -194,26 +193,6 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
             convert = new ArrayList<Convert>();
         }
         return this.convert;
-    }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
     }
 
     /**

@@ -57,11 +57,11 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class StoredProcedureParameter {
 
     protected String description;
-    @XmlAttribute(name = "name")
+    @XmlAttribute(name = "n")//(name = "name")
     protected String name;
-    @XmlAttribute(name = "class", required = true)
+    @XmlAttribute(name = "c", required = true)//(name = "class", required = true)
     protected String clazz;
-    @XmlAttribute(name = "mode")
+    @XmlAttribute(name = "m")//(name = "mode")
     protected ParameterMode mode;
     
     public static StoredProcedureParameter load(Element element, AnnotationMirror annotationMirror) {

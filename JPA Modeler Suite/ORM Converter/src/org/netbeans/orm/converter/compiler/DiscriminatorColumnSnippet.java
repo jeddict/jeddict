@@ -67,7 +67,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
 
         stringBuilder.append("@DiscriminatorColumn(");
 
-        if (GeneratorUtil.isGenerateDefaultValue() || length != 31) {
+        if (GeneratorUtil.isGenerateDefaultValue() || length != 30) {
             stringBuilder.append("length=");
             stringBuilder.append(length);
             stringBuilder.append(ORMConverterUtil.COMMA);

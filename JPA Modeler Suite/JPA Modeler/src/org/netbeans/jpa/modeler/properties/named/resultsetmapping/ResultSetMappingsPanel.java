@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import javax.swing.DefaultListModel;
-import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
+import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.ConstructorResult;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.ParameterMode;
+import org.netbeans.jpa.modeler.spec.EntityResult;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
@@ -39,20 +39,36 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
 
     private final ModelerFile modelerFile;
     private final EntityMappings entityMappings;
+    private final org.netbeans.jpa.modeler.spec.Entity entity; // entity null if used from other setting such as stored procedure or named queries
+    private NAttributeEntity entityResultEntity;
     private NAttributeEntity constructorResultEntity;
+    private NAttributeEntity columnResultEntity;
     private SqlResultSetMapping resultSetMapping;
 
     public ResultSetMappingsPanel(ModelerFile modelerFile) {
-        super("", true);
         this.modelerFile = modelerFile;
         this.entityMappings = (EntityMappings) modelerFile.getRootElement();
+        entity = null;
+        initComponents();
+    }
+
+    public ResultSetMappingsPanel(ModelerFile modelerFile, org.netbeans.jpa.modeler.spec.Entity entity) {
+        this.modelerFile = modelerFile;
+        this.entityMappings = (EntityMappings) modelerFile.getRootElement();
+        this.entity = entity;
         initComponents();
     }
 
     @Override
     public void init() {
         jTabbedPane.setSelectedIndex(0);
-        initEntityModel();
+        if (entity == null) {
+            entity_LayeredPane.setVisible(true);
+            JPAModelerUtil.initEntityModel(entity_ComboBox, entityMappings);
+        } else {
+            entity_LayeredPane.setVisible(false);
+        }
+
     }
 
     @Override
@@ -60,12 +76,21 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         this.setTitle("Create new ResultSet Mapping");
         if (entityWrapperType == RowValue.class) {
             this.setEntity(new RowValue(new Object[8]));
+            resultSetMapping = new SqlResultSetMapping();
         }
         name_TextField.setText("");
+
+        initEntityResultNAttributeEditor();
+        entityResultEntity = getEntityResult();
+        entityResultEditor.setAttributeEntity(entityResultEntity);
 
         initConstructorResultNAttributeEditor();
         constructorResultEntity = getConstructorResult();
         constructorResultEditor.setAttributeEntity(constructorResultEntity);
+
+        initColumnResultNAttributeEditor();
+        columnResultEntity = ResultMappingUtil.getColumnResult(resultSetMapping.getColumnResult(), modelerFile);
+        columnResultEditor.setAttributeEntity(columnResultEntity);
 
     }
 
@@ -77,13 +102,21 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
             Object[] row = ((RowValue) entityValue).getRow();
             resultSetMapping = (SqlResultSetMapping) row[0];
             name_TextField.setText(resultSetMapping.getName());
-            org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) row[1];
-            entity_ComboBox.addItem(new ComboBoxValue(entity, entity.getClazz()));
-            
+             if (entity == null) {
+           org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) row[1];
+            entity_ComboBox.setSelectedItem(new ComboBoxValue(entity, entity.getClazz()));
+        } 
         }
+
+        initEntityResultNAttributeEditor();
+        entityResultEntity = getEntityResult();
+        entityResultEditor.setAttributeEntity(entityResultEntity);
         initConstructorResultNAttributeEditor();
         constructorResultEntity = getConstructorResult();
         constructorResultEditor.setAttributeEntity(constructorResultEntity);
+        initColumnResultNAttributeEditor();
+        columnResultEntity = ResultMappingUtil.getColumnResult(resultSetMapping.getColumnResult(), modelerFile);
+        columnResultEditor.setAttributeEntity(columnResultEntity);
 
     }
 
@@ -287,11 +320,17 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean validateField() {
-//        if (this.type_jComboBox.getSelectedItem().toString().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-//            JOptionPane.showMessageDialog(this, "Type can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
-//            return false;
-//        }//I18n
-
+        if (name_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+            JOptionPane.showMessageDialog(this, "Name can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return false;
+        }//I18n
+        if (entity == null) {
+            org.netbeans.jpa.modeler.spec.Entity entitySpec = ((ComboBoxValue<org.netbeans.jpa.modeler.spec.Entity>) entity_ComboBox.getSelectedItem()).getValue();
+            if (entitySpec == null) {
+                JOptionPane.showMessageDialog(this, "Entity can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+                return false;
+            }//I18n
+        }
         return true;
     }
 
@@ -301,28 +340,30 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         }
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
-            if (row[0] == null) {
-                resultSetMapping = new SqlResultSetMapping();
-            } else {
+            if (row[0] != null) { //for update
                 resultSetMapping = (SqlResultSetMapping) row[0];
             }
-        } 
+        }
         resultSetMapping.setName(name_TextField.getText());
 
         if (this.getEntity().getClass() == RowValue.class) {
-            org.netbeans.jpa.modeler.spec.Entity entitySpec = ((ComboBoxValue<org.netbeans.jpa.modeler.spec.Entity>)entity_ComboBox.getSelectedItem()).getValue();
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = resultSetMapping;
-            row[1] = entitySpec;
-            row[2] = true;
-            row[3] = resultSetMapping.getName();
-            row[4] = entitySpec==null?"":entitySpec.getClazz();
-//            row[5] = resultSetMapping.getEntityResult().size();
-//            row[6] = resultSetMapping.getConstructorResult().size();
-//            row[7] = resultSetMapping.getColumnResult().size();
+
+            if (entity == null) {
+                org.netbeans.jpa.modeler.spec.Entity entitySpec = ((ComboBoxValue<org.netbeans.jpa.modeler.spec.Entity>) entity_ComboBox.getSelectedItem()).getValue();
+                row[1] = entitySpec;
+                row[2] = true;
+                row[3] = resultSetMapping.getName();
+                row[4] = entitySpec == null ? "" : entitySpec.getClazz();
+            } else {
+                row[1] = resultSetMapping.getName();
+            }
         }
 
+        entityResultEntity.getTableDataListener().setData(entityResultEditor.getSavedModel());
         constructorResultEntity.getTableDataListener().setData(constructorResultEditor.getSavedModel());
+        columnResultEntity.getTableDataListener().setData(columnResultEditor.getSavedModel());
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
 
@@ -353,6 +394,68 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
     private javax.swing.JLayeredPane root_jLayeredPane;
     private javax.swing.JButton save_Button;
     // End of variables declaration//GEN-END:variables
+
+    private NAttributeEntity getEntityResult() {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("EntityResult", "Entity Result", "");
+        attributeEntity.setCountDisplay(new String[]{"No Entity Results", "One Entity Result", " Entity Results"});
+        List<Column> columns = new ArrayList<Column>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Entity Class", false, String.class));
+        columns.add(new Column("Field", false, Integer.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new EntityResultPanel(modelerFile));
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data = new LinkedList<Object[]>();
+            int count;
+
+            @Override
+            public void initCount() {
+                if (resultSetMapping != null && resultSetMapping.getEntityResult() != null) {
+                    count = resultSetMapping.getEntityResult().size();
+                } else {
+                    count = 0;
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<Object[]>();
+                if (resultSetMapping != null && resultSetMapping.getEntityResult() != null) {
+                    for (EntityResult entityResult : new CopyOnWriteArrayList<EntityResult>(resultSetMapping.getEntityResult())) {
+                        Object[] row = new Object[3];
+                        row[0] = entityResult;
+                        row[1] = entityResult.getEntityClass();
+                        row[2] = entityResult.getFieldResult().size();
+                        data_local.add(row);
+                    }
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                if (resultSetMapping != null && resultSetMapping.getEntityResult() != null) {
+                    resultSetMapping.getEntityResult().clear();
+                }
+                for (Object[] row : data) {
+                    EntityResult entityResult = (EntityResult) row[0];
+                    resultSetMapping.getEntityResult().add(entityResult);
+                }
+                initData();
+            }
+        });
+        return attributeEntity;
+    }
 
     private NAttributeEntity getConstructorResult() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ConstructorResult", "Constructor Result", "");
@@ -386,7 +489,7 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
                 List<Object[]> data_local = new LinkedList<Object[]>();
                 if (resultSetMapping != null && resultSetMapping.getConstructorResult() != null) {
                     for (ConstructorResult constructorResult : new CopyOnWriteArrayList<ConstructorResult>(resultSetMapping.getConstructorResult())) {
-                        Object[] row = new Object[5];
+                        Object[] row = new Object[3];
                         row[0] = constructorResult;
                         row[1] = constructorResult.getTargetClass();
                         row[2] = constructorResult.getColumn().size();
@@ -416,18 +519,16 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         return attributeEntity;
     }
 
+    private void initEntityResultNAttributeEditor() {
+        entityResultEditor = NEntityEditor.createInstance(entityResult_LayeredPane, 534, 431);
+    }
+
     private void initConstructorResultNAttributeEditor() {
         constructorResultEditor = NEntityEditor.createInstance(constructorResult_LayeredPane, 534, 431);
     }
 
-    private void initEntityModel() {
-        entity_ComboBox.removeAllItems();
-        DefaultListModel model = new DefaultListModel();
-        entity_ComboBox.addItem(new ComboBoxValue(null, ""));
-        for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappings.getEntity()) {
-            model.addElement(entity);
-            entity_ComboBox.addItem(new ComboBoxValue(entity, entity.getClazz()));
-        }
+    private void initColumnResultNAttributeEditor() {
+        columnResultEditor = NEntityEditor.createInstance(columnResult_LayeredPane, 534, 431);
     }
 
 }

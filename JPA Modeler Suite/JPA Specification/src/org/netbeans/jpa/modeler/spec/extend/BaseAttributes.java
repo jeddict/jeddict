@@ -19,9 +19,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
@@ -45,6 +51,7 @@ import org.netbeans.jpa.modeler.spec.Transient;
 //})
 public abstract class BaseAttributes implements IAttributes {
 
+     @XmlElement(name = "basic")
     protected List<Basic> basic;
     @XmlElement(name = "many-to-one")
     protected List<ManyToOne> manyToOne;
@@ -56,6 +63,7 @@ public abstract class BaseAttributes implements IAttributes {
     protected List<ManyToMany> manyToMany;
     @XmlElement(name = "element-collection")
     protected List<ElementCollection> elementCollection;
+    @XmlElement(name = "embedded")
     protected List<Embedded> embedded;
     @XmlElement(name = "transient")
     protected List<Transient> _transient;

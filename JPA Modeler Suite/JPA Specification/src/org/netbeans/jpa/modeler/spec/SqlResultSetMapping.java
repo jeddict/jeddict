@@ -68,13 +68,13 @@ public class SqlResultSetMapping {
     @XmlAttribute @XmlIDREF
     private Entity entity;
     protected String description;
-    @XmlElement(name = "entity-result")
+    @XmlElement(name = "er")//(name = "entity-result")
     protected List<EntityResult> entityResult;
-    @XmlElement(name = "constructor-result")
+    @XmlElement(name = "ctr")//(name = "constructor-result")
     protected List<ConstructorResult> constructorResult;
-    @XmlElement(name = "column-result")
+    @XmlElement(name = "cr")//(name = "column-result")
     protected List<ColumnResult> columnResult;
-    @XmlAttribute(name = "name", required = true)
+    @XmlAttribute(name = "n" , required = true)//(name = "name", required = true)
     protected String name;
 
      public static SqlResultSetMapping load(Element element, AnnotationMirror annotationMirror) {

@@ -74,8 +74,6 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
     protected TableGenerator tableGenerator;
     @XmlElement(name = "sequence-generator")
     protected SequenceGenerator sequenceGenerator;
-    @XmlAttribute(required = true)
-    protected String name;
     @XmlAttribute
     protected AccessType access;
 
@@ -196,25 +194,7 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
         this.sequenceGenerator = value;
     }
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
 
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
 
     /**
      * Gets the value of the access property.

@@ -53,9 +53,9 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 })
 public class ConstructorResult {
 
-    @XmlElement(required = true)
+    @XmlElement(name="cr",required = true)//(required = true)
     protected List<ColumnResult> column;
-    @XmlAttribute(name = "target-class", required = true)
+    @XmlAttribute(name = "tc", required = true)//(name = "target-class", required = true)
     protected String targetClass;
 
     public static ConstructorResult load(Element element, AnnotationMirror annotationMirror) {

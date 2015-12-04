@@ -61,9 +61,6 @@ $classDef.getDiscriminatorValue().getSnippet()
 #if ($classDef.getDiscriminatorColumn())
 $classDef.getDiscriminatorColumn().getSnippet()
 #end
-#if ($classDef.getNamedQueries() )
-$classDef.getNamedQueries().getSnippet()
-#end
 #####################named queries ###############################
 #if ($classDef.getNamedQueries() )
 $classDef.getNamedQueries().getSnippet()

@@ -152,14 +152,14 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlElement(name = "table-generator")
     protected TableGenerator tableGenerator;
 
-    @XmlElement(name = "named-stored-procedure-query")
+    @XmlElement(name = "nspq")//(name = "named-stored-procedure-query")
     protected List<NamedStoredProcedureQuery> namedStoredProcedureQuery;
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
     protected List<AssociationOverride> associationOverride;
     protected List<Convert> convert;//REVENG PENDING JPA 2.1
-    @XmlElement(name = "named-entity-graph")
+    @XmlElement(name = "neg")//(name = "named-entity-graph")
     protected List<NamedEntityGraph> namedEntityGraph;
     @XmlAttribute
     protected String name;

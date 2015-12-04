@@ -20,11 +20,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -78,8 +80,11 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
+import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
 import org.netbeans.jpa.modeler.spec.AccessType;
+import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
+import static org.netbeans.jpa.modeler.spec.AccessType.PROPERTY;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
@@ -98,6 +103,7 @@ import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
+import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
@@ -107,6 +113,7 @@ import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
@@ -117,13 +124,14 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
+import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_TRANSIENT;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
-import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;
@@ -247,7 +255,8 @@ public class JPAModelerUtil implements PModelerUtil {
 
     static {
         try {
-            MODELER_CONTEXT = JAXBContext.newInstance(new Class<?>[]{EntityMappings.class});
+            System.out.println("------------------------------------rrrrrrrrrrr");
+            MODELER_CONTEXT = JAXBContext.newInstance(new Class<?>[]{EntityMappings.class , BaseAttributes.class});
             MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
             MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
             MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
@@ -341,7 +350,7 @@ public class JPAModelerUtil implements PModelerUtil {
             nodeWidgetInfo.setName(flowElement.getName());
             nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
             nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
-            INodeWidget nodeWidget = (INodeWidget) scene.createNodeWidget(nodeWidgetInfo);
+            INodeWidget nodeWidget = scene.createNodeWidget(nodeWidgetInfo);
             if (flowElement.getName() != null) {
                 nodeWidget.setLabel(flowElement.getName());
             }
@@ -818,7 +827,10 @@ public class JPAModelerUtil implements PModelerUtil {
     public static void saveFile(EntityMappings entityMappings, File file){
         try {
             MODELER_MARSHALLER.marshal(entityMappings, file);
-        } catch (JAXBException ex) {
+            StringWriter sw = new StringWriter();
+             MODELER_MARSHALLER.marshal(entityMappings, sw);
+             System.out.println("sw " + sw);
+        } catch (JAXBException ex) { 
             Exceptions.printStackTrace(ex);
         }
     }
@@ -1002,7 +1014,7 @@ public class JPAModelerUtil implements PModelerUtil {
     /*---------------------------------Save File End---------------------------------*/
     @Override
     public Anchor getAnchor(INodeWidget inodeWidget) {
-        INodeWidget nodeWidget = (INodeWidget) inodeWidget;
+        INodeWidget nodeWidget = inodeWidget;
         Anchor sourceAnchor;
 //        NodeWidgetInfo nodeWidgetInfo = nodeWidget.getNodeWidgetInfo();
         if (nodeWidget instanceof IFlowNodeWidget) {
@@ -1051,7 +1063,7 @@ public class JPAModelerUtil implements PModelerUtil {
             throw new InvalidElmentException("Invalid JPA Pin Element");
         }
 //        ((PNodeWidget) scene.findWidget(nodeWidgetInfo)).attachPinWidget(widget);
-        return (IPinWidget) widget;
+        return widget;
     }
 
     @Override
@@ -1380,26 +1392,27 @@ public class JPAModelerUtil implements PModelerUtil {
     }
 
     public static ComboBoxPropertySupport getAccessTypeProperty(IModelerScene modelerScene, final AccessTypeHandler accessTypeHandlerSpec) {
-        ComboBoxListener comboBoxListener = new ComboBoxListener() {
+        ComboBoxListener<AccessType> comboBoxListener = new ComboBoxListener<AccessType>() {
             @Override
-            public void setItem(ComboBoxValue value) {
-                accessTypeHandlerSpec.setAccess((AccessType) value.getValue());
+            public void setItem(ComboBoxValue<AccessType> value) {
+                accessTypeHandlerSpec.setAccess(value.getValue());
             }
 
             @Override
-            public ComboBoxValue getItem() {
+            public ComboBoxValue<AccessType> getItem() {
                 if (accessTypeHandlerSpec.getAccess() != null) {
-                    return new ComboBoxValue(accessTypeHandlerSpec.getAccess(), accessTypeHandlerSpec.getAccess().value());
+                    return new ComboBoxValue<AccessType>(accessTypeHandlerSpec.getAccess(), accessTypeHandlerSpec.getAccess().value());
                 } else {
-                    return new ComboBoxValue(AccessType.getDefault(), AccessType.getDefault().value());
+                    return new ComboBoxValue<AccessType>(AccessType.getDefault(), AccessType.getDefault().value());
                 }
             }
 
             @Override
-            public List<ComboBoxValue> getItemList() {
-                ComboBoxValue[] values = new ComboBoxValue[]{
-                    new ComboBoxValue(AccessType.FIELD, "Field"),
-                    new ComboBoxValue(AccessType.PROPERTY, "Property")};
+            public List<ComboBoxValue<AccessType>> getItemList() {
+                ComboBoxValue<AccessType>[] values;
+                values = new ComboBoxValue[]{
+                    new ComboBoxValue<AccessType>(FIELD, "Field"),
+                    new ComboBoxValue<AccessType>(PROPERTY, "Property")};
                 return Arrays.asList(values);
             }
 
@@ -1503,9 +1516,9 @@ public class JPAModelerUtil implements PModelerUtil {
             }
 
             @Override
-            public void setData(List data) {
+            public void setData(List<Object[]> data) {
                 joinColumnsSpec.clear();
-                for (Object[] row : (List<Object[]>) data) {
+                for (Object[] row : data) {
                     joinColumnsSpec.add((JoinColumn) row[0]);
                 }
                 this.data = data;
@@ -1516,7 +1529,64 @@ public class JPAModelerUtil implements PModelerUtil {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    
+    public static PropertySupport getResultSetMappingsProperty(String id, String name, String desc, IModelerScene modelerScene,final Entity entity) {
+        final Set<SqlResultSetMapping> sqlResultSetMappingSpec = entity.getSqlResultSetMapping();
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+
+        attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});
+        List<Column> columns = new ArrayList<Column>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("ResultSet Name", true, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerScene.getModelerFile(),entity));
+        
+        
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data = new LinkedList<Object[]>();
+            int count;
+
+            @Override
+            public void initCount() {
+                    count = sqlResultSetMappingSpec.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<Object[]>();
+                    for (SqlResultSetMapping resultSetMapping : sqlResultSetMappingSpec) {
+                        Object[] row = new Object[2];
+                        row[0] = resultSetMapping;
+                        row[1] = resultSetMapping.getName();
+                        data_local.add(row);
+                    }
+//                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                sqlResultSetMappingSpec.clear();
+                for (Object[] row : data) {
+                    SqlResultSetMapping resultSetMapping = (SqlResultSetMapping) row[0];
+                    resultSetMapping.setEntity(entity);
+                    sqlResultSetMappingSpec.add(resultSetMapping);
+                }
+                initData();
+            }
+        });
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
     public static PropertySupport getNamedStoredProcedureQueryProperty(String id, String name, String desc, IModelerScene modelerScene,Entity entity) {
         final List<NamedStoredProcedureQuery> namedStoredProcedureQueriesSpec = entity.getNamedStoredProcedureQuery();
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
@@ -1567,9 +1637,9 @@ public class JPAModelerUtil implements PModelerUtil {
             }
 
             @Override
-            public void setData(List data) {
+            public void setData(List<Object[]> data) {
                 namedStoredProcedureQueriesSpec.clear();
-                for (Object[] row : (List<Object[]>) data) {
+                for (Object[] row : data) {
                     namedStoredProcedureQueriesSpec.add((NamedStoredProcedureQuery) row[0]);
                 }
                 this.data = data;
@@ -1629,9 +1699,9 @@ public class JPAModelerUtil implements PModelerUtil {
             }
 
             @Override
-            public void setData(List data) {
+            public void setData(List<Object[]> data) {
                 namedQueriesSpec.clear();
-                for (Object[] row : (List<Object[]>) data) {
+                for (Object[] row : data) {
                     namedQueriesSpec.add((NamedQuery) row[0]);
                 }
                 this.data = data;
@@ -1693,9 +1763,9 @@ public class JPAModelerUtil implements PModelerUtil {
             }
 
             @Override
-            public void setData(List data) {
+            public void setData(List<Object[]> data) {
                 namedNativeQueriesSpec.clear();
-                for (Object[] row : (List<Object[]>) data) {
+                for (Object[] row : data) {
                     namedNativeQueriesSpec.add((NamedNativeQuery) row[0]);
                 }
                 this.data = data;
@@ -1732,15 +1802,15 @@ public class JPAModelerUtil implements PModelerUtil {
             }
 
             @Override
-            public ComboBoxValue getItem() {
+            public ComboBoxValue<JaxbVariableType> getItem() {
                 if (varHandlerSpec.getJaxbVariableType() == null) {
                     if (jaxbVariableList != null) {
-                        return new ComboBoxValue(JaxbVariableType.XML_ELEMENT, "Default(Element)");
+                        return new ComboBoxValue<JaxbVariableType>(XML_ELEMENT, "Default(Element)");
                     } else {
-                        return new ComboBoxValue(JaxbVariableType.XML_TRANSIENT, JaxbVariableType.XML_TRANSIENT.getDisplayText());
+                        return new ComboBoxValue<JaxbVariableType>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText());
                     }
                 } else {
-                    return new ComboBoxValue(varHandlerSpec.getJaxbVariableType(), varHandlerSpec.getJaxbVariableType().getDisplayText());
+                    return new ComboBoxValue<JaxbVariableType>(varHandlerSpec.getJaxbVariableType(), varHandlerSpec.getJaxbVariableType().getDisplayText());
                 }
             }
 
@@ -1748,12 +1818,12 @@ public class JPAModelerUtil implements PModelerUtil {
             public List<ComboBoxValue<JaxbVariableType>> getItemList() {
                 List<ComboBoxValue<JaxbVariableType>> values = new ArrayList<ComboBoxValue<JaxbVariableType>>();
                 if (jaxbVariableList != null) {
-                    values.add(new ComboBoxValue(JaxbVariableType.XML_ELEMENT, "Default(Element)"));
+                    values.add(new ComboBoxValue<JaxbVariableType>(XML_ELEMENT, "Default(Element)"));
                     for (JaxbVariableType variableType : jaxbVariableList) {
-                        values.add(new ComboBoxValue(variableType, variableType.getDisplayText()));
+                        values.add(new ComboBoxValue<JaxbVariableType>(variableType, variableType.getDisplayText()));
                     }
                 } else {
-                    values.add(new ComboBoxValue(JaxbVariableType.XML_TRANSIENT, JaxbVariableType.XML_TRANSIENT.getDisplayText()));
+                    values.add(new ComboBoxValue<JaxbVariableType>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText()));
                 }
                 return values;
             }
@@ -1779,6 +1849,15 @@ public class JPAModelerUtil implements PModelerUtil {
         }
         set.put("JAXB_PROP", new ComboBoxPropertySupport(attributeWidget.getModelerScene().getModelerFile(), "jaxbVariableType", "Variable Type", "", comboBoxListener, "root.jaxbSupport==true", varHandlerSpec));
 
+    }
+    
+    
+     public static void initEntityModel(javax.swing.JComboBox entity_ComboBox,EntityMappings entityMappings) {
+        entity_ComboBox.removeAllItems();
+        entity_ComboBox.addItem(new ComboBoxValue(null, ""));
+        for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappings.getEntity()) {
+            entity_ComboBox.addItem(new ComboBoxValue(entity, entity.getClazz()));
+        }
     }
 
 }

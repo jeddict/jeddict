@@ -9,31 +9,8 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DefaultAttribute extends Attribute {
 
-    @XmlAttribute(required = true)
-    protected String name;
-
     @XmlAttribute(name = "attribute-type")
     private String attributeType;
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
 
     /**
      * @return the attributeType

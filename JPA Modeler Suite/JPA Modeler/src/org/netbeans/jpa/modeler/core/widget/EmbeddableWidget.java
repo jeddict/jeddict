@@ -125,8 +125,6 @@ public class EmbeddableWidget extends PersistenceClassWidget {
         }
         attributeWidgets.addAll(getBasicAttributeWidgets());
         attributeWidgets.addAll(getBasicCollectionAttributeWidgets());
-        attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
-        attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
 
@@ -140,9 +138,20 @@ public class EmbeddableWidget extends PersistenceClassWidget {
         attributeWidgets.addAll(this.getOneToManyRelationAttributeWidgets());
         attributeWidgets.addAll(this.getManyToOneRelationAttributeWidgets());
         attributeWidgets.addAll(this.getManyToManyRelationAttributeWidgets());
+        return attributeWidgets;
+    }
+    public List<AttributeWidget> getEmbeddedOverrideWidgets() {
+        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (classWidget instanceof EmbeddableWidget) {
+            attributeWidgets.addAll(((EmbeddableWidget) classWidget).getEmbeddedOverrideWidgets());
+        }
         attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
         attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
+
+  
+    
 
 }

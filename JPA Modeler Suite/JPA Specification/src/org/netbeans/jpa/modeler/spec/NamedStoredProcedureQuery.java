@@ -71,15 +71,16 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class NamedStoredProcedureQuery {
 
     protected String description;
+    @XmlElement(name = "p")
     protected List<StoredProcedureParameter> parameter;
-    @XmlElement(name = "result-class")
+    @XmlElement(name = "rc")//(name = "result-class")
     protected List<String> resultClass;
-    @XmlElement(name = "result-set-mapping")
+    @XmlElement(name = "rsm")//(name = "result-set-mapping")
     protected List<String> resultSetMapping;
     protected List<QueryHint> hint;
-    @XmlAttribute(name = "name", required = true)
+    @XmlAttribute(name = "n", required = true)//(name = "name", required = true)
     protected String name;
-    @XmlAttribute(name = "procedure-name", required = true)
+    @XmlAttribute(name = "pn", required = true)//(name = "procedure-name", required = true)
     protected String procedureName;
 
     private static NamedStoredProcedureQuery loadStoredProcedureQuery(Element element, AnnotationMirror annotationMirror) {

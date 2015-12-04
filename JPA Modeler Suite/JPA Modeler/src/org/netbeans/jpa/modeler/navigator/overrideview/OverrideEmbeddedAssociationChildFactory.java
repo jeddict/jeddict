@@ -29,23 +29,20 @@ import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class OverrideEmbeddedAssociationChildFactory extends ChildFactory<AttributeWidget> {
+public class OverrideEmbeddedAssociationChildFactory extends OverrideChildFactory {
 
-    private EntityWidget entityWidget;
     private EmbeddableWidget embeddableWidget;
     private EmbeddedAttributeWidget initialAttributeWidget;
     private String prefixAttributePath;
 
     public OverrideEmbeddedAssociationChildFactory(EntityWidget entityWidget, String prefixAttributePath, EmbeddedAttributeWidget initialAttributeWidget, EmbeddableWidget embeddableWidget) {
-        this.entityWidget = entityWidget;
+        super(entityWidget);
         this.embeddableWidget = embeddableWidget;
         this.initialAttributeWidget = initialAttributeWidget;
         this.prefixAttributePath = prefixAttributePath;
@@ -56,26 +53,26 @@ public class OverrideEmbeddedAssociationChildFactory extends ChildFactory<Attrib
         for (AttributeWidget attributeWidget : embeddableWidget.getAssociationOverrideWidgets()) {
             attributeWidgets.add(attributeWidget);
         }
+        for (AttributeWidget attributeWidget : embeddableWidget.getEmbeddedOverrideWidgets()) {
+            attributeWidgets.add(attributeWidget);
+        }
         return true;
     }
 
     @Override
     protected Node createNodeForKey(final AttributeWidget attributeWidget) {
-//        AbstractNode node = new AttributeRootNode(Children.create(new AttributeChildFactory(attributeWidget), true)) {
         Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
         AbstractNode node = null;
         if (attributeWidget instanceof EmbeddedAttributeWidget) {
             EmbeddedAttributeWidget embeddedAttributeWidget = (EmbeddedAttributeWidget) attributeWidget;
-
-            Embedded embeddedSpec = (Embedded) embeddedAttributeWidget.getBaseElementSpec();
+            Attribute attributeSpec = (Attribute) embeddedAttributeWidget.getBaseElementSpec(); //May be Embedded or ElementCollection ( for multi Embedded )
             String prefixAttributePath_Tmp;
             if (prefixAttributePath == null || prefixAttributePath.trim().isEmpty()) {
-                prefixAttributePath_Tmp = embeddedSpec.getName();
+                prefixAttributePath_Tmp = attributeSpec.getName();
             } else {
-                prefixAttributePath_Tmp = prefixAttributePath + "." + embeddedSpec.getName();
+                prefixAttributePath_Tmp = prefixAttributePath + "." + attributeSpec.getName();
             }
-
-            node = new OverrideEmbeddedAssociationRootNode(Children.create(new OverrideEmbeddedAssociationChildFactory(entityWidget, prefixAttributePath_Tmp, initialAttributeWidget, embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget()), true));
+            node = new OverrideEmbeddedRootNode(Children.create(new OverrideEmbeddedAssociationChildFactory(entityWidget, prefixAttributePath_Tmp, initialAttributeWidget, embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget()), true));
         } else {
             node = new PropertyNode(entityWidget.getModelerScene(), Children.LEAF) {
 
@@ -115,19 +112,4 @@ public class OverrideEmbeddedAssociationChildFactory extends ChildFactory<Attrib
         return node;
     }
 
-//    private static boolean deleteEntity(int customerId) {
-//        EntityManager entityManager = Persistence.createEntityManagerFactory("EntityDBAccessPU").createEntityManager();
-//        entityManager.getTransaction().begin();
-//        try {
-//            Entity toDelete = entityManager.find(Entity.class, customerId);
-//            entityManager.remove(toDelete);
-//            // so far so good
-//            entityManager.getTransaction().commit();
-//        } catch(Exception e) {
-//            Logger.getLogger(EntityChildFactory.class.getName()).log(
-//                    Level.WARNING, "Cannot delete a customer with id {0}, cause: {1}", new Object[]{customerId, e});
-//            entityManager.getTransaction().rollback();
-//        }
-//        return true;
-//    }
 }

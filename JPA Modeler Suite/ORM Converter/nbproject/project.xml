@@ -59,10 +59,8 @@
                 </dependency>
                 <dependency>
                     <code-name-base>org.netbeans.modules.j2ee.persistence.kit</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
                     <run-dependency>
-                        <implementation-version/>
+                        <specification-version>1.29.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>

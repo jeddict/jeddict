@@ -4,7 +4,9 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
+import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.modeler.core.ModelerFile;
@@ -58,22 +60,22 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
     }
 
-    private void setStrategySelectedItem(InheritanceType type) {
+    private void setStrategySelectedItem(Inheritance inheritence) {
         strategy_ComboBox.setSelectedItem(strategy_ComboBox.getItemAt(0));
         for (int i = 0; i < strategy_ComboBox.getItemCount(); i++) {
             Property property = (Property) strategy_ComboBox.getItemAt(i);
-            if ((InheritanceType) property.getKey() == type) {
+            if (inheritence != null && (InheritanceType) property.getKey() == inheritence.getStrategy()) {
                 strategy_ComboBox.setSelectedItem(property);
                 break;
             }
         }
     }
 
-    private void setColumnTypeSelectedItem(DiscriminatorType type) {
+    private void setColumnTypeSelectedItem(DiscriminatorColumn col) {
         column_type_ComboBox.setSelectedItem(column_type_ComboBox.getItemAt(0));
         for (int i = 0; i < column_type_ComboBox.getItemCount(); i++) {
             Property property = (Property) column_type_ComboBox.getItemAt(i);
-            if ((DiscriminatorType) property.getKey() == type) {
+            if (col != null && (DiscriminatorType) property.getKey() == col.getDiscriminatorType()) {
                 column_type_ComboBox.setSelectedItem(property);
                 break;
             }
@@ -84,22 +86,27 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     public InheritenceHandler getValue() {
         InheritanceType inheritanceType = (InheritanceType) ((Property) strategy_ComboBox.getSelectedItem()).getKey();
         if (type.equals("ROOT") || type.equals("BRANCH")) {
+            if (classSpec.getInheritance() == null) {
+                classSpec.setInheritance(new Inheritance());
+            }
             classSpec.getInheritance().setStrategy(inheritanceType);
             DiscriminatorType discriminatorType = (DiscriminatorType) ((Property) column_type_ComboBox.getSelectedItem()).getKey();
-            classSpec.getDiscriminatorColumn().setDiscriminatorType(discriminatorType);
-            classSpec.getDiscriminatorColumn().setName(column_name_TextField.getText());
-            classSpec.getDiscriminatorColumn().setLength((Integer) column_length_Spinner.getValue());
-            classSpec.getDiscriminatorColumn().setColumnDefinition(column_def_TextArea.getText());
+
+            if (column_name_TextField.getText().isEmpty() && column_length_Spinner.getValue().equals(30)
+                    && column_def_TextArea.getText().isEmpty() && discriminatorType == DiscriminatorType.STRING) {
+                classSpec.setDiscriminatorColumn(null);
+            } else {
+                classSpec.setDiscriminatorColumn(new DiscriminatorColumn());
+                classSpec.getDiscriminatorColumn().setDiscriminatorType(discriminatorType);
+                classSpec.getDiscriminatorColumn().setName(column_name_TextField.getText());
+                classSpec.getDiscriminatorColumn().setLength((Integer) column_length_Spinner.getValue());
+                classSpec.getDiscriminatorColumn().setColumnDefinition(column_def_TextArea.getText());
+
+            }
 
         } else {
             classSpec.setInheritance(null);
             classSpec.setDiscriminatorColumn(null);
-//            classSpec.getInheritance().setStrategy(null);
-//            classSpec.getDiscriminatorColumn().setDiscriminatorType(null);
-//            classSpec.getDiscriminatorColumn().setName(null);
-//            classSpec.getDiscriminatorColumn().setLength(null);
-//            classSpec.getDiscriminatorColumn().setColumnDefinition(null);
-
         }
         if (type.equals("LEAF") || type.equals("BRANCH")) {
             classSpec.setDiscriminatorValue(value_TextField.getText());
@@ -153,19 +160,17 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
         if (type != null && type.equals("LEAF")) {
             EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
             InheritenceHandler superClassSpec = (InheritenceHandler) superEntityWidget.getBaseElementSpec();
-            setStrategySelectedItem(superClassSpec.getInheritance().getStrategy());
-            setColumnTypeSelectedItem(superClassSpec.getDiscriminatorColumn().getDiscriminatorType());
-            column_name_TextField.setText(superClassSpec.getDiscriminatorColumn().getName());
-            if (superClassSpec.getDiscriminatorColumn().getLength() != null) {
-                column_length_Spinner.setValue(superClassSpec.getDiscriminatorColumn().getLength());
-            } else {
-                column_length_Spinner.setValue(30);
-            }
-            column_def_TextArea.setText(superClassSpec.getDiscriminatorColumn().getColumnDefinition());
-
+            setUIValue(superClassSpec);
         } else {
-            setStrategySelectedItem(classSpec.getInheritance().getStrategy());
-            setColumnTypeSelectedItem(classSpec.getDiscriminatorColumn().getDiscriminatorType());
+            setUIValue(classSpec);
+        }
+
+    }
+
+    private void setUIValue(InheritenceHandler classSpec) {
+        setStrategySelectedItem(classSpec.getInheritance());
+        setColumnTypeSelectedItem(classSpec.getDiscriminatorColumn());
+        if (classSpec.getDiscriminatorColumn() != null) {
             column_name_TextField.setText(classSpec.getDiscriminatorColumn().getName());
             if (classSpec.getDiscriminatorColumn().getLength() != null) {
                 column_length_Spinner.setValue(classSpec.getDiscriminatorColumn().getLength());
@@ -173,7 +178,10 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                 column_length_Spinner.setValue(30);
             }
             column_def_TextArea.setText(classSpec.getDiscriminatorColumn().getColumnDefinition());
-
+        } else {
+            column_name_TextField.setText("");
+            column_length_Spinner.setValue(30);
+            column_def_TextArea.setText("");
         }
 
     }

@@ -49,9 +49,9 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlType(name = "column-result")
 public class ColumnResult {
 
-    @XmlAttribute(name = "name", required = true)
+    @XmlAttribute(name = "n", required = true)//(name = "name", required = true)
     protected String name;
-    @XmlAttribute(name = "class")
+    @XmlAttribute(name = "c")//(name = "class")
     protected String clazz;
 
     public static ColumnResult load(Element element, AnnotationMirror annotationMirror) {

@@ -124,6 +124,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         set.put("BASIC_PROP", JPAModelerUtil.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity.getNamedQuery()));
         set.put("BASIC_PROP", JPAModelerUtil.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity.getNamedNativeQuery()));
         set.put("BASIC_PROP", JPAModelerUtil.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
+        set.put("BASIC_PROP", JPAModelerUtil.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));
         
     }
 
@@ -146,12 +147,12 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
 
             @Override
             public InheritenceHandler getData() {
-                if (classSpec.getInheritance() == null) {
-                    classSpec.setInheritance(new Inheritance());
-                }
-                if (classSpec.getDiscriminatorColumn() == null) {
-                    classSpec.setDiscriminatorColumn(new DiscriminatorColumn());
-                }
+//                if (classSpec.getInheritance() == null) {
+//                    classSpec.setInheritance(new Inheritance());
+//                }
+//                if (classSpec.getDiscriminatorColumn() == null) {
+//                    classSpec.setDiscriminatorColumn(new DiscriminatorColumn());
+//                }
                 return classSpec;
             }
 
@@ -248,17 +249,17 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem addEntityGraph;
-        addEntityGraph = new JMenuItem("Add Entity Graph");
-        addEntityGraph.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Component parentComponent = (Component)EntityWidget.this.getModelerScene().getModelerPanelTopComponent();
-                String name = JOptionPane.showInputDialog(parentComponent, "Please enter entity graph name : ", null);
-                openDiagram(name);
-            }
-        });
-        menuList.add(0, addEntityGraph);
+//        JMenuItem addEntityGraph;
+//        addEntityGraph = new JMenuItem("Add Entity Graph");
+//        addEntityGraph.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                Component parentComponent = (Component)EntityWidget.this.getModelerScene().getModelerPanelTopComponent();
+//                String name = JOptionPane.showInputDialog(parentComponent, "Please enter entity graph name : ", null);
+//                openDiagram(name);
+//            }
+//        });
+//        menuList.add(0, addEntityGraph);
         return menuList;
     }
     

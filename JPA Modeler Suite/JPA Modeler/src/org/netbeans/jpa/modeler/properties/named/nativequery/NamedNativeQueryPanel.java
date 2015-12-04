@@ -40,7 +40,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
     private NAttributeEntity attributeEntity;
 
     public NamedNativeQueryPanel() {
-        super("", true);
+        
         initComponents();
 
     }

@@ -24,7 +24,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 public class QueryHintPanel extends EntityComponent<QueryHint> {
 
     public QueryHintPanel() {
-        super("", true);
+        
         initComponents();
     }
 

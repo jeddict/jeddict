@@ -29,7 +29,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 public class StoredProcedureParameterPanel extends EntityComponent<StoredProcedureParameter> {
 private final ModelerFile modelerFile;
     public StoredProcedureParameterPanel(ModelerFile modelerFile) {
-        super("", true);
+        
         this.modelerFile=modelerFile;
         initComponents();
     }

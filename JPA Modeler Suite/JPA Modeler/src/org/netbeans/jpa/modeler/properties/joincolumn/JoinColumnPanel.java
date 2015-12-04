@@ -28,7 +28,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
      * Creates new form CreateMessagePanel
      */
     public JoinColumnPanel() {
-        super("", true);
+        
         initComponents();
 
     }

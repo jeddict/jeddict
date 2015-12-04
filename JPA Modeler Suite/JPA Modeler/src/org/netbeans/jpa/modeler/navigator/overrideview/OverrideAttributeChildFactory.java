@@ -29,25 +29,23 @@ import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class OverrideAttributeChildFactory extends ChildFactory<AttributeWidget> {
-
-    private EntityWidget entityWidget;
+public class OverrideAttributeChildFactory extends OverrideChildFactory {
 
     public OverrideAttributeChildFactory(EntityWidget entityWidget) {
-        this.entityWidget = entityWidget;
+        super(entityWidget);
     }
 
     @Override
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
         for (AttributeWidget attributeWidget : entityWidget.getAttributeOverrideWidgets()) {
+            attributeWidgets.add(attributeWidget);
+        }for (AttributeWidget attributeWidget : entityWidget.getEmbeddedOverrideWidgets()) {
             attributeWidgets.add(attributeWidget);
         }
 
@@ -60,31 +58,9 @@ public class OverrideAttributeChildFactory extends ChildFactory<AttributeWidget>
         AbstractNode node;
         if (attributeWidget instanceof EmbeddedAttributeWidget) {
             EmbeddedAttributeWidget embeddedAttributeWidget = (EmbeddedAttributeWidget) attributeWidget;
-            node = new OverrideEmbeddedAttributeRootNode(Children.create(new OverrideEmbeddedAttributeChildFactory(entityWidget, "", embeddedAttributeWidget, embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget()), true));
+            node = new OverrideEmbeddedRootNode(Children.create(new OverrideEmbeddedAttributeChildFactory(entityWidget, "", embeddedAttributeWidget, embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget()), true));
         } else {
             node = new PropertyNode(entityWidget.getModelerScene(), Children.LEAF) {
-//                @Override
-//                public Action[] getActions(boolean context) {
-//                    Action[] result = new Action[]{
-//                        SystemAction.get(DeleteAction.class),
-//                        SystemAction.get(PropertiesAction.class)
-//                    };
-//                    return result;
-//                }
-//
-//                @Override
-//                public boolean canDestroy() {
-//                    EntityWidget customer = this.getLookup().lookup(EntityWidget.class);
-//                    return customer != null;
-//                }
-//
-//                @Override
-//                public void destroy() throws IOException {
-////                if (deleteEntity(this.getLookup().lookup(Entity.class).getEntityId())) {
-////                    super.destroy();
-////                    EntityTopComponent.refreshNode();
-////                }
-//                }
 
                 @Override
                 public void createPropertySet(ElementPropertySet set) {
@@ -117,19 +93,4 @@ public class OverrideAttributeChildFactory extends ChildFactory<AttributeWidget>
         return node;
     }
 
-//    private static boolean deleteEntity(int customerId) {
-//        EntityManager entityManager = Persistence.createEntityManagerFactory("EntityDBAccessPU").createEntityManager();
-//        entityManager.getTransaction().begin();
-//        try {
-//            Entity toDelete = entityManager.find(Entity.class, customerId);
-//            entityManager.remove(toDelete);
-//            // so far so good
-//            entityManager.getTransaction().commit();
-//        } catch(Exception e) {
-//            Logger.getLogger(EntityChildFactory.class.getName()).log(
-//                    Level.WARNING, "Cannot delete a customer with id {0}, cause: {1}", new Object[]{customerId, e});
-//            entityManager.getTransaction().rollback();
-//        }
-//        return true;
-//    }
 }

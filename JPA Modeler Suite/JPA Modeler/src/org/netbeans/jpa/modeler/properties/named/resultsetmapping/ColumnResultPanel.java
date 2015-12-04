@@ -27,7 +27,6 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 public class ColumnResultPanel extends EntityComponent<ColumnResult> {
 private final ModelerFile modelerFile;
     public ColumnResultPanel(ModelerFile modelerFile) {
-        super("", true);
         this.modelerFile=modelerFile;
         initComponents();
     }

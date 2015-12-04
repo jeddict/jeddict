@@ -74,8 +74,6 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
     protected TemporalType temporal;
     protected EnumType enumerated;
     protected Convert convert;//RENENF PENDING
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
     @XmlAttribute(name = "fetch")
     protected FetchType fetch;
     @XmlAttribute(name = "optional")
@@ -206,15 +204,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         this.convert = value;
     }
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
+ 
 
     /**
      * Sets the value of the name property.
@@ -222,6 +212,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      * @param value allowed object is {@link String }
      *
      */
+    @Override
     public void setName(String value) {
         notifyListeners("name", this.name, this.name = value);
     }

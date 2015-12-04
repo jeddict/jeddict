@@ -28,7 +28,7 @@ public abstract class CompositionAttribute extends BaseAttribute implements Acce
 
     @XmlAttribute(name = "connected-class-id", required = true)
     private String connectedClassId;
-
+  
     /**
      * @return the connectedClassId
      */

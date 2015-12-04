@@ -65,7 +65,7 @@ public class ColumnResultSnippet implements Snippet {
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
 
-        if (classHelper.getClassName() != null) {
+        if (classHelper.getClassName() != null && !classHelper.getClassName().isEmpty()) {
             builder.append("type=");
             builder.append(getType());
             builder.append(ORMConverterUtil.COMMA);

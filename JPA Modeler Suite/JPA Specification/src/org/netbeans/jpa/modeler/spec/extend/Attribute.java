@@ -38,18 +38,41 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     @XmlAttribute
     private boolean visibile = true;
 
-    @XmlAttribute(name = "jaxb-variable-type", required = true)
+    @XmlAttribute(name = "xvt", required = true)//(name = "jaxb-variable-type", required = true)
     private JaxbVariableType jaxbVariableType;
-    @XmlElement(name = "jaxb-xml-attribute")
+    @XmlElement(name = "xa")//(name = "jaxb-xml-attribute")
     private JaxbXmlAttribute jaxbXmlAttribute;
-    @XmlElement(name = "jaxb-xml-element")
+    @XmlElement(name = "xe")//(name = "jaxb-xml-element")
     private JaxbXmlElement jaxbXmlElement;
-    @XmlElement(name = "jaxb-xml-element")
-    @XmlElementWrapper(name = "jaxb-xml-element-list")
+    @XmlElement(name="xe")//(name = "jaxb-xml-element")
+    @XmlElementWrapper(name = "xel")//(name = "jaxb-xml-element-list")
     private List<JaxbXmlElement> jaxbXmlElementList;
 //    @XmlAttribute(name = "jaxb-xml-list")
 //    private Boolean jaxbXmlList;
 
+       
+    @XmlAttribute(name = "name", required = true)
+    protected String name;
+   
+    /**
+     * Gets the value of the name property.
+     *
+     * @return possible object is {@link String }
+     *
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the value of the name property.
+     *
+     * @param value allowed object is {@link String }
+     *
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
     /**
      * @return the annotation
      */

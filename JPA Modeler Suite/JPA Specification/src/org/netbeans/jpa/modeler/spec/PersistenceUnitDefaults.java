@@ -77,7 +77,7 @@ public class PersistenceUnitDefaults {
     protected AccessType access;
     @XmlElement(name = "cascade-persist")
     protected EmptyType cascadePersist;
-    @XmlElement(name = "entity-listeners")
+    @XmlElement(name = "el")//(name = "entity-listeners")
     protected EntityListeners entityListeners;
 
     /**

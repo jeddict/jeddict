@@ -225,10 +225,10 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     private ComboBoxPropertySupport getCompositePrimaryKeyProperty() {
         final JavaClassWidget javaClassWidget = this;
         final PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) javaClassWidget.getBaseElementSpec();
-        ComboBoxListener comboBoxListener = new ComboBoxListener() {
+        ComboBoxListener<CompositePrimaryKeyType> comboBoxListener = new ComboBoxListener<CompositePrimaryKeyType>() {
             @Override
-            public void setItem(ComboBoxValue value) {
-                CompositePrimaryKeyType compositePrimaryKeyType = (CompositePrimaryKeyType) value.getValue();
+            public void setItem(ComboBoxValue<CompositePrimaryKeyType> value) {
+                CompositePrimaryKeyType compositePrimaryKeyType =  value.getValue();
                 if (compositePrimaryKeyType == CompositePrimaryKeyType.EMBEDDEDID) {
                     PersistenceClassWidget.this.addNewEmbeddedIdAttribute(getNextAttributeName(PersistenceClassWidget.this.getName() + "EmbeddedId"));
                 } else {
@@ -240,7 +240,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             }
 
             @Override
-            public ComboBoxValue getItem() {
+            public ComboBoxValue<CompositePrimaryKeyType> getItem() {
                 if (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                     return new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id");
                 } else if (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
@@ -251,8 +251,8 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             }
 
             @Override
-            public List<ComboBoxValue> getItemList() {
-                List<ComboBoxValue> values = new ArrayList<ComboBoxValue>();
+            public List<ComboBoxValue<CompositePrimaryKeyType>> getItemList() {
+                List<ComboBoxValue<CompositePrimaryKeyType>> values = new ArrayList<ComboBoxValue<CompositePrimaryKeyType>>();
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.NONE, "None"));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class"));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id"));
@@ -312,7 +312,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     @Override
     public void deleteAttribute(AttributeWidget attributeWidget) {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
-        IAttributes attributes = (IAttributes) javaClass.getAttributes();
+        IAttributes attributes = javaClass.getAttributes();
         if (attributeWidget == null) {
             return;
         }

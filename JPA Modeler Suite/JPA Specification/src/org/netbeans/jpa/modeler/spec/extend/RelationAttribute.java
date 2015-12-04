@@ -53,8 +53,6 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
      @XmlElement(name = "join-table")
     protected JoinTable joinTable;
     protected CascadeType cascade;
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
     @XmlAttribute(name = "target-entity")
     protected String targetEntity;
     @XmlAttribute(name = "fetch")
@@ -145,27 +143,7 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         this.cascade = value;
     }
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
 
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    @Override
-    public void setName(String value) {
-        this.name = value;
-    }
 
     /**
      * Gets the value of the targetEntity property.

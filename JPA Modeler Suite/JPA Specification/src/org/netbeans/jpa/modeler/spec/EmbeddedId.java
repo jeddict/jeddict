@@ -60,8 +60,6 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
 
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;
-    @XmlAttribute(required = true)
-    protected String name;
     @XmlAttribute
     protected AccessType access;
 //No need to set connectedClassId cause is mapped to virtual(hidden) Embaddable not Visual Embaddable
@@ -106,25 +104,7 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         return this.attributeOverride;
     }
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
 
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
 
     /**
      * Gets the value of the access property.

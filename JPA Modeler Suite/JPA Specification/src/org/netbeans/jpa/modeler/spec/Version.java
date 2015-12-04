@@ -57,8 +57,6 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
 
     protected Column column;
     protected TemporalType temporal;//conflict no datatype allow uti.Date/Calendar
-    @XmlAttribute(required = true)
-    protected String name;
     @XmlAttribute
     protected AccessType access;
 
@@ -114,25 +112,7 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
         this.temporal = value;
     }
 
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+ 
 
     /**
      * Gets the value of the access property.

@@ -134,13 +134,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected List<SequenceGenerator> sequenceGenerator;
     @XmlElement(name = "table-generator")
     protected List<TableGenerator> tableGenerator;
-    @XmlElement(name = "named-query")
+    @XmlElement(name = "nq")//(name = "named-query")
     protected List<NamedQuery> namedQuery;
-    @XmlElement(name = "named-native-query")
+    @XmlElement(name = "nnq")//(name = "named-native-query")
     protected List<NamedNativeQuery> namedNativeQuery;
-    @XmlElement(name = "named-stored-procedure-query")
+    @XmlElement(name = "nspq")//(name = "named-stored-procedure-query")
     protected List<NamedStoredProcedureQuery> namedStoredProcedureQuery; //REVENG PENDING
-    @XmlElement(name = "sql-result-set-mapping")
+    @XmlElement(name="srsm")//(name = "sql-result-set-mapping")
     protected Set<SqlResultSetMapping> sqlResultSetMapping;
 
     @XmlElement(name = "default-class")
@@ -165,9 +165,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     /**
      * JAXB Attributes Start *
      */
-    @XmlAttribute(name = "jaxb-support")
+    @XmlAttribute(name = "xs")//(name = "jaxb-support")
     private Boolean jaxbSupport = false;
-    @XmlAttribute(name = "jaxb-namespace")
+    @XmlAttribute(name = "xn")//(name = "jaxb-namespace")
     private String jaxbNameSpace;
 
     /**
@@ -672,12 +672,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         } else {
             throw new InvalidElmentException("Invalid JPA Element");
         }
-        baseElement_In.setRootElement(this);
+        
     }
 
     public void removeEntity(Entity entity_In) {
         if (entity != null) {
             this.entity.remove(entity_In);
+            entity_In.setRootElement(null);
         }
     }
 
@@ -686,6 +687,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             entity = new ArrayList<Entity>();
         }
         this.entity.add(entity_In);
+        entity_In.setRootElement(this);
     }
 
     public Entity findEntity(String entityName) {
@@ -736,6 +738,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public void removeMappedSuperclass(MappedSuperclass mappedSuperclass_In) {
         if (mappedSuperclass != null) {
             this.mappedSuperclass.remove(mappedSuperclass_In);
+            mappedSuperclass_In.setRootElement(null);
         }
     }
 
@@ -744,6 +747,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             mappedSuperclass = new ArrayList<MappedSuperclass>();
         }
         this.mappedSuperclass.add(mappedSuperclass_In);
+        mappedSuperclass_In.setRootElement(this);
     }
 
     public MappedSuperclass findMappedSuperclass(String mappedSuperclassName) {
@@ -760,6 +764,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public void removeEmbeddable(Embeddable embeddable_In) {
         if (embeddable != null) {
             this.embeddable.remove(embeddable_In);
+            embeddable_In.setRootElement(null);
         }
     }
 
@@ -768,6 +773,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             embeddable = new ArrayList<Embeddable>();
         }
         this.embeddable.add(embeddable_In);
+        embeddable_In.setRootElement(this);
     }
 
     public Embeddable findEmbeddable(String embeddableName) {

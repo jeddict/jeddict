@@ -175,10 +175,10 @@ public class AttributeWidget extends FlowPinWidget {
     }
 
     private Image getErrorIcon() {
-        int iconWidth = (int) ((BufferedImage) icon).getWidth() + 3;
-        int iconHeight = (int) ((BufferedImage) icon).getHeight() + 3;
-        int errorIconWidth = (int) ((BufferedImage) errorIcon).getWidth();
-        int errorIconHeight = (int) ((BufferedImage) errorIcon).getHeight();
+        int iconWidth = ((BufferedImage) icon).getWidth() + 3;
+        int iconHeight = ((BufferedImage) icon).getHeight() + 3;
+        int errorIconWidth = ((BufferedImage) errorIcon).getWidth();
+        int errorIconHeight = ((BufferedImage) errorIcon).getHeight();
 
         BufferedImage combined = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics g = combined.getGraphics();
