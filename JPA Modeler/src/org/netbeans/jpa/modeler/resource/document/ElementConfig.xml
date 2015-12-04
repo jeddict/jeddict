@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<element-config>
+    <groups>
+        <group id="BASIC_PROP" name="Basic Properties"/>
+        <group id="COLUMN_PROP" name="Column Properties"/>
+        <group id="TABLE_PROP" name="Table Properties"/>
+        <group id="COLUMN_PROP" name="Column Properties"/>
+        <group id="JOIN_COLUMN_PROP" name="Join Column Properties"/>
+        <group id="JOIN_TABLE_PROP" name="Join Table Properties"/>
+        <group id="COLLECTION_TABLE_PROP" name="Collection Table Properties"/>
+        <group id="GENERATE_SOURCECODE_PROP" name="Genarate"/>
+        <group id="JAXB_PROP" name="JAXB Properties"/>
+        <group id="JAXB_ATTR_PROP" name="JAXB Attribute Properties"/>
+        <group id="JAXB_ELE_PROP" name="JAXB Element Properties"/>
+        
+        <!--<group id="COMPOSITE_PK_PROP" name="Composite PrimaryKey"/>-->
+    </groups>
+    <elements>
+        <element id="EntityMappings" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.EntityMappings">
+            <attributes>
+                <attribute id="jaxbSupport" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="jaxbSupport" refresh-onchange="true" >
+                    <display-name>JAXB Source</display-name>
+                    <change-listener><![CDATA[scene.refreshProperties()]]></change-listener>
+                </attribute>
+                <attribute id="jaxbNameSpace" groupId="JAXB_PROP" class="java.lang.String" name="jaxbNameSpace">
+                    <display-name>JAXB NameSpace</display-name>
+                    <visible><![CDATA[root.jaxbSupport==true]]></visible>
+                </attribute>
+                <attribute id="persistenceUnitName" groupId="BASIC_PROP" class="java.lang.String" name="persistenceUnitName">
+                    <display-name>PersistenceUnit Name</display-name>
+                </attribute>
+                <attribute id="package" groupId="BASIC_PROP" class="java.lang.String" name="package">
+                    <display-name>Package</display-name>
+                </attribute>
+                <attribute id="schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
+                </attribute>
+                <attribute id="catalog" groupId="BASIC_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                <attribute id="version" groupId="BASIC_PROP" class="java.lang.String" name="version">
+                    <display-name>Version</display-name>
+                </attribute>
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Table" groupId="TABLE_PROP" class="org.netbeans.jpa.modeler.spec.Table">
+            <attributes>
+                <attribute id="table_name" groupId="TABLE_PROP" class="java.lang.String" name="name">
+                    <display-name>name</display-name>
+                </attribute>
+                <attribute id="catalog" groupId="TABLE_PROP" class="java.lang.String" name="catalog">
+                    <display-name>catalog</display-name>
+                </attribute>
+                <attribute id="schema" groupId="TABLE_PROP" class="java.lang.String" name="schema">
+                    <display-name>schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+         <element id="Column" groupId="COLUMN_PROP" class="org.netbeans.jpa.modeler.spec.Column">
+            <attributes>
+                <attribute id="column_name" groupId="COLUMN_PROP" class="java.lang.String" name="name">
+                    <display-name>Column Name</display-name>
+                </attribute>
+                <attribute id="table_name" groupId="COLUMN_PROP" class="java.lang.String" name="table">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                <attribute id="unique" groupId="COLUMN_PROP" class="java.lang.Boolean" name="unique">
+                    <display-name>Unique</display-name>
+                </attribute>
+                   <attribute id="nullable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="nullable">
+                    <display-name>Nullable</display-name>
+                </attribute>
+                    <attribute id="insertable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="insertable">
+                    <display-name>Insertable</display-name>
+                </attribute>
+                   <attribute id="updatable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="updatable">
+                    <display-name>Updatable</display-name>
+                </attribute>
+                  <attribute id="length" groupId="COLUMN_PROP" class="java.lang.Integer" name="length">
+                    <display-name>Length</display-name>
+                    <visible><![CDATA["String".equals(node.getAttributeType())]]></visible>
+                </attribute>
+                <attribute id="precision" groupId="COLUMN_PROP" class="java.lang.Integer" name="precision">
+                    <display-name>Precision</display-name>
+                    <visible><![CDATA[node.isPrecisionAttributeType()]]></visible>
+                </attribute>
+                <attribute id="scale" groupId="COLUMN_PROP" class="java.lang.Integer" name="scale">
+                    <display-name>Scale</display-name>
+                    <visible><![CDATA[node.isScaleAttributeType()]]></visible>
+                </attribute>
+                 <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="MappedSuperclass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.MappedSuperclass">
+            <attributes>
+                <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
+                    <display-name>Class</display-name>
+                </attribute>                
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>
+                <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                    <display-name>Composite PrimaryKey Class</display-name>
+                </attribute>
+            </attributes>
+        </element>
+          <element id="ManagedClass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ManagedClass">
+            <attributes>
+                <attribute id="generateStaticMetamodel" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="generateStaticMetamodel">
+                    <display-name>StaticMetamodel</display-name>
+                </attribute>
+                 </attributes>
+        </element>
+        <element id="IdentifiableClass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.IdentifiableClass">
+            <attributes>
+                <attribute id="xmlRootElement" groupId="JAXB_PROP" class="java.lang.Boolean" name="xmlRootElement" >
+                    <display-name>Root Element</display-name>
+                    <visible><![CDATA[root.jaxbSupport==true]]></visible>
+                </attribute>
+                 </attributes>
+        </element>
+               
+        <element id="Entity" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Entity">
+            <attributes>
+                <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
+                    <display-name>Class</display-name>
+                </attribute>
+               <attribute id="abstract" groupId="BASIC_PROP" class="java.lang.Boolean" name="abstract">
+                    <display-name>Is Abstract</display-name>
+                </attribute>
+                      <attribute id="entity_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>
+                <!--                <attribute id="cacheable" groupId="BASIC_PROP" class="java.lang.Boolean" name="cacheable">
+                    <display-name>Cacheable</display-name>
+                </attribute>
+                <attribute id="metadataComplete" groupId="BASIC_PROP" class="java.lang.Boolean" name="metadataComplete">
+                    <display-name>MetadataComplete</display-name>
+                </attribute>-->
+                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                    <display-name>Composite PrimaryKey Class</display-name>
+                </attribute>
+            </attributes>
+        </element>
+           <element id="Embeddable" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Embeddable">
+            <attributes>
+                <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
+                    <display-name>Class</display-name>
+                </attribute>
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>
+            </attributes>
+        </element>
+<!--        <element id="RelationAttribute" groupId="CASCADE_PROP" class="org.netbeans.jpa.modeler.spec.extend.RelationAttribute">
+            <attributes>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+                <attribute id="cascadePersist" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadePersist">
+                    <display-name>Persist</display-name>
+                </attribute>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+
+            </attributes>
+        </element>-->
+
+       <element id="Id" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Id">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Basic" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Basic">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+
+                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>
+
+            </attributes>
+        </element>
+       <element id="ElementCollection" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ElementCollection">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
+                    <display-name>Collection Class</display-name>
+                </attribute>
+            </attributes>
+        </element>
+           <element id="Embedded" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Embedded">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+            </attributes>
+        </element>  
+        <element id="EmbeddedId" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.EmbeddedId">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>                
+            </attributes>
+        </element>
+
+        <element id="Version" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Version">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Transient" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Transient">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+            </attributes>
+        </element>
+
+        <element id="OneToOne" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.OneToOne">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+
+                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>
+
+            </attributes>
+        </element>
+        <element id="OneToMany" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.OneToMany">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
+                    <display-name>Collection Class</display-name>
+                </attribute>
+
+                <!--                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>-->
+
+            </attributes>
+        </element>
+        <element id="ManyToOne" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ManyToOne">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+
+                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>
+
+            </attributes>
+        </element>
+        <element id="ManyToMany" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ManyToMany">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
+                    <display-name>Collection Class</display-name>
+                </attribute>
+                <!--                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>-->
+
+            </attributes>
+        </element>
+              <element id="JoinTable" class="org.netbeans.jpa.modeler.spec.JoinTable">
+            <attributes>
+                <attribute id="JoinTable_name" groupId="JOIN_TABLE_PROP" class="java.lang.String" name="name">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                 <attribute id="JoinTable_catalog" groupId="JOIN_TABLE_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                 <attribute id="JoinTable_schema" groupId="JOIN_TABLE_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="CollectionTable" class="org.netbeans.jpa.modeler.spec.CollectionTable">
+            <attributes>
+                <attribute id="CollectionTable_name" groupId="COLLECTION_TABLE_PROP" class="java.lang.String" name="name">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                 <attribute id="CollectionTable_catalog" groupId="COLLECTION_TABLE_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                 <attribute id="CollectionTable_schema" groupId="COLLECTION_TABLE_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="BaseAttribute" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.BaseAttribute">
+            <attributes>
+                <!--                <attribute id="attributeType" groupId="BASIC_PROP" class="java.lang.String" name="attributeType">
+                    <display-name>Data Type</display-name>
+                </attribute>-->
+            </attributes>
+        </element>
+<!--
+        <element id="Column" groupId="COLUMN_PROP" class="org.netbeans.jpa.modeler.spec.Column">
+            <attributes>
+                <attribute id="name" groupId="COLUMN_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+
+                <attribute id="unique" groupId="COLUMN_PROP" class="java.lang.Boolean" name="unique">
+                    <display-name>Unique</display-name>
+                </attribute>
+                <attribute id="nullable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="nullable">
+                    <display-name>Nullable</display-name>
+                </attribute>
+                <attribute id="insertable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="insertable">
+                    <display-name>Insertable</display-name>
+                </attribute>
+                <attribute id="updatable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="updatable">
+                    <display-name>Updatable</display-name>
+                </attribute>
+                <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
+                <attribute id="table" groupId="COLUMN_PROP" class="java.lang.String" name="table">
+                    <display-name>Table</display-name>
+                </attribute>
+                <attribute id="length" groupId="COLUMN_PROP" class="java.lang.Integer" name="length">
+                    <display-name>Length</display-name>
+                </attribute>
+                <attribute id="precision" groupId="COLUMN_PROP" class="java.lang.Integer" name="precision">
+                    <display-name>Precision</display-name>
+                </attribute>
+                <attribute id="scale" groupId="COLUMN_PROP" class="java.lang.Integer" name="scale">
+                    <display-name>Scale</display-name>
+                </attribute>
+
+                    </attributes>
+                </element>
+        -->
+<!--           <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
+            <attributes>
+                <attribute id="jaxbXmlList" groupId="JAXB_PROP" class="java.lang.Boolean" name="jaxbXmlList">
+                    <display-name>Is Xml List</display-name>
+                    <visible><![CDATA[node instanceof org.netbeans.jpa.modeler.spec.ElementCollection || node instanceof org.netbeans.jpa.modeler.spec.OneToMany || node instanceof org.netbeans.jpa.modeler.spec.ManyToMany]]></visible>
+                </attribute>
+            </attributes>
+        </element>-->
+        <element id="JaxbXmlAttribute" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute">
+            <attributes>
+                <attribute id="JaxbXmlAttribute.name" groupId="JAXB_ATTR_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Attribute")]]></visible>
+                </attribute>
+                <attribute id="JaxbXmlAttribute.required" groupId="JAXB_ATTR_PROP" class="java.lang.Boolean" name="required">
+                    <display-name>Required</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Attribute")]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="JaxbXmlElement" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement">
+            <attributes>
+                <attribute id="JaxbXmlElement.name" groupId="JAXB_ELE_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Element")]]></visible>
+                </attribute>
+                <attribute id="JaxbXmlElement.required" groupId="JAXB_ELE_PROP" class="java.lang.Boolean" name="required">
+                    <display-name>Required</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Element")]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+
+    </elements>
+</element-config>

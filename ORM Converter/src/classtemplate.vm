@@ -1,0 +1,100 @@
+#####################Package Name definition ###########################
+#if ($classDef.getPackageName())
+package $classDef.getPackageName();
+#end
+
+#####################import statements #################################
+import java.io.Serializable;
+import java.util.Objects;
+#foreach ( $importStatement in $classDef.getImportSnippets() )
+$importStatement
+#end
+
+#if($classDef.getEntityString())
+$classDef.getEntityString()
+#end
+public class $classDef.getClassName() implements Serializable {
+#####################member variables ###############################
+#foreach( $varDef in $classDef.getVariableDefs() )
+
+## $varDef.type => $varDef.getTypeIdentifier().getVariableType() ## to resolve problem Collection => Collection<Entity>
+    private $varDef.type $varDef.name;
+#end
+
+#####################Constructor #################################
+    public $classDef.getClassName()() {
+
+    }
+
+#####################hash code ###############################
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        #foreach( $varDef in $classDef.getVariableDefs() ) #if($varDef.type == "boolean")
+hash = 59 * hash + (this.$varDef.name ? 1 : 0);
+#elseif($varDef.type == "byte" || $varDef.type == "short" || $varDef.type == "char" ||  $varDef.type == "int")
+hash = 59 * hash + this.$varDef.name;
+#elseif($varDef.type == "long")
+hash = 59 * hash + (int) (this.$varDef.name ^ (this.$varDef.name >>> 32));
+#elseif($varDef.type == "float")
+hash = 59 * hash + Float.floatToIntBits(this.$varDef.name);
+#elseif($varDef.type == "double")
+hash = 59 * hash + (int) (Double.doubleToLongBits(this.$varDef.name) ^ (Double.doubleToLongBits(this.$varDef.name) >>> 32));
+#else
+hash = 59 * hash + Objects.hashCode(this.$varDef.name);
+#end
+        #end
+     return hash;
+   }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final $classDef.getClassName() other = ($classDef.getClassName()) obj;
+        #foreach( $varDef in $classDef.getVariableDefs() )
+#if($varDef.type == "boolean" || $varDef.type == "byte" || $varDef.type == "short" || $varDef.type == "char" ||  $varDef.type == "int" || $varDef.type == "long")
+if (this.$varDef.name != other.$varDef.name) {
+            return false;
+        }
+#elseif($varDef.type == "float")
+if (Float.floatToIntBits(this.$varDef.name) != Float.floatToIntBits(other.$varDef.name)) {
+            return false;
+        }
+#elseif($varDef.type == "double")
+if (Double.doubleToLongBits(this.$varDef.name) != Double.doubleToLongBits(other.$varDef.name)) {
+            return false;
+        }
+#else
+if (!Objects.equals(this.$varDef.name, other.$varDef.name)) {
+            return false;
+        }
+#end
+        #end
+    return true;
+    }
+
+#####################getter/setter #################################
+#foreach( $varDef in $classDef.getVariableDefs() )
+#set($method = $varDef.getMethodName())
+#if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
+    
+    public $varDef.type is$method() {
+        return this.$varDef.name;
+    }
+#else
+
+   public $varDef.type get$method() {
+        return this.$varDef.name;
+    }
+#end
+
+    public void set$method ($varDef.type $varDef.name) {
+        this.$varDef.name = $varDef.name;
+    }
+#end
+}

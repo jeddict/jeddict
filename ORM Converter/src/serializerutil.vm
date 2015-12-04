@@ -1,0 +1,45 @@
+
+#####################Package Name definition ###########################
+
+#if ($serializerutil.getPackageName())
+package $serializerutil.getPackageName();
+#end
+
+#####################import statements #################################
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+public class SerializerUtil {
+
+    private static final String DEFAULT_PU_NAME = "DefaultPU";
+    private static final String PU_NAME = getPUName();
+
+    private static EntityManagerFactory entityManagerFactory =
+            Persistence.createEntityManagerFactory(PU_NAME);
+
+    private static EntityManager entityManager =
+            entityManagerFactory.createEntityManager();
+
+    public static void closeEntityManagerFactory() {
+        entityManagerFactory.close();
+    }
+
+    public static EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    //TODO: read from properties file.
+    private static String getPUName() {
+
+        String overriddenPUName = System.getProperty(
+            "org.netbeans.orm.converter");
+
+        if(overriddenPUName != null) {
+            return overriddenPUName;
+        }
+        return DEFAULT_PU_NAME;
+    }
+}
+

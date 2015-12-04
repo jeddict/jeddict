@@ -1,0 +1,173 @@
+
+#####################Package Name definition ###########################
+
+#if ($serializer.getPackageName())
+package $serializer.getPackageName();
+#end
+
+#####################import statements #################################
+
+#foreach ( $importStatement in $serializer.getImportSnippets() )
+$importStatement
+#end
+
+public class $serializer.getClassName() {
+
+    private EntityManager entityManager = SerializerUtil.getEntityManager();
+
+#####################Constructor #################################
+    public $serializer.getClassName()(){
+
+    }
+
+    public $serializer.getClassName()(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+#####################execute helpers #################################
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+#if(!$serializer.isAbstract())
+    public List executeQuery (String queryString) {
+        Query query = entityManager.createQuery(queryString);
+        return query.getResultList();
+    }
+
+    public void executeAtomicUpdate (String queryString) {
+        entityManager.getTransaction().begin();
+
+        Query query = entityManager.createQuery(queryString);
+        query.executeUpdate();
+
+        entityManager.getTransaction().commit();
+    }
+
+    public void executeUpdate (String queryString) {
+        Query query = entityManager.createQuery(queryString);
+        query.executeUpdate();
+    }
+
+    public int delete_All() {
+        Query query = entityManager.createQuery("DELETE FROM $serializer.getEntityName()");
+        return query.executeUpdate();
+    }
+
+    public int deleteAtomic_All() {
+        entityManager.getTransaction().begin();
+
+        int result = delete_All();
+
+        entityManager.getTransaction().commit();
+
+        return result;
+    }
+
+    public long getCount() {
+        Query query = entityManager.createQuery("SELECT COUNT(e) from $serializer.getEntityName() e");
+        return (Long) query.getSingleResult();
+    }
+
+#####################Create Operations #################################
+    public void createAtomic$serializer.getEntityClassName()($serializer.getEntityClassName() $serializer.getEntityVarName()) {
+        entityManager.getTransaction().begin();
+
+        entityManager.persist($serializer.getEntityVarName());
+
+        entityManager.getTransaction().commit();
+    }
+
+    public void create$serializer.getEntityClassName()($serializer.getEntityClassName() $serializer.getEntityVarName()) {
+        entityManager.persist($serializer.getEntityVarName());
+    }
+
+#if($serializer.getPrimaryKeyType())
+#####################delete Operations #################################
+    public void deleteAtomicby_PrimaryKey( $serializer.getPrimaryKeyType() $serializer.getPrimaryKeyName() ) {
+         entityManager.getTransaction().begin();
+         $serializer.getEntityClassName() entity = entityManager.find($serializer.getEntityClassNameWithClassSuffix(), $serializer.getPrimaryKeyName());
+
+         if(entity != null) {
+            entityManager.remove(entity);
+         }
+
+         entityManager.getTransaction().commit();
+    }
+
+    public void deleteby_PrimaryKey( $serializer.getPrimaryKeyType() $serializer.getPrimaryKeyName() ) {
+         $serializer.getEntityClassName() entity = entityManager.find($serializer.getEntityClassNameWithClassSuffix(), $serializer.getPrimaryKeyName());
+
+         if(entity != null) {
+            entityManager.remove(entity);
+         }
+    }
+
+#####################Default Query Operations #################################
+    public $serializer.getEntityClassName() findby_PrimaryKey( $serializer.getPrimaryKeyType() $serializer.getPrimaryKeyName() ) {
+        return entityManager.find($serializer.getEntityClassNameWithClassSuffix(), $serializer.getPrimaryKeyName());
+    }
+
+    public List<$serializer.getEntityClassName()> findAll_$serializer.getEntityClassName()s() {
+        Query query = entityManager.createQuery("SELECT e FROM $serializer.getEntityName() e");
+        return (List<$serializer.getEntityClassName()>) query.getResultList();
+    }
+
+#end
+#end
+#####################Query Operations #################################
+#foreach ( $query in $serializer.getNamedQueries() )
+    public $query.getSnippet() {
+        Query query = entityManager.createNamedQuery("$query.getQueryName()");
+
+#foreach ( $queryParam in $query.getQueryParams() )
+        query.setParameter($queryParam.getName(),$queryParam.getValue());
+#end
+
+        return query.getResultList();
+    }
+
+#end
+#foreach ( $query in $serializer.getNativeQueries() )
+    public $query.getSnippet() {
+        Query query = entityManager.createNamedQuery("$query.getQueryName()");
+
+#foreach ( $queryParam in $query.getQueryParams() )
+        query.setParameter($queryParam.getName(),$queryParam.getValue());
+#end
+
+        return query.getResultList();
+    }
+
+#end
+#if(!$serializer.isAbstract())
+#####################Update Operations #################################
+#set ($dotGet=".get")
+    public void update$serializer.getEntityClassName()($serializer.getEntityClassName() $serializer.getEntityVarName()) {
+#if($serializer.getPrimaryKeyType())
+        if (findby_PrimaryKey($serializer.getEntityVarName()$dotGet$serializer.getMethodName()()) == null ){
+            throw new IllegalArgumentException("Cannot find entity $serializer.getEntityClassName() with id : " +
+                $serializer.getEntityVarName()$dotGet$serializer.getMethodName()());
+        }
+
+#end
+        entityManager.merge($serializer.getEntityVarName());
+    }
+
+    public void updateAtomic$serializer.getEntityClassName()($serializer.getEntityClassName() $serializer.getEntityVarName()) {
+        entityManager.getTransaction().begin();
+
+#if($serializer.getPrimaryKeyType())
+        if (findby_PrimaryKey($serializer.getEntityVarName()$dotGet$serializer.getMethodName()()) == null ){
+            throw new IllegalArgumentException("Cannot find entity $serializer.getEntityClassName() with id : " +
+                $serializer.getEntityVarName()$dotGet$serializer.getMethodName()());
+        }
+
+#end
+        entityManager.merge($serializer.getEntityVarName());
+
+        entityManager.getTransaction().commit();
+    }
+
+#end
+}
