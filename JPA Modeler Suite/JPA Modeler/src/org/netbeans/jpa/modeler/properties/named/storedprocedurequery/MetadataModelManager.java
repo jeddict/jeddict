@@ -44,17 +44,10 @@ package org.netbeans.jpa.modeler.properties.named.storedprocedurequery;
 
 import java.sql.Connection;
 import java.util.WeakHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.netbeans.api.db.explorer.ConnectionManager;
 import org.netbeans.api.db.explorer.DatabaseConnection;
-import org.netbeans.modules.db.explorer.DbMetaDataListener;
-import org.netbeans.modules.db.metadata.model.api.Action;
-import org.netbeans.modules.db.metadata.model.api.Metadata;
 import org.netbeans.modules.db.metadata.model.api.MetadataModel;
-import org.netbeans.modules.db.metadata.model.api.MetadataModelException;
 import org.netbeans.modules.db.metadata.model.api.MetadataModels;
-import org.netbeans.modules.db.metadata.model.api.Table;
 import org.openide.util.Mutex;
 
 /**
@@ -65,7 +58,6 @@ import org.openide.util.Mutex;
  * @author Andrei Badea
  */
 public class MetadataModelManager {
-    private static final Logger LOGGER = Logger.getLogger(MetadataModelManager.class.getName());
 
     // XXX test against memory leak.
     // XXX test if DatabaseConnection can be GC'd.
@@ -106,72 +98,74 @@ public class MetadataModelManager {
         return conn;
     }
 
-    private final static class Listener implements DbMetaDataListener {
+//    private final static class Listener implements DbMetaDataListener {
+//
+//        // Remove when issue 141698 is fixed.
+//        private static Listener create() {
+//            return new Listener();
+//        }
+//
+//        private Listener() {}
+//
+//        // Refreshing in the calling thread is prone to deadlock:
+//        //
+//        // 1. TH1: SQL completion acquires model lock, model calls showConnectionDialog() in EDT.
+//        // 2. EDT: DB Explorer posts connect dialog in EDT, spawns TH2 to connect.
+//        // 3. TH2: notifies tables have changed.
+//        // 4. TH2: closes the dialog opened in #2.
+//        //
+//        // If in #3 TH2 wants to acquire the model lock, it doesn't createModel it since it
+//        // is held by TH1, #4 is never performed and the connect dialog stays open.
+//
+//        public void tablesChanged(DatabaseConnection dbconn) {
+//            // First make sure we're connected
+//            Connection conn = checkAndGetConnection(dbconn);
+//
+//            if (conn == null) {
+//                return;
+//            }
+//
+//            try {
+//                get(dbconn).runReadAction(new Action<Metadata>() {
+//                    public void run(Metadata md) {
+//                        md.refresh();
+//                    }
+//                });
+//            } catch (MetadataModelException mde) {
+//                LOGGER.log(Level.INFO, mde.getMessage(), mde);
+//            }
+//
+//        }
+//
+//        public void tableChanged(DatabaseConnection dbconn, final String tableName) {
+//            // First make sure we're connected
+//            Connection conn = checkAndGetConnection(dbconn);
+//
+//            if (conn == null) {
+//                return;
+//            }
+//
+//            try {
+//                get(dbconn).runReadAction(new Action<Metadata>() {
+//                    public void run(Metadata md) {
+//                        Table table = md.getDefaultSchema().getTable(tableName);
+//
+//                        // There is a slight possibility that the table was removed
+//                        // between the time tableChanged() was invoked and now,
+//                        // so check first...
+//                        if (table != null) {
+//                            md.getDefaultSchema().getTable(tableName).refresh();
+//                        } else {
+//                            LOGGER.log(Level.INFO, "Table '" + tableName + "' that was just changed no longer exists");
+//                        }
+//                    }
+//                });
+//            } catch (MetadataModelException mde) {
+//                LOGGER.log(Level.INFO, mde.getMessage(), mde);
+//            }
+//
+//        }
+//    }
 
-        // Remove when issue 141698 is fixed.
-        private static Listener create() {
-            return new Listener();
-        }
 
-        private Listener() {}
-
-        // Refreshing in the calling thread is prone to deadlock:
-        //
-        // 1. TH1: SQL completion acquires model lock, model calls showConnectionDialog() in EDT.
-        // 2. EDT: DB Explorer posts connect dialog in EDT, spawns TH2 to connect.
-        // 3. TH2: notifies tables have changed.
-        // 4. TH2: closes the dialog opened in #2.
-        //
-        // If in #3 TH2 wants to acquire the model lock, it doesn't createModel it since it
-        // is held by TH1, #4 is never performed and the connect dialog stays open.
-
-        public void tablesChanged(DatabaseConnection dbconn) {
-            // First make sure we're connected
-            Connection conn = checkAndGetConnection(dbconn);
-
-            if (conn == null) {
-                return;
-            }
-
-            try {
-                get(dbconn).runReadAction(new Action<Metadata>() {
-                    public void run(Metadata md) {
-                        md.refresh();
-                    }
-                });
-            } catch (MetadataModelException mde) {
-                LOGGER.log(Level.INFO, mde.getMessage(), mde);
-            }
-
-        }
-
-        public void tableChanged(DatabaseConnection dbconn, final String tableName) {
-            // First make sure we're connected
-            Connection conn = checkAndGetConnection(dbconn);
-
-            if (conn == null) {
-                return;
-            }
-
-            try {
-                get(dbconn).runReadAction(new Action<Metadata>() {
-                    public void run(Metadata md) {
-                        Table table = md.getDefaultSchema().getTable(tableName);
-
-                        // There is a slight possibility that the table was removed
-                        // between the time tableChanged() was invoked and now,
-                        // so check first...
-                        if (table != null) {
-                            md.getDefaultSchema().getTable(tableName).refresh();
-                        } else {
-                            LOGGER.log(Level.INFO, "Table '" + tableName + "' that was just changed no longer exists");
-                        }
-                    }
-                });
-            } catch (MetadataModelException mde) {
-                LOGGER.log(Level.INFO, mde.getMessage(), mde);
-            }
-
-        }
-    }
 }
