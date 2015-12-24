@@ -116,6 +116,7 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
     "entity",
     "embeddable",
     "converter",
+    "cache",
     "jpaDiagram"
 //    "theme"
 })

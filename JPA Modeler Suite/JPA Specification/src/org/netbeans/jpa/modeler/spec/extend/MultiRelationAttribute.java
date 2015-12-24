@@ -375,7 +375,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      */
     public String getCollectionType() {
         if (collectionType == null) {
-            collectionType = "java.util.Collection";
+            collectionType = "java.util.List";
         }
         return collectionType;
     }

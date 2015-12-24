@@ -16,8 +16,9 @@
 package org.netbeans.jpa.modeler.spec.extend.cache;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,27 +29,36 @@ import javax.xml.bind.annotation.XmlElement;
 public class Cache  {
 
     @XmlElement(name="ct")
-    private Set<String> collectionType;
+    private Queue<String> collectionClass;
+    private final static int COLLECTION_SIZE=5;
 
     /**
      * @return the collectionType
      */
-    public Set<String> getCollectionType() {
-        if(collectionType==null){
-            collectionType = new LinkedHashSet<>();
-            collectionType.add(List.class.getName());
-            collectionType.add(Set.class.getName());
-            collectionType.add(Collection.class.getName());
+    public Queue<String> getCollectionClasses() {
+        if(collectionClass==null){
+            collectionClass = new LinkedList<>();
+            collectionClass.add(List.class.getName());
+            collectionClass.add(Set.class.getName());
+            collectionClass.add(Collection.class.getName());
         }
-        return collectionType;
+        return collectionClass;
+    }
+    
+    public void addCollectionClass(String _class) {
+        LinkedList<String> collection = (LinkedList) getCollectionClasses();
+        if (collection.contains(_class)) {
+            collection.remove(_class);
+        }
+        while (COLLECTION_SIZE < collection.size()) {
+            collection.removeLast();
+        }
+        
+        collection.addFirst(_class);
+
     }
 
-    /**
-     * @param collectionType the collectionType to set
-     */
-    public void setCollectionType(Set<String> collectionType) {
-        this.collectionType = collectionType;
-    }
+ 
     
 
 }

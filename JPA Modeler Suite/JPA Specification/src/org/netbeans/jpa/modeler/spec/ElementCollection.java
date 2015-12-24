@@ -760,7 +760,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      */
     public String getCollectionType() {
         if (collectionType == null) {
-            collectionType = "java.util.Collection";
+            collectionType = "java.util.List";
         }
         return collectionType;
     }

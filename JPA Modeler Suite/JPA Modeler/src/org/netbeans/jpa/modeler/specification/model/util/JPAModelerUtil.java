@@ -1490,6 +1490,7 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public void setItem(ComboBoxValue<String> value) {
                 colSpec.setCollectionType(value.getValue());
+                em.getCache().addCollectionClass(value.getValue());
             }
 
             @Override
@@ -1500,13 +1501,13 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public List<ComboBoxValue<String>> getItemList() {
                 List<ComboBoxValue<String>> comboBoxValues = new ArrayList<>();
-                em.getCache().getCollectionType().stream().forEach((collection) -> {
+                em.getCache().getCollectionClasses().stream().forEach((collection) -> {
                     Class _class;
                     try {
                         _class = Class.forName(collection);
                         comboBoxValues.add(new ComboBoxValue(_class.getName(), _class.getSimpleName()));
                     } catch (ClassNotFoundException ex) {
-                        Exceptions.printStackTrace(ex);
+                         comboBoxValues.add(new ComboBoxValue(collection, collection + "(Not Exist)"));
                     }
                 });
                 return comboBoxValues;
@@ -1523,8 +1524,8 @@ public class JPAModelerUtil implements PModelerUtil {
                     String collectionType = NBModelerUtil.browseClass(modelerFile);
                     return new ComboBoxValue<String>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
                 })
-                        .afterCreation(e -> em.getCache().getCollectionType().add(e.getValue()))
-                        .afterDeletion(e -> em.getCache().getCollectionType().remove(e.getValue()))
+                        .afterCreation(e ->  em.getCache().addCollectionClass(e.getValue()))
+                        .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
                         .beforeDeletion(() -> JOptionPane.showConfirmDialog(null, "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
             }
         };
