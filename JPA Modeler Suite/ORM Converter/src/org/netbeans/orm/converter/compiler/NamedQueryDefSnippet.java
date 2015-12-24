@@ -72,6 +72,7 @@ public class NamedQueryDefSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null || query == null) {
@@ -119,6 +120,7 @@ public class NamedQueryDefSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
         importSnippets.add("javax.persistence.NamedQuery");

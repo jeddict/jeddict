@@ -43,6 +43,7 @@ public class BasicSnippet implements Snippet {
         this.optional = optional;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (fetchType == null) {
             return "@Basic";
@@ -51,6 +52,7 @@ public class BasicSnippet implements Snippet {
         return "@Basic(fetch=FetchType." + fetchType + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (fetchType == null) {

@@ -86,6 +86,7 @@ public class Embeddable extends ManagedClass {
      * @return possible object is {@link EmbeddableAttributes }
      *
      */
+    @Override
     public EmbeddableAttributes getAttributes() {
         if (attributes == null) {
             attributes = new EmbeddableAttributes();

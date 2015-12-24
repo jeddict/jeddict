@@ -37,7 +37,6 @@ import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextBox;
-import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
@@ -54,16 +53,16 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttribute
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
-import org.netbeans.modeler.specification.export.ExportManager;
+import org.netbeans.modeler.specification.export.IExportManager;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.node.INodeWidget;
 import org.openide.util.Exceptions;
 
-public class ExportManagerImpl implements ExportManager {
+public class ExportManagerImpl implements IExportManager {
 
-    private final Map<Image, byte[]> icons = new HashMap<Image, byte[]>();
+    private final Map<Image, byte[]> icons = new HashMap<>();
 
     @Override
     public void export(IModelerScene scene, FileType format, File file) {
@@ -241,7 +240,7 @@ public class ExportManagerImpl implements ExportManager {
     @Override
     public List<FileType> getExportType() {
         if (filetypes == null) {
-            filetypes = new ArrayList<FileType>();
+            filetypes = new ArrayList<>();
             filetypes.add(new FileType("ppt", "PPT - Microsoft PowerPoint Presentation"));
         }
         return filetypes;

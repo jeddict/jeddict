@@ -312,14 +312,17 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
         packageComboBox.setModel(model);
     }
 
+    @Override
     public void insertUpdate(DocumentEvent e) {
         changeSupport.fireChange();
     }
 
+    @Override
     public void removeUpdate(DocumentEvent e) {
         changeSupport.fireChange();
     }
 
+    @Override
     public void changedUpdate(DocumentEvent e) {
         changeSupport.fireChange();
     }

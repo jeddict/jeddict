@@ -62,6 +62,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
         this.length = length;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -105,6 +106,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
         return false;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (discriminatorType == null) {

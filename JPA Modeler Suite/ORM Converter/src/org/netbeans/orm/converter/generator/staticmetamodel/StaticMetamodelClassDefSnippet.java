@@ -27,6 +27,7 @@ public class StaticMetamodelClassDefSnippet extends ClassDefSnippet {
 
     private static final String STATIC_METAMODEL_TEMPLATE_FILENAME = "staticmetamodel.vm";
 
+    @Override
     protected String getTemplateName() {
         return STATIC_METAMODEL_TEMPLATE_FILENAME;
     }

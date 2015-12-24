@@ -28,7 +28,6 @@ import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.EmptyType;
 import org.netbeans.jpa.modeler.spec.FetchType;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -90,9 +89,12 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         this.name = variableElement.getSimpleName().toString();
         DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "targetEntity");
         if (declaredType == null) { // Issue Fix #5925 Start
-            declaredType = (DeclaredType) variableElement.asType();
+//            declaredType = (DeclaredType) variableElement.asType();
+        String variable = variableElement.asType().toString();
+ this.targetEntity = variable.substring(variable.lastIndexOf('.')+1,variable.length()-1); //java.util.Set<com.jpa.Entity1>
+        } else {
+                    this.targetEntity = declaredType.asElement().getSimpleName().toString();
         }
-        this.targetEntity = declaredType.asElement().getSimpleName().toString();
         this.fetch = FetchType.load(element, relationAnnotationMirror);
         this.access = AccessType.load(element);
         JavaSourceParserUtil.addNonEEAnnotation(this, element);

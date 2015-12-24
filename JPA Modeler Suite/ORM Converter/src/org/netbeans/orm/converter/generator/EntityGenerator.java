@@ -47,6 +47,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
         this.packageName = packageName;
     }
 
+    @Override
     public ManagedClassDefSnippet getClassDef() {
 
         //Classlevel annotations

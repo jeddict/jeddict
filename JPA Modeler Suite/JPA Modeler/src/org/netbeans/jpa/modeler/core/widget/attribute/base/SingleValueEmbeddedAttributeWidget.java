@@ -44,6 +44,7 @@ public class SingleValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget 
     /**
      * @return the embeddableFlowWidget
      */
+    @Override
     public EmbeddableFlowWidget getEmbeddableFlowWidget() {
         return embeddableFlowWidget;
     }
@@ -51,6 +52,7 @@ public class SingleValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget 
     /**
      * @param embeddableFlowWidget the embeddableFlowWidget to set
      */
+    @Override
     public void setEmbeddableFlowWidget(EmbeddableFlowWidget embeddableFlowWidget) {
         this.embeddableFlowWidget = embeddableFlowWidget;
     }

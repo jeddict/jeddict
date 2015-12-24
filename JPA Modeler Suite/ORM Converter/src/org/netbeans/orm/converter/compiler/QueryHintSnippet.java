@@ -41,6 +41,7 @@ public class QueryHintSnippet implements Snippet {
         this.value = value;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null || value == null) {
@@ -65,6 +66,7 @@ public class QueryHintSnippet implements Snippet {
 
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("javax.persistence.QueryHint");
     }

@@ -26,6 +26,7 @@ public class EntityListenersSnippet implements Snippet {
 
     private List<EntityListenerSnippet> entityListeners = Collections.EMPTY_LIST;
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (entityListeners.isEmpty()) {
@@ -44,6 +45,7 @@ public class EntityListenersSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_BRACES + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (entityListeners.isEmpty()) {

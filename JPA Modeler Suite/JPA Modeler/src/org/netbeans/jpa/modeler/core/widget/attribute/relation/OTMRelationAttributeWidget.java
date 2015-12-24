@@ -20,8 +20,10 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.HierarchicalRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -36,7 +38,12 @@ public class OTMRelationAttributeWidget extends RelationAttributeWidget {
     public OTMRelationAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
     }
-
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        OneToMany otmSpec = (OneToMany) this.getBaseElementSpec();
+        set.put("BASIC_PROP", JPAModelerUtil.getCollectionTypeProperty(this.getModelerScene(), otmSpec));
+    }
     public static PinWidgetInfo create(String id, String name) {
         PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name);
         pinWidgetInfo.setDocumentId(OTMRelationAttributeWidget.class.getSimpleName());
@@ -59,6 +66,7 @@ public class OTMRelationAttributeWidget extends RelationAttributeWidget {
         this.setIcon(this.getIcon());
     }
 
+    @Override
     public String getIconPath() {
         if (hierarchicalRelationFlowWidget instanceof Unidirectional) {
             return JPAModelerUtil.UOTM_ATTRIBUTE_ICON_PATH;
@@ -67,6 +75,7 @@ public class OTMRelationAttributeWidget extends RelationAttributeWidget {
         }
     }
 
+    @Override
     public Image getIcon() {
         if (hierarchicalRelationFlowWidget instanceof Unidirectional) {
             return JPAModelerUtil.UOTM_ATTRIBUTE;

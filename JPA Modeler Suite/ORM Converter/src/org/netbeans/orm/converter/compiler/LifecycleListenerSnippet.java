@@ -74,10 +74,12 @@ public class LifecycleListenerSnippet implements WritableSnippet {
         this.classHelper.setPackageName(packageName);
     }
 
+    @Override
     public ClassHelper getClassHelper() {
         return classHelper;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         try {
 
@@ -105,6 +107,7 @@ public class LifecycleListenerSnippet implements WritableSnippet {
         }
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         //Sort and eliminate duplicates
         Collection<String> importSnippets = new TreeSet<String>();

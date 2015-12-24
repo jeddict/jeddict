@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.openide.util.Exceptions;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public class NamedEntityGraphsSnippet implements Snippet {
 
@@ -33,7 +34,7 @@ public class NamedEntityGraphsSnippet implements Snippet {
     public void addNamedEntityGraph(NamedEntityGraphSnippet namedQueryDef) {
 
         if (namedEntityGraphs.isEmpty()) {
-            namedEntityGraphs = new ArrayList<NamedEntityGraphSnippet>();
+            namedEntityGraphs = new ArrayList<>();
         }
 
         namedEntityGraphs.add(namedQueryDef);
@@ -49,6 +50,7 @@ public class NamedEntityGraphsSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (namedEntityGraphs.isEmpty()) {
@@ -73,6 +75,7 @@ public class NamedEntityGraphsSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (namedEntityGraphs.isEmpty()) {
@@ -86,7 +89,15 @@ public class NamedEntityGraphsSnippet implements Snippet {
         ArrayList<String> importSnippets = new ArrayList<String>();
 
         importSnippets.add("javax.persistence.NamedEntityGraphs");
-        importSnippets.addAll(namedEntityGraphs.get(0).getImportSnippets());
+        namedEntityGraphs.stream().forEach(e ->
+        {
+            try {
+                importSnippets.addAll(e.getImportSnippets());
+            } catch (InvalidDataException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        );
 
         return importSnippets;
     }

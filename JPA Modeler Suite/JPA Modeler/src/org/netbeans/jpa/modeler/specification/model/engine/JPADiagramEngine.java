@@ -35,12 +35,14 @@ public class JPADiagramEngine extends ModelerDiagramEngine {
         private boolean locationChanged = false;
         private Point original;
 
+        @Override
         public void movementStarted(Widget widget) {
             INodeWidget nodeWidget = (INodeWidget) widget;
             NBModelerUtil.hideContextPalette(nodeWidget.getModelerScene());
             locationChanged = false;
         }
 
+        @Override
         public void movementFinished(Widget widget) {
             INodeWidget nodeWidget = (INodeWidget) widget;
             NBModelerUtil.showContextPalette(nodeWidget.getModelerScene(), nodeWidget);
@@ -50,11 +52,13 @@ public class JPADiagramEngine extends ModelerDiagramEngine {
             locationChanged = false;
         }
 
+        @Override
         public Point getOriginalLocation(Widget widget) {
             original = widget.getPreferredLocation();
             return original;
         }
 
+        @Override
         public void setNewLocation(Widget widget, Point location) {
             widget.setPreferredLocation(location);
             if (original != null) {
@@ -65,6 +69,7 @@ public class JPADiagramEngine extends ModelerDiagramEngine {
 
     @Override
     public void setNodeWidgetAction(final INodeWidget nodeWidget) {
+        if(nodeWidget.getModelerScene().getModelerFile().getId() == null){
         WidgetAction selectAction = ActionFactory.createSelectAction(new NodeWidgetSelectProvider(nodeWidget.getModelerScene()));
         WidgetAction moveAction = new MoveAction(nodeWidget,null, MOVE_PROVIDER_DEFAULT,alignStrategyProvider, alignStrategyProvider);
         WidgetAction popupMenuAction = ActionFactory.createPopupMenuAction(nodeWidget.getPopupMenuProvider());
@@ -72,8 +77,9 @@ public class JPADiagramEngine extends ModelerDiagramEngine {
         WidgetAction.Chain selectActionTool = nodeWidget.createActions(DesignerTools.SELECT);
         selectActionTool.addAction(selectAction);
         selectActionTool.addAction(moveAction);
-        selectActionTool.addAction(getScene().createWidgetHoverAction());
+        selectActionTool.addAction(nodeWidget.getModelerScene().createWidgetHoverAction());
         selectActionTool.addAction(popupMenuAction);
         selectActionTool.addAction(snapMoveAction);
+        }
     }
 }

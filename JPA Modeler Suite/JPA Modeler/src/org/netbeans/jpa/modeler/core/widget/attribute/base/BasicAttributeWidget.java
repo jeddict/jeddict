@@ -58,6 +58,7 @@ public class BasicAttributeWidget extends BaseAttributeWidget {
 
     }
 
+    @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         set.put("BASIC_PROP", JPAModelerUtil.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));

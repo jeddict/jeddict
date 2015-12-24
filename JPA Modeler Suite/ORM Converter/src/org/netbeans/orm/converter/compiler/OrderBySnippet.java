@@ -47,6 +47,7 @@ public class OrderBySnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (orderList.isEmpty()) {
@@ -68,6 +69,7 @@ public class OrderBySnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("javax.persistence.OrderBy");
     }

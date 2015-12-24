@@ -97,6 +97,7 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
      *
      *
      */
+    @Override
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
             attributeOverride = new ArrayList<AttributeOverride>();
@@ -112,6 +113,7 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
      * @return possible object is {@link AccessType }
      *
      */
+    @Override
     public AccessType getAccess() {
         return access;
     }
@@ -122,10 +124,12 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
      * @param value allowed object is {@link AccessType }
      *
      */
+    @Override
     public void setAccess(AccessType value) {
         this.access = value;
     }
 
+    @Override
     public AttributeOverride getAttributeOverride(String attributePath) {
         List<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {

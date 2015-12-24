@@ -38,6 +38,7 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         this.embeddable = parsedEmbeddable;
     }
 
+    @Override
     public ManagedClassDefSnippet getClassDef() {
 
         //Commented -- revist for Phase 3

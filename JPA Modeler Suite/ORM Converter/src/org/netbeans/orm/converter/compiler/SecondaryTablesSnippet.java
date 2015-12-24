@@ -44,6 +44,7 @@ public class SecondaryTablesSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (secondaryTables.isEmpty()) {
@@ -68,6 +69,7 @@ public class SecondaryTablesSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (secondaryTables.isEmpty()) {

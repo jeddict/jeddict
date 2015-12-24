@@ -38,6 +38,7 @@ public class DiscriminatorValueSnippet implements Snippet {
         return false;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (value == null) {
             throw new InvalidDataException("Value cannot be null");
@@ -47,6 +48,7 @@ public class DiscriminatorValueSnippet implements Snippet {
                 + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList(
                 "javax.persistence.DiscriminatorValue");

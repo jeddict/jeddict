@@ -134,10 +134,10 @@ public class DbSchemaEjbGenerator {
     public static Set<String> getTablesReferecedByOtherTables(SchemaElement schemaElement) {
         Set<String> tableNames = new HashSet<String>();
         TableElement[] allTables = schemaElement.getTables();
-        for (int i = 0; i < allTables.length; i++) {
-            ForeignKeyElement[] fkElements = allTables[i].getForeignKeys();
-            for (int fkix = 0; fkix < fkElements.length; fkix++) {
-                tableNames.add(fkElements[fkix].getReferencedTable().getName().getName());
+        for (TableElement allTable : allTables) {
+            ForeignKeyElement[] fkElements = allTable.getForeignKeys();
+            for (ForeignKeyElement fkElement : fkElements) {
+                tableNames.add(fkElement.getReferencedTable().getName().getName());
             }
         }
 
@@ -153,13 +153,12 @@ public class DbSchemaEjbGenerator {
     public static Set<String> getTablesReferencesOtherTablesWithPrimaryKeyMatch(SchemaElement schemaElement) {
         Set<String> tableNames = new HashSet<String>();
         TableElement[] allTables = schemaElement.getTables();
-        for (int i = 0; i < allTables.length; i++) {
-            TableElement table0 = allTables[i];
+        for (TableElement table0 : allTables) {
             UniqueKeyElement pk0 = table0.getPrimaryKey();
-            if (pk0 != null) {//it may be join table or other without pk
+            if (pk0 != null) {
+                //it may be join table or other without pk
                 ForeignKeyElement[] fkElements = table0.getForeignKeys();
-                for (int fkix = 0; fkix < fkElements.length; fkix++) {
-                    ForeignKeyElement fk = fkElements[fkix];
+                for (ForeignKeyElement fk : fkElements) {
                     TableElement table = fk.getReferencedTable();
                     UniqueKeyElement pk = table.getPrimaryKey();
                     //at first step support 1-1 keys (no composite yet).
@@ -223,8 +222,8 @@ public class DbSchemaEjbGenerator {
             return false;
         }
 
-        for (int i = 0; i < fks.length; i++) {
-            if (fks[i].getColumn(col.getName()) != null) {
+        for (ForeignKeyElement fk : fks) {
+            if (fk.getColumn(col.getName()) != null) {
                 return true;
             }
         }
@@ -411,8 +410,8 @@ public class DbSchemaEjbGenerator {
     private static boolean containsSameColumns(ColumnElement[] fkColumns,
             UniqueKeyElement uk) {
         if (fkColumns.length == uk.getColumns().length) {
-            for (int i = 0; i < fkColumns.length; i++) {
-                if (uk.getColumn(fkColumns[i].getName()) == null) {
+            for (ColumnElement fkColumn : fkColumns) {
+                if (uk.getColumn(fkColumn.getName()) == null) {
                     return false;
                 }
             }
@@ -427,8 +426,8 @@ public class DbSchemaEjbGenerator {
             return false;
         }
 
-        for (int i = 0; i < fkColumns.length; i++) {
-            if (uk.getColumn(fkColumns[i].getName()) != null) {
+        for (ColumnElement fkColumn : fkColumns) {
+            if (uk.getColumn(fkColumn.getName()) != null) {
                 return true;
             }
         }
@@ -443,8 +442,8 @@ public class DbSchemaEjbGenerator {
 //        key.getColumns()[0].getName().getName()
 //                uk[0].getColumns()[0].getName().getName()
         ColumnElement[] columns = key.getColumns();
-        for (int uin = 0; uin < uk.length; uin++) {
-            if (containsSameColumns(columns, uk[uin])) {
+        for (UniqueKeyElement uk1 : uk) {
+            if (containsSameColumns(columns, uk1)) {
                 return true;
             }
         }
@@ -590,14 +589,13 @@ public class DbSchemaEjbGenerator {
             //sometimes database may contain duplicating foreign keys (or it may be an issue in db schema generation)
             fkeys = removeDuplicateFK(fkeys);
 
-            for (int col = 0; col < cols.length; col++) {
-                if (pk != null
-                        && pk.getColumn(cols[col].getName()) != null) {
-                    generatePkField(cols[col], true, pk.getColumns().length == 1);
+            for (ColumnElement col : cols) {
+                if (pk != null && pk.getColumn(col.getName()) != null) {
+                    generatePkField(col, true, pk.getColumns().length == 1);
                 } else {
                     // TODO add check to see if table is included
-                    if (!isForeignKey(fkeys, cols[col])) {
-                        generatePkField(cols[col], false, false);
+                    if (!isForeignKey(fkeys, col)) {
+                        generatePkField(col, false, false);
                     }
                 }
             }
@@ -614,12 +612,10 @@ public class DbSchemaEjbGenerator {
 
     private List getFieldNames(EntityClass bean) {
         List result = new ArrayList();
-        for (Iterator i = bean.getFields().iterator(); i.hasNext();) {
-            EntityMember member = (EntityMember) i.next();
+        for (EntityMember member : bean.getFields()) {
             result.add(member.getMemberName());
         }
-        for (Iterator i = bean.getRoles().iterator(); i.hasNext();) {
-            RelationshipRole role = (RelationshipRole) i.next();
+        for (RelationshipRole role : bean.getRoles()) {
             result.add(role.getFieldName());
         }
         return result;
@@ -631,10 +627,10 @@ public class DbSchemaEjbGenerator {
     private EntityRelation[] makeRelationsUnique() {
         EntityRelation[] r = getRelations();
         List relationNames = new ArrayList(r.length);
-        for (int i = 0; i < r.length; i++) {
-            r[i].makeRoleNamesUnique();
-            String baseName = r[i].getRelationName();
-            r[i].setRelationName(uniqueAlgorithm(relationNames, baseName, "-")); // NOI18N
+        for (EntityRelation r1 : r) {
+            r1.makeRoleNamesUnique();
+            String baseName = r1.getRelationName();
+            r1.setRelationName(uniqueAlgorithm(relationNames, baseName, "-")); // NOI18N
         }
         return r;
     }
@@ -661,8 +657,7 @@ public class DbSchemaEjbGenerator {
             return fkeys;
         }
         HashMap<ComparableFK, ForeignKeyElement> ret = new HashMap<ComparableFK, ForeignKeyElement>();
-        for (int i = 0; i < fkeys.length; i++) {
-            ForeignKeyElement key = fkeys[i];
+        for (ForeignKeyElement key : fkeys) {
             ComparableFK fkc = new ComparableFK(key);
             if (ret.get(fkc) != null) {//we already have the same key
                 LOGGER.log(Level.INFO, key.getName().getFullName() + " key in " + key.getDeclaringTable().getName().getFullName() + " is considered as a duplicate, you may need to verify your schema or database structure.");//NOI18N

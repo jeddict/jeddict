@@ -52,6 +52,7 @@ public class EnumeratedSnippet implements Snippet {
         this.value = value;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (GeneratorUtil.isGenerateDefaultValue()) {
             if (value == null || value.equals(TYPE_ORDINAL)) {
@@ -68,6 +69,7 @@ public class EnumeratedSnippet implements Snippet {
         }
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if ((value == null || value.equals(TYPE_ORDINAL)) && !GeneratorUtil.isGenerateDefaultValue()) {

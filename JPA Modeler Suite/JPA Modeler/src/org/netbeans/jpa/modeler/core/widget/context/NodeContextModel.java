@@ -21,6 +21,8 @@ import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
@@ -135,7 +137,7 @@ public class NodeContextModel {
 
         ContextPaletteButtonModel[] addAttributeSubModelList = null;
         if (nodeWidget instanceof EntityWidget) {
-            if ("ROOT".equals(((EntityWidget) nodeWidget).getInheritenceState()) || "SINGLETON".equals(((EntityWidget) nodeWidget).getInheritenceState())) {
+            if (((EntityWidget) nodeWidget).getInheritenceState() == ROOT || ((EntityWidget) nodeWidget).getInheritenceState() == SINGLETON) {
                 addAttributeSubModelList = new ContextPaletteButtonModel[]{addIdAttributeModel, addBasicAttributeModel, addBasicCollectionAttributeModel, addTransientAttributeModel, addVersionAttributeModel};
             } else {
                 addAttributeSubModelList = new ContextPaletteButtonModel[]{addBasicAttributeModel, addBasicCollectionAttributeModel, addTransientAttributeModel, addVersionAttributeModel};

@@ -45,6 +45,7 @@ public class NamedQueriesSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (namedQueries.isEmpty()) {
@@ -69,6 +70,7 @@ public class NamedQueriesSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (namedQueries.isEmpty()) {

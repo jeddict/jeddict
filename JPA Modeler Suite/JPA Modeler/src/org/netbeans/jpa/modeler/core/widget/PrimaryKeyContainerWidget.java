@@ -27,8 +27,9 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
         super(scene, nodeWidgetInfo);
     }
 
+    @Override
     public List<AttributeWidget> getAttributeOverrideWidgets() {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getAttributeOverrideWidgetsImpl());
@@ -37,7 +38,7 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
     }
 
     private List<AttributeWidget> getAttributeOverrideWidgetsImpl() {//include self
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getAttributeOverrideWidgetsImpl());
@@ -52,7 +53,7 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
     }
 
     public List<AttributeWidget> getAssociationOverrideWidgets() {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getAssociationOverrideWidgetsImpl());
@@ -61,7 +62,7 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
     }
 
     private List<AttributeWidget> getAssociationOverrideWidgetsImpl() {//include self
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getAssociationOverrideWidgetsImpl());
@@ -73,7 +74,7 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
         return attributeWidgets;
     }
       public List<AttributeWidget> getEmbeddedOverrideWidgets() {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getEmbeddedOverrideWidgetsImpl());
@@ -84,7 +85,7 @@ public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
     }
 
     private List<AttributeWidget> getEmbeddedOverrideWidgetsImpl() {//include self
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof PrimaryKeyContainerWidget) {
             attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getEmbeddedOverrideWidgetsImpl());

@@ -37,11 +37,13 @@ public class TypeIdentifierSnippet implements Snippet {
         return type;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         processVariableType();
         return importSnippets;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

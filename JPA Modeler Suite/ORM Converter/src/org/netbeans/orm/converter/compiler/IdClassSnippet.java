@@ -38,6 +38,7 @@ public class IdClassSnippet implements Snippet {
         classHelper.setPackageName(packageName);
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (classHelper.getClassName() == null) {
             throw new InvalidDataException("value is a required");
@@ -46,6 +47,7 @@ public class IdClassSnippet implements Snippet {
         return "@IdClass(" + getValue() + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
 

@@ -106,6 +106,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      * @return possible object is {@link Column }
      *
      */
+    @Override
     public Column getColumn() {
         return column;
     }
@@ -116,6 +117,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      * @param value allowed object is {@link Column }
      *
      */
+    @Override
     public void setColumn(Column value) {
         this.column = value;
     }
@@ -223,6 +225,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      * @return possible object is {@link FetchType }
      *
      */
+    @Override
     public FetchType getFetch() {
         return fetch;
     }
@@ -233,6 +236,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      * @param value allowed object is {@link FetchType }
      *
      */
+    @Override
     public void setFetch(FetchType value) {
         this.fetch = value;
     }
@@ -263,6 +267,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      * @return possible object is {@link AccessType }
      *
      */
+    @Override
     public AccessType getAccess() {
         return access;
     }
@@ -273,6 +278,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
      * @param value allowed object is {@link AccessType }
      *
      */
+    @Override
     public void setAccess(AccessType value) {
         this.access = value;
     }

@@ -42,12 +42,9 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
     public FlowNodeWidget(IModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.setNodeImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
-        this.addPropertyChangeListener("name", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String value) {
-                setName(value);
-                setLabel(value);
-            }
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+            setName(value);
+            setLabel(value);
         });
         setAnchorGap(4);
     }
@@ -106,6 +103,7 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
     /**
      * @return the flowElementsContainer
      */
+    @Override
     public Widget getFlowElementsContainer() {
         return flowElementsContainer;
     }
@@ -113,12 +111,13 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
     /**
      * @param flowElementsContainer the flowElementsContainer to set
      */
+    @Override
     public void setFlowElementsContainer(Widget flowElementsContainer) {
         this.flowElementsContainer = flowElementsContainer;
     }
 
-    protected List<IFlowEdgeWidget> incomingSequenceFlows = new ArrayList<IFlowEdgeWidget>();
-    protected List<IFlowEdgeWidget> outgoingSequenceFlows = new ArrayList<IFlowEdgeWidget>();
+    protected List<IFlowEdgeWidget> incomingSequenceFlows = new ArrayList<>();
+    protected List<IFlowEdgeWidget> outgoingSequenceFlows = new ArrayList<>();
 
     @Override
     public List<? extends IFlowEdgeWidget> getIncommingFlowEdgeWidget() {

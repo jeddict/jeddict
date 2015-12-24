@@ -37,6 +37,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         this.packageName = packageName;
     }
 
+    @Override
     public ManagedClassDefSnippet getClassDef() {
 
         //--BEGIN ---- TODOs:

@@ -31,12 +31,9 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget {
 
     public RelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
-        this.addPropertyChangeListener("name", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String value) {
-                setName(value);
-                RelationFlowWidget.this.setLabel(name);
-            }
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+            setName(value);
+            RelationFlowWidget.this.setLabel(name);
         });
         setAnchorGap(4);
     }

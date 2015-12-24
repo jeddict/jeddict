@@ -45,6 +45,7 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
         this.mappedBy = mappedBy;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         if (isPrimaryKey()) {
@@ -107,6 +108,7 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
 
         if (getFetchType() == null

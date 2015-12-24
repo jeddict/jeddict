@@ -87,6 +87,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
 public class MappedSuperclass extends IdentifiableClass {
 
 
+    @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
 //        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.MappedSuperclass");
         if (entityMappings.findMappedSuperclass(element.getSimpleName().toString()) == null) {

@@ -9,6 +9,8 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -81,6 +83,7 @@ public class NamedEntityGraph {
             namedEntityGraph.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             namedEntityGraph.includeAllAttributes = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "includeAllAttributes");
 
+            
             List attributeNodesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "attributeNodes");
             if (attributeNodesAnnot != null) {
                 for (Object attributeNodeObj : attributeNodesAnnot) {
@@ -152,6 +155,34 @@ public class NamedEntityGraph {
         }
         return this.namedAttributeNode;
     }
+    
+    public NamedAttributeNode findNamedAttributeNode(String name) {
+        if (namedAttributeNode == null) {
+            namedAttributeNode = new ArrayList<NamedAttributeNode>();
+        }
+        
+        for(NamedAttributeNode namedAttributeNodeInst : namedAttributeNode){
+            if(namedAttributeNodeInst.getName().equals(name)){
+                return namedAttributeNodeInst;
+            }
+        }
+        
+        return null;
+    }
+    
+    public void addNamedAttributeNode(NamedAttributeNode node) {
+        if (namedAttributeNode == null) {
+            namedAttributeNode = new ArrayList<NamedAttributeNode>();
+        }
+        this.namedAttributeNode.add(node);
+    }
+    
+    public void removeNamedAttributeNode(NamedAttributeNode node) {
+        if (namedAttributeNode == null) {
+            namedAttributeNode = new ArrayList<NamedAttributeNode>();
+        }
+        this.namedAttributeNode.remove(node);
+    }
 
     /**
      * Gets the value of the subgraph property.
@@ -181,6 +212,34 @@ public class NamedEntityGraph {
         }
         return this.subgraph;
     }
+     public NamedSubgraph findSubgraph(String name) {
+        if (subgraph == null) {
+            subgraph = new ArrayList<NamedSubgraph>();
+        }
+           
+        for(NamedSubgraph subgraphInst : subgraph){
+            if(subgraphInst.getName().equals(name)){
+                return subgraphInst;
+            }
+        }
+        
+        return null;
+    }
+    
+    public void addSubgraph(NamedSubgraph graph) {
+        if (subgraph == null) {
+            subgraph = new ArrayList<NamedSubgraph>();
+        }
+        this.subgraph.add(graph);
+    }
+     public void removeSubgraph(NamedSubgraph graph) {
+        if (subgraph == null) {
+            subgraph = new ArrayList<NamedSubgraph>();
+        }
+        this.subgraph.remove(graph);
+    }
+    
+    
 
     /**
      * Gets the value of the subclassSubgraph property.
@@ -224,7 +283,7 @@ public class NamedEntityGraph {
     }
 
     /**
-     * Sets the value of the name property.
+     * Lists the value of the name property.
      * 
      * @param value
      *     allowed object is
@@ -248,7 +307,7 @@ public class NamedEntityGraph {
     }
 
     /**
-     * Sets the value of the includeAllAttributes property.
+     * Lists the value of the includeAllAttributes property.
      * 
      * @param value
      *     allowed object is

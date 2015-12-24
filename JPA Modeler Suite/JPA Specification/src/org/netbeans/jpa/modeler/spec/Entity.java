@@ -167,6 +167,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected Boolean cacheable;//REVENG PENDING
 
 
+    @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.Entity");
@@ -356,6 +357,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * @return possible object is {@link Inheritance }
      *
      */
+    @Override
     public Inheritance getInheritance() {
         return inheritance;
     }
@@ -366,6 +368,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * @param value allowed object is {@link Inheritance }
      *
      */
+    @Override
     public void setInheritance(Inheritance value) {
         this.inheritance = value;
     }
@@ -376,6 +379,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * @return possible object is {@link String }
      *
      */
+    @Override
     public String getDiscriminatorValue() {
         return discriminatorValue;
     }
@@ -386,6 +390,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * @param value allowed object is {@link String }
      *
      */
+    @Override
     public void setDiscriminatorValue(String value) {
         this.discriminatorValue = value;
     }
@@ -396,6 +401,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * @return possible object is {@link DiscriminatorColumn }
      *
      */
+    @Override
     public DiscriminatorColumn getDiscriminatorColumn() {
         return discriminatorColumn;
     }
@@ -406,6 +412,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * @param value allowed object is {@link DiscriminatorColumn }
      *
      */
+    @Override
     public void setDiscriminatorColumn(DiscriminatorColumn value) {
         this.discriminatorColumn = value;
     }
@@ -472,6 +479,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      *
      *
      */
+    @Override
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
             attributeOverride = new ArrayList<AttributeOverride>();
@@ -501,6 +509,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      *
      *
      */
+    @Override
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
             associationOverride = new ArrayList<AssociationOverride>();
@@ -560,6 +569,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return "Entity{" + "description=" + description + ", table=" + table + ", secondaryTable=" + secondaryTable + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn + ", idClass=" + idClass + ", inheritance=" + inheritance + ", discriminatorValue=" + discriminatorValue + ", discriminatorColumn=" + discriminatorColumn + ", sequenceGenerator=" + sequenceGenerator + ", tableGenerator=" + tableGenerator + ", namedQuery=" + namedQuery + ", namedNativeQuery=" + namedNativeQuery + ", sqlResultSetMapping=" + sqlResultSetMapping + ", excludeDefaultListeners=" + excludeDefaultListeners + ", excludeSuperclassListeners=" + excludeSuperclassListeners + ", entityListeners=" + entityListeners + ", prePersist=" + prePersist + ", postPersist=" + postPersist + ", preRemove=" + preRemove + ", postRemove=" + postRemove + ", preUpdate=" + preUpdate + ", postUpdate=" + postUpdate + ", postLoad=" + postLoad + ", attributeOverride=" + attributeOverride + ", associationOverride=" + associationOverride + ", attributes=" + attributes + ", name=" + name + ", clazz=" + clazz + ", access=" + access + ", cacheable=" + cacheable + ", metadataComplete=" + metadataComplete + '}';
     }
 
+    @Override
     public AttributeOverride getAttributeOverride(String attributePath) {
         List<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
@@ -593,6 +603,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * @param value allowed object is {@link String }
      *
      */
+    @Override
     public void setClazz(String value) {
 //        this.clazz = value;
         notifyListeners("clazz", this.clazz, this.clazz = value);

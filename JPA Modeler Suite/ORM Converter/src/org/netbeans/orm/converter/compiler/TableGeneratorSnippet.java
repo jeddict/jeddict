@@ -119,6 +119,7 @@ public class TableGeneratorSnippet implements Snippet {
         this.valueColumnName = valueColumnName;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (name == null) {
             throw new InvalidDataException("Name is required");
@@ -203,6 +204,7 @@ public class TableGeneratorSnippet implements Snippet {
 
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (uniqueConstraints.isEmpty()) {

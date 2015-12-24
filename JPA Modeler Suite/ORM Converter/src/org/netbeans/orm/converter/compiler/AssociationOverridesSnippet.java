@@ -49,6 +49,7 @@ public class AssociationOverridesSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (associationOverrides.isEmpty()) {
@@ -73,6 +74,7 @@ public class AssociationOverridesSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (associationOverrides.isEmpty()) {

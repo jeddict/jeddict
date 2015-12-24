@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public class NamedEntityGraphSnippet implements Snippet {
 

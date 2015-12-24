@@ -61,7 +61,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "mapKeyJoinColumn",
     "mapKeyForeignKey"
 })
-public abstract class MultiRelationAttribute extends RelationAttribute {
+public abstract class MultiRelationAttribute extends RelationAttribute implements CollectionTypeHandler {
 
     @XmlElement(name = "order-by")
     protected String orderBy;
@@ -91,6 +91,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute {
     @XmlAttribute(name = "collection-type")
     private String collectionType;//custom added
 
+    @Override
     public void load(AnnotationMirror relationAnnotationMirror, Element element, VariableElement variableElement) {
         super.load(relationAnnotationMirror, element, variableElement);
 

@@ -96,6 +96,7 @@ public class JoinColumnSnippet implements Snippet {
         this.table = table;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (!GeneratorUtil.isGenerateDefaultValue()) {
             if (insertable == true
@@ -193,6 +194,7 @@ public class JoinColumnSnippet implements Snippet {
         return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("javax.persistence.JoinColumn");
     }

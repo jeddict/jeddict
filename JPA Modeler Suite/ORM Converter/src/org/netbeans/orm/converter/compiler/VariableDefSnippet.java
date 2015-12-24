@@ -326,10 +326,12 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         return typeIdentifier;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         Collection<String> importSnippets = new ArrayList<String>();
@@ -539,6 +541,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @return the associationOverrides
      */
+    @Override
     public AssociationOverridesSnippet getAssociationOverrides() {
         return associationOverrides;
     }
@@ -546,6 +549,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @param associationOverrides the associationOverrides to set
      */
+    @Override
     public void setAssociationOverrides(AssociationOverridesSnippet associationOverrides) {
         this.associationOverrides = associationOverrides;
     }
@@ -553,6 +557,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @return the attributeOverrides
      */
+    @Override
     public AttributeOverridesSnippet getAttributeOverrides() {
         return attributeOverrides;
     }
@@ -560,6 +565,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @param attributeOverrides the attributeOverrides to set
      */
+    @Override
     public void setAttributeOverrides(AttributeOverridesSnippet attributeOverrides) {
         this.attributeOverrides = attributeOverrides;
     }

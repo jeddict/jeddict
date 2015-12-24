@@ -130,6 +130,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
      *
      *
      */
+    @Override
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
             attributeOverride = new ArrayList<AttributeOverride>();
@@ -159,6 +160,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
      *
      *
      */
+    @Override
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
             associationOverride = new ArrayList<AssociationOverride>();
@@ -201,6 +203,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
      * @return possible object is {@link AccessType }
      *
      */
+    @Override
     public AccessType getAccess() {
         return access;
     }
@@ -211,10 +214,12 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
      * @param value allowed object is {@link AccessType }
      *
      */
+    @Override
     public void setAccess(AccessType value) {
         this.access = value;
     }
 
+    @Override
     public AttributeOverride getAttributeOverride(String attributePath) {
         List<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {

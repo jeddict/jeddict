@@ -23,6 +23,7 @@ import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.cache.Cache;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
@@ -97,11 +98,10 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = "entity-mappings", propOrder = {
     "description",
     "persistenceUnitMetadata",
-    "_package",
+//    "_package",
     "schema",
     "catalog",
     "access",
@@ -116,16 +116,17 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
     "entity",
     "embeddable",
     "converter",
-    "jpaDiagram",
-    "theme"
+    "jpaDiagram"
+//    "theme"
 })
 @XmlRootElement(name = "entity-mappings")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class EntityMappings extends BaseElement implements IDefinitionElement, IRootElement {
 
     protected String description;
     @XmlElement(name = "persistence-unit-metadata")
     protected PersistenceUnitMetadata persistenceUnitMetadata;
-    @XmlElement(name = "package")
+    @XmlAttribute(name = "pkg")
     protected String _package;
     protected String schema;
     protected String catalog;
@@ -157,10 +158,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private Diagram jpaDiagram;//Custom Added
     @XmlAttribute
     private String status;//GENERATED (DBRE,JCRE)
-    @XmlAttribute
+    @XmlAttribute(name="thm")
     private String theme;
     @XmlAttribute
     private String persistenceUnitName;
+    
+    @XmlElement(name="c")
+    private Cache cache;
 
     /**
      * JAXB Attributes Start *
@@ -174,40 +178,32 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      * JAXB Attributes End *
      */
 
-    public EntityMappings() {
+    private EntityMappings() {
     }
 
     public void initJavaInheritenceMapping() {
         List<JavaClass> javaClassList = this.getJavaClass();
-        for (JavaClass javaClass : javaClassList) {
-            if (javaClass.getSuperclassId() != null) {
-                JavaClass javaSuperclass = findJavaClass(javaClass.getSuperclassId());
-                javaClass.addSuperclass(javaSuperclass);
-            }
-        }
+        javaClassList.stream().filter((javaClass) -> (javaClass.getSuperclassId() != null)).forEach((javaClass) -> {
+            JavaClass javaSuperclass = findJavaClass(javaClass.getSuperclassId());
+            javaClass.addSuperclass(javaSuperclass);
+        });
     }
 
     //UPDATE ELEMENT
     public boolean isClassExist(String _class) {
         if (mappedSuperclass != null) {
-            for (MappedSuperclass mappedSuperclass_TMP : mappedSuperclass) {
-                if (mappedSuperclass_TMP.getClazz() != null && mappedSuperclass_TMP.getClazz().equals(_class)) {
-                    return true;
-                }
+            if (mappedSuperclass.stream().anyMatch((e) -> (e.getClazz() != null && e.getClazz().equals(_class)))) {
+                return true;
             }
         }
         if (entity != null) {
-            for (Entity entity_TMP : entity) {
-                if (entity_TMP.getClazz() != null && entity_TMP.getClazz().equals(_class)) {
-                    return true;
-                }
+            if (entity.stream().anyMatch((e) -> (e.getClazz() != null && e.getClazz().equals(_class)))) {
+                return true;
             }
         }
-        if (embeddable != null) {
-            for (Embeddable embeddable_TMP : embeddable) {
-                if (embeddable_TMP.getClazz() != null && embeddable_TMP.getClazz().equals(_class)) {
-                    return true;
-                }
+        if (embeddable != null) { 
+            if (embeddable.stream().anyMatch((e) -> (e.getClazz() != null && e.getClazz().equals(_class)))) {
+                return true;
             }
         }
 
@@ -916,72 +912,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         }
     }
 
-//    public void manageSiblingAttribute(org.netbeans.jpa.modeler.spec.Entity targetEntity, RelationAttribute relationAttribute_Owner) {
-//        org.netbeans.jpa.modeler.spec.Entity sourceEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());
-//        if (relationAttribute_Owner instanceof ManyToMany) {
-//            ManyToMany targetAttribute = (ManyToMany) relationAttribute_Owner;
-//            ManyToMany sourceAttribute = null;
-//            String mappedBy = ((ManyToMany) relationAttribute_Owner).getMappedBy();
-//            for (ManyToMany sourceManyToMany : sourceEntity.getAttributes().getManyToMany()) {
-//                if (mappedBy.equals(sourceManyToMany.getName())) {
-//                    sourceAttribute = sourceManyToMany;
-//                    break;
-//                }
-//            }
-//            targetAttribute.setConnectedEntityId(sourceEntity.getId());
-//            targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
-//            sourceAttribute.setConnectedEntityId(targetEntity.getId());
-//            sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
-//
-//        } else if (relationAttribute_Owner instanceof OneToMany) {
-//            OneToMany targetAttribute = (OneToMany) relationAttribute_Owner;
-//            ManyToOne sourceAttribute = null;
-//            String mappedBy = ((OneToMany) relationAttribute_Owner).getMappedBy();
-//            for (ManyToOne sourceManyToOne : sourceEntity.getAttributes().getManyToOne()) {
-//                if (mappedBy.equals(sourceManyToOne.getName())) {
-//                    sourceAttribute = sourceManyToOne;
-//                    break;
-//                }
-//            }
-//            targetAttribute.setConnectedEntityId(sourceEntity.getId());
-//            targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
-//            sourceAttribute.setConnectedEntityId(targetEntity.getId());
-//            sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
-//
-//        } //            else if (relationAttribute_Owner instanceof ManyToOne) {
-//        //                ManyToOne targetAttribute = (ManyToOne) relationAttribute_Owner;
-//        //                OneToMany sourceAttribute = null;
-//        //                String mappedBy = ((ManyToOne) relationAttribute_Owner).getMappedBy();
-//        //                for (OneToMany sourceOneToMany : sourceEntity.getAttributes().getOneToMany()) {
-//        //                    if (mappedBy.equals(sourceOneToMany.getName())) {
-//        //                        sourceAttribute = sourceOneToMany;
-//        //                        break;
-//        //                    }
-//        //                }
-//        //                targetAttribute.setConnectedEntityId(sourceEntity.getId());
-//        //                targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
-//        //                sourceAttribute.setConnectedEntityId(targetEntity.getId());
-//        //                sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
-//        //
-//        //            }
-//        else if (relationAttribute_Owner instanceof OneToOne) {
-//            OneToOne targetAttribute = (OneToOne) relationAttribute_Owner;
-//            OneToOne sourceAttribute = null;
-//            String mappedBy = ((OneToOne) relationAttribute_Owner).getMappedBy();
-//            for (OneToOne sourceOneToMany : sourceEntity.getAttributes().getOneToOne()) {
-//                if (mappedBy.equals(sourceOneToMany.getName())) {
-//                    sourceAttribute = sourceOneToMany;
-//                    break;
-//                }
-//            }
-//            targetAttribute.setConnectedEntityId(sourceEntity.getId());
-//            targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
-//            sourceAttribute.setConnectedEntityId(targetEntity.getId());
-//            sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
-//
-//        }
-//
-//    }
     
     
     
@@ -1153,14 +1083,14 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public List<JavaClass> getJavaClass() {
-        List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
+        List<JavaClass> javaClassList = new ArrayList<>(this.getEntity());
         javaClassList.addAll(this.getMappedSuperclass());
         javaClassList.addAll(this.getEmbeddable());
         return javaClassList;
     }
 
     public JavaClass findJavaClass(String classId) {
-        List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
+        List<JavaClass> javaClassList = new ArrayList<>(this.getEntity());
         javaClassList.addAll(this.getMappedSuperclass());
         javaClassList.addAll(this.getEmbeddable());
         for (JavaClass javaClass : javaClassList) {
@@ -1173,16 +1103,14 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     public List<JavaClass> getSubClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<JavaClass>(this.getEntity());
-        for (JavaClass javaClass : this.getJavaClass()) {
-            if (classId.equals(javaClass.getSuperclass().getId())) {
-                javaClassList.add(javaClass);
-            }
-        }
+        this.getJavaClass().stream().filter((javaClass) -> (classId.equals(javaClass.getSuperclass().getId()))).forEach((javaClass) -> {
+            javaClassList.add(javaClass);
+        });
         return javaClassList;
     }
 
     public List<JavaClass> getAllSubClass(String classId) {
-        List<JavaClass> javaClassList = new ArrayList<JavaClass>();
+        List<JavaClass> javaClassList = new ArrayList<>();
         for (JavaClass javaClass : this.getJavaClass()) {
             if (javaClass.getSuperclass() != null && classId.equals(javaClass.getSuperclass().getId())) {
                 javaClassList.add(javaClass);
@@ -1198,7 +1126,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     @Override
-    public void setName(String value) {
+    public void setName(String persistenceUnitName) {
         this.persistenceUnitName = persistenceUnitName;
     }
 
@@ -1247,12 +1175,29 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
     
      public List<SqlResultSetMapping> getAllSqlResultSetMappings() {
-        List<IdentifiableClass> identifiableClasses = new ArrayList<IdentifiableClass>(this.getEntity());
+        List<IdentifiableClass> identifiableClasses = new ArrayList<>(this.getEntity());
         identifiableClasses.addAll(this.getMappedSuperclass());
-        List<SqlResultSetMapping> sqlResultSetMappings = new ArrayList<SqlResultSetMapping>();
-        for(IdentifiableClass identifiableClass : identifiableClasses){
+        List<SqlResultSetMapping> sqlResultSetMappings = new ArrayList<>();
+        identifiableClasses.stream().forEach((identifiableClass) -> {
             sqlResultSetMappings.addAll(identifiableClass.getSqlResultSetMapping());
-        }
+        });
         return sqlResultSetMappings;
+    }
+
+    /**
+     * @return the cache
+     */
+    public Cache getCache() {
+        if(cache == null){
+            cache = new Cache();
+        }
+        return cache;
+    }
+
+    /**
+     * @param cache the cache to set
+     */
+    public void setCache(Cache cache) {
+        this.cache = cache;
     }
 }

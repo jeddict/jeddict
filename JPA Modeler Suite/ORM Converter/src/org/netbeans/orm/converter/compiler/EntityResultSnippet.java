@@ -73,6 +73,7 @@ public class EntityResultSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (classHelper.getClassName() == null) {
@@ -111,6 +112,7 @@ public class EntityResultSnippet implements Snippet {
 
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (fieldResults.isEmpty()) {

@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.netbeans.api.visual.widget.Widget;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
@@ -115,19 +117,13 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     public PersistenceClassWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
-        this.addPropertyVisibilityHandler("compositePrimaryKeyType", new PropertyVisibilityHandler<String>() {
-            @Override
-            public boolean isVisible() {
-                CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
-                return property == CompositePKProperty.ALL || property == CompositePKProperty.TYPE || property == CompositePKProperty.AUTO_CLASS;
-            }
+        this.addPropertyVisibilityHandler("compositePrimaryKeyType", (PropertyVisibilityHandler<String>) () -> {
+            CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
+            return property == CompositePKProperty.ALL || property == CompositePKProperty.TYPE || property == CompositePKProperty.AUTO_CLASS;
         });
-        this.addPropertyVisibilityHandler("compositePrimaryKeyClass", new PropertyVisibilityHandler<String>() {
-            @Override
-            public boolean isVisible() {
-                CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
-                return property == CompositePKProperty.ALL || property == CompositePKProperty.CLASS;
-            }
+        this.addPropertyVisibilityHandler("compositePrimaryKeyClass", (PropertyVisibilityHandler<String>) () -> {
+            CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
+            return property == CompositePKProperty.ALL || property == CompositePKProperty.CLASS;
         });
         
 
@@ -136,11 +132,11 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     public CompositePKProperty isCompositePKPropertyAllow() {
         if (this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) this.getBaseElementSpec();
-            String inheritenceState = this.getInheritenceState();
+            InheritenceStateType inheritenceState = this.getInheritenceState();
             CompositePKProperty property = CompositePKProperty.NONE;
             boolean visible = false;
             if (this instanceof EntityWidget) {
-                visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1 && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState));
+                visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1 && (inheritenceState == ROOT || inheritenceState  == SINGLETON );
             } else if (this instanceof MappedSuperclassWidget) {
                 visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1;
             }
@@ -150,7 +146,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 //                Case (a): The dependent entity uses IdClass:
 //            CompositePKProperty.FIXED_CLASS
             if (!visible && getDerivedRelationAttributeWidgets().size() == 1) {//check for parent entity pk count
-                if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && ("ROOT".equals(inheritenceState) || "SINGLETON".equals(inheritenceState)))) {
+                if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && (inheritenceState == ROOT || inheritenceState  == SINGLETON ))) {
                     RelationAttributeWidget relationAttributeWidget = getDerivedRelationAttributeWidgets().get(0);
                     IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
                     EntityWidget targetEntityWidget = null;
@@ -190,11 +186,9 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     public List<IdAttributeWidget> getAllIdAttributeWidgets() {
         List<IdAttributeWidget> idAttributeWidgets_TMP = new ArrayList<IdAttributeWidget>(this.getIdAttributeWidgets());
         List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
-        for (JavaClassWidget classWidget : classWidgets) {
-            if (classWidget instanceof PersistenceClassWidget) {
-                idAttributeWidgets_TMP.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
-            }
-        }
+        classWidgets.stream().filter((classWidget) -> (classWidget instanceof PersistenceClassWidget)).forEach((classWidget) -> {
+            idAttributeWidgets_TMP.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
+        });
         return idAttributeWidgets_TMP;
     }
 
@@ -323,11 +317,9 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
             if (this instanceof EntityWidget) {
                 ((EntityWidget) this).scanPrimaryKeyError();
             }
-            for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
-                if (classWidget instanceof EntityWidget) {
-                    ((EntityWidget) classWidget).scanPrimaryKeyError();
-                }
-            }
+            this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
+                ((EntityWidget) classWidget).scanPrimaryKeyError();
+            });
             isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute        
         } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
             embeddedIdAttributeWidget = null;
@@ -361,11 +353,9 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
                     if (this instanceof EntityWidget) {
                         ((EntityWidget) this).scanPrimaryKeyError();
                     }
-                    for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
-                        if (classWidget instanceof EntityWidget) {
-                            ((EntityWidget) classWidget).scanPrimaryKeyError();
-                        }
-                    }
+                    this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
+                        ((EntityWidget) classWidget).scanPrimaryKeyError();
+                    });
                     isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  
                 }
                 
@@ -391,11 +381,9 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
                     if (this instanceof EntityWidget) {
                         ((EntityWidget) this).scanPrimaryKeyError();
                     }
-                    for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
-                        if (classWidget instanceof EntityWidget) {
-                            ((EntityWidget) classWidget).scanPrimaryKeyError();
-                        }
-                    }
+                    this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
+                        ((EntityWidget) classWidget).scanPrimaryKeyError();
+                    });
                     isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  
                 }
             } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
@@ -471,11 +459,9 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         if (this instanceof EntityWidget) {
             ((EntityWidget) this).scanPrimaryKeyError();
         }
-        for (JavaClassWidget classWidget : this.getAllSubclassWidgets()) {
-            if (classWidget instanceof EntityWidget) {
-                ((EntityWidget) classWidget).scanPrimaryKeyError();
-            }
-        }
+        this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
+            ((EntityWidget) classWidget).scanPrimaryKeyError();
+        });
         isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute        
         return attributeWidget;
     }
@@ -758,19 +744,19 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         }
         if (!idAttributeWidgets.isEmpty()) {
             List<Widget> idAttributeCatWidget = new ArrayList<Widget>();
-            for (IdAttributeWidget idAttributeWidget : getIdAttributeWidgets()) {
+            getIdAttributeWidgets().stream().forEach((idAttributeWidget) -> {
                 idAttributeCatWidget.add(idAttributeWidget);
-            }
+            });
             categories.put("PrimaryKey", idAttributeCatWidget);
         }
 
         List<Widget> basicAttributeCatWidget = new ArrayList<Widget>();
-        for (BasicAttributeWidget basicAttributeWidget : getBasicAttributeWidgets()) {
+        getBasicAttributeWidgets().stream().forEach((basicAttributeWidget) -> {
             basicAttributeCatWidget.add(basicAttributeWidget);
-        }
-        for (BasicCollectionAttributeWidget basicCollectionAttributeWidget : getBasicCollectionAttributeWidgets()) {
+        });
+        getBasicCollectionAttributeWidgets().stream().forEach((basicCollectionAttributeWidget) -> {
             basicAttributeCatWidget.add(basicCollectionAttributeWidget);
-        }
+        });
         if (!basicAttributeCatWidget.isEmpty()) {
             categories.put("Basic", basicAttributeCatWidget);
         }
@@ -778,9 +764,9 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         embeddedAttributeWidgets.addAll(multiValueEmbeddedAttributeWidgets);
         if (!embeddedAttributeWidgets.isEmpty()) {
             List<Widget> embeddedAttributeCatWidget = new ArrayList<Widget>();
-            for (EmbeddedAttributeWidget embeddedAttributeWidget : embeddedAttributeWidgets) {
+            embeddedAttributeWidgets.stream().forEach((embeddedAttributeWidget) -> {
                 embeddedAttributeCatWidget.add(embeddedAttributeWidget);
-            }
+            });
             categories.put("Embedded", embeddedAttributeCatWidget);
         }
 
@@ -791,36 +777,36 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
         if (!relationAttributeWidgets.isEmpty()) {
             List<Widget> relationAttributeCatWidget = new ArrayList<Widget>();
-            for (RelationAttributeWidget relationAttributeWidget : relationAttributeWidgets) {
+            relationAttributeWidgets.stream().forEach((relationAttributeWidget) -> {
                 relationAttributeCatWidget.add(relationAttributeWidget);
-            }
+            });
             categories.put("Relation", relationAttributeCatWidget);
         }
         if (!versionAttributeWidgets.isEmpty()) {
             List<Widget> versionAttributeCatWidget = new ArrayList<Widget>();
-            for (VersionAttributeWidget versionAttributeWidget : getVersionAttributeWidgets()) {
+            getVersionAttributeWidgets().stream().forEach((versionAttributeWidget) -> {
                 versionAttributeCatWidget.add(versionAttributeWidget);
-            }
+            });
             categories.put("Version", versionAttributeCatWidget);
         }
         if (!transientAttributeWidgets.isEmpty()) {
             List<Widget> transientAttributeCatWidget = new ArrayList<Widget>();
-            for (TransientAttributeWidget transientAttributeWidget : transientAttributeWidgets) {
+            transientAttributeWidgets.stream().forEach((transientAttributeWidget) -> {
                 transientAttributeCatWidget.add(transientAttributeWidget);
-            }
+            });
             categories.put("Transient", transientAttributeCatWidget);
         }
         this.sortPins(categories);
     }
 
     public List<EmbeddedAttributeWidget> getEmbeddedAttributeWidgets() {
-        List list = new ArrayList(singleValueEmbeddedAttributeWidgets);
+        List<EmbeddedAttributeWidget> list = new ArrayList<EmbeddedAttributeWidget>(singleValueEmbeddedAttributeWidgets);
         list.addAll(multiValueEmbeddedAttributeWidgets);
         return list;
     }
 
     public List<RelationAttributeWidget> getRelationAttributeWidgets() {
-        List list = new ArrayList(oneToOneRelationAttributeWidgets);
+        List<RelationAttributeWidget> list = new ArrayList<RelationAttributeWidget>(oneToOneRelationAttributeWidgets);
         list.addAll(oneToManyRelationAttributeWidgets);
         list.addAll(manyToOneRelationAttributeWidgets);
         list.addAll(manyToManyRelationAttributeWidgets);
@@ -851,16 +837,12 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     public List<RelationAttributeWidget> getDerivedRelationAttributeWidgets() {
         List<RelationAttributeWidget> relationAttributeWidget = new ArrayList<RelationAttributeWidget>();
-        for (OTORelationAttributeWidget oneToOneRelationAttributeWidget : oneToOneRelationAttributeWidgets) {
-            if (((OneToOne) oneToOneRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey()) {
-                relationAttributeWidget.add(oneToOneRelationAttributeWidget);
-            }
-        }
-        for (MTORelationAttributeWidget manyToOneRelationAttributeWidget : manyToOneRelationAttributeWidgets) {
-            if (((ManyToOne) manyToOneRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey()) {
-                relationAttributeWidget.add(manyToOneRelationAttributeWidget);
-            }
-        }
+        oneToOneRelationAttributeWidgets.stream().filter((oneToOneRelationAttributeWidget) -> (((OneToOne) oneToOneRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey())).forEach((oneToOneRelationAttributeWidget) -> {
+            relationAttributeWidget.add(oneToOneRelationAttributeWidget);
+        });
+        manyToOneRelationAttributeWidgets.stream().filter((manyToOneRelationAttributeWidget) -> (((ManyToOne) manyToOneRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey())).forEach((manyToOneRelationAttributeWidget) -> {
+            relationAttributeWidget.add(manyToOneRelationAttributeWidget);
+        });
         return relationAttributeWidget;
     }
 

@@ -274,9 +274,9 @@ public class ObjectFactory {
      * Create an instance of {@link EntityMappings }
      *
      */
-    public EntityMappings createEntityMappings() {
-        return new EntityMappings();
-    }
+//    public EntityMappings createEntityMappings() {
+//        return new EntityMappings();
+//    }
 
     /**
      * Create an instance of {@link MappedSuperclass }

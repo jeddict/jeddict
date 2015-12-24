@@ -24,7 +24,7 @@ import org.netbeans.orm.converter.util.ClassHelper;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public class NamedStoredProcedureQuerySnippet implements Snippet {
 

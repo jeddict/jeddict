@@ -36,6 +36,7 @@ public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
         this.packageName = packageName;
     }
 
+    @Override
     public ClassDefSnippet getClassDef() {
         for (DefaultAttribute defaultAttribute : defaultClass.getAttributes()) {
             VariableDefSnippet variableDef = getVariableDef(defaultAttribute);

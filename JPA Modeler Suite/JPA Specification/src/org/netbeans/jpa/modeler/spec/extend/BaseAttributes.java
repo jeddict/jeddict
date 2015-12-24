@@ -37,7 +37,7 @@ import org.netbeans.jpa.modeler.spec.Transient;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 //@XmlType(propOrder = {
 //    "basic",
@@ -103,6 +103,7 @@ public abstract class BaseAttributes implements IAttributes {
         notifyListeners(basic, "addAttribute", null, null);
     }
 
+     @Override
     public void removeBasic(Basic basic) {
         this.getBasic().remove(basic);
         notifyListeners(basic, "removeAttribute", null, null);
@@ -365,20 +366,24 @@ public abstract class BaseAttributes implements IAttributes {
     //does not need to extends BaseElement (id field hide)
     private transient List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
 
+     @Override
     public void notifyListeners(Object object, String property, String oldValue, String newValue) {
         for (PropertyChangeListener propertyChangeListener : listener) {
             propertyChangeListener.propertyChange(new PropertyChangeEvent(object, property, oldValue, newValue));
         }
     }
 
+     @Override
     public void addChangeListener(PropertyChangeListener newListener) {
         listener.add(newListener);
     }
 
+     @Override
     public void removeChangeListener(PropertyChangeListener newListener) {
         listener.remove(newListener);
     }
 
+     @Override
     public void removeRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
             this.getManyToMany().remove((ManyToMany) relationAttribute);
@@ -397,6 +402,7 @@ public abstract class BaseAttributes implements IAttributes {
         }
     }
 
+     @Override
     public void addRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
             this.getManyToMany().add((ManyToMany) relationAttribute);

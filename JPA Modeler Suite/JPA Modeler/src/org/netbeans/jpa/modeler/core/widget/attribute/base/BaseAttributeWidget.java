@@ -34,26 +34,24 @@ public class BaseAttributeWidget extends AttributeWidget {
 
     public BaseAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("collectionType", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String collectionType) { //Point here should be for only ElementCollection
-                if (BaseAttributeWidget.this.getBaseElementSpec() instanceof ElementCollection) {
-                    ElementCollection elementCollection = (ElementCollection) BaseAttributeWidget.this.getBaseElementSpec();
-                    boolean valid = false;
-                    try {
-                        if (collectionType != null || !collectionType.trim().isEmpty()) {
-                            if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
-                                valid = true;
-                            }
+        this.addPropertyChangeListener("collectionType", (PropertyChangeListener<String>) (String collectionType) -> {
+            //Point here should be for only ElementCollection
+            if (BaseAttributeWidget.this.getBaseElementSpec() instanceof ElementCollection) {
+                ElementCollection elementCollection = (ElementCollection) BaseAttributeWidget.this.getBaseElementSpec();
+                boolean valid = false;
+                try {
+                    if (collectionType != null || !collectionType.trim().isEmpty()) {
+                        if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
+                            valid = true;
                         }
-                    } catch (ClassNotFoundException ex) {
-                        //skip allow = false;
                     }
-                    if (!valid) {
-                        collectionType = java.util.Collection.class.getName();
-                    }
-                    elementCollection.setCollectionType(collectionType.trim());
+                } catch (ClassNotFoundException ex) {
+                    //skip allow = false;
                 }
+                if (!valid) {
+                    collectionType = java.util.Collection.class.getName();
+                }
+                elementCollection.setCollectionType(collectionType.trim());
             }
         });
 

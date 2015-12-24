@@ -37,12 +37,14 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget {
 
     }
 
+    @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         set.put("BASIC_PROP", JPAModelerUtil.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
 
         ElementCollection elementCollectionSpec = (ElementCollection) this.getBaseElementSpec();
         
+          set.put("BASIC_PROP", JPAModelerUtil.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
         set.createPropertySet( this , elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
     }

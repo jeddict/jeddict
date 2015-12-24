@@ -40,10 +40,12 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
         this.wizardDescriptor = wizardDescriptor;
     }
 
+    @Override
     public boolean isFinishPanel() {
         return true;
     }
 
+    @Override
     public Component getComponent() {
         if (component == null) {
             component = new JPAModelSetupPanelVisual(wizardDescriptor);
@@ -52,22 +54,26 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
         return component;
     }
 
+    @Override
     public HelpCtx getHelp() {
         return new HelpCtx("org.netbeans.modules.j2ee.persistence.wizard.jpacontroller." + JPAModelSetupPanel.class.getSimpleName()); // NOI18N
     }
 
+    @Override
     public boolean isValid() {
         getComponent();
         return component.valid(wizardDescriptor);
     }
     private final Set/*<ChangeListener>*/ listeners = new HashSet(1);
 
+    @Override
     public final void addChangeListener(ChangeListener l) {
         synchronized (listeners) {
             listeners.add(l);
         }
     }
 
+    @Override
     public final void removeChangeListener(ChangeListener l) {
         synchronized (listeners) {
             listeners.remove(l);
@@ -85,6 +91,7 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
         }
     }
 
+    @Override
     public void readSettings(Object settings) {
         wizardDescriptor = (WizardDescriptor) settings;
         component.read(wizardDescriptor);
@@ -97,6 +104,7 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
         }
     }
 
+    @Override
     public void storeSettings(Object settings) {
         WizardDescriptor d = (WizardDescriptor) settings;
         component.store(d);
@@ -114,6 +122,7 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
         }
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
         fireChangeEvent(e);
     }

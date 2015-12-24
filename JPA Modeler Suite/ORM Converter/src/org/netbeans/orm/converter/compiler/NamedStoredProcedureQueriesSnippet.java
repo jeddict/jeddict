@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public class NamedStoredProcedureQueriesSnippet implements Snippet {
 
@@ -49,6 +49,7 @@ public class NamedStoredProcedureQueriesSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (namedStoredProcedureQueries.isEmpty()) {
@@ -73,6 +74,7 @@ public class NamedStoredProcedureQueriesSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (namedStoredProcedureQueries.isEmpty()) {

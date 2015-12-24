@@ -39,6 +39,7 @@ public class MetamodelVariableDefSnippet extends VariableDefSnippet {
         this.attributeType = attributeType;
     }
     
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         Collection<String> importSnippets = new ArrayList<String>();

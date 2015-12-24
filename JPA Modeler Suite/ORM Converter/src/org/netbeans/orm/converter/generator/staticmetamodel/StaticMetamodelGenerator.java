@@ -49,6 +49,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
     }
 
     
+    @Override
    protected MetamodelVariableDefSnippet getVariableDef(Attribute attr) {
         MetamodelVariableDefSnippet variableDef = (MetamodelVariableDefSnippet)variables.get(attr.getName());//GG_REMOVE hard cast
         if (variableDef == null) {

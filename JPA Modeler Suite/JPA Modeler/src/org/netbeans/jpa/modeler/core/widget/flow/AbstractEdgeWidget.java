@@ -36,6 +36,7 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdg
     /**
      * @return the baseElementSpec
      */
+    @Override
     public IBaseElement getBaseElementSpec() {
         return baseElementSpec;
     }
@@ -43,6 +44,7 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdg
     /**
      * @param baseElementSpec the baseElementSpec to set
      */
+    @Override
     public void setBaseElementSpec(IBaseElement baseElementSpec) {
         this.baseElementSpec = baseElementSpec;
     }
@@ -50,18 +52,22 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdg
     protected String name;
     protected String documentation;
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
 //        if (name != null && !name.trim().isEmpty()) {
@@ -82,6 +88,7 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdg
     /**
      * @return the flowElementsContainer
      */
+    @Override
     public Widget getFlowElementsContainer() {
         return flowElementsContainer;
     }
@@ -89,6 +96,7 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdg
     /**
      * @param flowElementsContainer the flowElementsContainer to set
      */
+    @Override
     public void setFlowElementsContainer(Widget flowElementsContainer) {
         this.flowElementsContainer = flowElementsContainer;
     }

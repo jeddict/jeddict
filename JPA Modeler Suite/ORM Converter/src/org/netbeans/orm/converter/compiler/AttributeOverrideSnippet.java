@@ -43,6 +43,7 @@ public class AttributeOverrideSnippet implements Snippet {
         this.name = name;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null || columnDef == null) {
@@ -65,6 +66,7 @@ public class AttributeOverrideSnippet implements Snippet {
         return builder.toString();
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
 

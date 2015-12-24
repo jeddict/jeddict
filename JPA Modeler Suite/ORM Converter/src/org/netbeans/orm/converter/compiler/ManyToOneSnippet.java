@@ -36,6 +36,7 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
         this.optional = optional;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         if (isPrimaryKey()) {
@@ -90,6 +91,7 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
 
         if (getFetchType() == null

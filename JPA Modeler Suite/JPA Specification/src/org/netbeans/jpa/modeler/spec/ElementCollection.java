@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
+import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
@@ -123,7 +124,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "convert",
     "collectionTable"
 })
-public class ElementCollection extends CompositionAttribute implements FetchTypeHandler, AttributeOverrideHandler, AssociationOverrideHandler { //CompositionAttribute/BaseAttributes
+public class ElementCollection extends CompositionAttribute implements FetchTypeHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler { //CompositionAttribute/BaseAttributes
 
     @XmlElement(name = "order-by")
     protected String orderBy;
@@ -586,6 +587,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      *
      *
      */
+    @Override
     public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
             attributeOverride = new ArrayList<AttributeOverride>();
@@ -615,6 +617,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      *
      *
      */
+    @Override
     public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
             associationOverride = new ArrayList<AssociationOverride>();
@@ -695,6 +698,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         this.targetClass = value;
     }
 
+    @Override
     public String getAttributeType() {
         return targetClass;
     }
@@ -702,6 +706,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     /**
      * @param attributeType the attributeType to set
      */
+    @Override
     public void setAttributeType(String targetClass) {
         this.targetClass = targetClass;
     }
@@ -712,6 +717,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      * @return possible object is {@link FetchType }
      *
      */
+    @Override
     public FetchType getFetch() {
         return fetch;
     }
@@ -722,6 +728,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      * @param value allowed object is {@link FetchType }
      *
      */
+    @Override
     public void setFetch(FetchType value) {
         this.fetch = value;
     }
@@ -732,6 +739,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      * @return possible object is {@link AccessType }
      *
      */
+    @Override
     public AccessType getAccess() {
         return access;
     }
@@ -742,6 +750,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      * @param value allowed object is {@link AccessType }
      *
      */
+    @Override
     public void setAccess(AccessType value) {
         this.access = value;
     }
@@ -763,6 +772,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         this.collectionType = collectionType;
     }
 
+    @Override
     public AttributeOverride getAttributeOverride(String attributePath) {
         List<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {

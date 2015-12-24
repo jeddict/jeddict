@@ -58,10 +58,12 @@ public class MethodDefSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (callbacks.isEmpty()) {

@@ -33,16 +33,13 @@ public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
 
     public FlowPinWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("name", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String value) {
-                setName(value);
-
-                if (value != null && !value.trim().isEmpty()) {
-                    FlowPinWidget.this.setLabel(value);
-                } else {
-                    FlowPinWidget.this.setLabel("");
-                }
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+            setName(value);
+            
+            if (value != null && !value.trim().isEmpty()) {
+                FlowPinWidget.this.setLabel(value);
+            } else {
+                FlowPinWidget.this.setLabel("");
             }
         });
     }
@@ -81,6 +78,7 @@ public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
     /**
      * @return the flowElementsContainer
      */
+    @Override
     public Widget getFlowElementsContainer() {
         return flowElementsContainer;
     }
@@ -88,6 +86,7 @@ public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
     /**
      * @param flowElementsContainer the flowElementsContainer to set
      */
+    @Override
     public void setFlowElementsContainer(Widget flowElementsContainer) {
         this.flowElementsContainer = flowElementsContainer;
     }

@@ -41,6 +41,7 @@ public class FieldResultSnippet implements Snippet {
         this.column = column;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null || column == null) {
@@ -65,6 +66,7 @@ public class FieldResultSnippet implements Snippet {
 
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("javax.persistence.FieldResult");
     }

@@ -59,6 +59,7 @@ public class OTORelationAttributeWidget extends RelationAttributeWidget {
         this.setIcon(this.getIcon());
     }
 
+    @Override
     public String getIconPath() {
         if (((OneToOne) getBaseElementSpec()).isPrimaryKey()) {
             if (oneToOneRelationFlowWidget instanceof Unidirectional) {
@@ -75,6 +76,7 @@ public class OTORelationAttributeWidget extends RelationAttributeWidget {
         }
     }
 
+    @Override
     public Image getIcon() {
         if (((OneToOne) getBaseElementSpec()).isPrimaryKey()) {
             if (oneToOneRelationFlowWidget instanceof Unidirectional) {

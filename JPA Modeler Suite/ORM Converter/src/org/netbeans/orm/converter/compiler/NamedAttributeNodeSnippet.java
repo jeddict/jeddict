@@ -21,7 +21,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public class NamedAttributeNodeSnippet implements Snippet {
 
@@ -110,7 +110,7 @@ public class NamedAttributeNodeSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.NamedAttributeNode");
         return importSnippets;
     }

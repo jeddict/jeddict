@@ -100,6 +100,7 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
      * @return possible object is {@link Column }
      *
      */
+    @Override
     public Column getColumn() {
         return column;
     }
@@ -110,6 +111,7 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
      * @param value allowed object is {@link Column }
      *
      */
+    @Override
     public void setColumn(Column value) {
         this.column = value;
     }
@@ -202,6 +204,7 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
      * @return possible object is {@link AccessType }
      *
      */
+    @Override
     public AccessType getAccess() {
         return access;
     }
@@ -212,6 +215,7 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
      * @param value allowed object is {@link AccessType }
      *
      */
+    @Override
     public void setAccess(AccessType value) {
         this.access = value;
     }

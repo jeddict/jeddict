@@ -55,6 +55,18 @@ public class NamedAttributeNode {
     @XmlAttribute(name = "key-subgraph")
     protected String keySubgraph;
 
+    public NamedAttributeNode(String name) {
+        this.name = name;
+    }
+
+    public NamedAttributeNode(String name, String subgraph) {
+        this.name = name;
+        this.subgraph = subgraph;
+    }
+
+    public NamedAttributeNode() {
+    }
+
     public static NamedAttributeNode load(Element element, AnnotationMirror annotationMirror) {
         NamedAttributeNode namedAttributeNode = null;
         if (annotationMirror != null) {
@@ -66,6 +78,31 @@ public class NamedAttributeNode {
         return namedAttributeNode;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 19 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NamedAttributeNode other = (NamedAttributeNode) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
+
+    
+    
+    
     /**
      * Gets the value of the name property.
      *

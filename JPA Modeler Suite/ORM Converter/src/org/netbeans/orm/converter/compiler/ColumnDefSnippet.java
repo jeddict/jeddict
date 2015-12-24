@@ -129,6 +129,7 @@ public class ColumnDefSnippet implements Snippet {
         this.name = name;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         StringBuilder builder = new StringBuilder();
@@ -221,6 +222,7 @@ public class ColumnDefSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("javax.persistence.Column");
     }

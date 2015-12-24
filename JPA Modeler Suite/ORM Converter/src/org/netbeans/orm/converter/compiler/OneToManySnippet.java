@@ -35,6 +35,7 @@ public class OneToManySnippet extends AbstractRelationDefSnippet
         this.mappedBy = mappedBy;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (mappedBy == null
@@ -82,6 +83,7 @@ public class OneToManySnippet extends AbstractRelationDefSnippet
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
 
         if (getFetchType() == null

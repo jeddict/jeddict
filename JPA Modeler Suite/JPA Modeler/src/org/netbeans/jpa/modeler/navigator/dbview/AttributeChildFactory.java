@@ -69,7 +69,7 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
     }
 
     private boolean createKeys(String flowPreFix, PersistenceClassWidget classWidget, List<ColumnDef> columnDefList) {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         attributeWidgets.addAll(classWidget.getIdAttributeWidgets());
         attributeWidgets.addAll(classWidget.getVersionAttributeWidgets());
         attributeWidgets.addAll(classWidget.getBasicAttributeWidgets());

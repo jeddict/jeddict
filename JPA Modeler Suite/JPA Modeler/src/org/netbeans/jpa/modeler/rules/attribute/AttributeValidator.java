@@ -17,6 +17,8 @@ package org.netbeans.jpa.modeler.rules.attribute;
 
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
@@ -81,7 +83,7 @@ public class AttributeValidator {
     }
 
     public static void scanInheritenceError(EntityWidget entityWidget) {
-        if ("SINGLETON".equals(entityWidget.getInheritenceState()) || "ROOT".equals(entityWidget.getInheritenceState())) {
+        if (entityWidget.getInheritenceState() == SINGLETON  || entityWidget.getInheritenceState() == ROOT ) {
             for (IdAttributeWidget attributeWidget : entityWidget.getIdAttributeWidgets()) {
                 attributeWidget.clearError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             }

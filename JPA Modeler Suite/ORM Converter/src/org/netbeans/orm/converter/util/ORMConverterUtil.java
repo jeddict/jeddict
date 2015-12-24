@@ -275,13 +275,11 @@ public class ORMConverterUtil {
                     reformat.lock();
 
                     try {
-                        NbDocument.runAtomic(doc, new Runnable() {
-                            @Override public void run() {
-                                try {
-                                    reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
-                                } catch (BadLocationException ex) {
-                                    Exceptions.printStackTrace(ex);
-                                }
+                        NbDocument.runAtomic(doc, () -> {
+                            try {
+                                reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
+                            } catch (BadLocationException ex) {
+                                Exceptions.printStackTrace(ex);
                             }
                         });
                     } finally {

@@ -68,45 +68,36 @@ public class AttributeWidget extends FlowPinWidget {
 //    private boolean selectedView;
     public AttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("name", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String value) {
-                if (value == null || value.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
-                    setName(AttributeWidget.this.getLabel());//rollback
-                } else {
-                    setName(value);
-                    setLabel(value);
-                }
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+            if (value == null || value.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
+                setName(AttributeWidget.this.getLabel());//rollback
+            } else {
+                setName(value);
+                setLabel(value);
             }
         });
 
-        this.addPropertyChangeListener("table_name", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String tableName) {
-                if (tableName != null && !tableName.trim().isEmpty()) {
-                    if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                        throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                    } else {
-                        clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                    }
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
+            if (tableName != null && !tableName.trim().isEmpty()) {
+                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                    throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
                     clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
+            } else {
+                clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
-        this.addPropertyChangeListener("column_name", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String tableName) {
-                if (tableName != null && !tableName.trim().isEmpty()) {
-                    if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                        throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-                    } else {
-                        clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-                    }
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String tableName) -> {
+            if (tableName != null && !tableName.trim().isEmpty()) {
+                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                    throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
                     clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
+            } else {
+                clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
     }
@@ -143,7 +134,7 @@ public class AttributeWidget extends FlowPinWidget {
         this.setPinImage(image);
     }
 
-    private final java.util.Map<String, String> errorList = new HashMap<String, String>();
+    private final java.util.Map<String, String> errorList = new HashMap<>();
 
     public void throwError(String key) {
         errorList.put(key, NbBundle.getMessage(AttributeValidator.class, key));
@@ -175,10 +166,10 @@ public class AttributeWidget extends FlowPinWidget {
     }
 
     private Image getErrorIcon() {
-        int iconWidth = ((BufferedImage) icon).getWidth() + 3;
-        int iconHeight = ((BufferedImage) icon).getHeight() + 3;
-        int errorIconWidth = ((BufferedImage) errorIcon).getWidth();
-        int errorIconHeight = ((BufferedImage) errorIcon).getHeight();
+        int iconWidth = icon.getWidth(null) + 3;
+        int iconHeight = icon.getHeight(null) + 3;
+        int errorIconWidth =  errorIcon.getWidth(null);
+        int errorIconHeight = errorIcon.getHeight(null);
 
         BufferedImage combined = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics g = combined.getGraphics();
@@ -299,11 +290,8 @@ public class AttributeWidget extends FlowPinWidget {
         JMenuItem delete;
         delete = new JMenuItem("Delete");
         delete.setIcon(ImageUtil.getInstance().getIcon("delete.png"));
-        delete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AttributeWidget.this.remove(true);
-            }
+        delete.addActionListener((ActionEvent e) -> {
+            AttributeWidget.this.remove(true);
         });
 
         menuList.add(0, delete);
@@ -349,6 +337,7 @@ public class AttributeWidget extends FlowPinWidget {
 
     }
 
+    @Override
     public void setLabel(String label) {
         if (label != null && !label.trim().isEmpty()) {
             this.setPinName(label.replaceAll("\\s+", ""));

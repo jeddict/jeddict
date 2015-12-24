@@ -49,6 +49,7 @@ public class SQLResultSetMappingsSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (sqlResultSetMappings.isEmpty()) {
             throw new InvalidDataException("Missing SQLResultSetMappings");
@@ -72,6 +73,7 @@ public class SQLResultSetMappingsSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (sqlResultSetMappings.size() == 1) {

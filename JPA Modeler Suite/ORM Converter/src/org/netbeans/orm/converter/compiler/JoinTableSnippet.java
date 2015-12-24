@@ -93,6 +93,7 @@ public class JoinTableSnippet implements Snippet {
                 && uniqueConstraint == null;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if ((catalog == null || catalog.trim().isEmpty())
@@ -169,6 +170,7 @@ public class JoinTableSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (isEmpty()) {

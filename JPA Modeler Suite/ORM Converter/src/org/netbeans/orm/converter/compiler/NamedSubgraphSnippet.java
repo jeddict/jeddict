@@ -23,7 +23,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public class NamedSubgraphSnippet implements Snippet {
 
@@ -114,7 +114,9 @@ public class NamedSubgraphSnippet implements Snippet {
         if (classHelper.getPackageName() != null) {
             importSnippets.add(classHelper.getFQClassName());
         }
-        importSnippets.addAll(namedAttributeNodes.get(0).getImportSnippets());
+        if (namedAttributeNodes != null && !namedAttributeNodes.isEmpty()) {
+            importSnippets.addAll(namedAttributeNodes.get(0).getImportSnippets());
+        }
 
         return importSnippets;
     }

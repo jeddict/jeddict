@@ -131,6 +131,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         return classHelper.getClassName();
     }
 
+    @Override
     public ClassHelper getClassHelper() {
         return classHelper;
     }
@@ -177,20 +178,24 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         this.secondaryTables = secondaryTables;
     }
 
+    @Override
     public AssociationOverridesSnippet getAssociationOverrides() {
         return associationOverrides;
     }
 
+    @Override
     public void setAssociationOverrides(
             AssociationOverridesSnippet associationOverrides) {
 
         this.associationOverrides = associationOverrides;
     }
 
+    @Override
     public AttributeOverridesSnippet getAttributeOverrides() {
         return attributeOverrides;
     }
 
+    @Override
     public void setAttributeOverrides(AttributeOverridesSnippet attributeOverrides) {
         this.attributeOverrides = attributeOverrides;
     }
@@ -309,6 +314,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         try {
             Template template = ORMConverterUtil.getTemplate(getTemplateName());
@@ -336,6 +342,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         }
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         //Sort and eliminate duplicates

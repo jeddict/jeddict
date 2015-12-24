@@ -112,11 +112,12 @@ public class EmbeddableWidget extends PersistenceClassWidget {
     }
 
     @Override
-    public String getInheritenceState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public InheritenceStateType getInheritenceState() {
+        return InheritenceStateType.NONE;
     }
 
 //    An embeddable class (including an embeddable class within another embeddable class) that is contained within an element collection must not contain an element collection, nor may it contain a relationship to an entity other than a many-to-one or one-to-one relationship
+    @Override
     public List<AttributeWidget> getAttributeOverrideWidgets() {
         List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class

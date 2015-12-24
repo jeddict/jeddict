@@ -257,11 +257,13 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         return this.id;
     }
 
+    @Override
     public void addId(Id id) {
         this.getId().add(id);
         notifyListeners(id, "addAttribute", null, null);
     }
 
+    @Override
     public void removeId(Id id) {
         this.getId().remove(id);
         notifyListeners(id, "removeAttribute", null, null);

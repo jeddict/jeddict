@@ -696,25 +696,17 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
              MetadataModel metaDataModel = MetadataModelManager.get(dbCon);
             if (metaDataModel != null) {
                 try {
-                    metaDataModel.runReadAction(
-                            new Action<Metadata>() {
-                                @Override
-                                public void run(Metadata metaData) {
-                                    final Collection<Procedure> procedures = metaData.getDefaultSchema().getProcedures();
-                                    SwingUtilities.invokeLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if(!procedures.isEmpty()){
-                                            procedureName_jComboBox.removeAllItems();
-                                            for (Procedure procedure : procedures) {
-                                                procedureName_jComboBox.addItem(new ComboBoxValue(procedure, procedure.getName()));
-                                            }
-                                            }
-                                        }
-                                    });
+                    metaDataModel.runReadAction((Metadata metaData) -> {
+                        final Collection<Procedure> procedures = metaData.getDefaultSchema().getProcedures();
+                        SwingUtilities.invokeLater(() -> {
+                            if(!procedures.isEmpty()){
+                                procedureName_jComboBox.removeAllItems();
+                                for (Procedure procedure : procedures) {
+                                    procedureName_jComboBox.addItem(new ComboBoxValue(procedure, procedure.getName()));
                                 }
                             }
-                    );
+                        });
+                    });
 
                 } catch (MetadataModelException e) {
                     e.printStackTrace();
@@ -813,6 +805,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
      *
      * @param e the document event
      */
+@Override
     public void insertUpdate(javax.swing.event.DocumentEvent e){}
 
     /**
@@ -822,6 +815,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
      *
      * @param e the document event
      */
+@Override
     public void removeUpdate(javax.swing.event.DocumentEvent e){}
 
     /**
@@ -829,6 +823,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
      *
      * @param e the document event
      */
+@Override
     public void changedUpdate(javax.swing.event.DocumentEvent e){}
     
     

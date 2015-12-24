@@ -15,15 +15,26 @@
  */
 package org.netbeans.jpa.modeler.navigator.entitygraph;
 
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
 import org.openide.nodes.ChildFactory;
 
-public abstract class EGChildFactory  extends ChildFactory<AttributeWidget> {
+public abstract class EGChildFactory extends ChildFactory<AttributeWidget> {
 
-    protected final EntityWidget entityWidget;
+    protected EGParentNode parentNode;
 
-    public EGChildFactory(EntityWidget entityWidget) {
-        this.entityWidget = entityWidget;
+    /**
+     * @return the parentNode
+     */
+    public EGParentNode getParentNode() {
+        return parentNode;
+    }
+
+    /**
+     * @param parentNode the parentNode to set
+     */
+    public void setParentNode(EGParentNode parentNode) {
+        this.parentNode = parentNode;
     }
 }
+

@@ -29,6 +29,7 @@ public class ORMInputDefiniton implements InputDefinition {
     /**
      * @return the modelerFile
      */
+    @Override
     public ModelerFile getModelerFile() {
         return modelerFile;
     }
@@ -36,6 +37,7 @@ public class ORMInputDefiniton implements InputDefinition {
     /**
      * @param modelerFile the modelerFile to set
      */
+    @Override
     public void setModelerFile(ModelerFile modelerFile) {
         this.modelerFile = modelerFile;
     }

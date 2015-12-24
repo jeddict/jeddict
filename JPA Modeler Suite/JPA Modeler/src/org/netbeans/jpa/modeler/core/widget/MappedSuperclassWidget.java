@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import static org.netbeans.jpa.modeler.core.widget.CompositePKProperty.NONE;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -103,7 +104,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget {
 //        return menuList;
 //    }
     @Override
-    public String getInheritenceState() {
-        return "NONE";//Not implemented yet
+    public InheritenceStateType getInheritenceState() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

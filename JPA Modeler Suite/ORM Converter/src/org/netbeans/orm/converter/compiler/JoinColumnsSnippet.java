@@ -35,6 +35,7 @@ public class JoinColumnsSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (joinColumns.isEmpty()) {
@@ -62,6 +63,7 @@ public class JoinColumnsSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
 
         if (joinColumns.isEmpty()) {

@@ -43,6 +43,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget {
         super.createPropertySet(set);
 
         ElementCollection elementCollectionSpec = (ElementCollection) this.getBaseElementSpec();
+          set.put("BASIC_PROP", JPAModelerUtil.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
         
         set.createPropertySet( this , elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
@@ -58,6 +59,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget {
     /**
      * @return the embeddableFlowWidget
      */
+    @Override
     public EmbeddableFlowWidget getEmbeddableFlowWidget() {
         return embeddableFlowWidget;
     }
@@ -65,6 +67,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget {
     /**
      * @param embeddableFlowWidget the embeddableFlowWidget to set
      */
+    @Override
     public void setEmbeddableFlowWidget(EmbeddableFlowWidget embeddableFlowWidget) {
         this.embeddableFlowWidget = embeddableFlowWidget;
     }

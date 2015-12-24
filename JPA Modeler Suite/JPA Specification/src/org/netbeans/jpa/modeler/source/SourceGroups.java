@@ -138,9 +138,9 @@ public final class SourceGroups {
     public static SourceGroup getFolderSourceGroup(SourceGroup[] sourceGroups, FileObject folder) {
         Parameters.notNull("sourceGroups", sourceGroups); //NOI18N
         Parameters.notNull("folder", folder); //NOI18N
-        for (int i = 0; i < sourceGroups.length; i++) {
-            if (FileUtil.isParentOf(sourceGroups[i].getRootFolder(), folder)) {
-                return sourceGroups[i];
+        for (SourceGroup sourceGroup : sourceGroups) {
+            if (FileUtil.isParentOf(sourceGroup.getRootFolder(), folder)) {
+                return sourceGroup;
             }
         }
         return null;
@@ -235,8 +235,7 @@ public final class SourceGroups {
             result = Collections.emptyMap();
         } else {
             result = new HashMap<FileObject, SourceGroup>(2 * sourceGroups.length, .5f);
-            for (int i = 0; i < sourceGroups.length; i++) {
-                SourceGroup sourceGroup = sourceGroups[i];
+            for (SourceGroup sourceGroup : sourceGroups) {
                 result.put(sourceGroup.getRootFolder(), sourceGroup);
             }
         }
@@ -250,8 +249,7 @@ public final class SourceGroups {
         }
         List<SourceGroup> result = new ArrayList<SourceGroup>();
         List<FileObject> sourceRoots = getFileObjects(rootURLs);
-        for (int i = 0; i < sourceRoots.size(); i++) {
-            FileObject sourceRoot = sourceRoots.get(i);
+        for (FileObject sourceRoot : sourceRoots) {
             SourceGroup srcGroup = foldersToSourceGroupsMap.get(sourceRoot);
             if (srcGroup != null) {
                 result.add(srcGroup);
@@ -262,12 +260,12 @@ public final class SourceGroups {
 
     private static List<FileObject> getFileObjects(URL[] urls) {
         List<FileObject> result = new ArrayList<FileObject>();
-        for (int i = 0; i < urls.length; i++) {
-            FileObject sourceRoot = URLMapper.findFileObject(urls[i]);
+        for (URL url : urls) {
+            FileObject sourceRoot = URLMapper.findFileObject(url);
             if (sourceRoot != null) {
                 result.add(sourceRoot);
             } else {
-                Logger.getLogger(SourceGroup.class.getName()).log(Level.INFO, "No FileObject found for the following URL: " + urls[i]);
+                Logger.getLogger(SourceGroup.class.getName()).log(Level.INFO, "No FileObject found for the following URL: " + url);
             }
         }
         return result;
@@ -276,8 +274,8 @@ public final class SourceGroups {
     private static Set<SourceGroup> getTestSourceGroups(SourceGroup[] sourceGroups) {
         Map<FileObject, SourceGroup> foldersToSourceGroupsMap = createFoldersToSourceGroupsMap(sourceGroups);
         Set<SourceGroup> testGroups = new HashSet<SourceGroup>();
-        for (int i = 0; i < sourceGroups.length; i++) {
-            testGroups.addAll(getTestTargets(sourceGroups[i], foldersToSourceGroupsMap));
+        for (SourceGroup sourceGroup : sourceGroups) {
+            testGroups.addAll(getTestTargets(sourceGroup, foldersToSourceGroupsMap));
         }
         return testGroups;
     }

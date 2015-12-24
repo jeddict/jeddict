@@ -13,15 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.navigator.entitygraph;
+package org.netbeans.jpa.modeler.core.widget;
 
-import org.netbeans.modeler.node.ModelerNavigationNode;
-import org.openide.nodes.Children;
-import org.openide.util.lookup.Lookups;
-
-public class EGEmbeddedRootNode extends ModelerNavigationNode {
-
-    public EGEmbeddedRootNode(Children attributeList) {
-        super(attributeList,Lookups.singleton(new CheckableAttributeNode()));
-    }
+/**
+ *
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
+ */
+public enum InheritenceStateType {
+    SINGLETON,ROOT,BRANCH,LEAF,NONE;
+    
 }

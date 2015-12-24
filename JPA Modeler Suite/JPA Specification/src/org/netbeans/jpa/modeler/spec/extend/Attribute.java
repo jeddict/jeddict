@@ -31,6 +31,7 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
  *
  * @author Gaurav Gupta
  */
+
 public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandler {
 
 //    private List<String> annotation;
@@ -60,6 +61,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      * @return possible object is {@link String }
      *
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -70,6 +72,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      * @param value allowed object is {@link String }
      *
      */
+    @Override
     public void setName(String value) {
         this.name = value;
     }
@@ -121,6 +124,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @return the jaxbVariableType
      */
+    @Override
     public JaxbVariableType getJaxbVariableType() {
         return jaxbVariableType;
     }
@@ -128,6 +132,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @param jaxbVariableType the jaxbVariableType to set
      */
+    @Override
     public void setJaxbVariableType(JaxbVariableType jaxbVariableType) {
         this.jaxbVariableType = jaxbVariableType;
     }
@@ -135,6 +140,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @return the jaxbXmlAttribute
      */
+    @Override
     public JaxbXmlAttribute getJaxbXmlAttribute() {
         return jaxbXmlAttribute;
     }
@@ -142,6 +148,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @param jaxbXmlAttribute the jaxbXmlAttribute to set
      */
+    @Override
     public void setJaxbXmlAttribute(JaxbXmlAttribute jaxbXmlAttribute) {
         this.jaxbXmlAttribute = jaxbXmlAttribute;
     }
@@ -149,6 +156,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @return the jaxbXmlElement
      */
+    @Override
     public JaxbXmlElement getJaxbXmlElement() {
         return jaxbXmlElement;
     }
@@ -156,6 +164,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @param jaxbXmlElement the jaxbXmlElement to set
      */
+    @Override
     public void setJaxbXmlElement(JaxbXmlElement jaxbXmlElement) {
         this.jaxbXmlElement = jaxbXmlElement;
     }
@@ -163,6 +172,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @return the jaxbXmlElementList
      */
+    @Override
     public List<JaxbXmlElement> getJaxbXmlElementList() {
         return jaxbXmlElementList;
     }
@@ -170,6 +180,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     /**
      * @param jaxbXmlElementList the jaxbXmlElementList to set
      */
+    @Override
     public void setJaxbXmlElementList(List<JaxbXmlElement> jaxbXmlElementList) {
         this.jaxbXmlElementList = jaxbXmlElementList;
     }

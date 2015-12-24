@@ -15,22 +15,13 @@
  */
 package org.netbeans.jpa.modeler.specification.model;
 
-import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.ModelerFile;
 
 public class JPADefaultDiagramModel extends JPADiagramModel {
 
     @Override
     public void init(ModelerFile modelerFile) {
-        ElementConfigFactory elementConfigFactory = modelerFile.getVendorSpecification().getElementConfigFactory();
-        EntityMappings entityMappingsSpec = EntityMappings.getNewInstance();
-        elementConfigFactory.initializeObjectValue(entityMappingsSpec);
-        
-        this.setDiagramElement(entityMappingsSpec.getJPADiagram());
-        this.setDefinitionElement(entityMappingsSpec);
-        this.setRootElement(entityMappingsSpec);
-        this.getModelerScene().setRootElementSpec(entityMappingsSpec);
+       
     }
     
     

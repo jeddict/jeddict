@@ -15,6 +15,8 @@
  */
 package org.netbeans.jpa.modeler.core.widget.ui;
 
+import org.netbeans.modeler.properties.window.GenericDialog;
+
 /**
  *
  * @author Gaurav Gupta

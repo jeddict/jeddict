@@ -20,8 +20,10 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.MTMRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -35,6 +37,13 @@ public class MTMRelationAttributeWidget extends RelationAttributeWidget {
 
     public MTMRelationAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+    }
+    
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        ManyToMany mtmSpec = (ManyToMany) this.getBaseElementSpec();
+        set.put("BASIC_PROP", JPAModelerUtil.getCollectionTypeProperty(this.getModelerScene(), mtmSpec));
     }
 
     public static PinWidgetInfo create(String id, String name) {
@@ -59,6 +68,7 @@ public class MTMRelationAttributeWidget extends RelationAttributeWidget {
         this.setIcon(this.getIcon());
     }
 
+    @Override
     public String getIconPath() {
         if (manyToManyRelationFlowWidget instanceof Unidirectional) {
             return JPAModelerUtil.UMTM_ATTRIBUTE_ICON_PATH;
@@ -67,6 +77,7 @@ public class MTMRelationAttributeWidget extends RelationAttributeWidget {
         }
     }
 
+    @Override
     public Image getIcon() {
         if (manyToManyRelationFlowWidget instanceof Unidirectional) {
             return JPAModelerUtil.UMTM_ATTRIBUTE;

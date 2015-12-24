@@ -95,6 +95,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null) {
@@ -153,6 +154,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (entityResults.isEmpty() && constructorResults.isEmpty() && columnResults.isEmpty()) {

@@ -18,10 +18,13 @@ package org.netbeans.jpa.modeler.specification.model.scene;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -36,7 +39,7 @@ import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
-import org.netbeans.jpa.modeler.generator.ui.GenerateCodeDialog;
+import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
 import org.netbeans.jpa.modeler.spec.Embeddable;
@@ -66,14 +69,6 @@ import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 import org.openide.util.RequestProcessor;
 
 public class JPAModelerScene extends PModelerScene {
-
-//    private final LayerWidget widgetHighlightLayer;
-    public JPAModelerScene() {
-//        widgetHighlightLayer = new LayerWidget(this);
-//        widgetHighlightLayer.setOpaque(false);
-//        addChild(widgetHighlightLayer);
-
-    }
 
     private List<IFlowElementWidget> flowElements = new ArrayList<IFlowElementWidget>(); // Linked hashmap to preserve order of inserted elements
 
@@ -301,8 +296,7 @@ public class JPAModelerScene extends PModelerScene {
     }
 
     @Override
-    public void createBaseElement(IBaseElementWidget baseElementWidget
-    ) {
+    public void createBaseElement(IBaseElementWidget baseElementWidget) {
         String baseElementId = "";
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
@@ -387,11 +381,7 @@ public class JPAModelerScene extends PModelerScene {
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        ElementConfigFactory elementConfigFactory = this.getModelerFile().getVendorSpecification().getElementConfigFactory();
         set.createPropertySet( this , this.getBaseElementSpec(), getPropertyChangeListeners());
-//        if (this.getBaseElementSpec() instanceof AccessTypeHandler) {
-//            set.put("BASIC_PROP", JPAModelerUtil.getAccessTypeProperty(this, (AccessTypeHandler) this.getBaseElementSpec()));
-//        }
     }
 
     @Override
@@ -402,20 +392,24 @@ public class JPAModelerScene extends PModelerScene {
     @Override
     public void init() {
         super.init();
-        OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
-        if (!window.isOpened()) {
-            window.open();
-        }
-        window.requestActive();
+        SwingUtilities.invokeLater(() -> {
+            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
+            if (!window.isOpened()) {
+                window.open();
+            }
+            window.requestActive();
+        });
+        
     }
 
     @Override
     public void destroy() {
-        OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
-        System.out.println("");
-        if (ModelerCore.getModelerFiles().size() == 1) {
-            window.close();
-        }
+        SwingUtilities.invokeLater(() -> {
+            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
+            if (ModelerCore.getModelerFiles().size() == 1) {
+                window.close();
+            }
+        });
     }
 
     @Override
@@ -423,26 +417,19 @@ public class JPAModelerScene extends PModelerScene {
 //        final EntityMappings entityMappings = ((EntityMappings) this.getBaseElementSpec());
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         JMenuItem generateCode = new JMenuItem("Generate Source Code");
-        generateCode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GenerateCodeDialog dialog = new GenerateCodeDialog(JPAModelerScene.this.getModelerFile().getFileObject());
-                dialog.setVisible(true);
-                if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
-                    RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
-                    SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(JPAModelerScene.this.getModelerFile(), dialog.getTargetPoject(), dialog.getSourceGroup());
-                    processor.post(task);
-                }
-
+        generateCode.addActionListener((ActionEvent e) -> {
+            GenerateCodeDialog dialog = new GenerateCodeDialog(JPAModelerScene.this.getModelerFile().getFileObject());
+            dialog.setVisible(true);
+            if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
+                RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
+                SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(JPAModelerScene.this.getModelerFile(), dialog.getTargetPoject(), dialog.getSourceGroup());
+                processor.post(task);
             }
         });
 
         JMenuItem manageVisibility = new JMenuItem("Manage Entity Visibility");
-        manageVisibility.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                fireEntityVisibilityAction(JPAModelerScene.this.getModelerFile());
-            }
+        manageVisibility.addActionListener((ActionEvent e) -> {
+            fireEntityVisibilityAction(JPAModelerScene.this.getModelerFile());
         });
 
 //        JMenuItem generateCodeFromDB = new JMenuItem("Generate DB code");
@@ -513,29 +500,27 @@ public class JPAModelerScene extends PModelerScene {
     @Override
     public IColorScheme getColorScheme() {
         EntityMappings entityMappings = ((EntityMappings) this.getBaseElementSpec());
-        if (entityMappings.getTheme() == null) {
-            return PFactory.getMacScheme();
-        } else if (entityMappings.getTheme().equals("CLASSIC")) {
-            return PFactory.getNetBeans60Scheme();
-        } else if (entityMappings.getTheme().equals("METRO")) {
-            return PFactory.getMetroScheme();
-        } else if (entityMappings.getTheme().equals("MAC")) {
-            return PFactory.getMacScheme();
-        } else {
-            return PFactory.getMacScheme();
+        if (PFactory.getNetBeans60Scheme().getSimpleName().equals(entityMappings.getTheme())) {
+            return PFactory.getColorScheme(PFactory.getNetBeans60Scheme());
+        }  else if (PFactory.getMetroScheme().getSimpleName().equals(entityMappings.getTheme())) {
+            return PFactory.getColorScheme(PFactory.getMetroScheme());
+        }  else {
+            return PFactory.getColorScheme(PFactory.getMacScheme());
         }
     }
 
-    public void setColorScheme(IColorScheme scheme) {
+    @Override
+    public void setColorScheme(Class<? extends IColorScheme> scheme) {
         EntityMappings entityMappings = ((EntityMappings) this.getBaseElementSpec());
-        entityMappings.setTheme(scheme.getId());
+        entityMappings.setTheme(scheme.getSimpleName());
     }
 
-    public List<IColorScheme> getColorSchemes() {
-        List<IColorScheme> colorSchemes = new ArrayList<IColorScheme>();
-        colorSchemes.add(PFactory.getNetBeans60Scheme());
-        colorSchemes.add(PFactory.getMetroScheme());
-        colorSchemes.add(PFactory.getMacScheme());
+    @Override
+    public Map<String , Class<? extends IColorScheme>> getColorSchemes() {
+        Map<String , Class<? extends IColorScheme>> colorSchemes = new HashMap<String, Class<? extends IColorScheme>>();
+        colorSchemes.put("Classic",PFactory.getNetBeans60Scheme());
+        colorSchemes.put("Metro", PFactory.getMetroScheme());
+        colorSchemes.put("Mac", PFactory.getMacScheme());
         return colorSchemes;
     }
 

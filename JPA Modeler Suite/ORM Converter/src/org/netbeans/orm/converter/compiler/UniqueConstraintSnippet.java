@@ -33,6 +33,7 @@ public class UniqueConstraintSnippet implements Snippet {
         this.uniqueConstraints = uniqueConstraints;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (uniqueConstraints.isEmpty()) {
@@ -57,6 +58,7 @@ public class UniqueConstraintSnippet implements Snippet {
         return builder.toString();
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("javax.persistence.UniqueConstraint");
 

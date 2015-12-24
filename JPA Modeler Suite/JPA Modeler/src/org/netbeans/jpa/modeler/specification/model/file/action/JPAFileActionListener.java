@@ -22,12 +22,11 @@ import org.netbeans.jpa.modeler.specification.model.engine.JPADiagramEngine;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
-import org.netbeans.modeler.component.IModelerPanel;
-import org.netbeans.modeler.component.ModelerPanelTopComponent;
+import org.netbeans.modeler.core.IModelerDiagramEngine;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
-import org.netbeans.modeler.specification.model.ModelerSpecificationDiagramModel;
+import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
 import org.netbeans.modeler.widget.node.INodeWidget;
 import org.openide.awt.ActionID;
@@ -46,40 +45,20 @@ import org.openide.util.NbBundle.Messages;
         document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/jpa/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA", version = 2.0F, name = "JPA", displayName = "JPA 2.0 Specification")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "")
+@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "",
+        modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class , exportManager =ExportManagerImpl.class,
+        modelerDiagramEngine=JPADiagramEngine.class, relationValidator=RelationValidator.class, diagramSpecification=JPADefaultDiagramModel.class)
 public class JPAFileActionListener extends ModelerFileActionListener {
-
+    
     public JPAFileActionListener(IModelerFileDataObject context) {
         super(context);
     }
 
     @Override
-    public void initSpecification(ModelerFile modelerFile) {
-
-        modelerFile.setModelerVendorSpecification(new JPASpecification());
-        ModelerSpecificationDiagramModel diagramModel = new JPADefaultDiagramModel();
-        modelerFile.getVendorSpecification().setModelerSpecificationDiagramModel(diagramModel);
-
-        diagramModel.setModelerUtil(new JPAModelerUtil());
-
-        if (modelerFile.getId() == null) {
-            diagramModel.setModelerDiagramEngine(new JPADiagramEngine());
-        } else {
-            diagramModel.setModelerDiagramEngine(new JPADiagramEngine() {
-                @Override
-                public void setNodeWidgetAction(final INodeWidget nodeWidget) {
-                        //skip events
-                }
-            });
-        }
-        diagramModel.setExportManager(new ExportManagerImpl());
-        
-
-        diagramModel.setModelerScene(new JPAModelerScene());
-
-        diagramModel.setModelerPanelTopComponent((IModelerPanel) new ModelerPanelTopComponent());
-
-        diagramModel.setRelationValidator(new RelationValidator());
+    public void initSpecification(final ModelerFile modelerFile) {
+            modelerFile.setModelerVendorSpecification(new JPASpecification());// 0 ms
+            final ModelerDiagramSpecification diagramModel = new JPADefaultDiagramModel();// 0 ms
+            modelerFile.getVendorSpecification().setModelerSpecificationDiagramModel(diagramModel);// 0 ms
 
     }
 

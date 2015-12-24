@@ -62,6 +62,7 @@ public class SequenceGeneratorSnippet implements Snippet {
         this.sequenceName = sequenceName;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null) {
@@ -118,6 +119,7 @@ public class SequenceGeneratorSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singleton("javax.persistence.SequenceGenerator");
     }

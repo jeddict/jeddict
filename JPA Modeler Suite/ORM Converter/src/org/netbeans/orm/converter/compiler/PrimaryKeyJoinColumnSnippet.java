@@ -50,6 +50,7 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
         this.referencedColumnName = referencedColumnName;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null
@@ -87,6 +88,7 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("javax.persistence.PrimaryKeyJoinColumn");
     }

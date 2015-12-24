@@ -70,6 +70,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @XmlAttribute
     private String compositePrimaryKeyClass;//custom added
 
+    @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
         this.idClass = IdClass.load(element);
@@ -485,6 +486,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
         /**
      * @return the compositePrimaryKeyType
      */
+    @Override
     public CompositePrimaryKeyType getCompositePrimaryKeyType() {
         return compositePrimaryKeyType;
     }
@@ -492,6 +494,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     /**
      * @param compositePrimaryKeyType the compositePrimaryKeyType to set
      */
+    @Override
     public void setCompositePrimaryKeyType(CompositePrimaryKeyType compositePrimaryKeyType) {
         this.compositePrimaryKeyType = compositePrimaryKeyType;
         manageCompositePrimaryKeyClass();
@@ -500,6 +503,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     /**
      * @return the compositePrimaryKeyClass
      */
+    @Override
     public String getCompositePrimaryKeyClass() {
         return compositePrimaryKeyClass;
     }
@@ -507,10 +511,12 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     /**
      * @param compositePrimaryKeyClass the compositePrimaryKeyClass to set
      */
+    @Override
     public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
         this.compositePrimaryKeyClass = compositePrimaryKeyClass;
         manageCompositePrimaryKeyClass();
     }
+    @Override
         public void manageCompositePrimaryKeyClass() {
         if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
             compositePrimaryKeyClass = this.getClazz() + "PK";

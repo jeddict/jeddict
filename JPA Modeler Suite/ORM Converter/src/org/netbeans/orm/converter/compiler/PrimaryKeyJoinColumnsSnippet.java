@@ -47,6 +47,7 @@ public class PrimaryKeyJoinColumnsSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (primaryKeyJoinColumns.isEmpty()) {
@@ -71,6 +72,7 @@ public class PrimaryKeyJoinColumnsSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public List<String> getImportSnippets() throws InvalidDataException {
 
         if (primaryKeyJoinColumns.isEmpty()) {

@@ -68,6 +68,7 @@ public enum InheritanceType {
         return (otherName == null) ? false : name.equals(otherName);
     }
 
+    @Override
     public String toString() {
         return name;
     }

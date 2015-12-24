@@ -78,6 +78,7 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
      * @return possible object is {@link Column }
      *
      */
+    @Override
     public Column getColumn() {
         return column;
     }
@@ -88,6 +89,7 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
      * @param value allowed object is {@link Column }
      *
      */
+    @Override
     public void setColumn(Column value) {
         this.column = value;
     }
@@ -120,6 +122,7 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
      * @return possible object is {@link AccessType }
      *
      */
+    @Override
     public AccessType getAccess() {
         return access;
     }
@@ -130,6 +133,7 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
      * @param value allowed object is {@link AccessType }
      *
      */
+    @Override
     public void setAccess(AccessType value) {
         this.access = value;
     }

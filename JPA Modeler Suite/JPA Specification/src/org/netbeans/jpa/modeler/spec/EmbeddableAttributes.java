@@ -59,6 +59,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class EmbeddableAttributes extends BaseAttributes {
 
 
+    @Override
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
 
         for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {

@@ -72,18 +72,24 @@ public class PinContextModel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (widget instanceof PersistenceClassWidget) {
                     PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) widget;
-                    if ("ID_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewIdAttribute(persistenceClassWidget.getNextAttributeName("id"));
-                    } else if ("BASIC_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewBasicAttribute(persistenceClassWidget.getNextAttributeName());
-                    } else if ("BASIC_COLLECTION_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewBasicCollectionAttribute(persistenceClassWidget.getNextAttributeName());
-                    } else if ("TRANSIENT_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewTransientAttribute(persistenceClassWidget.getNextAttributeName());
-                    } else if ("VERSION_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewVersionAttribute(persistenceClassWidget.getNextAttributeName());
-                    } else {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+                    if (null != addAttributeModel.getId()) switch (addAttributeModel.getId()) {
+                        case "ID_ATTRIBUTE":
+                            persistenceClassWidget.addNewIdAttribute(persistenceClassWidget.getNextAttributeName("id"));
+                            break;
+                        case "BASIC_ATTRIBUTE":
+                            persistenceClassWidget.addNewBasicAttribute(persistenceClassWidget.getNextAttributeName());
+                            break;
+                        case "BASIC_COLLECTION_ATTRIBUTE":
+                            persistenceClassWidget.addNewBasicCollectionAttribute(persistenceClassWidget.getNextAttributeName());
+                            break;
+                        case "TRANSIENT_ATTRIBUTE":
+                            persistenceClassWidget.addNewTransientAttribute(persistenceClassWidget.getNextAttributeName());
+                            break;
+                        case "VERSION_ATTRIBUTE":
+                            persistenceClassWidget.addNewVersionAttribute(persistenceClassWidget.getNextAttributeName());
+                            break;
+                        default:
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
                     }
                     widget.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
 

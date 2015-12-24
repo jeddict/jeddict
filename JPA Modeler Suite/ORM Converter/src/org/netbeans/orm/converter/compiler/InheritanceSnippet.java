@@ -38,10 +38,12 @@ public class InheritanceSnippet implements Snippet {
         this.statergy = statergy;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         return "@Inheritance(strategy=InheritanceType." + statergy + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
 

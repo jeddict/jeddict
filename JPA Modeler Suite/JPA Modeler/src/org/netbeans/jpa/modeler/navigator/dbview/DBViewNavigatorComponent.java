@@ -67,6 +67,7 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
 
     }
 
+    @Override
     public ExplorerManager getExplorerManager() {
         return explorerManager;
     }
@@ -105,6 +106,7 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
         checkNodes(TopComponent.getRegistry().getCurrentNodes());
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (TopComponent.Registry.PROP_ACTIVATED.equals(evt.getPropertyName())) {
             if (opened) {
@@ -169,15 +171,12 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
 //            RequestProcessor.getDefault().post(new Runnable() {
 //                @Override
 //                public void run() {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    ((BeanTreeView) navigatorPane).setVisible(true);
-                    ((BeanTreeView) navigatorPane).setRootVisible(false);
+            SwingUtilities.invokeLater(() -> {
+                ((BeanTreeView) navigatorPane).setVisible(true);
+                ((BeanTreeView) navigatorPane).setRootVisible(false);
 //                    explorerManager.setRootContext(new AbstractNode(new EntityChildren(entityMappings)));
-                    explorerManager.setRootContext(new EntitytRootNode(Children.create(new EntityChildFactory((JPAModelerScene) modelerScene), true)));
-                    explorerManager.getRootContext().setDisplayName("JPA Modeler - Database View");
-                }
+                explorerManager.setRootContext(new EntitytRootNode(Children.create(new EntityChildFactory((JPAModelerScene) modelerScene), true)));
+                explorerManager.getRootContext().setDisplayName("JPA Modeler - Database View");
             });
         } else {
             System.out.println("In UPDATE ^EM");

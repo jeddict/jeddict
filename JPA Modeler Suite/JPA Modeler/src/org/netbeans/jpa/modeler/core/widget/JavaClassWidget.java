@@ -45,32 +45,25 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
 
     public JavaClassWidget(IModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
-        this.addPropertyChangeListener("class", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String value) {
-                if (value == null || value.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
-                    setName(JavaClassWidget.this.getLabel());//rollback
-                } else {
-                    setName(value);
-                    setLabel(value);
-                }
-
+        this.addPropertyChangeListener("class", (PropertyChangeListener<String>) (String value) -> {
+            if (value == null || value.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
+                setName(JavaClassWidget.this.getLabel());//rollback
+            } else {
+                setName(value);
+                setLabel(value);
             }
         });
 
-        this.addPropertyChangeListener("table_name", new PropertyChangeListener<String>() {
-            @Override
-            public void changePerformed(String tableName) {
-                if (tableName != null && !tableName.trim().isEmpty()) {
-                    if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                        throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                    } else {
-                        clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                    }
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
+            if (tableName != null && !tableName.trim().isEmpty()) {
+                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                    throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
                     clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
+            } else {
+                clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
 
@@ -94,9 +87,9 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
 
     private void printError() {
         StringBuilder errorMessage = new StringBuilder();
-        for (String errorKey : errorList.keySet()) {
+        errorList.keySet().stream().forEach((errorKey) -> {
             errorMessage.append(errorList.get(errorKey));
-        }
+        });
         if (errorMessage.length() != 0) {
             this.setToolTipText(errorMessage.toString());
             this.setNodeImage(getErrorIcon());
@@ -244,11 +237,10 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
         incomingGeneralizationFlowWidgets.remove(generalizationFlowWidget);
     }
 
-    public abstract String getInheritenceState();
+    public abstract InheritenceStateType getInheritenceState();
 
 ////    private static final Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25) ,2, new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25));
     public void showInheritencePath() {
-//        Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25), 1, new Color(255, 225, 225), new Color(255, 255, 255), new Color(255, 225, 225), new Color(255, 255, 255), new Color(255, 225, 225));
         IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
@@ -276,59 +268,11 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
         IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
-//        if (this.getEmbeddableFlowWidget() != null) {
-//            this.getEmbeddableFlowWidget().setHighlightStatus(true);
-//            colorScheme.highlightUI(this.getEmbeddableFlowWidget());
-//            this.getEmbeddableFlowWidget().getTargetEmbeddableWidget().showCompositionPath();
-//        }
     }
 
     public void hideCompositionPath() {
         IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
-//        if (this.getEmbeddableFlowWidget() != null) {
-//            this.getEmbeddableFlowWidget().setHighlightStatus(false);
-//            colorScheme.updateUI(this.getEmbeddableFlowWidget(), this.getEmbeddableFlowWidget().getState(), this.getEmbeddableFlowWidget().getState());
-//            this.getEmbeddableFlowWidget().getTargetEmbeddableWidget().hideCompositionPath();
-//        }
     }
-//    private LayerWidget preLayerWidget;
-//
-//    public void showInheritencePath() {
-//        JPAModelerScene modelerScene = (JPAModelerScene) this.getModelerScene();
-//        preLayerWidget = (LayerWidget) this.getParentWidget();
-//        this.removeFromParent();
-//        modelerScene.getWidgetHighlightLayer().addChild(this);
-//        if (this.getOutgoingGeneralizationFlowWidget() != null) {
-//            this.getOutgoingGeneralizationFlowWidget().setPreLayerWidget((LayerWidget) this.getOutgoingGeneralizationFlowWidget().getParentWidget());
-//            this.getOutgoingGeneralizationFlowWidget().removeFromParent();
-//            modelerScene.getBoundaryWidgetLayer().addChild(this.getOutgoingGeneralizationFlowWidget());
-//            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().showInheritencePath();
-//        }
-//    }
-//
-//    public void hideInheritencePath() {
-//        this.removeFromParent();
-//        preLayerWidget.addChild(this);
-//        if (this.getOutgoingGeneralizationFlowWidget() != null) {
-//            this.getOutgoingGeneralizationFlowWidget().removeFromParent();
-//            this.getOutgoingGeneralizationFlowWidget().getPreLayerWidget().addChild(this.getOutgoingGeneralizationFlowWidget());
-//            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().hideInheritencePath();
-//        }
-//    }
-//
-//    /**
-//     * @return the preLayerWidget
-//     */
-//    public LayerWidget getPreLayerWidget() {
-//        return preLayerWidget;
-//    }
-//
-//    /**
-//     * @param preLayerWidget the preLayerWidget to set
-//     */
-//    public void setPreLayerWidget(LayerWidget preLayerWidget) {
-//        this.preLayerWidget = preLayerWidget;
-//    }
 }

@@ -31,6 +31,7 @@ public abstract class ManagedClass extends JavaClass{
     
     protected String description;
     
+    @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
         this.access = AccessType.load(element);

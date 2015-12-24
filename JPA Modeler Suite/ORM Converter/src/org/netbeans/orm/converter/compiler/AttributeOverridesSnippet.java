@@ -47,6 +47,7 @@ public class AttributeOverridesSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (attributeOverrides.isEmpty()) {
@@ -71,6 +72,7 @@ public class AttributeOverridesSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (attributeOverrides.isEmpty()) {

@@ -3,6 +3,11 @@ package org.netbeans.jpa.modeler.properties.inheritence;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.InheritenceStateType;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.BRANCH;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.LEAF;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
@@ -36,7 +41,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
     private ModelerFile modelerFile;
     private EntityWidget entityWidget;
-    private String type;
+    private InheritenceStateType type;
     private InheritenceHandler classSpec;
 
     @Override
@@ -85,7 +90,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     @Override
     public InheritenceHandler getValue() {
         InheritanceType inheritanceType = (InheritanceType) ((Property) strategy_ComboBox.getSelectedItem()).getKey();
-        if (type.equals("ROOT") || type.equals("BRANCH")) {
+        if (type == ROOT ||type == BRANCH) {
             if (classSpec.getInheritance() == null) {
                 classSpec.setInheritance(new Inheritance());
             }
@@ -108,7 +113,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
             classSpec.setInheritance(null);
             classSpec.setDiscriminatorColumn(null);
         }
-        if (type.equals("LEAF") || type.equals("BRANCH")) {
+        if (type == LEAF ||type == BRANCH) {
             classSpec.setDiscriminatorValue(value_TextField.getText());
         } else {
             classSpec.setDiscriminatorValue(null);
@@ -129,22 +134,22 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
         }
 
         if (outgoingGeneralizationFlowWidget == null && incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = "SINGLETON";
+            type = SINGLETON;
             setEnablePanel(column_LayeredPane, false);
             setEnablePanel(strategy_LayeredPane, false);
             setEnablePanel(value_LayeredPane, false);
         } else if (outgoingGeneralizationFlowWidget != null && incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = "LEAF";
+            type = LEAF;
             setEnablePanel(column_LayeredPane, false);
             setEnablePanel(strategy_LayeredPane, false);
             setEnablePanel(value_LayeredPane, true);
         } else if (outgoingGeneralizationFlowWidget == null && !incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = "ROOT";
+            type = ROOT;
             setEnablePanel(column_LayeredPane, true);
             setEnablePanel(strategy_LayeredPane, true);
             setEnablePanel(value_LayeredPane, false);
         } else if (outgoingGeneralizationFlowWidget != null && !incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = "BRANCH";
+            type = BRANCH;
             setEnablePanel(column_LayeredPane, true);
             setEnablePanel(strategy_LayeredPane, true);
             setEnablePanel(value_LayeredPane, true);
@@ -157,7 +162,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
         value_TextField.setText(classSpec.getDiscriminatorValue());
 
-        if (type != null && type.equals("LEAF")) {
+        if (type != null && type == LEAF) {
             EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
             InheritenceHandler superClassSpec = (InheritenceHandler) superEntityWidget.getBaseElementSpec();
             setUIValue(superClassSpec);

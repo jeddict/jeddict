@@ -406,7 +406,7 @@ public class JavaSourceParserUtil {
         String[] fieldAnnotationFqns = {"javax.persistence.ManyToOne", "javax.persistence.OneToOne", "javax.persistence.Basic"};
         Boolean isFieldOptionalBoolean = findAnnotationValueAsBoolean(fieldElement, fieldAnnotationFqns, "optional");
         if (isFieldOptionalBoolean != null) {
-            isFieldOptional = isFieldOptionalBoolean.booleanValue();
+            isFieldOptional = isFieldOptionalBoolean;
         }
         if (!isFieldOptional) {
             return false;
@@ -415,7 +415,7 @@ public class JavaSourceParserUtil {
         fieldAnnotationFqns = new String[]{"javax.persistence.Column", "javax.persistence.JoinColumn"};
         isFieldNullable = findAnnotationValueAsBoolean(fieldElement, fieldAnnotationFqns, "nullable");
         if (isFieldNullable != null) {
-            return isFieldNullable.booleanValue();
+            return isFieldNullable;
         }
         //new ballgame
         boolean result = true;
@@ -441,8 +441,7 @@ public class JavaSourceParserUtil {
 
     private static Boolean findAnnotationValueAsBoolean(Element fieldElement, String[] fieldAnnotationFqns, String annotationKey) {
         Boolean isFieldXable = null;
-        for (int i = 0; i < fieldAnnotationFqns.length; i++) {
-            String fieldAnnotationFqn = fieldAnnotationFqns[i];
+        for (String fieldAnnotationFqn : fieldAnnotationFqns) {
             AnnotationMirror fieldAnnotation = JavaSourceParserUtil.findAnnotation(fieldElement, fieldAnnotationFqn); //NOI18N
             if (fieldAnnotation != null) {
                 String annotationValueString = JavaSourceParserUtil.findAnnotationValueAsString(fieldAnnotation, annotationKey); //NOI18N

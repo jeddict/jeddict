@@ -83,12 +83,7 @@ public final class OverrideViewNavigatorComponent extends TopComponent implement
             ((BeanTreeView) navigatorPane).setVisible(true);
         }
         overrideViewTypeComboBox.setEnabled(true);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                overrideViewTypeComboBoxActionPerformed();
-            }
-        });
+        SwingUtilities.invokeLater(this::overrideViewTypeComboBoxActionPerformed);
 
     }
 
@@ -98,6 +93,7 @@ public final class OverrideViewNavigatorComponent extends TopComponent implement
         overrideViewTypeComboBox.setEnabled(false);
     }
 
+    @Override
     public ExplorerManager getExplorerManager() {
         return explorerManager;
     }
@@ -163,6 +159,7 @@ public final class OverrideViewNavigatorComponent extends TopComponent implement
         opened = false;
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
 //        System.out.println(evt.getPropertyName());
         if (opened && "currentNodes".equals(evt.getPropertyName())) {

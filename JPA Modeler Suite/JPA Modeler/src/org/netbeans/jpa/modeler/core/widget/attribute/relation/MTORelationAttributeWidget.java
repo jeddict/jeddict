@@ -59,6 +59,7 @@ public class MTORelationAttributeWidget extends RelationAttributeWidget {
         this.setIcon(this.getIcon());
     }
 
+    @Override
     public String getIconPath() {
         if (((ManyToOne) getBaseElementSpec()).isPrimaryKey()) {
             if (manyToOneRelationFlowWidget instanceof Unidirectional) {
@@ -75,6 +76,7 @@ public class MTORelationAttributeWidget extends RelationAttributeWidget {
         }
     }
 
+    @Override
     public Image getIcon() {
         if (((ManyToOne) getBaseElementSpec()).isPrimaryKey()) {
             if (manyToOneRelationFlowWidget instanceof Unidirectional) {

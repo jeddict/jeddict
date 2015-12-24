@@ -30,6 +30,7 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
 
     private List<String> cascadeTypes = Collections.EMPTY_LIST;
 
+    @Override
     public List<String> getCascadeTypes() {
 
         if (cascadeTypes.isEmpty()) {
@@ -39,12 +40,14 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
         return processedCascadeTypes();
     }
 
+    @Override
     public void setCascadeTypes(List<String> cascadeTypes) {
         if (cascadeTypes != null) {
             this.cascadeTypes = cascadeTypes;
         }
     }
 
+    @Override
     public String getFetchType() {
         if (fetchType != null) {
             return "FetchType." + fetchType;
@@ -53,10 +56,12 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
         return null;
     }
 
+    @Override
     public void setFetchType(String fetchType) {
         this.fetchType = fetchType;
     }
 
+    @Override
     public String getTargetEntity() {
 
         if (targetEntity == null
@@ -67,6 +72,7 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
         return targetEntity + ORMConverterUtil.CLASS_SUFFIX;
     }
 
+    @Override
     public void setTargetEntity(String targetEntity) {
         this.targetEntity = targetEntity;
     }

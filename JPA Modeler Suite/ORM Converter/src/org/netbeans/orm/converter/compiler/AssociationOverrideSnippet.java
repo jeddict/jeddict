@@ -54,6 +54,7 @@ public class AssociationOverrideSnippet implements Snippet {
         }
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null || joinColumns == null) {
@@ -90,6 +91,7 @@ public class AssociationOverrideSnippet implements Snippet {
         return builder.toString();
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
 

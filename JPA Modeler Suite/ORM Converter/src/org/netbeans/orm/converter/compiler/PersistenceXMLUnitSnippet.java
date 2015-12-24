@@ -51,6 +51,7 @@ public class PersistenceXMLUnitSnippet implements Snippet {
         this.classNames = classes;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         try {
 
@@ -78,6 +79,7 @@ public class PersistenceXMLUnitSnippet implements Snippet {
         }
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

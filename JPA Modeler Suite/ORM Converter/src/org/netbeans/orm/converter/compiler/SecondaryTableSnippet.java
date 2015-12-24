@@ -76,6 +76,7 @@ public class SecondaryTableSnippet implements Snippet {
         this.uniqueConstraints = uniqueConstraints;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null) {
@@ -133,6 +134,7 @@ public class SecondaryTableSnippet implements Snippet {
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (name == null) {

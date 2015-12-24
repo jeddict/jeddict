@@ -162,16 +162,16 @@ public class DBSchemaTableProvider implements TableProvider {
     private Set<List<String>> getUniqueConstraints(TableElement tableElement) {
         Set<List<String>> uniqueConstraintsCols = new HashSet<List<String>>();
         UniqueKeyElement[] uks = tableElement.getUniqueKeys();
-        for (int ukIx = 0; ukIx < uks.length; ukIx++) {
-            if (!uks[ukIx].isPrimaryKey()) {
-                ColumnElement[] colElms = uks[ukIx].getColumns();
+        for (UniqueKeyElement uk : uks) {
+            if (!uk.isPrimaryKey()) {
+                ColumnElement[] colElms = uk.getColumns();
                 if (colElms == null || colElms.length == 0) {
                     // bad one
                     continue;
                 }
                 List<String> cols = new ArrayList<String>();
-                for (int cIx = 0; cIx < colElms.length; cIx++) {
-                    cols.add(colElms[cIx].getName().getName());
+                for (ColumnElement colElm : colElms) {
+                    cols.add(colElm.getName().getName());
                 }
                 uniqueConstraintsCols.add(cols);
             }

@@ -52,6 +52,7 @@ public class ColumnResultSnippet implements Snippet {
         this.name = name;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null) {
@@ -81,6 +82,7 @@ public class ColumnResultSnippet implements Snippet {
 //    public Collection<String> getImportSnippets() throws InvalidDataException {
 //        return Collections.singletonList("javax.persistence.ColumnResult");
 //    }
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<String>();
         importSnippets.add("javax.persistence.ColumnResult");

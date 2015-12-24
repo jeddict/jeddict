@@ -36,6 +36,7 @@ public class ElementCollectionSnippet implements Snippet {
         this.fetchType = fetchType;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
         if (fetchType == null) {
             return "@ElementCollection";
@@ -44,6 +45,7 @@ public class ElementCollectionSnippet implements Snippet {
         return "@ElementCollection(fetch=FetchType." + fetchType + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (fetchType == null) {

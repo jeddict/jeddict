@@ -355,6 +355,7 @@ public final class SelectedTables {
 
     private final class TableClosureListener implements ChangeListener {
 
+        @Override
         public void stateChanged(ChangeEvent event) {
             validateTables();
         }

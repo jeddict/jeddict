@@ -15,8 +15,9 @@
  */
 package org.netbeans.jpa.modeler.specification.model;
 
-import org.netbeans.modeler.specification.model.ModelerSpecificationDiagramModel;
+import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 
-public abstract class JPADiagramModel extends ModelerSpecificationDiagramModel {
+
+public abstract class JPADiagramModel extends ModelerDiagramSpecification {
 
 }

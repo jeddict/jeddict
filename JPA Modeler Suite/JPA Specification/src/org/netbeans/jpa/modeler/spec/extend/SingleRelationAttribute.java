@@ -20,19 +20,12 @@ import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.spec.AccessType;
-import org.netbeans.jpa.modeler.spec.CascadeType;
-import org.netbeans.jpa.modeler.spec.EmptyType;
-import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -54,6 +47,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     @XmlAttribute
     private Boolean primaryKey;//id=>primaryKey changed to prevent BaseElement.id field hiding//REVENG PENDING
 
+    @Override
     public void load(AnnotationMirror relationAnnotationMirror, Element element, VariableElement variableElement) {
         super.load(relationAnnotationMirror, element, variableElement);
         if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")) {

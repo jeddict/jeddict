@@ -22,7 +22,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public class StoredProcedureParameterSnippet implements Snippet {
 

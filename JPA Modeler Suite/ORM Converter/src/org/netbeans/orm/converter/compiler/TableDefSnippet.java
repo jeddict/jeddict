@@ -61,6 +61,7 @@ public class TableDefSnippet implements Snippet {
         this.uniqueConstraint = uniqueConstraint;
     }
 
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (name == null
@@ -108,6 +109,7 @@ public class TableDefSnippet implements Snippet {
 
     }
 
+    @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (uniqueConstraint == null) {
