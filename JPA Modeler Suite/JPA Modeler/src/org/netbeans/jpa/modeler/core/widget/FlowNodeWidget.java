@@ -41,7 +41,7 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
 
     public FlowNodeWidget(IModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
-        this.setNodeImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
+//        this.setNodeImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
             setLabel(value);

@@ -183,6 +183,7 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.PropertySupport;
 import org.openide.util.Exceptions;
+import org.openide.util.ImageUtilities;
 
 public class JPAModelerUtil implements PModelerUtil {
 
@@ -242,6 +243,7 @@ public class JPAModelerUtil implements PModelerUtil {
     public static Image MTOR_TARGET_ANCHOR_SHAPE;
     public static Image MTMR_SOURCE_ANCHOR_SHAPE;
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
+    public static Image ERROR_ICON;
 
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
@@ -322,6 +324,8 @@ public class JPAModelerUtil implements PModelerUtil {
             MTOR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png")).getImage();
             MTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many.gif")).getImage();
             MTMR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png")).getImage();
+            ERROR_ICON = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/error_small_icon.gif");//create java.awt.image.BufferedImage to generate different error icon
+            
             System.out.println("IUtil Total time : " + (new Date().getTime() - st) + " sec");
         }
     }
@@ -1167,6 +1171,10 @@ public class JPAModelerUtil implements PModelerUtil {
         switch (modelerDocument.getId()) {
             case "Entity":
                 widget = new EntityWidget(scene, widgetInfo);
+                break;
+            case "AbstractEntity":
+                widget = new EntityWidget(scene, widgetInfo);
+                ((EntityWidget)widget).setAbstractEntity(true);
                 break;
             case "MappedSuperclass":
                 widget = new MappedSuperclassWidget(scene, widgetInfo);

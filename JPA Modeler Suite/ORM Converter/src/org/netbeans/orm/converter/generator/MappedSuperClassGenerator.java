@@ -82,7 +82,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         //Class decorations
         ClassHelper classHelper = new ClassHelper(mappedSuperclass.getClazz());
         classHelper.setPackageName(packageName);
-        classDef.setAbstract(mappedSuperclass.getAbstract());
+        classDef.setAbstractClass(mappedSuperclass.getAbstract());
         classDef.setInterfaces(mappedSuperclass.getInterfaces());
         if(mappedSuperclass.getSuperclass()!=null){
         ClassHelper superClassHelper = new ClassHelper(mappedSuperclass.getSuperclass().getClazz());

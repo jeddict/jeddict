@@ -166,7 +166,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlAttribute
     protected Boolean cacheable;//REVENG PENDING
 
-
+   
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);

@@ -491,15 +491,15 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the abstractClass
      */
-    public boolean isAbstract() {
+    public boolean isAbstractClass() {
         return _abstract;
     }
 
     /**
-     * @param _abstract the abstractClass to set
+     * @param abstractClass the abstractClass to set
      */
-    public void setAbstract(boolean _abstract) {
-        this._abstract = _abstract;
+    public void setAbstractClass(boolean abstractClass) {
+        this._abstract = abstractClass;
     }
 
     /**

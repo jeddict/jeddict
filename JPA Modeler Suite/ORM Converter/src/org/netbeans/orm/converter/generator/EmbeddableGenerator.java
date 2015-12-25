@@ -64,7 +64,7 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         //Class decorations
         ClassHelper classHelper = new ClassHelper(embeddable.getClazz());
         classHelper.setPackageName(packageName);
-        classDef.setAbstract(embeddable.getAbstract());
+        classDef.setAbstractClass(embeddable.getAbstract());
         classDef.setInterfaces(embeddable.getInterfaces());
 
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));

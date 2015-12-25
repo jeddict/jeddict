@@ -29,6 +29,7 @@ import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import org.netbeans.modeler.core.scene.vmd.PModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
@@ -67,13 +68,14 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
             }
         });
 
-        this.icon = this.getNodeWidgetInfo().getModelerDocument().getImage();
+        this.setClassIcon(this.getNodeWidgetInfo().getModelerDocument().getImage());
     }
 
-    private Image icon;
-    private static Image errorIcon = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/error_small_icon.gif");
+    private Image classIcon; 
+    private Image classErrorIcon;
+    
 
-    private final java.util.Map<String, String> errorList = new HashMap<String, String>();
+    private final java.util.Map<String, String> errorList = new HashMap<>();
 
     public void throwError(String key) {
         errorList.put(key, NbBundle.getMessage(EntityValidator.class, key));
@@ -92,25 +94,29 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
         });
         if (errorMessage.length() != 0) {
             this.setToolTipText(errorMessage.toString());
-            this.setNodeImage(getErrorIcon());
+            this.setNodeImage(getClassErrorIcon());
         } else {
             this.setToolTipText(null);
-            this.setNodeImage(icon);
+            this.setNodeImage(getClassErrorIcon());
         }
     }
 
-    private Image getErrorIcon() {
-        int iconWidth = ((BufferedImage) icon).getWidth() + 3;
-        int iconHeight = ((BufferedImage) icon).getHeight() + 3;
-        int errorIconWidth = ((BufferedImage) errorIcon).getWidth();
-        int errorIconHeight = ((BufferedImage) errorIcon).getHeight();
+    
+    private void createErrorIcon(){
+        int iconWidth = ((BufferedImage) getClassIcon()).getWidth() + 3;
+        int iconHeight = ((BufferedImage) getClassIcon()).getHeight() + 3;
+        int errorIconWidth = ((BufferedImage) ERROR_ICON).getWidth();
+        int errorIconHeight = ((BufferedImage) ERROR_ICON).getHeight();
 
         BufferedImage combined = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics g = combined.getGraphics();
-        g.drawImage(icon, 0, 0, null);
-        g.drawImage(errorIcon, iconWidth - errorIconWidth, iconHeight - errorIconHeight, null);
-        return combined;
+        g.drawImage(getClassIcon(), 0, 0, null);
+        g.drawImage(ERROR_ICON, iconWidth - errorIconWidth, iconHeight - errorIconHeight, null);
+       setClassErrorIcon(combined);
+
     }
+    
+   
 
     public abstract void deleteAttribute(AttributeWidget attributeWidget);
 
@@ -274,5 +280,35 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
         IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
+    }
+
+    /**
+     * @return the classIcon
+     */
+    Image getClassIcon() {
+        return classIcon;
+    }
+
+    /**
+     * @param classIcon the classIcon to set
+     */
+    void setClassIcon(Image classIcon) {
+        this.classIcon = classIcon;
+        createErrorIcon();
+        printError();
+    }
+
+    /**
+     * @return the classErrorIcon
+     */
+    Image getClassErrorIcon() {
+        return classErrorIcon;
+    }
+
+    /**
+     * @param classErrorIcon the classErrorIcon to set
+     */
+    void setClassErrorIcon(Image classErrorIcon) {
+        this.classErrorIcon = classErrorIcon;
     }
 }

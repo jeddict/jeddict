@@ -309,20 +309,6 @@ public class JPAModelerScene extends PModelerScene {
                 ((IFlowEdgeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((IFlowEdgeWidget) baseElementWidget).getId();
                 isExist = ((PEdgeWidget) baseElementWidget).getEdgeWidgetInfo().isExist();
-
-//                if (baseElementWidget instanceof RelationFlowWidget) {
-//                    ((RelationFlowWidget) baseElementWidget).setFlowElementsContainer(this);
-//                    baseElementId = ((RelationFlowWidget) baseElementWidget).getId();
-//                    isExist = ((RelationFlowWidget) baseElementWidget).getEdgeWidgetInfo().isExist();
-//                } else if (baseElementWidget instanceof GeneralizationFlowWidget) {
-//                    ((GeneralizationFlowWidget) baseElementWidget).setFlowElementsContainer(this);
-//                    baseElementId = ((GeneralizationFlowWidget) baseElementWidget).getId();
-//                    isExist = ((GeneralizationFlowWidget) baseElementWidget).getEdgeWidgetInfo().isExist();
-//                }else if (baseElementWidget instanceof EmbeddableFlowWidget) {
-//                    ((EmbeddableFlowWidget) baseElementWidget).setFlowElementsContainer(this);
-//                    baseElementId = ((EmbeddableFlowWidget) baseElementWidget).getId();
-//                    isExist = ((EmbeddableFlowWidget) baseElementWidget).getEdgeWidgetInfo().isExist();
-//                }
             } else {
                 throw new InvalidElmentException("Invalid JPA FlowElement : " + baseElementWidget);
             }
@@ -338,6 +324,10 @@ public class JPAModelerScene extends PModelerScene {
                 if (baseElementWidget instanceof IFlowNodeWidget) {
                     if (baseElementWidget instanceof EntityWidget) {
                         baseElement = new Entity();
+                        Boolean isAbstract = ((EntityWidget)baseElementWidget).isAbstractEntity();
+                        if(isAbstract!=null){
+                        ((Entity)baseElement).setAbstract(isAbstract);
+                        }
                     } else if (baseElementWidget instanceof MappedSuperclassWidget) {
                         baseElement = new MappedSuperclass();
                     } else if (baseElementWidget instanceof EmbeddableWidget) {
@@ -366,9 +356,6 @@ public class JPAModelerScene extends PModelerScene {
                 if (baseElementWidget instanceof FlowNodeWidget) {
                     FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                     flowNodeWidget.setBaseElementSpec(flowNodeWidget.getNodeWidgetInfo().getBaseElementSpec());
-//                } else if (baseElementWidget instanceof SequenceFlowWidget) {
-//                    SequenceFlowWidget sequenceFlowWidget = (SequenceFlowWidget) baseElementWidget;//TBF_CODE
-//                    baseElementWidget.setBaseElementSpec(sequenceFlowWidget.getEdgeWidgetInfo().getBaseElementSpec());
                 } else {
                     throw new InvalidElmentException("Invalid JPA Element");
                 }

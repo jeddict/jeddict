@@ -41,8 +41,8 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class JavaClass extends FlowNode implements ReverseEngineeringController {
 
-    @XmlAttribute
-    private Boolean _abstract = false;
+    @XmlAttribute(name="abs")
+    protected Boolean _abstract = false;
 
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
@@ -50,8 +50,8 @@ public abstract class JavaClass extends FlowNode implements ReverseEngineeringCo
     @XmlAttribute
     private String superclassId;
 
-    @XmlElementWrapper(name = "interface-list")
-    @XmlElement(name = "interface")
+//    @XmlElementWrapper(name = "interface-list")
+    @XmlElement(name = "inf")
     private List<String> interfaces;
 
     @XmlTransient

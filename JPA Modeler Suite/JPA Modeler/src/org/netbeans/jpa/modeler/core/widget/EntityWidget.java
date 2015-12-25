@@ -44,6 +44,10 @@ import org.openide.util.ImageUtilities;
 
 public class EntityWidget extends PrimaryKeyContainerWidget {
 
+    private Boolean abstractEntity;
+    
+    
+    
     public EntityWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
         
@@ -76,6 +80,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
             entity.setClazz(((JPAModelerScene) this.getModelerScene()).getNextClassName("Entity_"));
         }
+        
+        if(abstractEntity!=null){
+        entity.setAbstract(abstractEntity);
+        }
+       
         setName(entity.getClazz());
         setLabel(entity.getClazz());
         changeAbstractionIcon(entity.getAbstract());
@@ -84,13 +93,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
     }
     
     private void changeAbstractionIcon(Boolean _abstract){
-        if(_abstract){
-                    EntityWidget.this.setNodeImage(ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
-                } else {
-                   EntityWidget.this.setNodeImage(ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
-        
+        if (_abstract) {
+            this.setClassIcon(ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
+        } else {
+            this.setClassIcon(ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
         }
-       
     }
 
     @Override
@@ -255,6 +262,20 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         String path = this.getModelerScene().getModelerPanelTopComponent().getToolTipText();
         JPAFileActionListener fileAction = new JPAFileActionListener(this.getModelerScene().getModelerFile().getModelerFileDataObject());
         fileAction.openModelerFile(entityGraphId,entityGraphId,entityGraphId + " > " + path);
+    }
+
+    /**
+     * @return the abstractEntity
+     */
+     public Boolean isAbstractEntity() {
+        return abstractEntity;
+    }
+
+    /**
+     * @param abstractEntity the abstractEntity to set
+     */
+    public void setAbstractEntity(Boolean abstractEntity) {
+        this.abstractEntity = abstractEntity;
     }
 
 }

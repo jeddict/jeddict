@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<palette-config id="JPA" name="JPA" class="org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject">
+<palette-config id="JPA" name="JPA">
     <category-node id="JPA_CLASS" name="JPA Class">
         <subcategory-node  id="Entity" name="Entity"  >
             <palette-document icon="/org/netbeans/jpa/modeler/resource/element/java/ENTITY_ICON.png" />
         </subcategory-node>
         <subcategory-node  id="MappedSuperclass" name="MappedSuperclass"  >
             <palette-document icon="/org/netbeans/jpa/modeler/resource/element/java/MAPPED_SUPER_CLASS_ICON.png" />
+        </subcategory-node>
+        <subcategory-node  id="AbstractEntity" name="Abstract Entity"  >
+            <palette-document icon="/org/netbeans/jpa/modeler/resource/element/java/ABSTRACT_ENTITY_ICON.png" />
         </subcategory-node>
         <subcategory-node  id="Embeddable" name="Embeddable"  >
             <palette-document icon="/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE_ICON.png" />
