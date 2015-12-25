@@ -398,14 +398,14 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
     private NAttributeEntity getEntityResult() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("EntityResult", "Entity Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Entity Results", "One Entity Result", " Entity Results"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Entity Class", false, String.class));
         columns.add(new Column("Field", false, Integer.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new EntityResultPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -424,9 +424,9 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 if (resultSetMapping != null && resultSetMapping.getEntityResult() != null) {
-                    for (EntityResult entityResult : new CopyOnWriteArrayList<EntityResult>(resultSetMapping.getEntityResult())) {
+                    for (EntityResult entityResult : new CopyOnWriteArrayList<>(resultSetMapping.getEntityResult())) {
                         Object[] row = new Object[3];
                         row[0] = entityResult;
                         row[1] = entityResult.getEntityClass();
@@ -460,14 +460,14 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
     private NAttributeEntity getConstructorResult() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ConstructorResult", "Constructor Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Constructor Results", "One Constructor Result", " Constructor Results"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Target Class", false, String.class));
         columns.add(new Column("Column", false, Integer.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ConstructorResultPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -486,9 +486,9 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 if (resultSetMapping != null && resultSetMapping.getConstructorResult() != null) {
-                    for (ConstructorResult constructorResult : new CopyOnWriteArrayList<ConstructorResult>(resultSetMapping.getConstructorResult())) {
+                    for (ConstructorResult constructorResult : new CopyOnWriteArrayList<>(resultSetMapping.getConstructorResult())) {
                         Object[] row = new Object[3];
                         row[0] = constructorResult;
                         row[1] = constructorResult.getTargetClass();

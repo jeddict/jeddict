@@ -79,7 +79,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     }
     
     public List<AttributeWidget> getAllAttributeWidgets(boolean includeParentClassAttibute) {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (includeParentClassAttibute && classWidget instanceof PersistenceClassWidget) {
             attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllAttributeWidgets(includeParentClassAttibute));
@@ -101,19 +101,19 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         return attributeWidgets;
     }
 
-    private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<RelationFlowWidget>();
+    private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<>();
     private EmbeddedIdAttributeWidget embeddedIdAttributeWidget;
-    private final List<IdAttributeWidget> idAttributeWidgets = new ArrayList<IdAttributeWidget>();
-    private final List<VersionAttributeWidget> versionAttributeWidgets = new ArrayList<VersionAttributeWidget>();
-    private final List<BasicAttributeWidget> basicAttributeWidgets = new ArrayList<BasicAttributeWidget>();
-    private final List<BasicCollectionAttributeWidget> basicCollectionAttributeWidgets = new ArrayList<BasicCollectionAttributeWidget>();
-    private final List<TransientAttributeWidget> transientAttributeWidgets = new ArrayList<TransientAttributeWidget>();
-    private final List<OTORelationAttributeWidget> oneToOneRelationAttributeWidgets = new ArrayList<OTORelationAttributeWidget>();
-    private final List<OTMRelationAttributeWidget> oneToManyRelationAttributeWidgets = new ArrayList<OTMRelationAttributeWidget>();
-    private final List<MTORelationAttributeWidget> manyToOneRelationAttributeWidgets = new ArrayList<MTORelationAttributeWidget>();
-    private final List<MTMRelationAttributeWidget> manyToManyRelationAttributeWidgets = new ArrayList<MTMRelationAttributeWidget>();
-    private final List<SingleValueEmbeddedAttributeWidget> singleValueEmbeddedAttributeWidgets = new ArrayList<SingleValueEmbeddedAttributeWidget>();
-    private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<MultiValueEmbeddedAttributeWidget>();
+    private final List<IdAttributeWidget> idAttributeWidgets = new ArrayList<>();
+    private final List<VersionAttributeWidget> versionAttributeWidgets = new ArrayList<>();
+    private final List<BasicAttributeWidget> basicAttributeWidgets = new ArrayList<>();
+    private final List<BasicCollectionAttributeWidget> basicCollectionAttributeWidgets = new ArrayList<>();
+    private final List<TransientAttributeWidget> transientAttributeWidgets = new ArrayList<>();
+    private final List<OTORelationAttributeWidget> oneToOneRelationAttributeWidgets = new ArrayList<>();
+    private final List<OTMRelationAttributeWidget> oneToManyRelationAttributeWidgets = new ArrayList<>();
+    private final List<MTORelationAttributeWidget> manyToOneRelationAttributeWidgets = new ArrayList<>();
+    private final List<MTMRelationAttributeWidget> manyToManyRelationAttributeWidgets = new ArrayList<>();
+    private final List<SingleValueEmbeddedAttributeWidget> singleValueEmbeddedAttributeWidgets = new ArrayList<>();
+    private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<>();
 
     public PersistenceClassWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
@@ -184,7 +184,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     }
 
     public List<IdAttributeWidget> getAllIdAttributeWidgets() {
-        List<IdAttributeWidget> idAttributeWidgets_TMP = new ArrayList<IdAttributeWidget>(this.getIdAttributeWidgets());
+        List<IdAttributeWidget> idAttributeWidgets_TMP = new ArrayList<>(this.getIdAttributeWidgets());
         List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
         classWidgets.stream().filter((classWidget) -> (classWidget instanceof PersistenceClassWidget)).forEach((classWidget) -> {
             idAttributeWidgets_TMP.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
@@ -193,7 +193,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     }
 
     public List<EmbeddedIdAttributeWidget> getAllEmbeddedIdAttributeWidgets() {
-        List<EmbeddedIdAttributeWidget> embeddedIdAttributeWidgets = new ArrayList<EmbeddedIdAttributeWidget>();
+        List<EmbeddedIdAttributeWidget> embeddedIdAttributeWidgets = new ArrayList<>();
         embeddedIdAttributeWidgets.add(this.getEmbeddedIdAttributeWidget());
         List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
         for (JavaClassWidget classWidget : classWidgets) {
@@ -246,7 +246,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
             @Override
             public List<ComboBoxValue<CompositePrimaryKeyType>> getItemList() {
-                List<ComboBoxValue<CompositePrimaryKeyType>> values = new ArrayList<ComboBoxValue<CompositePrimaryKeyType>>();
+                List<ComboBoxValue<CompositePrimaryKeyType>> values = new ArrayList<>();
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.NONE, "None"));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class"));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id"));
@@ -736,21 +736,21 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
 
     @Override//sortAttributes() method should be called only onec in case of loadDocument
     public void sortAttributes() {
-        Map<String, List<Widget>> categories = new LinkedHashMap<String, List<Widget>>();
+        Map<String, List<Widget>> categories = new LinkedHashMap<>();
         if (embeddedIdAttributeWidget != null) {
-            List<Widget> embeddedIdAttributeCatWidget = new ArrayList<Widget>();
+            List<Widget> embeddedIdAttributeCatWidget = new ArrayList<>();
             embeddedIdAttributeCatWidget.add(embeddedIdAttributeWidget);
             categories.put("Embedded Id", embeddedIdAttributeCatWidget);
         }
         if (!idAttributeWidgets.isEmpty()) {
-            List<Widget> idAttributeCatWidget = new ArrayList<Widget>();
+            List<Widget> idAttributeCatWidget = new ArrayList<>();
             getIdAttributeWidgets().stream().forEach((idAttributeWidget) -> {
                 idAttributeCatWidget.add(idAttributeWidget);
             });
             categories.put("PrimaryKey", idAttributeCatWidget);
         }
 
-        List<Widget> basicAttributeCatWidget = new ArrayList<Widget>();
+        List<Widget> basicAttributeCatWidget = new ArrayList<>();
         getBasicAttributeWidgets().stream().forEach((basicAttributeWidget) -> {
             basicAttributeCatWidget.add(basicAttributeWidget);
         });
@@ -760,37 +760,37 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
         if (!basicAttributeCatWidget.isEmpty()) {
             categories.put("Basic", basicAttributeCatWidget);
         }
-        List<EmbeddedAttributeWidget> embeddedAttributeWidgets = new LinkedList<EmbeddedAttributeWidget>(singleValueEmbeddedAttributeWidgets);
+        List<EmbeddedAttributeWidget> embeddedAttributeWidgets = new LinkedList<>(singleValueEmbeddedAttributeWidgets);
         embeddedAttributeWidgets.addAll(multiValueEmbeddedAttributeWidgets);
         if (!embeddedAttributeWidgets.isEmpty()) {
-            List<Widget> embeddedAttributeCatWidget = new ArrayList<Widget>();
+            List<Widget> embeddedAttributeCatWidget = new ArrayList<>();
             embeddedAttributeWidgets.stream().forEach((embeddedAttributeWidget) -> {
                 embeddedAttributeCatWidget.add(embeddedAttributeWidget);
             });
             categories.put("Embedded", embeddedAttributeCatWidget);
         }
 
-        List<RelationAttributeWidget> relationAttributeWidgets = new LinkedList<RelationAttributeWidget>(oneToOneRelationAttributeWidgets);
+        List<RelationAttributeWidget> relationAttributeWidgets = new LinkedList<>(oneToOneRelationAttributeWidgets);
         relationAttributeWidgets.addAll(oneToManyRelationAttributeWidgets);
         relationAttributeWidgets.addAll(manyToOneRelationAttributeWidgets);
         relationAttributeWidgets.addAll(manyToManyRelationAttributeWidgets);
 
         if (!relationAttributeWidgets.isEmpty()) {
-            List<Widget> relationAttributeCatWidget = new ArrayList<Widget>();
+            List<Widget> relationAttributeCatWidget = new ArrayList<>();
             relationAttributeWidgets.stream().forEach((relationAttributeWidget) -> {
                 relationAttributeCatWidget.add(relationAttributeWidget);
             });
             categories.put("Relation", relationAttributeCatWidget);
         }
         if (!versionAttributeWidgets.isEmpty()) {
-            List<Widget> versionAttributeCatWidget = new ArrayList<Widget>();
+            List<Widget> versionAttributeCatWidget = new ArrayList<>();
             getVersionAttributeWidgets().stream().forEach((versionAttributeWidget) -> {
                 versionAttributeCatWidget.add(versionAttributeWidget);
             });
             categories.put("Version", versionAttributeCatWidget);
         }
         if (!transientAttributeWidgets.isEmpty()) {
-            List<Widget> transientAttributeCatWidget = new ArrayList<Widget>();
+            List<Widget> transientAttributeCatWidget = new ArrayList<>();
             transientAttributeWidgets.stream().forEach((transientAttributeWidget) -> {
                 transientAttributeCatWidget.add(transientAttributeWidget);
             });
@@ -800,13 +800,13 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     }
 
     public List<EmbeddedAttributeWidget> getEmbeddedAttributeWidgets() {
-        List<EmbeddedAttributeWidget> list = new ArrayList<EmbeddedAttributeWidget>(singleValueEmbeddedAttributeWidgets);
+        List<EmbeddedAttributeWidget> list = new ArrayList<>(singleValueEmbeddedAttributeWidgets);
         list.addAll(multiValueEmbeddedAttributeWidgets);
         return list;
     }
 
     public List<RelationAttributeWidget> getRelationAttributeWidgets() {
-        List<RelationAttributeWidget> list = new ArrayList<RelationAttributeWidget>(oneToOneRelationAttributeWidgets);
+        List<RelationAttributeWidget> list = new ArrayList<>(oneToOneRelationAttributeWidgets);
         list.addAll(oneToManyRelationAttributeWidgets);
         list.addAll(manyToOneRelationAttributeWidgets);
         list.addAll(manyToManyRelationAttributeWidgets);
@@ -836,7 +836,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     }
 
     public List<RelationAttributeWidget> getDerivedRelationAttributeWidgets() {
-        List<RelationAttributeWidget> relationAttributeWidget = new ArrayList<RelationAttributeWidget>();
+        List<RelationAttributeWidget> relationAttributeWidget = new ArrayList<>();
         oneToOneRelationAttributeWidgets.stream().filter((oneToOneRelationAttributeWidget) -> (((OneToOne) oneToOneRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey())).forEach((oneToOneRelationAttributeWidget) -> {
             relationAttributeWidget.add(oneToOneRelationAttributeWidget);
         });

@@ -359,14 +359,14 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
     private NAttributeEntity getQueryHint() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Value", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new QueryHintPanel());
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -385,9 +385,9 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 if (namedQuery != null && namedQuery.getHint() != null) {
-                    for (QueryHint queryHint : new CopyOnWriteArrayList<QueryHint>(namedQuery.getHint())) {
+                    for (QueryHint queryHint : new CopyOnWriteArrayList<>(namedQuery.getHint())) {
                         Object[] row = new Object[5];
                         row[0] = queryHint;
                         row[1] = queryHint.getName();

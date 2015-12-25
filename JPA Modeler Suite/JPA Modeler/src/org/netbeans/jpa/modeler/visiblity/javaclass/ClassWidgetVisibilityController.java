@@ -69,15 +69,15 @@ public class ClassWidgetVisibilityController extends GenericDialog {
     }
 
     private List<ComboBoxValue<JavaClass>> getClassList() {
-        List<ComboBoxValue<JavaClass>> values = new ArrayList<ComboBoxValue<JavaClass>>();
+        List<ComboBoxValue<JavaClass>> values = new ArrayList<>();
         for (Entity entity : entityMappings.getEntity()) {
-            values.add(new ComboBoxValue<JavaClass>(entity.getId(), entity, entity.getClazz()));
+            values.add(new ComboBoxValue<>(entity.getId(), entity, entity.getClazz()));
         }
         for (MappedSuperclass mappedSuperclass : entityMappings.getMappedSuperclass()) {
-            values.add(new ComboBoxValue<JavaClass>(mappedSuperclass.getId(), mappedSuperclass, mappedSuperclass.getClazz()));
+            values.add(new ComboBoxValue<>(mappedSuperclass.getId(), mappedSuperclass, mappedSuperclass.getClazz()));
         }
         for (Embeddable embeddable : entityMappings.getEmbeddable()) {
-            values.add(new ComboBoxValue<JavaClass>(embeddable.getId(), embeddable, embeddable.getClazz()));
+            values.add(new ComboBoxValue<>(embeddable.getId(), embeddable, embeddable.getClazz()));
         }
         return values;
     }
@@ -377,7 +377,7 @@ public class ClassWidgetVisibilityController extends GenericDialog {
 
     private class JavaClassListModel extends DefaultListModel {
 
-        private List<ComboBoxValue<JavaClass>> classElements = new ArrayList<ComboBoxValue<JavaClass>>();
+        private List<ComboBoxValue<JavaClass>> classElements = new ArrayList<>();
 
         @Override
         public int getSize() {

@@ -42,7 +42,7 @@ import org.openide.util.NbBundle;
 public abstract class JavaClassWidget extends FlowNodeWidget {
 
     private GeneralizationFlowWidget outgoingGeneralizationFlowWidget;
-    private final List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<GeneralizationFlowWidget>();
+    private final List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<>();
 
     public JavaClassWidget(IModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
@@ -158,7 +158,7 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     }
 
     public List<JavaClassWidget> getAllSuperclassWidget() {
-        List<JavaClassWidget> superclassWidgetList = new LinkedList<JavaClassWidget>();
+        List<JavaClassWidget> superclassWidgetList = new LinkedList<>();
         boolean exist = false;
         GeneralizationFlowWidget generalizationFlowWidget_TMP = this.outgoingGeneralizationFlowWidget;
         if (generalizationFlowWidget_TMP != null) {
@@ -176,7 +176,7 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     }
 
     public List<JavaClassWidget> getSubclassWidgets() {
-        List<JavaClassWidget> subclassWidgetList = new LinkedList<JavaClassWidget>();
+        List<JavaClassWidget> subclassWidgetList = new LinkedList<>();
         for (GeneralizationFlowWidget generalizationFlowWidget_TMP : this.incomingGeneralizationFlowWidgets) {
             JavaClassWidget subclassWidget_Nest = generalizationFlowWidget_TMP.getSubclassWidget();
             subclassWidgetList.add(subclassWidget_Nest);
@@ -185,7 +185,7 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     }
 
     public List<JavaClassWidget> getAllSubclassWidgets() {
-        List<JavaClassWidget> subclassWidgetList = new LinkedList<JavaClassWidget>();
+        List<JavaClassWidget> subclassWidgetList = new LinkedList<>();
         for (GeneralizationFlowWidget generalizationFlowWidget_TMP : this.incomingGeneralizationFlowWidgets) {
             JavaClassWidget subclassWidget_Nest = generalizationFlowWidget_TMP.getSubclassWidget();
             subclassWidgetList.add(subclassWidget_Nest);

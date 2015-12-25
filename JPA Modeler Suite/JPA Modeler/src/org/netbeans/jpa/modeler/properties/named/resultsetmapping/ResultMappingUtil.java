@@ -32,14 +32,14 @@ public class ResultMappingUtil {
     public static NAttributeEntity getColumnResult( final List<ColumnResult> columnResults, ModelerFile modelerFile) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ColumnResult", "Column Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Column Results", "One Column Result", " Column Results"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Class", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ColumnResultPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -58,9 +58,9 @@ public class ResultMappingUtil {
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 if (columnResults != null) {
-                    for (ColumnResult columnResult : new CopyOnWriteArrayList<ColumnResult>(columnResults)) {
+                    for (ColumnResult columnResult : new CopyOnWriteArrayList<>(columnResults)) {
                         Object[] row = new Object[3];
                         row[0] = columnResult;
                         row[1] = columnResult.getName();
@@ -93,14 +93,14 @@ public class ResultMappingUtil {
     public static NAttributeEntity getFieldResult( final List<FieldResult> fieldResults, ModelerFile modelerFile) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("FieldResult", "Field Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Field Results", "One Field Result", " Field Results"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Column", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new FieldResultPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -119,9 +119,9 @@ public class ResultMappingUtil {
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 if (fieldResults != null) {
-                    for (FieldResult fieldResult : new CopyOnWriteArrayList<FieldResult>(fieldResults)) {
+                    for (FieldResult fieldResult : new CopyOnWriteArrayList<>(fieldResults)) {
                         Object[] row = new Object[3];
                         row[0] = fieldResult;
                         row[1] = fieldResult.getName();

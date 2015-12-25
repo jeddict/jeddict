@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import org.netbeans.db.modeler.specification.model.file.action.DBViewerActionListener;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -70,10 +71,10 @@ import org.openide.util.RequestProcessor;
 
 public class JPAModelerScene extends PModelerScene {
 
-    private List<IFlowElementWidget> flowElements = new ArrayList<IFlowElementWidget>(); // Linked hashmap to preserve order of inserted elements
+    private List<IFlowElementWidget> flowElements = new ArrayList<>(); // Linked hashmap to preserve order of inserted elements
 
     public List<EntityWidget> getEntityWidgets() {
-        List<EntityWidget> entityWidgets = new ArrayList<EntityWidget>();
+        List<EntityWidget> entityWidgets = new ArrayList<>();
         for (IFlowElementWidget flowElement : flowElements) {
             if (flowElement instanceof EntityWidget) {
                 entityWidgets.add((EntityWidget) flowElement);
@@ -117,38 +118,32 @@ public class JPAModelerScene extends PModelerScene {
 
     @Override
     public IBaseElementWidget findBaseElement(String id) {
-        IBaseElementWidget widget = null;
-        List<IBaseElementWidget> baseElementWidgets = new ArrayList<IBaseElementWidget>(flowElements);
-        for (IBaseElementWidget baseElementWidget : baseElementWidgets) {
+        for (IBaseElementWidget baseElementWidget : flowElements) {
             if (baseElementWidget instanceof IFlowNodeWidget) {
-                if (((FlowNodeWidget) baseElementWidget).getId().equals(id)) {
-                    widget = baseElementWidget;
-                    break;
+                if (baseElementWidget.getId().equals(id)) {
+                    return baseElementWidget;
                 }
             } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                 if (baseElementWidget instanceof RelationFlowWidget) {
-                    if (((RelationFlowWidget) baseElementWidget).getId().equals(id)) {
-                        widget = baseElementWidget;
-                        break;
+                    if (baseElementWidget.getId().equals(id)) {
+                        return baseElementWidget;
                     }
                 } else if (baseElementWidget instanceof GeneralizationFlowWidget) {
-                    if (((GeneralizationFlowWidget) baseElementWidget).getId().equals(id)) {
-                        widget = baseElementWidget;
-                        break;
+                    if ( baseElementWidget.getId().equals(id)) {
+                        return baseElementWidget;
                     }
                 }
             } else {
                 throw new InvalidElmentException("Invalid JPA Element" + baseElementWidget);
             }
         }
-        return widget;
+        return null;       
     }
 
     @Override
     public IBaseElementWidget getBaseElement(String id) {
         IBaseElementWidget widget = null;
-        List<IBaseElementWidget> baseElementWidgets = new ArrayList<IBaseElementWidget>(flowElements);
-        for (IBaseElementWidget baseElementWidget : baseElementWidgets) {
+        for (IBaseElementWidget baseElementWidget : flowElements) {
             if (baseElementWidget.getId().equals(id)) {
                 widget = baseElementWidget;
                 break;
@@ -159,7 +154,7 @@ public class JPAModelerScene extends PModelerScene {
 
     @Override
     public List<IBaseElementWidget> getBaseElements() {
-        List<IBaseElementWidget> baseElementWidgets = new ArrayList<IBaseElementWidget>(flowElements);
+        List<IBaseElementWidget> baseElementWidgets = new ArrayList<>(flowElements);
         return baseElementWidgets;
     }
 
@@ -189,14 +184,14 @@ public class JPAModelerScene extends PModelerScene {
                     if (javaClassWidget.getOutgoingGeneralizationFlowWidget() != null) {
                         javaClassWidget.getOutgoingGeneralizationFlowWidget().remove();
                     }
-                    for (GeneralizationFlowWidget generalizationFlowWidget : new CopyOnWriteArrayList<GeneralizationFlowWidget>(javaClassWidget.getIncomingGeneralizationFlowWidgets())) {
+                    for (GeneralizationFlowWidget generalizationFlowWidget : new CopyOnWriteArrayList<>(javaClassWidget.getIncomingGeneralizationFlowWidgets())) {
                         generalizationFlowWidget.remove();
                     }
 
                     if (baseElementWidget instanceof PersistenceClassWidget) {
                         PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
                         persistenceClassWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
-                        for (RelationFlowWidget relationFlowWidget : new CopyOnWriteArrayList<RelationFlowWidget>(persistenceClassWidget.getInverseSideRelationFlowWidgets())) {
+                        for (RelationFlowWidget relationFlowWidget : new CopyOnWriteArrayList<>(persistenceClassWidget.getInverseSideRelationFlowWidgets())) {
                             relationFlowWidget.remove();
                         }
                         for (RelationAttributeWidget relationAttributeWidget : persistenceClassWidget.getRelationAttributeWidgets()) {
@@ -208,7 +203,7 @@ public class JPAModelerScene extends PModelerScene {
 
                         if (baseElementWidget instanceof EmbeddableWidget) {
                             EmbeddableWidget embeddableWidget = (EmbeddableWidget) baseElementWidget;
-                            for (EmbeddableFlowWidget embeddableFlowWidget : new CopyOnWriteArrayList<EmbeddableFlowWidget>(embeddableWidget.getIncomingEmbeddableFlowWidgets())) {
+                            for (EmbeddableFlowWidget embeddableFlowWidget : new CopyOnWriteArrayList<>(embeddableWidget.getIncomingEmbeddableFlowWidgets())) {
                                 embeddableFlowWidget.remove();
                             }
                         }
@@ -416,9 +411,21 @@ public class JPAModelerScene extends PModelerScene {
 
         JMenuItem manageVisibility = new JMenuItem("Manage Entity Visibility");
         manageVisibility.addActionListener((ActionEvent e) -> {
-            fireEntityVisibilityAction(JPAModelerScene.this.getModelerFile());
+            fireEntityVisibilityAction(getModelerFile());
         });
-
+        
+        JMenuItem visDB = new JMenuItem("Viusalize DB");
+        visDB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelerFile file = JPAModelerScene.this.getModelerFile();
+        String path = JPAModelerScene.this.getModelerPanelTopComponent().getToolTipText();
+        DBViewerActionListener fileAction = new DBViewerActionListener(file.getModelerFileDataObject());
+        fileAction.openModelerFile("DB",null,null);
+            }
+        });
+       
+        
 //        JMenuItem generateCodeFromDB = new JMenuItem("Generate DB code");
 //        generateCodeFromDB.addActionListener(new ActionListener() {
 //            @Override
@@ -435,9 +442,10 @@ public class JPAModelerScene extends PModelerScene {
 //        });
 //
         menuList.add(0, generateCode);
-        menuList.add(1, null);
-        menuList.add(2, manageVisibility);
-        menuList.add(3, null);
+         menuList.add(1, visDB);
+        menuList.add(2, null);
+        menuList.add(3, manageVisibility);
+        menuList.add(4, null);
 
         return menuList;
     }
@@ -504,7 +512,7 @@ public class JPAModelerScene extends PModelerScene {
 
     @Override
     public Map<String , Class<? extends IColorScheme>> getColorSchemes() {
-        Map<String , Class<? extends IColorScheme>> colorSchemes = new HashMap<String, Class<? extends IColorScheme>>();
+        Map<String , Class<? extends IColorScheme>> colorSchemes = new HashMap<>();
         colorSchemes.put("Classic",PFactory.getNetBeans60Scheme());
         colorSchemes.put("Metro", PFactory.getMetroScheme());
         colorSchemes.put("Mac", PFactory.getMacScheme());

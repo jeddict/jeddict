@@ -258,11 +258,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
     }
     
     
-     public void openDiagram(String entityGraphId) {
-        String path = this.getModelerScene().getModelerPanelTopComponent().getToolTipText();
-        JPAFileActionListener fileAction = new JPAFileActionListener(this.getModelerScene().getModelerFile().getModelerFileDataObject());
-        fileAction.openModelerFile(entityGraphId,entityGraphId,entityGraphId + " > " + path);
-    }
+//     public void openDiagram(String entityGraphId) {
+//        String path = this.getModelerScene().getModelerPanelTopComponent().getToolTipText();
+//        JPAFileActionListener fileAction = new JPAFileActionListener(this.getModelerScene().getModelerFile().getModelerFileDataObject());
+//        fileAction.openModelerFile(entityGraphId,entityGraphId,entityGraphId + " > " + path);
+//    }
 
     /**
      * @return the abstractEntity

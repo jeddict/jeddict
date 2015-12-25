@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.specification.model.file.action;
+package org.netbeans.db.modeler.specification.model.file.action;
 
 import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -30,21 +30,21 @@ import org.openide.util.NbBundle.Messages;
 
 @ActionID(
         category = "Build",
-        id = "jpa.file.JPAFileActionListener")
+        id = "jpa.file.DBViewerActionListener")
 @ActionRegistration(
-        displayName = "#CTL_JPAFileActionListener")
+        displayName = "#CTL_DBViewerActionListener")
 @ActionReference(path = "Loaders/text/jpa+xml/Actions", position = 0, separatorAfter = +50) // Issue Fix #5846
-@Messages("CTL_JPAFileActionListener=Edit in Modeler")
+@Messages("CTL_DBViewerActionListener=Edit in Modeler")
 @ModelerConfig(palette = "org/netbeans/jpa/modeler/resource/document/PaletteConfig.xml",
         document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/jpa/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA", version = 2.0F, name = "JPA", displayName = "JPA 2.0 Specification")
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "",
         modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class , exportManager =ExportManagerImpl.class,
-       relationValidator=RelationValidator.class)
-public class JPAFileActionListener extends ModelerFileActionListener {
+         relationValidator=RelationValidator.class)
+public class DBViewerActionListener extends ModelerFileActionListener {
     
-    public JPAFileActionListener(IModelerFileDataObject context) {
+    public DBViewerActionListener(IModelerFileDataObject context) {
         super(context);
     }
 

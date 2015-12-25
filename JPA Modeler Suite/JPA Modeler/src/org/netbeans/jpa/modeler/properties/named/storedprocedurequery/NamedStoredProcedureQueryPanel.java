@@ -157,7 +157,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
     }
 
     private void loadResultClassesList() {
-        List<Object> resultClasses_jListElement = new ArrayList<Object>();
+        List<Object> resultClasses_jListElement = new ArrayList<>();
         for (String resultClass : namedStoredProcedureQuery.getResultClass()) {
             if (resultClass.charAt(0) == '{' && resultClass.charAt(resultClass.length() - 1) == '}') {
                 String id = resultClass.substring(1, resultClass.length() - 1);
@@ -830,7 +830,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
     private NAttributeEntity getResultSetMappings() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ResultSetMappings", "ResultSet Mappings", "");
         attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("ENTITY_OBJECT", false, true, org.netbeans.jpa.modeler.spec.Entity.class));
         columns.add(new Column("Add ResultSet Mapping", true, Boolean.class));
@@ -843,7 +843,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -862,10 +862,10 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
 //                if (entityMappings.getSqlResultSetMapping() != null) {
                 for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappings.getEntity()) {
-                    for (SqlResultSetMapping resultSetMapping : new CopyOnWriteArrayList<SqlResultSetMapping>(entity.getSqlResultSetMapping())) {
+                    for (SqlResultSetMapping resultSetMapping : new CopyOnWriteArrayList<>(entity.getSqlResultSetMapping())) {
                         Object[] row = new Object[5];
                         row[0] = resultSetMapping;
                         row[1] = entity;
@@ -921,14 +921,14 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
     private NAttributeEntity getQueryHint() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Value", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new QueryHintPanel());
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -947,9 +947,9 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getHint() != null) {
-                    for (QueryHint queryHint : new CopyOnWriteArrayList<QueryHint>(namedStoredProcedureQuery.getHint())) {
+                    for (QueryHint queryHint : new CopyOnWriteArrayList<>(namedStoredProcedureQuery.getHint())) {
                         Object[] row = new Object[5];
                         row[0] = queryHint;
                         row[1] = queryHint.getName();
@@ -983,7 +983,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
     private NAttributeEntity getStoredProcedureParameter() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("StoredProcedureParameter", "StoredProcedure Parameter", "");
         attributeEntity.setCountDisplay(new String[]{"No StoredProcedure Parameters", "One StoredProcedure Parameter", " StoredProcedure Parameters"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Type", false, String.class));
@@ -991,7 +991,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new StoredProcedureParameterPanel(modelerFile));
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -1010,9 +1010,9 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 if (namedStoredProcedureQuery != null && namedStoredProcedureQuery.getParameter() != null) {
-                    for (StoredProcedureParameter storedProcedureParameter : new CopyOnWriteArrayList<StoredProcedureParameter>(namedStoredProcedureQuery.getParameter())) {
+                    for (StoredProcedureParameter storedProcedureParameter : new CopyOnWriteArrayList<>(namedStoredProcedureQuery.getParameter())) {
                         Object[] row = new Object[5];
                         row[0] = storedProcedureParameter;
                         row[1] = storedProcedureParameter.getName();

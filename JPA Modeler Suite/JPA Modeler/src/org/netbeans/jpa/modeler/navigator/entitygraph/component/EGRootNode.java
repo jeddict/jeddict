@@ -49,7 +49,7 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
     private final EntityWidget widget;
     private final NamedEntityGraph namedEntityGraph;
 
-    private final List<EGChildNode> childList = new ArrayList<EGChildNode>();
+    private final List<EGChildNode> childList = new ArrayList<>();
 
     public EGRootNode(EntityWidget entityWidget,NamedEntityGraph namedEntityGraph, EGChildFactory childFactory,CheckableAttributeNode checkableNode) {
         super(Children.create(childFactory, true), Lookups.singleton(checkableNode));

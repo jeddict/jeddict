@@ -31,7 +31,7 @@ public class EmbeddableWidget extends PersistenceClassWidget {
         super(scene, nodeWidgetInfo);
     }
 
-    private List<EmbeddableFlowWidget> incomingEmbeddableFlowWidgets = new ArrayList<EmbeddableFlowWidget>();  //no need for reverse relation
+    private List<EmbeddableFlowWidget> incomingEmbeddableFlowWidgets = new ArrayList<>();  //no need for reverse relation
 
     @Override
     public void init() {
@@ -119,7 +119,7 @@ public class EmbeddableWidget extends PersistenceClassWidget {
 //    An embeddable class (including an embeddable class within another embeddable class) that is contained within an element collection must not contain an element collection, nor may it contain a relationship to an entity other than a many-to-one or one-to-one relationship
     @Override
     public List<AttributeWidget> getAttributeOverrideWidgets() {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof EmbeddableWidget) {
             attributeWidgets.addAll(((EmbeddableWidget) classWidget).getAttributeOverrideWidgets());
@@ -130,7 +130,7 @@ public class EmbeddableWidget extends PersistenceClassWidget {
     }
 
     public List<AttributeWidget> getAssociationOverrideWidgets() {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof EmbeddableWidget) {
             attributeWidgets.addAll(((EmbeddableWidget) classWidget).getAssociationOverrideWidgets());
@@ -142,7 +142,7 @@ public class EmbeddableWidget extends PersistenceClassWidget {
         return attributeWidgets;
     }
     public List<AttributeWidget> getEmbeddedOverrideWidgets() {
-        List<AttributeWidget> attributeWidgets = new ArrayList<AttributeWidget>();
+        List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof EmbeddableWidget) {
             attributeWidgets.addAll(((EmbeddableWidget) classWidget).getEmbeddedOverrideWidgets());

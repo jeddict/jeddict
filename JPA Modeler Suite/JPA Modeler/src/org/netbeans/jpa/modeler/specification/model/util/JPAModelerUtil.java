@@ -1468,9 +1468,9 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public ComboBoxValue<AccessType> getItem() {
                 if (accessTypeHandlerSpec.getAccess() != null) {
-                    return new ComboBoxValue<AccessType>(accessTypeHandlerSpec.getAccess(), accessTypeHandlerSpec.getAccess().value());
+                    return new ComboBoxValue<>(accessTypeHandlerSpec.getAccess(), accessTypeHandlerSpec.getAccess().value());
                 } else {
-                    return new ComboBoxValue<AccessType>(AccessType.getDefault(), AccessType.getDefault().value());
+                    return new ComboBoxValue<>(AccessType.getDefault(), AccessType.getDefault().value());
                 }
             }
 
@@ -1478,8 +1478,8 @@ public class JPAModelerUtil implements PModelerUtil {
             public List<ComboBoxValue<AccessType>> getItemList() {
                 ComboBoxValue<AccessType>[] values;
                 values = new ComboBoxValue[]{
-                    new ComboBoxValue<AccessType>(FIELD, "Field"),
-                    new ComboBoxValue<AccessType>(PROPERTY, "Property")};
+                    new ComboBoxValue<>(FIELD, "Field"),
+                    new ComboBoxValue<>(PROPERTY, "Property")};
                 return Arrays.asList(values);
             }
 
@@ -1584,7 +1584,7 @@ public class JPAModelerUtil implements PModelerUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
 
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Column Name", false, String.class));
         columns.add(new Column("Referenced Column Name", false, String.class));
@@ -1608,7 +1608,7 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public void initData() {
                 List<JoinColumn> joinColumns = joinColumnsSpec;
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 Iterator<JoinColumn> itr = joinColumns.iterator();
                 while (itr.hasNext()) {
                     JoinColumn joinColumn = itr.next();
@@ -1645,14 +1645,14 @@ public class JPAModelerUtil implements PModelerUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
 
         attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("ResultSet Name", true, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerScene.getModelerFile(), entity));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<Object[]>();
+            List<Object[]> data = new LinkedList<>();
             int count;
 
             @Override
@@ -1667,7 +1667,7 @@ public class JPAModelerUtil implements PModelerUtil {
 
             @Override
             public void initData() {
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 for (SqlResultSetMapping resultSetMapping : sqlResultSetMappingSpec) {
                     Object[] row = new Object[2];
                     row[0] = resultSetMapping;
@@ -1702,7 +1702,7 @@ public class JPAModelerUtil implements PModelerUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No NamedStoredProcedureQueries exist", "One NamedStoredProcedureQuery exist", "NamedStoredProcedureQueries exist"});
 
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("ProcedureName", false, String.class));
@@ -1727,7 +1727,7 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public void initData() {
                 List<NamedStoredProcedureQuery> joinColumns = namedStoredProcedureQueriesSpec;
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 Iterator<NamedStoredProcedureQuery> itr = joinColumns.iterator();
                 while (itr.hasNext()) {
                     NamedStoredProcedureQuery namedStoredProcedureQuery = itr.next();
@@ -1764,7 +1764,7 @@ public class JPAModelerUtil implements PModelerUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No NamedQueries exist", "One NamedQuery exist", "NamedQueries exist"});
 
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
@@ -1789,7 +1789,7 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public void initData() {
                 List<NamedQuery> joinColumns = namedQueriesSpec;
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 Iterator<NamedQuery> itr = joinColumns.iterator();
                 while (itr.hasNext()) {
                     NamedQuery namedQuery = itr.next();
@@ -1828,7 +1828,7 @@ public class JPAModelerUtil implements PModelerUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No EntityGraphs exist", "One EntityGraph exist", "EntityGraphs exist"});
 
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         attributeEntity.setColumns(columns);
@@ -1851,7 +1851,7 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public void initData() {
                 List<NamedEntityGraph> entityGraphList = entityGraphsSpec;
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 Iterator<NamedEntityGraph> itr = entityGraphList.iterator();
                 while (itr.hasNext()) {
                     NamedEntityGraph entityGraph = itr.next();
@@ -1886,7 +1886,7 @@ public class JPAModelerUtil implements PModelerUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No Named Native Queries exist", "One Named Native Query exist", "Named Native Queries exist"});
 
-        List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
@@ -1912,7 +1912,7 @@ public class JPAModelerUtil implements PModelerUtil {
             @Override
             public void initData() {
                 List<NamedNativeQuery> namedNativeQueries = namedNativeQueriesSpec;
-                List<Object[]> data_local = new LinkedList<Object[]>();
+                List<Object[]> data_local = new LinkedList<>();
                 Iterator<NamedNativeQuery> itr = namedNativeQueries.iterator();
                 while (itr.hasNext()) {
                     NamedNativeQuery namedNativeQuery = itr.next();
@@ -1964,7 +1964,7 @@ public class JPAModelerUtil implements PModelerUtil {
                     varHandlerSpec.setJaxbXmlElement(new JaxbXmlElement());
                     set.replacePropertySet(attributeWidget, varHandlerSpec.getJaxbXmlElement(), attributeWidget.getPropertyChangeListeners());
                 } else if (value.getValue() == JaxbVariableType.XML_ELEMENTS) {
-                    varHandlerSpec.setJaxbXmlElementList(new ArrayList<JaxbXmlElement>());
+                    varHandlerSpec.setJaxbXmlElementList(new ArrayList<>());
 //                     set.createPropertySet( attributeWidget , varHandlerSpec.get(), attributeWidget.getPropertyChangeListeners());
                 }
                 attributeWidget.refreshProperties();
@@ -1974,25 +1974,25 @@ public class JPAModelerUtil implements PModelerUtil {
             public ComboBoxValue<JaxbVariableType> getItem() {
                 if (varHandlerSpec.getJaxbVariableType() == null) {
                     if (jaxbVariableList != null) {
-                        return new ComboBoxValue<JaxbVariableType>(XML_ELEMENT, "Default(Element)");
+                        return new ComboBoxValue<>(XML_ELEMENT, "Default(Element)");
                     } else {
-                        return new ComboBoxValue<JaxbVariableType>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText());
+                        return new ComboBoxValue<>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText());
                     }
                 } else {
-                    return new ComboBoxValue<JaxbVariableType>(varHandlerSpec.getJaxbVariableType(), varHandlerSpec.getJaxbVariableType().getDisplayText());
+                    return new ComboBoxValue<>(varHandlerSpec.getJaxbVariableType(), varHandlerSpec.getJaxbVariableType().getDisplayText());
                 }
             }
 
             @Override
             public List<ComboBoxValue<JaxbVariableType>> getItemList() {
-                List<ComboBoxValue<JaxbVariableType>> values = new ArrayList<ComboBoxValue<JaxbVariableType>>();
+                List<ComboBoxValue<JaxbVariableType>> values = new ArrayList<>();
                 if (jaxbVariableList != null) {
-                    values.add(new ComboBoxValue<JaxbVariableType>(XML_ELEMENT, "Default(Element)"));
+                    values.add(new ComboBoxValue<>(XML_ELEMENT, "Default(Element)"));
                     jaxbVariableList.stream().forEach((variableType) -> {
-                        values.add(new ComboBoxValue<JaxbVariableType>(variableType, variableType.getDisplayText()));
+                        values.add(new ComboBoxValue<>(variableType, variableType.getDisplayText()));
                     });
                 } else {
-                    values.add(new ComboBoxValue<JaxbVariableType>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText()));
+                    values.add(new ComboBoxValue<>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText()));
                 }
                 return values;
             }

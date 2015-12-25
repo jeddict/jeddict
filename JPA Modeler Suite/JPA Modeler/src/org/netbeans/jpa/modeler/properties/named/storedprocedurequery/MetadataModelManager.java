@@ -62,7 +62,7 @@ public class MetadataModelManager {
     // XXX test against memory leak.
     // XXX test if DatabaseConnection can be GC'd.
 
-    private final static WeakHashMap<DatabaseConnection, MetadataModel> conn2Model = new WeakHashMap<DatabaseConnection, MetadataModel>();
+    private final static WeakHashMap<DatabaseConnection, MetadataModel> conn2Model = new WeakHashMap<>();
 
 
     private MetadataModelManager() {}

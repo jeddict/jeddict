@@ -131,7 +131,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
 
     private void initTypeComboBox() {
         TitledBorder titledBorder = (TitledBorder) jLayeredPane1.getBorder();
-        List<String> type = new ArrayList<String>();
+        List<String> type = new ArrayList<>();
         type.add("Default");
         if (baseAttribute instanceof Basic) {
             type.add("Enumerated");
