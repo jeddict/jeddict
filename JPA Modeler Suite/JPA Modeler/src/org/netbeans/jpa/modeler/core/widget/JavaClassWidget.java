@@ -28,23 +28,22 @@ import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
-import org.netbeans.modeler.core.scene.vmd.PModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
-import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 
-public abstract class JavaClassWidget extends FlowNodeWidget {
+public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E> {
 
     private GeneralizationFlowWidget outgoingGeneralizationFlowWidget;
     private final List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<>();
 
-    public JavaClassWidget(IModelerScene scene, NodeWidgetInfo node) {
+    public JavaClassWidget(JPAModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.addPropertyChangeListener("class", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
@@ -127,7 +126,7 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
 
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
-            ((JavaClass) getBaseElementSpec()).setClazz(this.name);
+            getBaseElementSpec().setClazz(this.name);
         }
         if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
             throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
@@ -247,7 +246,7 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
 
 ////    private static final Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25) ,2, new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25));
     public void showInheritencePath() {
-        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
 //        this.setBorder(colorScheme.);
@@ -260,7 +259,7 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     }
 
     public void hideInheritencePath() {
-        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
         if (this.getOutgoingGeneralizationFlowWidget() != null) {
@@ -271,13 +270,13 @@ public abstract class JavaClassWidget extends FlowNodeWidget {
     }
 
     public void showCompositionPath() {
-        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
     }
 
     public void hideCompositionPath() {
-        IColorScheme colorScheme = ((PModelerScene) this.getModelerScene()).getColorScheme();
+        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
     }

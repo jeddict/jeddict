@@ -18,7 +18,7 @@ package org.netbeans.jpa.modeler.core.widget.flow.relation;
 import java.awt.Color;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
@@ -29,7 +29,7 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget {
 
     private RelationAttributeWidget sourceRelationAttributeWidget;
 
-    public RelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
+    public RelationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);

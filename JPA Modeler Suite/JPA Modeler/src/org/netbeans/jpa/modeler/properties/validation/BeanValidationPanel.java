@@ -15,10 +15,7 @@
  */
 package org.netbeans.jpa.modeler.properties.validation;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
-import org.netbeans.jpa.modeler.spec.GenerationType;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;

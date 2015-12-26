@@ -51,21 +51,23 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWid
 import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.export.IExportManager;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.node.INodeWidget;
 import org.openide.util.Exceptions;
 
-public class ExportManagerImpl implements IExportManager {
+public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
 
     private final Map<Image, byte[]> icons = new HashMap<>();
 
     @Override
-    public void export(IModelerScene scene, FileType format, File file) {
+    public void export(JPAModelerScene scene, FileType format, File file) {
         try {
             HSLFSlideShow ppt = new HSLFSlideShow();
             int width = 0, height = 0;
@@ -91,7 +93,7 @@ public class ExportManagerImpl implements IExportManager {
                     shape.setLineColor(Color.BLACK);
 
                     if (baseElementWidget instanceof PersistenceClassWidget) {
-                        PersistenceClassWidget entityWidget = (PersistenceClassWidget) baseElementWidget;
+                        PersistenceClassWidget<? extends ManagedClass> entityWidget = (PersistenceClassWidget) baseElementWidget;
                         HSLFTextRun classTextRun = shape.setText(entityWidget.getName());
                         classTextRun.setFontSize(18.);
                         classTextRun.setFontFamily("Arial");

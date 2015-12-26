@@ -13,19 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.core.widget.flow.relation;
+package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
+import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.IPNodeWidget;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 /**
  *
  * @author Gaurav_Gupta
  */
-public abstract class HierarchicalRelationFlowWidget extends RelationFlowWidget {
+public abstract class SingleRelationAttributeWidget<E extends SingleRelationAttribute> extends RelationAttributeWidget<E> {
 
-    public HierarchicalRelationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
-        super(scene, edge);
+    public SingleRelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+        super(scene, nodeWidget, pinWidgetInfo);
     }
+
 
 }

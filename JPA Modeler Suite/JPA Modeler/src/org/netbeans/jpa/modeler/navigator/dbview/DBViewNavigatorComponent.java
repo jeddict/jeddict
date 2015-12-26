@@ -21,7 +21,6 @@ import javax.swing.SwingUtilities;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.properties.view.manager.BasePropertyViewManager;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -120,7 +119,7 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
 //        System.out.println("evt.getPropertyName() " + evt.getPropertyName());
     }
 
-    BasePropertyViewManager basePropertyViewManager;
+    private BasePropertyViewManager basePropertyViewManager;
 
     private void checkNodes(Node[] arr) {
         if (arr != null) {
@@ -139,7 +138,7 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
                     if (basePropertyViewManager_Pre != basePropertyViewManager_Cur) {
                         basePropertyViewManager = basePropertyViewManager_Cur;
                         System.out.println("1-In checkNodes2 BPVM");
-                        update(basePropertyViewManager.getModelerScene());
+                        update((JPAModelerScene)basePropertyViewManager.getModelerScene());
                     } else {
                         System.out.println("1-In checkNodes2 same BPVM");
                     }
@@ -163,7 +162,7 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
         }
     }
 
-    private synchronized void update(final IModelerScene modelerScene) {
+    private synchronized void update(final JPAModelerScene modelerScene) {
         final EntityMappings entityMappings = (EntityMappings) modelerScene.getBaseElementSpec();
         if (entityMappings != null) {
             System.out.println("In UPDATE EM");
@@ -175,7 +174,7 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
                 ((BeanTreeView) navigatorPane).setVisible(true);
                 ((BeanTreeView) navigatorPane).setRootVisible(false);
 //                    explorerManager.setRootContext(new AbstractNode(new EntityChildren(entityMappings)));
-                explorerManager.setRootContext(new EntitytRootNode(Children.create(new EntityChildFactory((JPAModelerScene) modelerScene), true)));
+                explorerManager.setRootContext(new EntitytRootNode(Children.create(new EntityChildFactory(modelerScene), true)));
                 explorerManager.getRootContext().setDisplayName("JPA Modeler - Database View");
             });
         } else {

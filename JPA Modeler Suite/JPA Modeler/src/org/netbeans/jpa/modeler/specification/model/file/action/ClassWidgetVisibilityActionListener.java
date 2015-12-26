@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene.fireEntityVisibilityAction;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
 import org.netbeans.modeler.core.ModelerCore;

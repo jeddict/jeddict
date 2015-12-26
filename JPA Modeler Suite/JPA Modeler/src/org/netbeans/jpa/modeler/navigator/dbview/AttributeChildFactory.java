@@ -39,11 +39,10 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttrib
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
-import org.netbeans.modeler.properties.view.manager.BasePropertyViewManager;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.actions.DeleteAction;
@@ -68,7 +67,7 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
         return createKeys(null, entityWidget, columnDefList);
     }
 
-    private boolean createKeys(String flowPreFix, PersistenceClassWidget classWidget, List<ColumnDef> columnDefList) {
+    private boolean createKeys(String flowPreFix, PersistenceClassWidget<? extends ManagedClass> classWidget, List<ColumnDef> columnDefList) {
         List<AttributeWidget> attributeWidgets = new ArrayList<>();
         attributeWidgets.addAll(classWidget.getIdAttributeWidgets());
         attributeWidgets.addAll(classWidget.getVersionAttributeWidgets());

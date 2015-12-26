@@ -15,8 +15,6 @@
  */
 package org.netbeans.jpa.modeler.navigator.entitygraph.component;
 
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
@@ -25,6 +23,8 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.navigator.entitygraph.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
+import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;

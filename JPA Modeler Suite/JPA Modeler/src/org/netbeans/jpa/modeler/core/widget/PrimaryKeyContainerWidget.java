@@ -18,12 +18,14 @@ package org.netbeans.jpa.modeler.core.widget;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
-public abstract class PrimaryKeyContainerWidget extends PersistenceClassWidget {
+public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> extends PersistenceClassWidget<E> {
 
-    public PrimaryKeyContainerWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
+    public PrimaryKeyContainerWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
     }
 

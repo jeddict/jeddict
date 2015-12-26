@@ -17,14 +17,12 @@ package org.netbeans.jpa.modeler.core.widget.context;
 
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.NBModelerUtil;
-import org.netbeans.modeler.core.scene.ModelerScene;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextPaletteButtonModel;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;

@@ -40,12 +40,13 @@ import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
-import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
+import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
@@ -69,7 +70,7 @@ import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 import org.openide.util.RequestProcessor;
 
-public class JPAModelerScene extends PModelerScene {
+public class JPAModelerScene extends PModelerScene<EntityMappings,EntityMappings> {
 
     private List<IFlowElementWidget> flowElements = new ArrayList<>(); // Linked hashmap to preserve order of inserted elements
 
@@ -116,40 +117,16 @@ public class JPAModelerScene extends PModelerScene {
         this.flowElements.add(flowElementWidget);
     }
 
-    @Override
-    public IBaseElementWidget findBaseElement(String id) {
-        for (IBaseElementWidget baseElementWidget : flowElements) {
-            if (baseElementWidget instanceof IFlowNodeWidget) {
-                if (baseElementWidget.getId().equals(id)) {
-                    return baseElementWidget;
-                }
-            } else if (baseElementWidget instanceof IFlowEdgeWidget) {
-                if (baseElementWidget instanceof RelationFlowWidget) {
-                    if (baseElementWidget.getId().equals(id)) {
-                        return baseElementWidget;
-                    }
-                } else if (baseElementWidget instanceof GeneralizationFlowWidget) {
-                    if ( baseElementWidget.getId().equals(id)) {
-                        return baseElementWidget;
-                    }
-                }
-            } else {
-                throw new InvalidElmentException("Invalid JPA Element" + baseElementWidget);
-            }
-        }
-        return null;       
-    }
+
 
     @Override
     public IBaseElementWidget getBaseElement(String id) {
-        IBaseElementWidget widget = null;
         for (IBaseElementWidget baseElementWidget : flowElements) {
             if (baseElementWidget.getId().equals(id)) {
-                widget = baseElementWidget;
-                break;
+                return baseElementWidget;
             }
         }
-        return widget;
+         return null;
     }
 
     @Override
@@ -180,7 +157,7 @@ public class JPAModelerScene extends PModelerScene {
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
                 if (baseElementWidget instanceof JavaClassWidget) {
-                    JavaClassWidget javaClassWidget = (JavaClassWidget) baseElementWidget;
+                    JavaClassWidget<JavaClass> javaClassWidget = (JavaClassWidget) baseElementWidget;
                     if (javaClassWidget.getOutgoingGeneralizationFlowWidget() != null) {
                         javaClassWidget.getOutgoingGeneralizationFlowWidget().remove();
                     }
@@ -189,7 +166,7 @@ public class JPAModelerScene extends PModelerScene {
                     }
 
                     if (baseElementWidget instanceof PersistenceClassWidget) {
-                        PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
+                        PersistenceClassWidget<ManagedClass> persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
                         persistenceClassWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
                         for (RelationFlowWidget relationFlowWidget : new CopyOnWriteArrayList<>(persistenceClassWidget.getInverseSideRelationFlowWidgets())) {
                             relationFlowWidget.remove();
@@ -215,24 +192,6 @@ public class JPAModelerScene extends PModelerScene {
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
                 this.flowElements.remove(flowNodeWidget);
-//            } else if (baseElementWidget instanceof SequenceFlowWidget) {
-//                SequenceFlowWidget sequenceFlowWidget = ((SequenceFlowWidget) baseElementWidget);
-//                TSequenceFlow sequenceFlowSpec = sequenceFlowWidget.getSequenceFlowSpec();
-//
-//                FlowNodeWidget sourceWidget = sequenceFlowWidget.getSourceNode();
-//                TFlowNode sourceSpec = (TFlowNode) sourceWidget.getBaseElementSpec();
-//                FlowNodeWidget targetWidget = sequenceFlowWidget.getTargetNode();
-//                TFlowNode targetSpec = (TFlowNode) targetWidget.getBaseElementSpec();
-//
-//                sourceSpec.getOutgoing().remove(sequenceFlowSpec.getId());
-//                targetSpec.getIncoming().remove(sequenceFlowSpec.getId());
-//
-//                sourceWidget.getOutgoingSequenceFlows().remove(sequenceFlowWidget);
-//                targetWidget.getIncomingSequenceFlows().remove(sequenceFlowWidget);
-//
-//                entityMappingsSpec.removeFlowElement(sequenceFlowSpec);
-//                sequenceFlowWidget.setFlowElementsContainer(null);
-//                this.flowElements.remove(sequenceFlowWidget);
             } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                 if (baseElementWidget instanceof RelationFlowWidget) {
                     RelationFlowWidget relationFlowWidget = (RelationFlowWidget) baseElementWidget;
@@ -262,8 +221,6 @@ public class JPAModelerScene extends PModelerScene {
                     JavaClass javaSubclass = (JavaClass) generalizationFlowWidget.getSubclassWidget().getBaseElementSpec();
                     JavaClass javaSuperclass = (JavaClass) generalizationFlowWidget.getSuperclassWidget().getBaseElementSpec();
                     javaSubclass.removeSuperclass(javaSuperclass);
-//                    generalizationFlowWidget.setSubclassWidget(null); // moved to destroy
-//                    generalizationFlowWidget.setSuperclassWidget(null);
 
                     generalizationFlowWidget.setFlowElementsContainer(null);
                     this.flowElements.remove(generalizationFlowWidget);
@@ -396,7 +353,6 @@ public class JPAModelerScene extends PModelerScene {
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
-//        final EntityMappings entityMappings = ((EntityMappings) this.getBaseElementSpec());
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         JMenuItem generateCode = new JMenuItem("Generate Source Code");
         generateCode.addActionListener((ActionEvent e) -> {
@@ -466,10 +422,6 @@ public class JPAModelerScene extends PModelerScene {
         }
     }
     
-    
-    public String getNextClassName() {
-        return getNextClassName(null);
-    }
 
     public String getNextClassName(String className) {
         int index = 0;

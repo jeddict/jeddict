@@ -15,8 +15,8 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow;
 
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.openide.util.ImageUtilities;
 
@@ -29,7 +29,7 @@ public class SingleValueEmbeddableFlowWidget extends EmbeddableFlowWidget {
     private static final IconAnchorShape SOURCE_ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/composition-anchor.png"), true);
     private static final IconAnchorShape TARGET_ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/single-value-anchor-shape.png"), true, 18, 7);
 
-    public SingleValueEmbeddableFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
+    public SingleValueEmbeddableFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
         setSourceAnchorShape(SOURCE_ANCHOR_SHAPE);
         setTargetAnchorShape(TARGET_ANCHOR_SHAPE);

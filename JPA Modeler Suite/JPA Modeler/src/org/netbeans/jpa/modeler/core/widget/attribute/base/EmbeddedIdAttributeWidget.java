@@ -18,8 +18,9 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 import java.util.List;
 import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -27,9 +28,9 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class EmbeddedIdAttributeWidget extends BaseAttributeWidget {
+public class EmbeddedIdAttributeWidget extends BaseAttributeWidget <EmbeddedId>{
 
-    public EmbeddedIdAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public EmbeddedIdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setIcon(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE);
     }

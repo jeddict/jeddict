@@ -45,6 +45,7 @@ import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
@@ -52,16 +53,17 @@ import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
+import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ActionHandler;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ComboBoxListener;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
@@ -71,7 +73,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
  *
  * @author Gaurav_Gupta
  */
-public abstract class PersistenceClassWidget extends JavaClassWidget {
+public abstract class PersistenceClassWidget<E extends ManagedClass> extends JavaClassWidget<E> {
 
     public List<AttributeWidget> getAllAttributeWidgets() {
         
@@ -115,7 +117,7 @@ public abstract class PersistenceClassWidget extends JavaClassWidget {
     private final List<SingleValueEmbeddedAttributeWidget> singleValueEmbeddedAttributeWidgets = new ArrayList<>();
     private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<>();
 
-    public PersistenceClassWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
+    public PersistenceClassWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
         this.addPropertyVisibilityHandler("compositePrimaryKeyType", (PropertyVisibilityHandler<String>) () -> {
             CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();

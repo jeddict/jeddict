@@ -18,9 +18,8 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -29,11 +28,11 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget {
+public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<ElementCollection>{
 
     private EmbeddableFlowWidget embeddableFlowWidget;
 
-    public MultiValueEmbeddedAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public MultiValueEmbeddedAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setIcon(JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE);
     }

@@ -20,11 +20,11 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -34,9 +34,9 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class IdAttributeWidget extends BaseAttributeWidget {
+public class IdAttributeWidget extends BaseAttributeWidget <Id>{
 
-    public IdAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public IdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setIcon(JPAModelerUtil.ID_ATTRIBUTE);
     }
@@ -79,7 +79,7 @@ public class IdAttributeWidget extends BaseAttributeWidget {
 
             @Override
             public void setData(Id classSpec) {
-                IdAttributeWidget.this.setBaseElementSpec((IBaseElement) classSpec);
+                IdAttributeWidget.this.setBaseElementSpec(classSpec);
             }
 
             @Override

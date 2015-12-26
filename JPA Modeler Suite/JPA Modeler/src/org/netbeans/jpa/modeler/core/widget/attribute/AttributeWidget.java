@@ -18,7 +18,6 @@ package org.netbeans.jpa.modeler.core.widget.attribute;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
@@ -41,12 +40,12 @@ import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -63,10 +62,10 @@ import org.openide.util.NbBundle;
  *
  * @author Gaurav Gupta
  */
-public class AttributeWidget extends FlowPinWidget {
+public class AttributeWidget<E extends Attribute> extends FlowPinWidget<E> {
 
 //    private boolean selectedView;
-    public AttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public AttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
@@ -220,11 +219,11 @@ public class AttributeWidget extends FlowPinWidget {
             public void init() {
                 attribute = (Attribute) AttributeWidget.this.getBaseElementSpec();
                 if (attribute instanceof RelationAttribute) {
-                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().findBaseElement(((RelationAttribute) attribute).getConnectedEntityId());
+                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().getBaseElement(((RelationAttribute) attribute).getConnectedEntityId());
                 } else if (attribute instanceof ElementCollection && ((ElementCollection) attribute).getConnectedClassId() != null) { //Embedded Collection
-                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().findBaseElement(((ElementCollection) attribute).getConnectedClassId());
+                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().getBaseElement(((ElementCollection) attribute).getConnectedClassId());
                 } else if (attribute instanceof Embedded) {
-                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().findBaseElement(((Embedded) attribute).getConnectedClassId());
+                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().getBaseElement(((Embedded) attribute).getConnectedClassId());
                 }
             }
 
@@ -235,7 +234,7 @@ public class AttributeWidget extends FlowPinWidget {
 
             @Override
             public void setData(Attribute baseAttribute) {
-                AttributeWidget.this.setBaseElementSpec(baseAttribute);
+                AttributeWidget.this.setBaseElementSpec((E)baseAttribute);
             }
 
             @Override
@@ -350,23 +349,6 @@ public class AttributeWidget extends FlowPinWidget {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private IBaseElement baseElementSpec;
-
-    /**
-     * @return the baseElementSpec
-     */
-    @Override
-    public IBaseElement getBaseElementSpec() {
-        return baseElementSpec;
-    }
-
-    /**
-     * @param baseElementSpec the baseElementSpec to set
-     */
-    @Override
-    public void setBaseElementSpec(IBaseElement baseElementSpec) {
-        this.baseElementSpec = baseElementSpec;
-    }
 
     @Override
     public void init() {

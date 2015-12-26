@@ -15,20 +15,18 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import static org.netbeans.jpa.modeler.core.widget.CompositePKProperty.NONE;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
 /**
  *
  * @author Gaurav_Gupta
  */
-public class MappedSuperclassWidget extends PrimaryKeyContainerWidget {
+public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSuperclass> {
 
-    public MappedSuperclassWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
+    public MappedSuperclassWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
     }
 
@@ -41,7 +39,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget {
 //            sortAttributes();
         }
         if (mappedSuperclass.getClazz() == null || mappedSuperclass.getClazz().isEmpty()) {
-            mappedSuperclass.setClazz(((JPAModelerScene) this.getModelerScene()).getNextClassName("MappedSuperclass_"));
+            mappedSuperclass.setClazz(this.getModelerScene().getNextClassName("MappedSuperclass_"));
         }
         setName(mappedSuperclass.getClazz());
         setLabel(mappedSuperclass.getClazz());

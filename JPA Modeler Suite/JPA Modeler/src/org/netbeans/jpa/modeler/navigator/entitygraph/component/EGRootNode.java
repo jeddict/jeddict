@@ -15,13 +15,13 @@
  */
 package org.netbeans.jpa.modeler.navigator.entitygraph.component;
 
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.navigator.entitygraph.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.EGChildFactory;
+import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
+import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;

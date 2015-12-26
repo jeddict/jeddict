@@ -16,19 +16,19 @@
 package org.netbeans.jpa.modeler.core.widget.flow;
 
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.specification.model.document.core.IFlowEdge;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 
-public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdgeWidget {
+public abstract class AbstractEdgeWidget extends PEdgeWidget<JPAModelerScene> implements IFlowEdgeWidget <IFlowEdge> {
 
     private Widget flowElementsContainer;
-    private IBaseElement baseElementSpec;
+    private IFlowEdge baseElementSpec;
 
-    public AbstractEdgeWidget(IModelerScene scene, EdgeWidgetInfo edge) {
+    public AbstractEdgeWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
 
     }
@@ -37,7 +37,7 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdg
      * @return the baseElementSpec
      */
     @Override
-    public IBaseElement getBaseElementSpec() {
+    public IFlowEdge getBaseElementSpec() {
         return baseElementSpec;
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget implements IFlowEdg
      * @param baseElementSpec the baseElementSpec to set
      */
     @Override
-    public void setBaseElementSpec(IBaseElement baseElementSpec) {
+    public void setBaseElementSpec(IFlowEdge baseElementSpec) {
         this.baseElementSpec = baseElementSpec;
     }
     protected String id;

@@ -15,12 +15,12 @@
  */
 package org.netbeans.jpa.modeler.properties.named.nativequery;
 
-import org.netbeans.jpa.modeler.properties.named.query.QueryHintPanel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
+import org.netbeans.jpa.modeler.properties.named.query.QueryHintPanel;
 import org.netbeans.jpa.modeler.spec.LockModeType;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;

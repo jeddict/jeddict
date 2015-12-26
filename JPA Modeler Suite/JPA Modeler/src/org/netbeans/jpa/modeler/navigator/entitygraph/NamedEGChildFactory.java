@@ -26,10 +26,11 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGLeafNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGInternalNode;
+import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGLeafNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGRootNode;
+import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -41,7 +42,7 @@ public class NamedEGChildFactory extends EGChildFactory {
 
     @Override
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
-        PersistenceClassWidget classWidget = null;
+        PersistenceClassWidget<? extends ManagedClass> classWidget = null;
         if (parentNode instanceof EGRootNode) {
             classWidget = ((EGRootNode) parentNode).getRootWidget();
         } else if (parentNode instanceof EGInternalNode) {

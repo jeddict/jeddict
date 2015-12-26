@@ -21,8 +21,8 @@ import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
@@ -40,7 +40,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget {
     private JavaClassWidget subclassWidget;
     private static final IconAnchorShape GENERALIZATION_ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/generalization-anchor.png"), true);
 
-    public GeneralizationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
+    public GeneralizationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
         setTargetAnchorShape(GENERALIZATION_ANCHOR_SHAPE);
         setAnchorGap(4);

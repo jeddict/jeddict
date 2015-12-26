@@ -24,10 +24,10 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAtt
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
-import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -74,7 +74,7 @@ public class OverrideEmbeddedAssociationChildFactory extends OverrideChildFactor
             }
             node = new OverrideEmbeddedRootNode(Children.create(new OverrideEmbeddedAssociationChildFactory(entityWidget, prefixAttributePath_Tmp, initialAttributeWidget, embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget()), true));
         } else {
-            node = new PropertyNode(entityWidget.getModelerScene(), Children.LEAF) {
+            node = new PropertyNode<JPAModelerScene>(entityWidget.getModelerScene(), Children.LEAF) {
 
                 @Override
                 public void createPropertySet(ElementPropertySet set) {

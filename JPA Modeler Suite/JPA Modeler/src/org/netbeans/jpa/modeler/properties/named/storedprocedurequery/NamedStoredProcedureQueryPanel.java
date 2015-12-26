@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -55,7 +54,6 @@ import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
-import org.netbeans.modules.db.metadata.model.api.Action;
 import org.netbeans.modules.db.metadata.model.api.Metadata;
 import org.netbeans.modules.db.metadata.model.api.MetadataModel;
 import org.netbeans.modules.db.metadata.model.api.MetadataModelException;
@@ -64,7 +62,6 @@ import org.netbeans.modules.db.metadata.model.api.Procedure;
 import org.netbeans.modules.db.metadata.model.api.SQLType;
 import org.openide.text.CloneableEditorSupport;
 import org.openide.util.RequestProcessor;
-import org.w3c.dom.events.DocumentEvent;
 
 public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredProcedureQuery> implements DocumentListener{
 private static final RequestProcessor RP = new RequestProcessor(NamedStoredProcedureQueryPanel.class);

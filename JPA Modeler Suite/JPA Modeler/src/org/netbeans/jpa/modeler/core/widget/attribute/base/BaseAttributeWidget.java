@@ -18,9 +18,9 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -30,9 +30,9 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
  *
  * @author Gaurav Gupta
  */
-public class BaseAttributeWidget extends AttributeWidget {
+public class BaseAttributeWidget<E extends BaseAttribute> extends AttributeWidget <E>{
 
-    public BaseAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public BaseAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("collectionType", (PropertyChangeListener<String>) (String collectionType) -> {
             //Point here should be for only ElementCollection

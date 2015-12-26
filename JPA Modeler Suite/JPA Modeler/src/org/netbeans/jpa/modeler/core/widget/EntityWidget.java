@@ -29,26 +29,22 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.Table;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
-import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.openide.util.ImageUtilities;
 
-public class EntityWidget extends PrimaryKeyContainerWidget {
+public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
     private Boolean abstractEntity;
     
-    
-    
-    public EntityWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
+    public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
         
         this.addPropertyVisibilityHandler("inheritence", (PropertyVisibilityHandler<String>) () -> {
@@ -70,7 +66,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
 
     @Override
     public void init() {
-        Entity entity = (Entity) this.getBaseElementSpec();
+        Entity entity = this.getBaseElementSpec();
         if (entity.getAttributes() == null) {
             entity.setAttributes(new Attributes());
             addNewIdAttribute("id");
@@ -78,7 +74,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
         }
 
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
-            entity.setClazz(((JPAModelerScene) this.getModelerScene()).getNextClassName("Entity_"));
+            entity.setClazz(this.getModelerScene().getNextClassName("Entity_"));
         }
         
         if(abstractEntity!=null){
@@ -103,7 +99,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        Entity entity = (Entity) this.getBaseElementSpec();
+        Entity entity = this.getBaseElementSpec();
         if (entity.getTable() == null) {
             entity.setTable(new Table());
         }
@@ -140,18 +136,12 @@ public class EntityWidget extends PrimaryKeyContainerWidget {
 
             @Override
             public InheritenceHandler getData() {
-//                if (classSpec.getInheritance() == null) {
-//                    classSpec.setInheritance(new Inheritance());
-//                }
-//                if (classSpec.getDiscriminatorColumn() == null) {
-//                    classSpec.setDiscriminatorColumn(new DiscriminatorColumn());
-//                }
                 return classSpec;
             }
 
             @Override
             public void setData(InheritenceHandler classSpec) {
-                EntityWidget.this.setBaseElementSpec((IBaseElement) classSpec);
+                EntityWidget.this.setBaseElementSpec((Entity)classSpec);
             }
 
             @Override

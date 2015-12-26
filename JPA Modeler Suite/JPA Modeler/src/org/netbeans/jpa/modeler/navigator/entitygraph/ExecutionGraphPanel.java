@@ -17,9 +17,9 @@ package org.netbeans.jpa.modeler.navigator.entitygraph;
 
 import javax.swing.SwingUtilities;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGRootNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
+import org.netbeans.modeler.properties.window.GenericDialog;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
 

@@ -15,10 +15,10 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTOR_SOURCE_ANCHOR_SHAPE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTOR_TARGET_ANCHOR_SHAPE;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 
 /**
@@ -30,7 +30,7 @@ public abstract class MTORelationFlowWidget extends HierarchicalRelationFlowWidg
     private static final IconAnchorShape SOURCE_ANCHOR_SHAPE = new IconAnchorShape(MTOR_SOURCE_ANCHOR_SHAPE, true);
     private static final IconAnchorShape TARGET_ANCHOR_SHAPE = new IconAnchorShape(MTOR_TARGET_ANCHOR_SHAPE, true);
 
-    public MTORelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
+    public MTORelationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
         setSourceAnchorShape(SOURCE_ANCHOR_SHAPE);
         setTargetAnchorShape(TARGET_ANCHOR_SHAPE);

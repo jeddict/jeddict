@@ -18,20 +18,19 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class BasicAttributeWidget extends BaseAttributeWidget {
+public class BasicAttributeWidget extends BaseAttributeWidget <Basic>{
 
-    public BasicAttributeWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public BasicAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setIcon(JPAModelerUtil.BASIC_ATTRIBUTE);
 //        this.addPropertyVisibilityHandler("length", new PropertyVisibilityHandler<String>() {

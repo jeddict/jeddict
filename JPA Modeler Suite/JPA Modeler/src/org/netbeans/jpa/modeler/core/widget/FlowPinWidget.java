@@ -18,8 +18,7 @@ package org.netbeans.jpa.modeler.core.widget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.PinContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowPinWidget;
@@ -29,9 +28,9 @@ import org.netbeans.modeler.widget.pin.PinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
+public class FlowPinWidget<E extends FlowPin> extends PinWidget<JPAModelerScene> implements IFlowPinWidget<E> {
 
-    public FlowPinWidget(IModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public FlowPinWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
@@ -101,13 +100,13 @@ public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
     public void createVisualPropertySet(ElementPropertySet elementPropertySet) {
     }
 
-    private IBaseElement baseElementSpec;
+    private E baseElementSpec;
 
     /**
      * @return the baseElementSpec
      */
     @Override
-    public IBaseElement getBaseElementSpec() {
+    public E getBaseElementSpec() {
         return baseElementSpec;
     }
 
@@ -115,7 +114,7 @@ public class FlowPinWidget extends PinWidget implements IFlowPinWidget {
      * @param baseElementSpec the baseElementSpec to set
      */
     @Override
-    public void setBaseElementSpec(IBaseElement baseElementSpec) {
+    public void setBaseElementSpec(E baseElementSpec) {
         this.baseElementSpec = baseElementSpec;
     }
 

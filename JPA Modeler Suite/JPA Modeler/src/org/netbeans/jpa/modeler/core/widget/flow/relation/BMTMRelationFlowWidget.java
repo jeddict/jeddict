@@ -17,7 +17,7 @@ package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 
@@ -29,7 +29,7 @@ public class BMTMRelationFlowWidget extends MTMRelationFlowWidget implements Bid
 
     private RelationAttributeWidget targetRelationAttributeWidget;
 
-    public BMTMRelationFlowWidget(IModelerScene scene, EdgeWidgetInfo edge) {
+    public BMTMRelationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
     }
 

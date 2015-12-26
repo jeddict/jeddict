@@ -20,9 +20,7 @@ import java.util.List;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
@@ -31,22 +29,16 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-/**
- *
- *
- *
- *
- */
-public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWidget {
+public abstract class FlowNodeWidget<E extends FlowNode> extends PNodeWidget<JPAModelerScene> implements IFlowNodeWidget<E> {
 
-    public FlowNodeWidget(IModelerScene scene, NodeWidgetInfo node) {
+    public FlowNodeWidget(JPAModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
-//        this.setNodeImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
             setLabel(value);
         });
         setAnchorGap(4);
+        
     }
 
     @Override
@@ -69,13 +61,13 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private IBaseElement baseElementSpec;
+    private E baseElementSpec;
 
     /**
      * @return the baseElementSpec
      */
     @Override
-    public IBaseElement getBaseElementSpec() {
+    public E getBaseElementSpec() {
         return baseElementSpec;
     }
 
@@ -83,7 +75,7 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
      * @param baseElementSpec the baseElementSpec to set
      */
     @Override
-    public void setBaseElementSpec(IBaseElement baseElementSpec) {
+    public void setBaseElementSpec(E baseElementSpec) {
         this.baseElementSpec = baseElementSpec;
     }
 
@@ -151,9 +143,9 @@ public abstract class FlowNodeWidget extends PNodeWidget implements IFlowNodeWid
     public void setName(String name) {
         this.name = name;
         if (name != null && !name.trim().isEmpty()) {
-            ((FlowNode) FlowNodeWidget.this.getBaseElementSpec()).setName(name);
+             FlowNodeWidget.this.getBaseElementSpec().setName(name);
         } else {
-            ((FlowNode) FlowNodeWidget.this.getBaseElementSpec()).setName(null);
+             FlowNodeWidget.this.getBaseElementSpec().setName(null);
         }
     }
 

@@ -16,11 +16,9 @@
 package org.netbeans.jpa.modeler.properties.named.resultsetmapping;
 
 import org.netbeans.jpa.modeler.properties.named.resultsetmapping.*;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.FieldResult;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;

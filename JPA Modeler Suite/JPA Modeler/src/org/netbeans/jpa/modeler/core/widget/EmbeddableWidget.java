@@ -22,12 +22,11 @@ import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
-public class EmbeddableWidget extends PersistenceClassWidget {
+public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
 
-    public EmbeddableWidget(IModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
+    public EmbeddableWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
     }
 
@@ -35,14 +34,14 @@ public class EmbeddableWidget extends PersistenceClassWidget {
 
     @Override
     public void init() {
-        Embeddable embeddable = (Embeddable) this.getBaseElementSpec();
+        Embeddable embeddable = this.getBaseElementSpec();
         if (embeddable.getAttributes() == null) {
             embeddable.setAttributes(new EmbeddableAttributes());
 //            addNewIdAttribute("id");
 //            sortAttributes();
         }
         if (embeddable.getClazz() == null || embeddable.getClazz().isEmpty()) {
-            embeddable.setClazz(((JPAModelerScene) this.getModelerScene()).getNextClassName("Embeddable_"));
+            embeddable.setClazz(this.getModelerScene().getNextClassName("Embeddable_"));
         }
         setName(embeddable.getClazz());
         setLabel(embeddable.getClazz());
