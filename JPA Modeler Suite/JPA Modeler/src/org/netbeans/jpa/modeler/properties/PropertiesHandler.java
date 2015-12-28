@@ -109,7 +109,7 @@ public class PropertiesHandler {
         EntityMappings em = modelerScene.getBaseElementSpec();
         ModelerFile modelerFile = modelerScene.getModelerFile();
         ComboBoxListener<String> comboBoxListener = new ComboBoxListener<String>() {
-            private Set<String> value = new HashSet<>();
+            private final Set<String> value = new HashSet<>();
             @Override
             public void setItem(ComboBoxValue<String> value) {
                 colSpec.setCollectionType(value.getValue());
