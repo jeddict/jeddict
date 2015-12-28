@@ -180,4 +180,6 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget {
         }
     }
 
+   
+
 }

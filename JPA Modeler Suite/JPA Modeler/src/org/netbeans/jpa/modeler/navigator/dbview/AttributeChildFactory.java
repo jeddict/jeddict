@@ -88,7 +88,7 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
         for (EmbeddedAttributeWidget embeddedAttributeWidgets : classWidget.getEmbeddedAttributeWidgets()) {
             Embedded embeddedSpec = (Embedded) embeddedAttributeWidgets.getBaseElementSpec();
             EmbeddableWidget embeddableWidget = embeddedAttributeWidgets.getEmbeddableFlowWidget().getTargetEmbeddableWidget();
-//            Embeddable embeddable = (Embeddable) embeddableWidget.getBaseElementSpec();
+//            Embeddable embeddable = embeddableWidget.getBaseElementSpec();
             createKeys(embeddedSpec.getName(), embeddableWidget, columnDefList);
         }
 

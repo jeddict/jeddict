@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Image;
 import java.util.List;
 import javax.swing.JMenuItem;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.BRANCH;
@@ -22,6 +23,7 @@ import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.LEAF;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Attributes;
@@ -34,7 +36,6 @@ import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
@@ -76,11 +77,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
             entity.setClazz(this.getModelerScene().getNextClassName("Entity_"));
         }
-        
-        if(abstractEntity!=null){
-        entity.setAbstract(abstractEntity);
-        }
-       
+            
         setName(entity.getClazz());
         setLabel(entity.getClazz());
         changeAbstractionIcon(entity.getAbstract());
@@ -90,9 +87,9 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     
     private void changeAbstractionIcon(Boolean _abstract){
         if (_abstract) {
-            this.setClassIcon(ImageUtilities.loadImage(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH));
+            this.setImage(JPAModelerUtil.ABSTRACT_ENTITY);
         } else {
-            this.setClassIcon(ImageUtilities.loadImage(JPAModelerUtil.ENTITY_ICON_PATH));
+            this.setImage(JPAModelerUtil.ENTITY);
         }
     }
 
@@ -109,11 +106,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         if (entity instanceof InheritenceHandler) {
             set.put("BASIC_PROP", getInheritenceProperty());
         }
-        set.put("BASIC_PROP", JPAModelerUtil.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity.getNamedQuery()));
-        set.put("BASIC_PROP", JPAModelerUtil.getNamedEntityGraphProperty("NamedEntityGraphs", "Named Entity Graphs", "", this));
-        set.put("BASIC_PROP", JPAModelerUtil.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity.getNamedNativeQuery()));
-        set.put("BASIC_PROP", JPAModelerUtil.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
-        set.put("BASIC_PROP", JPAModelerUtil.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));
+        set.put("BASIC_PROP", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity.getNamedQuery()));
+        set.put("BASIC_PROP", PropertiesHandler.getNamedEntityGraphProperty("NamedEntityGraphs", "Named Entity Graphs", "", this));
+        set.put("BASIC_PROP", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity.getNamedNativeQuery()));
+        set.put("BASIC_PROP", PropertiesHandler.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
+        set.put("BASIC_PROP", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));
         
     }
 
@@ -219,13 +216,13 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         if (SINGLETON == inheritenceState || ROOT == inheritenceState) {
             // Issue Fix #6041 Start
             if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE) {
-                throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
+                getErrorHandler().throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
-                clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
+                getErrorHandler().clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
             }
             // Issue Fix #6041 End
         } else {
-            clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
+            getErrorHandler().clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
         }
     }
     
@@ -267,5 +264,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public void setAbstractEntity(Boolean abstractEntity) {
         this.abstractEntity = abstractEntity;
     }
+
 
 }

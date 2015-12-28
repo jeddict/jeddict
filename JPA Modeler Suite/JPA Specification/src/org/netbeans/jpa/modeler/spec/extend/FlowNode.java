@@ -21,7 +21,7 @@ import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 
 /**
  *
- * @author Gaurav_Gupta
+ * @author Gaurav Gupta
  */
 public abstract class FlowNode extends BaseElement implements IFlowNode {
 

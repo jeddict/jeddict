@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -32,7 +33,7 @@ public class BasicAttributeWidget extends BaseAttributeWidget <Basic>{
 
     public BasicAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(JPAModelerUtil.BASIC_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.BASIC_ATTRIBUTE);
 //        this.addPropertyVisibilityHandler("length", new PropertyVisibilityHandler<String>() {
 //            @Override
 //            public boolean isVisible() {
@@ -60,7 +61,7 @@ public class BasicAttributeWidget extends BaseAttributeWidget <Basic>{
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", JPAModelerUtil.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
+        set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
 
     }
 

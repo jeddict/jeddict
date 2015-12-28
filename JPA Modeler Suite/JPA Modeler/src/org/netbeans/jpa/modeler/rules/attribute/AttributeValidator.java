@@ -55,9 +55,9 @@ public class AttributeValidator {
                         }
                     }
                     if (errorExist) {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().throwError(AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().throwError(AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
                     } else {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().clearError(AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().clearError(AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
                     }
 
                 }
@@ -73,9 +73,9 @@ public class AttributeValidator {
                 PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) javaClassWidget;
                 if (persistenceClassWidget.getEmbeddedIdAttributeWidget() != null) {
                     if (persistenceClassWidget.getAllEmbeddedIdAttributeWidgets().size() > 1) {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().throwError(AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().throwError(AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
                     } else {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().clearError(AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().clearError(AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
                     }
                 }
             }
@@ -85,11 +85,11 @@ public class AttributeValidator {
     public static void scanInheritenceError(EntityWidget entityWidget) {
         if (entityWidget.getInheritenceState() == SINGLETON  || entityWidget.getInheritenceState() == ROOT ) {
             for (IdAttributeWidget attributeWidget : entityWidget.getIdAttributeWidgets()) {
-                attributeWidget.clearError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
+                attributeWidget.getErrorHandler().clearError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             }
         } else {
             for (IdAttributeWidget attributeWidget : entityWidget.getIdAttributeWidgets()) {
-                attributeWidget.throwError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
+                attributeWidget.getErrorHandler().throwError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             }
         }
 

@@ -32,7 +32,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
 
     @Override
     public void init() {
-        MappedSuperclass mappedSuperclass = (MappedSuperclass) this.getBaseElementSpec();
+        MappedSuperclass mappedSuperclass = this.getBaseElementSpec();
         if (mappedSuperclass.getAttributes() == null) {
             mappedSuperclass.setAttributes(new Attributes());
 //            addNewIdAttribute("id");
@@ -103,6 +103,6 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
 //    }
     @Override
     public InheritenceStateType getInheritenceState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       return InheritenceStateType.NONE;
     }
 }

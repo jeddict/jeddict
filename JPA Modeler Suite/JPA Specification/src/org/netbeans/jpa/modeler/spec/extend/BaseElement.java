@@ -36,7 +36,7 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 public abstract class BaseElement implements IBaseElement {
 
 //    @XmlTransient
-     @XmlAttribute @XmlIDREF
+    @XmlAttribute @XmlIDREF
     private EntityMappings rootElement;
     
     

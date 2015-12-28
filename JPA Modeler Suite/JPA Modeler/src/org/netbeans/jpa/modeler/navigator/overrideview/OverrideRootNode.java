@@ -25,7 +25,7 @@ public class OverrideRootNode extends ModelerNavigationNode {
 
     public OverrideRootNode(EntityWidget entityWidget , OverrideChildFactory factory) {
         super(Children.create(factory, true));
-        Entity entity = (Entity) entityWidget.getBaseElementSpec();
+        Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
         setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);

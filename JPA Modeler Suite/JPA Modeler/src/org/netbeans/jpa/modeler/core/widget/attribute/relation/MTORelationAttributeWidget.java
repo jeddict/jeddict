@@ -56,12 +56,12 @@ public class MTORelationAttributeWidget extends SingleRelationAttributeWidget <M
      */
     public void setManyToOneRelationFlowWidget(MTORelationFlowWidget manyToOneRelationFlowWidget) {
         this.manyToOneRelationFlowWidget = manyToOneRelationFlowWidget;
-        this.setIcon(this.getIcon());
+        this.setImage(this.getIcon());
     }
 
     @Override
     public String getIconPath() {
-        if (((ManyToOne) getBaseElementSpec()).isPrimaryKey()) {
+        if ( getBaseElementSpec().isPrimaryKey()) {
             if (manyToOneRelationFlowWidget instanceof Unidirectional) {
                 return JPAModelerUtil.PK_UMTO_ATTRIBUTE_ICON_PATH;
             } else {
@@ -78,7 +78,7 @@ public class MTORelationAttributeWidget extends SingleRelationAttributeWidget <M
 
     @Override
     public Image getIcon() {
-        if (((ManyToOne) getBaseElementSpec()).isPrimaryKey()) {
+        if ( getBaseElementSpec().isPrimaryKey()) {
             if (manyToOneRelationFlowWidget instanceof Unidirectional) {
                 return JPAModelerUtil.PK_UMTO_ATTRIBUTE;
             } else {

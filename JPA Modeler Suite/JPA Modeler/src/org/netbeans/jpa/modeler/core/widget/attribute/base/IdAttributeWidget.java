@@ -38,7 +38,7 @@ public class IdAttributeWidget extends BaseAttributeWidget <Id>{
 
     public IdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(JPAModelerUtil.ID_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.ID_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {
@@ -66,7 +66,7 @@ public class IdAttributeWidget extends BaseAttributeWidget <Id>{
 
             @Override
             public void init() {
-                idAttribute = (Id) IdAttributeWidget.this.getBaseElementSpec();
+                idAttribute = IdAttributeWidget.this.getBaseElementSpec();
             }
 
             @Override

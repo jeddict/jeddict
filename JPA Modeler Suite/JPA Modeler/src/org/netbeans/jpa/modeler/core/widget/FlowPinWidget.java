@@ -15,11 +15,11 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Image;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.PinContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.modeler.specification.model.document.IPModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowPinWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
@@ -28,9 +28,11 @@ import org.netbeans.modeler.widget.pin.PinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class FlowPinWidget<E extends FlowPin> extends PinWidget<JPAModelerScene> implements IFlowPinWidget<E> {
+public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends PinWidget<S> implements IFlowPinWidget<E> {
 
-    public FlowPinWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    protected final ErrorHandler errorHandler;
+    
+    public FlowPinWidget(S scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
@@ -41,11 +43,13 @@ public class FlowPinWidget<E extends FlowPin> extends PinWidget<JPAModelerScene>
                 FlowPinWidget.this.setLabel("");
             }
         });
+        errorHandler = new ErrorHandler(this);
     }
 
     protected String id;
     protected String name;
 
+    
     @Override
     public String getId() {
         return id;
@@ -65,9 +69,9 @@ public class FlowPinWidget<E extends FlowPin> extends PinWidget<JPAModelerScene>
     public void setName(String name) {
         this.name = name;
         if (name != null && !name.trim().isEmpty()) {
-            ((FlowPin) FlowPinWidget.this.getBaseElementSpec()).setName(name);
+             FlowPinWidget.this.getBaseElementSpec().setName(name);
         } else {
-            ((FlowPin) FlowPinWidget.this.getBaseElementSpec()).setName(null);
+             FlowPinWidget.this.getBaseElementSpec().setName(null);
         }
 
     }
@@ -136,4 +140,10 @@ public class FlowPinWidget<E extends FlowPin> extends PinWidget<JPAModelerScene>
         return contextPaletteModel;
     }
 
+    /**
+     * @return the errorHandler
+     */
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
 }

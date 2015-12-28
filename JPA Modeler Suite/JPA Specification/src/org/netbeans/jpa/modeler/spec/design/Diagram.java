@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.modeler.specification.model.document.IDiagramElement;
 
 /**
  * <p>
@@ -42,8 +41,7 @@ import org.netbeans.modeler.specification.model.document.IDiagramElement;
     "plane",
     "labelStyle"
 })
-public class Diagram
-        extends AbstractDiagram implements IDiagramElement {
+public class Diagram extends AbstractDiagram {
 
     @XmlElement(name = "plane", required = true)
     protected Plane plane;

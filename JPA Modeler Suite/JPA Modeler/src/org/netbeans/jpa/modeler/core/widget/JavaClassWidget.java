@@ -15,11 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -28,17 +24,15 @@ import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.NbBundle;
 
-public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E> {
+public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E,JPAModelerScene> {
 
     private GeneralizationFlowWidget outgoingGeneralizationFlowWidget;
     private final List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<>();
@@ -58,65 +52,20 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
 
-        this.setClassIcon(this.getNodeWidgetInfo().getModelerDocument().getImage());
-    }
-
-    private Image classIcon; 
-    private Image classErrorIcon;
-    
-
-    private final java.util.Map<String, String> errorList = new HashMap<>();
-
-    public void throwError(String key) {
-        errorList.put(key, NbBundle.getMessage(EntityValidator.class, key));
-        printError();
-    }
-
-    public void clearError(String key) {
-        errorList.remove(key);
-        printError();
-    }
-
-    private void printError() {
-        StringBuilder errorMessage = new StringBuilder();
-        errorList.keySet().stream().forEach((errorKey) -> {
-            errorMessage.append(errorList.get(errorKey));
-        });
-        if (errorMessage.length() != 0) {
-            this.setToolTipText(errorMessage.toString());
-            this.setNodeImage(getClassErrorIcon());
-        } else {
-            this.setToolTipText(null);
-            this.setNodeImage(getClassErrorIcon());
-        }
+        this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
     }
 
     
-    private void createErrorIcon(){
-        int iconWidth = ((BufferedImage) getClassIcon()).getWidth() + 3;
-        int iconHeight = ((BufferedImage) getClassIcon()).getHeight() + 3;
-        int errorIconWidth = ((BufferedImage) ERROR_ICON).getWidth();
-        int errorIconHeight = ((BufferedImage) ERROR_ICON).getHeight();
-
-        BufferedImage combined = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = combined.getGraphics();
-        g.drawImage(getClassIcon(), 0, 0, null);
-        g.drawImage(ERROR_ICON, iconWidth - errorIconWidth, iconHeight - errorIconHeight, null);
-       setClassErrorIcon(combined);
-
-    }
-    
-   
-
+     
     public abstract void deleteAttribute(AttributeWidget attributeWidget);
 
     public abstract void sortAttributes();
@@ -129,15 +78,15 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
             getBaseElementSpec().setClazz(this.name);
         }
         if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
-            throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+            getErrorHandler().throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
         } else {
-            clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+            getErrorHandler().clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
         }
-        EntityMappings entityMapping = (EntityMappings) JavaClassWidget.this.getModelerScene().getBaseElementSpec();
+        EntityMappings entityMapping = JavaClassWidget.this.getModelerScene().getBaseElementSpec();
         if (entityMapping.findAllEntity(JavaClassWidget.this.getName()).size() > 1) {
-            throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         } else {
-            clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         }
 
     }
@@ -281,33 +230,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         colorScheme.updateUI(this, this.getState(), this.getState());
     }
 
-    /**
-     * @return the classIcon
-     */
-    Image getClassIcon() {
-        return classIcon;
-    }
+    
 
-    /**
-     * @param classIcon the classIcon to set
-     */
-    void setClassIcon(Image classIcon) {
-        this.classIcon = classIcon;
-        createErrorIcon();
-        printError();
-    }
 
-    /**
-     * @return the classErrorIcon
-     */
-    Image getClassErrorIcon() {
-        return classErrorIcon;
-    }
-
-    /**
-     * @param classErrorIcon the classErrorIcon to set
-     */
-    void setClassErrorIcon(Image classErrorIcon) {
-        this.classErrorIcon = classErrorIcon;
-    }
 }

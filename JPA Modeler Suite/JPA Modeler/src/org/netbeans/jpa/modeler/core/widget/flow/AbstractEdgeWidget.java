@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.core.widget.flow;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IFlowEdge;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
@@ -119,5 +120,9 @@ public abstract class AbstractEdgeWidget extends PEdgeWidget<JPAModelerScene> im
     @Override
     public ContextPaletteModel getContextPaletteModel() {
         return null;
+    }
+    
+     @Override
+    public void createVisualPropertySet(ElementPropertySet elementPropertySet) {
     }
 }

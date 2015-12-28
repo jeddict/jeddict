@@ -15,32 +15,28 @@
  */
 package org.netbeans.db.modeler.specification.model.file.action;
 
+import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionRegistration;
-import org.openide.util.NbBundle.Messages;
 
-@ActionID(
-        category = "Build",
-        id = "jpa.file.DBViewerActionListener")
-@ActionRegistration(
-        displayName = "#CTL_DBViewerActionListener")
-@ActionReference(path = "Loaders/text/jpa+xml/Actions", position = 0, separatorAfter = +50) // Issue Fix #5846
-@Messages("CTL_DBViewerActionListener=Edit in Modeler")
-@ModelerConfig(palette = "org/netbeans/jpa/modeler/resource/document/PaletteConfig.xml",
-        document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
-        element = "org/netbeans/jpa/modeler/resource/document/ElementConfig.xml")
-@org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA", version = 2.0F, name = "JPA", displayName = "JPA 2.0 Specification")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "",
-        modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class , exportManager =ExportManagerImpl.class,
+//@ActionID(
+//        category = "Build",
+//        id = "jpa.file.DBViewerActionListener")
+//@ActionRegistration(
+//        displayName = "#CTL_DBViewerActionListener")
+//@ActionReference(path = "Loaders/text/jpa+xml/Actions", position = 0, separatorAfter = +50) // Issue Fix #5846
+//@Messages("CTL_DBViewerActionListener=Edit in Modeler")
+@ModelerConfig(palette = "org/netbeans/db/modeler/resource/document/PaletteConfig.xml",
+        document = "org/netbeans/db/modeler/resource/document/DocumentConfig.xml",
+        element = "org/netbeans/db/modeler/resource/document/ElementConfig.xml")
+@org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA_DB", version = 2.0F, name = "JPA DB Viewer", displayName = "JPA 2.0 Specification - DB Viewer")
+@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "DB Viewer", name = "DB Viewer",
+        modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class , exportManager =ExportManagerImpl.class,
          relationValidator=RelationValidator.class)
 public class DBViewerActionListener extends ModelerFileActionListener {
     

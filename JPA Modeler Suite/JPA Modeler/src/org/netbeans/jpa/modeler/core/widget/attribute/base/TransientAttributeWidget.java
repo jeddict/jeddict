@@ -30,7 +30,7 @@ public class TransientAttributeWidget extends BaseAttributeWidget <Transient>{
 
     public TransientAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(JPAModelerUtil.TRANSIENT_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.TRANSIENT_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

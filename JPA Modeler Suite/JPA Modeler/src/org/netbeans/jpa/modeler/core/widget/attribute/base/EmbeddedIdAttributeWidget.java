@@ -32,7 +32,7 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget <EmbeddedId>{
 
     public EmbeddedIdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

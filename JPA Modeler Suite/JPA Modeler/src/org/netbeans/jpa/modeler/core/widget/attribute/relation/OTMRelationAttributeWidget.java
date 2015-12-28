@@ -20,8 +20,8 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.HierarchicalRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.OneToMany;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -42,8 +42,8 @@ public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget <On
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        OneToMany otmSpec = (OneToMany) this.getBaseElementSpec();
-        set.put("BASIC_PROP", JPAModelerUtil.getCollectionTypeProperty(this.getModelerScene(), otmSpec));
+        OneToMany otmSpec =  this.getBaseElementSpec();
+        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), otmSpec));
     }
     public static PinWidgetInfo create(String id, String name) {
         PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name);
@@ -64,7 +64,7 @@ public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget <On
      */
     public void setHierarchicalRelationFlowWidget(HierarchicalRelationFlowWidget hierarchicalRelationFlowWidget) {
         this.hierarchicalRelationFlowWidget = hierarchicalRelationFlowWidget;
-        this.setIcon(this.getIcon());
+        this.setImage(this.getIcon());
     }
 
     @Override

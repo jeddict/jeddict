@@ -56,12 +56,12 @@ public class OTORelationAttributeWidget extends SingleRelationAttributeWidget <O
      */
     public void setOneToOneRelationFlowWidget(OTORelationFlowWidget oneToOneRelationFlowWidget) {
         this.oneToOneRelationFlowWidget = oneToOneRelationFlowWidget;
-        this.setIcon(this.getIcon());
+        this.setImage(this.getIcon());
     }
 
     @Override
     public String getIconPath() {
-        if (((OneToOne) getBaseElementSpec()).isPrimaryKey()) {
+        if (getBaseElementSpec().isPrimaryKey()) {
             if (oneToOneRelationFlowWidget instanceof Unidirectional) {
                 return JPAModelerUtil.PK_UOTO_ATTRIBUTE_ICON_PATH;
             } else {
@@ -78,7 +78,7 @@ public class OTORelationAttributeWidget extends SingleRelationAttributeWidget <O
 
     @Override
     public Image getIcon() {
-        if (((OneToOne) getBaseElementSpec()).isPrimaryKey()) {
+        if ( getBaseElementSpec().isPrimaryKey()) {
             if (oneToOneRelationFlowWidget instanceof Unidirectional) {
                 return JPAModelerUtil.PK_UOTO_ATTRIBUTE;
             } else {

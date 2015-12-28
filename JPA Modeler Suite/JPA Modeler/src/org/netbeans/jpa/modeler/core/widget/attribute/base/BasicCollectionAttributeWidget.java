@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -32,20 +33,20 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
 
     public BasicCollectionAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE);
 
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", JPAModelerUtil.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
+        set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
 
-        ElementCollection elementCollectionSpec = (ElementCollection) this.getBaseElementSpec();
+        ElementCollection elementCollectionSpec = this.getBaseElementSpec();
         
-          set.put("BASIC_PROP", JPAModelerUtil.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
+          set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
         set.createPropertySet( this , elementCollectionSpec.getCollectionTable());
-        set.put("COLLECTION_TABLE_PROP", JPAModelerUtil.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
+        set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
     }
 //
 //      private PropertySupport getCollectionTableColumnProperty() {

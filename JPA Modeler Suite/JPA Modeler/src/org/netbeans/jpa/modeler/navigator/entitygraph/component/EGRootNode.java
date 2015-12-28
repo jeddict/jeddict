@@ -61,7 +61,7 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
         
         checkableNode.setSelected(true);
         
-        Entity entity = (Entity) entityWidget.getBaseElementSpec();
+        Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
         setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);
@@ -74,7 +74,7 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
         this.namedEntityGraph = namedEntityGraph;
         childFactory.setParentNode(this);
         
-        Entity entity = (Entity) entityWidget.getBaseElementSpec();
+        Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
         setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);

@@ -36,7 +36,7 @@ public class EntityResultPanel extends EntityComponent<EntityResult> {
 
     public EntityResultPanel(ModelerFile modelerFile) {
         this.modelerFile = modelerFile;
-        this.entityMappings = (EntityMappings) modelerFile.getRootElement();
+        this.entityMappings = (EntityMappings)  modelerFile.getModelerScene().getBaseElementSpec();
         initComponents();
     }
 

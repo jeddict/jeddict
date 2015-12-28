@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
@@ -41,12 +42,10 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -62,7 +61,7 @@ import org.openide.util.NbBundle;
  *
  * @author Gaurav Gupta
  */
-public class AttributeWidget<E extends Attribute> extends FlowPinWidget<E> {
+public class AttributeWidget<E extends Attribute> extends FlowPinWidget<E,JPAModelerScene> {
 
 //    private boolean selectedView;
     public AttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
@@ -80,23 +79,23 @@ public class AttributeWidget<E extends Attribute> extends FlowPinWidget<E> {
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                errorHandler.clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
     }
@@ -120,62 +119,18 @@ public class AttributeWidget<E extends Attribute> extends FlowPinWidget<E> {
 //
 //        }
 //    };
-    private Image icon;
-    private static Image errorIcon = ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/error_small_icon.gif");
 
-    protected void setIcon(Image image) {
-        this.icon = image;
-        this.setPinImage(image);
-    }
+  
+//    protected void setIcon(Image image) {
+//        this.icon = image;
+//        this.setImage(image);
+//    }
+//
+//    protected void setHoverIcon(Image image) {
+//        this.icon = image;
+//        this.setImage(image);
+//    }
 
-    protected void setHoverIcon(Image image) {
-        this.icon = image;
-        this.setPinImage(image);
-    }
-
-    private final java.util.Map<String, String> errorList = new HashMap<>();
-
-    public void throwError(String key) {
-        errorList.put(key, NbBundle.getMessage(AttributeValidator.class, key));
-        printError();
-    }
-
-    public void throwError(String key, String message) {
-        errorList.put(key, message);
-        printError();
-    }
-
-    public void clearError(String key) {
-        errorList.remove(key);
-        printError();
-    }
-
-    private void printError() {
-        StringBuilder errorMessage = new StringBuilder();
-        for (String errorKey : errorList.keySet()) {
-            errorMessage.append(errorList.get(errorKey));
-        }
-        if (errorMessage.length() != 0) {
-            this.setToolTipText(errorMessage.toString());
-            this.setPinImage(getErrorIcon());
-        } else {
-            this.setToolTipText(null);
-            this.setPinImage(icon);
-        }
-    }
-
-    private Image getErrorIcon() {
-        int iconWidth = icon.getWidth(null) + 3;
-        int iconHeight = icon.getHeight(null) + 3;
-        int errorIconWidth =  errorIcon.getWidth(null);
-        int errorIconHeight = errorIcon.getHeight(null);
-
-        BufferedImage combined = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = combined.getGraphics();
-        g.drawImage(icon, 0, 0, null);
-        g.drawImage(errorIcon, iconWidth - errorIconWidth, iconHeight - errorIconHeight, null);
-        return combined;
-    }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
@@ -192,7 +147,7 @@ public class AttributeWidget<E extends Attribute> extends FlowPinWidget<E> {
                 Exceptions.printStackTrace(ex);
             }
         }
-          JPAModelerUtil.getJaxbVarTypeProperty(set , this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
+          PropertiesHandler.getJaxbVarTypeProperty(set , this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
     }
 
     private EmbeddedPropertySupport getFieldTypeProperty() {
@@ -319,19 +274,19 @@ public class AttributeWidget<E extends Attribute> extends FlowPinWidget<E> {
 
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
-            ((FlowPin) getBaseElementSpec()).setName(this.name);
+             getBaseElementSpec().setName(this.name);
         }
         if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
-            throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         } else {
-            clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         }
 
         JavaClass javaClass = (JavaClass) this.getClassWidget().getBaseElementSpec();
         if (javaClass.getAttributes().findAllAttribute(this.getName()).size() > 1) {
-            throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         } else {
-            clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         }
 
     }

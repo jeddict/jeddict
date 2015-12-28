@@ -163,17 +163,11 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
     }
 
     private synchronized void update(final JPAModelerScene modelerScene) {
-        final EntityMappings entityMappings = (EntityMappings) modelerScene.getBaseElementSpec();
+        final EntityMappings entityMappings = modelerScene.getBaseElementSpec();
         if (entityMappings != null) {
-            System.out.println("In UPDATE EM");
-
-//            RequestProcessor.getDefault().post(new Runnable() {
-//                @Override
-//                public void run() {
             SwingUtilities.invokeLater(() -> {
                 ((BeanTreeView) navigatorPane).setVisible(true);
                 ((BeanTreeView) navigatorPane).setRootVisible(false);
-//                    explorerManager.setRootContext(new AbstractNode(new EntityChildren(entityMappings)));
                 explorerManager.setRootContext(new EntitytRootNode(Children.create(new EntityChildFactory(modelerScene), true)));
                 explorerManager.getRootContext().setDisplayName("JPA Modeler - Database View");
             });

@@ -25,7 +25,7 @@ public class OverrideAssociationRootNode extends ModelerNavigationNode {
 
     public OverrideAssociationRootNode(EntityWidget entityWidget) {
         super(Children.create(new OverrideAssociationChildFactory(entityWidget), true));
-        Entity entity = (Entity) entityWidget.getBaseElementSpec();
+        Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
         setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);

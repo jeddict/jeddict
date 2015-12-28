@@ -31,7 +31,7 @@ public class VersionAttributeWidget extends BaseAttributeWidget <Version>{
 
     public VersionAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(JPAModelerUtil.VERSION_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.VERSION_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

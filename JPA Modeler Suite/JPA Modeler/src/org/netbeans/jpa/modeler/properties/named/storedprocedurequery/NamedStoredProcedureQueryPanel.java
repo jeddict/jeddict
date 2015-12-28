@@ -78,7 +78,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
 
         this.modelerFile = modelerFile;
         this.entity = entity;
-        this.entityMappings = (EntityMappings) modelerFile.getRootElement();
+        this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
         initComponents();
         DatabaseExplorerUIs.connect(dbCon_jComboBox, ConnectionManager.getDefault());
 

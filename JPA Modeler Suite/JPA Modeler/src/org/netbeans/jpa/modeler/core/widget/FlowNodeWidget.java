@@ -15,12 +15,14 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
@@ -29,9 +31,11 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public abstract class FlowNodeWidget<E extends FlowNode> extends PNodeWidget<JPAModelerScene> implements IFlowNodeWidget<E> {
+public abstract class FlowNodeWidget<E extends FlowNode,S extends IModelerScene> extends PNodeWidget<S> implements IFlowNodeWidget<E> {
 
-    public FlowNodeWidget(JPAModelerScene scene, NodeWidgetInfo node) {
+    private final ErrorHandler errorHandler;
+    
+    public FlowNodeWidget(S scene, NodeWidgetInfo node) {
         super(scene, node);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
@@ -39,6 +43,7 @@ public abstract class FlowNodeWidget<E extends FlowNode> extends PNodeWidget<JPA
         });
         setAnchorGap(4);
         
+        errorHandler = new ErrorHandler(this);
     }
 
     @Override
@@ -58,7 +63,6 @@ public abstract class FlowNodeWidget<E extends FlowNode> extends PNodeWidget<JPA
 
     @Override
     public void createVisualPropertySet(ElementPropertySet elementPropertySet) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private E baseElementSpec;
@@ -81,7 +85,7 @@ public abstract class FlowNodeWidget<E extends FlowNode> extends PNodeWidget<JPA
 
     @Override
     public void init() {
-        FlowNode flowNode = (FlowNode) this.getBaseElementSpec();
+        FlowNode flowNode = this.getBaseElementSpec();
         this.setName(flowNode.getName());
         this.setLabel(flowNode.getName());
     }
@@ -158,5 +162,14 @@ public abstract class FlowNodeWidget<E extends FlowNode> extends PNodeWidget<JPA
         }
         return contextPaletteModel;
     }
+
+    /**
+     * @return the errorHandler
+     */
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+   
 
 }

@@ -20,6 +20,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.MTMRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -42,8 +43,8 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        ManyToMany mtmSpec = (ManyToMany) this.getBaseElementSpec();
-        set.put("BASIC_PROP", JPAModelerUtil.getCollectionTypeProperty(this.getModelerScene(), mtmSpec));
+        ManyToMany mtmSpec = this.getBaseElementSpec();
+        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), mtmSpec));
     }
 
     public static PinWidgetInfo create(String id, String name) {
@@ -65,7 +66,7 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
      */
     public void setManyToManyRelationFlowWidget(MTMRelationFlowWidget manyToManyRelationFlowWidget) {
         this.manyToManyRelationFlowWidget = manyToManyRelationFlowWidget;
-        this.setIcon(this.getIcon());
+        this.setImage(this.getIcon());
     }
 
     @Override

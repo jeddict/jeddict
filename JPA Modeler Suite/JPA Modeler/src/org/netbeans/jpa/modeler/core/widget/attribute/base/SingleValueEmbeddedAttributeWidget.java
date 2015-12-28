@@ -33,7 +33,7 @@ public class SingleValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget 
 
     public SingleValueEmbeddedAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setIcon(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {
