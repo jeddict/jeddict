@@ -204,6 +204,21 @@ public class JavaSourceParserUtil {
         return attribute;
     }
 
+    public static TypeElement getCollectionTypeElement(VariableElement variableElement) {
+        TypeElement attribute = null;
+        TypeMirror attributeMirror = variableElement.asType();
+        if (attributeMirror.getKind() == TypeKind.DECLARED) {
+            DeclaredType attributeDeclaredType = (DeclaredType) attributeMirror; //java.util.List<Address>
+            DeclaredType attributeGenericType = (DeclaredType) attributeDeclaredType.getTypeArguments().get(0);//Address
+            Element attributeElement = attributeGenericType.asElement();
+            if (attributeElement.getKind() == ElementKind.CLASS && (attributeElement instanceof TypeElement)) {
+                attribute = (TypeElement) attributeElement;
+            }
+        }
+        return attribute;
+    }
+    
+    
     public static String findAnnotationValueAsString(AnnotationMirror annotation, String annotationKey) {
         String value = null;
         Map<? extends ExecutableElement, ? extends AnnotationValue> annotationMap = annotation.getElementValues();

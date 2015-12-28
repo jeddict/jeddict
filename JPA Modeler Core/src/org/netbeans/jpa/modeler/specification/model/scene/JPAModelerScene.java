@@ -398,8 +398,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             return PFactory.getColorScheme(PFactory.getNetBeans60Scheme());
         } else if (PFactory.getMetroScheme().getSimpleName().equals(entityMappings.getTheme())) {
             return PFactory.getColorScheme(PFactory.getMetroScheme());
-        } else if (PFactory.getWoodScheme().getSimpleName().equals(entityMappings.getTheme())) {
-            return PFactory.getColorScheme(PFactory.getWoodScheme());
+//        } else if (PFactory.getWoodScheme().getSimpleName().equals(entityMappings.getTheme())) {
+//            return PFactory.getColorScheme(PFactory.getWoodScheme());
         } else {
             return PFactory.getColorScheme(PFactory.getMacScheme());
         }
@@ -417,7 +417,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         colorSchemes.put("Classic", PFactory.getNetBeans60Scheme());
         colorSchemes.put("Metro", PFactory.getMetroScheme());
         colorSchemes.put("Mac", PFactory.getMacScheme());
-        colorSchemes.put("Wood", PFactory.getWoodScheme());
+//        colorSchemes.put("Wood", PFactory.getWoodScheme());
         return colorSchemes;
     }
 

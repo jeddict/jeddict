@@ -35,7 +35,7 @@ public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends Bas
 
     public EmbeddedAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(JPAModelerUtil.EMBEDDED_ATTRIBUTE);
+//        this.setImage(JPAModelerUtil.EMBEDDED_ATTRIBUTE);
     }
 
     public static PinWidgetInfo create(String id, String name) {

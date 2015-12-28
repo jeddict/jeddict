@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import java.awt.Image;
 import java.util.List;
 import javax.swing.JMenuItem;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.BRANCH;
@@ -39,7 +38,6 @@ import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
-import org.openide.util.ImageUtilities;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 

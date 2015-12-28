@@ -15,12 +15,8 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.WidgetStateHandler;
 import org.openide.util.NbBundle;

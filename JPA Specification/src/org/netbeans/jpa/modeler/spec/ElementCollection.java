@@ -218,7 +218,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
                         fieldAccess = true;
                     }
                     embeddableClassSpec = new org.netbeans.jpa.modeler.spec.Embeddable();
-                    TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
+                    TypeElement embeddableTypeElement = JavaSourceParserUtil.getCollectionTypeElement(variableElement);
                     embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
                     entityMappings.addEmbeddable(embeddableClassSpec);
                 }

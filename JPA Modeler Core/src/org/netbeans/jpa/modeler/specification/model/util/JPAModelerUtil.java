@@ -202,7 +202,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image MTOR_TARGET_ANCHOR_SHAPE;
     public static Image MTMR_SOURCE_ANCHOR_SHAPE;
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
-    public static Image ERROR_ICON;
     public static Image ABSTRACT_ENTITY;
     public static Image ENTITY;
 
@@ -275,7 +274,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             MTOR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png")).getImage();
             MTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many.gif")).getImage();
             MTMR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png")).getImage();
-            ERROR_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/error_small_icon.gif")).getImage();//create java.awt.image.BufferedImage to generate different error icon
             
             ABSTRACT_ENTITY = new ImageIcon(cl.getResource(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH)).getImage();
             ENTITY = new ImageIcon(cl.getResource(JPAModelerUtil.ENTITY_ICON_PATH)).getImage();
