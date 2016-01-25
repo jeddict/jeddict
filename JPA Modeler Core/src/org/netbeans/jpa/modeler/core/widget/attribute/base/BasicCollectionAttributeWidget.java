@@ -21,6 +21,7 @@ import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -112,8 +113,8 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
 //
 //
 
-    public static PinWidgetInfo create(String id, String name) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name);
+    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
+        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
         pinWidgetInfo.setDocumentId(BasicCollectionAttributeWidget.class.getSimpleName());
         return pinWidgetInfo;
     }

@@ -6,38 +6,33 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.util.ArrayList;
-import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ManyToOneAccessor;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
  *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface ManyToOne {
- *           Class targetEntity() default void.class;
- *           CascadeType[] cascade() default {};
- *           FetchType fetch() default EAGER;
- *           boolean optional() default true;
- *         }
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface ManyToOne {
+ * Class targetEntity() default void.class; CascadeType[] cascade() default {};
+ * FetchType fetch() default EAGER; boolean optional() default true; }
  *
  *
  *
- * <p>Java class for many-to-one complex type.
+ * <p>
+ * Java class for many-to-one complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  *
  * <pre>
  * &lt;complexType name="many-to-one">
@@ -68,10 +63,8 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "many-to-one", propOrder = {
-})
+@XmlType(name = "many-to-one", propOrder = {})
 public class ManyToOne extends SingleRelationAttribute {
-
 
     @XmlAttribute(name = "maps-id")
     protected String mapsId;//REVENG PENDING
@@ -79,9 +72,8 @@ public class ManyToOne extends SingleRelationAttribute {
     public void load(Element element, VariableElement variableElement) {
         AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ManyToOne");
         super.load(relationAnnotationMirror, element, variableElement);
-        
-    }
 
+    }
 
     /**
      * Gets the value of the mapsId property.
@@ -103,7 +95,30 @@ public class ManyToOne extends SingleRelationAttribute {
         this.mapsId = value;
     }
 
-    
-  
+    public ManyToOneAccessor getAccessor() {
+        ManyToOneAccessor accessor = new ManyToOneAccessor();
+        accessor.setName(name);
+        accessor.setTargetEntityName(getTargetEntity());
+        accessor.setId(isPrimaryKey());
+        
+        if (joinTable != null) {
+            accessor.setJoinTable(joinTable.getAccessor());
+        }
+        accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
+        return accessor;
+    }
 
+        /**
+     * @return the owner
+     */
+    public boolean isOwner() {
+        return true;//always owner
+    }
+
+    /**
+     * @param owner the owner to set
+     */
+    public void setOwner(boolean owner) {
+            //skip
+    }
 }

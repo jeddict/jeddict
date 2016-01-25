@@ -4,20 +4,21 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for constraint-mode.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
- * <pre>
+ * Java class for constraint-mode.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * <
+ * pre>
  * &lt;simpleType name="constraint-mode">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
  *     &lt;enumeration value="CONSTRAINT"/>
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "constraint-mode")
 @XmlEnum

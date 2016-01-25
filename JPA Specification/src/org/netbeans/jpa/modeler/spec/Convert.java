@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,23 +11,22 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * 
- * 
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Convert {
- *           Class converter() default void.class;
- *           String attributeName() default "";
- *           boolean disableConversion() default false;
- *         }
- * 
- *       
- * 
- * <p>Java class for convert complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME) public @interface Convert
+ * { Class converter() default void.class; String attributeName() default "";
+ * boolean disableConversion() default false; }
+ *
+ *
+ *
+ * <p>
+ * Java class for convert complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="convert">
  *   &lt;complexContent>
@@ -44,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "convert", propOrder = {
@@ -63,11 +60,9 @@ public class Convert {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getDescription() {
         return description;
@@ -75,11 +70,9 @@ public class Convert {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -87,11 +80,9 @@ public class Convert {
 
     /**
      * Gets the value of the converter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getConverter() {
         return converter;
@@ -99,11 +90,9 @@ public class Convert {
 
     /**
      * Sets the value of the converter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setConverter(String value) {
         this.converter = value;
@@ -111,11 +100,9 @@ public class Convert {
 
     /**
      * Gets the value of the attributeName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getAttributeName() {
         return attributeName;
@@ -123,11 +110,9 @@ public class Convert {
 
     /**
      * Sets the value of the attributeName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setAttributeName(String value) {
         this.attributeName = value;
@@ -135,11 +120,9 @@ public class Convert {
 
     /**
      * Gets the value of the disableConversion property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is {@link Boolean }
+     *
      */
     public Boolean isDisableConversion() {
         return disableConversion;
@@ -147,11 +130,9 @@ public class Convert {
 
     /**
      * Sets the value of the disableConversion property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is {@link Boolean }
+     *
      */
     public void setDisableConversion(Boolean value) {
         this.disableConversion = value;

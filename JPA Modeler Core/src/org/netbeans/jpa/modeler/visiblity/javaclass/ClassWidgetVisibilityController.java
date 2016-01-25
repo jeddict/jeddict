@@ -96,7 +96,7 @@ public class ClassWidgetVisibilityController extends GenericDialog {
                 embeddedId.setVisibile(true);
             }
             for (ElementCollection elementCollection : entity.getAttributes().getElementCollection()) {
-                if (elementCollection.getConnectedClassId() != null) {
+                if (elementCollection.getConnectedClass() != null) {
                     elementCollection.setVisibile(true);
                 }
             }
@@ -114,7 +114,7 @@ public class ClassWidgetVisibilityController extends GenericDialog {
                 embeddedId.setVisibile(true);
             }
             for (ElementCollection elementCollection : mappedSuperclass.getAttributes().getElementCollection()) {
-                if (elementCollection.getConnectedClassId() != null) {
+                if (elementCollection.getConnectedClass() != null) {
                     elementCollection.setVisibile(true);
                 }
             }
@@ -128,7 +128,7 @@ public class ClassWidgetVisibilityController extends GenericDialog {
                 embedded.setVisibile(true);
             }
             for (ElementCollection elementCollection : embeddable.getAttributes().getElementCollection()) { // remove this block // Embeddable can not contain ElementCollection[Embeddable]
-                if (elementCollection.getConnectedClassId() != null) {
+                if (elementCollection.getConnectedClass() != null) {
                     elementCollection.setVisibile(true);
                 }
             }
@@ -138,59 +138,59 @@ public class ClassWidgetVisibilityController extends GenericDialog {
     private void manageClassVisibility() {
         for (Entity entity : entityMappings.getEntity()) {
             for (RelationAttribute relationAttribute : entity.getAttributes().getRelationAttributes()) {
-                if (!entityMappings.getEntity(relationAttribute.getConnectedEntityId()).isVisibile()) {
+                if (!relationAttribute.getConnectedEntity().isVisibile()) {
                     relationAttribute.setVisibile(false);
                 }
             }
             for (Embedded embedded : entity.getAttributes().getEmbedded()) {
-                if (!entityMappings.getEmbedded(embedded.getConnectedClassId()).isVisibile()) {
+                if (!embedded.getConnectedClass().isVisibile()) {
                     embedded.setVisibile(false);
                 }
             }
             EmbeddedId embeddedId = entity.getAttributes().getEmbeddedId();
-            if (embeddedId != null && !entityMappings.getEmbedded(embeddedId.getConnectedClassId()).isVisibile()) {
+            if (embeddedId != null && !embeddedId.getConnectedClass().isVisibile()) {
                 embeddedId.setVisibile(false);
             }
             for (ElementCollection elementCollection : entity.getAttributes().getElementCollection()) {
-                if (elementCollection.getConnectedClassId() != null && !entityMappings.getEmbedded(elementCollection.getConnectedClassId()).isVisibile()) {
+                if (elementCollection.getConnectedClass() != null && !elementCollection.getConnectedClass().isVisibile()) {
                     elementCollection.setVisibile(false);
                 }
             }
         }
         for (MappedSuperclass mappedSuperclass : entityMappings.getMappedSuperclass()) {
             for (RelationAttribute relationAttribute : mappedSuperclass.getAttributes().getRelationAttributes()) {
-                if (!entityMappings.getEntity(relationAttribute.getConnectedEntityId()).isVisibile()) {
+                if (!relationAttribute.getConnectedEntity().isVisibile()) {
                     relationAttribute.setVisibile(false);
                 }
             }
             for (Embedded embedded : mappedSuperclass.getAttributes().getEmbedded()) {
-                if (!entityMappings.getEmbedded(embedded.getConnectedClassId()).isVisibile()) {
+                if (!embedded.getConnectedClass().isVisibile()) {
                     embedded.setVisibile(false);
                 }
             }
             EmbeddedId embeddedId = mappedSuperclass.getAttributes().getEmbeddedId();
-            if (embeddedId != null && !entityMappings.getEmbedded(embeddedId.getConnectedClassId()).isVisibile()) {
+            if (embeddedId != null && !embeddedId.getConnectedClass().isVisibile()) {
                 embeddedId.setVisibile(false);
             }
             for (ElementCollection elementCollection : mappedSuperclass.getAttributes().getElementCollection()) {
-                if (elementCollection.getConnectedClassId() != null && !entityMappings.getEmbedded(elementCollection.getConnectedClassId()).isVisibile()) {
+                if (elementCollection.getConnectedClass() != null && !elementCollection.getConnectedClass().isVisibile()) {
                     elementCollection.setVisibile(false);
                 }
             }
         }
         for (Embeddable embeddable : entityMappings.getEmbeddable()) {
             for (RelationAttribute relationAttribute : embeddable.getAttributes().getRelationAttributes()) {
-                if (!entityMappings.getEntity(relationAttribute.getConnectedEntityId()).isVisibile()) {
+                if (!relationAttribute.getConnectedEntity().isVisibile()) {
                     relationAttribute.setVisibile(false);
                 }
             }
             for (Embedded embedded : embeddable.getAttributes().getEmbedded()) {
-                if (!entityMappings.getEmbedded(embedded.getConnectedClassId()).isVisibile()) {
+                if (!embedded.getConnectedClass().isVisibile()) {
                     embedded.setVisibile(false);
                 }
             }
             for (ElementCollection elementCollection : embeddable.getAttributes().getElementCollection()) {// remove this block // Embeddable can not contain ElementCollection[Embeddable]
-                if (elementCollection.getConnectedClassId() != null && !entityMappings.getEmbedded(elementCollection.getConnectedClassId()).isVisibile()) {
+                if (elementCollection.getConnectedClass() != null && !elementCollection.getConnectedClass().isVisibile()) {
                     elementCollection.setVisibile(false);
                 }
             }

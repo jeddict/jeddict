@@ -57,7 +57,6 @@ public class QueryHint {
     @XmlAttribute(required = true)
     protected String value;
 
-    
     public static QueryHint load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.QueryHint");
@@ -71,7 +70,7 @@ public class QueryHint {
         return queryHint;
 
     }
-    
+
     /**
      * Gets the value of the description property.
      *

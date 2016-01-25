@@ -34,6 +34,10 @@ private ConstructorResult constructorResult;
     public ConstructorResultPanel(ModelerFile modelerFile) {
         
         this.modelerFile=modelerFile;
+    }
+    
+             @Override
+    public void postConstruct() {
         initComponents();
     }
 

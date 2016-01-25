@@ -79,9 +79,9 @@ public class NamedNativeQuery {
             namedNativeQuery.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             namedNativeQuery.query = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "query");
             Object resultClass = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultClass");
-            namedNativeQuery.resultClass = resultClass==null?null:resultClass.toString();
+            namedNativeQuery.resultClass = resultClass == null ? null : resultClass.toString();
             Object resultSetMapping = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultSetMapping");
-            namedNativeQuery.resultSetMapping = resultSetMapping==null?null:resultSetMapping.toString();
+            namedNativeQuery.resultSetMapping = resultSetMapping == null ? null : resultSetMapping.toString();
 
             List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
             if (hintsAnnot != null) {
@@ -92,7 +92,6 @@ public class NamedNativeQuery {
         }
         return namedNativeQuery;
     }
-    
 
     /**
      * Gets the value of the description property.
@@ -222,7 +221,5 @@ public class NamedNativeQuery {
     public void setResultSetMapping(String value) {
         this.resultSetMapping = value;
     }
-
-  
 
 }

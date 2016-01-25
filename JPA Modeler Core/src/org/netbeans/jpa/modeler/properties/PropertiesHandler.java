@@ -44,6 +44,7 @@ import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
@@ -199,8 +200,10 @@ public class PropertiesHandler {
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "fetchType", "Fetch Type", "", comboBoxListener);
     }
-
-    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec) {
+ public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec) {
+   return getJoinColumnsProperty( id, name, desc, modelerScene,joinColumnsSpec,null);
+ }
+    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec,Entity entity) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
 
@@ -209,7 +212,7 @@ public class PropertiesHandler {
         columns.add(new Column("Column Name", false, String.class));
         columns.add(new Column("Referenced Column Name", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new JoinColumnPanel());
+        attributeEntity.setCustomDialog(new JoinColumnPanel(entity));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
@@ -329,7 +332,7 @@ public class PropertiesHandler {
         columns.add(new Column("ProcedureName", false, String.class));
         columns.add(new Column("Parameters", false, Integer.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedStoredProcedureQueryPanel(modelerScene.getModelerFile(), entity));
+        attributeEntity.setCustomDialog(new NamedStoredProcedureQueryPanel(modelerScene.getModelerFile()));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;

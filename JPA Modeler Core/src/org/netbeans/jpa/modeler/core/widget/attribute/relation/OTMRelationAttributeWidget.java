@@ -24,6 +24,7 @@ import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -45,8 +46,8 @@ public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget <On
         OneToMany otmSpec =  this.getBaseElementSpec();
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), otmSpec));
     }
-    public static PinWidgetInfo create(String id, String name) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name);
+    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
+        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
         pinWidgetInfo.setDocumentId(OTMRelationAttributeWidget.class.getSimpleName());
         return pinWidgetInfo;
     }

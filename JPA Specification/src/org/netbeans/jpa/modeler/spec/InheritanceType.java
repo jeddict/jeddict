@@ -44,8 +44,8 @@ public enum InheritanceType {
     public static InheritanceType fromValue(String v) {
         return valueOf(v);
     }
-    
-       public static InheritanceType load(Element element , AnnotationMirror annotationMirror ) {        
+
+    public static InheritanceType load(Element element, AnnotationMirror annotationMirror) {
         InheritanceType inheritanceType = null;
         if (annotationMirror != null) {
             Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "strategy");
@@ -55,8 +55,6 @@ public enum InheritanceType {
         }
         return inheritanceType;
     }
-    
-    
 
     private final String name;
 

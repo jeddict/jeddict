@@ -30,7 +30,7 @@ import org.openide.nodes.Sheet;
  *
  * @author Gaurav_Gupta
  */
-public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget {
+public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModelerScene> {
 
     private EmbeddableWidget targetEmbeddableWidget;
     private EmbeddedAttributeWidget sourceEmbeddedAttributeWidget;

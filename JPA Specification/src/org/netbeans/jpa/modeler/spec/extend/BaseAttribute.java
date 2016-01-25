@@ -17,9 +17,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
-import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 
 /**
  *
@@ -27,82 +25,24 @@ import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
  */
 public abstract class BaseAttribute extends Attribute {
 
-    @XmlAttribute(name = "attribute-type", required = true)
-    private String attributeType;
+
 
     /**
      * @return the attributeType
      */
-    public String getAttributeType() {
-        return attributeType;
-    }
+    public abstract String getAttributeType();
 
-    public boolean isPrecisionAttributeType() {
-//        if (attributeType.equals("byte") || attributeType.equals("Byte")) {
-//            return true;
-//        } else if (attributeType.equals("short") || attributeType.equals("Short")) {
-//            return true;
-//        } else if (attributeType.equals("int") || attributeType.equals("Integer")) {
-//            return true;
-//        } else if (attributeType.equals("long") || attributeType.equals("Long")) {
-//            return true;
-//        } else if (attributeType.equals("float") || attributeType.equals("Float")) {
-//            return true;
-//        } else if (attributeType.equals("double") || attributeType.equals("Double")) {
-//            return true;
-//        } else if (attributeType.equals("java.math.BigInteger") || attributeType.equals("java.math.BigDecimal")) {
-//            return true;
-//        }
 
-        if (attributeType.equals("java.math.BigDecimal")) {
-            return true;
-        }
-        return false;
-    }
 
-    public boolean isScaleAttributeType() {
-//        if (attributeType.equals("float") || attributeType.equals("Float")) {
-//            return true;
-//        } else if (attributeType.equals("double") || attributeType.equals("Double")) {
-//            return true;
-//        } else if (attributeType.equals("java.math.BigDecimal")) {
-//            return true;
-//        }
-        if (attributeType.equals("java.math.BigDecimal")) {
-            return true;
-        }
-        return false;
-    }
 
-    public boolean isTextAttributeType() {
-        if (attributeType.equals("String")) {
-            return true;
-        }
-        return false;
-    }
-
-    
-    /**
-     * @param attributeType the attributeType to set
-     */
-    public void setAttributeType(String attributeType) {
-        if (attributeType.indexOf(LANG_PACKAGE) == 0) {
-            this.attributeType = attributeType.substring(LANG_PACKAGE.length()+1);
-        } else {
-            this.attributeType = attributeType;
-        }
-    }
-
-    
     @Override
-    public List<JaxbVariableType> getJaxbVariableList(){
-        List<JaxbVariableType> jaxbVariableTypeList = new ArrayList<JaxbVariableType>();
+    public List<JaxbVariableType> getJaxbVariableList() {
+        List<JaxbVariableType> jaxbVariableTypeList = new ArrayList<>();
         jaxbVariableTypeList.add(JaxbVariableType.XML_ATTRIBUTE);
         jaxbVariableTypeList.add(JaxbVariableType.XML_ELEMENT);
         jaxbVariableTypeList.add(JaxbVariableType.XML_VALUE);
         jaxbVariableTypeList.add(JaxbVariableType.XML_TRANSIENT);
         return jaxbVariableTypeList;
     }
-
 
 }

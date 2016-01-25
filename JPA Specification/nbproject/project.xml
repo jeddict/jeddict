@@ -33,6 +33,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.jpa.ri</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.libs.javacapi</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -46,6 +54,15 @@
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.db</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.65.0.30</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -118,10 +135,12 @@
                 </dependency>
             </module-dependencies>
             <friend-packages>
+                <friend>org.netbeans.db.modeler</friend>
                 <friend>org.netbeans.jpa.modeler</friend>
                 <friend>org.netbeans.jpa.modeler.dbre</friend>
                 <friend>org.netbeans.jpa.modeler.jcre</friend>
                 <friend>org.netbeans.orm.converter</friend>
+                <package>org.netbeans.db.modeler.manager</package>
                 <package>org.netbeans.jpa.modeler.source</package>
                 <package>org.netbeans.jpa.modeler.spec</package>
                 <package>org.netbeans.jpa.modeler.spec.design</package>

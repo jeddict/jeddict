@@ -69,7 +69,6 @@ public class NamedQuery {
     @XmlAttribute(required = true)
     protected String name;
 
-    
     public static NamedQuery load(Element element, AnnotationMirror annotationMirror) {
         NamedQuery namedQuery = null;
         if (annotationMirror != null) {
@@ -80,7 +79,7 @@ public class NamedQuery {
             Object lockModeObj = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "lockMode");
             if (lockModeObj != null) {
                 namedQuery.lockMode = LockModeType.valueOf(lockModeObj.toString());
-            }  
+            }
             List hintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "hints");
             if (hintsAnnot != null) {
                 for (Object hintObj : hintsAnnot) {
@@ -90,8 +89,7 @@ public class NamedQuery {
         }
         return namedQuery;
     }
-    
-    
+
     /**
      * Gets the value of the description property.
      *
@@ -200,7 +198,5 @@ public class NamedQuery {
     public void setName(String value) {
         this.name = value;
     }
-
-    
 
 }

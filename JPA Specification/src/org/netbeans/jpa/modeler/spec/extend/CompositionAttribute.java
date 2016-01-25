@@ -18,6 +18,8 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlIDREF;
+import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 
 /**
@@ -27,23 +29,32 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 public abstract class CompositionAttribute extends BaseAttribute implements AccessTypeHandler {
 
     @XmlAttribute(name = "connected-class-id", required = true)
-    private String connectedClassId;
-  
-    /**
-     * @return the connectedClassId
+    @XmlIDREF
+    private Embeddable connectedClass;
+
+    @Override
+      public String getAttributeType() {
+          if(connectedClass!=null){
+        return connectedClass.getClazz();
+          } else {
+              return null;//TODO init called before initialization of connectedClass
+          }
+    }
+
+      /**
+     * @return the connectedClass
      */
-    public String getConnectedClassId() {
-        return connectedClassId;
+    public Embeddable getConnectedClass() {
+        return connectedClass;
     }
 
     /**
-     * @param connectedClassId the connectedClassId to set
+     * @param connectedClass the connectedClass to set
      */
-    public void setConnectedClassId(String connectedClassId) {
-        this.connectedClassId = connectedClassId;
+    public void setConnectedClass(Embeddable connectedClass) {
+        this.connectedClass = connectedClass;
     }
 
-    
     @Override
     public List<JaxbVariableType> getJaxbVariableList() {
         List<JaxbVariableType> jaxbVariableTypeList = new ArrayList<JaxbVariableType>();

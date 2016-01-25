@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -22,21 +23,22 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- *         Defines the settings and mappings for embeddable objects. Is 
- *         allowed to be sparsely populated and used in conjunction with 
- *         the annotations. Alternatively, the metadata-complete attribute 
- *         can be used to indicate that no annotations are to be processed 
- *         in the class. If this is the case then the defaulting rules will 
- *         be recursively applied.
+ * Defines the settings and mappings for embeddable objects. Is allowed to be
+ * sparsely populated and used in conjunction with the annotations.
+ * Alternatively, the metadata-complete attribute can be used to indicate that
+ * no annotations are to be processed in the class. If this is the case then the
+ * defaulting rules will be recursively applied.
  *
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface Embeddable {}
+ * @Target({TYPE}) @Retention(RUNTIME) public @interface Embeddable {}
  *
  *
  *
- * <p>Java class for embeddable complex type.
+ * <p>
+ * Java class for embeddable complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  *
  * <pre>
  * &lt;complexType name="embeddable">
@@ -58,15 +60,12 @@ import org.netbeans.modeler.core.NBModelerUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "embeddable", propOrder = {
-//    "description",
-    "attributes",
-//    "interfaces"
+    //    "description",
+    "attributes", //    "interfaces"
 })
 public class Embeddable extends ManagedClass {
 
     protected EmbeddableAttributes attributes;
-    
-    
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -78,7 +77,6 @@ public class Embeddable extends ManagedClass {
             super.load(entityMappings, element, fieldAccess);
         }
     }
-
 
     /**
      * Gets the value of the attributes property.
@@ -103,8 +101,6 @@ public class Embeddable extends ManagedClass {
     public void setAttributes(EmbeddableAttributes value) {
         this.attributes = value;
     }
-    
-
 
     @Override
     public String getName() {
@@ -119,6 +115,18 @@ public class Embeddable extends ManagedClass {
     @Override
     public void setAttributes(IAttributes attributes) {
         this.attributes = (EmbeddableAttributes) attributes;
+    }
+
+    public EmbeddableAccessor getAccessor() {
+        EmbeddableAccessor accessor = new EmbeddableAccessor();
+        accessor.setClassName(clazz);
+        accessor.setAccess("VIRTUAL");
+        accessor.setAttributes(attributes.getAccessor());
+        if (getSuperclass() != null) {
+            accessor.setParentClassName(getSuperclass().getClazz());
+        }
+        return accessor;
+
     }
 
 }

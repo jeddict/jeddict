@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget.relation.flow.direction;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
 /**
  *
@@ -26,11 +27,11 @@ public interface Bidirectional extends Direction {
     /**
      * @return the targetRelationAttributeWidget
      */
-    public RelationAttributeWidget getTargetRelationAttributeWidget();
+    public RelationAttributeWidget<RelationAttribute> getTargetRelationAttributeWidget();
 
     /**
      * @param targetRelationAttributeWidget the targetRelationAttributeWidget to
      * set
      */
-    public void setTargetRelationAttributeWidget(RelationAttributeWidget targetRelationAttributeWidget);
+    public void setTargetRelationAttributeWidget(RelationAttributeWidget<RelationAttribute> targetRelationAttributeWidget);
 }

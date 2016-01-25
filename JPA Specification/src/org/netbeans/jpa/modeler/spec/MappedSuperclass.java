@@ -9,16 +9,10 @@ package org.netbeans.jpa.modeler.spec;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.MappedSuperclassAccessor;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -70,8 +64,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "mapped-superclass", propOrder = {
-//    "description",
+@XmlType(name = "mapped-superclass", propOrder = { //    "description",
 //    "excludeDefaultListeners",
 //    "excludeSuperclassListeners",
 //    "entityListeners",
@@ -86,12 +79,11 @@ import org.netbeans.modeler.core.NBModelerUtil;
 })
 public class MappedSuperclass extends IdentifiableClass {
 
-
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
 //        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.MappedSuperclass");
         if (entityMappings.findMappedSuperclass(element.getSimpleName().toString()) == null) {
-                    super.load(entityMappings, element, fieldAccess);
+            super.load(entityMappings, element, fieldAccess);
 
             TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
             if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
@@ -109,13 +101,9 @@ public class MappedSuperclass extends IdentifiableClass {
                     //Skip
                 }
             }
-            
-            
+
         }
     }
-
-
-
 
     @Override
     public String getName() {
@@ -132,8 +120,18 @@ public class MappedSuperclass extends IdentifiableClass {
         this.attributes = (Attributes) attributes;
     }
 
+    public MappedSuperclassAccessor getAccessor() {
+        MappedSuperclassAccessor accessor = new MappedSuperclassAccessor();
+        accessor.setClassName(clazz);
+//        accessor.set
+//        accessor.setAccess("VIRTUAL");
+        accessor.setAttributes(attributes.getAccessor());
+        if (getSuperclass() != null) {
+            accessor.setParentClassName(getSuperclass().getClazz());
+        }
+        return accessor;
 
-
-    
+    }
 
 }
+    

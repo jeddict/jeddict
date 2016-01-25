@@ -8,6 +8,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -16,20 +17,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface CollectionTable {
- *           String name() default "";
- *           String catalog() default "";
- *           String schema() default "";
- *           JoinColumn[] joinColumns() default {};
- *           UniqueConstraint[] uniqueConstraints() default {};
- *           Index[] indexes() default {};
- *         }
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface
+ * CollectionTable { String name() default ""; String catalog() default "";
+ * String schema() default ""; JoinColumn[] joinColumns() default {};
+ * UniqueConstraint[] uniqueConstraints() default {}; Index[] indexes() default
+ * {}; }
  *
  *
  *
@@ -145,11 +144,9 @@ public class CollectionTable {
 
     /**
      * Gets the value of the foreignKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @return possible object is {@link ForeignKey }
+     *
      */
     public ForeignKey getForeignKey() {
         return foreignKey;
@@ -157,11 +154,9 @@ public class CollectionTable {
 
     /**
      * Sets the value of the foreignKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
      */
     public void setForeignKey(ForeignKey value) {
         this.foreignKey = value;
@@ -198,25 +193,24 @@ public class CollectionTable {
 
     /**
      * Gets the value of the index property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the index property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the index property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIndex().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Index }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link Index }
+     *
+     *
      */
     public List<Index> getIndex() {
         if (index == null) {
@@ -285,4 +279,12 @@ public class CollectionTable {
         this.schema = value;
     }
 
+    public CollectionTableMetadata getAccessor() {
+        CollectionTableMetadata accessor = new CollectionTableMetadata();
+        accessor.setName(name);
+        accessor.setCatalog(catalog);
+        accessor.setSchema(schema);
+        accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
+        return accessor;
+    }
 }

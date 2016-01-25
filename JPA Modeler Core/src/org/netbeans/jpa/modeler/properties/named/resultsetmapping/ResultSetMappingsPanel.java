@@ -49,13 +49,16 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         this.modelerFile = modelerFile;
         this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
         entity = null;
-        initComponents();
     }
 
     public ResultSetMappingsPanel(ModelerFile modelerFile, org.netbeans.jpa.modeler.spec.Entity entity) {
         this.modelerFile = modelerFile;
         this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
         this.entity = entity;
+    }
+    
+             @Override
+    public void postConstruct() {
         initComponents();
     }
 

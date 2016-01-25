@@ -9,7 +9,6 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,12 +16,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -141,7 +142,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;//REVENG PENDING
     @XmlElement(name = "primary-key-foreign-key")
     protected ForeignKey primaryKeyForeignKey;//REVENG PENDING JPA 2.1
-    
+
     protected Inheritance inheritance;
     @XmlElement(name = "discriminator-value")
     protected String discriminatorValue;
@@ -166,7 +167,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlAttribute
     protected Boolean cacheable;//REVENG PENDING
 
-   
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
@@ -658,12 +658,45 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * {@link NamedEntityGraph }
      *
      *
+     * @return 
      */
     public List<NamedEntityGraph> getNamedEntityGraph() {
         if (namedEntityGraph == null) {
-            namedEntityGraph = new ArrayList<NamedEntityGraph>();
+            namedEntityGraph = new ArrayList<>();
         }
         return this.namedEntityGraph;
+    }
+
+    private void processSuperClass(JavaClass _class, EntityAccessor accessor) {
+        if (_class.getSuperclass() != null) {
+            if (_class.getSuperclass() instanceof MappedSuperclass) {
+                MappedSuperclass superclass = (MappedSuperclass) _class.getSuperclass();
+                superclass.getAttributes().updateAccessor(accessor.getAttributes());
+                processSuperClass(superclass, accessor);
+            } else {
+                accessor.setParentClassName(_class.getSuperclass().getClazz());
+            }
+        }
+    }
+    
+    public EntityAccessor getAccessor() {
+        EntityAccessor accessor = new EntityAccessor();
+        accessor.setName(name);
+        accessor.setClassName(clazz);
+        accessor.setAccess("VIRTUAL");
+        accessor.setAttributes(attributes.getAccessor());
+        if (table != null) {
+            accessor.setTable(table.getAccessor());
+        }
+        processSuperClass(this, accessor);
+        if (inheritance != null) {
+            accessor.setInheritance(inheritance.getAccessor());
+        }
+        if (discriminatorColumn != null) {
+            accessor.setDiscriminatorColumn(discriminatorColumn.getAccessor());
+        }
+        accessor.setDiscriminatorValue(discriminatorValue);
+        return accessor;
     }
 
 }

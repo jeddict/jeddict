@@ -31,7 +31,6 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
  *
  * @author Gaurav Gupta
  */
-
 public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandler {
 
 //    private List<String> annotation;
@@ -45,16 +44,15 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     private JaxbXmlAttribute jaxbXmlAttribute;
     @XmlElement(name = "xe")//(name = "jaxb-xml-element")
     private JaxbXmlElement jaxbXmlElement;
-    @XmlElement(name="xe")//(name = "jaxb-xml-element")
+    @XmlElement(name = "xe")//(name = "jaxb-xml-element")
     @XmlElementWrapper(name = "xel")//(name = "jaxb-xml-element-list")
     private List<JaxbXmlElement> jaxbXmlElementList;
 //    @XmlAttribute(name = "jaxb-xml-list")
 //    private Boolean jaxbXmlList;
 
-       
     @XmlAttribute(name = "name", required = true)
     protected String name;
-   
+
     /**
      * Gets the value of the name property.
      *
@@ -76,6 +74,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     public void setName(String value) {
         this.name = value;
     }
+
     /**
      * @return the annotation
      */
@@ -198,10 +197,8 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 //    public void setJaxbXmlList(Boolean jaxbXmlList) {
 //        this.jaxbXmlList = jaxbXmlList;
 //    }
-    
-    
     @Override
-    public List<JaxbVariableType> getJaxbVariableList(){
+    public List<JaxbVariableType> getJaxbVariableList() {
         return Arrays.asList(JaxbVariableType.values());
     }
 }

@@ -54,31 +54,30 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "fieldResult"
 })
 public class EntityResult {
-    
+
     @XmlElement(name = "fr")//(name = "field-result")
     protected List<FieldResult> fieldResult;
     @XmlAttribute(name = "ec", required = true)//(name = "entity-class", required = true)
     protected String entityClass;
     @XmlAttribute(name = "dcl")//(name = "discriminator-column")
     protected String discriminatorColumn;
-    
-    
-     public static EntityResult load(Element element, AnnotationMirror annotationMirror) {
-         EntityResult entityResult = null;
+
+    public static EntityResult load(Element element, AnnotationMirror annotationMirror) {
+        EntityResult entityResult = null;
         if (annotationMirror != null) {
             entityResult = new EntityResult();
             entityResult.discriminatorColumn = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "discriminatorColumn");
             Object entityClass = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "entityClass");
-            entityResult.entityClass = entityClass==null?null:entityClass.toString();
-            List fieldResultList = (List)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fields");
+            entityResult.entityClass = entityClass == null ? null : entityClass.toString();
+            List fieldResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fields");
             if (fieldResultList != null) {
                 for (Object fieldResultObj : fieldResultList) {
                     entityResult.getFieldResult().add(FieldResult.load(element, (AnnotationMirror) fieldResultObj));
                 }
             }
         }
-       return entityResult;
-     }
+        return entityResult;
+    }
 
     /**
      * Gets the value of the fieldResult property.

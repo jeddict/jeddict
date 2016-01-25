@@ -28,6 +28,10 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
 private final ModelerFile modelerFile;
     public ColumnResultPanel(ModelerFile modelerFile) {
         this.modelerFile=modelerFile;
+    }
+    
+            @Override
+    public void postConstruct() {
         initComponents();
     }
 

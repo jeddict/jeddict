@@ -23,5 +23,6 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
  * @author Gaurav Gupta
  */
 public interface ReverseEngineeringController {
-   void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess);
+
+    void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess);
 }

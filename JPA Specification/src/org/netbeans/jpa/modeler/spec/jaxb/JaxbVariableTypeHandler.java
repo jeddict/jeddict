@@ -31,7 +31,7 @@ public interface JaxbVariableTypeHandler {
     /**
      * @param jaxbVariableType the jaxbVariableType to set
      */
-    public void setJaxbVariableType(JaxbVariableType jaxbVariableType) ;
+    public void setJaxbVariableType(JaxbVariableType jaxbVariableType);
 
     /**
      * @return the jaxbXmlAttribute
@@ -46,7 +46,7 @@ public interface JaxbVariableTypeHandler {
     /**
      * @return the jaxbXmlElement
      */
-    public JaxbXmlElement getJaxbXmlElement() ;
+    public JaxbXmlElement getJaxbXmlElement();
 
     /**
      * @param jaxbXmlElement the jaxbXmlElement to set
@@ -62,6 +62,6 @@ public interface JaxbVariableTypeHandler {
      * @param jaxbXmlElementList the jaxbXmlElementList to set
      */
     public void setJaxbXmlElementList(List<JaxbXmlElement> jaxbXmlElementList);
-    
+
     public List<JaxbVariableType> getJaxbVariableList();
 }

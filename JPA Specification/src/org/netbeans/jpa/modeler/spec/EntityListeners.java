@@ -54,19 +54,18 @@ public class EntityListeners {
     @XmlElement(name = "entity-listener")
     protected List<EntityListener> entityListener;
 
-      public static EntityListeners load(Element element, AnnotationMirror annotationMirror) {
+    public static EntityListeners load(Element element, AnnotationMirror annotationMirror) {
         EntityListeners entityListeners = null;
-         List entityListenersMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
-            if (entityListenersMirrorList != null) {
-                entityListeners = new EntityListeners();
-                for (Object entityListenerObj : entityListenersMirrorList) {
-                    entityListeners.getEntityListener().add(new EntityListener(entityListenerObj.toString()));
-                }
+        List entityListenersMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+        if (entityListenersMirrorList != null) {
+            entityListeners = new EntityListeners();
+            for (Object entityListenerObj : entityListenersMirrorList) {
+                entityListeners.getEntityListener().add(new EntityListener(entityListenerObj.toString()));
             }
+        }
         return entityListeners;
     }
-    
-    
+
     /**
      * Gets the value of the entityListener property.
      *

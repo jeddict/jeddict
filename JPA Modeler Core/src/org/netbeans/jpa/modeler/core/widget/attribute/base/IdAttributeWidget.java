@@ -41,8 +41,8 @@ public class IdAttributeWidget extends BaseAttributeWidget <Id>{
         this.setImage(JPAModelerUtil.ID_ATTRIBUTE);
     }
 
-    public static PinWidgetInfo create(String id, String name) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name);
+    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
+        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
         pinWidgetInfo.setDocumentId(IdAttributeWidget.class.getSimpleName());
         return pinWidgetInfo;
     }

@@ -6,10 +6,9 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -18,10 +17,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -73,7 +74,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "description",
     "id",
     "embeddedId",
-        "version"
+    "version"
 })
 public class Attributes extends BaseAttributes implements IPersistenceAttributes {
 
@@ -179,13 +180,13 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 }
             }
         }
-       
+
         return attributes;
     }
 
     @Override
     public boolean isAttributeExist(String name) {
-        if(super.isAttributeExist(name)){
+        if (super.isAttributeExist(name)) {
             return true;
         }
         if (id != null) {
@@ -202,8 +203,8 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 }
             }
         }
-      
-    return false;
+
+        return false;
     }
 
     /**
@@ -297,7 +298,6 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
     }
 
-
     /**
      * Gets the value of the version property.
      *
@@ -339,13 +339,37 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         notifyListeners(version, "removeAttribute", null, null);
     }
 
-    
     @Override
     public List<Attribute> getAllAttribute() {
         List<Attribute> attributes = super.getAllAttribute();
         attributes.addAll(this.getId());
-        attributes.add(this.getEmbeddedId());
+       if(this.getEmbeddedId()!=null){ 
+           attributes.add(this.getEmbeddedId());
+       }
         attributes.addAll(this.getVersion());
         return attributes;
+    }
+
+    @Override
+    public XMLAttributes getAccessor() {
+        XMLAttributes attr = super.getAccessor();
+        attr.setIds(new ArrayList<>());
+        attr.setVersions(new ArrayList<>());
+        return updateAccessor(attr);
+    }
+    
+    @Override
+    public XMLAttributes updateAccessor(XMLAttributes attr) {
+        super.updateAccessor(attr);
+        return processAccessor(attr);
+    }
+    
+    private XMLAttributes processAccessor(XMLAttributes attr) {
+        attr.getIds().addAll(getId().stream().map(Id::getAccessor).collect(toList()));
+        attr.getVersions().addAll(getVersion().stream().map(Version::getAccessor).collect(toList()));
+        if (getEmbeddedId() != null) {
+            attr.setEmbeddedId(getEmbeddedId().getAccessor());
+        }
+        return attr;
     }
 }

@@ -17,6 +17,8 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlIDREF;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 
 /**
@@ -25,6 +27,7 @@ import org.netbeans.modeler.specification.model.document.core.IFlowNode;
  */
 public abstract class FlowNode extends BaseElement implements IFlowNode {
 
+    
     @XmlAttribute
     private boolean minimized = false;
 

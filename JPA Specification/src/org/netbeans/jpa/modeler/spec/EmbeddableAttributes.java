@@ -10,6 +10,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -18,6 +19,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -53,11 +55,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "embeddable-attributes", propOrder = {
-    
-})
+@XmlType(name = "embeddable-attributes", propOrder = {})
 public class EmbeddableAttributes extends BaseAttributes {
-
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
@@ -87,41 +86,54 @@ public class EmbeddableAttributes extends BaseAttributes {
                     element = method;
                 }
 
-                    if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
-                        this.getBasic().add(Basic.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
-                        this.getTransient().add(Transient.load(element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
-                        this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
-                        OneToOne oneToOneObj = new OneToOne();
-                        this.getOneToOne().add(oneToOneObj);
-                        oneToOneObj.load(element, variableElement);
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
-                        ManyToOne manyToOneObj = new ManyToOne();
-                        this.getManyToOne().add(manyToOneObj);
-                        manyToOneObj.load(element, variableElement);
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
-                        OneToMany oneToManyObj = new OneToMany();
-                        this.getOneToMany().add(oneToManyObj);
-                        oneToManyObj.load(element, variableElement);
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
-                        ManyToMany manyToManyObj = new ManyToMany();
-                        this.getManyToMany().add(manyToManyObj);
-                        manyToManyObj.load(element, variableElement);
-                    } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
-                        this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
-                    } else {
-                        this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
-                    }
+                if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
+                    this.getBasic().add(Basic.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
+                    this.getTransient().add(Transient.load(element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
+                    this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
+                    OneToOne oneToOneObj = new OneToOne();
+                    this.getOneToOne().add(oneToOneObj);
+                    oneToOneObj.load(element, variableElement);
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
+                    ManyToOne manyToOneObj = new ManyToOne();
+                    this.getManyToOne().add(manyToOneObj);
+                    manyToOneObj.load(element, variableElement);
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
+                    OneToMany oneToManyObj = new OneToMany();
+                    this.getOneToMany().add(oneToManyObj);
+                    oneToManyObj.load(element, variableElement);
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
+                    ManyToMany manyToManyObj = new ManyToMany();
+                    this.getManyToMany().add(manyToManyObj);
+                    manyToManyObj.load(element, variableElement);
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
+                    this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
+                } else {
+                    this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
+                }
 
             }
         }
 
     }
 
-
     
+       @Override
+    public XMLAttributes getAccessor() {
+        XMLAttributes attr = super.getAccessor();
+        attr.setIds(new ArrayList<>());
+        attr.setVersions(new ArrayList<>());
+        return updateAccessor(attr);
+    }
+    
+    @Override
+    public XMLAttributes updateAccessor(XMLAttributes attr) {
+        super.updateAccessor(attr);
+        return attr;
+    }
     
 
 }
+ 

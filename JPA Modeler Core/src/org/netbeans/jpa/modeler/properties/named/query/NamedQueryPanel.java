@@ -37,10 +37,9 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
     private NamedQuery namedQuery;
     private NAttributeEntity attributeEntity;
 
-    public NamedQueryPanel() {
-        
+        @Override
+    public void postConstruct() {
         initComponents();
-
     }
 
     @Override

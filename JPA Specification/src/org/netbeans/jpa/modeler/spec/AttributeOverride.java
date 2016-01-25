@@ -74,10 +74,10 @@ public class AttributeOverride {
         }
         return attributeOverride;
     }
-    
+
     public static List<AttributeOverride> load(Element element) {
         List<AttributeOverride> attributeOverrides = new ArrayList<AttributeOverride>();
-            
+
         AnnotationMirror attributeOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AttributeOverrides");
         if (attributeOverridesMirror != null) {
             List attributeOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(attributeOverridesMirror, "value");
@@ -92,7 +92,7 @@ public class AttributeOverride {
                 attributeOverrides.add(AttributeOverride.loadAttribute(element, attributeOverridesMirror));
             }
         }
-            
+
         return attributeOverrides;
     }
 

@@ -125,7 +125,7 @@ public abstract class DiagramElement {
      * @param value allowed object is {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(String value) { //not in use
         this.id = value;
     }
 

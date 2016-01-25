@@ -34,7 +34,7 @@ import org.openide.util.ImageUtilities;
  *
  * @author Gaurav_Gupta
  */
-public class GeneralizationFlowWidget extends AbstractEdgeWidget {
+public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene> {
 
     private JavaClassWidget superclassWidget;
     private JavaClassWidget subclassWidget;

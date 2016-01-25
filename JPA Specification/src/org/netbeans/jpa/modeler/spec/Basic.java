@@ -6,7 +6,6 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -14,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
@@ -23,17 +23,17 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Basic {
- *           FetchType fetch() default EAGER;
- *           boolean optional() default true;
- *         }
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface Basic {
+ * FetchType fetch() default EAGER; boolean optional() default true; }
  *
  *
  *
- * <p>Java class for basic complex type.
+ * <p>
+ * Java class for basic complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  *
  * <pre>
  * &lt;complexType name="basic">
@@ -184,11 +184,9 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
 
     /**
      * Gets the value of the convert property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Convert }
-     *     
+     *
+     * @return possible object is {@link Convert }
+     *
      */
     public Convert getConvert() {
         return convert;
@@ -196,17 +194,13 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
 
     /**
      * Sets the value of the convert property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Convert }
-     *     
+     *
+     * @param value allowed object is {@link Convert }
+     *
      */
     public void setConvert(Convert value) {
         this.convert = value;
     }
-
- 
 
     /**
      * Sets the value of the name property.
@@ -283,4 +277,13 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         this.access = value;
     }
 
+    public BasicAccessor getAccessor() {
+        BasicAccessor accessor = new BasicAccessor();
+        accessor.setName(name);
+        accessor.setAttributeType(getAttributeType());
+        if (column != null) {
+            accessor.setColumn(column.getAccessor());
+        }
+        return accessor;
+    }
 }

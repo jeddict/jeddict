@@ -23,6 +23,7 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -38,8 +39,8 @@ public class OTORelationAttributeWidget extends SingleRelationAttributeWidget <O
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-    public static PinWidgetInfo create(String id, String name) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name);
+    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
+        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
         pinWidgetInfo.setDocumentId(OTORelationAttributeWidget.class.getSimpleName());
         return pinWidgetInfo;
     }

@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.22 at 04:26:24 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -14,13 +12,16 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
-
 /**
- * <p>Java class for parameter-mode.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
- * <pre>
+ * Java class for parameter-mode.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * <
+ * pre>
  * &lt;simpleType name="parameter-mode">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
  *     &lt;enumeration value="IN"/>
@@ -30,7 +31,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "parameter-mode")
 @XmlEnum
@@ -41,17 +42,17 @@ public enum ParameterMode {
     OUT,
     REF_CURSOR;
 
-    public static ParameterMode load(Element element , AnnotationMirror annotationMirror ) {        
+    public static ParameterMode load(Element element, AnnotationMirror annotationMirror) {
         ParameterMode parameterMode = null;
         if (annotationMirror != null) {
             Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mode");
             if (value != null) {
                 parameterMode = ParameterMode.valueOf(value.toString());
             }
-        }     
+        }
         return parameterMode;
     }
-    
+
     public String value() {
         return name();
     }

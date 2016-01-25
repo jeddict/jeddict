@@ -98,7 +98,7 @@ public class ResultMappingUtil {
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Column", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new FieldResultPanel(modelerFile));
+        attributeEntity.setCustomDialog(new FieldResultPanel());
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;

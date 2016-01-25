@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
@@ -20,24 +18,22 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
-
 /**
- * 
- * 
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface SqlResultSetMapping {
- *           String name();
- *           EntityResult[] entities() default {};
- *           ConstructorResult[] classes() default{};
- *           ColumnResult[] columns() default {};
- *         }
- * 
- *       
- * 
- * <p>Java class for sql-result-set-mapping complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({TYPE}) @Retention(RUNTIME) public @interface SqlResultSetMapping {
+ * String name(); EntityResult[] entities() default {}; ConstructorResult[]
+ * classes() default{}; ColumnResult[] columns() default {}; }
+ *
+ *
+ *
+ * <p>
+ * Java class for sql-result-set-mapping complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="sql-result-set-mapping">
  *   &lt;complexContent>
@@ -53,8 +49,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sql-result-set-mapping", propOrder = {
@@ -65,7 +61,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 })
 public class SqlResultSetMapping {
 
-    @XmlAttribute @XmlIDREF
+    @XmlAttribute
+    @XmlIDREF
     private Entity entity;
     protected String description;
     @XmlElement(name = "er")//(name = "entity-result")
@@ -74,28 +71,28 @@ public class SqlResultSetMapping {
     protected List<ConstructorResult> constructorResult;
     @XmlElement(name = "cr")//(name = "column-result")
     protected List<ColumnResult> columnResult;
-    @XmlAttribute(name = "n" , required = true)//(name = "name", required = true)
+    @XmlAttribute(name = "n", required = true)//(name = "name", required = true)
     protected String name;
 
-     public static SqlResultSetMapping load(Element element, AnnotationMirror annotationMirror) {
+    public static SqlResultSetMapping load(Element element, AnnotationMirror annotationMirror) {
         SqlResultSetMapping sqlResultSetMapping = null;
         if (annotationMirror != null) {
             sqlResultSetMapping = new SqlResultSetMapping();
             sqlResultSetMapping.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             sqlResultSetMapping.description = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "description");
-            List entityResultList = (List)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "entities");
+            List entityResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "entities");
             if (entityResultList != null) {
                 for (Object entityResultObj : entityResultList) {
                     sqlResultSetMapping.getEntityResult().add(EntityResult.load(element, (AnnotationMirror) entityResultObj));
                 }
             }
-            List constructorResultList = (List)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "classes");
+            List constructorResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "classes");
             if (constructorResultList != null) {
                 for (Object constructorResultObj : constructorResultList) {
                     sqlResultSetMapping.getConstructorResult().add(ConstructorResult.load(element, (AnnotationMirror) constructorResultObj));
                 }
             }
-            List columnResultList = (List)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columns");
+            List columnResultList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columns");
             if (columnResultList != null) {
                 for (Object columnResultObj : columnResultList) {
                     sqlResultSetMapping.getColumnResult().add(ColumnResult.load(element, (AnnotationMirror) columnResultObj));
@@ -126,15 +123,12 @@ public class SqlResultSetMapping {
         }
         return true;
     }
-    
-    
+
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getDescription() {
         return description;
@@ -142,11 +136,9 @@ public class SqlResultSetMapping {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -154,25 +146,25 @@ public class SqlResultSetMapping {
 
     /**
      * Gets the value of the entityResult property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the entityResult property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the entityResult property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEntityResult().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link EntityResult }
-     * 
-     * 
+     *
+     *
      */
     public List<EntityResult> getEntityResult() {
         if (entityResult == null) {
@@ -183,25 +175,25 @@ public class SqlResultSetMapping {
 
     /**
      * Gets the value of the constructorResult property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the constructorResult property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the constructorResult property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConstructorResult().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ConstructorResult }
-     * 
-     * 
+     *
+     *
      */
     public List<ConstructorResult> getConstructorResult() {
         if (constructorResult == null) {
@@ -212,25 +204,25 @@ public class SqlResultSetMapping {
 
     /**
      * Gets the value of the columnResult property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the columnResult property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the columnResult property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getColumnResult().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ColumnResult }
-     * 
-     * 
+     *
+     *
      */
     public List<ColumnResult> getColumnResult() {
         if (columnResult == null) {
@@ -241,11 +233,9 @@ public class SqlResultSetMapping {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -253,11 +243,9 @@ public class SqlResultSetMapping {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;

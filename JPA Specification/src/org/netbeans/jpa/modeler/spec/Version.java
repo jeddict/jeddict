@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.VersionAccessor;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -114,8 +115,6 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
         this.temporal = value;
     }
 
- 
-
     /**
      * Gets the value of the access property.
      *
@@ -138,4 +137,13 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
         this.access = value;
     }
 
+    public VersionAccessor getAccessor() {
+        VersionAccessor accessor = new VersionAccessor();
+        accessor.setName(name);
+        accessor.setAttributeType(getAttributeType());
+        if (column != null) {
+            accessor.setColumn(column.getAccessor());
+        }
+        return accessor;
+    }
 }

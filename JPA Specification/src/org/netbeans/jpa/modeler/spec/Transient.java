@@ -6,15 +6,16 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.TransientAccessor;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
+import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
@@ -47,7 +48,26 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlType(name = "transient")
 public class Transient extends BaseAttribute {
 
+    
+    @XmlAttribute(name = "attribute-type", required = true)
+    private String attributeType;
+    
+        @Override
+     public String getAttributeType() {
+        return attributeType;
+    }
 
+        /**
+     * @param attributeType the attributeType to set
+     */
+    public void setAttributeType(String attributeType) {
+        if (attributeType.indexOf(LANG_PACKAGE) == 0) {
+            this.attributeType = attributeType.substring(LANG_PACKAGE.length() + 1);
+        } else {
+            this.attributeType = attributeType;
+        }
+    }
+    
     public static Transient load(Element element, VariableElement variableElement) {
 //        AnnotationMirror annotationMirror = JpaControllerUtil.findAnnotation(element, "javax.persistence.Transient");
         Transient _transient = new Transient();
@@ -58,6 +78,11 @@ public class Transient extends BaseAttribute {
         return _transient;
     }
 
-
+    public TransientAccessor getAccessor() {
+        TransientAccessor accessor = new TransientAccessor();
+        accessor.setName(name);
+        accessor.setAttributeType(getAttributeType());
+        return accessor;
+    }
 
 }

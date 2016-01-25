@@ -41,7 +41,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     protected List<JoinColumn> joinColumn;
     @XmlElement(name = "foreign-key")
     protected ForeignKey foreignKey;//REVENG PENDING
-    
+
     @XmlAttribute(name = "optional")
     protected Boolean optional;
     @XmlAttribute
@@ -63,12 +63,12 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
                 }
             }
         } else {
-        AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
-        if (joinColumnAnnotationMirror != null) {
-            this.getJoinColumn().add(JoinColumn.load(element, joinColumnAnnotationMirror));
+            AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
+            if (joinColumnAnnotationMirror != null) {
+                this.getJoinColumn().add(JoinColumn.load(element, joinColumnAnnotationMirror));
+            }
         }
-        }
-        
+
         this.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "optional");
     }
 
@@ -137,6 +137,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     public void setForeignKey(ForeignKey value) {
         this.foreignKey = value;
     }
+
     /**
      * Gets the value of the optional property.
      *

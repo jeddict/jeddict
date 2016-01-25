@@ -21,20 +21,12 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 /**
  *
  *
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface TableGenerator {
- *           String name();
- *           String table() default "";
- *           String catalog() default "";
- *           String schema() default "";
- *           String pkColumnName() default "";
- *           String valueColumnName() default "";
- *           String pkColumnValue() default "";
- *           int initialValue() default 0;
- *           int allocationSize() default 50;
- *           UniqueConstraint[] uniqueConstraints() default {};
- *           Indexes[] indexes() default {};
- *         }
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME) public @interface
+ * TableGenerator { String name(); String table() default ""; String catalog()
+ * default ""; String schema() default ""; String pkColumnName() default "";
+ * String valueColumnName() default ""; String pkColumnValue() default ""; int
+ * initialValue() default 0; int allocationSize() default 50; UniqueConstraint[]
+ * uniqueConstraints() default {}; Indexes[] indexes() default {}; }
  *
  *
  *
@@ -178,25 +170,24 @@ public class TableGenerator {
 
     /**
      * Gets the value of the index property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the index property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the index property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIndex().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Index }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link Index }
+     *
+     *
      */
     public List<Index> getIndex() {
         if (index == null) {

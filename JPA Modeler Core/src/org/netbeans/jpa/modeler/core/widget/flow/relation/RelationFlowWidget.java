@@ -25,7 +25,7 @@ import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.openide.nodes.Sheet;
 
-public abstract class RelationFlowWidget extends AbstractEdgeWidget {
+public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerScene> {
 
     private RelationAttributeWidget sourceRelationAttributeWidget;
 

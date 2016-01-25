@@ -43,7 +43,12 @@
                 </attribute>
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
-                </attribute>
+                </attribute>  
+<!--                <attribute id="buildOn" groupId="BASIC_PROP" class="java.lang.Float" name="buildOn" value="2.0">
+                    <display-name>JPA Modeler Version</display-name>
+                </attribute>-->
+                
+                
             </attributes>
         </element>
         <element id="Table" groupId="TABLE_PROP" class="org.netbeans.jpa.modeler.spec.Table">

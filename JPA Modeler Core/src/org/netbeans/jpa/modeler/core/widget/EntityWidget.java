@@ -66,8 +66,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     @Override
     public void init() {
         Entity entity = this.getBaseElementSpec();
-        if (entity.getAttributes() == null) {
-            entity.setAttributes(new Attributes());
+        if (entity.getAttributes().getAllAttribute().isEmpty()) {
             addNewIdAttribute("id");
             sortAttributes();
         }
@@ -213,7 +212,10 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         InheritenceStateType inheritenceState = this.getInheritenceState();
         if (SINGLETON == inheritenceState || ROOT == inheritenceState) {
             // Issue Fix #6041 Start
-            if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE) {
+           boolean relationKey = this.getOneToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey())?true:
+                   this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
+                    
+            if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
                 getErrorHandler().throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
                 getErrorHandler().clearError(EntityValidator.NO_PRIMARYKEY_EXIST);

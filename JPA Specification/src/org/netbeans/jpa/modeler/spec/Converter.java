@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,21 +11,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * 
- * 
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Converter {
- *           boolean autoApply() default false;
- *         }
- * 
- *       
- * 
- * <p>Java class for converter complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME) public @interface
+ * Converter { boolean autoApply() default false; }
+ *
+ *
+ *
+ * <p>
+ * Java class for converter complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="converter">
  *   &lt;complexContent>
@@ -41,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "converter", propOrder = {
@@ -58,11 +56,9 @@ public class Converter {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getDescription() {
         return description;
@@ -70,11 +66,9 @@ public class Converter {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -82,11 +76,9 @@ public class Converter {
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getClazz() {
         return clazz;
@@ -94,11 +86,9 @@ public class Converter {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setClazz(String value) {
         this.clazz = value;
@@ -106,11 +96,9 @@ public class Converter {
 
     /**
      * Gets the value of the autoApply property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is {@link Boolean }
+     *
      */
     public Boolean isAutoApply() {
         return autoApply;
@@ -118,11 +106,9 @@ public class Converter {
 
     /**
      * Sets the value of the autoApply property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is {@link Boolean }
+     *
      */
     public void setAutoApply(Boolean value) {
         this.autoApply = value;

@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -16,22 +14,21 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
-
 /**
- * 
- * 
- *         @Target({}) @Retention(RUNTIME)
- *         public @interface ColumnResult {
- *           String name();
- *           Class type() default void.class;
- *         }
- * 
- *       
- * 
- * <p>Java class for column-result complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({}) @Retention(RUNTIME) public @interface ColumnResult { String
+ * name(); Class type() default void.class; }
+ *
+ *
+ *
+ * <p>
+ * Java class for column-result complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="column-result">
  *   &lt;complexContent>
@@ -42,8 +39,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column-result")
@@ -55,23 +52,21 @@ public class ColumnResult {
     protected String clazz;
 
     public static ColumnResult load(Element element, AnnotationMirror annotationMirror) {
-       ColumnResult columnResult = null;
+        ColumnResult columnResult = null;
         if (annotationMirror != null) {
             columnResult = new ColumnResult();
             columnResult.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             Object clazz = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "type");
             columnResult.clazz = clazz == null ? null : clazz.toString();
-           }
+        }
         return columnResult;
-     }
-       
+    }
+
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -79,11 +74,9 @@ public class ColumnResult {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -91,11 +84,9 @@ public class ColumnResult {
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getClazz() {
         return clazz;
@@ -103,11 +94,9 @@ public class ColumnResult {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setClazz(String value) {
         this.clazz = value;

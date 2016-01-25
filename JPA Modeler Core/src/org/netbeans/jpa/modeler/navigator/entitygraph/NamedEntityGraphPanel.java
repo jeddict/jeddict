@@ -34,15 +34,19 @@ import org.openide.explorer.view.OutlineView;
 
 public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  implements ExplorerManager.Provider {
 
-        private ExplorerManager manager;
+        private final ExplorerManager manager;
 
     private NamedEntityGraph namedEntityGraph;
-    private EntityWidget entityWidget;
+    private final EntityWidget entityWidget;
     private EGRootNode  node;
 
     public NamedEntityGraphPanel(EntityWidget entityWidget) {
         this.entityWidget=entityWidget;
              manager = new ExplorerManager();
+    }
+    
+        @Override
+    public void postConstruct() {
         initComponents();
     }
 

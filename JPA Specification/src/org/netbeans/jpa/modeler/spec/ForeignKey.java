@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,27 +11,27 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * 
- * 
- *         @Target({}) @Retention(RUNTIME)
- *         public @interface ForeignKey {
- *           String name() default "";
- * 	  ConstraintMode value() default CONSTRAINT;
- *           String foreign-key-definition() default "";
- * 
- *         Note that the elements that embed the use of the annotation
- *         default this use as @ForeignKey(PROVIDER_DEFAULT).
- * 
- *         }
- * 
- *       
- * 
- * <p>Java class for foreign-key complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({}) @Retention(RUNTIME) public @interface ForeignKey { String name()
+ * default ""; ConstraintMode value() default CONSTRAINT; String
+ * foreign-key-definition() default "";
+ *
+ * Note that the elements that embed the use of the annotation default this use
+ * as @ForeignKey(PROVIDER_DEFAULT).
+ *
+ * }
+ *
+ *
+ *
+ * <p>
+ * Java class for foreign-key complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="foreign-key">
  *   &lt;complexContent>
@@ -48,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "foreign-key", propOrder = {
@@ -67,11 +65,9 @@ public class ForeignKey {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getDescription() {
         return description;
@@ -79,11 +75,9 @@ public class ForeignKey {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -91,11 +85,9 @@ public class ForeignKey {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -103,11 +95,9 @@ public class ForeignKey {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -115,11 +105,9 @@ public class ForeignKey {
 
     /**
      * Gets the value of the constraintMode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ConstraintMode }
-     *     
+     *
+     * @return possible object is {@link ConstraintMode }
+     *
      */
     public ConstraintMode getConstraintMode() {
         return constraintMode;
@@ -127,11 +115,9 @@ public class ForeignKey {
 
     /**
      * Sets the value of the constraintMode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ConstraintMode }
-     *     
+     *
+     * @param value allowed object is {@link ConstraintMode }
+     *
      */
     public void setConstraintMode(ConstraintMode value) {
         this.constraintMode = value;
@@ -139,11 +125,9 @@ public class ForeignKey {
 
     /**
      * Gets the value of the foreignKeyDefinition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getForeignKeyDefinition() {
         return foreignKeyDefinition;
@@ -151,11 +135,9 @@ public class ForeignKey {
 
     /**
      * Sets the value of the foreignKeyDefinition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setForeignKeyDefinition(String value) {
         this.foreignKeyDefinition = value;

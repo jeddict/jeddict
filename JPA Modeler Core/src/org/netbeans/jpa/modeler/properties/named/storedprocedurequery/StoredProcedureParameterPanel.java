@@ -31,6 +31,10 @@ private final ModelerFile modelerFile;
     public StoredProcedureParameterPanel(ModelerFile modelerFile) {
         
         this.modelerFile=modelerFile;
+    }
+    
+             @Override
+    public void postConstruct() {
         initComponents();
     }
 

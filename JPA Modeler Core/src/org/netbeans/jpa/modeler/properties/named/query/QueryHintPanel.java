@@ -23,11 +23,10 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 
 public class QueryHintPanel extends EntityComponent<QueryHint> {
 
-    public QueryHintPanel() {
-        
+        @Override
+    public void postConstruct() {
         initComponents();
     }
-
     @Override
     public void init() {
     }

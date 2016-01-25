@@ -67,7 +67,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class EntityListener {
 
     protected String description;
-      
+
     @XmlElement(name = "sp")//(name = "pre-persist")
     protected PrePersist prePersist;//REVENG PENDING
     @XmlElement(name = "ep")//(name = "post-persist")
@@ -82,7 +82,7 @@ public class EntityListener {
     protected PostUpdate postUpdate;//REVENG PENDING
     @XmlElement(name = "el")//(name = "post-load")
     protected PostLoad postLoad;//REVENG PENDING
-    
+
     @XmlAttribute(name = "c", required = true)//(name = "class", required = true)
     protected String clazz;
 
@@ -93,9 +93,6 @@ public class EntityListener {
     public EntityListener() {
     }
 
-    
-      
-    
     /**
      * Gets the value of the description property.
      *

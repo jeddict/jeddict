@@ -168,11 +168,8 @@
             </module-dependencies>
             <public-packages>
                 <package>org.netbeans.orm.converter.compiler</package>
-                <package>org.netbeans.orm.converter.generated</package>
                 <package>org.netbeans.orm.converter.generator</package>
                 <package>org.netbeans.orm.converter.generator.staticmetamodel</package>
-                <package>org.netbeans.orm.converter.parser</package>
-                <package>org.netbeans.orm.converter.serializer</package>
                 <package>org.netbeans.orm.converter.spec</package>
                 <package>org.netbeans.orm.converter.util</package>
             </public-packages>

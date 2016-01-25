@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.columns.DiscriminatorColumnMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.inheritance.InheritanceMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -59,22 +61,20 @@ public class DiscriminatorColumn {
     @XmlAttribute
     protected Integer length;
 
-     public static DiscriminatorColumn load(Element element) {
+    public static DiscriminatorColumn load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.DiscriminatorColumn");
         DiscriminatorColumn column = null;
         if (annotationMirror != null) {
             column = new DiscriminatorColumn();
             column.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
-            column.discriminatorType = DiscriminatorType.load(element,annotationMirror);
+            column.discriminatorType = DiscriminatorType.load(element, annotationMirror);
             column.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
             column.length = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "length");
-           }
+        }
         return column;
 
     }
 
-    
-    
     /**
      * Gets the value of the name property.
      *
@@ -155,4 +155,12 @@ public class DiscriminatorColumn {
         this.length = value;
     }
 
+    public DiscriminatorColumnMetadata getAccessor() {
+        DiscriminatorColumnMetadata accessor = new DiscriminatorColumnMetadata();
+        accessor.setColumnDefinition(columnDefinition);
+        accessor.setLength(length);
+        accessor.setName(name);
+        accessor.setDiscriminatorType(discriminatorType.value());
+        return accessor;
+    }
 }

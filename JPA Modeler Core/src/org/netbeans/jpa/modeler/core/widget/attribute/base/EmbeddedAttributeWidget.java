@@ -20,8 +20,8 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -38,8 +38,8 @@ public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends Bas
 //        this.setImage(JPAModelerUtil.EMBEDDED_ATTRIBUTE);
     }
 
-    public static PinWidgetInfo create(String id, String name) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name);
+    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
+        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
         pinWidgetInfo.setDocumentId(EmbeddedAttributeWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
@@ -60,7 +60,7 @@ public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends Bas
 
     public void setConnectedSibling(EmbeddableWidget embeddableWidget) {
         CompositionAttribute compositionAttribute = (CompositionAttribute) this.getBaseElementSpec();
-        compositionAttribute.setConnectedClassId(embeddableWidget.getId());
+        compositionAttribute.setConnectedClass(embeddableWidget.getBaseElementSpec());
     }
 
     public void showCompositionPath() {

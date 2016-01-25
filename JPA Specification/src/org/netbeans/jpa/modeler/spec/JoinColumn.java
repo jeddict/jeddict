@@ -13,23 +13,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToOneAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface JoinColumn {
- *           String name() default "";
- *           String referencedColumnName() default "";
- *           boolean unique() default false;
- *           boolean nullable() default true;
- *           boolean insertable() default true;
- *           boolean updatable() default true;
- *           String columnDefinition() default "";
- *           String table() default "";
- *           ForeignKey foreignKey() default @ForeignKey();
- *         }
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface JoinColumn {
+ * String name() default ""; String referencedColumnName() default ""; boolean
+ * unique() default false; boolean nullable() default true; boolean insertable()
+ * default true; boolean updatable() default true; String columnDefinition()
+ * default ""; String table() default ""; ForeignKey foreignKey() default
+ * @ForeignKey(); }
  *
  *
  *
@@ -258,6 +254,19 @@ public class JoinColumn {
      */
     public void setTable(String value) {
         this.table = value;
+    }
+
+    public JoinColumnMetadata getAccessor() {
+        JoinColumnMetadata accessor = new JoinColumnMetadata();
+        accessor.setColumnDefinition(columnDefinition);
+        accessor.setInsertable(insertable);
+        accessor.setName(name);
+        accessor.setNullable(nullable);
+        accessor.setReferencedColumnName(referencedColumnName);
+        accessor.setTable(table);
+        accessor.setUnique(unique);
+        accessor.setUpdatable(updatable);
+        return accessor;
     }
 
 }

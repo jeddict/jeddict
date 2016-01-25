@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.18 at 01:46:14 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,23 +11,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * 
- * 
- *         @Target({}) @Retention(RUNTIME)
- *         public @interface Index {
- *           String name() default "";
- *           String columnList();
- *           boolean unique() default false;
- *         }
- * 
- *       
- * 
- * <p>Java class for index complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({}) @Retention(RUNTIME) public @interface Index { String name()
+ * default ""; String columnList(); boolean unique() default false; }
+ *
+ *
+ *
+ * <p>
+ * Java class for index complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="index">
  *   &lt;complexContent>
@@ -44,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "index", propOrder = {
@@ -63,11 +59,9 @@ public class Index {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getDescription() {
         return description;
@@ -75,11 +69,9 @@ public class Index {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -87,11 +79,9 @@ public class Index {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -99,11 +89,9 @@ public class Index {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -111,11 +99,9 @@ public class Index {
 
     /**
      * Gets the value of the columnList property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getColumnList() {
         return columnList;
@@ -123,11 +109,9 @@ public class Index {
 
     /**
      * Sets the value of the columnList property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setColumnList(String value) {
         this.columnList = value;
@@ -135,11 +119,9 @@ public class Index {
 
     /**
      * Gets the value of the unique property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is {@link Boolean }
+     *
      */
     public Boolean isUnique() {
         return unique;
@@ -147,11 +129,9 @@ public class Index {
 
     /**
      * Sets the value of the unique property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is {@link Boolean }
+     *
      */
     public void setUnique(Boolean value) {
         this.unique = value;

@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.22 at 04:26:24 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -16,23 +14,22 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
-
 /**
- * 
- * 
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface StoredProcedureParameter {
- *           String name() default "";
- *           ParameterMode mode() default ParameterMode.IN;
- *           Class type();
- *         }
- * 
- *       
- * 
- * <p>Java class for stored-procedure-parameter complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({TYPE}) @Retention(RUNTIME) public @interface
+ * StoredProcedureParameter { String name() default ""; ParameterMode mode()
+ * default ParameterMode.IN; Class type(); }
+ *
+ *
+ *
+ * <p>
+ * Java class for stored-procedure-parameter complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="stored-procedure-parameter">
  *   &lt;complexContent>
@@ -47,8 +44,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "stored-procedure-parameter", propOrder = {
@@ -63,7 +60,7 @@ public class StoredProcedureParameter {
     protected String clazz;
     @XmlAttribute(name = "m")//(name = "mode")
     protected ParameterMode mode;
-    
+
     public static StoredProcedureParameter load(Element element, AnnotationMirror annotationMirror) {
         StoredProcedureParameter storedProcedureParameter = null;
         if (annotationMirror != null) {
@@ -75,14 +72,12 @@ public class StoredProcedureParameter {
         }
         return storedProcedureParameter;
     }
-     
+
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getDescription() {
         return description;
@@ -90,11 +85,9 @@ public class StoredProcedureParameter {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -102,11 +95,9 @@ public class StoredProcedureParameter {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -114,11 +105,9 @@ public class StoredProcedureParameter {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -126,11 +115,9 @@ public class StoredProcedureParameter {
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getClazz() {
         return clazz;
@@ -138,11 +125,9 @@ public class StoredProcedureParameter {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setClazz(String value) {
         this.clazz = value;
@@ -150,11 +135,9 @@ public class StoredProcedureParameter {
 
     /**
      * Gets the value of the mode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ParameterMode }
-     *     
+     *
+     * @return possible object is {@link ParameterMode }
+     *
      */
     public ParameterMode getMode() {
         return mode;
@@ -162,11 +145,9 @@ public class StoredProcedureParameter {
 
     /**
      * Sets the value of the mode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ParameterMode }
-     *     
+     *
+     * @param value allowed object is {@link ParameterMode }
+     *
      */
     public void setMode(ParameterMode value) {
         this.mode = value;

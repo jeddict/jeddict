@@ -44,6 +44,7 @@ import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.jpa.modeler.spec.ParameterMode;
 import org.netbeans.jpa.modeler.spec.QueryHint;
 import org.netbeans.jpa.modeler.spec.StoredProcedureParameter;
+import org.netbeans.jpa.modeler.spec.extend.cache.Cache.DBConnectionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
@@ -72,32 +73,23 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
     private NAttributeEntity resultSetMappingsEntity;
     private final ModelerFile modelerFile;
     private final EntityMappings entityMappings;
-    private org.netbeans.jpa.modeler.spec.Entity entity;
 
-    public NamedStoredProcedureQueryPanel(ModelerFile modelerFile, org.netbeans.jpa.modeler.spec.Entity entity) {
-
+    public NamedStoredProcedureQueryPanel(ModelerFile modelerFile) {
         this.modelerFile = modelerFile;
-        this.entity = entity;
         this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
-        initComponents();
-        DatabaseExplorerUIs.connect(dbCon_jComboBox, ConnectionManager.getDefault());
-
     }
 
+    @Override
+    public void postConstruct() {
+        initComponents();
+        DBConnectionUtil.loadConnection(modelerFile, dbCon_jComboBox);
+    }
+    
     @Override
     public void init() {
         jTabbedPane.setSelectedIndex(0);
         initResultClassesModel();
         resultSetMappingTypeActionPerformed(null);
-    }
-
-    private DatabaseConnection getConnection() {
-        Object item = dbCon_jComboBox.getSelectedItem();
-        if (item instanceof DatabaseConnection) {
-            return (DatabaseConnection) item;
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -678,8 +670,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
 
     private void dbCon_jComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_dbCon_jComboBoxItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-//            Thread dbTask = new Thread(new StoredProcedureExecutor());
-//            dbTask.start();
+            DBConnectionUtil.saveConnection(modelerFile, dbCon_jComboBox);
             RP.post(new StoredProcedureExecutor());
         }
     }//GEN-LAST:event_dbCon_jComboBoxItemStateChanged
@@ -688,7 +679,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
 
         @Override
         public void run() {
-            DatabaseConnection dbCon = getConnection();
+            DatabaseConnection dbCon = DBConnectionUtil.getConnection(dbCon_jComboBox);
             if (dbCon != null) {
              MetadataModel metaDataModel = MetadataModelManager.get(dbCon);
             if (metaDataModel != null) {

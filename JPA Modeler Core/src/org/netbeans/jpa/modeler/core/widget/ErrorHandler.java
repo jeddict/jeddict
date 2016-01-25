@@ -15,7 +15,11 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.MissingResourceException;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.WidgetStateHandler;
@@ -28,6 +32,7 @@ import org.openide.util.NbBundle;
 public class ErrorHandler {
 
     private final IWidget widget;
+    
 
     public ErrorHandler(IWidget widget) {
         this.widget = widget;
@@ -36,7 +41,7 @@ public class ErrorHandler {
     private final java.util.Map<String, String> errorList = new HashMap<>();
 
     public void throwError(String key) {
-        errorList.put(key, NbBundle.getMessage(EntityValidator.class, key));
+        errorList.put(key, ResourceBundleManager.get(key));//NbBundle.getMessage(bundle.getClass(), key));
         printError();
     }
 
@@ -63,20 +68,28 @@ public class ErrorHandler {
         }
     }
 
-//    private Image icon;
-//    private Image errorIcon;
+    
+    private static class ResourceBundleManager {
 
-//    public void createErrorIcon(Image icon) {
-//        this.icon = icon;
-//        int iconWidth =  icon.getWidth(null) + 3;
-//        int iconHeight =  icon.getHeight(null) + 3;
-//        int errorIconWidth =  ERROR_ICON.getWidth(null);
-//        int errorIconHeight =  ERROR_ICON.getHeight(null);
-//
-//        BufferedImage combined = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
-//        Graphics g = combined.getGraphics();
-//        g.drawImage(icon, 0, 0, null);
-//        g.drawImage(ERROR_ICON, iconWidth - errorIconWidth, iconHeight - errorIconHeight, null);
-//        errorIcon = combined;
-//    }
+        private static final Map<String, String> ERRORS = new HashMap<>();
+        private static final Class[] VALIDATORS = {EntityValidator.class, AttributeValidator.class};
+
+        private static String get(String key) {
+            String value = ERRORS.get(key);
+            if (value != null) {
+                return value;
+            }
+            for (Class validator : VALIDATORS) {
+                try {
+                    value = NbBundle.getMessage(validator, key);
+                    ERRORS.put(key, value);
+                    return value;
+                } catch (MissingResourceException resourceException) {
+                    //Ignore
+                }
+            }
+            throw new MissingResourceException(key + " not found", Arrays.toString(VALIDATORS), key);
+        }
+
+    }
 }

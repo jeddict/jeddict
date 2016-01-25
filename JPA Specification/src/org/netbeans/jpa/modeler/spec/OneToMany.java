@@ -8,21 +8,19 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang.StringUtils;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToManyAccessor;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -109,7 +107,7 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
     public void load(Element element, VariableElement variableElement) {
         AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToMany");
         super.load(relationAnnotationMirror, element, variableElement);
-        
+
         AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumns");
         if (joinColumnsAnnotationMirror != null) {
             List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
@@ -157,13 +155,11 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
         return this.joinColumn;
     }
 
-   /**
+    /**
      * Gets the value of the foreignKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @return possible object is {@link ForeignKey }
+     *
      */
     public ForeignKey getForeignKey() {
         return foreignKey;
@@ -171,15 +167,14 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
 
     /**
      * Sets the value of the foreignKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
      */
     public void setForeignKey(ForeignKey value) {
         this.foreignKey = value;
     }
+
     @Override
     public void addJoinColumn(JoinColumn joinColumn_In) {
         if (joinColumn == null) {
@@ -216,4 +211,16 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
         this.orphanRemoval = value;
     }
 
+    public OneToManyAccessor getAccessor() {
+        OneToManyAccessor accessor = new OneToManyAccessor();
+        accessor.setName(name);
+        accessor.setTargetEntityName(getTargetEntity());
+        accessor.setAttributeType(getCollectionType());
+        accessor.setMappedBy(getMappedBy());
+        if (joinTable != null) {
+            accessor.setJoinTable(joinTable.getAccessor());
+        }
+        accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
+        return accessor;
+    }
 }

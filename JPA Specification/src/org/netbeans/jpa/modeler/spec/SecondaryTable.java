@@ -17,15 +17,10 @@ import javax.xml.bind.annotation.XmlType;
 /**
  *
  *
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface SecondaryTable {
- *           String name();
- *           String catalog() default "";
- *           String schema() default "";
- *           PrimaryKeyJoinColumn[] pkJoinColumns() default {};
- *           UniqueConstraint[] uniqueConstraints() default {};
- *           Index[] indexes() default {};
- *          }
+ * @Target({TYPE}) @Retention(RUNTIME) public @interface SecondaryTable { String
+ * name(); String catalog() default ""; String schema() default "";
+ * PrimaryKeyJoinColumn[] pkJoinColumns() default {}; UniqueConstraint[]
+ * uniqueConstraints() default {}; Index[] indexes() default {}; }
  *
  *
  *
@@ -112,11 +107,9 @@ public class SecondaryTable {
 
     /**
      * Gets the value of the primaryKeyForeignKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @return possible object is {@link ForeignKey }
+     *
      */
     public ForeignKey getPrimaryKeyForeignKey() {
         return primaryKeyForeignKey;
@@ -124,11 +117,9 @@ public class SecondaryTable {
 
     /**
      * Sets the value of the primaryKeyForeignKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
      */
     public void setPrimaryKeyForeignKey(ForeignKey value) {
         this.primaryKeyForeignKey = value;
@@ -165,25 +156,24 @@ public class SecondaryTable {
 
     /**
      * Gets the value of the index property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the index property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the index property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIndex().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Index }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link Index }
+     *
+     *
      */
     public List<Index> getIndex() {
         if (index == null) {

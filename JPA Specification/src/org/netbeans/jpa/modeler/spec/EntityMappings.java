@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,6 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
@@ -101,7 +103,7 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 @XmlType(name = "entity-mappings", propOrder = {
     "description",
     "persistenceUnitMetadata",
-//    "_package",
+    //    "_package",
     "schema",
     "catalog",
     "access",
@@ -142,7 +144,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected List<NamedNativeQuery> namedNativeQuery;
     @XmlElement(name = "nspq")//(name = "named-stored-procedure-query")
     protected List<NamedStoredProcedureQuery> namedStoredProcedureQuery; //REVENG PENDING
-    @XmlElement(name="srsm")//(name = "sql-result-set-mapping")
+    @XmlElement(name = "srsm")//(name = "sql-result-set-mapping")
     protected Set<SqlResultSetMapping> sqlResultSetMapping;
 
     @XmlElement(name = "default-class")
@@ -159,12 +161,16 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private Diagram jpaDiagram;//Custom Added
     @XmlAttribute
     private String status;//GENERATED (DBRE,JCRE)
-    @XmlAttribute(name="thm")
+    @XmlAttribute(name = "thm")
     private String theme;
     @XmlAttribute
     private String persistenceUnitName;
+    @XmlAttribute
+    private Float buildOn;//JPA Modeler version
     
-    @XmlElement(name="c")
+
+
+    @XmlElement(name = "c")
     private Cache cache;
 
     /**
@@ -178,7 +184,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     /**
      * JAXB Attributes End *
      */
-
     private EntityMappings() {
     }
 
@@ -202,7 +207,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                 return true;
             }
         }
-        if (embeddable != null) { 
+        if (embeddable != null) {
             if (embeddable.stream().anyMatch((e) -> (e.getClazz() != null && e.getClazz().equals(_class)))) {
                 return true;
             }
@@ -669,7 +674,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         } else {
             throw new InvalidElmentException("Invalid JPA Element");
         }
-        
+
     }
 
     public void removeEntity(Entity entity_In) {
@@ -793,7 +798,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 //    public void setCustomAttributes(Map<String, String> customAttributes) {
 //          throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-
     /**
      * @return the jpaDiagram
      */
@@ -913,33 +917,30 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         }
     }
 
-    
-    
-    
-    public void manageSiblingAttribute(){
-        EntityMappings entityMappingsSpec = this ;
-                for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappingsSpec.getEntity()) {
-            for (ManyToMany manyToMany : new ArrayList<ManyToMany>(entity.getAttributes().getManyToMany())) {
+    public void manageSiblingAttribute() {
+        EntityMappings entityMappingsSpec = this;
+        for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappingsSpec.getEntity()) {
+            for (ManyToMany manyToMany : new ArrayList<>(entity.getAttributes().getManyToMany())) {
                 if (manyToMany.getMappedBy() == null) {
                     manageSiblingAttribute(entity, manyToMany);
                 }
             }
-            for (OneToMany oneToMany : new ArrayList<OneToMany>(entity.getAttributes().getOneToMany())) {
+            for (OneToMany oneToMany : new ArrayList<>(entity.getAttributes().getOneToMany())) {
                 if (oneToMany.getMappedBy() == null) {
                     manageSiblingAttribute(entity, oneToMany);
                 }
             }
-            for (ManyToOne manyToOne : new ArrayList<ManyToOne>(entity.getAttributes().getManyToOne())) {
+            for (ManyToOne manyToOne : new ArrayList<>(entity.getAttributes().getManyToOne())) {
                 manageSiblingAttribute(entity, manyToOne);
             }
-            for (OneToOne oneToOne : new ArrayList<OneToOne>(entity.getAttributes().getOneToOne())) {
+            for (OneToOne oneToOne : new ArrayList<>(entity.getAttributes().getOneToOne())) {
                 if (oneToOne.getMappedBy() == null) {
                     manageSiblingAttribute(entity, oneToOne);
                 }
             }
 
             // If Include Referenced Classed Checkbox is Uncheked then remove attribute
-            for (RelationAttribute relationAttribute : new ArrayList<RelationAttribute>(entity.getAttributes().getRelationAttributes())) {
+            for (RelationAttribute relationAttribute : new ArrayList<>(entity.getAttributes().getRelationAttributes())) {
                 org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
                 if (targetEntity == null) {
                     entity.getAttributes().removeRelationAttribute(relationAttribute);
@@ -947,31 +948,30 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
 
         }
-                
-        // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
 
+        // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
         for (org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclass : entityMappingsSpec.getMappedSuperclass()) {
-            for (ManyToMany manyToMany : new ArrayList<ManyToMany>(mappedSuperclass.getAttributes().getManyToMany())) {
+            for (ManyToMany manyToMany : new ArrayList<>(mappedSuperclass.getAttributes().getManyToMany())) {
                 if (manyToMany.getMappedBy() == null) {
                     manageSiblingAttribute(mappedSuperclass, manyToMany);
                 }
             }
-            for (OneToMany oneToMany : new ArrayList<OneToMany>(mappedSuperclass.getAttributes().getOneToMany())) {
+            for (OneToMany oneToMany : new ArrayList<>(mappedSuperclass.getAttributes().getOneToMany())) {
                 if (oneToMany.getMappedBy() == null) {
                     manageSiblingAttribute(mappedSuperclass, oneToMany);
                 }
             }
-            for (ManyToOne manyToOne : new ArrayList<ManyToOne>(mappedSuperclass.getAttributes().getManyToOne())) {
+            for (ManyToOne manyToOne : new ArrayList<>(mappedSuperclass.getAttributes().getManyToOne())) {
                 manageSiblingAttribute(mappedSuperclass, manyToOne);
             }
-            for (OneToOne oneToOne : new ArrayList<OneToOne>(mappedSuperclass.getAttributes().getOneToOne())) {
+            for (OneToOne oneToOne : new ArrayList<>(mappedSuperclass.getAttributes().getOneToOne())) {
                 if (oneToOne.getMappedBy() == null) {
                     manageSiblingAttribute(mappedSuperclass, oneToOne);
                 }
             }
 
             // If Include Referenced Classed Checkbox is Uncheked then remove attribute
-            for (RelationAttribute relationAttribute : new ArrayList<RelationAttribute>(mappedSuperclass.getAttributes().getRelationAttributes())) {
+            for (RelationAttribute relationAttribute : new ArrayList<>(mappedSuperclass.getAttributes().getRelationAttributes())) {
                 org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
                 if (targetEntity == null) {
                     mappedSuperclass.getAttributes().removeRelationAttribute(relationAttribute);
@@ -980,20 +980,20 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
         }
         for (org.netbeans.jpa.modeler.spec.Embeddable embeddable : entityMappingsSpec.getEmbeddable()) {
-            for (ManyToMany manyToMany : new ArrayList<ManyToMany>(embeddable.getAttributes().getManyToMany())) {
+            for (ManyToMany manyToMany : new ArrayList<>(embeddable.getAttributes().getManyToMany())) {
                 if (manyToMany.getMappedBy() == null) {
                     manageSiblingAttribute(embeddable, manyToMany);
                 }
             }
-            for (OneToMany oneToMany : new ArrayList<OneToMany>(embeddable.getAttributes().getOneToMany())) {
+            for (OneToMany oneToMany : new ArrayList<>(embeddable.getAttributes().getOneToMany())) {
                 if (oneToMany.getMappedBy() == null) {
                     manageSiblingAttribute(embeddable, oneToMany);
                 }
             }
-            for (ManyToOne manyToOne : new ArrayList<ManyToOne>(embeddable.getAttributes().getManyToOne())) {
+            for (ManyToOne manyToOne : new ArrayList<>(embeddable.getAttributes().getManyToOne())) {
                 manageSiblingAttribute(embeddable, manyToOne);
             }
-            for (OneToOne oneToOne : new ArrayList<OneToOne>(embeddable.getAttributes().getOneToOne())) {
+            for (OneToOne oneToOne : new ArrayList<>(embeddable.getAttributes().getOneToOne())) {
                 if (oneToOne.getMappedBy() == null) {
                     manageSiblingAttribute(embeddable, oneToOne);
                 }
@@ -1008,8 +1008,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         }
     }
-    
-    
+
     // Issue Fix #5949 Start
     private void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
         org.netbeans.jpa.modeler.spec.Entity targetEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());
@@ -1024,14 +1023,14 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                     }
                 }
                 if (targetAttribute != null) {
-                    targetAttribute.setConnectedEntityId(sourceJavaClass.getId());
-                    targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
-                    sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+                    targetAttribute.setConnectedEntity((Entity)sourceJavaClass);
+                    targetAttribute.setConnectedAttribute(sourceAttribute);
+                    sourceAttribute.setConnectedAttribute(targetAttribute);
                 }
-                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+                sourceAttribute.setConnectedEntity(targetEntity);
             } else if (relationAttribute_Owner instanceof OneToMany) {
                 OneToMany sourceAttribute = (OneToMany) relationAttribute_Owner;
-                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+                sourceAttribute.setConnectedEntity(targetEntity);
             } else if (relationAttribute_Owner instanceof ManyToOne) {
                 ManyToOne sourceAttribute = (ManyToOne) relationAttribute_Owner;
                 OneToMany targetAttribute = null;
@@ -1042,11 +1041,11 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                     }
                 }
                 if (targetAttribute != null) {
-                    targetAttribute.setConnectedEntityId(sourceJavaClass.getId());
-                    targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
-                    sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+                    targetAttribute.setConnectedEntity((Entity)sourceJavaClass);
+                    targetAttribute.setConnectedAttribute(sourceAttribute);
+                    sourceAttribute.setConnectedAttribute(targetAttribute);
                 }
-                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+                sourceAttribute.setConnectedEntity(targetEntity);
 
             } else if (relationAttribute_Owner instanceof OneToOne) {
                 OneToOne sourceAttribute = (OneToOne) relationAttribute_Owner;
@@ -1058,11 +1057,11 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                     }
                 }
                 if (targetAttribute != null) {
-                    targetAttribute.setConnectedEntityId(sourceJavaClass.getId());
-                    targetAttribute.setConnectedAttributeId(sourceAttribute.getId());
-                    sourceAttribute.setConnectedAttributeId(targetAttribute.getId());
+                    targetAttribute.setConnectedEntity((Entity)sourceJavaClass);
+                    targetAttribute.setConnectedAttribute(sourceAttribute);
+                    sourceAttribute.setConnectedAttribute(targetAttribute);
                 }
-                sourceAttribute.setConnectedEntityId(targetEntity.getId());
+                sourceAttribute.setConnectedEntity(targetEntity);
 
             }
         }
@@ -1159,23 +1158,24 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.jaxbNameSpace = jaxbNameSpace;
     }
 
+    public static final float INSTALLATION_VERSION = 2.0F;
+
     public static EntityMappings getNewInstance() {
 
         EntityMappings entityMappingsSpec = new EntityMappings();
         entityMappingsSpec.setId(NBModelerUtil.getAutoGeneratedStringId());
+        entityMappingsSpec.setBuildOn(INSTALLATION_VERSION);
 
         Diagram diagram = new Diagram();
-        diagram.setId(NBModelerUtil.getAutoGeneratedStringId());
         Plane plane = new Plane();
-        plane.setId(NBModelerUtil.getAutoGeneratedStringId() + "_p");
         diagram.setJPAPlane(plane);
         plane.setElementRef(entityMappingsSpec.getId());
         entityMappingsSpec.setJPADiagram(diagram);
 
         return entityMappingsSpec;
     }
-    
-     public List<SqlResultSetMapping> getAllSqlResultSetMappings() {
+
+    public List<SqlResultSetMapping> getAllSqlResultSetMappings() {
         List<IdentifiableClass> identifiableClasses = new ArrayList<>(this.getEntity());
         identifiableClasses.addAll(this.getMappedSuperclass());
         List<SqlResultSetMapping> sqlResultSetMappings = new ArrayList<>();
@@ -1189,7 +1189,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      * @return the cache
      */
     public Cache getCache() {
-        if(cache == null){
+        if (cache == null) {
             cache = new Cache();
         }
         return cache;
@@ -1200,5 +1200,59 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      */
     public void setCache(Cache cache) {
         this.cache = cache;
+    }
+
+    public XMLEntityMappings getAccessor() {
+
+        XMLEntityMappings mapping = new XMLEntityMappings();
+        mapping.setPackage(_package);
+        mapping.setEntities(getEntity().stream().map(Entity::getAccessor).collect(toList()));
+        mapping.setMappedSuperclasses(getMappedSuperclass().stream().map(MappedSuperclass::getAccessor).collect(toList()));
+        mapping.setEmbeddables(getEmbeddable().stream().map(Embeddable::getAccessor).collect(toList()));
+
+        mapping.setMixedConverters(new ArrayList<>());
+
+        mapping.setConverters(new ArrayList<>());
+        mapping.setTypeConverters(new ArrayList<>());
+        mapping.setObjectTypeConverters(new ArrayList<>());
+        mapping.setSerializedConverters(new ArrayList<>());
+        mapping.setStructConverters(new ArrayList<>());
+        mapping.setTableGenerators(new ArrayList<>());
+        mapping.setUuidGenerators(new ArrayList<>());
+        mapping.setSequenceGenerators(new ArrayList<>());
+        mapping.setPartitioning(new ArrayList<>());
+        mapping.setReplicationPartitioning(new ArrayList<>());
+        mapping.setRoundRobinPartitioning(new ArrayList<>());
+        mapping.setPinnedPartitioning(new ArrayList<>());
+        mapping.setRangePartitioning(new ArrayList<>());
+        mapping.setValuePartitioning(new ArrayList<>());
+        mapping.setHashPartitioning(new ArrayList<>());
+        mapping.setNamedQueries(new ArrayList<>());
+        mapping.setNamedNativeQueries(new ArrayList<>());
+        mapping.setNamedStoredProcedureQueries(new ArrayList<>());
+        mapping.setNamedStoredFunctionQueries(new ArrayList<>());
+        mapping.setNamedPLSQLStoredFunctionQueries(new ArrayList<>());
+        mapping.setNamedPLSQLStoredProcedureQueries(new ArrayList<>());
+        mapping.setSqlResultSetMappings(new ArrayList<>());
+        mapping.setOracleArrayTypes(new ArrayList<>());
+        mapping.setOracleObjectTypes(new ArrayList<>());
+        mapping.setPLSQLTables(new ArrayList<>());
+        mapping.setPLSQLRecords(new ArrayList<>());
+        mapping.setTenantDiscriminatorColumns(new ArrayList<>());
+        return mapping;
+    }
+
+    /**
+     * @return the buildOn
+     */
+    float getBuildOn() {
+        return buildOn;
+    }
+
+    /**
+     * @param buildOn the buildOn to set
+     */
+    void setBuildOn(float buildOn) {
+        this.buildOn = buildOn;
     }
 }

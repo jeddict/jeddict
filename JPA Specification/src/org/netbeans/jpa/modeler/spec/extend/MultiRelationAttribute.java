@@ -23,17 +23,13 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
-import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.Convert;
-import org.netbeans.jpa.modeler.spec.EmptyType;
 import org.netbeans.jpa.modeler.spec.EnumType;
-import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
-import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.MapKey;
 import org.netbeans.jpa.modeler.spec.MapKeyClass;
 import org.netbeans.jpa.modeler.spec.MapKeyColumn;
@@ -42,7 +38,6 @@ import org.netbeans.jpa.modeler.spec.OrderColumn;
 import org.netbeans.jpa.modeler.spec.TemporalType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -85,8 +80,9 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     protected List<MapKeyJoinColumn> mapKeyJoinColumn;//REVENG PENDING
     @XmlElement(name = "map-key-foreign-key")
     protected ForeignKey mapKeyForeignKey;//REVENG PENDING
-
-    @XmlAttribute(name = "mapped-by")
+    @XmlAttribute(name = "own")
+    private Boolean owner;
+    @XmlTransient//(name = "mapped-by")
     protected String mappedBy;
     @XmlAttribute(name = "collection-type")
     private String collectionType;//custom added
@@ -357,7 +353,14 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      *
      */
     public String getMappedBy() {
-        return mappedBy;
+        if (Boolean.FALSE.equals(isOwner())) {
+            if (mappedBy != null) {
+                return mappedBy;
+            }
+            return getConnectedAttribute().getName();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -368,8 +371,8 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      */
     public void setMappedBy(String value) {
         this.mappedBy = value;
+        this.setOwner((Boolean) false);
     }
-
     /**
      * @return the collectionType
      */
@@ -394,5 +397,22 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
         } else {
             return super.getJaxbVariableList();
         }
+    }
+
+    /**
+     * @return the owner
+     */
+    public boolean isOwner() {
+        if(owner==null){
+            return Boolean.FALSE;
+        }
+        return owner;
+    }
+
+    /**
+     * @param owner the owner to set
+     */
+    public void setOwner(boolean owner) {
+        this.owner = owner;
     }
 }

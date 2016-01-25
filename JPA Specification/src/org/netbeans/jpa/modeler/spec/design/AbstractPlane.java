@@ -80,7 +80,7 @@ public abstract class AbstractPlane
      *
      * <p>
      * Objects of the following type(s) are allowed in the list null null null
-     * null null null null null     {@link JAXBElement }{@code <}{@link DiagramElement }{@code >}
+     * null null null null null null     {@link JAXBElement }{@code <}{@link DiagramElement }{@code >}
      * {@link JAXBElement }{@code <}{@link Shape }{@code >}
      * {@link JAXBElement }{@code <}{@link Edge }{@code >}
      *

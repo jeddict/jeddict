@@ -6,9 +6,6 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,9 +13,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -196,8 +193,6 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
         this.sequenceGenerator = value;
     }
 
-
-
     /**
      * Gets the value of the access property.
      *
@@ -226,4 +221,13 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
 ////                jaxbVariableTypeList.add(JaxbVariableType.);
 //        return jaxbVariableTypeList;
 //    }
+    public IdAccessor getAccessor() {
+        IdAccessor accessor = new IdAccessor();
+        accessor.setName(name);
+        accessor.setAttributeType(getAttributeType());
+        if (column != null) {
+            accessor.setColumn(column.getAccessor());
+        }
+        return accessor;
+    }
 }

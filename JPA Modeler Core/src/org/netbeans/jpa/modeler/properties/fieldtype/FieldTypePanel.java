@@ -71,9 +71,8 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
                     basic.setTemporal(TemporalType.TIMESTAMP);
                 }
             }
-
-        }
-        if (baseAttribute instanceof ElementCollection) {
+            basic.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
+        } else if (baseAttribute instanceof ElementCollection) {
             ElementCollection elementCollection = (ElementCollection) baseAttribute;
             elementCollection.setLob(null);
             elementCollection.setEnumerated(null);
@@ -95,7 +94,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
                     elementCollection.setTemporal(TemporalType.TIMESTAMP);
                 }
             }
-
+            elementCollection.setTargetClass(dataType_ComboBox.getSelectedItem().toString());
         } else if (baseAttribute instanceof Id) {
             Id id = (Id) baseAttribute;
             id.setTemporal(null);
@@ -108,10 +107,10 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
                     id.setTemporal(TemporalType.TIMESTAMP);
                 }
             }
-
+            id.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
         } else if (baseAttribute instanceof Transient) {
-//            Transient _transient = (Transient) baseAttribute;
-
+            Transient _transient = (Transient) baseAttribute;
+            _transient.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
         } else if (baseAttribute instanceof Version) {
             Version version = (Version) baseAttribute;
             version.setTemporal(null);
@@ -124,8 +123,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
                     version.setTemporal(TemporalType.TIMESTAMP);
                 }
             }
+            version.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
         }
-        baseAttribute.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
+        
         return baseAttribute;
     }
 

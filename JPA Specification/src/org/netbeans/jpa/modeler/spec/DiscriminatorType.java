@@ -45,9 +45,8 @@ public enum DiscriminatorType {
     public static DiscriminatorType fromValue(String v) {
         return valueOf(v);
     }
-    
-    
-    public static DiscriminatorType load(Element element , AnnotationMirror annotationMirror ) {        
+
+    public static DiscriminatorType load(Element element, AnnotationMirror annotationMirror) {
         DiscriminatorType discriminatorType = null;
         if (annotationMirror != null) {
             Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "discriminatorType");

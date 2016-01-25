@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.inheritance.InheritanceMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -50,18 +52,16 @@ public class Inheritance {
 
     @XmlAttribute
     protected InheritanceType strategy;
-    
-    
-      public static Inheritance load(Element element) {
+
+    public static Inheritance load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Inheritance");
         Inheritance inheritance = null;
         if (annotationMirror != null) {
             inheritance = new Inheritance();
-                    inheritance.strategy = InheritanceType.load(element,annotationMirror);
-           }
+            inheritance.strategy = InheritanceType.load(element, annotationMirror);
+        }
         return inheritance;
     }
-
 
     /**
      * Gets the value of the strategy property.
@@ -83,4 +83,12 @@ public class Inheritance {
         this.strategy = value;
     }
 
+    
+        public InheritanceMetadata getAccessor() {
+        InheritanceMetadata accessor = new InheritanceMetadata();
+                    System.out.println("strategy.value() : " + strategy.value());
+
+//        accessor.setStrategy(strategy.value());
+        return  accessor;
+        }
 }

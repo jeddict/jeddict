@@ -20,18 +20,18 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 /**
  *
  *
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface AssociationOverride {
- *           String name();
- *           JoinColumn[] joinColumns() default{};
- *           JoinTable joinTable() default @JoinTable;
- *         }
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME) public @interface
+ * AssociationOverride { String name(); JoinColumn[] joinColumns() default{};
+ * JoinTable joinTable() default @JoinTable; }
  *
  *
  *
- * <p>Java class for association-override complex type.
+ * <p>
+ * Java class for association-override complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  *
  * <pre>
  * &lt;complexType name="association-override">
@@ -95,11 +95,10 @@ public class AssociationOverride {
         }
         return associationOverride;
     }
-    
-    
+
     public static List<AssociationOverride> load(Element element) {
         List<AssociationOverride> associationOverrides = new ArrayList<AssociationOverride>();
-        
+
         AnnotationMirror associationOverridesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.AssociationOverrides");
         if (associationOverridesMirror != null) {
             List associationOverridesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(associationOverridesMirror, "value");
@@ -114,7 +113,7 @@ public class AssociationOverride {
                 associationOverrides.add(AssociationOverride.loadAssociation(element, associationOverridesMirror));
             }
         }
-            
+
         return associationOverrides;
     }
 
@@ -169,11 +168,9 @@ public class AssociationOverride {
 
     /**
      * Gets the value of the foreignKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @return possible object is {@link ForeignKey }
+     *
      */
     public ForeignKey getForeignKey() {
         return foreignKey;
@@ -181,11 +178,9 @@ public class AssociationOverride {
 
     /**
      * Sets the value of the foreignKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
      */
     public void setForeignKey(ForeignKey value) {
         this.foreignKey = value;
@@ -194,9 +189,7 @@ public class AssociationOverride {
     /**
      * Gets the value of the joinTable property.
      *
-     * @return
-     *     possible object is
-     *     {@link JoinTable }
+     * @return possible object is {@link JoinTable }
      *
      */
     public JoinTable getJoinTable() {

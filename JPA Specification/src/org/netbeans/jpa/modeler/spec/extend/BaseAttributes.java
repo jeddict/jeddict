@@ -19,21 +19,25 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
+import org.netbeans.jpa.modeler.spec.Version;
 
 /**
  *
@@ -51,7 +55,7 @@ import org.netbeans.jpa.modeler.spec.Transient;
 //})
 public abstract class BaseAttributes implements IAttributes {
 
-     @XmlElement(name = "basic")
+    @XmlElement(name = "basic")
     protected List<Basic> basic;
     @XmlElement(name = "many-to-one")
     protected List<ManyToOne> manyToOne;
@@ -103,7 +107,7 @@ public abstract class BaseAttributes implements IAttributes {
         notifyListeners(basic, "addAttribute", null, null);
     }
 
-     @Override
+    @Override
     public void removeBasic(Basic basic) {
         this.getBasic().remove(basic);
         notifyListeners(basic, "removeAttribute", null, null);
@@ -366,24 +370,24 @@ public abstract class BaseAttributes implements IAttributes {
     //does not need to extends BaseElement (id field hide)
     private transient List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
 
-     @Override
+    @Override
     public void notifyListeners(Object object, String property, String oldValue, String newValue) {
         for (PropertyChangeListener propertyChangeListener : listener) {
             propertyChangeListener.propertyChange(new PropertyChangeEvent(object, property, oldValue, newValue));
         }
     }
 
-     @Override
+    @Override
     public void addChangeListener(PropertyChangeListener newListener) {
         listener.add(newListener);
     }
 
-     @Override
+    @Override
     public void removeChangeListener(PropertyChangeListener newListener) {
         listener.remove(newListener);
     }
 
-     @Override
+    @Override
     public void removeRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
             this.getManyToMany().remove((ManyToMany) relationAttribute);
@@ -402,7 +406,7 @@ public abstract class BaseAttributes implements IAttributes {
         }
     }
 
-     @Override
+    @Override
     public void addRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
             this.getManyToMany().add((ManyToMany) relationAttribute);
@@ -430,7 +434,7 @@ public abstract class BaseAttributes implements IAttributes {
         attributes.addAll(this.getTransient());
         return attributes;
     }
-    
+
     @Override
     public boolean isAttributeExist(String name) {
 
@@ -494,7 +498,7 @@ public abstract class BaseAttributes implements IAttributes {
 
         return false;
     }
-    
+
     @Override
     public List<Attribute> findAllAttribute(String name) {
         List<Attribute> attributes = new ArrayList<Attribute>();
@@ -560,5 +564,38 @@ public abstract class BaseAttributes implements IAttributes {
         return attributes;
     }
 
-  
+    
+    public XMLAttributes getAccessor() {
+        XMLAttributes attr = new XMLAttributes();
+        attr.setBasicCollections(new ArrayList<>());
+        attr.setBasicMaps(new ArrayList<>());
+        attr.setTransformations(new ArrayList<>());
+        attr.setVariableOneToOnes(new ArrayList<>());
+        attr.setStructures(new ArrayList<>());
+        attr.setArrays(new ArrayList<>());
+        
+        attr.setBasics(new ArrayList<>());
+        attr.setElementCollections(new ArrayList<>());
+        attr.setEmbeddeds(new ArrayList<>());
+        attr.setTransients(new ArrayList<>());
+        attr.setManyToManys(new ArrayList<>());
+        attr.setManyToOnes(new ArrayList<>());
+        attr.setOneToManys(new ArrayList<>());
+        attr.setOneToOnes(new ArrayList<>());
+        return attr;
+//        return updateAccessor(attr);
+    }
+    
+    public XMLAttributes updateAccessor(XMLAttributes attr) {
+        attr.getBasics().addAll(getBasic().stream().map(Basic::getAccessor).collect(toList()));
+        attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollection::getAccessor).collect(toList()));
+        attr.getEmbeddeds().addAll(getEmbedded().stream().map(Embedded::getAccessor).collect(toList()));
+        attr.getTransients().addAll(getTransient().stream().map(Transient::getAccessor).collect(toList()));
+        attr.getManyToManys().addAll(getManyToMany().stream().map(ManyToMany::getAccessor).collect(toList()));
+        attr.getManyToOnes().addAll(getManyToOne().stream().map(ManyToOne::getAccessor).collect(toList()));
+        attr.getOneToManys().addAll(getOneToMany().stream().map(OneToMany::getAccessor).collect(toList()));
+        attr.getOneToOnes().addAll(getOneToOne().stream().map(OneToOne::getAccessor).collect(toList()));
+        return attr;
+    }
+
 }

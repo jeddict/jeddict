@@ -16,19 +16,16 @@
 package org.netbeans.jpa.modeler.specification.model.scene;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import org.netbeans.db.modeler.spec.Column;
-import org.netbeans.db.modeler.spec.DBMapping;
-import org.netbeans.db.modeler.spec.Table;
-import org.netbeans.db.modeler.specification.model.file.action.DBViewerActionListener;
+import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -44,6 +41,7 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
+import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
 import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.spec.Embeddable;
@@ -70,6 +68,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
+import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
@@ -294,41 +293,17 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         manageVisibility.addActionListener((ActionEvent e) -> {
             fireEntityVisibilityAction(getModelerFile());
         });
-
+//
         JMenuItem visDB = new JMenuItem("Viusalize DB");
         visDB.addActionListener((ActionEvent e) -> {
             ModelerFile file = this.getModelerFile();
-            EntityMappings em = this.getBaseElementSpec();
-            DBMapping dbm = new DBMapping();
-
-            em.getEntity().stream().forEach(entity -> {
-                Table table = new Table();
-
-                table.setId(entity.getId());
-                org.netbeans.jpa.modeler.spec.Table entityTable = entity.getTable();
-                if (entityTable != null && !entityTable.getName().isEmpty()) {
-                    table.setName(entity.getTable().getName());
-                } else {
-                    table.setName(entity.getClazz());
-                }
-                dbm.getTables().add(table);
-                entity.getAttributes().getBasic().stream().forEach(attr -> {
-                    Column column = new Column();
-                    column.setId(attr.getId());
-                    org.netbeans.jpa.modeler.spec.Column attrColumn = attr.getColumn();
-                    if (attrColumn != null && !attrColumn.getName().isEmpty()) {
-                        column.setName(attr.getColumn().getName());
-                    } else {
-                        column.setName(attr.getName());
-                    }
-                    table.getColumns().add(column);
-
-                });
-
-            });
-
-            DBViewerActionListener fileAction = new DBViewerActionListener(file.getModelerFileDataObject());
-            fileAction.openModelerFile("DB", null, null, dbm);
+            Optional<ModelerFile> dbModelerFile = file.getChildrenFile("DB");
+            if(dbModelerFile.isPresent()){
+                dbModelerFile.get().getModelerPanelTopComponent().close();
+                ModelerCore.removeModelerFile(dbModelerFile.get().getPath());//TODO : BUG
+            }
+            DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
+            dbModelerRequestManager.init(file);
         });
 
 //        JMenuItem generateCodeFromDB = new JMenuItem("Generate DB code");

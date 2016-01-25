@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbXmlElement {
 

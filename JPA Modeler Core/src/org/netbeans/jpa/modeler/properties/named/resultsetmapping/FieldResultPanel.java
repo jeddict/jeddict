@@ -24,9 +24,9 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.enti
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
 
 public class FieldResultPanel extends EntityComponent<FieldResult> {
-private final ModelerFile modelerFile;
-    public FieldResultPanel(ModelerFile modelerFile) {
-        this.modelerFile=modelerFile;
+
+             @Override
+    public void postConstruct() {
         initComponents();
     }
 

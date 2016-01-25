@@ -13,25 +13,20 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Column {
- *           String name() default "";
- *           boolean unique() default false;
- *           boolean nullable() default true;
- *           boolean insertable() default true;
- *           boolean updatable() default true;
- *           String columnDefinition() default "";
- *           String table() default "";
- *           int length() default 255;
- *           int precision() default 0; // decimal precision
- *           int scale() default 0; // decimal scale
- *         }
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface Column {
+ * String name() default ""; boolean unique() default false; boolean nullable()
+ * default true; boolean insertable() default true; boolean updatable() default
+ * true; String columnDefinition() default ""; String table() default ""; int
+ * length() default 255; int precision() default 0; // decimal precision int
+ * scale() default 0; // decimal scale }
  *
  *
  *
@@ -321,4 +316,19 @@ public class Column extends BaseElement {
         this.scale = value;
     }
 
+    public ColumnMetadata getAccessor() {
+        ColumnMetadata accessr = new ColumnMetadata();
+        accessr.setName(name);
+        accessr.setColumnDefinition(columnDefinition);
+        accessr.setInsertable(insertable);
+        accessr.setLength(length);
+        accessr.setNullable(nullable);
+        accessr.setPrecision(precision);
+        accessr.setScale(scale);
+        accessr.setTable(table);
+        accessr.setUnique(unique);
+        accessr.setUpdatable(updatable);
+
+        return accessr;
+    }
 }

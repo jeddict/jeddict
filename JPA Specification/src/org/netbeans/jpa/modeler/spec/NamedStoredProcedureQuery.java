@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.08.22 at 04:26:24 PM IST 
 //
-
-
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
@@ -20,26 +18,24 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
-
 /**
- * 
- * 
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface NamedStoredProcedureQuery {
- *           String name();
- *           String procedureName();
- *           StoredProcedureParameter[] parameters() default {};
- *           Class[] resultClasses() default {};
- *           String[] resultSetMappings() default{};
- *           QueryHint[] hints() default {};
- *         }
- * 
- *       
- * 
- * <p>Java class for named-stored-procedure-query complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
+ *
+ * @Target({TYPE}) @Retention(RUNTIME) public @interface
+ * NamedStoredProcedureQuery { String name(); String procedureName();
+ * StoredProcedureParameter[] parameters() default {}; Class[] resultClasses()
+ * default {}; String[] resultSetMappings() default{}; QueryHint[] hints()
+ * default {}; }
+ *
+ *
+ *
+ * <p>
+ * Java class for named-stored-procedure-query complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="named-stored-procedure-query">
  *   &lt;complexContent>
@@ -57,8 +53,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-stored-procedure-query", propOrder = {
@@ -116,11 +112,10 @@ public class NamedStoredProcedureQuery {
         }
         return namedStoredProcedureQuery;
     }
-        
-    
+
     public static List<NamedStoredProcedureQuery> load(Element element) {
         List<NamedStoredProcedureQuery> namedStoredProcedureQueries = new ArrayList<NamedStoredProcedureQuery>();
-        
+
         AnnotationMirror namedStoredProcedureQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedStoredProcedureQueries");
         if (namedStoredProcedureQueriesMirror != null) {
             List namedStoredProcedureQueryMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedStoredProcedureQueriesMirror, "value");
@@ -136,15 +131,13 @@ public class NamedStoredProcedureQuery {
             }
         }
         return namedStoredProcedureQueries;
-    }  
-    
+    }
+
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getDescription() {
         return description;
@@ -152,11 +145,9 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -164,25 +155,25 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Gets the value of the parameter property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the parameter property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getParameter().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link StoredProcedureParameter }
-     * 
-     * 
+     *
+     *
      */
     public List<StoredProcedureParameter> getParameter() {
         if (parameter == null) {
@@ -193,25 +184,24 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Gets the value of the resultClass property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resultClass property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the resultClass property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResultClass().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link String }
+     *
+     *
      */
     public List<String> getResultClass() {
         if (resultClass == null) {
@@ -222,25 +212,24 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Gets the value of the resultSetMapping property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resultSetMapping property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the resultSetMapping property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResultSetMapping().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link String }
+     *
+     *
      */
     public List<String> getResultSetMapping() {
         if (resultSetMapping == null) {
@@ -251,25 +240,25 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Gets the value of the hint property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the hint property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the hint property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getHint().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link QueryHint }
-     * 
-     * 
+     *
+     *
      */
     public List<QueryHint> getHint() {
         if (hint == null) {
@@ -280,11 +269,9 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getName() {
         return name;
@@ -292,11 +279,9 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -304,11 +289,9 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Gets the value of the procedureName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getProcedureName() {
         return procedureName;
@@ -316,11 +299,9 @@ public class NamedStoredProcedureQuery {
 
     /**
      * Sets the value of the procedureName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
+     *
      */
     public void setProcedureName(String value) {
         this.procedureName = value;

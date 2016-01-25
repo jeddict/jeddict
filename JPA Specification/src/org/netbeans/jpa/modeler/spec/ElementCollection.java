@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
@@ -32,17 +33,18 @@ import org.netbeans.modeler.core.NBModelerUtil;
 /**
  *
  *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface ElementCollection {
- *           Class targetClass() default void.class;
- *           FetchType fetch() default LAZY;
- *         }
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface
+ * ElementCollection { Class targetClass() default void.class; FetchType fetch()
+ * default LAZY; }
  *
  *
  *
- * <p>Java class for element-collection complex type.
+ * <p>
+ * Java class for element-collection complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  *
  * <pre>
  * &lt;complexType name="element-collection">
@@ -124,6 +126,10 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "convert",
     "collectionTable"
 })
+/**
+ * For Basic ElementCollection    -> TargetClass<String>
+ * For Embeddable ElementCollection -> ConnectedClass<Embeddable>
+ */
 public class ElementCollection extends CompositionAttribute implements FetchTypeHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler { //CompositionAttribute/BaseAttributes
 
     @XmlElement(name = "order-by")
@@ -155,11 +161,11 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
-    protected List<AssociationOverride> associationOverride; 
+    protected List<AssociationOverride> associationOverride;
     protected List<Convert> convert;//REVENG PENDING
     @XmlElement(name = "collection-table")
     protected CollectionTable collectionTable;
-    
+
     @XmlAttribute(name = "target-class")
     protected String targetClass;
     @XmlAttribute(name = "fetch")
@@ -178,37 +184,29 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         elementCollection.temporal = TemporalType.load(element, variableElement);
         elementCollection.enumerated = EnumType.load(element, variableElement);
         elementCollection.lob = Lob.load(element, variableElement);
-        
-        
+
         elementCollection.getAttributeOverride().addAll(AttributeOverride.load(element));
-       elementCollection.getAssociationOverride().addAll(AssociationOverride.load(element));
-         
-        
+        elementCollection.getAssociationOverride().addAll(AssociationOverride.load(element));
+
         elementCollection.collectionTable = CollectionTable.load(element, variableElement);
         elementCollection.name = variableElement.getSimpleName().toString();
-        
+
         AnnotationMirror orderByMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OrderBy");
         if (orderByMirror != null) {
             Object value = JavaSourceParserUtil.findAnnotationValue(orderByMirror, "value");
-            elementCollection.orderBy = value==null?StringUtils.EMPTY:value.toString();
+            elementCollection.orderBy = value == null ? StringUtils.EMPTY : value.toString();
         }
-        
+
         elementCollection.fetch = FetchType.load(element, annotationMirror);
         elementCollection.access = AccessType.load(element);
 
         elementCollection.collectionType = ((DeclaredType) variableElement.asType()).asElement().toString();
 
-        
-        
-        
-        
-        
         DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetClass");
         if (declaredType == null) {
             declaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(0);
         }
         if (declaredType != null) {
-            elementCollection.setAttributeType(declaredType.asElement().getSimpleName().toString());//elementCollection.targetClass
             /* Embeddable Start*/
             if (JavaSourceParserUtil.isEmbeddableClass(declaredType.asElement())) {
                 org.netbeans.jpa.modeler.spec.Embeddable embeddableClassSpec = entityMappings.findEmbeddable(elementCollection.targetClass);
@@ -222,11 +220,11 @@ public class ElementCollection extends CompositionAttribute implements FetchType
                     embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
                     entityMappings.addEmbeddable(embeddableClassSpec);
                 }
-                elementCollection.setConnectedClassId(embeddableClassSpec.getId());
+                elementCollection.setConnectedClass(embeddableClassSpec);
             }
             /* Embeddable End*/
         } else {
-            elementCollection.setAttributeType("java.lang.String");//elementCollection.targetClass
+            elementCollection.setTargetClass("java.lang.String");//elementCollection.targetClass
         }
         JavaSourceParserUtil.addNonEEAnnotation(elementCollection, element);
 
@@ -385,25 +383,24 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     /**
      * Gets the value of the mapKeyConvert property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the mapKeyConvert property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the mapKeyConvert property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMapKeyConvert().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Convert }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link Convert }
+     *
+     *
      */
     public List<Convert> getMapKeyConvert() {
         if (mapKeyConvert == null) {
@@ -463,11 +460,9 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     /**
      * Gets the value of the mapKeyForeignKey property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @return possible object is {@link ForeignKey }
+     *
      */
     public ForeignKey getMapKeyForeignKey() {
         return mapKeyForeignKey;
@@ -475,11 +470,9 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     /**
      * Sets the value of the mapKeyForeignKey property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ForeignKey }
-     *     
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
      */
     public void setMapKeyForeignKey(ForeignKey value) {
         this.mapKeyForeignKey = value;
@@ -627,25 +620,24 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     /**
      * Gets the value of the convert property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the convert property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the convert property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConvert().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Convert }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link Convert }
+     *
+     *
      */
     public List<Convert> getConvert() {
         if (convert == null) {
@@ -677,7 +669,6 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         this.collectionTable = value;
     }
 
-  
     /**
      * Gets the value of the targetClass property.
      *
@@ -700,16 +691,9 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     @Override
     public String getAttributeType() {
-        return targetClass;
+     return this.getConnectedClass()!=null?super.getAttributeType():targetClass;
     }
 
-    /**
-     * @param attributeType the attributeType to set
-     */
-    @Override
-    public void setAttributeType(String targetClass) {
-        this.targetClass = targetClass;
-    }
 
     /**
      * Gets the value of the fetch property.
@@ -802,10 +786,24 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     @Override
     public List<JaxbVariableType> getJaxbVariableList() {
-        if (this.getConnectedClassId() != null && !this.getConnectedClassId().trim().isEmpty()) { //Embedded //Complex
+        if (this.getConnectedClass() != null) { //Embedded //Complex
             return super.getJaxbVariableList();
         } else { //Basic //Simple
             return Arrays.asList(JaxbVariableType.values());
         }
+    }
+
+    public ElementCollectionAccessor getAccessor() {
+        ElementCollectionAccessor accessor = new ElementCollectionAccessor();
+        accessor.setName(name);
+        accessor.setTargetClassName(targetClass);
+        accessor.setAttributeType(getCollectionType());
+        if (column != null) {
+            accessor.setColumn(column.getAccessor());
+        }
+        if(collectionTable!= null){
+            accessor.setCollectionTable(collectionTable.getAccessor());
+        }
+        return accessor;
     }
 }

@@ -35,14 +35,14 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @XmlElement(name = "id-class")
     protected IdClass idClass;
     protected Attributes attributes;
-    
+
     @XmlElement(name = "nq")//(name = "named-query")
     protected List<NamedQuery> namedQuery;
     @XmlElement(name = "nnq")//(name = "named-native-query")
     protected List<NamedNativeQuery> namedNativeQuery;
-    @XmlElement(name="srsm")//(name = "sql-result-set-mapping")
+    @XmlElement(name = "srsm")//(name = "sql-result-set-mapping")
     protected Set<SqlResultSetMapping> sqlResultSetMapping;
-    
+
     @XmlElement(name = "edl")//(name = "exclude-default-listeners")
     protected EmptyType excludeDefaultListeners;
     @XmlElement(name = "esl")//(name = "exclude-superclass-listeners")
@@ -63,8 +63,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     protected PostUpdate postUpdate;//REVENG PENDING
     @XmlElement(name = "el")//(name = "post-load")
     protected PostLoad postLoad;//REVENG PENDING
-    
-    
+
     @XmlAttribute
     private CompositePrimaryKeyType compositePrimaryKeyType;//custom added
     @XmlAttribute
@@ -85,23 +84,23 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
             this.setCompositePrimaryKeyClass(null);
             this.setCompositePrimaryKeyType(null);
         }
-        
-          AnnotationMirror entityListenersMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.EntityListeners");
+
+        AnnotationMirror entityListenersMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.EntityListeners");
         if (entityListenersMirror != null) {
             this.setEntityListeners(EntityListeners.load(element, entityListenersMirror));
         }
-        
+
         AnnotationMirror excludeDefaultListenersMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ExcludeDefaultListeners");
         if (excludeDefaultListenersMirror != null) {
             this.setExcludeDefaultListeners(new EmptyType());
         }
-        
+
         AnnotationMirror excludeSuperclassListenersMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ExcludeSuperclassListeners");
         if (excludeSuperclassListenersMirror != null) {
             this.setExcludeSuperclassListeners(new EmptyType());
         }
-        
-            AnnotationMirror namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedQueries");
+
+        AnnotationMirror namedQueriesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.NamedQueries");
         if (namedQueriesMirror != null) {
             List namedQueriesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(namedQueriesMirror, "value");
             if (namedQueriesMirrorList != null) {
@@ -194,8 +193,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     public void setAttributes(Attributes value) {
         this.attributes = value;
     }
-    
-    
+
     /**
      * Gets the value of the excludeDefaultListeners property.
      *
@@ -483,7 +481,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
         return this.sqlResultSetMapping;
     }
 
-        /**
+    /**
      * @return the compositePrimaryKeyType
      */
     @Override
@@ -516,22 +514,26 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
         this.compositePrimaryKeyClass = compositePrimaryKeyClass;
         manageCompositePrimaryKeyClass();
     }
+
     @Override
-        public void manageCompositePrimaryKeyClass() {
+    public void manageCompositePrimaryKeyClass() {
         if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
             compositePrimaryKeyClass = this.getClazz() + "PK";
         }
-        if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-            this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass);
-            this.idClass = null;
-        } else if (this.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-            this.idClass = new IdClass(compositePrimaryKeyClass);
-        } else {
-            this.idClass = null;
-            compositePrimaryKeyClass = null;
-            if (getCompositePrimaryKeyType() == null) {
-                setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
-            }
+        if (null != this.getCompositePrimaryKeyType()) switch (this.getCompositePrimaryKeyType()) {
+            case EMBEDDEDID:
+                //this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass); //todo urgent
+                this.idClass = null;
+                break;
+            case IDCLASS:
+                this.idClass = new IdClass(compositePrimaryKeyClass);
+                break;
+            default:
+                this.idClass = null;
+                compositePrimaryKeyClass = null;
+                if (getCompositePrimaryKeyType() == null) {
+                    setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
+                }   break;
         }
     }
 

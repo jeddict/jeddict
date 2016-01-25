@@ -34,6 +34,7 @@ import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -50,7 +51,7 @@ public class NamedEGChildFactory extends EGChildFactory {
         }
         if (classWidget != null) {
             for (AttributeWidget attributeWidget : classWidget.getAllAttributeWidgets()) {
-                if (attributeWidget instanceof TransientAttributeWidget || (attributeWidget instanceof RelationAttributeWidget && !((RelationAttributeWidget) attributeWidget).isOwner())) {
+                if (attributeWidget instanceof TransientAttributeWidget || (attributeWidget instanceof RelationAttributeWidget && !((RelationAttributeWidget<? extends RelationAttribute>) attributeWidget).getBaseElementSpec().isOwner())) {
                     // skip
                 } else {//check for all remaining
                     attributeWidgets.add(attributeWidget);

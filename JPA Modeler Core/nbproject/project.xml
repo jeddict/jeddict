@@ -275,9 +275,50 @@
                 </dependency>
             </module-dependencies>
             <friend-packages>
+                <friend>org.netbeans.db.modeler</friend>
                 <friend>org.netbeans.jpa.modeler.dbre</friend>
                 <friend>org.netbeans.jpa.modeler.jcre</friend>
+                <package>org.netbeans.jpa.modeler.core.widget</package>
+                <package>org.netbeans.jpa.modeler.core.widget.attribute</package>
+                <package>org.netbeans.jpa.modeler.core.widget.attribute.base</package>
+                <package>org.netbeans.jpa.modeler.core.widget.attribute.relation</package>
+                <package>org.netbeans.jpa.modeler.core.widget.context</package>
+                <package>org.netbeans.jpa.modeler.core.widget.flow</package>
+                <package>org.netbeans.jpa.modeler.core.widget.flow.relation</package>
+                <package>org.netbeans.jpa.modeler.core.widget.relation.flow.direction</package>
+                <package>org.netbeans.jpa.modeler.core.widget.ui</package>
+                <package>org.netbeans.jpa.modeler.navigator.dbview</package>
+                <package>org.netbeans.jpa.modeler.navigator.entitygraph</package>
+                <package>org.netbeans.jpa.modeler.navigator.entitygraph.component</package>
+                <package>org.netbeans.jpa.modeler.navigator.entitygraph.component.spec</package>
+                <package>org.netbeans.jpa.modeler.navigator.overrideview</package>
+                <package>org.netbeans.jpa.modeler.properties</package>
+                <package>org.netbeans.jpa.modeler.properties.cascade</package>
+                <package>org.netbeans.jpa.modeler.properties.fieldtype</package>
+                <package>org.netbeans.jpa.modeler.properties.idgeneration</package>
+                <package>org.netbeans.jpa.modeler.properties.inheritence</package>
+                <package>org.netbeans.jpa.modeler.properties.joincolumn</package>
+                <package>org.netbeans.jpa.modeler.properties.named.nativequery</package>
+                <package>org.netbeans.jpa.modeler.properties.named.query</package>
+                <package>org.netbeans.jpa.modeler.properties.named.resultsetmapping</package>
+                <package>org.netbeans.jpa.modeler.properties.named.storedprocedurequery</package>
+                <package>org.netbeans.jpa.modeler.properties.validation</package>
+                <package>org.netbeans.jpa.modeler.rules.attribute</package>
+                <package>org.netbeans.jpa.modeler.rules.entity</package>
+                <package>org.netbeans.jpa.modeler.source.generator.adaptor</package>
+                <package>org.netbeans.jpa.modeler.source.generator.adaptor.definition</package>
+                <package>org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm</package>
+                <package>org.netbeans.jpa.modeler.source.generator.adaptor.internal</package>
+                <package>org.netbeans.jpa.modeler.source.generator.task</package>
+                <package>org.netbeans.jpa.modeler.source.generator.ui</package>
+                <package>org.netbeans.jpa.modeler.specification.export</package>
+                <package>org.netbeans.jpa.modeler.specification.model.file</package>
+                <package>org.netbeans.jpa.modeler.specification.model.file.action</package>
+                <package>org.netbeans.jpa.modeler.specification.model.navigator</package>
+                <package>org.netbeans.jpa.modeler.specification.model.scene</package>
                 <package>org.netbeans.jpa.modeler.specification.model.util</package>
+                <package>org.netbeans.jpa.modeler.visiblity.javaclass</package>
+                <package>org.netbeans.jpa.modeler.widget.connection.relation</package>
             </friend-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-lang-2.4.jar</runtime-relative-path>

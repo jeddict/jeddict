@@ -35,12 +35,12 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class BaseElement implements IBaseElement {
 
-//    @XmlTransient
-    @XmlAttribute @XmlIDREF
+    @XmlAttribute
+    @XmlIDREF
     private EntityMappings rootElement;
-    
-    
-    @XmlAttribute @XmlID
+
+    @XmlAttribute
+    @XmlID
     protected String id;
 
     private ExtensionElements extensionElement;
@@ -51,7 +51,7 @@ public abstract class BaseElement implements IBaseElement {
      * @return possible object is {@link String }
      *
      */
-     @Override
+    @Override
     public String getId() {
         return id;
     }
@@ -62,7 +62,7 @@ public abstract class BaseElement implements IBaseElement {
      * @param value allowed object is {@link String }
      *
      */
-     @Override
+    @Override
     public void setId(String value) {
         this.id = value;
     }
@@ -77,10 +77,11 @@ public abstract class BaseElement implements IBaseElement {
 //    public void setCustomAttributes(Map<String, String> customAttributes) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-@Override
+    @Override
     public void setCustomAttributes(Map customAttributes) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
     /**
      * @return the extensionElement
      */
@@ -132,12 +133,8 @@ public abstract class BaseElement implements IBaseElement {
         }
         return true;
     }
-
-//    @Override
-//    public void setCustomAttributes(Map customAttributes) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-
+    
+    
     @Override
     public Object getRootElement() {
         return this.rootElement;
@@ -145,9 +142,7 @@ public abstract class BaseElement implements IBaseElement {
 
     @Override
     public void setRootElement(Object rootElement) {
-        this.rootElement = (EntityMappings)rootElement;
+        this.rootElement = (EntityMappings) rootElement;
     }
-
-    
 
 }

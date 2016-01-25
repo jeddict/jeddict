@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbXmlAttribute {
 
@@ -28,7 +27,7 @@ public class JaxbXmlAttribute {
      * name is derived from the JavaBean property name.
      *
      */
-    @XmlAttribute(name="name")
+    @XmlAttribute(name = "name")
     private String name;// default "##default";
 
     /**

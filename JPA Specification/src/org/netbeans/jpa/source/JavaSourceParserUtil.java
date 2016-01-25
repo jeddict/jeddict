@@ -130,14 +130,14 @@ public class JavaSourceParserUtil {
         return findAnnotation(element, annotationFqn);
     }
 
-  //"javax.persistence|javax.xml.bind.annotation"
+    //"javax.persistence|javax.xml.bind.annotation"
     private static final Pattern JEE_PACKAGE_PATTERN = Pattern.compile(JEE_PACKAGE);
 
     public static void addNonEEAnnotation(JavaClass _class, Element element) {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
             Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
-            if(!matcher.find()){
+            if (!matcher.find()) {
                 _class.addAnnotation(annotationMirror.toString());
             }
         }
@@ -147,14 +147,14 @@ public class JavaSourceParserUtil {
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
             Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
-            if(!matcher.find()){
+            if (!matcher.find()) {
 //                attribute.addAnnotation(annotationMirror.toString());
-                
+
 //                annotationMirror.getAnnotationType().getTypeArguments()
                 Annotation annotation = new Annotation();
                 annotation.setName(annotationMirror.getAnnotationType().toString());
-               attribute.addAnnotation(annotation); 
-                
+                attribute.addAnnotation(annotation);
+
 //                attribute.addAnnotationMirror(annotationMirror);
             }
         }
@@ -217,8 +217,7 @@ public class JavaSourceParserUtil {
         }
         return attribute;
     }
-    
-    
+
     public static String findAnnotationValueAsString(AnnotationMirror annotation, String annotationKey) {
         String value = null;
         Map<? extends ExecutableElement, ? extends AnnotationValue> annotationMap = annotation.getElementValues();
@@ -625,7 +624,7 @@ public class JavaSourceParserUtil {
         TypeElement typeElement = (TypeElement) getter.getEnclosingElement();
         for (VariableElement variableElement : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
             //BUG : handling of field name for reserved sql keyword e.g : _size
-            if(variableElement.getSimpleName().charAt(0) == '_' && variableElement.getSimpleName().contentEquals('_'+guessFieldName)){
+            if (variableElement.getSimpleName().charAt(0) == '_' && variableElement.getSimpleName().contentEquals('_' + guessFieldName)) {
                 return variableElement;
             } else if (variableElement.getSimpleName().contentEquals(guessFieldName)) {
                 return variableElement;

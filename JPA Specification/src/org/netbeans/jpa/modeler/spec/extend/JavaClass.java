@@ -41,7 +41,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class JavaClass extends FlowNode implements ReverseEngineeringController {
 
-    @XmlAttribute(name="abs")
+    @XmlAttribute(name = "abs")
     protected Boolean _abstract = false;
 
     @XmlAttribute(name = "class", required = true)
@@ -78,11 +78,11 @@ public abstract class JavaClass extends FlowNode implements ReverseEngineeringCo
         if (element.getModifiers().contains(Modifier.ABSTRACT)) {
             this.setAbstract(true);
         }
-        for(TypeMirror mirror : element.getInterfaces()){
-            if(Serializable.class.getName().equals(mirror.toString())){
+        for (TypeMirror mirror : element.getInterfaces()) {
+            if (Serializable.class.getName().equals(mirror.toString())) {
                 continue;
             }
-           this.addInterface(mirror.toString());
+            this.addInterface(mirror.toString());
         }
         JavaSourceParserUtil.addNonEEAnnotation(this, element);
     }
@@ -234,8 +234,8 @@ public abstract class JavaClass extends FlowNode implements ReverseEngineeringCo
     public void setInterfaces(List<String> interfaces) {
         this.interfaces = interfaces;
     }
-    
-        public void addInterface(String _interface) {
+
+    public void addInterface(String _interface) {
         if (this.interfaces == null) {
             this.interfaces = new ArrayList<String>();
         }

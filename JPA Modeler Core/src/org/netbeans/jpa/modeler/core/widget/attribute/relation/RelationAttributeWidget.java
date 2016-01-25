@@ -16,14 +16,17 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
 import java.awt.Image;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
+import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
 import org.netbeans.jpa.modeler.spec.CascadeType;
-import org.netbeans.jpa.modeler.spec.ManyToMany;
-import org.netbeans.jpa.modeler.spec.OneToMany;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -34,7 +37,6 @@ import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 /**
  *
@@ -42,34 +44,26 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
  */
 public abstract class RelationAttributeWidget<E extends RelationAttribute> extends AttributeWidget<E> {
 
-    private boolean owner = false;
 
     public RelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("collectionType", (PropertyChangeListener<String>) (String collectionType) -> {
-            RelationAttribute relationAttribute = (RelationAttribute) RelationAttributeWidget.this.getBaseElementSpec();
-            boolean valid = false;
-            try {
-                if (collectionType != null || !collectionType.trim().isEmpty()) {
-                    if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
-                        valid = true;
-                    }
-                }
-            } catch (ClassNotFoundException ex) {
-                //skip allow = false;
-            }
-            if (!valid) {
-                collectionType = java.util.Collection.class.getName();
-            }
-            if (relationAttribute instanceof OneToMany) {
-                ((OneToMany) relationAttribute).setCollectionType(collectionType.trim());
-            } else if (relationAttribute instanceof ManyToMany) {
-                ((ManyToMany) relationAttribute).setCollectionType(collectionType.trim());
-            }
-        });
+       
 
     }
 
+        @Override
+    protected void setAttributeTooltip(){
+        if (getBaseElementSpec() instanceof CollectionTypeHandler) {
+                CollectionTypeHandler collectionTypeHandler = (CollectionTypeHandler)getBaseElementSpec();
+                StringBuilder writer = new StringBuilder();
+                writer.append(collectionTypeHandler.getCollectionType().substring(collectionTypeHandler.getCollectionType().lastIndexOf('.')+1));
+//                writer.append('<').append(this.getBaseElementSpec().get()).append('>');//TODO
+            this.setToolTipText(writer.toString());    
+        } else {
+            this.setToolTipText(this.getBaseElementSpec().getTargetEntity());//TODO
+        }
+    }
+    
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
@@ -78,12 +72,29 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
         set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         // Issue Fix #6153 End
         RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
-
-        if (owner) {
+        
+        // find source and target entity
+        Entity sourceEntity = ((EntityWidget)getModelerScene().getBaseElement(relationAttributeSpec.getConnectedEntity().getId())).getBaseElementSpec();
+        Entity targetEntity;
+        
+        RelationFlowWidget flowWidget = this.getRelationFlowWidget();
+        if(flowWidget instanceof Bidirectional){
+           RelationAttribute targetRelationAttributeSpec = ((Bidirectional)flowWidget).getTargetRelationAttributeWidget().getBaseElementSpec();
+            targetEntity = ((EntityWidget)getModelerScene().getBaseElement(targetRelationAttributeSpec.getConnectedEntity().getId())).getBaseElementSpec();
+        } else {
+            targetEntity = ((Unidirectional)flowWidget).getTargetEntityWidget().getBaseElementSpec();
+        }
+        
+        
+        
+        
+        
+        
+        if (relationAttributeSpec.isOwner()) {
 
             if (this.getBaseElementSpec() instanceof JoinColumnHandler) {
                 JoinColumnHandler joinColumnHandlerSpec = (JoinColumnHandler) this.getBaseElementSpec();
-                set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), joinColumnHandlerSpec.getJoinColumn()));
+                set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), joinColumnHandlerSpec.getJoinColumn(),targetEntity));
 
             }
             
@@ -339,29 +350,16 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
 
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
+
+    public void setConnectedSibling(EntityWidget classWidget) {
+        RelationAttribute relationAttribute = this.getBaseElementSpec();
+        relationAttribute.setConnectedEntity(classWidget.getBaseElementSpec());
     }
 
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
-    }
-
-    public void setConnectedSibling(JavaClassWidget classWidget) {
-        RelationAttribute relationAttribute = (RelationAttribute) this.getBaseElementSpec();
-        relationAttribute.setConnectedEntityId(classWidget.getId());
-    }
-
-    public void setConnectedSibling(JavaClassWidget classWidget, AttributeWidget attributeWidget) {
-        RelationAttribute relationAttribute = (RelationAttribute) this.getBaseElementSpec();
-        relationAttribute.setConnectedEntityId(classWidget.getId());
-        relationAttribute.setConnectedAttributeId(attributeWidget.getId());
+    public void setConnectedSibling(EntityWidget classWidget, RelationAttributeWidget<RelationAttribute> attributeWidget) {
+        RelationAttribute relationAttribute = this.getBaseElementSpec();
+        relationAttribute.setConnectedEntity(classWidget.getBaseElementSpec());
+        relationAttribute.setConnectedAttribute(attributeWidget.getBaseElementSpec());
 
     }
 

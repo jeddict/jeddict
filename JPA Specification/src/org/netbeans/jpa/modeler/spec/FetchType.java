@@ -37,15 +37,15 @@ public enum FetchType {
     EAGER("Eager");
 
     private final String value;
-    
-    public static FetchType load(Element element , AnnotationMirror annotationMirror ) {        
+
+    public static FetchType load(Element element, AnnotationMirror annotationMirror) {
         FetchType fetchType = null;
         if (annotationMirror != null) {
             Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fetch");
             if (value != null) {
                 fetchType = FetchType.valueOf(value.toString());
             }
-        }     
+        }
         return fetchType;
     }
 

@@ -20,8 +20,8 @@ package org.netbeans.jpa.modeler.spec.extend.annotation;
  * @author Gaurav Gupta
  */
 public class Annotation {
-    
-    private String name ;
+
+    private String name;
 
     /**
      * @return the name
@@ -36,7 +36,5 @@ public class Annotation {
     public void setName(String name) {
         this.name = name;
     }
-    
-    
-    
+
 }

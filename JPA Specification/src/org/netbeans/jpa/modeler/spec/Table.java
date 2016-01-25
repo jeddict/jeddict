@@ -16,19 +16,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.tables.TableMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  *
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface Table {
- *           String name() default "";
- *           String catalog() default "";
- *           String schema() default "";
- *           UniqueConstraint[] uniqueConstraints() default {};
- *           Index[] indexes() default {};
- *         }
+ * @Target({TYPE}) @Retention(RUNTIME) public @interface Table { String name()
+ * default ""; String catalog() default ""; String schema() default "";
+ * UniqueConstraint[] uniqueConstraints() default {}; Index[] indexes() default
+ * {}; }
  *
  *
  *
@@ -124,25 +122,24 @@ public class Table {
 
     /**
      * Gets the value of the index property.
-     * 
+     *
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the index property.
-     * 
+     * This accessor method returns a reference to the live list, not a
+     * snapshot. Therefore any modification you make to the returned list will
+     * be present inside the JAXB object. This is why there is not a
+     * <CODE>set</CODE> method for the index property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIndex().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Index }
-     * 
-     * 
+     * Objects of the following type(s) are allowed in the list {@link Index }
+     *
+     *
      */
     public List<Index> getIndex() {
         if (index == null) {
@@ -211,4 +208,13 @@ public class Table {
         this.schema = value;
     }
 
+    public TableMetadata getAccessor() {
+        TableMetadata accessor = new TableMetadata();
+        accessor.setName(name);
+        accessor.setCatalog(catalog);
+        accessor.setSchema(schema);
+
+        return accessor;
+
+    }
 }

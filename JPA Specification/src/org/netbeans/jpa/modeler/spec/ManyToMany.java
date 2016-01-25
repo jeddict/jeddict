@@ -6,39 +6,31 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.commons.lang.StringUtils;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ManyToManyAccessor;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
  *
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface ManyToMany {
- *           Class targetEntity() default void.class;
- *           CascadeType[] cascade() default {};
- *           FetchType fetch() default LAZY;
- *           String mappedBy() default "";
- *         }
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME) public @interface ManyToMany {
+ * Class targetEntity() default void.class; CascadeType[] cascade() default {};
+ * FetchType fetch() default LAZY; String mappedBy() default ""; }
  *
  *
  *
- * <p>Java class for many-to-many complex type.
+ * <p>
+ * Java class for many-to-many complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  *
  * <pre>
  * &lt;complexType name="many-to-many">
@@ -86,12 +78,23 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "many-to-many", propOrder = {
-})
+@XmlType(name = "many-to-many", propOrder = {})
 public class ManyToMany extends MultiRelationAttribute {
 
     public void load(Element element, VariableElement variableElement) {
         AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ManyToMany");
         super.load(relationAnnotationMirror, element, variableElement);
+    }
+
+    public ManyToManyAccessor getAccessor() {
+        ManyToManyAccessor accessor = new ManyToManyAccessor();
+        accessor.setName(name);
+        accessor.setTargetEntityName(getTargetEntity());
+        accessor.setAttributeType(getCollectionType());
+        accessor.setMappedBy(getMappedBy());
+        if (joinTable != null) {
+            accessor.setJoinTable(joinTable.getAccessor());
+        }
+        return accessor;
     }
 }

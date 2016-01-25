@@ -100,9 +100,6 @@ public class NamedAttributeNode {
         return true;
     }
 
-    
-    
-    
     /**
      * Gets the value of the name property.
      *

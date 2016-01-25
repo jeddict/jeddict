@@ -46,9 +46,9 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlType(name = "field-result")
 public class FieldResult {
 
-    @XmlAttribute(name="n", required = true)//(required = true)
+    @XmlAttribute(name = "n", required = true)//(required = true)
     protected String name;
-    @XmlAttribute(name="cl",required = true)//(required = true)
+    @XmlAttribute(name = "cl", required = true)//(required = true)
     protected String column;
 
     public static FieldResult load(Element element, AnnotationMirror annotationMirror) {

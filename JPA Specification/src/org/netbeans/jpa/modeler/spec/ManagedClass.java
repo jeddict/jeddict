@@ -19,18 +19,18 @@ import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
-public abstract class ManagedClass extends JavaClass{
-    
+public abstract class ManagedClass extends JavaClass {
+
     @XmlAttribute
     protected AccessType access;
-    
-    @XmlAttribute(name="sm")//(name="static-metamodel")
+
+    @XmlAttribute(name = "sm")//(name="static-metamodel")
     private Boolean generateStaticMetamodel = false;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;//REVENG PENDING
-    
+
     protected String description;
-    
+
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
@@ -41,7 +41,7 @@ public abstract class ManagedClass extends JavaClass{
      * @return the generateStaticMetamodel
      */
     public boolean getGenerateStaticMetamodel() {
-        return generateStaticMetamodel;          
+        return generateStaticMetamodel;
     }
 
     /**
@@ -50,8 +50,8 @@ public abstract class ManagedClass extends JavaClass{
     public void setGenerateStaticMetamodel(Boolean generateStaticMetamodel) {
         this.generateStaticMetamodel = generateStaticMetamodel;
     }
-    
-        /**
+
+    /**
      * Gets the value of the access property.
      *
      * @return possible object is {@link AccessType }
@@ -70,8 +70,8 @@ public abstract class ManagedClass extends JavaClass{
     public void setAccess(AccessType value) {
         this.access = value;
     }
-    
-        /**
+
+    /**
      * Gets the value of the metadataComplete property.
      *
      * @return possible object is {@link Boolean }
@@ -90,7 +90,7 @@ public abstract class ManagedClass extends JavaClass{
     public void setMetadataComplete(Boolean value) {
         this.metadataComplete = value;
     }
-    
+
     /**
      * Gets the value of the description property.
      *
