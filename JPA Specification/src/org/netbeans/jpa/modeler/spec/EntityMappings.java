@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -19,7 +18,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
@@ -167,8 +165,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private String persistenceUnitName;
     @XmlAttribute
     private Float buildOn;//JPA Modeler version
-    
-
 
     @XmlElement(name = "c")
     private Cache cache;
@@ -1023,7 +1019,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                     }
                 }
                 if (targetAttribute != null) {
-                    targetAttribute.setConnectedEntity((Entity)sourceJavaClass);
+                    targetAttribute.setConnectedEntity((Entity) sourceJavaClass);
                     targetAttribute.setConnectedAttribute(sourceAttribute);
                     sourceAttribute.setConnectedAttribute(targetAttribute);
                 }
@@ -1041,7 +1037,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                     }
                 }
                 if (targetAttribute != null) {
-                    targetAttribute.setConnectedEntity((Entity)sourceJavaClass);
+                    targetAttribute.setConnectedEntity((Entity) sourceJavaClass);
                     targetAttribute.setConnectedAttribute(sourceAttribute);
                     sourceAttribute.setConnectedAttribute(targetAttribute);
                 }
@@ -1057,7 +1053,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                     }
                 }
                 if (targetAttribute != null) {
-                    targetAttribute.setConnectedEntity((Entity)sourceJavaClass);
+                    targetAttribute.setConnectedEntity((Entity) sourceJavaClass);
                     targetAttribute.setConnectedAttribute(sourceAttribute);
                     sourceAttribute.setConnectedAttribute(targetAttribute);
                 }
@@ -1200,46 +1196,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      */
     public void setCache(Cache cache) {
         this.cache = cache;
-    }
-
-    public XMLEntityMappings getAccessor() {
-
-        XMLEntityMappings mapping = new XMLEntityMappings();
-        mapping.setPackage(_package);
-        mapping.setEntities(getEntity().stream().map(Entity::getAccessor).collect(toList()));
-        mapping.setMappedSuperclasses(getMappedSuperclass().stream().map(MappedSuperclass::getAccessor).collect(toList()));
-        mapping.setEmbeddables(getEmbeddable().stream().map(Embeddable::getAccessor).collect(toList()));
-
-        mapping.setMixedConverters(new ArrayList<>());
-
-        mapping.setConverters(new ArrayList<>());
-        mapping.setTypeConverters(new ArrayList<>());
-        mapping.setObjectTypeConverters(new ArrayList<>());
-        mapping.setSerializedConverters(new ArrayList<>());
-        mapping.setStructConverters(new ArrayList<>());
-        mapping.setTableGenerators(new ArrayList<>());
-        mapping.setUuidGenerators(new ArrayList<>());
-        mapping.setSequenceGenerators(new ArrayList<>());
-        mapping.setPartitioning(new ArrayList<>());
-        mapping.setReplicationPartitioning(new ArrayList<>());
-        mapping.setRoundRobinPartitioning(new ArrayList<>());
-        mapping.setPinnedPartitioning(new ArrayList<>());
-        mapping.setRangePartitioning(new ArrayList<>());
-        mapping.setValuePartitioning(new ArrayList<>());
-        mapping.setHashPartitioning(new ArrayList<>());
-        mapping.setNamedQueries(new ArrayList<>());
-        mapping.setNamedNativeQueries(new ArrayList<>());
-        mapping.setNamedStoredProcedureQueries(new ArrayList<>());
-        mapping.setNamedStoredFunctionQueries(new ArrayList<>());
-        mapping.setNamedPLSQLStoredFunctionQueries(new ArrayList<>());
-        mapping.setNamedPLSQLStoredProcedureQueries(new ArrayList<>());
-        mapping.setSqlResultSetMappings(new ArrayList<>());
-        mapping.setOracleArrayTypes(new ArrayList<>());
-        mapping.setOracleObjectTypes(new ArrayList<>());
-        mapping.setPLSQLTables(new ArrayList<>());
-        mapping.setPLSQLRecords(new ArrayList<>());
-        mapping.setTenantDiscriminatorColumns(new ArrayList<>());
-        return mapping;
     }
 
     /**

@@ -667,36 +667,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return this.namedEntityGraph;
     }
 
-    private void processSuperClass(JavaClass _class, EntityAccessor accessor) {
-        if (_class.getSuperclass() != null) {
-            if (_class.getSuperclass() instanceof MappedSuperclass) {
-                MappedSuperclass superclass = (MappedSuperclass) _class.getSuperclass();
-                superclass.getAttributes().updateAccessor(accessor.getAttributes());
-                processSuperClass(superclass, accessor);
-            } else {
-                accessor.setParentClassName(_class.getSuperclass().getClazz());
-            }
-        }
-    }
-    
-    public EntityAccessor getAccessor() {
-        EntityAccessor accessor = new EntityAccessor();
-        accessor.setName(name);
-        accessor.setClassName(clazz);
-        accessor.setAccess("VIRTUAL");
-        accessor.setAttributes(attributes.getAccessor());
-        if (table != null) {
-            accessor.setTable(table.getAccessor());
-        }
-        processSuperClass(this, accessor);
-        if (inheritance != null) {
-            accessor.setInheritance(inheritance.getAccessor());
-        }
-        if (discriminatorColumn != null) {
-            accessor.setDiscriminatorColumn(discriminatorColumn.getAccessor());
-        }
-        accessor.setDiscriminatorValue(discriminatorValue);
-        return accessor;
-    }
+
+
 
 }

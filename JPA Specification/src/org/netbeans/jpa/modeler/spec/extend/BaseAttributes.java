@@ -20,24 +20,17 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
-import org.netbeans.jpa.modeler.spec.Attributes;
+import org.netbeans.jpa.modeler.db.accessor.BasicSpecAccessor;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.spec.Embedded;
-import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
-import org.netbeans.jpa.modeler.spec.Version;
 
 /**
  *
@@ -587,7 +580,7 @@ public abstract class BaseAttributes implements IAttributes {
     }
     
     public XMLAttributes updateAccessor(XMLAttributes attr) {
-        attr.getBasics().addAll(getBasic().stream().map(Basic::getAccessor).collect(toList()));
+        attr.getBasics().addAll(getBasic().stream().map(BasicSpecAccessor::getInstance).collect(toList()));
         attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollection::getAccessor).collect(toList()));
         attr.getEmbeddeds().addAll(getEmbedded().stream().map(Embedded::getAccessor).collect(toList()));
         attr.getTransients().addAll(getTransient().stream().map(Transient::getAccessor).collect(toList()));

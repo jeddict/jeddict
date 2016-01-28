@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
+import org.netbeans.jpa.modeler.db.accessor.BasicSpecAccessor;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
@@ -277,13 +278,4 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         this.access = value;
     }
 
-    public BasicAccessor getAccessor() {
-        BasicAccessor accessor = new BasicAccessor();
-        accessor.setName(name);
-        accessor.setAttributeType(getAttributeType());
-        if (column != null) {
-            accessor.setColumn(column.getAccessor());
-        }
-        return accessor;
-    }
 }
