@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
+import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.sessions.DatabaseLogin;
@@ -186,7 +187,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
         DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
         JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
-        XMLEntityMappings mapping = entityMapping.getAccessor();
+        XMLEntityMappings mapping = new  DBEntityMappings(entityMapping);
         JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
 
         processor.setClassLoader(dynamicClassLoader);
