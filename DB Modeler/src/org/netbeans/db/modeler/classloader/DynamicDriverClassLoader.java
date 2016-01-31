@@ -18,9 +18,9 @@ package org.netbeans.db.modeler.classloader;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.dynamic.DynamicClassWriter;
 
-
 /**
- * This custom ClassLoader provides support for dynamically generating classes and JDBC Driver class
+ * This custom ClassLoader provides support for dynamically generating classes
+ * and JDBC Driver class
  *
  * @author Gaurav Gupta
  * @since JPA Modeler 1.3
@@ -79,10 +79,10 @@ public class DynamicDriverClassLoader extends DynamicClassLoader {
                 Class<?> loaded = super.findLoadedClass(name);
                 if (loaded != null) {
                     return loaded;
-                } 
+                }
                 return super.loadClass(name);//findClass
             } catch (ClassNotFoundException e) {
-                   return realParent.loadClass(name);
+                return realParent.loadClass(name);
             }
         }
     }

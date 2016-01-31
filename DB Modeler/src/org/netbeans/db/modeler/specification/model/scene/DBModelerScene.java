@@ -18,9 +18,7 @@ package org.netbeans.db.modeler.specification.model.scene;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.netbeans.db.modeler.core.widget.TableWidget;
 import org.netbeans.db.modeler.spec.DBMapping;
-import org.netbeans.db.modeler.spec.Table;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -36,11 +34,9 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
-import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
@@ -172,31 +168,30 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
         if (!isExist) {
 
-            IRootElement rootElement = this.getBaseElementSpec();
-            IBaseElement baseElement = null;
-            if (baseElementWidget instanceof IFlowElementWidget) {
-                if (baseElementWidget instanceof IFlowNodeWidget) {
-                    if (baseElementWidget instanceof TableWidget) {
-                        baseElement = new Table();
-                    } else {
-                        throw new InvalidElmentException("Invalid JPA Task Element : " + baseElement);
-                    }
-                } else if (baseElementWidget instanceof IFlowEdgeWidget) {
-                    // skip don't need to create spec RelationFlowWidget, GeneralizationFlowWidget,EmbeddableFlowWidget
-                } else {
-                    throw new InvalidElmentException("Invalid JPA Element");
-                }
-            } else {
-                throw new InvalidElmentException("Invalid JPA Element");
-            }
-            if (baseElement != null) {
-                baseElementWidget.setBaseElementSpec(baseElement);
-                baseElement.setId(baseElementId);
-                rootElement.addBaseElement(baseElement);
-                ElementConfigFactory elementConfigFactory = this.getModelerFile().getVendorSpecification().getElementConfigFactory();
-                elementConfigFactory.initializeObjectValue(baseElement);
-            }
-
+//            IRootElement rootElement = this.getBaseElementSpec();
+//            IBaseElement baseElement = null;
+//            if (baseElementWidget instanceof IFlowElementWidget) {
+//                if (baseElementWidget instanceof IFlowNodeWidget) {
+//                    if (baseElementWidget instanceof TableWidget) {
+//                        baseElement = new Table(null);
+//                    } else {
+//                        throw new InvalidElmentException("Invalid JPA Task Element : " + baseElement);
+//                    }
+//                } else if (baseElementWidget instanceof IFlowEdgeWidget) {
+//                    // skip don't need to create spec RelationFlowWidget, GeneralizationFlowWidget,EmbeddableFlowWidget
+//                } else {
+//                    throw new InvalidElmentException("Invalid JPA Element");
+//                }
+//            } else {
+//                throw new InvalidElmentException("Invalid JPA Element");
+//            }
+//            if (baseElement != null) {
+//                baseElementWidget.setBaseElementSpec(baseElement);
+//                baseElement.setId(baseElementId);
+//                rootElement.addBaseElement(baseElement);
+//                ElementConfigFactory elementConfigFactory = this.getModelerFile().getVendorSpecification().getElementConfigFactory();
+//                elementConfigFactory.initializeObjectValue(baseElement);
+//            }
         } else if (baseElementWidget instanceof IFlowElementWidget) {
             if (baseElementWidget instanceof FlowNodeWidget) {
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;

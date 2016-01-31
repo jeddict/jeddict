@@ -56,7 +56,7 @@ public class DBColorScheme implements IColorScheme {
     private final org.netbeans.api.visual.border.Border OPAQUE_BORDER;
     private final Image BUTTON_E;
     private final Image BUTTON_C;
-        private final Image BUTTON_E_H;
+    private final Image BUTTON_E_H;
     private final Image BUTTON_C_H;
     private final Color COLOR1;
     private final Color COLOR2;
@@ -112,24 +112,19 @@ public class DBColorScheme implements IColorScheme {
         return instance;
     }
 
-    
     public Paint getBackgroundPaint() {
-        final float[] FRACTIONS = {0.0f,0.25f,0.5f, 0.75f, 1.0f};
-        final Color[] DARK_COLORS = {new Color(76,30,57),new Color(78,29,47),new Color(76,24,40),new Color(115,68,56),new Color(163,83,76)};
+        final float[] FRACTIONS = {0.0f, 0.25f, 0.5f, 0.75f, 1.0f};
+        final Color[] DARK_COLORS = {new Color(76, 30, 57), new Color(78, 29, 47), new Color(76, 24, 40), new Color(115, 68, 56), new Color(163, 83, 76)};
 
         LinearGradientPaint DARK_GRADIENT = new LinearGradientPaint(
                 new Point2D.Double(0, 0), new Point2D.Double(1000, 0),
-                FRACTIONS, DARK_COLORS,MultipleGradientPaint.CycleMethod.REFLECT);
+                FRACTIONS, DARK_COLORS, MultipleGradientPaint.CycleMethod.REFLECT);
         return DARK_GRADIENT;
     }
-    
-    
-    
-    
-    
+
     private DBColorScheme() {
         SCENE_BACKGROUND = getBackgroundPaint();//Color.white;
-        
+
         OPAQUE_BORDER = BorderFactory.createOpaqueBorder(2, 8, 2, 8);
         BUTTON_E = ImageUtilities.loadImage("org/netbeans/db/modeler/theme/expand.png");
         BUTTON_C = ImageUtilities.loadImage("org/netbeans/db/modeler/theme/collapse.png");
@@ -139,47 +134,45 @@ public class DBColorScheme implements IColorScheme {
         producer = new FilteredImageSource(BUTTON_C.getSource(), filter);
         BUTTON_C_H = Toolkit.getDefaultToolkit().createImage(producer);
 
- 
         COLOR1 = new Color(221, 235, 246);
         COLOR2 = new Color(255, 255, 255);
         COLOR3 = new Color(214, 235, 255);
         COLOR4 = new Color(255, 255, 255);
         COLOR5 = new Color(241, 249, 253);
 
-        WIDGET_BORDER_COLOR = new Color(80,78,71);
-        WIDGET_SELECT_BORDER_COLOR = new Color(36,35,32);
-        WIDGET_HOVER_BORDER_COLOR = new Color(66,65,62);
+        WIDGET_BORDER_COLOR = new Color(80, 78, 71);
+        WIDGET_SELECT_BORDER_COLOR = new Color(36, 35, 32);
+        WIDGET_HOVER_BORDER_COLOR = new Color(66, 65, 62);
 
-        WIDGET_HOVER_BACKGROUND = new Color(66,65,62);
-        WIDGET_SELECT_BACKGROUND = new Color(56,55,52);
-        WIDGET_BACKGROUND = new Color(80,78,71);
+        WIDGET_HOVER_BACKGROUND = new Color(66, 65, 62);
+        WIDGET_SELECT_BACKGROUND = new Color(56, 55, 52);
+        WIDGET_BACKGROUND = new Color(80, 78, 71);
 
-        WIDGET_HOVER_LBACKGROUND = new Color(60,59,56);
-        WIDGET_SELECT_LBACKGROUND = new Color(50,49,46);
-        WIDGET_LBACKGROUND = new Color(63,62,57);
+        WIDGET_HOVER_LBACKGROUND = new Color(60, 59, 56);
+        WIDGET_SELECT_LBACKGROUND = new Color(50, 49, 46);
+        WIDGET_LBACKGROUND = new Color(63, 62, 57);
 
-        
         WIDGET_BORDER = new ShadowBorder(null, 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
-        WIDGET_SELECT_BORDER = new ShadowBorder(new Color(130, 130, 130,230), 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
-        WIDGET_HOVER_BORDER = new ShadowBorder(new Color(200, 200, 200,150), 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
+        WIDGET_SELECT_BORDER = new ShadowBorder(new Color(130, 130, 130, 230), 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
+        WIDGET_HOVER_BORDER = new ShadowBorder(new Color(200, 200, 200, 150), 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
 
-        EDGE_WIDGET_COLOR = new Color(156,156,156);
-        EDGE_WIDGET_SELECT_COLOR = new Color(136,136,136);
-        EDGE_WIDGET_HOVER_COLOR = new Color(146,146,146);
+        EDGE_WIDGET_COLOR = new Color(156, 156, 156);
+        EDGE_WIDGET_SELECT_COLOR = new Color(136, 136, 136);
+        EDGE_WIDGET_HOVER_COLOR = new Color(146, 146, 146);
 
-        PIN_WIDGET_BACKGROUND = new Color(231,229,228);
-        PIN_WIDGET_LBACKGROUND = new Color(231,229,228);
-        PIN_WIDGET_HOVER_BACKGROUND = new Color(211,219,218);
-        PIN_WIDGET_HOVER_LBACKGROUND = new Color(211,219,218);
-        PIN_WIDGET_SELECT_BACKGROUND = new Color(235,112,62);
-        PIN_WIDGET_SELECT_LBACKGROUND = new Color(246,129,82);
+        PIN_WIDGET_BACKGROUND = new Color(231, 229, 228);
+        PIN_WIDGET_LBACKGROUND = new Color(231, 229, 228);
+        PIN_WIDGET_HOVER_BACKGROUND = new Color(211, 219, 218);
+        PIN_WIDGET_HOVER_LBACKGROUND = new Color(211, 219, 218);
+        PIN_WIDGET_SELECT_BACKGROUND = new Color(235, 112, 62);
+        PIN_WIDGET_SELECT_LBACKGROUND = new Color(246, 129, 82);
 
-        PIN_WIDGET_TEXT_COLOR = new Color(76,76,76);
-        PIN_WIDGET_HOVER_TEXT_COLOR = new Color(66,66,66);
+        PIN_WIDGET_TEXT_COLOR = new Color(76, 76, 76);
+        PIN_WIDGET_HOVER_TEXT_COLOR = new Color(66, 66, 66);
         PIN_WIDGET_SELECT_TEXT_COLOR = Color.WHITE;
         PIN_WIDGET_SELECT_BORDER = BorderFactory.createCompositeBorder(BorderFactory.createLineBorder(0, 1, 0, 1, WIDGET_BORDER_COLOR), BorderFactory.createLineBorder(2, 3, 2, 3, WIDGET_HOVER_BORDER_COLOR));
 
-        PIN_SEPERATOR_WIDGET_BACKGROUND = new Color(136,136,136);
+        PIN_SEPERATOR_WIDGET_BACKGROUND = new Color(136, 136, 136);
         PIN_SEPERATOR_WIDGET_FOREGROUND = Color.WHITE;
     }
 
@@ -221,7 +214,7 @@ public class DBColorScheme implements IColorScheme {
                 widget.getHeader().setBackground(gp);
                 widget.setBorder(WIDGET_BORDER);
             }
-                widget.getMinimizeButton().setImage(this.getMinimizeWidgetImage(state,widget));
+            widget.getMinimizeButton().setImage(this.getMinimizeWidgetImage(state, widget));
         }
 
     }
@@ -287,10 +280,10 @@ public class DBColorScheme implements IColorScheme {
 
         if (state.isSelected()) {
             widget.setBorder(PIN_WIDGET_SELECT_BORDER);
-             widget.getPinNameWidget().setForeground(PIN_WIDGET_SELECT_TEXT_COLOR);
+            widget.getPinNameWidget().setForeground(PIN_WIDGET_SELECT_TEXT_COLOR);
         } else {
             widget.setBorder(OPAQUE_BORDER);
-             widget.getPinNameWidget().setForeground(PIN_WIDGET_TEXT_COLOR);
+            widget.getPinNameWidget().setForeground(PIN_WIDGET_TEXT_COLOR);
         }
     }
 
@@ -303,9 +296,9 @@ public class DBColorScheme implements IColorScheme {
     public Image getMinimizeWidgetImage(IPNodeWidget widget) {
         return widget.isMinimized() ? BUTTON_E : BUTTON_C;
     }
-      
+
     public Image getMinimizeWidgetImage(ObjectState state, IPNodeWidget widget) {
-        return widget.isMinimized()?(state.isHovered()?BUTTON_E_H:BUTTON_E) : (state.isHovered()?BUTTON_C_H:BUTTON_C);
+        return widget.isMinimized() ? (state.isHovered() ? BUTTON_E_H : BUTTON_E) : (state.isHovered() ? BUTTON_C_H : BUTTON_C);
     }
 
     @Override

@@ -79,10 +79,9 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
                 file.getModelerPanelTopComponent().close();
                 DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
                 dbModelerRequestManager.init(parentFile);
-                parentFile.addAttribute(DatabaseConnection.class.getName(),connection);
+                parentFile.addAttribute(DatabaseConnection.class.getName(), connection);
             }
-            
-            
+
         }
     }
 

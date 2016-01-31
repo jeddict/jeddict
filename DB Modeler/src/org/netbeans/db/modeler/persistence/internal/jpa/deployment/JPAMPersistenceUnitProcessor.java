@@ -49,5 +49,4 @@ public class JPAMPersistenceUnitProcessor {
         processor.processORMMetadata(mode);
     }
 
-   
 }
