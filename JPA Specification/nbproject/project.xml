@@ -62,7 +62,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.65.0.30</specification-version>
+                        <specification-version>1.61</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -141,6 +141,7 @@
                 <friend>org.netbeans.jpa.modeler.jcre</friend>
                 <friend>org.netbeans.orm.converter</friend>
                 <package>org.netbeans.db.modeler.manager</package>
+                <package>org.netbeans.jpa.modeler.db.accessor</package>
                 <package>org.netbeans.jpa.modeler.source</package>
                 <package>org.netbeans.jpa.modeler.spec</package>
                 <package>org.netbeans.jpa.modeler.spec.design</package>

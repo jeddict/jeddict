@@ -221,13 +221,4 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
 ////                jaxbVariableTypeList.add(JaxbVariableType.);
 //        return jaxbVariableTypeList;
 //    }
-    public IdAccessor getAccessor() {
-        IdAccessor accessor = new IdAccessor();
-        accessor.setName(name);
-        accessor.setAttributeType(getAttributeType());
-        if (column != null) {
-            accessor.setColumn(column.getAccessor());
-        }
-        return accessor;
-    }
 }

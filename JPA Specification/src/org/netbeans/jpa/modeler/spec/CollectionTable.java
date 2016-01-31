@@ -16,8 +16,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -83,6 +83,9 @@ public class CollectionTable {
     protected String catalog;
     @XmlAttribute(name = "schema")
     protected String schema;
+
+    @XmlTransient
+    private String generatedName;
 
     public static CollectionTable load(Element element, VariableElement variableElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinTable");
@@ -286,5 +289,19 @@ public class CollectionTable {
         accessor.setSchema(schema);
         accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
         return accessor;
+    }
+
+    /**
+     * @return the generatedName
+     */
+    public String getGeneratedName() {
+        return generatedName;
+    }
+
+    /**
+     * @param generatedName the generatedName to set
+     */
+    public void setGeneratedName(String generatedName) {
+        this.generatedName = generatedName;
     }
 }

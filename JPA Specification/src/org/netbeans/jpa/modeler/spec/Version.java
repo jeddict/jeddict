@@ -136,14 +136,4 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
     public void setAccess(AccessType value) {
         this.access = value;
     }
-
-    public VersionAccessor getAccessor() {
-        VersionAccessor accessor = new VersionAccessor();
-        accessor.setName(name);
-        accessor.setAttributeType(getAttributeType());
-        if (column != null) {
-            accessor.setColumn(column.getAccessor());
-        }
-        return accessor;
-    }
 }

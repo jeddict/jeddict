@@ -21,6 +21,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
@@ -49,7 +50,7 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
     @XmlAttribute(name = "connected-entity-id", required = true)
     @XmlIDREF
     private Entity connectedEntity;
-    
+
     @XmlAttribute(name = "connected-attribute-id", required = true)
     @XmlIDREF
     private RelationAttribute connectedAttribute;
@@ -155,13 +156,13 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
      *
      */
     public String getTargetEntity() {
-        if(targetEntity!=null){
+        if (targetEntity != null) {
             return targetEntity;
         }
-        if(connectedEntity!=null){ //TODO bug : called by tooltip from init
-        return connectedEntity.getClazz();
+        if (connectedEntity != null) { //TODO bug : called by tooltip from init
+            return connectedEntity.getClazz();
         } else {
-            return  null;
+            return null;
         }
     }
 
@@ -254,14 +255,20 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         jaxbVariableTypeList.add(JaxbVariableType.XML_TRANSIENT);
         return jaxbVariableTypeList;
     }
-    
-        /**
+
+    /**
      * @return the owner
      */
-    public abstract boolean isOwner() ;
+    public abstract boolean isOwner();
 
     /**
      * @param owner the owner to set
      */
     public abstract void setOwner(boolean owner);
+
+    void beforeMarshal(Marshaller marshaller) {
+        if (joinTable != null && joinTable.isEmpty()) {
+            joinTable = null;
+        }
+    }
 }

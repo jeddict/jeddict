@@ -15,36 +15,34 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
-import org.netbeans.jpa.modeler.spec.Basic;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.VersionAccessor;
+import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class BasicSpecAccessor extends BasicAccessor{
+public class VersionSpecAccessor extends VersionAccessor{
     
-    private Basic basic;
+    private Version version;
 
-    private BasicSpecAccessor(Basic basic) {
-        this.basic = basic;
+    private VersionSpecAccessor(Version version) {
+        this.version = version;
     }
-    public static BasicSpecAccessor getInstance(Basic basic){
-        BasicSpecAccessor accessor = new BasicSpecAccessor(basic);
-        accessor.setName(basic.getName());
-        accessor.setAttributeType(basic.getAttributeType());
-        if (basic.getColumn() != null) {
-            accessor.setColumn(basic.getColumn().getAccessor());
+    public static VersionSpecAccessor getInstance(Version version){
+        VersionSpecAccessor accessor = new VersionSpecAccessor(version);
+        accessor.setName(version.getName());
+        accessor.setAttributeType(version.getAttributeType());
+        if (version.getColumn() != null) {
+            accessor.setColumn(version.getColumn().getAccessor());
         }
         return accessor;
-        
     }
 
-    @Override
     public void process(){
         super.process();
-        getMapping().setProperty(Attribute.class, basic);
+        getMapping().setProperty(Attribute.class, version);
     }
     
 }

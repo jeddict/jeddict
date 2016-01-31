@@ -15,36 +15,27 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
-import org.netbeans.jpa.modeler.spec.Basic;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.TransientAccessor;
+import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class BasicSpecAccessor extends BasicAccessor{
+public class TransientSpecAccessor extends TransientAccessor{
     
-    private Basic basic;
+    private Transient _transient;
 
-    private BasicSpecAccessor(Basic basic) {
-        this.basic = basic;
+    private TransientSpecAccessor(Transient _transient) {
+        this._transient = _transient;
     }
-    public static BasicSpecAccessor getInstance(Basic basic){
-        BasicSpecAccessor accessor = new BasicSpecAccessor(basic);
-        accessor.setName(basic.getName());
-        accessor.setAttributeType(basic.getAttributeType());
-        if (basic.getColumn() != null) {
-            accessor.setColumn(basic.getColumn().getAccessor());
-        }
+    public static TransientSpecAccessor getInstance(Transient _transient){
+        TransientSpecAccessor accessor = new TransientSpecAccessor(_transient);
+        accessor.setName(_transient.getName());
+        accessor.setAttributeType(_transient.getAttributeType());
         return accessor;
         
-    }
-
-    @Override
-    public void process(){
-        super.process();
-        getMapping().setProperty(Attribute.class, basic);
     }
     
 }

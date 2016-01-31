@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
+import org.netbeans.jpa.modeler.db.accessor.IdSpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.VersionSpecAccessor;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
@@ -365,8 +365,8 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     }
     
     private XMLAttributes processAccessor(XMLAttributes attr) {
-        attr.getIds().addAll(getId().stream().map(Id::getAccessor).collect(toList()));
-        attr.getVersions().addAll(getVersion().stream().map(Version::getAccessor).collect(toList()));
+        attr.getIds().addAll(getId().stream().map(IdSpecAccessor::getInstance).collect(toList()));
+        attr.getVersions().addAll(getVersion().stream().map(VersionSpecAccessor::getInstance).collect(toList()));
         if (getEmbeddedId() != null) {
             attr.setEmbeddedId(getEmbeddedId().getAccessor());
         }

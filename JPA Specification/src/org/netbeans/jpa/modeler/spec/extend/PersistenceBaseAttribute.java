@@ -30,7 +30,7 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute {
         @XmlAttribute(name = "attribute-type", required = true)
     private String attributeType;
     
-        @Override
+     @Override
      public String getAttributeType() {
         return attributeType;
     }
@@ -84,7 +84,7 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute {
     }
 
     public boolean isTextAttributeType() {
-        if (attributeType.equals("String")) {
+        if (attributeType.equals(String.class.getName())) {
             return true;
         }
         return false;

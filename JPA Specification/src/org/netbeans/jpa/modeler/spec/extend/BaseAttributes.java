@@ -23,6 +23,9 @@ import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlElement;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.db.accessor.BasicSpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.ElementCollectionSpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.EmbeddedSpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.TransientSpecAccessor;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -581,9 +584,9 @@ public abstract class BaseAttributes implements IAttributes {
     
     public XMLAttributes updateAccessor(XMLAttributes attr) {
         attr.getBasics().addAll(getBasic().stream().map(BasicSpecAccessor::getInstance).collect(toList()));
-        attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollection::getAccessor).collect(toList()));
-        attr.getEmbeddeds().addAll(getEmbedded().stream().map(Embedded::getAccessor).collect(toList()));
-        attr.getTransients().addAll(getTransient().stream().map(Transient::getAccessor).collect(toList()));
+        attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollectionSpecAccessor::getInstance).collect(toList()));
+        attr.getEmbeddeds().addAll(getEmbedded().stream().map(EmbeddedSpecAccessor::getInstance).collect(toList()));
+        attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));
         attr.getManyToManys().addAll(getManyToMany().stream().map(ManyToMany::getAccessor).collect(toList()));
         attr.getManyToOnes().addAll(getManyToOne().stream().map(ManyToOne::getAccessor).collect(toList()));
         attr.getOneToManys().addAll(getOneToMany().stream().map(OneToMany::getAccessor).collect(toList()));

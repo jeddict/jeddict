@@ -689,12 +689,6 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         this.targetClass = value;
     }
 
-    @Override
-    public String getAttributeType() {
-     return this.getConnectedClass()!=null?super.getAttributeType():targetClass;
-    }
-
-
     /**
      * Gets the value of the fetch property.
      *
@@ -792,18 +786,27 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             return Arrays.asList(JaxbVariableType.values());
         }
     }
-
-    public ElementCollectionAccessor getAccessor() {
-        ElementCollectionAccessor accessor = new ElementCollectionAccessor();
-        accessor.setName(name);
-        accessor.setTargetClassName(targetClass);
-        accessor.setAttributeType(getCollectionType());
-        if (column != null) {
-            accessor.setColumn(column.getAccessor());
-        }
-        if(collectionTable!= null){
-            accessor.setCollectionTable(collectionTable.getAccessor());
-        }
-        return accessor;
+    
+    
+    
+    @Override
+    public String getAttributeType() {
+        return this.getConnectedClass() != null ? super.getAttributeType() : targetClass;
     }
+
+    public boolean isPrecisionAttributeType() {
+        if ("java.math.BigDecimal".equals(getAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isScaleAttributeType() {
+        if ("java.math.BigDecimal".equals(getAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

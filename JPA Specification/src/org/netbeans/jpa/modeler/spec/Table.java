@@ -11,11 +11,14 @@ import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.tables.TableMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -71,6 +74,9 @@ public class Table {
     protected String catalog;
     @XmlAttribute(name = "schema")
     protected String schema;
+    
+    @XmlTransient
+    private String generatedName;
 
     public static Table load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Table");
@@ -217,4 +223,27 @@ public class Table {
         return accessor;
 
     }
+
+    /**
+     * @return the generatedName
+     */
+    public String getGeneratedName() {
+        return generatedName;
+    }
+
+    /**
+     * @param generatedName the generatedName to set
+     */
+    public void setGeneratedName(String generatedName) {
+        this.generatedName = generatedName;
+    }
+    
+    boolean isEmpty(){
+        if(name != null && name.equalsIgnoreCase(generatedName)){
+            name = null;
+        }
+        return StringUtils.isBlank(name) && StringUtils.isBlank(schema) && StringUtils.isBlank(catalog);
+    }
+    
+    
 }

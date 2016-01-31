@@ -15,36 +15,33 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
-import org.netbeans.jpa.modeler.spec.Basic;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.EmbeddedAccessor;
+import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class BasicSpecAccessor extends BasicAccessor{
-    
-    private Basic basic;
+public class EmbeddedSpecAccessor extends EmbeddedAccessor {
 
-    private BasicSpecAccessor(Basic basic) {
-        this.basic = basic;
+    private Embedded embedded;
+
+    private EmbeddedSpecAccessor(Embedded embedded) {
+        this.embedded = embedded;
     }
-    public static BasicSpecAccessor getInstance(Basic basic){
-        BasicSpecAccessor accessor = new BasicSpecAccessor(basic);
-        accessor.setName(basic.getName());
-        accessor.setAttributeType(basic.getAttributeType());
-        if (basic.getColumn() != null) {
-            accessor.setColumn(basic.getColumn().getAccessor());
-        }
+
+    public static EmbeddedSpecAccessor getInstance(Embedded embedded) {
+        EmbeddedSpecAccessor accessor = new EmbeddedSpecAccessor(embedded);
+        accessor.setName(embedded.getName());
+        accessor.setAttributeType(embedded.getAttributeType());
         return accessor;
-        
     }
 
     @Override
-    public void process(){
+    public void process() {
         super.process();
-        getMapping().setProperty(Attribute.class, basic);
+        getMapping().setProperty(Attribute.class, embedded);
     }
-    
+
 }

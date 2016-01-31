@@ -243,10 +243,4 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
         return attributeOverride_TMP;
     }
 
-    public EmbeddedAccessor getAccessor() {
-        EmbeddedAccessor accessor = new EmbeddedAccessor();
-        accessor.setName(name);
-        accessor.setAttributeType(getAttributeType());
-        return accessor;
-    }
 }

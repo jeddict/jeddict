@@ -15,36 +15,35 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
 import org.netbeans.jpa.modeler.spec.Basic;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class BasicSpecAccessor extends BasicAccessor{
+public class IdSpecAccessor extends IdAccessor{
     
-    private Basic basic;
+    private Id id;
 
-    private BasicSpecAccessor(Basic basic) {
-        this.basic = basic;
+    private IdSpecAccessor(Id id) {
+        this.id = id;
     }
-    public static BasicSpecAccessor getInstance(Basic basic){
-        BasicSpecAccessor accessor = new BasicSpecAccessor(basic);
-        accessor.setName(basic.getName());
-        accessor.setAttributeType(basic.getAttributeType());
-        if (basic.getColumn() != null) {
-            accessor.setColumn(basic.getColumn().getAccessor());
+    public static IdSpecAccessor getInstance(Id id){
+        IdSpecAccessor accessor = new IdSpecAccessor(id);
+        accessor.setName(id.getName());
+        accessor.setAttributeType(id.getAttributeType());
+        if (id.getColumn() != null) {
+            accessor.setColumn(id.getColumn().getAccessor());
         }
         return accessor;
-        
     }
 
-    @Override
     public void process(){
         super.process();
-        getMapping().setProperty(Attribute.class, basic);
+        getMapping().setProperty(Attribute.class, id);
     }
     
 }

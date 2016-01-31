@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
@@ -219,7 +220,8 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     }
 
     void beforeMarshal(Marshaller marshaller) {
-        if (NBModelerUtil.isEmptyObject(table)) {
+//        if (NBModelerUtil.isEmptyObject(table)) {
+        if(table!=null && table.isEmpty()){
             table = null;
         }
     }
@@ -231,6 +233,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      *
      */
     public Table getTable() {
+        if (table == null) {
+            table = new Table();
+        }
         return table;
     }
 
@@ -668,6 +673,13 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     }
 
 
+    public String getTableName() {
+        if (table != null && StringUtils.isNotBlank(table.getName())) {
+            return table.getName();
+        } else {
+            return clazz;
+        }
+    }
 
 
 }

@@ -78,11 +78,4 @@ public class Transient extends BaseAttribute {
         return _transient;
     }
 
-    public TransientAccessor getAccessor() {
-        TransientAccessor accessor = new TransientAccessor();
-        accessor.setName(name);
-        accessor.setAttributeType(getAttributeType());
-        return accessor;
-    }
-
 }
