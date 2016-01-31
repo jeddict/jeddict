@@ -17,23 +17,27 @@ package org.netbeans.db.modeler.core.widget;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
-import org.netbeans.db.modeler.spec.Column;
+import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.spec.Column;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
-import org.openide.util.NbBundle;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class ColumnWidget extends FlowPinWidget<Column, DBModelerScene> {
+public class ColumnWidget extends FlowPinWidget<DBColumn, DBModelerScene> {
 
     private final List<ReferenceFlowWidget> referenceFlowWidget = new ArrayList<>();
 
@@ -41,23 +45,37 @@ public class ColumnWidget extends FlowPinWidget<Column, DBModelerScene> {
     public ColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.COLUMN);
-        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
-                setName(ColumnWidget.this.getLabel());//rollback
+                Attribute attribute = this.getBaseElementSpec().getAttribute();
+                value = attribute.getName();
+            }
+            setName(value);
+            setLabel(value);
+        });
+
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
+            if (tableName != null && !tableName.trim().isEmpty()) {
+                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                } else {
+                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                }
             } else {
-                setName(value);
-                setLabel(value);
+                errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
 
     }
-    
-    public void setDatatypeTooltip(){
-        Column column = this.getBaseElementSpec();
+
+    public void setDatatypeTooltip() {
+        DBColumn column = this.getBaseElementSpec();
         StringBuilder writer = new StringBuilder();
         writer.append(column.getDataType());
-        if(column.getSize()!=0){writer.append('(').append(column.getSize()).append(')');}
+        if (column.getSize() != 0) {
+            writer.append('(').append(column.getSize()).append(')');
+        }
         this.setToolTipText(writer.toString());
     }
 
@@ -88,8 +106,25 @@ public class ColumnWidget extends FlowPinWidget<Column, DBModelerScene> {
     public void setName(String name) {
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
-            getBaseElementSpec().setName(this.name);
+            Attribute attribute = this.getBaseElementSpec().getAttribute();
+            if (attribute instanceof PersistenceBaseAttribute) {
+                PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
+                baseAttribute.getColumn().setName(this.name);
+            }
         }
+        if (SQLKeywords.isSQL99ReservedKeyword(ColumnWidget.this.getName())) {
+            this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+        } else {
+            this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+        }
+
+        DBTable tableSpec = this.getTableWidget().getBaseElementSpec();
+        if (tableSpec.findColumns(this.getName()).size() > 1) {
+            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+        } else {
+            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+        }
+
     }
 
     @Override
@@ -108,7 +143,7 @@ public class ColumnWidget extends FlowPinWidget<Column, DBModelerScene> {
     public void destroy() {
     }
 
-    public TableWidget getTableWidget() {
+    public TableWidget<DBTable> getTableWidget() {
         return (TableWidget) this.getPNodeWidget();
     }
 
@@ -119,4 +154,17 @@ public class ColumnWidget extends FlowPinWidget<Column, DBModelerScene> {
     public boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget) {
         return referenceFlowWidget.remove(flowWidget);
     }
+
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        Attribute attribute = this.getBaseElementSpec().getAttribute();
+        if (attribute instanceof PersistenceBaseAttribute) {
+            PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
+            if (baseAttribute.getColumn() == null) {
+                baseAttribute.setColumn(new Column());
+            }
+            set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
+        }
+    }
+
 }
