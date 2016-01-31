@@ -17,10 +17,6 @@ package org.netbeans.db.modeler.specification.model.util;
 
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -35,50 +31,28 @@ import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
+import org.netbeans.db.modeler.core.widget.BaseTableWidget;
+import org.netbeans.db.modeler.core.widget.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.RelationTableWidget;
 import org.netbeans.db.modeler.core.widget.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
-import org.netbeans.db.modeler.spec.Column;
+import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
-import org.netbeans.db.modeler.spec.Table;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
-import org.netbeans.jpa.modeler.core.widget.InheritenceStateType;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.LEAF;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
-import org.netbeans.jpa.modeler.spec.DefaultAttribute;
-import org.netbeans.jpa.modeler.spec.DefaultClass;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.ManyToOne;
-import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.DiagramElement;
 import org.netbeans.jpa.modeler.spec.design.Edge;
-import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
-import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
-import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
-import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
-import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -87,16 +61,12 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.exception.ModelerException;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
-import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
-import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.edge.IEdgeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.netbeans.modeler.widget.node.INodeWidget;
@@ -107,10 +77,6 @@ import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.openide.*;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
@@ -154,7 +120,17 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         } catch (ValidationException ex) {
             file.getModelerPanelTopComponent().close();
             Logger.getLogger(DBModelerUtil.class.getName()).log(Level.INFO, null, ex);
-            NotifyDescriptor nd = new NotifyDescriptor.Message(ex.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
+            String message = ex.getLocalizedMessage();
+            int end = message.lastIndexOf("Runtime Exceptions:");
+            if (end < 1) {
+                end = message.length();
+            }
+            int start = message.lastIndexOf("Exception Description:");
+            if (start < 1) {
+                start = 0;
+            }
+            message = message.substring(start, end);
+            NotifyDescriptor nd = new NotifyDescriptor.Message(message, NotifyDescriptor.ERROR_MESSAGE);
             DialogDisplayer.getDefault().notify(nd);
         } catch (Exception ex) {
 //            IO.getOut().println("Exception: " + ex.toString());
@@ -187,7 +163,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
         DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
         JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
-        XMLEntityMappings mapping = new  DBEntityMappings(entityMapping);
+        XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
         JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
 
         processor.setClassLoader(dynamicClassLoader);
@@ -278,8 +254,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             if (flowNode.isMinimized()) {
                 ((PNodeWidget) nodeWidget).setMinimized(true);
             }
-            if (flowElement instanceof Table) {
-                Table table = (Table) flowElement;
+            if (flowElement instanceof DBTable) {
+                DBTable table = (DBTable) flowElement;
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {
@@ -314,7 +290,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     private void loadEdge(DBModelerScene scene, TableWidget sourceTableWidget, ForeignKeyWidget foreignKeyWidget) {
 //       ForeignKey => Source
 //       ReferenceColumn => Target      
-        Column sourceColumn = foreignKeyWidget.getBaseElementSpec();
+        DBColumn sourceColumn = foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
         ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) {
@@ -377,240 +353,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
     }
 
-    /*---------------------------------Load File End---------------------------------*/
- /*---------------------------------Save File Satrt---------------------------------*/
-//      public static void saveJPA(final JPAFile file) {
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                saveJPAImpl(file);
-//            }
-//        };
-//        final RequestProcessor.Task theTask = RP.create(runnable);
-//        final ProgressHandle ph = ProgressHandleFactory.createHandle("Saving JPA File...", theTask);
-//        theTask.addTaskListener(new TaskListener() {
-//            @Override
-//            public void taskFinished(org.openide.util.Task task) {
-//                ph.finish();
-//            }
-//        });
-//        ph.start();
-//        theTask.schedule(0);
-//    }
-//
     @Override
     public void saveModelerFile(ModelerFile file) {
-//        updateJPADiagram(file);
-
-        DBModelerScene scene = (DBModelerScene) file.getModelerScene();
-        EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
-
-        entityMappings.getDefaultClass().clear();
-
-        for (IBaseElementWidget baseElementWidget : scene.getBaseElements()) {
-            if (baseElementWidget instanceof FlowNodeWidget) {
-                FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
-                FlowNode flowNode = (FlowNode) flowNodeWidget.getBaseElementSpec();
-                flowNode.setMinimized(flowNodeWidget.isMinimized());
-                if (baseElementWidget instanceof JavaClassWidget) {
-                    if (baseElementWidget instanceof PersistenceClassWidget) {
-                        PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
-                        if (persistenceClassWidget instanceof EntityWidget) {
-                            EntityWidget entityWidget = (EntityWidget) persistenceClassWidget;
-                            InheritenceHandler classSpec = (InheritenceHandler) entityWidget.getBaseElementSpec();
-                            InheritenceStateType inheritenceState = entityWidget.getInheritenceState();
-                            switch (inheritenceState) {
-                                case LEAF:
-                                case SINGLETON:
-                                    classSpec.setDiscriminatorColumn(null);
-                                    classSpec.setInheritance(null);
-                                    break;
-                                case ROOT:
-                                    classSpec.setDiscriminatorValue(null);
-                                    break;
-                            }
-                        }
-//Start : IDCLASS,EMBEDDEDID
-                        if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
-                            PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) persistenceClassWidget.getBaseElementSpec();
-                            CompositePKProperty compositePKProperty = persistenceClassWidget.isCompositePKPropertyAllow();
-
-                            if (compositePKProperty == CompositePKProperty.NONE
-                                    && (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
-                                    || pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
-                                pkContainerSpec.setCompositePrimaryKeyClass(null);
-                                pkContainerSpec.setCompositePrimaryKeyType(null);
-                            } else if (compositePKProperty != CompositePKProperty.NONE
-                                    && (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
-                                    || pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
-                                if (compositePKProperty == CompositePKProperty.AUTO_CLASS) {
-                                    RelationAttributeWidget relationAttributeWidget = persistenceClassWidget.getDerivedRelationAttributeWidgets().get(0);
-                                    RelationAttribute relationAttribute = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
-                                    IFlowElementWidget targetElementWidget = (EntityWidget) relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
-                                    EntityWidget targetEntityWidget = null;
-                                    if (targetElementWidget instanceof EntityWidget) {
-                                        targetEntityWidget = (EntityWidget) targetElementWidget;
-                                    } else if (targetElementWidget instanceof RelationAttributeWidget) {
-                                        RelationAttributeWidget targetRelationAttributeWidget = (RelationAttributeWidget) targetElementWidget;
-                                        targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
-                                    }
-                                    Entity targetPKConatinerSpec = targetEntityWidget.getBaseElementSpec();
-                                    if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
-                                            && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-                                        // when Enity E1 class use IdClass IC1 and
-                                        //another Enity E2 class use EmbeddedId is also IC1
-                                        //then register IdClass name here to append @Embeddable annotation
-                                        DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
-                                        _class.setEmbeddable(true);
-//                                            _class.setAttributes(null);//attribute will be added in parent Entity DefaultClass creation process
-                                        if (relationAttribute instanceof OneToOne) {
-                                            ((OneToOne) relationAttribute).setMapsId("");
-                                        } else if (relationAttribute instanceof ManyToOne) {
-                                            ((ManyToOne) relationAttribute).setMapsId("");
-                                        }
-                                    } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS
-                                            && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-                                        if (relationAttribute instanceof OneToOne) {
-                                            ((OneToOne) relationAttribute).setMapsId(null);
-                                        } else if (relationAttribute instanceof ManyToOne) {
-                                            ((ManyToOne) relationAttribute).setMapsId(null);
-                                        }
-                                    }
-                                    //set derived entity IdClass/EmbeddedId class type same as of parent entity IdClass/EmbeddedId class type
-                                    pkContainerSpec.setCompositePrimaryKeyClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
-                                } else { //not CompositePKProperty.NONE
-                                    List<IdAttributeWidget> idAttributeWidgets = null;
-                                    DefaultClass _class = entityMappings.addDefaultClass(pkContainerSpec.getCompositePrimaryKeyClass());
-                                    if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-                                        idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
-                                        _class.setEmbeddable(true);
-                                    } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-                                        idAttributeWidgets = persistenceClassWidget.getAllIdAttributeWidgets();
-                                    }
-
-                                    for (IdAttributeWidget idAttributeWidget : idAttributeWidgets) {
-                                        Id idSpec = idAttributeWidget.getBaseElementSpec();
-                                        DefaultAttribute attribute = new DefaultAttribute();
-                                        attribute.setAttributeType(idSpec.getAttributeType());
-                                        attribute.setName(idSpec.getName());
-                                        _class.addAttribute(attribute);
-                                    }
-                                    for (RelationAttributeWidget relationAttributeWidget : persistenceClassWidget.getDerivedRelationAttributeWidgets()) {
-                                        RelationAttribute relationAttributeSpec = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
-                                        Entity targetEntitySpec;
-                                        IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
-                                        EntityWidget targetEntityWidget = null;
-                                        if (targetElementWidget instanceof EntityWidget) {
-                                            targetEntityWidget = (EntityWidget) targetElementWidget;
-                                        } else if (targetElementWidget instanceof RelationAttributeWidget) {
-                                            RelationAttributeWidget targetRelationAttributeWidget = (RelationAttributeWidget) targetElementWidget;
-                                            targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
-                                        }
-                                        targetEntitySpec = targetEntityWidget.getBaseElementSpec();
-                                        List<IdAttributeWidget> targetIdAttributeWidgets = targetEntityWidget.getAllIdAttributeWidgets();
-                                        DefaultAttribute attribute = new DefaultAttribute();
-                                        if (targetIdAttributeWidgets.size() == 1) {
-                                            Id idSpec = targetIdAttributeWidgets.get(0).getBaseElementSpec();
-                                            attribute.setAttributeType(idSpec.getAttributeType());
-                                            attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute
-                                        } else {
-                                            attribute.setAttributeType(targetEntitySpec.getCompositePrimaryKeyClass());
-                                            attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute
-
-                                            if (targetEntitySpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-                                            } else if (targetEntitySpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-                                            } else {
-                                                throw new UnsupportedOperationException("Not Supported Currently");
-                                            }
-                                        }
-                                        _class.addAttribute(attribute);
-                                        //Start : if dependent class is Embedded that add @MapsId to Derived PK
-                                        if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-                                            if (relationAttributeSpec instanceof OneToOne) {
-                                                ((OneToOne) relationAttributeSpec).setMapsId(null);
-                                            } else if (relationAttributeSpec instanceof ManyToOne) {
-                                                ((ManyToOne) relationAttributeSpec).setMapsId(null);
-                                            }
-                                        } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-                                            if (relationAttributeSpec instanceof OneToOne) {
-                                                ((OneToOne) relationAttributeSpec).setMapsId(attribute.getName());
-                                            } else if (relationAttributeSpec instanceof ManyToOne) {
-                                                ((ManyToOne) relationAttributeSpec).setMapsId(attribute.getName());
-                                            }
-                                        }
-                                        //End : if dependent class is Embedded that add @MapsId to Derived PK
-
-                                    }
-                                }
-                            }
-                        }
-//End : IDCLASS,EMBEDDEDID
-                    }
-                }
-            }
-
-        }
-        saveFile(entityMappings, file.getFile());
-    }
-
-    public static void saveFile(EntityMappings entityMappings, File file) {
-//        try {
-//            if (MODELER_MARSHALLER == null) {
-//                MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
-//                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
-//                MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
-//            }
-//            MODELER_MARSHALLER.marshal(entityMappings, file);
-//            StringWriter sw = new StringWriter();
-//            MODELER_MARSHALLER.marshal(entityMappings, sw);
-//
-//            System.out.println("sw :");
-//        } catch (JAXBException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-    }
-
-    private static String getFileName(String fileName, Integer index, FileObject parentFileObject) {
-        File jpaFile;
-        if (index == null) {
-            jpaFile = new File(parentFileObject.getPath() + File.separator + fileName + ".jpa");
-        } else {
-            jpaFile = new File(parentFileObject.getPath() + File.separator + fileName + index + ".jpa");
-        }
-        if (jpaFile.exists()) {
-            if (index == null) {
-                index = 0;
-            }
-            return getFileName(fileName, ++index, parentFileObject);
-        } else if (index == null) {
-            return fileName;
-        } else {
-            return fileName + index;
-        }
-    }
-
-    public static void createNewModelerFile(EntityMappings entityMappingsSpec, FileObject parentFileObject, String fileName, boolean autoOpen) {
-        File jpaFile = null;
-        try {
-            jpaFile = new File(parentFileObject.getPath() + File.separator + getFileName(fileName, null, parentFileObject) + ".jpa");
-            if (!jpaFile.exists()) {
-                jpaFile.createNewFile();
-            }
-            saveFile(entityMappingsSpec, jpaFile);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        if (autoOpen) {
-            FileObject jpaFileObject = FileUtil.toFileObject(jpaFile);
-            try {
-                JPAFileActionListener actionListener = new JPAFileActionListener((JPAFileDataObject) DataObject.find(jpaFileObject));
-                actionListener.actionPerformed(null);
-            } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-
+        file.getParentFile().getModelerUtil().saveModelerFile(file.getParentFile());
     }
 
     @Override
@@ -641,27 +386,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 //        }
 
         return (INodeWidget) nodeWidget;
-    }
-
-    public static void updateDiagramFlowElement(Plane plane, Widget widget) {
-        //Diagram Model
-        if (widget instanceof INodeWidget) { //reverse ref
-            INodeWidget nodeWidget = (INodeWidget) widget;
-
-            Rectangle rec = nodeWidget.getSceneViewBound();
-
-            Shape shape = new Shape();
-            shape.setBounds(new Bounds(rec));//(new Bounds(flowNodeWidget.getBounds()));
-            shape.setElementRef(((IBaseElementWidget) nodeWidget).getId());
-//            shape.setId(((IBaseElementWidget) nodeWidget).getId() + "_gui");
-            plane.addDiagramElement(shape);
-
-        } else if (widget instanceof EdgeWidget) {
-
-        } else {
-            throw new InvalidElmentException("Invalid JPA Element");
-        }
-
     }
 
     @Override
@@ -749,8 +473,14 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         IFlowNodeWidget widget = null;
         IModelerDocument modelerDocument = widgetInfo.getModelerDocument();
         switch (modelerDocument.getId()) {
-            case "Table":
-                widget = new TableWidget(scene, widgetInfo);
+            case "BaseTable":
+                widget = new BaseTableWidget(scene, widgetInfo);
+                break;
+            case "RelationTable":
+                widget = new RelationTableWidget(scene, widgetInfo);
+                break;
+            case "CollectionTable":
+                widget = new CollectionTableWidget(scene, widgetInfo);
                 break;
             default:
                 throw new InvalidElmentException("Invalid DB Element");
@@ -766,8 +496,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     @Override
     public String getEdgeType(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, String connectionContextToolId) {
-        String edgeType = null;
-        edgeType = connectionContextToolId;
+        String edgeType = connectionContextToolId;
         return edgeType;
     }
 
@@ -785,7 +514,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
 //            Table targetTable = (Table) targetTableWidget.getBaseElementSpec();
 
-            Column sourceColumn = sourceColumnWidget.getBaseElementSpec();
+            DBColumn sourceColumn = sourceColumnWidget.getBaseElementSpec();
             ColumnWidget targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
 //            Column targetColumn = targetColumnWidget.getBaseElementSpec();
 
@@ -810,14 +539,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-    }
-
-    public static void initEntityModel(javax.swing.JComboBox entity_ComboBox, EntityMappings entityMappings) {
-        entity_ComboBox.removeAllItems();
-        entity_ComboBox.addItem(new ComboBoxValue(null, ""));
-        entityMappings.getEntity().stream().forEach((entity) -> {
-            entity_ComboBox.addItem(new ComboBoxValue(entity, entity.getClazz()));
-        });
     }
 
 }

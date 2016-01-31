@@ -17,7 +17,6 @@ package org.netbeans.db.modeler.specification.model.file.action;
 
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.db.modeler.specification.model.engine.DBDiagramEngine;
-import org.netbeans.db.modeler.specification.model.panel.DBPanel;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
@@ -40,8 +39,8 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA_DB", version = 2.0F, name = "JPA DB Viewer", displayName = "JPA 2.0 Specification - DB Viewer")
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "DB Viewer", name = "DB Viewer",
         modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class, exportManager = ExportManagerImpl.class,
-        relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
-        modelerPanel=DBPanel.class)
+        relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class)
+//        modelerPanel=DBPanel.class)
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
 
@@ -56,4 +55,3 @@ public class DBViewerActionListener extends ModelerFileActionListener implements
     }
 
 }
-
