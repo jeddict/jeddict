@@ -1,25 +1,84 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <element-config>
     <groups>
-        <group id="BASIC_PROP" name="Basic Properties"/>
+        <group id="BASIC_PROP" name="Properties"/>
     </groups>
     <elements>
-        <element id="DBMapping" groupId="BASIC_PROP" class="org.netbeans.db.modeler.spec.DBMapping">
+        <element id="Table" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Table">
             <attributes>
-
-            </attributes>
-        </element>
-        <element id="Table" groupId="BASIC_PROP" class="org.netbeans.db.modeler.spec.Table">
-            <attributes>
-                <attribute id="table_name" groupId="TABLE_PROP" class="java.lang.String" name="name">
-                    <display-name>Name</display-name>
+                <attribute id="table_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Table</display-name>
+                </attribute>
+                <attribute id="catalog" groupId="BASIC_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                <attribute id="schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
                 </attribute>
             </attributes>
         </element>
+        <element id="JoinTable" class="org.netbeans.jpa.modeler.spec.JoinTable">
+            <attributes>
+                <attribute id="JoinTable_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Table</display-name>
+                </attribute>
+                <attribute id="JoinTable_catalog" groupId="BASIC_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                <attribute id="JoinTable_schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+
         <element id="Column" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Column">
             <attributes>
-                <attribute id="column_name" groupId="COLUMN_PROP" class="java.lang.String" name="name">
-                    <display-name>Name</display-name>
+                <attribute id="column_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Column Name</display-name>
+                </attribute>
+                <attribute id="table_name" groupId="BASIC_PROP" class="java.lang.String" name="table">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                <attribute id="unique" groupId="BASIC_PROP" class="java.lang.Boolean" name="unique">
+                    <display-name>Unique</display-name>
+                </attribute>
+                <attribute id="nullable" groupId="BASIC_PROP" class="java.lang.Boolean" name="nullable">
+                    <display-name>Nullable</display-name>
+                </attribute>
+                <attribute id="insertable" groupId="BASIC_PROP" class="java.lang.Boolean" name="insertable">
+                    <display-name>Insertable</display-name>
+                </attribute>
+                <attribute id="updatable" groupId="BASIC_PROP" class="java.lang.Boolean" name="updatable">
+                    <display-name>Updatable</display-name>
+                </attribute>
+                <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
+                    <display-name>Length</display-name>
+                    <visible><![CDATA["String".equals(node.getAttribute().getAttributeType())]]></visible>
+                </attribute>
+                <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
+                    <display-name>Precision</display-name>
+                    <visible><![CDATA[node.getAttribute().isPrecisionAttributeType()]]></visible>
+                </attribute>
+                <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
+                    <display-name>Scale</display-name>
+                    <visible><![CDATA[node.getAttribute().isScaleAttributeType()]]></visible>
+                </attribute>
+                <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        
+        <element id="CollectionTable" class="org.netbeans.jpa.modeler.spec.CollectionTable">
+            <attributes>
+                <attribute id="CollectionTable_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Table</display-name>
+                </attribute>
+                <attribute id="CollectionTable_catalog" groupId="BASIC_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                <attribute id="CollectionTable_schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
                 </attribute>
             </attributes>
         </element>

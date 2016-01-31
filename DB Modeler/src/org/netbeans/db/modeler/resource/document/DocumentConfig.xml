@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <document-config>
     <documents>
-        <document id="Table" widget="org.netbeans.db.modeler.core.widget.TableWidget" specification="org.netbeans.db.modeler.spec.Table" >
+        <document id="BaseTable" widget="org.netbeans.db.modeler.core.widget.TableWidget" specification="org.netbeans.db.modeler.spec.DBTable" >
+            <container-document>/org/netbeans/db/modeler/resource/image/table.gif</container-document>
+        </document>
+        <document id="RelationTable" widget="org.netbeans.db.modeler.core.widget.RelationTableWidget" specification="org.netbeans.db.modeler.spec.DBRelationTable" >
+            <container-document>/org/netbeans/db/modeler/resource/image/table.gif</container-document>
+        </document>
+        <document id="CollectionTable" widget="org.netbeans.db.modeler.core.widget.CollectionTableWidget" specification="org.netbeans.db.modeler.spec.DBCollectionTable" >
             <container-document>/org/netbeans/db/modeler/resource/image/table.gif</container-document>
         </document>
     </documents>
