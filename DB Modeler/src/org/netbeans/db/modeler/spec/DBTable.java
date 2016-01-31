@@ -15,23 +15,36 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class Table extends FlowNode {
+public class DBTable extends FlowNode {
 
     private String name;
+    private Entity entity;
 
-//    private List<PrimaryKey> primaryKeys;
-//    private List<ForeignKey> foreignKeys;
-    private Map<String, Column> columns = new HashMap<>();
+    private final Map<String, DBColumn> columns = new HashMap<>();
+
+    public DBTable(String name) {
+        this(name, null);
+    }
+
+    public DBTable(String name, Entity entity) {
+        this.name = name;
+        this.entity = entity;
+        if (this.getClass() == DBTable.class) {
+            entity.getTable().setGeneratedName(name);
+        }
+    }
 
     /**
      * @return the name
@@ -77,27 +90,40 @@ public class Table extends FlowNode {
     /**
      * @return the columns
      */
-    public Collection<Column> getColumns() {
+    public Collection<DBColumn> getColumns() {
         return columns.values();
+    }
+
+    public Collection<DBColumn> findColumns(String columnName) {
+        List<DBColumn> columnResult = new ArrayList<>();
+        columns.values().stream().filter(c -> columnName.equals(c.getName())).forEach(c -> columnResult.add(c));
+        return columnResult;
     }
 
     /**
      * @param columns the columns to set
      */
-    public void setColumns(List<Column> columns) {
+    public void setColumns(List<DBColumn> columns) {
         columns.stream().forEach(c -> addColumn(c));
     }
 
-    public Column getColumn(String name) {
+    public DBColumn getColumn(String name) {
         return this.columns.get(name.toUpperCase());
     }
 
-    public void addColumn(Column column) {
+    public void addColumn(DBColumn column) {
         this.columns.put(column.getName().toUpperCase(), column);
     }
 
-    public void removeColumn(Column column) {
+    public void removeColumn(DBColumn column) {
         this.columns.remove(column.getName().toUpperCase());
+    }
+
+    /**
+     * @return the entity
+     */
+    public Entity getEntity() {
+        return entity;
     }
 
 }

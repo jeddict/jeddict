@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,32 +32,42 @@ public class DBMapping implements IDefinitionElement, IRootElement {
 
     private String id;
     private String name;
-    private Map<String, Table> tables = new HashMap<>();
+    private Map<String, DBTable> tables = new HashMap<>();
 
     /**
      * @return the tables
      */
-    public Collection<Table> getTables() {
+    public Collection<DBTable> getTables() {
         return tables.values();
     }
 
     /**
      * @param tables the tables to set
      */
-    public void setTables(List<Table> tables) {
+    public void setTables(List<DBTable> tables) {
         tables.stream().forEach(t -> addTable(t));
     }
 
-    public Table getTable(String name) {
+    public DBTable getTable(String name) {
         return this.tables.get(name);
     }
 
-    public void addTable(Table table) {
+    public void addTable(DBTable table) {
         this.tables.put(table.getName(), table);
     }
 
-    public void removeTable(Table table) {
+    public void removeTable(DBTable table) {
         this.tables.remove(table.getName());
+    }
+
+    public List<DBTable> findAllTable(String tableName) {
+        List<DBTable> tablesResult = new ArrayList<>();
+        for (DBTable table : tables.values()) {
+            if (tableName.equals(table.getName())) {
+                tablesResult.add(table);
+            }
+        }
+        return tablesResult;
     }
 
     @Override

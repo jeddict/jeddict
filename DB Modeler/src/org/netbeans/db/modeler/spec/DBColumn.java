@@ -15,14 +15,16 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class Column extends FlowPin {
+public class DBColumn extends FlowPin {
 
+    private Attribute attribute;
     private String name;
     private String dataType;
     private int size;
@@ -30,9 +32,15 @@ public class Column extends FlowPin {
     private boolean primaryKey;
 
     private boolean foreignKey;
-    private Column referenceColumn;
-    private Table referenceTable;
+    private DBColumn referenceColumn;
+    private DBTable referenceTable;
 
+    public DBColumn(Attribute attribute) {
+        this.attribute = attribute;
+    }
+
+//    public Column() {
+//    }
     /**
      * @return the name
      */
@@ -92,28 +100,28 @@ public class Column extends FlowPin {
     /**
      * @return the referenceColumn
      */
-    public Column getReferenceColumn() {
+    public DBColumn getReferenceColumn() {
         return referenceColumn;
     }
 
     /**
      * @param referenceColumn the referenceColumn to set
      */
-    public void setReferenceColumn(Column referenceColumn) {
+    public void setReferenceColumn(DBColumn referenceColumn) {
         this.referenceColumn = referenceColumn;
     }
 
     /**
      * @return the referenceTable
      */
-    public Table getReferenceTable() {
+    public DBTable getReferenceTable() {
         return referenceTable;
     }
 
     /**
      * @param referenceTable the referenceTable to set
      */
-    public void setReferenceTable(Table referenceTable) {
+    public void setReferenceTable(DBTable referenceTable) {
         this.referenceTable = referenceTable;
     }
 
@@ -143,5 +151,12 @@ public class Column extends FlowPin {
      */
     public void setSubSize(int subSize) {
         this.subSize = subSize;
+    }
+
+    /**
+     * @return the attribute
+     */
+    public Attribute getAttribute() {
+        return attribute;
     }
 }
