@@ -34,9 +34,10 @@ public class DBColumn extends FlowPin {
     private boolean foreignKey;
     private DBColumn referenceColumn;
     private DBTable referenceTable;
-
-    public DBColumn(Attribute attribute) {
+   
+    public DBColumn(String name, Attribute attribute) {
         this.attribute = attribute;
+        this.name=name;
     }
 
 //    public Column() {
@@ -159,4 +160,5 @@ public class DBColumn extends FlowPin {
     public Attribute getAttribute() {
         return attribute;
     }
+
 }
