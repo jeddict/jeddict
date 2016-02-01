@@ -15,9 +15,9 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -25,18 +25,11 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class ForeignKeyWidget extends ColumnWidget {
+public class ForeignKeyWidget<E extends DBColumn> extends ColumnWidget<E> {
 
     public ForeignKeyWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.FOREIGNKEY);
-    }
-
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(ForeignKeyWidget.class.getSimpleName());
-        return pinWidgetInfo;
     }
 
 }
