@@ -33,13 +33,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.persistence.descriptors.ClassDescriptor;
-import org.eclipse.persistence.eis.EISDescriptor;
+import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
 import org.eclipse.persistence.exceptions.DatabaseException;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.databaseaccess.DatabasePlatform;
@@ -63,14 +62,16 @@ import org.eclipse.persistence.mappings.AggregateObjectMapping;
 import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.eclipse.persistence.mappings.DirectCollectionMapping;
 import org.eclipse.persistence.mappings.DirectMapMapping;
+import org.eclipse.persistence.mappings.DirectToFieldMapping;
 import org.eclipse.persistence.mappings.ForeignReferenceMapping;
 import org.eclipse.persistence.mappings.ManyToManyMapping;
 import org.eclipse.persistence.mappings.OneToManyMapping;
 import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.eclipse.persistence.mappings.RelationTableMechanism;
 import org.eclipse.persistence.mappings.TransformationMapping;
-import org.eclipse.persistence.mappings.structures.ObjectRelationalDataTypeDescriptor;
-import org.eclipse.persistence.oxm.XMLDescriptor;
+import org.eclipse.persistence.mappings.converters.Converter;
+import org.eclipse.persistence.mappings.converters.SerializedObjectConverter;
+import org.eclipse.persistence.mappings.converters.TypeConversionConverter;
 import org.eclipse.persistence.sequencing.DefaultSequence;
 import org.eclipse.persistence.sequencing.NativeSequence;
 import org.eclipse.persistence.sequencing.Sequence;
@@ -78,10 +79,11 @@ import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Project;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.server.ServerSession;
-import org.eclipse.persistence.mappings.DirectToFieldMapping;
-import org.eclipse.persistence.mappings.converters.Converter;
-import org.eclipse.persistence.mappings.converters.SerializedObjectConverter;
-import org.eclipse.persistence.mappings.converters.TypeConversionConverter;
+import org.netbeans.jpa.modeler.db.accessor.EntityspecAccessor;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
 /**
  * DefaultTableGenerator is a utility class used to generate a default table
@@ -186,13 +188,12 @@ public class JPAMDefaultTableGenerator {
 
         //go through each descriptor and build the table/field definitions out of mappings
         for (ClassDescriptor descriptor : this.project.getOrderedDescriptors()) {
-
-            if ((descriptor instanceof XMLDescriptor) || (descriptor instanceof EISDescriptor) || (descriptor instanceof ObjectRelationalDataTypeDescriptor)) {
-                //default table generator does not support ox, eis and object-relational descriptor
-                AbstractSessionLog.getLog().log(SessionLog.WARNING, SessionLog.DDL, "relational_descriptor_support_only", (Object[]) null, true);
-
-                return tblCreator;
-            }
+//            if ((descriptor instanceof XMLDescriptor) || (descriptor instanceof EISDescriptor) || (descriptor instanceof ObjectRelationalDataTypeDescriptor)) {
+//                //default table generator does not support ox, eis and object-relational descriptor
+//                AbstractSessionLog.getLog().log(SessionLog.WARNING, SessionLog.DDL, "relational_descriptor_support_only", (Object[]) null, true);
+//
+//                return tblCreator;
+//            }
 
             // Aggregate descriptors do not contain table/field data and are 
             // processed through their owning entities. Aggregate descriptors
@@ -289,7 +290,14 @@ public class JPAMDefaultTableGenerator {
      * mappings except many-to-many and direct collection/map mappings, which
      * must be down in postInit method.
      */
-    protected void initTableSchema(ClassDescriptor descriptor) {
+    protected void initTableSchema(ClassDescriptor baseDescriptor) {
+
+        DBRelationalDescriptor descriptor = (DBRelationalDescriptor) baseDescriptor;
+        Entity entity = null;
+        if (descriptor.getAccessor() instanceof EntityspecAccessor) {
+            entity = ((EntityspecAccessor) descriptor.getAccessor()).getEntity();
+        }
+
         TableDefinition tableDefintion = null;
         if (descriptor.hasTablePerClassPolicy() && descriptor.isAbstract()) {
             return;
@@ -297,11 +305,21 @@ public class JPAMDefaultTableGenerator {
 
         //create a table definition for each mapped database table
         for (DatabaseTable table : descriptor.getTables()) {
-            tableDefintion = getTableDefFromDBTable(table);
+            tableDefintion = getTableDefFromDBTable(entity, table);
+        }
+
+        if (descriptor.getMappings().size() != descriptor.getFields().size()) {
+            System.out.println("");
+//            throw new IllegalStateException("Invalid DB Fields state");
         }
 
         //build each field definition and figure out which table it goes
-        for (DatabaseField dbField : descriptor.getFields()) {
+        for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
+            if (!(databaseMapping instanceof DirectToFieldMapping)) {
+                continue;
+            }
+            Attribute attribute = (Attribute) databaseMapping.getProperty(Attribute.class);
+            DatabaseField dbField = databaseMapping.getField();
             if (dbField.isCreatable()) {
                 boolean isPKField = false;
 
@@ -319,7 +337,7 @@ public class JPAMDefaultTableGenerator {
                 isPKField = isPKField || dbField.isPrimaryKey();
 
                 //build or retrieve the field definition.
-                FieldDefinition fieldDef = getFieldDefFromDBField(dbField);
+                FieldDefinition fieldDef = getFieldDefFromDBField(attribute,false,false, dbField);
                 if (isPKField) {
                     fieldDef.setIsPrimaryKey(true);
                     // Check if the generation strategy is IDENTITY
@@ -350,18 +368,49 @@ public class JPAMDefaultTableGenerator {
      * LOB type for serialized object mapping and type conversion mapping for
      * LOB usage
      */
-    protected void postInitTableSchema(ClassDescriptor descriptor) {
+    protected void postInitTableSchema(ClassDescriptor baseDescriptor) {
+
+        DBRelationalDescriptor descriptor = (DBRelationalDescriptor) baseDescriptor;
+        Entity descriptorEntity = null;
+        if (descriptor.getAccessor() instanceof EntityspecAccessor) {
+            descriptorEntity = ((EntityspecAccessor) descriptor.getAccessor()).getEntity();
+        }
+
         for (DatabaseMapping mapping : descriptor.getMappings()) {
+            Entity entity = null;
+            Attribute attribute = null;
+            RelationAttribute relationAttribute = null;
+//            RelationAttribute inverseRelationAttribute = null;
+            ElementCollection elementCollection = null;
+
+            if (mapping.isForeignReferenceMapping()) {
+                attribute = (Attribute) descriptorEntity.getAttributes().findAllAttribute(mapping.getAttributeName()).get(0);
+                if (attribute instanceof RelationAttribute) {
+                    relationAttribute = (RelationAttribute) attribute;
+                    if (!relationAttribute.isOwner()) {
+                        entity = relationAttribute.getConnectedEntity();
+//                        inverseRelationAttribute = relationAttribute;
+                        relationAttribute = relationAttribute.getConnectedAttribute();
+                    } else {
+//                        inverseRelationAttribute = relationAttribute.getConnectedAttribute();
+                        entity = descriptorEntity;
+                    }
+                } else if (attribute instanceof ElementCollection) {
+                    elementCollection = (ElementCollection) attribute;
+                     entity = descriptorEntity;
+                }
+
+            }
+
             if (descriptor.isChildDescriptor() && descriptor.getInheritancePolicy().getParentDescriptor().getMappingForAttributeName(mapping.getAttributeName()) != null) {
                 // If we are an inheritance subclass, do nothing. That is, don't 
                 // generate mappings that will be generated by our parent,
                 // otherwise the fields for that mapping will be generated n 
                 // times for the same table.
-                continue;
             } else if (mapping.isManyToManyMapping()) {
-                buildRelationTableDefinition((ManyToManyMapping) mapping, ((ManyToManyMapping) mapping).getRelationTableMechanism(), ((ManyToManyMapping) mapping).getListOrderField(), mapping.getContainerPolicy());
+                buildRelationTableDefinition(entity, relationAttribute, (ManyToManyMapping) mapping, ((ManyToManyMapping) mapping).getRelationTableMechanism(), ((ManyToManyMapping) mapping).getListOrderField(), mapping.getContainerPolicy());
             } else if (mapping.isDirectCollectionMapping()) {
-                buildDirectCollectionTableDefinition((DirectCollectionMapping) mapping, descriptor);
+                buildDirectCollectionTableDefinition(entity,elementCollection,(DirectCollectionMapping) mapping, descriptor);
             } else if (mapping.isDirectToFieldMapping()) {
                 Converter converter = ((DirectToFieldMapping) mapping).getConverter();
                 if (converter != null) {
@@ -376,14 +425,14 @@ public class JPAMDefaultTableGenerator {
                 }
             } else if (mapping.isAggregateCollectionMapping()) {
                 //need to figure out the target foreign key field and add it into the aggregate target table
-                createAggregateTargetTable((AggregateCollectionMapping) mapping);
+                createAggregateTargetTable(entity,elementCollection,(AggregateCollectionMapping) mapping);
             } else if (mapping.isForeignReferenceMapping()) {
                 if (mapping.isOneToOneMapping()) {
                     RelationTableMechanism relationTableMechanism = ((OneToOneMapping) mapping).getRelationTableMechanism();
                     if (relationTableMechanism == null) {
                         addForeignKeyFieldToSourceTargetTable((OneToOneMapping) mapping);
                     } else {
-                        buildRelationTableDefinition((OneToOneMapping) mapping, relationTableMechanism, null, null);
+                        buildRelationTableDefinition(entity, relationAttribute, (OneToOneMapping) mapping, relationTableMechanism, null, null);
                     }
                 } else if (mapping.isOneToManyMapping()) {
                     addForeignKeyFieldToSourceTargetTable((OneToManyMapping) mapping);
@@ -428,21 +477,22 @@ public class JPAMDefaultTableGenerator {
      * Build relation table definitions for all many-to-many relationships in a
      * EclipseLink descriptor.
      */
-    protected void buildRelationTableDefinition(ForeignReferenceMapping mapping, RelationTableMechanism relationTableMechanism, DatabaseField listOrderField, ContainerPolicy cp) {
+    protected void buildRelationTableDefinition(Entity entity, RelationAttribute attribute, ForeignReferenceMapping mapping, RelationTableMechanism relationTableMechanism, DatabaseField listOrderField, ContainerPolicy cp) {
         //first create relation table
-        TableDefinition table = getTableDefFromDBTable(relationTableMechanism.getRelationTable());
+        TableDefinition table = getTableDefFromDBTable(entity, attribute, relationTableMechanism.getRelationTable());
 
         //add source foreign key fields into the relation table
-        List<DatabaseField> srcFkFields = relationTableMechanism.getSourceRelationKeyFields();
-        List<DatabaseField> srcKeyFields = relationTableMechanism.getSourceKeyFields();
+        List<DatabaseField> srcFkFields = relationTableMechanism.getSourceRelationKeyFields();//Relation Table
+        List<DatabaseField> srcKeyFields = relationTableMechanism.getSourceKeyFields();//Entity Table
 
-        buildRelationTableFields(mapping, table, srcFkFields, srcKeyFields);
+        buildRelationTableFields(attribute,false, mapping, table, srcFkFields, srcKeyFields);
 
         //add target foreign key fields into the relation table
         List<DatabaseField> targFkFields = relationTableMechanism.getTargetRelationKeyFields();
         List<DatabaseField> targKeyFields = relationTableMechanism.getTargetKeyFields();
 
-        buildRelationTableFields(mapping, table, targFkFields, targKeyFields);
+//        attribute.getConnectedAttribute()
+        buildRelationTableFields(attribute,true, mapping, table, targFkFields, targKeyFields);
 
         if (cp != null) {
             addFieldsForMappedKeyMapContainerPolicy(cp, table);
@@ -460,7 +510,7 @@ public class JPAMDefaultTableGenerator {
      * Build field definitions and foreign key constraints for all many-to-many
      * relation table.
      */
-    protected void buildRelationTableFields(ForeignReferenceMapping mapping, TableDefinition table, List<DatabaseField> fkFields, List<DatabaseField> targetFields) {
+    protected void buildRelationTableFields(Attribute attribute,boolean inverse, ForeignReferenceMapping mapping, TableDefinition table, List<DatabaseField> fkFields, List<DatabaseField> targetFields) {
         assert fkFields.size() > 0 && fkFields.size() == targetFields.size();
 
         DatabaseField fkField = null;
@@ -475,7 +525,7 @@ public class JPAMDefaultTableGenerator {
             targetFieldNames.add(targetField.getNameDelimited(databasePlatform));
 
             fkField = resolveDatabaseField(fkField, targetField);
-            setFieldToRelationTable(fkField, table);
+            setFieldToRelationTable(attribute, inverse, fkField, table);
         }
 
         // add a foreign key constraint from fk field to target field
@@ -495,9 +545,9 @@ public class JPAMDefaultTableGenerator {
     /**
      * Build direct collection table definitions in a EclipseLink descriptor
      */
-    protected void buildDirectCollectionTableDefinition(DirectCollectionMapping mapping, ClassDescriptor descriptor) {
+    protected void buildDirectCollectionTableDefinition(Entity entity, ElementCollection attribute,DirectCollectionMapping mapping, ClassDescriptor descriptor) {
         //first create direct collection table
-        TableDefinition table = getTableDefFromDBTable(mapping.getReferenceTable());
+        TableDefinition table = getTableDefFromDBTable(entity,attribute,mapping.getReferenceTable());
 
         DatabaseField dbField = null;
         DatabaseField targetField = null;
@@ -512,7 +562,7 @@ public class JPAMDefaultTableGenerator {
             targetFieldNames.add(targetField.getNameDelimited(databasePlatform));
 
             fkField = resolveDatabaseField(fkField, targetField);
-            FieldDefinition fieldDef = getFieldDefFromDBField(fkField);
+            FieldDefinition fieldDef = getFieldDefFromDBField(attribute,false,true,fkField);//todo pass entity
             // Avoid adding fields twice for table per class.
             if (!table.getFields().contains(fieldDef)) {
                 table.addField(fieldDef);
@@ -521,10 +571,10 @@ public class JPAMDefaultTableGenerator {
 
         // add a foreign key constraint from fk field to target field
         DatabaseTable targetTable = targetField.getTable();
-        TableDefinition targetTblDef = getTableDefFromDBTable(targetTable);
+        TableDefinition targetTblDef = getTableDefFromDBTable(entity,targetTable);
 
         //add the direct collection field to the table.
-        FieldDefinition fieldDef = getFieldDefFromDBField(mapping.getDirectField());
+        FieldDefinition fieldDef = getFieldDefFromDBField(attribute, false,false, mapping.getDirectField());
         if (!table.getFields().contains(fieldDef)) {
             table.addField(fieldDef);
         }
@@ -617,8 +667,8 @@ public class JPAMDefaultTableGenerator {
      * Add the foreign key to the aggregate collection mapping target table.
      * Also add listOrderField if specified.
      */
-    protected void createAggregateTargetTable(AggregateCollectionMapping mapping) {
-        TableDefinition targetTable = getTableDefFromDBTable(mapping.getReferenceDescriptor().getDefaultTable());
+    protected void createAggregateTargetTable(Entity entity,ElementCollection elementCollection,AggregateCollectionMapping mapping) {
+        TableDefinition targetTable = getTableDefFromDBTable(entity, elementCollection, mapping.getReferenceDescriptor().getDefaultTable());
         addFieldsForMappedKeyMapContainerPolicy(mapping.getContainerPolicy(), targetTable);
 
         Iterator aggregateFieldIterator = mapping.getReferenceDescriptor().getFields().iterator();
@@ -653,7 +703,7 @@ public class JPAMDefaultTableGenerator {
 
         // add a foreign key constraint from fk field to target field
         DatabaseTable sourceDatabaseTable = targetField.getTable();
-        TableDefinition sourceTable = getTableDefFromDBTable(sourceDatabaseTable);
+        TableDefinition sourceTable = getTableDefFromDBTable(entity, sourceDatabaseTable);
 
         if (mapping.getListOrderField() != null) {
             FieldDefinition fieldDef = getFieldDefFromDBField(mapping.getListOrderField());
@@ -741,14 +791,35 @@ public class JPAMDefaultTableGenerator {
      * Build a table definition object from a database table object
      */
     protected TableDefinition getTableDefFromDBTable(DatabaseTable databaseTable) {
+        return getTableDefFromDBTable(null, null, databaseTable);
+    }
+
+    protected TableDefinition getTableDefFromDBTable(Entity entity, DatabaseTable databaseTable) {
+        return getTableDefFromDBTable(entity, null, databaseTable);
+    }
+
+    protected TableDefinition getTableDefFromDBTable(Entity entity, Attribute attribute, DatabaseTable databaseTable) {
         TableDefinition tableDefinition = this.tableMap.get(databaseTable.getName());
 
         if (tableDefinition == null) {
             //table not built yet, simply built it
-            tableDefinition = new JPAMTableDefinition();
+            String tableName = databaseTable.getNameDelimited(databasePlatform);
+            if (entity != null) {
+                if (attribute != null) {
+                    tableDefinition = new JPAMTableDefinition(entity, attribute);
+                } else if (tableName.equalsIgnoreCase(entity.getTableName())) {
+                    tableDefinition = new JPAMTableDefinition(entity);
+                } else {
+                    tableDefinition = new JPAMTableDefinition();
+                }
+            } else {
+                tableDefinition = new JPAMTableDefinition();
+            }
+
             tableDefinition.setTable(databaseTable);
-            tableDefinition.setName(databaseTable.getNameDelimited(databasePlatform));
+            tableDefinition.setName(tableName);
             tableDefinition.setQualifier(databaseTable.getTableQualifier());
+            System.out.println("Table :" + tableDefinition.getName());
             if (databaseTable.hasUniqueConstraints()) {
                 addUniqueKeyConstraints(tableDefinition, databaseTable.getUniqueConstraints());
             }
@@ -817,16 +888,21 @@ public class JPAMDefaultTableGenerator {
         return resolvedDatabaseField;
     }
 
+    protected FieldDefinition getFieldDefFromDBField(DatabaseField dbField) {
+        return getFieldDefFromDBField(null,false,false, dbField);
+    }
+
     /**
      * Build a field definition object from a database field.
      */
-    protected FieldDefinition getFieldDefFromDBField(DatabaseField dbField) {
+    protected FieldDefinition getFieldDefFromDBField(Attribute attribute,boolean inverse,boolean foriegnKey, DatabaseField dbField) {
         FieldDefinition fieldDef = this.fieldMap.get(dbField);
-
         if (fieldDef == null) {
             //not built yet, build one
-            fieldDef = new JPAMFieldDefinition();
+            fieldDef = new JPAMFieldDefinition(attribute, inverse, foriegnKey);
             fieldDef.setName(dbField.getNameDelimited(databasePlatform));
+
+            System.out.println("Field :" + fieldDef.getName());
             //added for extending tables where the field needs to be looked up
             fieldDef.setDatabaseField(dbField);
 
@@ -876,8 +952,8 @@ public class JPAMDefaultTableGenerator {
     /**
      * Build and add a field definition object to relation table
      */
-    protected void setFieldToRelationTable(DatabaseField dbField, TableDefinition table) {
-        FieldDefinition fieldDef = getFieldDefFromDBField(dbField);
+    protected void setFieldToRelationTable(Attribute attribute, boolean inverse, DatabaseField dbField, TableDefinition table) {
+        FieldDefinition fieldDef = getFieldDefFromDBField(attribute, inverse,true, dbField);
 
         if (!table.getFields().contains(fieldDef)) {
             //only add the field once, to avoid add twice if m:m is bi-directional.

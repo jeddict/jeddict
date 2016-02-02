@@ -15,7 +15,6 @@
 package org.eclipse.persistence.tools.schemaframework;
 
 import java.util.*;
-
 import org.eclipse.persistence.exceptions.DatabaseException;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
@@ -436,9 +435,9 @@ public class JPAMTableCreator {
                 AbstractSession abstractSession = (AbstractSession) session;
                 boolean alreadyExists = false;
                 // Check if the table already exists, to avoid logging create error.
-                if (CHECK_EXISTENCE && schemaManager.shouldWriteToDatabase()) {
-                    alreadyExists = schemaManager.checkTableExists(table);
-                }
+//                if (CHECK_EXISTENCE && schemaManager.shouldWriteToDatabase()) {
+//                    alreadyExists = schemaManager.checkTableExists(table);
+//                }
                 DatabaseException createTableException = null;
                 if (!alreadyExists) {
                     //assume table does not exist
@@ -450,6 +449,7 @@ public class JPAMTableCreator {
                         alreadyExists = true;
                     }
                 }
+                alreadyExists = true;
                 if (alreadyExists) {
                     //Assume the table exists, so lookup the column info
 

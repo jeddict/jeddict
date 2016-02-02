@@ -26,27 +26,23 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
-
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.exceptions.DatabaseException;
 import org.eclipse.persistence.exceptions.EclipseLinkException;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.databaseaccess.DatabaseAccessor;
-import org.eclipse.persistence.internal.helper.Helper;
 import org.eclipse.persistence.internal.sequencing.Sequencing;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
-import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.queries.DataReadQuery;
-import org.eclipse.persistence.queries.SQLCall;
 import org.eclipse.persistence.sequencing.DefaultSequence;
 import org.eclipse.persistence.sequencing.NativeSequence;
 import org.eclipse.persistence.sequencing.Sequence;
 import org.eclipse.persistence.sequencing.TableSequence;
 import org.eclipse.persistence.sequencing.UnaryTableSequence;
-import org.netbeans.db.modeler.spec.Column;
+import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
-import org.netbeans.db.modeler.spec.Table;
+import org.netbeans.db.modeler.spec.DBTable;
 
 /**
  * <p>
@@ -249,7 +245,7 @@ public class JPAMSchemaManager {
     public void createReference(DatabaseObjectDefinition databaseObjectDefinition) {
 
         JPAMTableDefinition tableDefinition = ((JPAMTableDefinition) databaseObjectDefinition);
-        Table sourceTable = dbMapping.getTable(tableDefinition.getFullName());
+        DBTable sourceTable = dbMapping.getTable(tableDefinition.getFullName());
 
         if ((!session.getPlatform().supportsForeignKeyConstraints()) || tableDefinition.getForeignKeyMap().isEmpty()) {
             return;
@@ -263,11 +259,11 @@ public class JPAMSchemaManager {
                 if (foreignKey.hasForeignKeyDefinition()) {
                     //TODO : foreignKey.getForeignKeyDefinition()
                 } else {
-                    Table targetTable = dbMapping.getTable(foreignKey.getTargetTable());
+                    DBTable targetTable = dbMapping.getTable(foreignKey.getTargetTable());
 
                     for (int i = 0; i < foreignKey.getSourceFields().size(); i++) {
-                        Column sourceColumn = sourceTable.getColumn(foreignKey.getSourceFields().get(i));
-                        Column targetColumn = targetTable.getColumn(foreignKey.getTargetFields().get(i));
+                        DBColumn sourceColumn = sourceTable.getColumn(foreignKey.getSourceFields().get(i));
+                        DBColumn targetColumn = targetTable.getColumn(foreignKey.getTargetFields().get(i));
                         sourceColumn.setForeignKey(true);
                         sourceColumn.setReferenceColumn(targetColumn);
                         sourceColumn.setReferenceTable(targetTable);
@@ -437,12 +433,10 @@ public class JPAMSchemaManager {
                     // we should not drop sequence tables since they may be re-used across
                     // persistence units (default behavior right now).
                     // TODO: We should drop them really unless it is the default SEQUENCE table??
-                    {
-                        if (replace) {
+                     if (replace) {
                             dropObject(tableDefinition);
                             createObject(tableDefinition);
                         }
-                    }
                 }
             }
         } catch (DatabaseException exception) {
@@ -1231,22 +1225,22 @@ public class JPAMSchemaManager {
      * associated with.
      */
     public void extendDefaultTables(boolean generateFKConstraints) throws EclipseLinkException {
-        boolean shouldLogExceptionStackTrace = getSession().getSessionLog().shouldLogExceptionStackTrace();
-        this.session.getSessionLog().setShouldLogExceptionStackTrace(false);
-
-        try {
-            JPAMTableCreator tableCreator = getDefaultTableCreator(generateFKConstraints);
-            tableCreator.extendTables(this.session, this);
-        } catch (DatabaseException exception) {
-            // Ignore error
-        } finally {
-            this.session.getSessionLog().setShouldLogExceptionStackTrace(shouldLogExceptionStackTrace);
-        }
-        // Reset database change events to new tables.
-        if (this.session.getDatabaseEventListener() != null) {
-            this.session.getDatabaseEventListener().remove(this.session);
-            this.session.getDatabaseEventListener().register(this.session);
-        }
+//        boolean shouldLogExceptionStackTrace = getSession().getSessionLog().shouldLogExceptionStackTrace();
+//        this.session.getSessionLog().setShouldLogExceptionStackTrace(false);
+//
+//        try {
+        JPAMTableCreator tableCreator = getDefaultTableCreator(generateFKConstraints);
+        tableCreator.extendTables(this.session, this);
+//        } catch (DatabaseException exception) {
+//            // Ignore error
+//        } finally {
+//            this.session.getSessionLog().setShouldLogExceptionStackTrace(shouldLogExceptionStackTrace);
+//        }
+//        // Reset database change events to new tables.
+//        if (this.session.getDatabaseEventListener() != null) {
+//            this.session.getDatabaseEventListener().remove(this.session);
+//            this.session.getDatabaseEventListener().register(this.session);
+//        }
     }
 
 }

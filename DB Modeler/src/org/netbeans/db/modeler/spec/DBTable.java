@@ -41,9 +41,6 @@ public class DBTable extends FlowNode {
     public DBTable(String name, Entity entity) {
         this.name = name;
         this.entity = entity;
-        if (this.getClass() == DBTable.class) {
-            entity.getTable().setGeneratedName(name);
-        }
     }
 
     /**

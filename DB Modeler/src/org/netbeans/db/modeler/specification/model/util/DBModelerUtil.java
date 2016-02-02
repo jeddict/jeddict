@@ -32,9 +32,12 @@ import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
 import org.netbeans.db.modeler.core.widget.BaseTableWidget;
+import org.netbeans.db.modeler.core.widget.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.RelationTableWidget;
@@ -42,6 +45,8 @@ import org.netbeans.db.modeler.core.widget.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
+import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -113,7 +118,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMapping);
 
-            dbMapping.getTables().stream().forEach(table -> loadTable(scene, (Widget) scene, table));
+            dbMapping.getTables().stream().forEach(table -> loadTable(scene , table));
             loadFlowEdge(scene);
             scene.autoLayout();
 
@@ -153,7 +158,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             databaseLogin.setPassword("");
             databaseLogin.setDriverClass(org.h2.Driver.class);
         } else {
-            dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());//,connection.getDriverClass());
+            dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
             contextClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(dynamicClassLoader);
             databaseLogin.setDatabaseURL(connection.getUrl());
@@ -185,53 +190,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         return dbMapping;
     }
 
-//        
-//           private  void loadFields(Entity entity , JPADynamicTypeBuilder entityBuilder) {
-//
-//               entity.getAttributes().getId().stream().forEach(a -> {
-//                   String column = a.getColumn() != null ? a.getColumn().getName() : a.getName();
-////                   try {
-//                       entityBuilder.setPrimaryKeyFields(column);
-////                       System.out.println("attr" + a.getAttributeType());
-////                       String attr = a.getAttributeType();
-////                       if(attr.indexOf('.') == -1){
-////                           String primitive = attr.substring(0, 1).toUpperCase()+ attr.substring(1);
-////                           if(isPrimitive(primitive)){
-////                               attr = "java.lang." + primitive;
-////                           }
-////                       }
-////                        Class.forName(attr)
-//                       entityBuilder.addDirectMapping(a.getName(),String.class, column);
-////                   } catch (ClassNotFoundException ex) {
-////                       Exceptions.printStackTrace(ex);
-////                   }
-//
-//               });
-//                       
-//
-//               
-//               entity.getAttributes().getBasic().stream().forEach(a -> {
-//                   String column = a.getColumn() != null ? a.getColumn().getName() : a.getName();
-////                   try {
-////                       Class.forName(a.getAttributeType())
-//                       entityBuilder.addDirectMapping(a.getName(), String.class, column);
-////                   } catch (ClassNotFoundException ex) {
-////                       Exceptions.printStackTrace(ex);
-////                   }
-//
-//               });
-//     
-//    }
-//        
-//        
-//         public static boolean isPrimitive(String type) {
-//        return "boolean".equals(type) || "byte".equals(type)
-//                || "short".equals(type) || "char".equals(type)
-//                || "int".equals(type) || "long".equals(type)
-//                || "float".equals(type) || "double".equals(type);
-//    }
-//        
-    private void loadTable(DBModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
+    private void loadTable(DBModelerScene scene, IFlowNode flowElement) {
         IModelerDocument document = null;
         ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getVendorSpecification().getModelerDocumentFactory();
         if (flowElement instanceof FlowNode) {
@@ -260,11 +219,16 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {
                         if (column.isForeignKey()) {
-                            tableWidget.addNewForeignKey(column.getName(), column);
+                            if(column instanceof DBJoinColumn){
+                                tableWidget.addNewJoinKey(column.getName(), column);
+                            } else if(column instanceof DBInverseJoinColumn){
+                                tableWidget.addNewInverseJoinKey(column.getName(), column);
+                            }
+                            
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
                         } else {
-                            tableWidget.addNewColumn(column.getName(), column);
+                            tableWidget.addNewBasicColumn(column.getName(), column);
                         }
                     });
                     tableWidget.sortAttributes();
@@ -290,7 +254,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     private void loadEdge(DBModelerScene scene, TableWidget sourceTableWidget, ForeignKeyWidget foreignKeyWidget) {
 //       ForeignKey => Source
 //       ReferenceColumn => Target      
-        DBColumn sourceColumn = foreignKeyWidget.getBaseElementSpec();
+        DBColumn sourceColumn = (DBColumn)foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
         ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) {
@@ -408,10 +372,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     @Override
     public IPinWidget attachPinWidget(DBModelerScene scene, INodeWidget nodeWidget, PinWidgetInfo widgetInfo) {
         IPinWidget widget = null;
-        if (widgetInfo.getDocumentId().equals(ColumnWidget.class.getSimpleName())) {
-            widget = new ColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(ForeignKeyWidget.class.getSimpleName())) {
-            widget = new ForeignKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        if (widgetInfo.getDocumentId().equals(BasicColumnWidget.class.getSimpleName())) {
+            widget = new BasicColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(JoinColumnWidget.class.getSimpleName())) {
+            widget = new JoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        }  else if (widgetInfo.getDocumentId().equals(InverseJoinColumnWidget.class.getSimpleName())) {
+            widget = new InverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(PrimaryKeyWidget.class.getSimpleName())) {
             widget = new PrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
@@ -514,7 +480,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
 //            Table targetTable = (Table) targetTableWidget.getBaseElementSpec();
 
-            DBColumn sourceColumn = sourceColumnWidget.getBaseElementSpec();
+            DBColumn sourceColumn = (DBColumn)sourceColumnWidget.getBaseElementSpec();
             ColumnWidget targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
 //            Column targetColumn = targetColumnWidget.getBaseElementSpec();
 

@@ -1,11 +1,24 @@
+/**
+ * Copyright [2016] Gaurav Gupta
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.eclipse.persistence.internal.jpa.metadata.xml;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
-//import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.MetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ConverterAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
@@ -20,15 +33,14 @@ import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 
 /**
  * Object to hold onto the entity mappings metadata.
- * 
+ *
  * @author Gaurav Gupta
  * @since JPA Modeler 1.3
  */
 public class DBEntityMappings extends XMLEntityMappings {
 
-  
     public DBEntityMappings(EntityMappings mappings) {
-        
+
         setPackage(mappings.getPackage());
         setEntities(mappings.getEntity().stream().map(EntityspecAccessor::getInstance).collect(toList()));
         setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclass::getAccessor).collect(toList()));
@@ -64,15 +76,12 @@ public class DBEntityMappings extends XMLEntityMappings {
         setPLSQLRecords(new ArrayList<>());
         setTenantDiscriminatorColumns(new ArrayList<>());
     }
-  
-    
-    
+
     /**
-     * INTERNAL:
-     * Assumes the correct class loader has been set before calling this
-     * method.
+     * INTERNAL: Assumes the correct class loader has been set before calling
+     * this method.
      */
-    public void initPersistenceUnitClasses(HashMap<String, EntityAccessor> allEntities, HashMap<String, EmbeddableAccessor> allEmbeddables) { 
+    public void initPersistenceUnitClasses(HashMap<String, EntityAccessor> allEntities, HashMap<String, EmbeddableAccessor> allEmbeddables) {
         // Build our ConverterAccessor and ConverterMetadata lists from
         // the mixed converter metadata list.
         for (MixedConverterMetadata mixedConverter : getMixedConverters()) {
@@ -82,16 +91,16 @@ public class DBEntityMappings extends XMLEntityMappings {
                 getConverterAccessors().add(mixedConverter.buildConverterAccessor());
             }
         }
-        
+
         // Process the entities
         for (EntityAccessor entity : getEntities()) {
             // Initialize the class with the package from entity mappings.
             MetadataClass entityClass = getMetadataClass(getPackageQualifiedClassName(entity.getClassName()), false);
-            
+
             // Initialize the entity with its metadata descriptor and project.
             // This initialization must be done before a potential merge below.
             entity.initXMLClassAccessor(entityClass, new DBMetadataDescriptor(entityClass, entity), getProject(), this);
-            
+
             if (allEntities.containsKey(entityClass.getName())) {
                 // Merge this entity with the existing one.
                 allEntities.get(entityClass.getName()).merge(entity);
@@ -100,25 +109,25 @@ public class DBEntityMappings extends XMLEntityMappings {
                 allEntities.put(entityClass.getName(), entity);
             }
         }
-        
+
         // Process the embeddables.
         for (EmbeddableAccessor embeddable : getEmbeddables()) {
             // Initialize the class with the package from entity mappings.
             MetadataClass embeddableClass = getMetadataClass(getPackageQualifiedClassName(embeddable.getClassName()), false);
-            
+
             // Initialize the embeddable with its metadata descriptor and project.
             // This initialization must be done before a potential merge below.
             embeddable.initXMLClassAccessor(embeddableClass, new MetadataDescriptor(embeddableClass, embeddable), getProject(), this);
-            
+
             if (allEmbeddables.containsKey(embeddableClass.getName())) {
                 // Merge this embeddable with the existing one.
                 allEmbeddables.get(embeddableClass.getName()).merge(embeddable);
-            } else {    
+            } else {
                 // Add this embeddable to the map.
                 allEmbeddables.put(embeddableClass.getName(), embeddable);
             }
         }
-        
+
         // Process the mapped superclasses
         for (MappedSuperclassAccessor mappedSuperclass : getMappedSuperclasses()) {
             // Initialize the class with the package from entity mappings.
@@ -127,7 +136,7 @@ public class DBEntityMappings extends XMLEntityMappings {
             // Initialize the mapped superclass with a metadata descriptor and project.
             // This initialization must be done before a potential merge below.
             mappedSuperclass.initXMLClassAccessor(mappedSuperclassClass, new MetadataDescriptor(mappedSuperclassClass, mappedSuperclass), getProject(), this);
-            
+
             if (getProject().hasMappedSuperclass(mappedSuperclassClass)) {
                 // Merge this mapped superclass with the existing one.
                 getProject().getMappedSuperclassAccessor(mappedSuperclassClass).merge(mappedSuperclass);
@@ -136,7 +145,7 @@ public class DBEntityMappings extends XMLEntityMappings {
                 getProject().addMappedSuperclass(mappedSuperclass);
             }
         }
-        
+
         // Process the JPA converter classes.
         for (ConverterAccessor converterAccessor : getConverterAccessors()) {
             // Initialize the class with the package from entity mappings.
@@ -145,7 +154,7 @@ public class DBEntityMappings extends XMLEntityMappings {
             // Initialize the converter class.
             // This initialization must be done before a potential merge below.
             converterAccessor.initXMLObject(converterClass, this);
-            
+
             if (getProject().hasConverterAccessor(converterClass)) {
                 // Merge this converter with the existing one (will check for discrepancies between them)
                 getProject().getConverterAccessor(converterClass).merge(converterAccessor);
@@ -156,5 +165,4 @@ public class DBEntityMappings extends XMLEntityMappings {
         }
     }
 
-  
 }

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
 import org.eclipse.persistence.exceptions.DatabaseException;
 import org.eclipse.persistence.exceptions.EclipseLinkException;
 import org.eclipse.persistence.exceptions.ValidationException;
@@ -44,9 +43,14 @@ import org.eclipse.persistence.internal.helper.DatabaseTable;
 import org.eclipse.persistence.internal.helper.Helper;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.queries.SQLCall;
-import org.netbeans.db.modeler.spec.Column;
+import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBMapping;
-import org.netbeans.db.modeler.spec.Table;
+import org.netbeans.db.modeler.spec.DBRelationTable;
+import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
@@ -57,20 +61,16 @@ import org.netbeans.modeler.core.NBModelerUtil;
  */
 public class JPAMTableDefinition extends TableDefinition {
 
-    protected List<FieldDefinition> fields; //FieldDefinitions
-    protected Map<String, ForeignKeyConstraint> foreignKeyMap; //key is the name of ForeignKeyConstraint
-    protected List<UniqueKeyConstraint> uniqueKeys;
-    protected List<IndexDefinition> indexes;
-    protected String creationPrefix;
-    protected String creationSuffix;
     private boolean createSQLFiles;
     private boolean createVPDCalls;
     private String tenantFieldName;
-    //holds onto the name and delimiting info.
-    protected DatabaseTable table;
-    protected boolean hasUserDefinedForeignKeyConstraints;
 
-    public JPAMTableDefinition() {
+    private Entity entity;
+    private Attribute attribute;
+
+    public JPAMTableDefinition(Entity entity, Attribute attribute) {
+        this.entity = entity;
+        this.attribute = attribute;
         createVPDCalls = false;
         hasUserDefinedForeignKeyConstraints = false;
         this.fields = new ArrayList<FieldDefinition>();
@@ -81,13 +81,21 @@ public class JPAMTableDefinition extends TableDefinition {
         this.creationSuffix = "";
     }
 
+    public JPAMTableDefinition(Entity entity) {
+        this(entity, null);
+    }
+
+    public JPAMTableDefinition() {
+        this(null, null);
+    }
+
     /**
      * PUBLIC: Add the field to the table, default sizes are used.
      *
      * @param type is the Java class type corresponding to the database type.
      */
-    public void addField(String fieldName, Class type) {
-        this.addField(new JPAMFieldDefinition(fieldName, type));
+    public void addField(Attribute attribute, String fieldName, Class type) {
+        this.addField(new JPAMFieldDefinition(attribute, fieldName, type));
     }
 
     /**
@@ -95,8 +103,8 @@ public class JPAMTableDefinition extends TableDefinition {
      *
      * @param type is the Java class type corresponding to the database type.
      */
-    public void addField(String fieldName, Class type, int fieldSize) {
-        this.addField(new JPAMFieldDefinition(fieldName, type, fieldSize));
+    public void addField(Attribute attribute, String fieldName, Class type, int fieldSize) {
+        this.addField(new JPAMFieldDefinition(attribute, fieldName, type, fieldSize));
     }
 
     /**
@@ -104,8 +112,8 @@ public class JPAMTableDefinition extends TableDefinition {
      *
      * @param type is the Java class type corresponding to the database type.
      */
-    public void addField(String fieldName, Class type, int fieldSize, int fieldSubSize) {
-        this.addField(new JPAMFieldDefinition(fieldName, type, fieldSize, fieldSubSize));
+    public void addField(Attribute attribute, String fieldName, Class type, int fieldSize, int fieldSubSize) {
+        this.addField(new JPAMFieldDefinition(attribute, fieldName, type, fieldSize, fieldSubSize));
     }
 
     /**
@@ -113,8 +121,8 @@ public class JPAMTableDefinition extends TableDefinition {
      *
      * @param typeName is the name of the nested type.
      */
-    public void addField(String fieldName, String typeName) {
-        addField(new JPAMFieldDefinition(fieldName, typeName));
+    public void addField(Attribute attribute, String fieldName, String typeName) {
+        addField(new JPAMFieldDefinition(attribute, fieldName, typeName));
     }
 
     /**
@@ -204,8 +212,8 @@ public class JPAMTableDefinition extends TableDefinition {
      *
      * @param type is the Java class type corresponding to the database type.
      */
-    public void addIdentityField(String fieldName, Class type) {
-        FieldDefinition fieldDef = new JPAMFieldDefinition(fieldName, type);
+    public void addIdentityField(Attribute attribute, String fieldName, Class type) {
+        FieldDefinition fieldDef = new JPAMFieldDefinition(attribute, fieldName, type);
         fieldDef.setIsIdentity(true);
         fieldDef.setIsPrimaryKey(true);
         addField(fieldDef);
@@ -218,8 +226,8 @@ public class JPAMTableDefinition extends TableDefinition {
      *
      * @param type is the Java class type corresponding to the database type.
      */
-    public void addIdentityField(String fieldName, Class type, int fieldSize) {
-        FieldDefinition fieldDef = new JPAMFieldDefinition(fieldName, type, fieldSize);
+    public void addIdentityField(Attribute attribute, String fieldName, Class type, int fieldSize) {
+        FieldDefinition fieldDef = new JPAMFieldDefinition(attribute, fieldName, type, fieldSize);
         fieldDef.setIsIdentity(true);
         fieldDef.setIsPrimaryKey(true);
         addField(fieldDef);
@@ -231,8 +239,8 @@ public class JPAMTableDefinition extends TableDefinition {
      *
      * @param type is the Java class type corresponding to the database type.
      */
-    public void addPrimaryKeyField(String fieldName, Class type) {
-        FieldDefinition fieldDef = new JPAMFieldDefinition(fieldName, type);
+    public void addPrimaryKeyField(Attribute attribute, String fieldName, Class type) {
+        FieldDefinition fieldDef = new JPAMFieldDefinition(attribute, fieldName, type);
         fieldDef.setIsPrimaryKey(true);
         addField(fieldDef);
     }
@@ -243,8 +251,8 @@ public class JPAMTableDefinition extends TableDefinition {
      *
      * @param type is the Java class type corresponding to the database type.
      */
-    public void addPrimaryKeyField(String fieldName, Class type, int fieldSize) {
-        FieldDefinition fieldDef = new JPAMFieldDefinition(fieldName, type, fieldSize);
+    public void addPrimaryKeyField(Attribute attribute, String fieldName, Class type, int fieldSize) {
+        FieldDefinition fieldDef = new JPAMFieldDefinition(attribute, fieldName, type, fieldSize);
         fieldDef.setIsPrimaryKey(true);
         addField(fieldDef);
     }
@@ -389,9 +397,18 @@ public class JPAMTableDefinition extends TableDefinition {
      * INTERNAL: Return the create table statement.
      */
     public void buildCreationWriter(AbstractSession session, DBMapping dbMapping) throws ValidationException {
-        Table table = new Table();
+
+        DBTable table = null;
+
+        if (attribute instanceof RelationAttribute) {
+            table = new DBRelationTable(getFullName(), entity, (RelationAttribute) attribute);
+        } else if (attribute instanceof ElementCollection) {
+            table = new DBCollectionTable(getFullName(), entity, (ElementCollection) attribute);
+        } else {
+            table = new DBTable(getFullName(), entity);
+        }
+
         table.setId(NBModelerUtil.getAutoGeneratedStringId());
-        table.setName(getFullName());
 
         for (Iterator<FieldDefinition> itetrator = getFields().iterator(); itetrator.hasNext();) {
             JPAMFieldDefinition field = (JPAMFieldDefinition) itetrator.next();
@@ -617,13 +634,11 @@ public class JPAMTableDefinition extends TableDefinition {
         if (name == null || name.equals("")) {
             unqConstraint.setName(buildUniqueKeyConstraintName(getName(), serialNumber, platform.getMaxUniqueKeyNameSize()));
         } else // Hack if off if it exceeds the max size.
-        {
-            if (name.length() > platform.getMaxUniqueKeyNameSize()) {
+         if (name.length() > platform.getMaxUniqueKeyNameSize()) {
                 unqConstraint.setName(name.substring(0, platform.getMaxUniqueKeyNameSize() - 1));
             } else {
                 unqConstraint.setName(name);
             }
-        }
 
         return unqConstraint;
     }
@@ -1340,5 +1355,12 @@ public class JPAMTableDefinition extends TableDefinition {
 
     public void setTable(DatabaseTable table) {
         this.table = table;
+    }
+
+    /**
+     * @return the attribute
+     */
+    public Attribute getAttribute() {
+        return attribute;
     }
 }
