@@ -36,7 +36,7 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
         accessor.setName(elementCollection.getName());
         
             accessor.setAttributeType(elementCollection.getCollectionType());
-            accessor.setTargetClassName(elementCollection.getTargetClass());
+            accessor.setTargetClassName(elementCollection.getAttributeType());
         
         if (elementCollection.getColumn() != null) {
             accessor.setColumn(elementCollection.getColumn().getAccessor());

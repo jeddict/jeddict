@@ -10,17 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.tables.TableMetadata;
+import org.netbeans.jpa.modeler.spec.validator.table.TableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -63,6 +61,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "uniqueConstraint",
     "index"
 })
+    @XmlJavaTypeAdapter(value=TableValidator.class)
+
 public class Table {
 
     @XmlElement(name = "unique-constraint")
@@ -75,9 +75,6 @@ public class Table {
     @XmlAttribute(name = "schema")
     protected String schema;
     
-    @XmlTransient
-    private String generatedName;
-
     public static Table load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Table");
         Table table = null;
@@ -221,27 +218,9 @@ public class Table {
         accessor.setSchema(schema);
 
         return accessor;
-
-    }
-
-    /**
-     * @return the generatedName
-     */
-    public String getGeneratedName() {
-        return generatedName;
-    }
-
-    /**
-     * @param generatedName the generatedName to set
-     */
-    public void setGeneratedName(String generatedName) {
-        this.generatedName = generatedName;
     }
     
-    boolean isEmpty(){
-        if(name != null && name.equalsIgnoreCase(generatedName)){
-            name = null;
-        }
+  public boolean isEmpty(){
         return StringUtils.isBlank(name) && StringUtils.isBlank(schema) && StringUtils.isBlank(catalog);
     }
     

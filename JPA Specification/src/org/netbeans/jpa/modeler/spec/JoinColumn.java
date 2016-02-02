@@ -12,7 +12,9 @@ import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToOneAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -75,6 +77,9 @@ public class JoinColumn {
     protected String columnDefinition;
     @XmlAttribute(name = "table")
     protected String table;
+    
+        @XmlTransient
+    private String generatedName;
 
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
@@ -267,6 +272,22 @@ public class JoinColumn {
         accessor.setUnique(unique);
         accessor.setUpdatable(updatable);
         return accessor;
+    }
+
+    /**
+     * @param generatedName the generatedName to set
+     */
+    public void setGeneratedName(String generatedName) {
+        this.generatedName = generatedName;
+    }
+    
+    boolean isEmpty() {
+//        if (name != null && name.equalsIgnoreCase(generatedName)) {
+//            name = null;
+//        }
+        return StringUtils.isBlank(name) && StringUtils.isBlank(referencedColumnName) 
+                && StringUtils.isBlank(columnDefinition) && StringUtils.isBlank(table)
+                && nullable && insertable && updatable && !unique;
     }
 
 }

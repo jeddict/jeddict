@@ -21,12 +21,12 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.EmptyType;
@@ -34,6 +34,7 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -266,9 +267,4 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
      */
     public abstract void setOwner(boolean owner);
 
-    void beforeMarshal(Marshaller marshaller) {
-        if (joinTable != null && joinTable.isEmpty()) {
-            joinTable = null;
-        }
-    }
 }

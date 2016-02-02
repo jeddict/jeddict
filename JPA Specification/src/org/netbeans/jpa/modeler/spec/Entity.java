@@ -10,23 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.validator.table.TableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -219,13 +216,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     }
 
-    void beforeMarshal(Marshaller marshaller) {
-//        if (NBModelerUtil.isEmptyObject(table)) {
-        if(table!=null && table.isEmpty()){
-            table = null;
-        }
-    }
-
     /**
      * Gets the value of the table property.
      *
@@ -239,6 +229,17 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return table;
     }
 
+    public String getDefaultTableName(){
+        return this.getClazz().toUpperCase();
+    }
+
+    public String getTableName() {
+        if (this.getTable() != null && StringUtils.isNotBlank(this.getTable().getName())) {
+            return getTable().getName();
+        } else {
+            return getDefaultTableName();
+        }
+    }
     /**
      * Sets the value of the table property.
      *
@@ -671,15 +672,5 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         }
         return this.namedEntityGraph;
     }
-
-
-    public String getTableName() {
-        if (table != null && StringUtils.isNotBlank(table.getName())) {
-            return table.getName();
-        } else {
-            return clazz;
-        }
-    }
-
 
 }

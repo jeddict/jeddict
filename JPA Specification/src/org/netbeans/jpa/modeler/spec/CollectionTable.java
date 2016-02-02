@@ -18,7 +18,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
+import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -68,6 +71,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "uniqueConstraint",
     "index"
 })
+    @XmlJavaTypeAdapter(value=CollectionTableValidator.class)
+
 public class CollectionTable {
 
     @XmlElement(name = "join-column")
@@ -292,16 +297,24 @@ public class CollectionTable {
     }
 
     /**
-     * @return the generatedName
-     */
-    public String getGeneratedName() {
-        return generatedName;
-    }
-
-    /**
      * @param generatedName the generatedName to set
      */
     public void setGeneratedName(String generatedName) {
         this.generatedName = generatedName;
+    }
+    
+    public boolean isEmpty() {
+//        if (name != null && name.equalsIgnoreCase(getGeneratedName())) {
+//            name = null;
+//        }
+        return StringUtils.isBlank(name) && StringUtils.isBlank(schema) && StringUtils.isBlank(catalog)
+                && getJoinColumn().isEmpty();
+    }
+
+    /**
+     * @return the generatedName
+     */
+    public String getGeneratedName() {
+        return generatedName;
     }
 }
