@@ -74,7 +74,7 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
         RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
         
         // find source and target entity
-        Entity sourceEntity = ((EntityWidget)getModelerScene().getBaseElement(relationAttributeSpec.getConnectedEntity().getId())).getBaseElementSpec();
+//        Entity sourceEntity = ((EntityWidget)getModelerScene().getBaseElement(relationAttributeSpec.getConnectedEntity().getId())).getBaseElementSpec();
         Entity targetEntity;
         
         RelationFlowWidget flowWidget = this.getRelationFlowWidget();
@@ -86,209 +86,18 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
         }
         
         
-        
-        
-        
-        
         if (relationAttributeSpec.isOwner()) {
-
             if (this.getBaseElementSpec() instanceof JoinColumnHandler) {
                 JoinColumnHandler joinColumnHandlerSpec = (JoinColumnHandler) this.getBaseElementSpec();
                 set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), joinColumnHandlerSpec.getJoinColumn(),targetEntity));
-
             }
-            
             set.createPropertySet( this , relationAttributeSpec.getJoinTable());
-
             set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_JoinColumns", "Join Columns", "", this.getModelerScene(), relationAttributeSpec.getJoinTable().getJoinColumn()));
             set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_InverseJoinColumns", "Inverse Join Columns", "", this.getModelerScene(), relationAttributeSpec.getJoinTable().getInverseJoinColumn()));
-
-//            set.put("JOIN_TABLE_PROP", getJoinTableColumnProperty());
-//            set.put("JOIN_TABLE_PROP", getJoinTableInverseColumnProperty());
         }
 
     }
 
-//    private PropertySupport getJoinTableInverseColumnProperty() {
-//        final RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
-//        final NAttributeEntity attributeEntity = new NAttributeEntity("JoinTable_InverseJoinColumns", "Inverse Join Columns", "");
-//        attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
-//
-//        List<Column> columns = new ArrayList<Column>();
-//        columns.add(new Column("OBJECT", false, true, Object.class));
-//        columns.add(new Column("Column Name", false, String.class));
-//        columns.add(new Column("Referenced Column Name", false, String.class));
-//        attributeEntity.setColumns(columns);
-//        attributeEntity.setCustomDialog(new JoinColumnPanel());
-//
-//        attributeEntity.setTableDataListener(new NEntityDataListener() {
-//            List<Object[]> data;
-//            int count;
-//
-//            @Override
-//            public void initCount() {
-//                count = relationAttributeSpec.getJoinTable().getInverseJoinColumn().size();
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return count;
-//            }
-//
-//            @Override
-//            public void initData() {
-//                List<JoinColumn> joinColumns = relationAttributeSpec.getJoinTable().getInverseJoinColumn();
-//                List<Object[]> data_local = new LinkedList<Object[]>();
-//                Iterator<JoinColumn> itr = joinColumns.iterator();
-//                while (itr.hasNext()) {
-//                    JoinColumn joinColumn = itr.next();
-//                    Object[] row = new Object[attributeEntity.getColumns().size()];
-//                    row[0] = joinColumn;
-//                    row[1] = joinColumn.getName();
-//                    row[2] = joinColumn.getReferencedColumnName();
-//                    data_local.add(row);
-//                }
-//                this.data = data_local;
-//            }
-//
-//            @Override
-//            public List<Object[]> getData() {
-//                return data;
-//            }
-//
-//            @Override
-//            public void setData(List data) {
-//                relationAttributeSpec.getJoinTable().getInverseJoinColumn().clear();
-//                for (Object[] row : (List<Object[]>) data) {
-//                    relationAttributeSpec.getJoinTable().getInverseJoinColumn().add((JoinColumn) row[0]);
-//                }
-//                this.data = data;
-//            }
-//
-//        });
-//
-//        return new NEntityPropertySupport(this.getModelerScene().getModelerFile(), attributeEntity);
-//    }
-//    private PropertySupport getJoinTableColumnProperty() {
-//        final RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
-//        final NAttributeEntity attributeEntity = new NAttributeEntity("JoinTable_JoinColumns", "Join Columns", "");
-//        attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
-//
-//        List<Column> columns = new ArrayList<Column>();
-//        columns.add(new Column("OBJECT", false, true, Object.class));
-//        columns.add(new Column("Column Name", false, String.class));
-//        columns.add(new Column("Referenced Column Name", false, String.class));
-//        attributeEntity.setColumns(columns);
-//        attributeEntity.setCustomDialog(new JoinColumnPanel());
-//
-//        attributeEntity.setTableDataListener(new NEntityDataListener() {
-//            List<Object[]> data;
-//            int count;
-//
-//            @Override
-//            public void initCount() {
-//                count = relationAttributeSpec.getJoinTable().getJoinColumn().size();
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return count;
-//            }
-//
-//            @Override
-//            public void initData() {
-//                List<JoinColumn> joinColumns = relationAttributeSpec.getJoinTable().getJoinColumn();
-//                List<Object[]> data_local = new LinkedList<Object[]>();
-//                Iterator<JoinColumn> itr = joinColumns.iterator();
-//                while (itr.hasNext()) {
-//                    JoinColumn joinColumn = itr.next();
-//                    Object[] row = new Object[attributeEntity.getColumns().size()];
-//                    row[0] = joinColumn;
-//                    row[1] = joinColumn.getName();
-//                    row[2] = joinColumn.getReferencedColumnName();
-//                    data_local.add(row);
-//                }
-//                this.data = data_local;
-//            }
-//
-//            @Override
-//            public List<Object[]> getData() {
-//                return data;
-//            }
-//
-//            @Override
-//            public void setData(List data) {
-//                relationAttributeSpec.getJoinTable().getJoinColumn().clear();
-//                for (Object[] row : (List<Object[]>) data) {
-//                    relationAttributeSpec.getJoinTable().getJoinColumn().add((JoinColumn) row[0]);
-//                }
-//                this.data = data;
-//            }
-//
-//        });
-//
-//        return new NEntityPropertySupport(this.getModelerScene().getModelerFile(), attributeEntity);
-//    }
-//    private PropertySupport getJoinColumnsProperty() {
-//        final JoinColumnHandler joinColumnHandlerSpec = (JoinColumnHandler) this.getBaseElementSpec();
-//        final NAttributeEntity attributeEntity = new NAttributeEntity("JoinColumns", "Join Columns", "");
-//        attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
-//
-//        List<Column> columns = new ArrayList<Column>();
-//        columns.add(new Column("OBJECT", false, true, Object.class));
-//        columns.add(new Column("Column Name", false, String.class));
-//        columns.add(new Column("Referenced Column Name", false, String.class));
-//        attributeEntity.setColumns(columns);
-//        attributeEntity.setCustomDialog(new JoinColumnPanel());
-//
-//        attributeEntity.setTableDataListener(new NEntityDataListener/*<TProperty>*/() {
-//                    List<Object[]> data;
-//                    int count;
-//
-//                    @Override
-//                    public void initCount() {
-//                        count = joinColumnHandlerSpec.getJoinColumn().size();
-//                    }
-//
-//                    @Override
-//                    public int getCount() {
-//                        return count;
-//                    }
-//
-//                    @Override
-//                    public void initData() {
-//                        List<JoinColumn> joinColumns = joinColumnHandlerSpec.getJoinColumn();
-//                        List<Object[]> data_local = new LinkedList<Object[]>();
-//                        Iterator<JoinColumn> itr = joinColumns.iterator();
-//                        while (itr.hasNext()) {
-//                            JoinColumn joinColumn = itr.next();
-//                            Object[] row = new Object[attributeEntity.getColumns().size()];
-//                            row[0] = joinColumn;
-//                            row[1] = joinColumn.getName();
-//                            row[2] = joinColumn.getReferencedColumnName();
-//                            data_local.add(row);
-//                        }
-//                        this.data = data_local;
-//                    }
-//
-//                    @Override
-//                    public List<Object[]> getData() {
-//                        return data;
-//                    }
-//
-//                    @Override
-//                    public void setData(List data) {
-//                        joinColumnHandlerSpec.getJoinColumn().clear();
-//                        for (Object[] row : (List<Object[]>) data) {
-//                            joinColumnHandlerSpec.addJoinColumn((JoinColumn) row[0]);
-//                        }
-//                        this.data = data;
-//                    }
-//
-//                });
-//
-//        return new NEntityPropertySupport(this.getModelerScene().getModelerFile(), attributeEntity);
-//    }
     private EmbeddedPropertySupport getCascadeProperty() {
 
         GenericEmbedded entity = new GenericEmbedded("cascadeType", "Cascade Type", "");

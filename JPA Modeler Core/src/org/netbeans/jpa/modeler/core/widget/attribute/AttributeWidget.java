@@ -114,7 +114,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             }
             
                 ((CollectionTypeHandler) attribute).setCollectionType(collectionType.trim());
-                                setAttributeTooltip();
+                setAttributeTooltip();
 
         });
         

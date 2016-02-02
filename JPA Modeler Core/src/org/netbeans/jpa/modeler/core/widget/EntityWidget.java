@@ -78,8 +78,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         setName(entity.getClazz());
         setLabel(entity.getClazz());
         changeAbstractionIcon(entity.getAbstract());
-        scanPrimaryKeyError();
-//        
+        scanPrimaryKeyError();     
     }
     
     private void changeAbstractionIcon(Boolean _abstract){
@@ -94,10 +93,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         Entity entity = this.getBaseElementSpec();
-        if (entity.getTable() == null) {
-            entity.setTable(new Table());
-        }
-        
         set.createPropertySet( this , entity.getTable(), getPropertyChangeListeners());
 
         if (entity instanceof InheritenceHandler) {

@@ -22,5 +22,6 @@ public class EntityValidator {
     public final static String CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_ClassNamedWithReservedSQLKeyword";
     public final static String CLASS_NAME_WITH_JPQL_KEYWORD = "MSG_ClassNamedWithJavaPersistenceQLKeyword";
     public final static String NON_UNIQUE_ENTITY_NAME = "MSG_NonUniqueEntityName";
+    public final static String NON_UNIQUE_TABLE_NAME = "MSG_NonUniqueTableName";
 
 }

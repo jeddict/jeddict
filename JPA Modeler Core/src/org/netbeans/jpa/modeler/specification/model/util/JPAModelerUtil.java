@@ -29,7 +29,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
@@ -126,7 +125,6 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
-import org.netbeans.modeler.util.Util;
 import org.netbeans.modeler.validation.jaxb.ValidateJAXB;
 import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.edge.IEdgeWidget;
@@ -766,7 +764,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         saveFile(entityMappings, file.getFile());
     }
 
-    public static void saveFile(EntityMappings entityMappings, File file) {
+       
+
+         public static void saveFile(EntityMappings entityMappings, File file) {
         try {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
@@ -775,34 +775,16 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
             }
             MODELER_MARSHALLER.marshal(entityMappings, file);
-            StringWriter sw = new StringWriter();
-            MODELER_MARSHALLER.marshal(entityMappings, sw);
+//            StringWriter sw = new StringWriter();
+//            MODELER_MARSHALLER.marshal(entityMappings, sw);
 
-            System.out.println("sw :");
         } catch (JAXBException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
-    private static String getFileName(String fileName, Integer index, FileObject parentFileObject) {
-        File jpaFile;
-        if (index == null) {
-            jpaFile = new File(parentFileObject.getPath() + File.separator + fileName + ".jpa");
-        } else {
-            jpaFile = new File(parentFileObject.getPath() + File.separator + fileName + index + ".jpa");
-        }
-        if (jpaFile.exists()) {
-            if (index == null) {
-                index = 0;
-            }
-            return getFileName(fileName, ++index, parentFileObject);
-        } else if (index == null) {
-            return fileName;
-        } else {
-            return fileName + index;
-        }
-    }
-
+  
+  
     public static void createNewModelerFile(EntityMappings entityMappingsSpec, FileObject parentFileObject, String fileName, boolean autoOpen) {
         File jpaFile = null;
         try {
@@ -826,6 +808,27 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     }
 
+
+    private static String getFileName(String fileName, Integer index, FileObject parentFileObject) {
+        File jpaFile;
+        if (index == null) {
+            jpaFile = new File(parentFileObject.getPath() + File.separator + fileName + ".jpa");
+        } else {
+            jpaFile = new File(parentFileObject.getPath() + File.separator + fileName + index + ".jpa");
+        }
+        if (jpaFile.exists()) {
+            if (index == null) {
+                index = 0;
+            }
+            return getFileName(fileName, ++index, parentFileObject);
+        } else if (index == null) {
+            return fileName;
+        } else {
+            return fileName + index;
+        }
+    }
+
+ 
     @Override
     public INodeWidget updateNodeWidgetDesign(ShapeDesign shapeDesign, INodeWidget inodeWidget) {
         PNodeWidget nodeWidget = (PNodeWidget) inodeWidget;
