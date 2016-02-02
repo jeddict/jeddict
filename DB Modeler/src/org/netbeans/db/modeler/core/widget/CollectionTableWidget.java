@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -23,7 +24,6 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
@@ -34,21 +34,27 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
     public CollectionTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.addPropertyChangeListener("CollectionTable_name", (PropertyChangeListener<String>) (String value) -> {
-            if (value == null || value.trim().isEmpty()) {
-                value = this.getBaseElementSpec().getAttribute().getCollectionTable().getGeneratedName();
-            }
             setName(value);
-            setLabel(value);
         });
     }
 
-    @Override
-    public void setName(String name) {
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name.replaceAll("\\s+", "");
+    private void setDefaultName() {
+        ElementCollection attribute = this.getBaseElementSpec().getAttribute();
+        this.name = getDefaultCollectionTableName();
+        attribute.getCollectionTable().setName(null);
+        setLabel(name);
+    }
 
-            ElementCollection attribute = this.getBaseElementSpec().getAttribute();
-            attribute.getCollectionTable().setName(this.name);
+    @Override
+    public void setName(String newName) {
+        if (StringUtils.isNotBlank(newName)) {
+            this.name = newName.replaceAll("\\s+", "");
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                ElementCollection attribute = this.getBaseElementSpec().getAttribute();
+                attribute.getCollectionTable().setName(this.name);
+            }
+        } else {
+            setDefaultName();
         }
 
         if (SQLKeywords.isSQL99ReservedKeyword(CollectionTableWidget.this.getName())) {
@@ -72,6 +78,12 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
         ElementCollection attribute = this.getBaseElementSpec().getAttribute();
         CollectionTable collectionTable = attribute.getCollectionTable();
         set.createPropertySet(this, collectionTable, getPropertyChangeListeners());
+    }
+
+    private String getDefaultCollectionTableName() {
+        Entity entity = this.getBaseElementSpec().getEntity();
+        ElementCollection attribute = this.getBaseElementSpec().getAttribute();
+        return entity.getDefaultTableName().toUpperCase() + "_" + attribute.getName().toUpperCase();
     }
 
 }

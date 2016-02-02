@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBRelationTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -32,22 +33,29 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
     public RelationTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.addPropertyChangeListener("JoinTable_name", (PropertyChangeListener<String>) (String value) -> {
-            if (value == null || value.trim().isEmpty()) {
-                value = this.getBaseElementSpec().getAttribute().getJoinTable().getGeneratedName();
-            }
             setName(value);
-            setLabel(value);
         });
+    }
+
+    private void setDefaultName() {
+        RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
+        this.name = getDefaultJoinTableName();
+        attribute.getJoinTable().setName(null);
+        setLabel(name);
     }
 
     @Override
     public void setName(String name) {
 
-        if (name != null && !name.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
-
-            RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
-            attribute.getJoinTable().setName(this.name);
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
+                attribute.getJoinTable().setName(this.name);
+            }
+            //setLabel called by inplace editor (in case of blank value escaped)
+        } else {
+          setDefaultName();
         }
         if (SQLKeywords.isSQL99ReservedKeyword(RelationTableWidget.this.getName())) {
             this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -69,6 +77,16 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         JoinTable joinTable = attribute.getJoinTable();
         set.createPropertySet(this, joinTable, getPropertyChangeListeners());
+    }
+    
+    private String getDefaultJoinTableName(){
+        Entity entity = this.getBaseElementSpec().getEntity();
+        RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
+            if(attribute.isOwner()){
+            return entity.getTableName().toUpperCase() + "_" + attribute.getConnectedEntity().getTableName().toUpperCase();
+            } else {
+                 return attribute.getConnectedEntity().getTableName().toUpperCase() + "_" + entity.getTableName().toUpperCase();
+            }
     }
 
 }

@@ -43,8 +43,10 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     public void setName(String name) {
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
-            JoinColumn joinColumn = this.getBaseElementSpec().getInverseJoinColumn();
+           if (this.getModelerScene().getModelerFile().isLoaded()) {
+               JoinColumn joinColumn = this.getBaseElementSpec().getInverseJoinColumn();
             joinColumn.setName(this.name);
+        }
         }
         if (SQLKeywords.isSQL99ReservedKeyword(name)) {
             this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);

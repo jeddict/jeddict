@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -26,47 +27,53 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public class BaseTableWidget extends TableWidget<DBTable> {
-
+    
     public BaseTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String value) -> {
-            if (value == null || value.trim().isEmpty()) {
-                Entity entity = this.getBaseElementSpec().getEntity();
-                value = entity.getClazz();
-            }
-            setName(value);
-            setLabel(value);
+             setName(value);
         });
     }
-
+    
+    private void setDefaultName() {
+        Entity entity = this.getBaseElementSpec().getEntity();
+        this.name = entity.getDefaultTableName();
+        entity.getTable().setName(null);
+        setLabel(name);
+    }
+    
     @Override
     public void setName(String name) {
-
-        if (name != null && !name.trim().isEmpty()) {
+        
+        if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
-            Entity entity = this.getBaseElementSpec().getEntity();
-            entity.getTable().setName(this.name);
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                Entity entity = this.getBaseElementSpec().getEntity();
+                entity.getTable().setName(this.name);
+            }
+        } else {
+           setDefaultName(); 
         }
-
+        
         if (SQLKeywords.isSQL99ReservedKeyword(BaseTableWidget.this.getName())) {
             this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
             this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
-
+        
         DBMapping mapping = BaseTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(BaseTableWidget.this.getName()).size() > 1) {
             getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         } else {
             getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         }
-
+        
     }
-
+    
     @Override
     public void createPropertySet(ElementPropertySet set) {
         Entity entity = this.getBaseElementSpec().getEntity();
         set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
     }
-
+    
 }

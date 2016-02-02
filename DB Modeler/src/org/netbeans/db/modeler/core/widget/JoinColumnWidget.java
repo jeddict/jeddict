@@ -43,8 +43,10 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
     public void setName(String name) {
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
             JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
             joinColumn.setName(this.name);
+            }
         }
         if (SQLKeywords.isSQL99ReservedKeyword(name)) {
             this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);

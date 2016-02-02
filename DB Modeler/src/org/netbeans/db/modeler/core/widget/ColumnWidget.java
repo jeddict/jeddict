@@ -96,10 +96,14 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     public void setName(String name) {
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
-            Attribute attribute = this.getBaseElementSpec().getAttribute();
+            
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                Attribute attribute = this.getBaseElementSpec().getAttribute();
+            
             if (attribute instanceof PersistenceBaseAttribute) {
                 PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
                 baseAttribute.getColumn().setName(this.name);
+            }
             }
         }
         if (SQLKeywords.isSQL99ReservedKeyword(ColumnWidget.this.getName())) {
