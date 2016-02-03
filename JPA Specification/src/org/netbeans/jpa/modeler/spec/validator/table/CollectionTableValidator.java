@@ -15,16 +15,22 @@
  */
 package org.netbeans.jpa.modeler.spec.validator.table;
 
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 
-
 public class CollectionTableValidator extends MarshalValidator<CollectionTable> {
-        @Override
-        public CollectionTable marshal(CollectionTable table) throws Exception {
-            if (table != null && table.isEmpty()) {
-                return null;
-            }
-            return table;
+
+    @Override
+    public CollectionTable marshal(CollectionTable table) throws Exception {
+        if (table != null && isEmpty(table)) {
+            return null;
         }
+        return table;
     }
+
+    public boolean isEmpty(CollectionTable table) {
+        return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) && StringUtils.isBlank(table.getCatalog())
+                && table.getJoinColumn().isEmpty();
+    }
+}

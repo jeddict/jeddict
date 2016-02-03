@@ -809,4 +809,15 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         return false;
     }
 
+    public String getDefaultColumnName() {
+        return this.getName().toUpperCase();
+    }
+
+    public String getColumnName() {
+        if (this.getColumn() != null && StringUtils.isNotBlank(this.getColumn().getName())) {
+            return getColumn().getName();
+        } else {
+            return getDefaultColumnName();
+        }
+    }
 }

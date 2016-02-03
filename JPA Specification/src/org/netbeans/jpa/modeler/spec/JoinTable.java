@@ -354,16 +354,10 @@ public class JoinTable {
         this.schema = value;
     }
 
-    public boolean isEmpty(){
-//         if(name != null && name.equalsIgnoreCase(getGeneratedName())){
-//            name = null;
-//        }
-        return StringUtils.isBlank(name) && StringUtils.isBlank(schema) && StringUtils.isBlank(catalog) 
-                && getJoinColumn().isEmpty() && getInverseJoinColumn().isEmpty();
-    }
+
     
     public JoinTableMetadata getAccessor() {
-        if(isEmpty()){
+        if(JoinTableValidator.isEmpty(this)){
             return null;
         }
         JoinTableMetadata accessor = new JoinTableMetadata();

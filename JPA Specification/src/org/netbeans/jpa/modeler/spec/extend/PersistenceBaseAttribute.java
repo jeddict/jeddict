@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Column;
 import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -26,16 +27,16 @@ import org.netbeans.modeler.core.NBModelerUtil;
  * @author Gaurav Gupta
  */
 public abstract class PersistenceBaseAttribute extends BaseAttribute {
-    
-        @XmlAttribute(name = "attribute-type", required = true)
+
+    @XmlAttribute(name = "attribute-type", required = true)
     private String attributeType;
-    
-     @Override
-     public String getAttributeType() {
+
+    @Override
+    public String getAttributeType() {
         return attributeType;
     }
 
-        /**
+    /**
      * @param attributeType the attributeType to set
      */
     public void setAttributeType(String attributeType) {
@@ -45,8 +46,8 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute {
             this.attributeType = attributeType;
         }
     }
-    
-        public boolean isPrecisionAttributeType() {
+
+    public boolean isPrecisionAttributeType() {
 //        if (attributeType.equals("byte") || attributeType.equals("Byte")) {
 //            return true;
 //        } else if (attributeType.equals("short") || attributeType.equals("Short")) {
@@ -90,10 +91,6 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute {
         return false;
     }
 
-     
-     
-     
-     
     void beforeMarshal(Marshaller marshaller) {
         if (NBModelerUtil.isEmptyObject(getColumn())) {
             setColumn(null);
@@ -115,4 +112,16 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute {
      *
      */
     public abstract void setColumn(Column value);
+
+    public String getDefaultColumnName() {
+        return this.getName().toUpperCase();
+    }
+
+    public String getColumnName() {
+        if (this.getColumn() != null && StringUtils.isNotBlank(this.getColumn().getName())) {
+            return getColumn().getName();
+        } else {
+            return getDefaultColumnName();
+        }
+    }
 }

@@ -15,16 +15,22 @@
  */
 package org.netbeans.jpa.modeler.spec.validator.table;
 
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 
-
 public class JoinTableValidator extends MarshalValidator<JoinTable> {
-        @Override
-        public JoinTable marshal(JoinTable table) throws Exception {
-            if (table != null && table.isEmpty()) {
-                return null;
-            }
-            return table;
+
+    @Override
+    public JoinTable marshal(JoinTable table) throws Exception {
+        if (table != null && isEmpty(table)) {
+            return null;
         }
+        return table;
     }
+
+    public static boolean isEmpty(JoinTable table) {
+        return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) && StringUtils.isBlank(table.getCatalog())
+                && table.getJoinColumn().isEmpty() && table.getInverseJoinColumn().isEmpty();
+    }
+}

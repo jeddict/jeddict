@@ -218,11 +218,6 @@ public class Table {
         accessor.setSchema(schema);
 
         return accessor;
-    }
-    
-  public boolean isEmpty(){
-        return StringUtils.isBlank(name) && StringUtils.isBlank(schema) && StringUtils.isBlank(catalog);
-    }
-    
+    }   
     
 }
