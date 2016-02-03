@@ -69,10 +69,10 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
             JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity,joinColumn.getReferencedColumnName());
             table_TextField.setText(joinColumn.getTable());
             columnDefinition_TextArea.setText(joinColumn.getColumnDefinition());
-            unique_CheckBox.setSelected(joinColumn.isUnique());
-            nullable_CheckBox.setSelected(joinColumn.isNullable());
-            insertable_CheckBox.setSelected(joinColumn.isInsertable());
-            updatable_CheckBox.setSelected(joinColumn.isUpdatable());
+            unique_CheckBox.setSelected(joinColumn.getUnique());
+            nullable_CheckBox.setSelected(joinColumn.getNullable());
+            insertable_CheckBox.setSelected(joinColumn.getInsertable());
+            updatable_CheckBox.setSelected(joinColumn.getUpdatable());
 
         }
     }

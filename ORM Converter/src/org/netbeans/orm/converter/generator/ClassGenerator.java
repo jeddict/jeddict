@@ -463,20 +463,20 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             joinColumn.setColumnDefinition(
                     parsedJoinColumn.getColumnDefinition());
 
-            if (parsedJoinColumn.isInsertable() != null) {
-                joinColumn.setInsertable(parsedJoinColumn.isInsertable());
+            if (parsedJoinColumn.getInsertable() != null) {
+                joinColumn.setInsertable(parsedJoinColumn.getInsertable());
             }
 
-            if (parsedJoinColumn.isUnique() != null) {
-                joinColumn.setUnique(parsedJoinColumn.isUnique());
+            if (parsedJoinColumn.getUnique() != null) {
+                joinColumn.setUnique(parsedJoinColumn.getUnique());
             }
 
-            if (parsedJoinColumn.isNullable() != null) {
-                joinColumn.setNullable(parsedJoinColumn.isNullable());
+            if (parsedJoinColumn.getNullable() != null) {
+                joinColumn.setNullable(parsedJoinColumn.getNullable());
             }
 
-            if (parsedJoinColumn.isUpdatable() != null) {
-                joinColumn.setUpdatable(parsedJoinColumn.isUpdatable());
+            if (parsedJoinColumn.getUpdatable() != null) {
+                joinColumn.setUpdatable(parsedJoinColumn.getUpdatable());
             }
 
             joinColumn.setName(parsedJoinColumn.getName());

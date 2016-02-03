@@ -39,9 +39,8 @@ public class DBJoinColumn extends DBColumn {
         boolean created = false;
         if (!joinColumns.isEmpty()) {
             for (JoinColumn column : joinColumns) {
-                if (column.getName().equals(name)) {
+                if (name.equals(column.getName())) {
                     this.joinColumn=column;
-                    column.setGeneratedName(name);
                     created = true;
                     break;
                 }
@@ -50,8 +49,6 @@ public class DBJoinColumn extends DBColumn {
         
         if (!created) {
             joinColumn= new JoinColumn();
-            joinColumn.setGeneratedName(name);
-            joinColumn.setName(name);
             joinColumns.add(joinColumn);
         }
     }

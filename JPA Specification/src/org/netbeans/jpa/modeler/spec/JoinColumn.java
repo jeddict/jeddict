@@ -8,15 +8,14 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToOneAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
+import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -59,6 +58,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "join-column")
+@XmlJavaTypeAdapter(value=JoinColumnValidator.class)
 public class JoinColumn {
 
     @XmlAttribute(name = "name")
@@ -78,8 +78,8 @@ public class JoinColumn {
     @XmlAttribute(name = "table")
     protected String table;
     
-        @XmlTransient
-    private String generatedName;
+//        @XmlTransient
+//    private String generatedName;
 
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
@@ -147,7 +147,7 @@ public class JoinColumn {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean isUnique() {
+    public Boolean getUnique() {
         return unique;
     }
 
@@ -167,7 +167,7 @@ public class JoinColumn {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean isNullable() {
+    public Boolean getNullable() {
         return nullable;
     }
 
@@ -187,7 +187,7 @@ public class JoinColumn {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean isInsertable() {
+    public Boolean getInsertable() {
         return insertable;
     }
 
@@ -207,7 +207,7 @@ public class JoinColumn {
      * @return possible object is {@link Boolean }
      *
      */
-    public Boolean isUpdatable() {
+    public Boolean getUpdatable() {
         return updatable;
     }
 
@@ -272,22 +272,6 @@ public class JoinColumn {
         accessor.setUnique(unique);
         accessor.setUpdatable(updatable);
         return accessor;
-    }
-
-    /**
-     * @param generatedName the generatedName to set
-     */
-    public void setGeneratedName(String generatedName) {
-        this.generatedName = generatedName;
-    }
-    
-    boolean isEmpty() {
-//        if (name != null && name.equalsIgnoreCase(generatedName)) {
-//            name = null;
-//        }
-        return StringUtils.isBlank(name) && StringUtils.isBlank(referencedColumnName) 
-                && StringUtils.isBlank(columnDefinition) && StringUtils.isBlank(table)
-                && nullable && insertable && updatable && !unique;
     }
 
 }
