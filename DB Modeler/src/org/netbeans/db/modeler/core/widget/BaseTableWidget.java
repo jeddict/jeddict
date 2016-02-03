@@ -32,6 +32,7 @@ public class BaseTableWidget extends TableWidget<DBTable> {
         super(scene, node);
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String value) -> {
              setName(value);
+             setLabel(name);
         });
     }
     

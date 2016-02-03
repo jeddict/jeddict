@@ -34,6 +34,7 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         super(scene, node);
         this.addPropertyChangeListener("JoinTable_name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
+            setLabel(name);
         });
     }
 
@@ -41,7 +42,7 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         this.name = getDefaultJoinTableName();
         attribute.getJoinTable().setName(null);
-        setLabel(name);
+        setLabel(name);//setLabel escaped by inplace editor in case of blank value
     }
 
     @Override
@@ -53,7 +54,7 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
                 RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
                 attribute.getJoinTable().setName(this.name);
             }
-            //setLabel called by inplace editor (in case of blank value escaped)
+            
         } else {
           setDefaultName();
         }

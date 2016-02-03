@@ -24,7 +24,6 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
@@ -35,6 +34,7 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
         super(scene, node);
         this.addPropertyChangeListener("CollectionTable_name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
+            setLabel(name);
         });
     }
 
@@ -74,7 +74,6 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        Entity entity = this.getBaseElementSpec().getEntity();
         ElementCollection attribute = this.getBaseElementSpec().getAttribute();
         CollectionTable collectionTable = attribute.getCollectionTable();
         set.createPropertySet(this, collectionTable, getPropertyChangeListeners());

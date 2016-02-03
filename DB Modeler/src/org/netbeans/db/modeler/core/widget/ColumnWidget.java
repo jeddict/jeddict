@@ -17,6 +17,7 @@ package org.netbeans.db.modeler.core.widget;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -24,6 +25,7 @@ import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -38,18 +40,13 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
     private final List<ReferenceFlowWidget> referenceFlowWidget = new ArrayList<>();
 
-//    private boolean selectedView;
     public ColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.COLUMN);
 
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
-            if (value == null || value.trim().isEmpty()) {
-                Attribute attribute = this.getBaseElementSpec().getAttribute();
-                value = attribute.getName();
-            }
             setName(value);
-            setLabel(value);
+            setLabel(name);
         });
 
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
@@ -64,6 +61,18 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
             }
         });
 
+    }
+
+    private void setDefaultName() {
+        Attribute attribute = this.getBaseElementSpec().getAttribute();
+        if (attribute instanceof PersistenceBaseAttribute) {
+            this.name = ((PersistenceBaseAttribute) attribute).getDefaultColumnName();
+            ((PersistenceBaseAttribute) attribute).getColumn().setName(null);
+        } else if (attribute instanceof ElementCollection) {
+            this.name = ((ElementCollection) attribute).getDefaultColumnName();
+            ((ElementCollection) attribute).getColumn().setName(null);
+        }
+        setLabel(name);
     }
 
     public void setDatatypeTooltip() {
@@ -94,17 +103,19 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
     @Override
     public void setName(String name) {
-        if (name != null && !name.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
-            
+
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 Attribute attribute = this.getBaseElementSpec().getAttribute();
-            
-            if (attribute instanceof PersistenceBaseAttribute) {
-                PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
-                baseAttribute.getColumn().setName(this.name);
+
+                if (attribute instanceof PersistenceBaseAttribute) {
+                    PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
+                    baseAttribute.getColumn().setName(this.name);
+                }
             }
-            }
+        } else {
+            setDefaultName();
         }
         if (SQLKeywords.isSQL99ReservedKeyword(ColumnWidget.this.getName())) {
             this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -112,7 +123,7 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
             this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
-        DBTable tableSpec = (DBTable)this.getTableWidget().getBaseElementSpec();
+        DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
         if (tableSpec.findColumns(this.getName()).size() > 1) {
             errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         } else {
@@ -148,6 +159,5 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     public boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget) {
         return referenceFlowWidget.remove(flowWidget);
     }
-
 
 }
