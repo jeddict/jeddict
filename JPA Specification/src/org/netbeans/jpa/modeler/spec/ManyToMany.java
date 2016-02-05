@@ -86,4 +86,15 @@ public class ManyToMany extends MultiRelationAttribute {
         super.load(relationAnnotationMirror, element, variableElement);
     }
 
+    public ManyToManyAccessor getAccessor() {
+        ManyToManyAccessor accessor = new ManyToManyAccessor();
+        accessor.setName(name);
+        accessor.setTargetEntityName(getTargetEntity());
+        accessor.setAttributeType(getCollectionType());
+        accessor.setMappedBy(getMappedBy());
+        if (joinTable != null) {
+            accessor.setJoinTable(joinTable.getAccessor());
+        }
+        return accessor;
+    }
 }

@@ -2,9 +2,6 @@
 <element-config>
     <groups>
         <group id="BASIC_PROP" name="Properties"/>
-        <group id="ATTRIBUTE_OVERRIDE" name="AttributeOverride @Column"/>
-        <group id="EMBEDDABLE_COLUMN" name="Embeddable @Column"/>
-        
     </groups>
     <elements>
         <element id="Table" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Table">
@@ -33,6 +30,7 @@
                 </attribute>
             </attributes>
         </element>
+
         <element id="Column" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Column">
             <attributes>
                 <attribute id="column_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
@@ -70,45 +68,7 @@
                 </attribute>
             </attributes>
         </element>
-     
-        <element id="Column" category="ATTR_OVERRIDE" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Column">
-            <attributes>
-                <attribute id="attr_override_column_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
-                    <display-name>Column Name</display-name>
-                </attribute>
-                <attribute id="attr_override_table_name" groupId="BASIC_PROP" class="java.lang.String" name="table">
-                    <display-name>Table Name</display-name>
-                </attribute>
-                <attribute id="unique" groupId="BASIC_PROP" class="java.lang.Boolean" name="unique">
-                    <display-name>Unique</display-name>
-                </attribute>
-                <attribute id="nullable" groupId="BASIC_PROP" class="java.lang.Boolean" name="nullable">
-                    <display-name>Nullable</display-name>
-                </attribute>
-                <attribute id="insertable" groupId="BASIC_PROP" class="java.lang.Boolean" name="insertable">
-                    <display-name>Insertable</display-name>
-                </attribute>
-                <attribute id="updatable" groupId="BASIC_PROP" class="java.lang.Boolean" name="updatable">
-                    <display-name>Updatable</display-name>
-                </attribute>
-                <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
-                    <display-name>Length</display-name>
-                    <visible><![CDATA["String".equals(node.getAttribute().getAttributeType())]]></visible>
-                </attribute>
-                <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
-                    <display-name>Precision</display-name>
-                    <visible><![CDATA[node.getAttribute().isPrecisionAttributeType()]]></visible>
-                </attribute>
-                <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
-                    <display-name>Scale</display-name>
-                    <visible><![CDATA[node.getAttribute().isScaleAttributeType()]]></visible>
-                </attribute>
-                <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
-                    <display-name>Column Definition</display-name>
-                </attribute>
-            </attributes>
-        </element>
-       
+        
         <element id="CollectionTable" class="org.netbeans.jpa.modeler.spec.CollectionTable">
             <attributes>
                 <attribute id="CollectionTable_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
@@ -123,7 +83,7 @@
             </attributes>
         </element>
         
-        <element id="JoinColumn" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.JoinColumn">
+         <element id="JoinColumn" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.JoinColumn">
             <attributes>
                 <attribute id="JoinColumn_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Column Name</display-name>

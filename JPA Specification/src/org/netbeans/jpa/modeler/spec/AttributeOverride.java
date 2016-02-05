@@ -53,7 +53,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "description",
     "column"
 })
-public class AttributeOverride implements Comparable<AttributeOverride> {
+public class AttributeOverride {
 
     protected String description;
     @XmlElement(required = true)
@@ -157,11 +157,6 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
      */
     public void setName(String value) {
         this.name = value;
-    }
-
-    @Override
-    public int compareTo(AttributeOverride attributeOverride) {
-       return this.name.compareTo(attributeOverride.getName());
     }
 
 }

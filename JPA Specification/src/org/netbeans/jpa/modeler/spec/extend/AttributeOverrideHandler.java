@@ -15,12 +15,12 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
-import java.util.Set;
+import java.util.List;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 
 public interface AttributeOverrideHandler {
 
-    public Set<AttributeOverride> getAttributeOverride();
+    public List<AttributeOverride> getAttributeOverride();
 
     public AttributeOverride getAttributeOverride(String attributePath);
 }

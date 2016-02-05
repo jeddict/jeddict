@@ -19,7 +19,7 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
-public class DBInverseJoinColumn extends DBColumn<RelationAttribute> {
+public class DBInverseJoinColumn extends DBColumn {
     
     private JoinColumn inverseJoinColumn;
 

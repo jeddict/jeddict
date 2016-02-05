@@ -19,12 +19,10 @@ import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.databaseaccess.FieldTypeDefinition;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.netbeans.db.modeler.spec.DBColumn;
-import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -32,45 +30,47 @@ import org.netbeans.modeler.core.NBModelerUtil;
 public class JPAMFieldDefinition extends FieldDefinition {
 
     private Attribute attribute;
-    private Attribute refAttribute;
     private boolean inverse;
     private boolean foriegnKey;
 
-    public JPAMFieldDefinition(Attribute attribute, Attribute refAttribute, boolean inverse, boolean foriegnKey) {
+//    public JPAMFieldDefinition() {
+//
+//    }
+//    public JPAMFieldDefinition(Attribute attribute, boolean inverse) {
+//        this.attribute = attribute;
+//        this.inverse = inverse;
+//    }
+
+    public JPAMFieldDefinition(Attribute attribute, boolean inverse, boolean foriegnKey) {
         this.attribute = attribute;
-        this.refAttribute = refAttribute;
         this.inverse = inverse;
         this.foriegnKey = foriegnKey;
     }
     
-//
-//    public JPAMFieldDefinition(Attribute attribute, Attribute refAttribute) {
-//        this.attribute = attribute;
-//        this.refAttribute = refAttribute;
-//    }
-//
-//    public JPAMFieldDefinition(Attribute attribute, Attribute refAttribute, String name, Class type) {
-//        super(name, type);
-//        this.attribute = attribute;
-//        this.refAttribute = refAttribute;
-//    }
-//
-//    public JPAMFieldDefinition(Attribute attribute, Attribute refAttribute, String name, Class type, int size) {
-//        super(name, type, size);
-//        this.attribute = attribute;
-//        this.refAttribute = refAttribute;
-//    }
-//
-//    public JPAMFieldDefinition(Attribute attribute, Attribute refAttribute, String name, Class type, int size, int subSize) {
-//        super(name, type, size, subSize);
-//        this.attribute = attribute;
-//        this.refAttribute = refAttribute;
-//    }
-//
-//    public JPAMFieldDefinition(Attribute attribute, Attribute refAttribute, String name, String typeName) {
-//        super(name, typeName);
-//        this.attribute = attribute;
-//    }
+
+    public JPAMFieldDefinition(Attribute attribute) {
+        this.attribute = attribute;
+    }
+
+    public JPAMFieldDefinition(Attribute attribute, String name, Class type) {
+        super(name, type);
+        this.attribute = attribute;
+    }
+
+    public JPAMFieldDefinition(Attribute attribute, String name, Class type, int size) {
+        super(name, type, size);
+        this.attribute = attribute;
+    }
+
+    public JPAMFieldDefinition(Attribute attribute, String name, Class type, int size, int subSize) {
+        super(name, type, size, subSize);
+        this.attribute = attribute;
+    }
+
+    public JPAMFieldDefinition(Attribute attribute, String name, String typeName) {
+        super(name, typeName);
+        this.attribute = attribute;
+    }
 
     /**
      * INTERNAL: Append the database field definition string to the table
@@ -81,7 +81,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
      * @param table Database table being processed.
      * @throws ValidationException When invalid or inconsistent data were found.
      */
-    public void buildDBColumn(final DBTable table, final AbstractSession session,
+    public void appendDBString(final DBTable table, final AbstractSession session,
             final JPAMTableDefinition tableDef) throws ValidationException {
 
         DBColumn column = null;
@@ -96,8 +96,6 @@ public class JPAMFieldDefinition extends FieldDefinition {
             } else if (attribute instanceof ElementCollection) {
                 column = new DBJoinColumn(name, attribute);
             }
-        } else if(attribute instanceof Embedded && refAttribute!=null){
-            column = new DBEmbeddedColumn(name, (Embedded)attribute, refAttribute);
         } else {
             column = new DBColumn(name, attribute);
         }

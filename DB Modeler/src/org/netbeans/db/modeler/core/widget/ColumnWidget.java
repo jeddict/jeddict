@@ -43,9 +43,38 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     public ColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.COLUMN);
-  }
 
- 
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
+            setName(value);
+            setLabel(name);
+        });
+
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
+            if (tableName != null && !tableName.trim().isEmpty()) {
+                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                } else {
+                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                }
+            } else {
+                errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            }
+        });
+
+    }
+
+    private void setDefaultName() {
+        Attribute attribute = this.getBaseElementSpec().getAttribute();
+        if (attribute instanceof PersistenceBaseAttribute) {
+            this.name = ((PersistenceBaseAttribute) attribute).getDefaultColumnName();
+            ((PersistenceBaseAttribute) attribute).getColumn().setName(null);
+        } else if (attribute instanceof ElementCollection) {
+            this.name = ((ElementCollection) attribute).getDefaultColumnName();
+            ((ElementCollection) attribute).getColumn().setName(null);
+        }
+        setLabel(name);
+    }
+
     public void setDatatypeTooltip() {
         DBColumn column = this.getBaseElementSpec();
         StringBuilder writer = new StringBuilder();
@@ -72,6 +101,36 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
         return false;
     }
 
+    @Override
+    public void setName(String name) {
+        if (StringUtils.isNotBlank(name)) {
+            this.name = name.replaceAll("\\s+", "");
+
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                Attribute attribute = this.getBaseElementSpec().getAttribute();
+
+                if (attribute instanceof PersistenceBaseAttribute) {
+                    PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
+                    baseAttribute.getColumn().setName(this.name);
+                }
+            }
+        } else {
+            setDefaultName();
+        }
+        if (SQLKeywords.isSQL99ReservedKeyword(ColumnWidget.this.getName())) {
+            this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+        } else {
+            this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+        }
+
+        DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
+        if (tableSpec.findColumns(this.getName()).size() > 1) {
+            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+        } else {
+            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+        }
+
+    }
 
     @Override
     public void setLabel(String label) {

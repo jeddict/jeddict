@@ -8,8 +8,6 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,12 +15,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
+import org.netbeans.jpa.modeler.spec.validator.table.TableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -154,9 +154,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlElement(name = "nspq")//(name = "named-stored-procedure-query")
     protected List<NamedStoredProcedureQuery> namedStoredProcedureQuery;
     @XmlElement(name = "attribute-override")
-    protected Set<AttributeOverride> attributeOverride;
+    protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
-    protected Set<AssociationOverride> associationOverride;
+    protected List<AssociationOverride> associationOverride;
     protected List<Convert> convert;//REVENG PENDING JPA 2.1
     @XmlElement(name = "neg")//(name = "named-entity-graph")
     protected List<NamedEntityGraph> namedEntityGraph;
@@ -486,9 +486,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      *
      */
     @Override
-    public Set<AttributeOverride> getAttributeOverride() {
+    public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
-            attributeOverride = new TreeSet<AttributeOverride>();
+            attributeOverride = new ArrayList<AttributeOverride>();
         }
         return this.attributeOverride;
     }
@@ -516,9 +516,9 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      *
      */
     @Override
-    public Set<AssociationOverride> getAssociationOverride() {
+    public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
-            associationOverride = new TreeSet<>();
+            associationOverride = new ArrayList<AssociationOverride>();
         }
         return this.associationOverride;
     }
@@ -577,7 +577,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     @Override
     public AttributeOverride getAttributeOverride(String attributePath) {
-        Set<AttributeOverride> attributeOverrides = getAttributeOverride();
+        List<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
             if (attributeOverride_TMP.getName().equals(attributePath)) {
                 return attributeOverride_TMP;
@@ -591,7 +591,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     @Override
     public AssociationOverride getAssociationOverride(String attributePath) {
-        Set<AssociationOverride> associationOverrides = getAssociationOverride();
+        List<AssociationOverride> associationOverrides = getAssociationOverride();
         for (AssociationOverride associationOverride_TMP : associationOverrides) {
             if (associationOverride_TMP.getName().equals(attributePath)) {
                 return associationOverride_TMP;

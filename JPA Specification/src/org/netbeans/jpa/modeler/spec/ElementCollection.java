@@ -9,8 +9,6 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
@@ -21,6 +19,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
@@ -28,6 +27,7 @@ import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -146,7 +146,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     @XmlElement(name = "map-key-enumerated")
     protected EnumType mapKeyEnumerated;//REVENG PENDING
     @XmlElement(name = "map-key-attribute-override")
-    protected Set<AttributeOverride> mapKeyAttributeOverride;//REVENG PENDING
+    protected List<AttributeOverride> mapKeyAttributeOverride;//REVENG PENDING
     @XmlElement(name = "map-key-convert")
     protected List<Convert> mapKeyConvert;//REVENG PENDING
     @XmlElement(name = "map-key-column")
@@ -160,9 +160,9 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     protected EnumType enumerated;
     protected Lob lob;
     @XmlElement(name = "attribute-override")
-    protected Set<AttributeOverride> attributeOverride;
+    protected List<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
-    protected Set<AssociationOverride> associationOverride;
+    protected List<AssociationOverride> associationOverride;
     protected List<Convert> convert;//REVENG PENDING
     @XmlElement(name = "collection-table")
     protected CollectionTable collectionTable;
@@ -375,9 +375,9 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      *
      * @return
      */
-    public Set<AttributeOverride> getMapKeyAttributeOverride() {
+    public List<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
-            mapKeyAttributeOverride = new TreeSet<AttributeOverride>();
+            mapKeyAttributeOverride = new ArrayList<AttributeOverride>();
         }
         return this.mapKeyAttributeOverride;
     }
@@ -582,9 +582,9 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      *
      */
     @Override
-    public Set<AttributeOverride> getAttributeOverride() {
+    public List<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
-            attributeOverride = new TreeSet<AttributeOverride>();
+            attributeOverride = new ArrayList<AttributeOverride>();
         }
         return this.attributeOverride;
     }
@@ -612,9 +612,9 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      *
      */
     @Override
-    public Set<AssociationOverride> getAssociationOverride() {
+    public List<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
-            associationOverride = new TreeSet<>();
+            associationOverride = new ArrayList<AssociationOverride>();
         }
         return this.associationOverride;
     }
@@ -753,7 +753,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     @Override
     public AttributeOverride getAttributeOverride(String attributePath) {
-        Set<AttributeOverride> attributeOverrides = getAttributeOverride();
+        List<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
             if (attributeOverride_TMP.getName().equals(attributePath)) {
                 return attributeOverride_TMP;
@@ -767,7 +767,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
     @Override
     public AssociationOverride getAssociationOverride(String attributePath) {
-        Set<AssociationOverride> associationOverrides = getAssociationOverride();
+        List<AssociationOverride> associationOverrides = getAssociationOverride();
         for (AssociationOverride associationOverride_TMP : associationOverrides) {
             if (associationOverride_TMP.getName().equals(attributePath)) {
                 return associationOverride_TMP;

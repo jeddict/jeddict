@@ -25,10 +25,6 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttrib
 import org.netbeans.jpa.modeler.db.accessor.BasicSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.ElementCollectionSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddedSpecAccessor;
-import org.netbeans.jpa.modeler.db.accessor.ManyToManySpecAccessor;
-import org.netbeans.jpa.modeler.db.accessor.ManyToOneSpecAccessor;
-import org.netbeans.jpa.modeler.db.accessor.OneToManySpecAccessor;
-import org.netbeans.jpa.modeler.db.accessor.OneToOneSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.TransientSpecAccessor;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -591,10 +587,10 @@ public abstract class BaseAttributes implements IAttributes {
         attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollectionSpecAccessor::getInstance).collect(toList()));
         attr.getEmbeddeds().addAll(getEmbedded().stream().map(EmbeddedSpecAccessor::getInstance).collect(toList()));
         attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));
-        attr.getManyToManys().addAll(getManyToMany().stream().map(ManyToManySpecAccessor::getInstance).collect(toList()));
-        attr.getManyToOnes().addAll(getManyToOne().stream().map(ManyToOneSpecAccessor::getInstance).collect(toList()));
-        attr.getOneToManys().addAll(getOneToMany().stream().map(OneToManySpecAccessor::getInstance).collect(toList()));
-        attr.getOneToOnes().addAll(getOneToOne().stream().map(OneToOneSpecAccessor::getInstance).collect(toList()));
+        attr.getManyToManys().addAll(getManyToMany().stream().map(ManyToMany::getAccessor).collect(toList()));
+        attr.getManyToOnes().addAll(getManyToOne().stream().map(ManyToOne::getAccessor).collect(toList()));
+        attr.getOneToManys().addAll(getOneToMany().stream().map(OneToMany::getAccessor).collect(toList()));
+        attr.getOneToOnes().addAll(getOneToOne().stream().map(OneToOne::getAccessor).collect(toList()));
         return attr;
     }
 

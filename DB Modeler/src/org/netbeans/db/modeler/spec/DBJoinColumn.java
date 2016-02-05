@@ -22,33 +22,33 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
 public class DBJoinColumn extends DBColumn {
-
+    
     private JoinColumn joinColumn;
-
+    
     public DBJoinColumn(String name, Attribute attribute) {
         super(name, attribute);
         List<JoinColumn> joinColumns;
-        if (attribute instanceof RelationAttribute) {
-            joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
-        } else if (attribute instanceof ElementCollection) {
-            joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();
+        if(attribute instanceof RelationAttribute){
+       joinColumns = ((RelationAttribute)attribute).getJoinTable().getJoinColumn();
+        } else if(attribute instanceof ElementCollection){
+            joinColumns = ((ElementCollection)attribute).getCollectionTable().getJoinColumn();
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }
-
+         
         boolean created = false;
         if (!joinColumns.isEmpty()) {
             for (JoinColumn column : joinColumns) {
                 if (name.equals(column.getName())) {
-                    this.joinColumn = column;
+                    this.joinColumn=column;
                     created = true;
                     break;
                 }
             }
         }
-
+        
         if (!created) {
-            joinColumn = new JoinColumn();
+            joinColumn= new JoinColumn();
             joinColumns.add(joinColumn);
         }
     }
@@ -59,5 +59,5 @@ public class DBJoinColumn extends DBColumn {
     public JoinColumn getJoinColumn() {
         return joinColumn;
     }
-
+    
 }

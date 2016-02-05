@@ -22,9 +22,9 @@ import org.netbeans.jpa.modeler.spec.extend.FlowPin;
  *
  * @author Gaurav Gupta
  */
-public class DBColumn<E extends Attribute> extends FlowPin {
+public class DBColumn extends FlowPin {
 
-    private final E attribute;
+    private Attribute attribute;
     private String name;
     private String dataType;
     private int size;
@@ -35,7 +35,7 @@ public class DBColumn<E extends Attribute> extends FlowPin {
     private DBColumn referenceColumn;
     private DBTable referenceTable;
    
-    public DBColumn(String name, E attribute) {
+    public DBColumn(String name, Attribute attribute) {
         this.attribute = attribute;
         this.name=name;
     }
@@ -157,7 +157,7 @@ public class DBColumn<E extends Attribute> extends FlowPin {
     /**
      * @return the attribute
      */
-    public E getAttribute() {
+    public Attribute getAttribute() {
         return attribute;
     }
 

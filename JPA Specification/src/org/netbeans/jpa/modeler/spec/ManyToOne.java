@@ -95,7 +95,20 @@ public class ManyToOne extends SingleRelationAttribute {
         this.mapsId = value;
     }
 
-     /**
+    public ManyToOneAccessor getAccessor() {
+        ManyToOneAccessor accessor = new ManyToOneAccessor();
+        accessor.setName(name);
+        accessor.setTargetEntityName(getTargetEntity());
+        accessor.setId(isPrimaryKey());
+        
+        if (joinTable != null) {
+            accessor.setJoinTable(joinTable.getAccessor());
+        }
+        accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
+        return accessor;
+    }
+
+        /**
      * @return the owner
      */
     public boolean isOwner() {

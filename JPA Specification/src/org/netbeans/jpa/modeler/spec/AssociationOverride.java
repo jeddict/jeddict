@@ -62,7 +62,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "foreignKey",
     "joinTable"
 })
-public class AssociationOverride implements Comparable<AssociationOverride> {
+public class AssociationOverride {
 
     protected String description;
     @XmlElement(name = "join-column")
@@ -227,11 +227,6 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
      */
     public void setName(String value) {
         this.name = value;
-    }
-
-    @Override
-    public int compareTo(AssociationOverride associationOverride) {
-        return this.name.compareTo(associationOverride.getName());
     }
 
 }
