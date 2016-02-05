@@ -25,16 +25,16 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
  *
  * @author Gaurav Gupta
  */
-public class EntityspecAccessor extends EntityAccessor {
+public class EntitySpecAccessor extends EntityAccessor {
 
     private Entity entity;
 
-    private EntityspecAccessor(Entity entity) {
+    private EntitySpecAccessor(Entity entity) {
         this.entity = entity;
     }
 
-    public static EntityspecAccessor getInstance(Entity entity) {
-        EntityspecAccessor accessor = new EntityspecAccessor(entity);
+    public static EntitySpecAccessor getInstance(Entity entity) {
+        EntitySpecAccessor accessor = new EntitySpecAccessor(entity);
         accessor.setName(entity.getName());
         accessor.setClassName(entity.getClazz());
         accessor.setAccess("VIRTUAL");

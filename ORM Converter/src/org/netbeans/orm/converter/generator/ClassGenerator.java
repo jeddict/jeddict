@@ -667,7 +667,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processAssociationOverrides(
-            List<AssociationOverride> parsedAssociationOverrides) {
+            Set<AssociationOverride> parsedAssociationOverrides) {
 
         if (parsedAssociationOverrides == null
                 || parsedAssociationOverrides.isEmpty()) {
@@ -698,7 +698,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processAttributeOverrides(
-            List<AttributeOverride> parsedAttributeOverrides) {
+            Set<AttributeOverride> parsedAttributeOverrides) {
 
         if (parsedAttributeOverrides == null || parsedAttributeOverrides.isEmpty()) {
             return;
@@ -948,7 +948,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    private void processInternalAttributeOverride(AttributeOverridesHandler attrHandler, List<AttributeOverride> attributeOverrrides) {
+    private void processInternalAttributeOverride(AttributeOverridesHandler attrHandler, Set<AttributeOverride> attributeOverrrides) {
         if (attributeOverrrides != null && !attributeOverrrides.isEmpty()
                 && attrHandler.getAttributeOverrides() == null) {
             attrHandler.setAttributeOverrides(new AttributeOverridesSnippet());
@@ -968,7 +968,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    private void processInternalAssociationOverride(AssociationOverridesHandler assoHandler, List<AssociationOverride> associationOverrrides) {
+    private void processInternalAssociationOverride(AssociationOverridesHandler assoHandler, Set<AssociationOverride> associationOverrrides) {
 
         if (associationOverrrides != null && !associationOverrrides.isEmpty()
                 && assoHandler.getAssociationOverrides() == null) {

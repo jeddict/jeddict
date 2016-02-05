@@ -211,16 +211,4 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
         this.orphanRemoval = value;
     }
 
-    public OneToManyAccessor getAccessor() {
-        OneToManyAccessor accessor = new OneToManyAccessor();
-        accessor.setName(name);
-        accessor.setTargetEntityName(getTargetEntity());
-        accessor.setAttributeType(getCollectionType());
-        accessor.setMappedBy(getMappedBy());
-        if (joinTable != null) {
-            accessor.setJoinTable(joinTable.getAccessor());
-        }
-        accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
-        return accessor;
-    }
 }

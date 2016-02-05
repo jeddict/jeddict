@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
+import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.EmbeddedAccessor;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -35,6 +36,7 @@ public class EmbeddedSpecAccessor extends EmbeddedAccessor {
         EmbeddedSpecAccessor accessor = new EmbeddedSpecAccessor(embedded);
         accessor.setName(embedded.getName());
         accessor.setAttributeType(embedded.getAttributeType());
+        accessor.setAttributeOverrides(embedded.getAttributeOverride().stream().map(AttributeOverrideSpecMetadata::getInstance).collect(toList()));
         return accessor;
     }
 

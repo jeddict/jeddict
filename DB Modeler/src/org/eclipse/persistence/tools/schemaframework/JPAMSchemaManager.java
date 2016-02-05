@@ -235,10 +235,8 @@ public class JPAMSchemaManager {
     }
 
     public void createMapping(DatabaseObjectDefinition databaseObjectDefinition) {
-
         JPAMTableDefinition tableDefinition = ((JPAMTableDefinition) databaseObjectDefinition);
-
-        tableDefinition.buildCreationWriter(session, dbMapping);
+        tableDefinition.buildDBTable(session, dbMapping);
 
     }
 
