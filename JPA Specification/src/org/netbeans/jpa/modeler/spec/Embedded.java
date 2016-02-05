@@ -8,7 +8,8 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.lang.model.element.AnnotationMirror;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -18,12 +19,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.EmbeddedAccessor;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -68,9 +67,9 @@ import org.netbeans.modeler.core.NBModelerUtil;
 public class Embedded extends CompositionAttribute implements AttributeOverrideHandler, AssociationOverrideHandler {
 
     @XmlElement(name = "attribute-override")
-    protected List<AttributeOverride> attributeOverride;
+    protected Set<AttributeOverride> attributeOverride;
     @XmlElement(name = "association-override")
-    protected List<AssociationOverride> associationOverride;
+    protected Set<AssociationOverride> associationOverride;
     protected List<Convert> convert;//REVENG PENDING
 
     @XmlAttribute(name = "access")
@@ -128,12 +127,32 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
      *
      */
     @Override
-    public List<AttributeOverride> getAttributeOverride() {
+    public Set<AttributeOverride> getAttributeOverride() {
         if (attributeOverride == null) {
-            attributeOverride = new ArrayList<AttributeOverride>();
+            attributeOverride = new TreeSet<AttributeOverride>();
         }
         return this.attributeOverride;
     }
+    
+    public AttributeOverride findAttributeOverride(String name) {
+        for(AttributeOverride attributeOverride : getAttributeOverride()){
+            if(StringUtils.equals(name, attributeOverride.getName())){
+                return attributeOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().add(attributeOverride);
+    }
+
+    public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().remove(attributeOverride);
+    }
+    
+    
+    
 
     /**
      * Gets the value of the associationOverride property.
@@ -158,9 +177,9 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
      *
      */
     @Override
-    public List<AssociationOverride> getAssociationOverride() {
+    public Set<AssociationOverride> getAssociationOverride() {
         if (associationOverride == null) {
-            associationOverride = new ArrayList<AssociationOverride>();
+            associationOverride = new TreeSet<>();
         }
         return this.associationOverride;
     }
@@ -217,7 +236,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
 
     @Override
     public AttributeOverride getAttributeOverride(String attributePath) {
-        List<AttributeOverride> attributeOverrides = getAttributeOverride();
+        Set<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
             if (attributeOverride_TMP.getName().equals(attributePath)) {
                 return attributeOverride_TMP;
@@ -231,7 +250,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
 
     @Override
     public AssociationOverride getAssociationOverride(String attributePath) {
-        List<AssociationOverride> associationOverrides = getAssociationOverride();
+        Set<AssociationOverride> associationOverrides = getAssociationOverride();
         for (AssociationOverride associationOverride_TMP : associationOverrides) {
             if (associationOverride_TMP.getName().equals(attributePath)) {
                 return associationOverride_TMP;

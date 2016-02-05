@@ -54,6 +54,13 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         columnWidgets.put(column.getId(), widget);
         return widget;
     }
+    
+        public ColumnWidget addEmbeddedColumn(String name, DBColumn column) {
+        EmbeddedColumnWidget widget = (EmbeddedColumnWidget) createPinWidget(EmbeddedColumnWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        columnWidgets.put(column.getId(), widget);
+        return widget;
+    }
 
     public ColumnWidget addNewJoinKey(String name, DBColumn column) {
 //        E table = this.getBaseElementSpec();

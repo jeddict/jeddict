@@ -35,6 +35,7 @@ import org.netbeans.db.modeler.core.widget.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.EmbeddedColumnWidget;
 import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
@@ -45,6 +46,7 @@ import org.netbeans.db.modeler.core.widget.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
@@ -127,15 +129,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             Logger.getLogger(DBModelerUtil.class.getName()).log(Level.INFO, null, ex);
             String message = ex.getLocalizedMessage();
             int end = message.lastIndexOf("Runtime Exceptions:");
-            if (end < 1) {
-                end = message.length();
-            }
+            end = end < 1 ? message.length() : end;
             int start = message.lastIndexOf("Exception Description:");
-            if (start < 1) {
-                start = 0;
-            }
-            message = message.substring(start, end);
-            NotifyDescriptor nd = new NotifyDescriptor.Message(message, NotifyDescriptor.ERROR_MESSAGE);
+            start = start < 1 ? 0 : start;
+            NotifyDescriptor nd = new NotifyDescriptor.Message(message.substring(start, end), NotifyDescriptor.ERROR_MESSAGE);
             DialogDisplayer.getDefault().notify(nd);
         } catch (Exception ex) {
 //            IO.getOut().println("Exception: " + ex.toString());
@@ -224,9 +221,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                             } else if(column instanceof DBInverseJoinColumn){
                                 tableWidget.addNewInverseJoinKey(column.getName(), column);
                             }
-                            
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
+                        } else if(column instanceof DBEmbeddedColumn){ 
+                            tableWidget.addEmbeddedColumn(column.getName(), column);
                         } else {
                             tableWidget.addNewBasicColumn(column.getName(), column);
                         }
@@ -380,6 +378,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new InverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(PrimaryKeyWidget.class.getSimpleName())) {
             widget = new PrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        }  else if (widgetInfo.getDocumentId().equals(EmbeddedColumnWidget.class.getSimpleName())) {
+            widget = new EmbeddedColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }

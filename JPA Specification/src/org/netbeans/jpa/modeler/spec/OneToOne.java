@@ -228,20 +228,6 @@ public class OneToOne extends SingleRelationAttribute {
         }
     }
 
-    public OneToOneAccessor getAccessor() {
-        OneToOneAccessor accessor = new OneToOneAccessor();
-        accessor.setName(name);
-        accessor.setTargetEntityName(getTargetEntity());
-        accessor.setMappedBy(getMappedBy());
-        accessor.setId(isPrimaryKey());
-        
-        if (joinTable != null) {
-            accessor.setJoinTable(joinTable.getAccessor());
-        }
-        accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
-        return accessor;
-    }
-
     /**
      * @return the owner
      */

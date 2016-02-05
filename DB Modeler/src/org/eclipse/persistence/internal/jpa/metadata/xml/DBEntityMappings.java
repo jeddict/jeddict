@@ -19,15 +19,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
-import org.eclipse.persistence.internal.jpa.metadata.MetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ConverterAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.MappedSuperclassAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataClass;
 import org.eclipse.persistence.internal.jpa.metadata.converters.MixedConverterMetadata;
-import org.netbeans.jpa.modeler.db.accessor.EntityspecAccessor;
-import org.netbeans.jpa.modeler.spec.Embeddable;
+import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 
@@ -42,9 +41,9 @@ public class DBEntityMappings extends XMLEntityMappings {
     public DBEntityMappings(EntityMappings mappings) {
 
         setPackage(mappings.getPackage());
-        setEntities(mappings.getEntity().stream().map(EntityspecAccessor::getInstance).collect(toList()));
+        setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
         setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclass::getAccessor).collect(toList()));
-        setEmbeddables(mappings.getEmbeddable().stream().map(Embeddable::getAccessor).collect(toList()));
+        setEmbeddables(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
 
         setMixedConverters(new ArrayList<>());
 
@@ -117,7 +116,7 @@ public class DBEntityMappings extends XMLEntityMappings {
 
             // Initialize the embeddable with its metadata descriptor and project.
             // This initialization must be done before a potential merge below.
-            embeddable.initXMLClassAccessor(embeddableClass, new MetadataDescriptor(embeddableClass, embeddable), getProject(), this);
+            embeddable.initXMLClassAccessor(embeddableClass, new DBMetadataDescriptor(embeddableClass, embeddable), getProject(), this);
 
             if (allEmbeddables.containsKey(embeddableClass.getName())) {
                 // Merge this embeddable with the existing one.
@@ -135,7 +134,7 @@ public class DBEntityMappings extends XMLEntityMappings {
 
             // Initialize the mapped superclass with a metadata descriptor and project.
             // This initialization must be done before a potential merge below.
-            mappedSuperclass.initXMLClassAccessor(mappedSuperclassClass, new MetadataDescriptor(mappedSuperclassClass, mappedSuperclass), getProject(), this);
+            mappedSuperclass.initXMLClassAccessor(mappedSuperclassClass, new DBMetadataDescriptor(mappedSuperclassClass, mappedSuperclass), getProject(), this);
 
             if (getProject().hasMappedSuperclass(mappedSuperclassClass)) {
                 // Merge this mapped superclass with the existing one.

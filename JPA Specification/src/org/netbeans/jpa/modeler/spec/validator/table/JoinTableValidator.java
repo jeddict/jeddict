@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.validator.table;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
+import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 
 public class JoinTableValidator extends MarshalValidator<JoinTable> {
 
@@ -30,7 +31,11 @@ public class JoinTableValidator extends MarshalValidator<JoinTable> {
     }
 
     public static boolean isEmpty(JoinTable table) {
+        boolean f = table.getJoinColumn().stream().allMatch(JoinColumnValidator::isEmpty);
+        boolean f2 = table.getInverseJoinColumn().stream().allMatch(JoinColumnValidator::isEmpty);
+        
         return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) && StringUtils.isBlank(table.getCatalog())
-                && table.getJoinColumn().isEmpty() && table.getInverseJoinColumn().isEmpty();
+                && table.getJoinColumn().stream().allMatch(JoinColumnValidator::isEmpty) 
+                && table.getInverseJoinColumn().stream().allMatch(JoinColumnValidator::isEmpty);
     }
 }

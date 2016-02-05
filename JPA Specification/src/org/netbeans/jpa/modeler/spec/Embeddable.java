@@ -117,16 +117,6 @@ public class Embeddable extends ManagedClass {
         this.attributes = (EmbeddableAttributes) attributes;
     }
 
-    public EmbeddableAccessor getAccessor() {
-        EmbeddableAccessor accessor = new EmbeddableAccessor();
-        accessor.setClassName(clazz);
-        accessor.setAccess("VIRTUAL");
-        accessor.setAttributes(attributes.getAccessor());
-        if (getSuperclass() != null) {
-            accessor.setParentClassName(getSuperclass().getClazz());
-        }
-        return accessor;
-
-    }
+ 
 
 }
