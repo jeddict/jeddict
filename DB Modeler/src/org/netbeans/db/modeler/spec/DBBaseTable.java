@@ -15,25 +15,12 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import org.netbeans.jpa.modeler.spec.Embedded;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.Entity;
 
-public abstract class DBEmbeddedColumn extends DBColumn {
-   
-    private final Embedded embedded;
-    
-    
-    public DBEmbeddedColumn(String name, Embedded embedded, Attribute managedAttribute) {
-        super(name, managedAttribute);
-        this.embedded = embedded;
+public class DBBaseTable extends DBTable {
+
+    public DBBaseTable(String name, Entity entity) {
+        super(name, entity);
     }
 
-
-    /**
-     * @return the embedded
-     */
-    public Embedded getEmbedded() {
-        return embedded;
-    }
-    
 }

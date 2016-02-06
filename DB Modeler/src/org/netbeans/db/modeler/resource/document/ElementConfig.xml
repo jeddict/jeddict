@@ -4,6 +4,8 @@
         <group id="BASIC_PROP" name="Properties"/>
         <group id="ATTRIBUTE_OVERRIDE" name="AttributeOverride @Column"/>
         <group id="EMBEDDABLE_COLUMN" name="Embeddable @Column"/>
+        <group id="JOIN_COLUMN" name="@JoinColumn"/>
+        <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn"/>
         
     </groups>
     <elements>

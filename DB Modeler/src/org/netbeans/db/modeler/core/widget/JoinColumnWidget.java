@@ -139,6 +139,6 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
     @Override
     public void createPropertySet(ElementPropertySet set) {
     JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
-    set.createPropertySet(this, joinColumn, getPropertyChangeListeners());
+    set.createPropertySet("JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
     }
 }

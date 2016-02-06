@@ -86,7 +86,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
         embedded.access = AccessType.load(element);
 
         DeclaredType declaredType = (DeclaredType) variableElement.asType();
-        
+
         org.netbeans.jpa.modeler.spec.Embeddable embeddableClassSpec = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
         if (embeddableClassSpec == null) {
             boolean fieldAccess = false;
@@ -133,10 +133,10 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
         }
         return this.attributeOverride;
     }
-    
+
     public AttributeOverride findAttributeOverride(String name) {
-        for(AttributeOverride attributeOverride : getAttributeOverride()){
-            if(StringUtils.equals(name, attributeOverride.getName())){
+        for (AttributeOverride attributeOverride : getAttributeOverride()) {
+            if (StringUtils.equals(name, attributeOverride.getName())) {
                 return attributeOverride;
             }
         }
@@ -150,9 +150,6 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
     public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
         return getAttributeOverride().remove(attributeOverride);
     }
-    
-    
-    
 
     /**
      * Gets the value of the associationOverride property.
@@ -182,6 +179,23 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
             associationOverride = new TreeSet<>();
         }
         return this.associationOverride;
+    }
+
+    public AssociationOverride findAssociationOverride(String name) {
+        for (AssociationOverride associationOverride : getAssociationOverride()) {
+            if (StringUtils.equals(name, associationOverride.getName())) {
+                return associationOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().add(associationOverride);
+    }
+
+    public boolean removeAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().remove(associationOverride);
     }
 
     /**

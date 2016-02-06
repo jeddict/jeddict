@@ -55,10 +55,24 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         return widget;
     }
     
-        public ColumnWidget addEmbeddedColumn(String name, DBColumn column) {
-        EmbeddedColumnWidget widget = (EmbeddedColumnWidget) createPinWidget(EmbeddedColumnWidget.create(column.getId(), name, column));
+        public ColumnWidget addEmbeddedAttributeColumn(String name, DBColumn column) {
+        EmbeddedAttributeColumnWidget widget = (EmbeddedAttributeColumnWidget) createPinWidget(EmbeddedAttributeColumnWidget.create(column.getId(), name, column));
         widget.setDatatypeTooltip();
         columnWidgets.put(column.getId(), widget);
+        return widget;
+    }
+        
+     public ColumnWidget addEmbeddedAssociationInverseJoinColumn(String name, DBColumn column) {
+        EmbeddedAssociationColumnWidget widget = (EmbeddedAssociationColumnWidget) createPinWidget(EmbeddedAssociationInverseJoinColumnWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        foreignKeyWidgets.put(column.getId(), widget);
+        return widget;
+    }
+     
+    public ColumnWidget addEmbeddedAssociationJoinColumn(String name, DBColumn column) {
+        EmbeddedAssociationColumnWidget widget = (EmbeddedAssociationColumnWidget) createPinWidget(EmbeddedAssociationJoinColumnWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        foreignKeyWidgets.put(column.getId(), widget);
         return widget;
     }
 

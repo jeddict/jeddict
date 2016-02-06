@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <document-config>
     <documents>
-        <document id="BaseTable" widget="org.netbeans.db.modeler.core.widget.TableWidget" specification="org.netbeans.db.modeler.spec.DBTable" >
+        <document id="BaseTable" widget="org.netbeans.db.modeler.core.widget.TableWidget" specification="org.netbeans.db.modeler.spec.DBBaseTable" >
             <container-document>/org/netbeans/db/modeler/resource/image/table.gif</container-document>
         </document>
         <document id="RelationTable" widget="org.netbeans.db.modeler.core.widget.RelationTableWidget" specification="org.netbeans.db.modeler.spec.DBRelationTable" >

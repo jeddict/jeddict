@@ -32,7 +32,6 @@ public class DBInverseJoinColumn extends DBColumn<RelationAttribute> {
             for (JoinColumn column : joinColumns) {
                 if (column.getName().equals(name)) {
                     this.inverseJoinColumn = column;
-//                    column.setGeneratedName(name);
                     created = true;
                     break;
                 }
@@ -41,8 +40,6 @@ public class DBInverseJoinColumn extends DBColumn<RelationAttribute> {
 
         if (!created) {
             inverseJoinColumn = new JoinColumn();
-//            inverseJoinColumn.setGeneratedName(name);
-            inverseJoinColumn.setName(name);
             joinColumns.add(inverseJoinColumn);
         }
     }

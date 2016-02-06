@@ -27,7 +27,7 @@ import org.netbeans.jpa.modeler.spec.extend.FlowNode;
  *
  * @author Gaurav Gupta
  */
-public class DBTable extends FlowNode {
+public abstract class DBTable extends FlowNode {
 
     private String name;
     private Entity entity;

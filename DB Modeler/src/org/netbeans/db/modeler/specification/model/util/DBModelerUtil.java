@@ -35,7 +35,9 @@ import org.netbeans.db.modeler.core.widget.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.ColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedColumnWidget;
+import org.netbeans.db.modeler.core.widget.EmbeddedAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.EmbeddedAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
@@ -46,6 +48,10 @@ import org.netbeans.db.modeler.core.widget.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBEmbeddedAssociationColumn;
+import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
+import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
+import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
@@ -120,7 +126,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMapping);
 
-            dbMapping.getTables().stream().forEach(table -> loadTable(scene , table));
+            dbMapping.getTables().stream().forEach(table -> loadTable(scene, table));
             loadFlowEdge(scene);
             scene.autoLayout();
 
@@ -215,16 +221,22 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {
-                        if (column.isForeignKey()) {
-                            if(column instanceof DBJoinColumn){
-                                tableWidget.addNewJoinKey(column.getName(), column);
-                            } else if(column instanceof DBInverseJoinColumn){
-                                tableWidget.addNewInverseJoinKey(column.getName(), column);
+                        if (column instanceof DBJoinColumn) {
+                            tableWidget.addNewJoinKey(column.getName(), column);
+                        } else if (column instanceof DBInverseJoinColumn) {
+                            tableWidget.addNewInverseJoinKey(column.getName(), column);
+                        } else if (column instanceof DBEmbeddedColumn) {
+                            if (column instanceof DBEmbeddedAttributeColumn) {
+                                tableWidget.addEmbeddedAttributeColumn(column.getName(), column);
+                            } else if (column instanceof DBEmbeddedAssociationColumn) {
+                                if (column instanceof DBEmbeddedAssociationInverseJoinColumn) {
+                                    tableWidget.addEmbeddedAssociationInverseJoinColumn(column.getName(), column);
+                                } else if (column instanceof DBEmbeddedAssociationJoinColumn) {
+                                    tableWidget.addEmbeddedAssociationJoinColumn(column.getName(), column);
+                                }
                             }
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
-                        } else if(column instanceof DBEmbeddedColumn){ 
-                            tableWidget.addEmbeddedColumn(column.getName(), column);
                         } else {
                             tableWidget.addNewBasicColumn(column.getName(), column);
                         }
@@ -243,7 +255,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             TableWidget tableWidget = (TableWidget) baseElementWidget;
 
             tableWidget.getForeignKeyWidgets().stream().forEach((foreignKeyWidget) -> {
-                loadEdge(scene, tableWidget, (ForeignKeyWidget) foreignKeyWidget);
+                loadEdge(scene, tableWidget,  (ForeignKeyWidget)foreignKeyWidget);
             });
 
         });
@@ -252,7 +264,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     private void loadEdge(DBModelerScene scene, TableWidget sourceTableWidget, ForeignKeyWidget foreignKeyWidget) {
 //       ForeignKey => Source
 //       ReferenceColumn => Target      
-        DBColumn sourceColumn = (DBColumn)foreignKeyWidget.getBaseElementSpec();
+        DBColumn sourceColumn = (DBColumn) foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
         ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) {
@@ -374,12 +386,16 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new BasicColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(JoinColumnWidget.class.getSimpleName())) {
             widget = new JoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        }  else if (widgetInfo.getDocumentId().equals(InverseJoinColumnWidget.class.getSimpleName())) {
+        } else if (widgetInfo.getDocumentId().equals(InverseJoinColumnWidget.class.getSimpleName())) {
             widget = new InverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(PrimaryKeyWidget.class.getSimpleName())) {
             widget = new PrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        }  else if (widgetInfo.getDocumentId().equals(EmbeddedColumnWidget.class.getSimpleName())) {
-            widget = new EmbeddedColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedAttributeColumnWidget.class.getSimpleName())) {
+            widget = new EmbeddedAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationJoinColumnWidget.class.getSimpleName())) {
+            widget = new EmbeddedAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName())) {
+            widget = new EmbeddedAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }
@@ -480,7 +496,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
 //            Table targetTable = (Table) targetTableWidget.getBaseElementSpec();
 
-            DBColumn sourceColumn = (DBColumn)sourceColumnWidget.getBaseElementSpec();
+            DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getBaseElementSpec();
             ColumnWidget targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
 //            Column targetColumn = targetColumnWidget.getBaseElementSpec();
 
