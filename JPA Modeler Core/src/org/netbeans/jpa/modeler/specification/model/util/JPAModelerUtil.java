@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -202,6 +203,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
     public static Image ABSTRACT_ENTITY;
     public static Image ENTITY;
+    
+    public static Icon TWITTER;
+    public static Icon LINKEDIN;
+    
 
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
@@ -286,7 +291,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             VERSION_ATTRIBUTE = new ImageIcon(cl.getResource(VERSION_ATTRIBUTE_ICON_PATH)).getImage();
             MULTIVALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
 
-            System.out.println("IUtil Total time : " + (new Date().getTime() - st) + " sec");
+            
+            TWITTER = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/twitter.png"));
+            LINKEDIN = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/linkedin.png"));
         }
     }
 

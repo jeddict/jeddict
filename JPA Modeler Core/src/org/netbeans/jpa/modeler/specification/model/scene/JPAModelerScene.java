@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -41,6 +42,8 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
+import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
+import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
 import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.spec.Embeddable;
@@ -325,14 +328,23 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 //            }
 //        });
 //
+
+        JMenu shareModeler = new JMenu("Share");
+        shareModeler.add(TwitterSocialNetwork.getInstance().getComponent());
+        shareModeler.add(LinkedInSocialNetwork.getInstance().getComponent());
+        
+
         menuList.add(0, generateCode);
         menuList.add(1, visDB);
         menuList.add(2, null);
         menuList.add(3, manageVisibility);
         menuList.add(4, null);
-
+        menuList.add(5, shareModeler);
+        
         return menuList;
     }
+    
+
 
     public static void fireEntityVisibilityAction(ModelerFile file) {
         ClassWidgetVisibilityController dialog = new ClassWidgetVisibilityController((EntityMappings) file.getDefinitionElement());
