@@ -37,12 +37,16 @@ public class JPAMFieldDefinition extends FieldDefinition {
     private final Attribute managedAttribute;
     private boolean inverse;
     private boolean foriegnKey;
+    private boolean relationTable;
+    
+    
 
-    public JPAMFieldDefinition(Attribute intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey) {
+    public JPAMFieldDefinition(Attribute intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
         this.intrinsicAttribute = intrinsicAttribute;
         this.managedAttribute = managedAttribute;
         this.inverse = inverse;
         this.foriegnKey = foriegnKey;
+        this.relationTable=relationTable;
     }
 
     /**
@@ -60,13 +64,13 @@ public class JPAMFieldDefinition extends FieldDefinition {
         DBColumn column = null;
 
         if (intrinsicAttribute instanceof RelationAttribute) {
-            if (inverse) {//((RelationAttribute)attribute).isOwner()
-                column = new DBInverseJoinColumn(name, (RelationAttribute) intrinsicAttribute);
+            if (inverse) {
+                column = new DBInverseJoinColumn(name, (RelationAttribute) intrinsicAttribute, relationTable);
             } else {
-                column = new DBJoinColumn(name, intrinsicAttribute);
+                column = new DBJoinColumn(name, intrinsicAttribute, relationTable);
             }
         } else if (intrinsicAttribute instanceof ElementCollection) {
-            column = new DBJoinColumn(name, intrinsicAttribute);
+            column = new DBJoinColumn(name, intrinsicAttribute, relationTable);
         } else if (intrinsicAttribute instanceof Embedded && managedAttribute != null) {
             if (managedAttribute instanceof RelationAttribute) {
                 if (inverse) {

@@ -20,6 +20,7 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToOne
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 
 /**
@@ -42,6 +43,7 @@ public class OneToOneSpecAccessor extends OneToOneAccessor{
         if (!JoinTableValidator.isEmpty(oneToOne.getJoinTable())) {
             accessor.setJoinTable(oneToOne.getJoinTable().getAccessor());
         }
+        JoinColumnValidator.filter(oneToOne.getJoinColumn());        
         accessor.setJoinColumns(oneToOne.getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
         
         return accessor;

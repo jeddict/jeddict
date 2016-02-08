@@ -81,11 +81,11 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class JoinTable {
 
     @XmlElement(name = "join-column")
-    protected List<JoinColumn> joinColumn;
+    private List<JoinColumn> joinColumn;
     @XmlElement(name = "foreign-key")
     protected ForeignKey foreignKey;//REVENG PENDING
     @XmlElement(name = "inverse-join-column")
-    protected List<JoinColumn> inverseJoinColumn;
+    private List<JoinColumn> inverseJoinColumn;
     @XmlElement(name = "inverse-foreign-key")
     protected ForeignKey inverseForeignKey;//REVENG PENDING
     @XmlElement(name = "unique-constraint")
@@ -163,7 +163,7 @@ public class JoinTable {
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
-            joinColumn = new ArrayList<JoinColumn>();
+            setJoinColumn(new ArrayList<JoinColumn>());
         }
         return this.joinColumn;
     }
@@ -212,7 +212,7 @@ public class JoinTable {
      */
     public List<JoinColumn> getInverseJoinColumn() {
         if (inverseJoinColumn == null) {
-            inverseJoinColumn = new ArrayList<JoinColumn>();
+            setInverseJoinColumn(new ArrayList<JoinColumn>());
         }
         return this.inverseJoinColumn;
     }
@@ -357,9 +357,6 @@ public class JoinTable {
 
     
     public JoinTableMetadata getAccessor() {
-        if(JoinTableValidator.isEmpty(this)){
-            return null;
-        }
         JoinTableMetadata accessor = new JoinTableMetadata();
         accessor.setName(name);
         accessor.setSchema(schema);
@@ -381,6 +378,20 @@ public class JoinTable {
      */
     public String getGeneratedName() {
         return generatedName;
+    }
+
+    /**
+     * @param joinColumn the joinColumn to set
+     */
+    public void setJoinColumn(List<JoinColumn> joinColumn) {
+        this.joinColumn = joinColumn;
+    }
+
+    /**
+     * @param inverseJoinColumn the inverseJoinColumn to set
+     */
+    public void setInverseJoinColumn(List<JoinColumn> inverseJoinColumn) {
+        this.inverseJoinColumn = inverseJoinColumn;
     }
 
 }

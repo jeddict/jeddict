@@ -20,20 +20,22 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToMan
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class OneToManySpecAccessor extends OneToManyAccessor{
-    
+public class OneToManySpecAccessor extends OneToManyAccessor {
+
     private final OneToMany oneToMany;
 
     private OneToManySpecAccessor(OneToMany oneToMany) {
         this.oneToMany = oneToMany;
     }
-    public static OneToManySpecAccessor getInstance(OneToMany oneToMany){
+
+    public static OneToManySpecAccessor getInstance(OneToMany oneToMany) {
         OneToManySpecAccessor accessor = new OneToManySpecAccessor(oneToMany);
         accessor.setName(oneToMany.getName());
         accessor.setTargetEntityName(oneToMany.getTargetEntity());
@@ -42,16 +44,17 @@ public class OneToManySpecAccessor extends OneToManyAccessor{
         if (!JoinTableValidator.isEmpty(oneToMany.getJoinTable())) {
             accessor.setJoinTable(oneToMany.getJoinTable().getAccessor());
         }
+        JoinColumnValidator.filter(oneToMany.getJoinColumn());
         accessor.setJoinColumns(oneToMany.getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
-        
+
         return accessor;
-        
+
     }
 
     @Override
-    public void process(){
+    public void process() {
         super.process();
         getMapping().setProperty(Attribute.class, oneToMany);
     }
-    
+
 }

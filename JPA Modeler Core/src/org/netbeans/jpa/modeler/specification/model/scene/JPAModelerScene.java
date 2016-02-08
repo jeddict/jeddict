@@ -41,7 +41,6 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
-import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
 import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.spec.Embeddable;
@@ -59,6 +58,7 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
@@ -66,6 +66,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
+import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 import org.openide.util.Lookup;
@@ -293,14 +294,17 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         manageVisibility.addActionListener((ActionEvent e) -> {
             fireEntityVisibilityAction(getModelerFile());
         });
-//
-        JMenuItem visDB = new JMenuItem("Viusalize DB");
+
+        JMenuItem visDB = new JMenuItem("Visualize DB");
         visDB.addActionListener((ActionEvent e) -> {
             ModelerFile file = this.getModelerFile();
             Optional<ModelerFile> dbModelerFile = file.getChildrenFile("DB");
             if(dbModelerFile.isPresent()){
-                dbModelerFile.get().getModelerPanelTopComponent().close();
-                ModelerCore.removeModelerFile(dbModelerFile.get().getPath());//TODO : BUG
+                IModelerScene scene = dbModelerFile.get().getModelerScene();
+                scene.getBaseElements().stream().filter(element-> element instanceof INodeWidget).forEach(element -> {
+                    ((INodeWidget) element).remove(false);
+                });
+                dbModelerFile.get().getModelerUtil().loadModelerFile(dbModelerFile.get());
             }
             DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
             dbModelerRequestManager.init(file);

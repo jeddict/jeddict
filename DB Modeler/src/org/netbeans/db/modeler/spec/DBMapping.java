@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
 import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
@@ -70,14 +71,23 @@ public class DBMapping implements IDefinitionElement, IRootElement {
         return tablesResult;
     }
 
-    @Override
+          @Override
     public void removeBaseElement(IBaseElement baseElement_In) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (baseElement_In instanceof DBTable) {
+            removeTable((DBTable)baseElement_In);
+        } else {
+            throw new InvalidElmentException("Invalid JPA Element");
+        }
     }
 
     @Override
     public void addBaseElement(IBaseElement baseElement_In) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (baseElement_In instanceof DBTable) {
+            addTable((DBTable)baseElement_In);
+        } else {
+            throw new InvalidElmentException("Invalid JPA Element");
+        }
+
     }
 
     @Override

@@ -6,7 +6,7 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import static java.util.stream.Collectors.toList;
+import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ManyToOneAccessor;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -108,4 +107,5 @@ public class ManyToOne extends SingleRelationAttribute {
     public void setOwner(boolean owner) {
             //skip
     }
+
 }

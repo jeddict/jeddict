@@ -51,6 +51,7 @@ public class DBViewerActionListener extends ModelerFileActionListener implements
 
     @Override
     public void init(ModelerFile file) {
+        context = null;
         openModelerFile("DB", null, null, file);
     }
 

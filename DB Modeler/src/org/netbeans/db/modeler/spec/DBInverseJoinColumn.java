@@ -15,40 +15,69 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 
-public class DBInverseJoinColumn extends DBColumn<RelationAttribute> {
-    
-    private JoinColumn inverseJoinColumn;
+public class DBInverseJoinColumn extends DBColumn<RelationAttribute> implements DBForeignKey {
 
-    public DBInverseJoinColumn(String name, RelationAttribute attribute) {
+    private final boolean relationTableExist;
+
+    private JoinColumn joinColumn;
+    private List<JoinColumn> joinColumns;
+
+    public DBInverseJoinColumn(String name, RelationAttribute attribute, boolean relationTableExist) {
         super(name, attribute);
+        this.relationTableExist = relationTableExist;
 
-        List<JoinColumn> joinColumns = attribute.getJoinTable().getInverseJoinColumn();
+        if (!relationTableExist) {
+            if (attribute instanceof SingleRelationAttribute) {
+                joinColumns = ((SingleRelationAttribute) attribute).getJoinColumn();
+            } else if (attribute instanceof OneToMany) {
+                joinColumns = ((OneToMany) attribute).getJoinColumn();
+            } else {
+                throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+            }
+        } else {
+            joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
+        }
+
         boolean created = false;
         if (!joinColumns.isEmpty()) {
-            for (JoinColumn column : joinColumns) {
-                if (column.getName().equals(name)) {
-                    this.inverseJoinColumn = column;
+            for (Iterator<JoinColumn> it = joinColumns.iterator(); it.hasNext();) {
+                JoinColumn column = it.next();
+                if (name.equals(column.getName())) {
+                    this.joinColumn = column;
                     created = true;
                     break;
+                } else if (StringUtils.isBlank(column.getName())) {
+                    it.remove();
                 }
             }
         }
 
         if (!created) {
-            inverseJoinColumn = new JoinColumn();
-            joinColumns.add(inverseJoinColumn);
+            joinColumn = new JoinColumn();
+            joinColumns.add(joinColumn);
         }
     }
 
     /**
      * @return the inverseJoinColumn
      */
-    public JoinColumn getInverseJoinColumn() {
-        return inverseJoinColumn;
+    public JoinColumn getJoinColumn() {
+        return joinColumn;
     }
 
+    public List<JoinColumn> getJoinColumns() {
+        return joinColumns;
+    }
+
+    public boolean isRelationTableExist() {
+        return relationTableExist;
+    }
 }

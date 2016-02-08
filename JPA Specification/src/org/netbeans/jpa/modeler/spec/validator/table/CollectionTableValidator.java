@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.validator.table;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
+import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 
 public class CollectionTableValidator extends MarshalValidator<CollectionTable> {
 
@@ -30,6 +31,8 @@ public class CollectionTableValidator extends MarshalValidator<CollectionTable> 
     }
 
     public boolean isEmpty(CollectionTable table) {
+     JoinColumnValidator.filter(table.getJoinColumn());
+        
         return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) && StringUtils.isBlank(table.getCatalog())
                 && table.getJoinColumn().isEmpty();
     }

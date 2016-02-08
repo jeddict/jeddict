@@ -15,21 +15,32 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColumn> {
 
     public InverseJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
+            setName(value);
+            setLabel(name);
+        });
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -38,15 +49,36 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
         pinWidgetInfo.setDocumentId(InverseJoinColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
-    
+
+    private void setDefaultName() {
+        String name = getDefaultJoinColumnName();
+        updateJoinColumn(null);
+        this.name = null;
+        setLabel(name);
+    }
+
+    private String getDefaultJoinColumnName() {
+        RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
+        Entity entity = attribute.getConnectedEntity();
+        List<Id> id = entity.getAttributes().getId();
+        return attribute.getName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
+    }
+
+    private void updateJoinColumn(String newName) {
+        JoinColumn column = this.getBaseElementSpec().getJoinColumn();
+        column.setName(newName);
+    }
+
     @Override
     public void setName(String name) {
-        if (name != null && !name.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
-           if (this.getModelerScene().getModelerFile().isLoaded()) {
-               JoinColumn joinColumn = this.getBaseElementSpec().getInverseJoinColumn();
-            joinColumn.setName(this.name);
-        }
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
+                joinColumn.setName(this.name);
+            }
+        } else {
+            setDefaultName();
         }
         if (SQLKeywords.isSQL99ReservedKeyword(name)) {
             this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -65,7 +97,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-    JoinColumn joinColumn = this.getBaseElementSpec().getInverseJoinColumn();
-    set.createPropertySet("INVERSE_JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+        JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
+        set.createPropertySet("INVERSE_JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
     }
 }

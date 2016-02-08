@@ -645,7 +645,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.version = value;
     }
 
-    ;
+    
       @Override
     public void removeBaseElement(IBaseElement baseElement_In) {
         if (baseElement_In instanceof Entity) {

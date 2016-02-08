@@ -148,6 +148,9 @@
                 <package>org.netbeans.jpa.modeler.spec.extend</package>
                 <package>org.netbeans.jpa.modeler.spec.extend.cache</package>
                 <package>org.netbeans.jpa.modeler.spec.jaxb</package>
+                <package>org.netbeans.jpa.modeler.spec.validator</package>
+                <package>org.netbeans.jpa.modeler.spec.validator.column</package>
+                <package>org.netbeans.jpa.modeler.spec.validator.table</package>
                 <package>org.netbeans.jpa.source</package>
             </friend-packages>
         </data>

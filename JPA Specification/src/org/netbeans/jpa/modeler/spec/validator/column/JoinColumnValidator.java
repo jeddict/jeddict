@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.spec.validator.column;
 
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
@@ -33,5 +34,10 @@ public class JoinColumnValidator extends MarshalValidator<JoinColumn> {
         return StringUtils.isBlank(column.getName()) && StringUtils.isBlank(column.getReferencedColumnName())
                 && StringUtils.isBlank(column.getColumnDefinition()) && StringUtils.isBlank(column.getTable())
                 && column.getNullable() && column.getInsertable() && column.getUpdatable() && !column.getUnique();
+    }    
+    
+    public static void filter(List<JoinColumn> columns) {
+        columns.removeIf(JoinColumnValidator::isEmpty);
     }
+    
 }

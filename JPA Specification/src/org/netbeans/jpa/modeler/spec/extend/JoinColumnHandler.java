@@ -29,5 +29,5 @@ public interface JoinColumnHandler {
     public void addJoinColumn(JoinColumn joinColumn);
 
     public void removeJoinColumn(JoinColumn joinColumn);
-
+    
 }

@@ -27,6 +27,8 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.cache.Cache.DBConnectionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.engine.ModelerDiagramEngine;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.widget.node.INodeWidget;
 import org.openide.util.Lookup;
 
 /**
@@ -55,7 +57,12 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
         bar.add(reloadButton);
         reloadButton.addActionListener((ActionEvent e) -> {
             ModelerFile parentFile = file.getParentFile();
-            file.getModelerPanelTopComponent().close();
+
+            IModelerScene scene = file.getModelerScene();
+            scene.getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
+                ((INodeWidget) element).remove(false);
+            });
+            file.getModelerUtil().loadModelerFile(file);
             DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
             dbModelerRequestManager.init(parentFile);
         });

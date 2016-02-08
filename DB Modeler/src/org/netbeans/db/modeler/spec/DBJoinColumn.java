@@ -15,21 +15,42 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 
-public class DBJoinColumn extends DBColumn {
+public class DBJoinColumn extends DBColumn implements DBForeignKey{
 
+    private final boolean relationTableExist;
     private JoinColumn joinColumn;
+    private List<JoinColumn> joinColumns;
 
-    public DBJoinColumn(String name, Attribute attribute) {
+    public List<JoinColumn> getJoinColumns() {
+        return joinColumns;
+    }
+
+    public DBJoinColumn(String name, Attribute attribute, boolean relationTableExist) {
         super(name, attribute);
-        List<JoinColumn> joinColumns;
+        this.relationTableExist = relationTableExist;
         if (attribute instanceof RelationAttribute) {
-            joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
+            if (!relationTableExist) {
+                if (attribute instanceof SingleRelationAttribute) {
+                    joinColumns = ((SingleRelationAttribute) attribute).getJoinColumn();
+                } else if (attribute instanceof OneToMany) {
+                    joinColumns = ((OneToMany) attribute).getJoinColumn();
+                } else {
+                    throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+                }
+            } else {
+                joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
+            }
         } else if (attribute instanceof ElementCollection) {
             joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();
         } else {
@@ -37,13 +58,16 @@ public class DBJoinColumn extends DBColumn {
         }
 
         boolean created = false;
-            for (JoinColumn column : joinColumns) {
-                if (name.equals(column.getName())) {
-                    this.joinColumn = column;
-                    created = true;
-                    break;
-                }
+        for (Iterator<JoinColumn> it = joinColumns.iterator(); it.hasNext();) {
+            JoinColumn column = it.next();
+            if (name.equals(column.getName())) {
+                this.joinColumn = column;
+                created = true;
+                break;
+            } else if(StringUtils.isBlank(column.getName())) {
+                it.remove();
             }
+        }
 
         if (!created) {
             joinColumn = new JoinColumn();
@@ -56,6 +80,15 @@ public class DBJoinColumn extends DBColumn {
      */
     public JoinColumn getJoinColumn() {
         return joinColumn;
+    }
+
+    /**
+     * Get the value of relationTableExist
+     *
+     * @return the value of relationTableExist
+     */
+    public boolean isRelationTableExist() {
+        return relationTableExist;
     }
 
 }

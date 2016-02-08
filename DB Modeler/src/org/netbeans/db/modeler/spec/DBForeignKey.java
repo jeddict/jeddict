@@ -13,18 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.spec.validator;
+package org.netbeans.db.modeler.spec;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.List;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public abstract class MarshalValidator<E> extends XmlAdapter<E, E> {
-        @Override
-        public E unmarshal(E e) throws Exception {
-            return e;
+public interface DBForeignKey {
 
-        }
-    }
+    public JoinColumn getJoinColumn();
+
+    public List<JoinColumn> getJoinColumns();
+}

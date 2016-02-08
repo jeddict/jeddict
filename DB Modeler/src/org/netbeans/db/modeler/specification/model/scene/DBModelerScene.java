@@ -16,8 +16,16 @@
 package org.netbeans.db.modeler.specification.model.scene;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import static java.util.stream.Collectors.toList;
+import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBForeignKey;
+import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
+import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
@@ -32,8 +40,10 @@ import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -147,7 +157,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public void createBaseElement(IBaseElementWidget baseElementWidget) {
-        String baseElementId = "";
+        String baseElementId;
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
             this.flowElements.add((IFlowElementWidget) baseElementWidget);
@@ -235,6 +245,32 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public void destroy() {
+//        Iterator<DBColumn> itr = this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
+//                .filter(c -> c instanceof DBForeignKey).collect(toList()).iterator();
+//        
+//        
+//        while (itr.hasNext()) {
+//            DBColumn column = itr.next();
+//            List<JoinColumn> joinColumns;
+//            JoinColumn joinColumn;
+//                joinColumn = ((DBForeignKey) column).getJoinColumn();
+//                joinColumns = ((DBForeignKey) column).getJoinColumns();
+//            if (JoinColumnValidator.isEmpty(joinColumn)) {
+//                joinColumns.remove(joinColumn);
+//            }
+//
+//        }
+        this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
+                .filter(c -> c instanceof DBForeignKey).collect(toList())
+                .forEach((DBColumn column) -> {
+                    List<JoinColumn> joinColumns;
+                    JoinColumn joinColumn;
+                    joinColumn = ((DBForeignKey) column).getJoinColumn();
+                    joinColumns = ((DBForeignKey) column).getJoinColumns();
+                    if (JoinColumnValidator.isEmpty(joinColumn)) {
+                        joinColumns.remove(joinColumn);
+                    }
+                });
     }
 
     @Override
