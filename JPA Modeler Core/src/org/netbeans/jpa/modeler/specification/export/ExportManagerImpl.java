@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.specification.export;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -52,7 +53,6 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidge
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
@@ -86,7 +86,7 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
                     if (height < rect.y + rect.height) {
                         height = rect.y + rect.height;
                     }
-                                       
+
                     HSLFTextBox shape = new HSLFTextBox();
                     shape.setAnchor(new java.awt.Rectangle(rect.x, rect.y, rect.width, rect.height));
                     shape.setFillColor(Color.WHITE);
@@ -181,15 +181,7 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
                     group.addShape(shape);
 
                     if (edgeWidget instanceof GeneralizationFlowWidget) {
-                        Image targetAnchorImage = GENERALIZATION;//((IconAnchorShape) edgeWidget.getTargetAnchorShape()).getImage();
-                        byte[] targetAnchor;
-                        targetAnchor = icons.get(targetAnchorImage);
-                        if (targetAnchor == null) {
-                            ByteArrayOutputStream targetAnchorStream = new ByteArrayOutputStream();
-                            ImageIO.write(((BufferedImage) targetAnchorImage), "png", targetAnchorStream);
-                            targetAnchor = targetAnchorStream.toByteArray();
-                            icons.put(targetAnchorImage, targetAnchor);
-                        }
+                        byte[] targetAnchor = getImageArray(GENERALIZATION);
                         HSLFPictureData targetPictureData = ppt.addPicture(targetAnchor, PictureData.PictureType.PNG);
                         HSLFPictureShape targetPictureShape = new HSLFPictureShape(targetPictureData);
                         group.addShape(targetPictureShape);
@@ -197,30 +189,15 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
                     } else {
                         //source anchor
                         Image sourceAnchorImage = ((IconAnchorShape) edgeWidget.getSourceAnchorShape()).getImage();
-                        byte[] sourceAnchor;
-                        sourceAnchor = icons.get(sourceAnchorImage);
-                        if (sourceAnchor == null) {
-                            ByteArrayOutputStream sourceAnchorStream = new ByteArrayOutputStream();
-                            ImageIO.write(((BufferedImage) sourceAnchorImage), "png", sourceAnchorStream);
-                            sourceAnchor = sourceAnchorStream.toByteArray();
-                            icons.put(sourceAnchorImage, sourceAnchor);
-                        }
-
+                        byte[] sourceAnchor = getImageArray(sourceAnchorImage);
                         HSLFPictureData sourcePictureData = ppt.addPicture(sourceAnchor, PictureData.PictureType.PNG);
                         HSLFPictureShape sourcePictureShape = new HSLFPictureShape(sourcePictureData);
                         group.addShape(sourcePictureShape);
                         sourcePictureShape.moveTo(initPoint.x - 6, initPoint.y - 5);
-                        
+
                         //target anchor
                         Image targetAnchorImage = ((IconAnchorShape) edgeWidget.getTargetAnchorShape()).getImage();
-                        byte[] targetAnchor;
-                        targetAnchor = icons.get(targetAnchorImage);
-                        if (targetAnchor == null) {
-                            ByteArrayOutputStream targetAnchorStream = new ByteArrayOutputStream();
-                            ImageIO.write(((BufferedImage) targetAnchorImage), "png", targetAnchorStream);
-                            targetAnchor = targetAnchorStream.toByteArray();
-                            icons.put(targetAnchorImage, targetAnchor);
-                        }
+                        byte[] targetAnchor = getImageArray(targetAnchorImage);
                         HSLFPictureData targetPictureData = ppt.addPicture(targetAnchor, PictureData.PictureType.PNG);
                         HSLFPictureShape targetPictureShape = new HSLFPictureShape(targetPictureData);
                         group.addShape(targetPictureShape);
@@ -246,5 +223,43 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
             filetypes.add(new FileType("ppt", "PPT - Microsoft PowerPoint Presentation"));
         }
         return filetypes;
+    }
+
+    /**
+     * Converts a given Image into a BufferedImage
+     *
+     * @param img The Image to be converted
+     * @return The converted BufferedImage
+     */
+    public static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+    
+    private byte[] getImageArray(Image image) {
+        byte[] bytes = icons.get(image);
+        if (bytes == null) {
+            try {
+                ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+                ImageIO.write(toBufferedImage(image), "png", byteArrayStream);
+                bytes = byteArrayStream.toByteArray();
+                icons.put(image, bytes);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return bytes;
     }
 }
