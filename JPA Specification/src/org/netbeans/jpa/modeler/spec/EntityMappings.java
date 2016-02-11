@@ -558,9 +558,16 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      */
     public List<Entity> getEntity() {
         if (entity == null) {
-            entity = new ArrayList<Entity>();
+            entity = new ArrayList<>();
         }
         return this.entity;
+    }
+    
+    public void setEntity(List<Entity> entity) {
+        if (this.entity == null) {
+            this.entity = new ArrayList<>();
+        }
+        this.entity = entity;
     }
 
     /**

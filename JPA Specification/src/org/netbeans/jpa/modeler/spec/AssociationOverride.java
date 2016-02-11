@@ -66,7 +66,7 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
 
     protected String description;
     @XmlElement(name = "join-column")
-    protected List<JoinColumn> joinColumn;
+    private List<JoinColumn> joinColumn;
     @XmlElement(name = "foreign-key")
     protected ForeignKey foreignKey;//REVENG PENDING
     @XmlElement(name = "join-table")
@@ -161,7 +161,7 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
      */
     public List<JoinColumn> getJoinColumn() {
         if (joinColumn == null) {
-            joinColumn = new ArrayList<JoinColumn>();
+            setJoinColumn(new ArrayList<JoinColumn>());
         }
         return this.joinColumn;
     }
@@ -232,6 +232,13 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
     @Override
     public int compareTo(AssociationOverride associationOverride) {
         return this.name.compareTo(associationOverride.getName());
+    }
+
+    /**
+     * @param joinColumn the joinColumn to set
+     */
+    public void setJoinColumn(List<JoinColumn> joinColumn) {
+        this.joinColumn = joinColumn;
     }
 
 }

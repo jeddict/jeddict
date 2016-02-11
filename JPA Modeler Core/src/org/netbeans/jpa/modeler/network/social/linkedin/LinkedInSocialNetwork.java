@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.network.social.SharingHelper;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.LINKEDIN;
 import org.openide.util.Exceptions;
 
 /**
@@ -61,8 +61,7 @@ public class LinkedInSocialNetwork {
     }
 
     public JMenuItem getComponent() {
-        JMenuItem twitterShare = new JMenuItem("Linked In");
-        twitterShare.setIcon(JPAModelerUtil.LINKEDIN);
+        JMenuItem twitterShare = new JMenuItem("Linked In" , LINKEDIN);
         twitterShare.addActionListener((ActionEvent e) -> {
             SharingHelper.openWebpage(LINK);
         });

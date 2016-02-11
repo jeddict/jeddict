@@ -29,7 +29,7 @@ public class TableValidator extends MarshalValidator<Table> {
         return table;
     }
 
-    public boolean isEmpty(Table table) {
+    public static boolean isEmpty(Table table) {
         return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) && StringUtils.isBlank(table.getCatalog())
                 && table.getUniqueConstraint().isEmpty();
     }

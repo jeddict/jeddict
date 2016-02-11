@@ -17,18 +17,14 @@ package org.netbeans.db.modeler.core.widget;
 
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
-import org.netbeans.db.modeler.spec.DBRelationTable;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -43,8 +39,6 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
             setName(value);
             setLabel(name);
         });
-
-        
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -107,7 +101,7 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Entity entity = table.getEntity();
         List<Id> id = entity.getAttributes().getId();
-        return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
+        return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getColumnName().toUpperCase();
     }
 
     @Override

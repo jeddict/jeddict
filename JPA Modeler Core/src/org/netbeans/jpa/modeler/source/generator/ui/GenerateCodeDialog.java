@@ -61,6 +61,7 @@ public class GenerateCodeDialog extends GenericDialog
         generateDefaultValue.setSelected(GeneratorUtil.isGenerateDefaultValue());
         getPropertyChangeSupport().addPropertyChangeListener(this);
         this.setTitle("Generate Source Code");
+        getRootPane().setDefaultButton(generateSourceCode);
     }
 
     /**

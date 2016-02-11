@@ -20,6 +20,7 @@ import org.netbeans.db.modeler.specification.model.engine.DBDiagramEngine;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.core.ModelerFile;
@@ -44,13 +45,17 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
 
+    private EntityMappings mappings;
+    
     @Override
     public void initSpecification(final ModelerFile modelerFile) {
         modelerFile.setIcon(TAB_ICON);
+        modelerFile.getAttributes().put(EntityMappings.class.getSimpleName(), mappings);
     }
 
     @Override
-    public void init(ModelerFile file) {
+    public void init(ModelerFile file , EntityMappings mappings) {
+        this.mappings=mappings;
         context = null;
         openModelerFile("DB", null, null, file);
     }

@@ -16,17 +16,17 @@
 package org.netbeans.jpa.modeler.specification.model.scene;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -44,8 +44,6 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
-import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
-import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -54,6 +52,10 @@ import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERATE_SRC;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_DB;
 import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.ModelerCore;
@@ -61,7 +63,6 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
@@ -69,11 +70,8 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
-import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
-import org.openide.util.Lookup;
-import org.openide.util.RequestProcessor;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -278,19 +276,15 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
         });
     }
+    
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem generateCode = new JMenuItem("Generate Source Code");
+        JMenuItem generateCode = new JMenuItem("Generate Source Code", GENERATE_SRC);
+        generateCode.setAccelerator( KeyStroke.getKeyStroke(Character.valueOf('G'),InputEvent.CTRL_DOWN_MASK));
         generateCode.addActionListener((ActionEvent e) -> {
-            GenerateCodeDialog dialog = new GenerateCodeDialog(JPAModelerScene.this.getModelerFile().getFileObject());
-            dialog.setVisible(true);
-            if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
-                RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
-                SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(JPAModelerScene.this.getModelerFile(), dialog.getTargetPoject(), dialog.getSourceGroup());
-                processor.post(task);
-            }
+            JPAModelerUtil.generateSourceCode(JPAModelerScene.this.getModelerFile());
         });
 
         JMenuItem manageVisibility = new JMenuItem("Manage Entity Visibility");
@@ -298,42 +292,17 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             fireEntityVisibilityAction(getModelerFile());
         });
 
-        JMenuItem visDB = new JMenuItem("Visualize DB");
+        JMenuItem visDB = new JMenuItem("Visualize DB", VIEW_DB);
+        visDB.setAccelerator( KeyStroke.getKeyStroke(Character.valueOf('D'),InputEvent.CTRL_DOWN_MASK));
         visDB.addActionListener((ActionEvent e) -> {
-            ModelerFile file = this.getModelerFile();
-            Optional<ModelerFile> dbModelerFile = file.getChildrenFile("DB");
-            if(dbModelerFile.isPresent()){
-                IModelerScene scene = dbModelerFile.get().getModelerScene();
-                scene.getBaseElements().stream().filter(element-> element instanceof INodeWidget).forEach(element -> {
-                    ((INodeWidget) element).remove(false);
-                });
-                dbModelerFile.get().getModelerUtil().loadModelerFile(dbModelerFile.get());
-            }
-            DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
-            dbModelerRequestManager.init(file);
+             JPAModelerUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
         });
 
-//        JMenuItem generateCodeFromDB = new JMenuItem("Generate DB code");
-//        generateCodeFromDB.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                GenerateCodeDialog dialog = new GenerateCodeDialog();
-//                dialog.setVisible(true);
-//                if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
-//                    RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
-//                    SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(JPAModelerScene.this.getModelerFile(), dialog.getSourceGroup().getRootFolder());
-//                    processor.post(task);
-//                }
-//
-//            }
-//        });
-//
-
         JMenu shareModeler = new JMenu("Share");
+        shareModeler.setIcon(SOCIAL_NETWORK_SHARING);
         shareModeler.add(TwitterSocialNetwork.getInstance().getComponent());
         shareModeler.add(LinkedInSocialNetwork.getInstance().getComponent());
         
-
         menuList.add(0, generateCode);
         menuList.add(1, visDB);
         menuList.add(2, null);

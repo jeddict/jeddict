@@ -15,21 +15,33 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.spec.Column;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class PrimaryKeyWidget extends ColumnWidget {
+public class PrimaryKeyWidget extends BasicColumnWidget{
 
     public PrimaryKeyWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.PRIMARYKEY);
+
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {

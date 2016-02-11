@@ -15,30 +15,20 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public class DBEmbeddedAssociationJoinColumn extends DBEmbeddedAssociationColumn {
 
-    private AssociationOverride associationOverride;
 
-    public DBEmbeddedAssociationJoinColumn(String name, Embedded embedded, Attribute managedAttribute) {
-        super(name, embedded, managedAttribute);
-        associationOverride = embedded.findAssociationOverride(managedAttribute.getName());
-        if (associationOverride == null) {
-            associationOverride = new AssociationOverride();
-            associationOverride.setName(managedAttribute.getName());
-//            associationOverride.setColumn(new Column());
-            embedded.addAssociationOverride(associationOverride);
-        }
+    public DBEmbeddedAssociationJoinColumn(String name, Embedded embedded, Attribute managedAttribute, boolean relationTableExist) {
+        super(name, embedded, managedAttribute, relationTableExist);
+//        joinColumns = JoinColumnFinder.findJoinColumns(managedAttribute, relationTableExist, false);
+//        joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
+
+        joinColumnsOverride = JoinColumnFinder.findJoinColumns(associationOverride, managedAttribute, relationTableExist, false);
+        joinColumnOverride = JoinColumnFinder.findJoinColumn(name, joinColumnsOverride);
     }
 
-    /**
-     * @return the associationOverride
-     */
-    public AssociationOverride getAssociationOverride() {
-        return associationOverride;
-    }
 
 }

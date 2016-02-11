@@ -30,7 +30,7 @@ public class CollectionTableValidator extends MarshalValidator<CollectionTable> 
         return table;
     }
 
-    public boolean isEmpty(CollectionTable table) {
+    public static boolean isEmpty(CollectionTable table) {
      JoinColumnValidator.filter(table.getJoinColumn());
         
         return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) && StringUtils.isBlank(table.getCatalog())

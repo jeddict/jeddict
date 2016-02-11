@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.specification.model.file.action;
 
+import org.netbeans.jpa.modeler.listener.ShortcutListener;
 import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -50,7 +51,7 @@ public class JPAFileActionListener extends ModelerFileActionListener {
 
     @Override
     public void initSpecification(final ModelerFile modelerFile) {
-
+        modelerFile.getModelerPanelTopComponent().addKeyListener(new ShortcutListener(modelerFile));
     }
 
 }

@@ -27,7 +27,7 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
  */
 public class EmbeddableSpecAccessor extends EmbeddableAccessor {
 
-    private Embeddable embeddable;
+    private final Embeddable embeddable;
 
     private EmbeddableSpecAccessor(Embeddable embeddable) {
         this.embeddable = embeddable;

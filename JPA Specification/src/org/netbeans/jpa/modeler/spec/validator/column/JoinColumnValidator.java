@@ -34,7 +34,11 @@ public class JoinColumnValidator extends MarshalValidator<JoinColumn> {
         return StringUtils.isBlank(column.getName()) && StringUtils.isBlank(column.getReferencedColumnName())
                 && StringUtils.isBlank(column.getColumnDefinition()) && StringUtils.isBlank(column.getTable())
                 && column.getNullable() && column.getInsertable() && column.getUpdatable() && !column.getUnique();
-    }    
+    }
+
+public static boolean isNotEmpty(JoinColumn column) {
+        return !isEmpty(column);
+}
     
     public static void filter(List<JoinColumn> columns) {
         columns.removeIf(JoinColumnValidator::isEmpty);

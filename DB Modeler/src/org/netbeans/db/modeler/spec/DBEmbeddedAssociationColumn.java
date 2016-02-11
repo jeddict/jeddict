@@ -15,21 +15,32 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.List;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBEmbeddedAssociationColumn extends DBEmbeddedColumn {
+public abstract class DBEmbeddedAssociationColumn extends DBEmbeddedColumn implements DBForeignKey {
 
-    private AssociationOverride associationOverride;
+    protected AssociationOverride associationOverride;
+    protected final boolean relationTableExist;
+    
+    
+    protected JoinColumn joinColumn;
+    protected List<JoinColumn> joinColumns;
+    
+        protected JoinColumn joinColumnOverride;
+    protected List<JoinColumn> joinColumnsOverride;
 
-    public DBEmbeddedAssociationColumn(String name, Embedded embedded, Attribute managedAttribute) {
+    public DBEmbeddedAssociationColumn(String name, Embedded embedded, Attribute managedAttribute, boolean relationTableExist) {
         super(name, embedded, managedAttribute);
+        this.relationTableExist = relationTableExist;
+
         associationOverride = embedded.findAssociationOverride(managedAttribute.getName());
         if (associationOverride == null) {
             associationOverride = new AssociationOverride();
             associationOverride.setName(managedAttribute.getName());
-//            associationOverride.setColumn(new Column());
             embedded.addAssociationOverride(associationOverride);
         }
     }
@@ -41,4 +52,31 @@ public class DBEmbeddedAssociationColumn extends DBEmbeddedColumn {
         return associationOverride;
     }
 
+    /**
+     * @return the joinColumn
+     */
+    public JoinColumn getJoinColumn() {
+        return joinColumn;
+    }
+
+    public List<JoinColumn> getJoinColumns() {
+        return joinColumns;
+    }
+    
+        public JoinColumn getJoinColumnOverride() {
+        return joinColumnOverride;
+    }
+
+    public List<JoinColumn> getJoinColumnsOverride() {
+        return joinColumnsOverride;
+    }
+
+   /**
+     * Get the value of relationTableExist
+     *
+     * @return the value of relationTableExist
+     */
+    public boolean isRelationTableExist() {
+        return relationTableExist;
+    }
 }

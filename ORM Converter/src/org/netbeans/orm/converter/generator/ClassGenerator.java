@@ -73,6 +73,10 @@ import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
+import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
+import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
+import org.netbeans.jpa.modeler.spec.validator.table.TableValidator;
 import org.netbeans.orm.converter.compiler.AssociationOverrideSnippet;
 import org.netbeans.orm.converter.compiler.AssociationOverridesSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverrideSnippet;
@@ -451,12 +455,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return fieldResults;
     }
 
-    protected List<JoinColumnSnippet> getJoinColumns(
-            List<JoinColumn> parsedJoinColumns) {
+    protected List<JoinColumnSnippet> getJoinColumns(List<JoinColumn> parsedJoinColumns) {
 
-        List<JoinColumnSnippet> joinColumns = new ArrayList<JoinColumnSnippet>();
+        List<JoinColumnSnippet> joinColumns = new ArrayList<>();
 
-        for (JoinColumn parsedJoinColumn : parsedJoinColumns) {
+            parsedJoinColumns.stream().filter(JoinColumnValidator::isNotEmpty).forEach(parsedJoinColumn -> {
 
             JoinColumnSnippet joinColumn = new JoinColumnSnippet();
 
@@ -485,13 +488,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             joinColumn.setTable(parsedJoinColumn.getTable());
 
             joinColumns.add(joinColumn);
-        }
+        });
 
         return joinColumns;
     }
 
     protected CollectionTableSnippet getCollectionTable(CollectionTable parsedCollectionTable) {
-        if (parsedCollectionTable == null) {
+        if (parsedCollectionTable == null || CollectionTableValidator.isEmpty(parsedCollectionTable)) {
             return null;
         }
 
@@ -516,7 +519,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected JoinTableSnippet getJoinTable(JoinTable parsedJoinTable) {
-        if (parsedJoinTable == null) {
+        if (parsedJoinTable == null || JoinTableValidator.isEmpty(parsedJoinTable)) {
             return null;
         }
 
@@ -1446,7 +1449,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected void processTable(Table parsedTable) {
 
-        if (parsedTable == null) {
+        if (parsedTable == null || TableValidator.isEmpty(parsedTable)) {
             return;
         }
 

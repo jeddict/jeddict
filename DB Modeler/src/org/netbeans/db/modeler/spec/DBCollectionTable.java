@@ -25,7 +25,6 @@ public class DBCollectionTable extends DBTable {
     public DBCollectionTable(String name, Entity entity, ElementCollection attribute) {
         super(name, entity);
         this.attribute = attribute;
-        attribute.getCollectionTable().setGeneratedName(name);
     }
 
     /**

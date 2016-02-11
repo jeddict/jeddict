@@ -26,7 +26,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
  */
 public class EmbeddedSpecAccessor extends EmbeddedAccessor {
 
-    private Embedded embedded;
+    private final Embedded embedded;
 
     private EmbeddedSpecAccessor(Embedded embedded) {
         this.embedded = embedded;
@@ -37,6 +37,7 @@ public class EmbeddedSpecAccessor extends EmbeddedAccessor {
         accessor.setName(embedded.getName());
         accessor.setAttributeType(embedded.getAttributeType());
         accessor.setAttributeOverrides(embedded.getAttributeOverride().stream().map(AttributeOverrideSpecMetadata::getInstance).collect(toList()));
+        accessor.setAssociationOverrides(embedded.getAssociationOverride().stream().map(AssociationOverrideSpecMetadata::getInstance).collect(toList()));
         return accessor;
     }
 

@@ -20,6 +20,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.db.accessor.BasicSpecAccessor;
@@ -53,24 +55,25 @@ import org.netbeans.jpa.modeler.spec.Transient;
 //    "embedded",
 //    "_transient"
 //})
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class BaseAttributes implements IAttributes {
 
     @XmlElement(name = "basic")
-    protected List<Basic> basic;
+    private List<Basic> basic;
     @XmlElement(name = "many-to-one")
-    protected List<ManyToOne> manyToOne;
+    private List<ManyToOne> manyToOne;
     @XmlElement(name = "one-to-many")
-    protected List<OneToMany> oneToMany;
+    private List<OneToMany> oneToMany;
     @XmlElement(name = "one-to-one")
-    protected List<OneToOne> oneToOne;
+    private List<OneToOne> oneToOne;
     @XmlElement(name = "many-to-many")
-    protected List<ManyToMany> manyToMany;
+    private List<ManyToMany> manyToMany;
     @XmlElement(name = "element-collection")
-    protected List<ElementCollection> elementCollection;
+    private List<ElementCollection> elementCollection;
     @XmlElement(name = "embedded")
-    protected List<Embedded> embedded;
+    private List<Embedded> embedded;
     @XmlElement(name = "transient")
-    protected List<Transient> _transient;
+    private List<Transient> _transient;
 
     /**
      * Gets the value of the basic property.
@@ -96,7 +99,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<Basic> getBasic() {
         if (basic == null) {
-            basic = new ArrayList<Basic>();
+            setBasic(new ArrayList<Basic>());
         }
         return this.basic;
     }
@@ -138,7 +141,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<ManyToOne> getManyToOne() {
         if (manyToOne == null) {
-            manyToOne = new ArrayList<ManyToOne>();
+            setManyToOne(new ArrayList<ManyToOne>());
         }
         return this.manyToOne;
     }
@@ -168,7 +171,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<OneToMany> getOneToMany() {
         if (oneToMany == null) {
-            oneToMany = new ArrayList<OneToMany>();
+            setOneToMany(new ArrayList<OneToMany>());
         }
         return this.oneToMany;
     }
@@ -198,7 +201,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<OneToOne> getOneToOne() {
         if (oneToOne == null) {
-            oneToOne = new ArrayList<OneToOne>();
+            setOneToOne(new ArrayList<OneToOne>());
         }
         return this.oneToOne;
     }
@@ -228,7 +231,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<ManyToMany> getManyToMany() {
         if (manyToMany == null) {
-            manyToMany = new ArrayList<ManyToMany>();
+            setManyToMany(new ArrayList<ManyToMany>());
         }
         return this.manyToMany;
     }
@@ -258,7 +261,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<ElementCollection> getElementCollection() {
         if (elementCollection == null) {
-            elementCollection = new ArrayList<ElementCollection>();
+            setElementCollection(new ArrayList<ElementCollection>());
         }
         return this.elementCollection;
     }
@@ -300,7 +303,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<Embedded> getEmbedded() {
         if (embedded == null) {
-            embedded = new ArrayList<Embedded>();
+            setEmbedded(new ArrayList<Embedded>());
         }
         return this.embedded;
     }
@@ -342,7 +345,7 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public List<Transient> getTransient() {
         if (_transient == null) {
-            _transient = new ArrayList<Transient>();
+            setTransient(new ArrayList<Transient>());
         }
         return this._transient;
     }
@@ -596,6 +599,62 @@ public abstract class BaseAttributes implements IAttributes {
         attr.getOneToManys().addAll(getOneToMany().stream().map(OneToManySpecAccessor::getInstance).collect(toList()));
         attr.getOneToOnes().addAll(getOneToOne().stream().map(OneToOneSpecAccessor::getInstance).collect(toList()));
         return attr;
+    }
+
+    /**
+     * @param basic the basic to set
+     */
+    public void setBasic(List<Basic> basic) {
+        this.basic = basic;
+    }
+
+    /**
+     * @param manyToOne the manyToOne to set
+     */
+    public void setManyToOne(List<ManyToOne> manyToOne) {
+        this.manyToOne = manyToOne;
+    }
+
+    /**
+     * @param oneToMany the oneToMany to set
+     */
+    public void setOneToMany(List<OneToMany> oneToMany) {
+        this.oneToMany = oneToMany;
+    }
+
+    /**
+     * @param oneToOne the oneToOne to set
+     */
+    public void setOneToOne(List<OneToOne> oneToOne) {
+        this.oneToOne = oneToOne;
+    }
+
+    /**
+     * @param manyToMany the manyToMany to set
+     */
+    public void setManyToMany(List<ManyToMany> manyToMany) {
+        this.manyToMany = manyToMany;
+    }
+
+    /**
+     * @param elementCollection the elementCollection to set
+     */
+    public void setElementCollection(List<ElementCollection> elementCollection) {
+        this.elementCollection = elementCollection;
+    }
+
+    /**
+     * @param embedded the embedded to set
+     */
+    public void setEmbedded(List<Embedded> embedded) {
+        this.embedded = embedded;
+    }
+
+    /**
+     * @param _transient the _transient to set
+     */
+    public void setTransient(List<Transient> _transient) {
+        this._transient = _transient;
     }
 
 }

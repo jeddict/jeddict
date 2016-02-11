@@ -17,9 +17,15 @@ package org.netbeans.db.modeler.specification.model.util;
 
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
@@ -117,7 +123,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public void loadModelerFile(ModelerFile file) {
         try {
 
-            EntityMappings entityMapping = (EntityMappings) file.getParentFile().getModelerScene().getBaseElementSpec();
+//            EntityMappings entityMapping = (EntityMappings) file.getParentFile().getModelerScene().getBaseElementSpec();
+            EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
             DBMapping dbMapping = createDBMapping(entityMapping);
@@ -138,7 +145,16 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             end = end < 1 ? message.length() : end;
             int start = message.lastIndexOf("Exception Description:");
             start = start < 1 ? 0 : start;
-            NotifyDescriptor nd = new NotifyDescriptor.Message(message.substring(start, end), NotifyDescriptor.ERROR_MESSAGE);
+            final String errorMessage = message.substring(start, end);
+            NotifyDescriptor nd = new NotifyDescriptor.Message(errorMessage, NotifyDescriptor.ERROR_MESSAGE);
+            JButton copyErrorMessage = new JButton("Copy error message");
+            copyErrorMessage.addActionListener((ActionEvent e) -> {
+                Toolkit toolkit = Toolkit.getDefaultToolkit();
+                Clipboard clipboard = toolkit.getSystemClipboard();
+                StringSelection strSel = new StringSelection(errorMessage);
+                clipboard.setContents(strSel, null);
+            });
+            nd.setOptions(new Object[]{copyErrorMessage});
             DialogDisplayer.getDefault().notify(nd);
         } catch (Exception ex) {
 //            IO.getOut().println("Exception: " + ex.toString());

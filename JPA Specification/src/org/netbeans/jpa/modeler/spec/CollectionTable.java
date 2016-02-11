@@ -89,9 +89,6 @@ public class CollectionTable {
     @XmlAttribute(name = "schema")
     protected String schema;
 
-    @XmlTransient
-    private String generatedName;
-
     public static CollectionTable load(Element element, VariableElement variableElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinTable");
 
@@ -296,19 +293,4 @@ public class CollectionTable {
         return accessor;
     }
 
-    /**
-     * @param generatedName the generatedName to set
-     */
-    public void setGeneratedName(String generatedName) {
-        this.generatedName = generatedName;
-    }
-    
-
-
-    /**
-     * @return the generatedName
-     */
-    public String getGeneratedName() {
-        return generatedName;
-    }
 }

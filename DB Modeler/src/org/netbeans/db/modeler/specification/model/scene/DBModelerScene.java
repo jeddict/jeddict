@@ -245,32 +245,19 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public void destroy() {
-//        Iterator<DBColumn> itr = this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
-//                .filter(c -> c instanceof DBForeignKey).collect(toList()).iterator();
-//        
-//        
-//        while (itr.hasNext()) {
-//            DBColumn column = itr.next();
-//            List<JoinColumn> joinColumns;
-//            JoinColumn joinColumn;
-//                joinColumn = ((DBForeignKey) column).getJoinColumn();
-//                joinColumns = ((DBForeignKey) column).getJoinColumns();
-//            if (JoinColumnValidator.isEmpty(joinColumn)) {
-//                joinColumns.remove(joinColumn);
-//            }
-//
-//        }
-        this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
-                .filter(c -> c instanceof DBForeignKey).collect(toList())
-                .forEach((DBColumn column) -> {
-                    List<JoinColumn> joinColumns;
-                    JoinColumn joinColumn;
-                    joinColumn = ((DBForeignKey) column).getJoinColumn();
-                    joinColumns = ((DBForeignKey) column).getJoinColumns();
-                    if (JoinColumnValidator.isEmpty(joinColumn)) {
-                        joinColumns.remove(joinColumn);
-                    }
-                });
+        if (this.getModelerFile().isLoaded()) {
+            this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
+                    .filter(c -> c instanceof DBForeignKey).collect(toList())
+                    .forEach((DBColumn column) -> {
+                        List<JoinColumn> joinColumns;
+                        JoinColumn joinColumn;
+                        joinColumn = ((DBForeignKey) column).getJoinColumn();
+                        joinColumns = ((DBForeignKey) column).getJoinColumns();
+                        if (JoinColumnValidator.isEmpty(joinColumn)) {
+                            joinColumns.remove(joinColumn);
+                        }
+                    });
+        }
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.manager;
 
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -23,6 +24,6 @@ import org.netbeans.modeler.core.ModelerFile;
  */
 public interface DBModelerRequestManager {
 
-    void init(ModelerFile file);
+    void init(ModelerFile file , EntityMappings mappings);
 
 }

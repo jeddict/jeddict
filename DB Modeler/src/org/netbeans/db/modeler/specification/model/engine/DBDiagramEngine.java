@@ -57,14 +57,15 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
         bar.add(reloadButton);
         reloadButton.addActionListener((ActionEvent e) -> {
             ModelerFile parentFile = file.getParentFile();
-
             IModelerScene scene = file.getModelerScene();
             scene.getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
                 ((INodeWidget) element).remove(false);
             });
+            file.unload();
             file.getModelerUtil().loadModelerFile(file);
-            DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
-            dbModelerRequestManager.init(parentFile);
+            file.loaded();
+            DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);
+            dbModelerRequestManager.init(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
         });
     }
 
@@ -83,9 +84,15 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
             DatabaseConnection connection = DBConnectionUtil.getConnection(dbConComboBox);
             if (connection != null) {
                 ModelerFile parentFile = file.getParentFile();
-                file.getModelerPanelTopComponent().close();
-                DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
-                dbModelerRequestManager.init(parentFile);
+                IModelerScene scene = file.getModelerScene();
+                scene.getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
+                    ((INodeWidget) element).remove(false);
+                });
+                file.unload();
+                file.getModelerUtil().loadModelerFile(file);
+                file.loaded();
+                DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);
+                dbModelerRequestManager.init(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
                 parentFile.addAttribute(DatabaseConnection.class.getName(), connection);
             }
 

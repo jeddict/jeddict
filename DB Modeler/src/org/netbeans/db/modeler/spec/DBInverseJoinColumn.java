@@ -15,55 +15,22 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 
 public class DBInverseJoinColumn extends DBColumn<RelationAttribute> implements DBForeignKey {
 
     private final boolean relationTableExist;
 
-    private JoinColumn joinColumn;
-    private List<JoinColumn> joinColumns;
+    private final JoinColumn joinColumn;
+    private final List<JoinColumn> joinColumns;
 
     public DBInverseJoinColumn(String name, RelationAttribute attribute, boolean relationTableExist) {
         super(name, attribute);
         this.relationTableExist = relationTableExist;
-
-        if (!relationTableExist) {
-            if (attribute instanceof SingleRelationAttribute) {
-                joinColumns = ((SingleRelationAttribute) attribute).getJoinColumn();
-            } else if (attribute instanceof OneToMany) {
-                joinColumns = ((OneToMany) attribute).getJoinColumn();
-            } else {
-                throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
-            }
-        } else {
-            joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
-        }
-
-        boolean created = false;
-        if (!joinColumns.isEmpty()) {
-            for (Iterator<JoinColumn> it = joinColumns.iterator(); it.hasNext();) {
-                JoinColumn column = it.next();
-                if (name.equals(column.getName())) {
-                    this.joinColumn = column;
-                    created = true;
-                    break;
-                } else if (StringUtils.isBlank(column.getName())) {
-                    it.remove();
-                }
-            }
-        }
-
-        if (!created) {
-            joinColumn = new JoinColumn();
-            joinColumns.add(joinColumn);
-        }
+        joinColumns = JoinColumnFinder.findJoinColumns(attribute, relationTableExist, true);
+        joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
     }
 
     /**

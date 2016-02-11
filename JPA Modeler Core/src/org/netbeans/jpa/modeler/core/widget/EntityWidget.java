@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.BRANCH;
@@ -25,19 +26,23 @@ import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
-import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
-import org.netbeans.jpa.modeler.spec.Table;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MICRO_DB;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
+import org.openide.util.Lookup;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
@@ -225,26 +230,16 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-//        JMenuItem addEntityGraph;
-//        addEntityGraph = new JMenuItem("Add Entity Graph");
-//        addEntityGraph.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                Component parentComponent = (Component)EntityWidget.this.getModelerScene().getModelerPanelTopComponent();
-//                String name = JOptionPane.showInputDialog(parentComponent, "Please enter entity graph name : ", null);
-//                openDiagram(name);
-//            }
-//        });
-//        menuList.add(0, addEntityGraph);
+        JMenuItem visDB = new JMenuItem("Micro DB", MICRO_DB);
+        visDB.addActionListener((ActionEvent e) -> {
+            ModelerFile file = this.getModelerScene().getModelerFile();
+            JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(),this.getBaseElementSpec()));
+        });            
+        
+        menuList.add(0, visDB);
         return menuList;
     }
     
-    
-//     public void openDiagram(String entityGraphId) {
-//        String path = this.getModelerScene().getModelerPanelTopComponent().getToolTipText();
-//        JPAFileActionListener fileAction = new JPAFileActionListener(this.getModelerScene().getModelerFile().getModelerFileDataObject());
-//        fileAction.openModelerFile(entityGraphId,entityGraphId,entityGraphId + " > " + path);
-//    }
 
     /**
      * @return the abstractEntity

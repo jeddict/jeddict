@@ -74,9 +74,9 @@ public class JPAMFieldDefinition extends FieldDefinition {
         } else if (intrinsicAttribute instanceof Embedded && managedAttribute != null) {
             if (managedAttribute instanceof RelationAttribute) {
                 if (inverse) {
-                    column = new DBEmbeddedAssociationInverseJoinColumn(name, (Embedded) intrinsicAttribute, managedAttribute);
+                    column = new DBEmbeddedAssociationInverseJoinColumn(name, (Embedded) intrinsicAttribute, managedAttribute,relationTable);
                 } else {
-                    column = new DBEmbeddedAssociationJoinColumn(name, (Embedded) intrinsicAttribute, managedAttribute);
+                    column = new DBEmbeddedAssociationJoinColumn(name, (Embedded) intrinsicAttribute, managedAttribute,relationTable);
                 }
             } else {
                 column = new DBEmbeddedAttributeColumn(name, (Embedded) intrinsicAttribute, managedAttribute);

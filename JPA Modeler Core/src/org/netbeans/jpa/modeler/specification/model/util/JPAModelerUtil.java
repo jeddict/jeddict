@@ -20,9 +20,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import static java.util.stream.Collectors.toSet;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBContext;
@@ -33,6 +38,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -78,6 +84,9 @@ import org.netbeans.jpa.modeler.core.widget.flow.relation.UOTORelationFlowWidget
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
+import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
+import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
+import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -96,6 +105,7 @@ import org.netbeans.jpa.modeler.spec.design.DiagramElement;
 import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
+import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
@@ -120,6 +130,7 @@ import org.netbeans.modeler.core.exception.ModelerException;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
@@ -142,6 +153,8 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.RequestProcessor;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
@@ -203,10 +216,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
     public static Image ABSTRACT_ENTITY;
     public static Image ENTITY;
-    
+
+    public static Icon GENERATE_SRC;
+    public static Icon ENTITY_VISIBILITY;
+    public static Icon VIEW_DB;
+    public static Icon SOCIAL_NETWORK_SHARING;
     public static Icon TWITTER;
     public static Icon LINKEDIN;
-    
+    public static Icon MICRO_DB;
 
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
@@ -220,8 +237,18 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         } catch (JAXBException ex) {
             Exceptions.printStackTrace(ex);
         }
-//        IO = IOProvider.getDefault().getIO("JPA Modeler", false);
 
+        ClassLoader cl = JPAModelerUtil.class.getClassLoader();//Eager Initialization
+        GENERATE_SRC = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/generate-src.png"));
+        ENTITY_VISIBILITY = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/entity-visibility.png"));
+        VIEW_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/db.png"));
+        MICRO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/micro-db.png"));
+        
+        SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/share.png"));
+        TWITTER = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/twitter.png"));
+        LINKEDIN = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/linkedin.png"));
+        
+//        IO = IOProvider.getDefault().getIO("JPA Modeler", false);
     }
 
     @Override
@@ -291,9 +318,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             VERSION_ATTRIBUTE = new ImageIcon(cl.getResource(VERSION_ATTRIBUTE_ICON_PATH)).getImage();
             MULTIVALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
 
-            
-            TWITTER = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/twitter.png"));
-            LINKEDIN = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/linkedin.png"));
         }
     }
 
@@ -771,9 +795,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         saveFile(entityMappings, file.getFile());
     }
 
-       
-
-         public static void saveFile(EntityMappings entityMappings, File file) {
+    public static void saveFile(EntityMappings entityMappings, File file) {
         try {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
@@ -790,8 +812,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
     }
 
-  
-  
     public static void createNewModelerFile(EntityMappings entityMappingsSpec, FileObject parentFileObject, String fileName, boolean autoOpen) {
         File jpaFile = null;
         try {
@@ -815,7 +835,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     }
 
-
     private static String getFileName(String fileName, Integer index, FileObject parentFileObject) {
         File jpaFile;
         if (index == null) {
@@ -835,7 +854,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
     }
 
- 
     @Override
     public INodeWidget updateNodeWidgetDesign(ShapeDesign shapeDesign, INodeWidget inodeWidget) {
         PNodeWidget nodeWidget = (PNodeWidget) inodeWidget;
@@ -1317,9 +1335,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //                    columnComboBox.addItem(new ComboBoxValue(basic, basic.getName()));
 //                }
 //            });
-int i=0;
-int selectedItemIndex=-1;
-            for(Id id : entity.getAttributes().getId()) {
+            int i = 0;
+            int selectedItemIndex = -1;
+            for (Id id : entity.getAttributes().getId()) {
                 String columnName;
                 if (id.getColumn() != null && org.apache.commons.lang.StringUtils.isNotBlank(id.getColumn().getName())) {
                     columnName = id.getColumn().getName();
@@ -1327,13 +1345,101 @@ int selectedItemIndex=-1;
                     columnName = id.getName();
                 }
                 columnComboBox.addItem(new ComboBoxValue(id, columnName));
-                if(columnName.equalsIgnoreCase(selectedColumnName)){
+                if (columnName.equalsIgnoreCase(selectedColumnName)) {
                     selectedItemIndex = i;
                 }
                 i++;
             }
             columnComboBox.setSelectedIndex(selectedItemIndex);
         }
+    }
+
+    /**
+     * Micro DB filter
+     *
+     * @param mappings The graph
+     * @param entity The master node
+     * @return
+     */
+    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity entity) {
+
+        EntityMappings mappingClone = cloneObject(mappings);
+        Entity entityClone = mappingClone.getEntity(entity.getId());
+
+        Set<Entity> relationClasses = getRelationClass(entityClone.getAttributes());
+
+        mappingClone.getEntity().stream().filter(e -> e.getAttributes().getRelationAttributes().stream().anyMatch(r -> r.getConnectedEntity() == entityClone)).forEach(relationClasses::add);
+        relationClasses.remove(entityClone);
+        relationClasses.stream().map(e -> e.getAttributes()).forEach(attr -> {
+            attr.getManyToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
+            attr.getManyToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
+            attr.getOneToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
+            attr.getOneToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
+            attr.setEmbedded(null);
+        });
+        relationClasses.add(entityClone);
+        mappingClone.setEntity(new ArrayList<>());
+        relationClasses.stream().forEach(mappingClone::addEntity);
+        return mappingClone;
+    }
+
+    private static Set<Entity> getRelationClass(BaseAttributes attributes) {
+        Set<Entity> relationAttributeconnected = attributes.getRelationAttributes().stream().map(RelationAttribute::getConnectedEntity).collect(toSet());
+        relationAttributeconnected.addAll(attributes.getEmbedded().stream().map(e -> e.getConnectedClass()).flatMap(c -> getRelationClass(c.getAttributes()).stream()).collect(toSet()));
+        if (attributes instanceof Attributes && ((Attributes) attributes).getEmbeddedId() != null) {
+            relationAttributeconnected.addAll(getRelationClass(((Attributes) attributes).getEmbeddedId().getConnectedClass().getAttributes()));
+        }
+        return relationAttributeconnected;
+    }
+
+    public static EntityMappings cloneObject(EntityMappings entityMappings) {
+        EntityMappings definition_Load = null;
+        try {
+            if (MODELER_MARSHALLER == null) {
+                MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
+                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
+                MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
+            }
+            StringWriter sw = new StringWriter();
+            MODELER_MARSHALLER.marshal(entityMappings, sw);
+
+            if (MODELER_UNMARSHALLER == null) {
+                MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
+            }
+            StringReader reader = new StringReader(sw.toString());
+            definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(reader), EntityMappings.class).getValue();
+        } catch (JAXBException ex) {
+            ex.printStackTrace();
+        }
+        return definition_Load;
+    }
+    
+    public static void generateSourceCode(ModelerFile modelerFile) {
+        GenerateCodeDialog dialog = new GenerateCodeDialog(modelerFile.getFileObject());
+        dialog.setVisible(true);
+        if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
+            RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
+            SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(modelerFile, dialog.getTargetPoject(), dialog.getSourceGroup());
+            processor.post(task);
+        }
+    }
+    
+    public static void openDBViewer(ModelerFile file , EntityMappings entityMappings) {
+        DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
+            dbModelerRequestManager.init(file, entityMappings);
+            
+            Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
+            if(dbChildModelerFile.isPresent()){
+                ModelerFile childModelerFile = dbChildModelerFile.get();
+                IModelerScene scene = childModelerFile.getModelerScene();
+                scene.getBaseElements().stream().filter(element-> element instanceof INodeWidget).forEach(element -> {
+                    ((INodeWidget) element).remove(false);
+                });
+                childModelerFile.unload();
+                childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
+                childModelerFile.loaded();
+            }
     }
 
 }

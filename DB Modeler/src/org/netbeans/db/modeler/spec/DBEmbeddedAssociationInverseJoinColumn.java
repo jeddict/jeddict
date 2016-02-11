@@ -23,8 +23,8 @@ public class DBEmbeddedAssociationInverseJoinColumn extends DBEmbeddedAssociatio
 
     private AssociationOverride associationOverride;
 
-    public DBEmbeddedAssociationInverseJoinColumn(String name, Embedded embedded, Attribute managedAttribute) {
-        super(name, embedded, managedAttribute);
+    public DBEmbeddedAssociationInverseJoinColumn(String name, Embedded embedded, Attribute managedAttribute, boolean relationTableExist) {
+        super(name, embedded, managedAttribute,relationTableExist);
         associationOverride = embedded.findAssociationOverride(managedAttribute.getName());
         if (associationOverride == null) {
             associationOverride = new AssociationOverride();

@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
@@ -24,6 +25,9 @@ import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Column;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
@@ -66,69 +70,58 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
         return pinWidgetInfo;
     }
 
-    private String evaluateLabel() {
-        AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
-        Column embeddableColumn = null;
-        Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
-        PersistenceBaseAttribute baseRefAttribute = null;
-        if (refAttribute instanceof PersistenceBaseAttribute) {
-            baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
-            embeddableColumn = baseRefAttribute.getColumn();
-        }
-
-//        if (StringUtils.isNotBlank(associationOverride.getColumn().getName())) {
-//            return associationOverride.getColumn().getName();
-//        } else if (StringUtils.isNotBlank(embeddableColumn.getName())) {
-//            return embeddableColumn.getName();
-//        } else {
-            return baseRefAttribute.getDefaultColumnName();
-//        }
-
+    private void setDefaultName() {
+        String name = getDefaultJoinColumnName();
+        updateJoinColumn(null);
+        this.name = null;
+        setLabel(name);
+    }
+    
+    private void updateJoinColumn(String newName){ 
+     JoinColumn column = this.getBaseElementSpec().getJoinColumnOverride();
+        column.setName(newName);
     }
 
-    private void setDefaultName() {
-        this.name = evaluateLabel();
+    private String getDefaultJoinColumnName() {
+        DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
+        Entity entity = table.getEntity();
+        List<Id> id = entity.getAttributes().getId();
+        return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
+    }
 
-        if (SQLKeywords.isSQL99ReservedKeyword(EmbeddedAssociationJoinColumnWidget.this.getName())) {
+    @Override
+    public void setName(String name) {
+        if (StringUtils.isNotBlank(name)) {
+            this.name = name.replaceAll("\\s+", "");
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumnOverride();
+                joinColumn.setName(this.name);
+            }
+        } else {
+            setDefaultName();
+        }
+        if (SQLKeywords.isSQL99ReservedKeyword(name)) {
             this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
             this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
-        if (tableSpec.findColumns(this.getName()).size() > 1) {
+        if (tableSpec.findColumns(name).size() > 1) {
             errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         } else {
             errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         }
-        setLabel(name);
-    }
 
-    @Override
-    public void setName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            if (this.getModelerScene().getModelerFile().isLoaded()) {
-                AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
-//                attributeOverride.getColumn().setName(this.name);
-            }
-        } else {
-            AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
-//            attributeOverride.getColumn().setName(null);
-        }
-        setDefaultName();
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
-        if (refAttribute instanceof PersistenceBaseAttribute) {
-            PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
-            if (baseRefAttribute.getColumn() == null) {
-                baseRefAttribute.setColumn(new Column());
-            }
-//            set.createPropertySet("EMBEDDABLE_COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
-        }
-        AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
-//        set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
+//        JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
+//        set.createPropertySet("EMBEDDABLE_JOINCOLUMN", this, joinColumn, getPropertyChangeListeners());
+
+        JoinColumn joinColumnOverride = this.getBaseElementSpec().getJoinColumnOverride();
+        set.createPropertySet("ASSOCIATION_OVERRIDE", this, joinColumnOverride, getPropertyChangeListeners());
     }
+    
 }
