@@ -56,6 +56,8 @@ public class DBColorScheme implements IColorScheme {
     private final org.netbeans.api.visual.border.Border OPAQUE_BORDER;
     private final Image BUTTON_E;
     private final Image BUTTON_C;
+    private final Image BUTTON_E_F;
+    private final Image BUTTON_C_F;
     private final Image BUTTON_E_H;
     private final Image BUTTON_C_H;
     private final Color COLOR1;
@@ -126,13 +128,12 @@ public class DBColorScheme implements IColorScheme {
         SCENE_BACKGROUND = getBackgroundPaint();//Color.white;
 
         OPAQUE_BORDER = BorderFactory.createOpaqueBorder(2, 8, 2, 8);
-        BUTTON_E = ImageUtilities.loadImage("org/netbeans/db/modeler/theme/expand.png");
-        BUTTON_C = ImageUtilities.loadImage("org/netbeans/db/modeler/theme/collapse.png");
-        ImageFilter filter = new GrayFilter(true, 5);
-        ImageProducer producer = new FilteredImageSource(BUTTON_E.getSource(), filter);
-        BUTTON_E_H = Toolkit.getDefaultToolkit().createImage(producer);
-        producer = new FilteredImageSource(BUTTON_C.getSource(), filter);
-        BUTTON_C_H = Toolkit.getDefaultToolkit().createImage(producer);
+        BUTTON_E = ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/theme/expand_u.png");
+        BUTTON_C = ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/theme/collapse_u.png");
+        BUTTON_E_F = ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/theme/expand_f.png");
+        BUTTON_C_F = ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/theme/collapse_f.png");
+        BUTTON_E_H = ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/theme/expand_h.png");
+        BUTTON_C_H = ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/theme/collapse_h.png");
 
         COLOR1 = new Color(221, 235, 246);
         COLOR2 = new Color(255, 255, 255);
@@ -214,6 +215,9 @@ public class DBColorScheme implements IColorScheme {
                 widget.getHeader().setBackground(gp);
                 widget.setBorder(WIDGET_BORDER);
             }
+            System.out.println("state.isHovered() : " + state.isHovered());
+            System.out.println("state.isFocused() : " + state.isFocused());
+            System.out.println("state.isSelected() : " + state.isSelected());
             widget.getMinimizeButton().setImage(this.getMinimizeWidgetImage(state, widget));
         }
 
@@ -298,7 +302,9 @@ public class DBColorScheme implements IColorScheme {
     }
 
     public Image getMinimizeWidgetImage(ObjectState state, IPNodeWidget widget) {
-        return widget.isMinimized() ? (state.isHovered() ? BUTTON_E_H : BUTTON_E) : (state.isHovered() ? BUTTON_C_H : BUTTON_C);
+        return widget.isMinimized() ? 
+                (state.isHovered() ? BUTTON_E_H : (state.isSelected()? BUTTON_E_F : BUTTON_E)) : 
+                (state.isHovered() ? BUTTON_C_H : (state.isSelected()? BUTTON_C_F : BUTTON_C));
     }
 
     @Override
