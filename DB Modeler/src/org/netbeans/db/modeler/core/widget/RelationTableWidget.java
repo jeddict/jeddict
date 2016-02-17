@@ -15,6 +15,9 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import java.awt.event.ActionEvent;
+import java.util.List;
+import javax.swing.JMenuItem;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBRelationTable;
@@ -22,8 +25,11 @@ import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
@@ -88,6 +94,24 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
             } else {
                  return attribute.getConnectedEntity().getTableName().toUpperCase() + "_" + entity.getTableName().toUpperCase();
             }
+    }
+
+        @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuList = super.getPopupMenuItemList();
+            JMenuItem joinTable = new JMenuItem("Delete Join Table");//, MICRO_DB);
+            joinTable.addActionListener((ActionEvent e) -> {
+                convertToJoinColumn();
+                ModelerFile parentFile = RelationTableWidget.this.getModelerScene().getModelerFile().getParentFile();
+                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+            });
+            menuList.add(0, joinTable);
+        return menuList;
+    }
+    
+    private void convertToJoinColumn(){
+        DBRelationTable relationTable  = this.getBaseElementSpec();
+        relationTable.getAttribute().getJoinTable().clear();
     }
 
 }

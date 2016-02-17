@@ -25,6 +25,7 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -134,5 +135,14 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
     public void createPropertySet(ElementPropertySet set) {
     JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
     set.createPropertySet("JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+    }
+    
+    @Override
+    void convertToJoinTable(String name) {
+        DBJoinColumn joinColumn = this.getBaseElementSpec();
+        if (joinColumn.getAttribute() instanceof RelationAttribute) {
+            joinColumn.getJoinColumns().clear();
+            ((RelationAttribute) joinColumn.getAttribute()).getJoinTable().setName(name);
+        }
     }
 }

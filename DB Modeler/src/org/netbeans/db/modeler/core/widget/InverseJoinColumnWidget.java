@@ -60,7 +60,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     private String getDefaultJoinColumnName() {
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         Entity entity = attribute.getConnectedEntity();
-        List<Id> id = entity.getAttributes().getId();
+        List<Id> id = entity.getAttributes().getId();//TODO
         return attribute.getName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
     }
 
@@ -99,5 +99,12 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     public void createPropertySet(ElementPropertySet set) {
         JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
         set.createPropertySet("INVERSE_JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+    }
+    
+     void convertToJoinTable(String name){
+        DBInverseJoinColumn inverseJoinColumnSpec = (DBInverseJoinColumn)this.getBaseElementSpec();
+        inverseJoinColumnSpec.getJoinColumns().removeIf(c -> true);
+//        JoinColumnFinder.findJoinColumns(inverseJoinColumnSpec.getAttribute(), true, true);
+        inverseJoinColumnSpec.getAttribute().getJoinTable().setName(name);
     }
 }
