@@ -15,9 +15,11 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBRelationTable;
@@ -26,7 +28,10 @@ import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.JoinTable;
+import org.netbeans.jpa.modeler.spec.OneToMany;
+import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
@@ -99,6 +104,8 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
+        DBRelationTable relationTable  = this.getBaseElementSpec();
+        if(relationTable.getAttribute() instanceof JoinColumnHandler){
             JMenuItem joinTable = new JMenuItem("Delete Join Table");//, MICRO_DB);
             joinTable.addActionListener((ActionEvent e) -> {
                 convertToJoinColumn();
@@ -106,12 +113,21 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
                 JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
             });
             menuList.add(0, joinTable);
+        }
         return menuList;
     }
     
     private void convertToJoinColumn(){
         DBRelationTable relationTable  = this.getBaseElementSpec();
         relationTable.getAttribute().getJoinTable().clear();
+        if(relationTable.getAttribute() instanceof OneToMany){
+             String joinColumnName = JOptionPane.showInputDialog((Component)RelationTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join column name (required) :");
+               ((JoinColumnHandler)relationTable.getAttribute()).getJoinColumn().clear();
+               JoinColumn joinColumn = new JoinColumn();
+               joinColumn.setName(joinColumnName);
+               ((JoinColumnHandler)relationTable.getAttribute()).addJoinColumn(joinColumn);
+        }
+        
     }
 
 }

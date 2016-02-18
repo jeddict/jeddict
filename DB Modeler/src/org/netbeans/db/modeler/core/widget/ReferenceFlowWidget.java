@@ -107,7 +107,7 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
     public void setReferenceColumnWidget(ColumnWidget referenceColumnWidget) {
         this.referenceColumnWidget = referenceColumnWidget;
         if (referenceColumnWidget != null) {
-            referenceColumnWidget.removeReferenceFlowWidget(this);
+            referenceColumnWidget.addReferenceFlowWidget(this);
         }
     }
 

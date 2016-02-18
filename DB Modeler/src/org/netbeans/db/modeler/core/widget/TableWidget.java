@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JMenuItem;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -206,6 +208,13 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     @Override
     public ContextPaletteModel getContextPaletteModel() {
         return null;
+    }
+    
+     @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuItemList = new LinkedList<>();
+        menuItemList.add(getPropertyMenu());
+        return menuItemList;
     }
 
 }

@@ -25,6 +25,7 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
@@ -51,6 +52,10 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     }
 
     private void setDefaultName() {
+//        Attribute attribute = this.getBaseElementSpec().getAttribute();
+//        if(attribute instanceof OneToMany){
+//            return;
+//        }
         String name = getDefaultJoinColumnName();
         updateJoinColumn(null);
         this.name = null;
