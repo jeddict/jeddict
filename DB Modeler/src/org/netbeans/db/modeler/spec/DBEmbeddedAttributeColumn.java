@@ -17,6 +17,7 @@ package org.netbeans.db.modeler.spec;
 
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Column;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
@@ -27,6 +28,9 @@ public class DBEmbeddedAttributeColumn extends DBEmbeddedColumn {
     
     public DBEmbeddedAttributeColumn(String name, Embedded embedded, Attribute managedAttribute) {
         super(name,embedded, managedAttribute);
+        if(managedAttribute instanceof ElementCollection){
+            
+        } else {
        attributeOverride = embedded.findAttributeOverride(managedAttribute.getName());
        if(attributeOverride == null){
            attributeOverride = new AttributeOverride();
@@ -34,6 +38,7 @@ public class DBEmbeddedAttributeColumn extends DBEmbeddedColumn {
            attributeOverride.setColumn(new Column());
            embedded.addAttributeOverride(attributeOverride);
        }
+        }
     }
 
 
