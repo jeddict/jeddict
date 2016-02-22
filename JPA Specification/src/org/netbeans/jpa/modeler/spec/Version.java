@@ -81,6 +81,9 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
      */
     @Override
     public Column getColumn() {
+        if (column == null) {
+            column = new Column();
+        }
         return column;
     }
 

@@ -99,6 +99,9 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
      */
     @Override
     public Column getColumn() {
+        if (column == null) {
+            column = new Column();
+        }
         return column;
     }
 
