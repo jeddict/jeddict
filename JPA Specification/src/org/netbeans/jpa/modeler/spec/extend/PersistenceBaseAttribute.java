@@ -26,7 +26,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  *
  * @author Gaurav Gupta
  */
-public abstract class PersistenceBaseAttribute extends BaseAttribute {
+public abstract class PersistenceBaseAttribute extends BaseAttribute implements ColumnHandler{
 
     @XmlAttribute(name = "attribute-type", required = true)
     private String attributeType;
