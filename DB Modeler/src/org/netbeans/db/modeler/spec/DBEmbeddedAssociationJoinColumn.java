@@ -15,19 +15,21 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.List;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public class DBEmbeddedAssociationJoinColumn extends DBEmbeddedAssociationColumn {
 
 
-    public DBEmbeddedAssociationJoinColumn(String name, Embedded embedded, Attribute managedAttribute, boolean relationTableExist) {
-        super(name, embedded, managedAttribute, relationTableExist);
-//        joinColumns = JoinColumnFinder.findJoinColumns(managedAttribute, relationTableExist, false);
-//        joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
+    public DBEmbeddedAssociationJoinColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute, boolean relationTableExist) {
+        super(name, embeddedList, managedAttribute, relationTableExist);
 
         joinColumnsOverride = JoinColumnFinder.findJoinColumns(associationOverride, managedAttribute, relationTableExist, false);
         joinColumnOverride = JoinColumnFinder.findJoinColumn(name, joinColumnsOverride);
+
+        joinColumns = JoinColumnFinder.findJoinColumns(managedAttribute, relationTableExist, false);
+        joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
     }
 
 

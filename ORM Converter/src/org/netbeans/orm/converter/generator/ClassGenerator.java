@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -317,8 +318,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    protected void processTransient(
-            List<Transient> parsedTransients) {
+    protected void processTransient(List<Transient> parsedTransients) {
 
         for (Transient parsedTransient : parsedTransients) {
             VariableDefSnippet variableDef = getVariableDef(parsedTransient);

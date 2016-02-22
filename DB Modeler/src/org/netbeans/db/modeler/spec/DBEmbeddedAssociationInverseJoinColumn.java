@@ -15,30 +15,19 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import org.netbeans.jpa.modeler.spec.AssociationOverride;
+import java.util.List;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public class DBEmbeddedAssociationInverseJoinColumn extends DBEmbeddedAssociationColumn {
 
-    private AssociationOverride associationOverride;
+    public DBEmbeddedAssociationInverseJoinColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute, boolean relationTableExist) {
+        super(name, embeddedList, managedAttribute,relationTableExist);
+        joinColumnsOverride = JoinColumnFinder.findJoinColumns(associationOverride, managedAttribute, relationTableExist, true);
+        joinColumnOverride = JoinColumnFinder.findJoinColumn(name, joinColumnsOverride);
 
-    public DBEmbeddedAssociationInverseJoinColumn(String name, Embedded embedded, Attribute managedAttribute, boolean relationTableExist) {
-        super(name, embedded, managedAttribute,relationTableExist);
-        associationOverride = embedded.findAssociationOverride(managedAttribute.getName());
-        if (associationOverride == null) {
-            associationOverride = new AssociationOverride();
-            associationOverride.setName(managedAttribute.getName());
-//            associationOverride.setColumn(new Column());
-            embedded.addAssociationOverride(associationOverride);
-        }
-    }
-
-    /**
-     * @return the associationOverride
-     */
-    public AssociationOverride getAssociationOverride() {
-        return associationOverride;
+        joinColumns = JoinColumnFinder.findJoinColumns(managedAttribute, relationTableExist, true);
+        joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
     }
 
 }

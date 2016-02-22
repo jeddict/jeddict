@@ -21,11 +21,11 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
@@ -44,6 +44,7 @@ import org.netbeans.db.modeler.core.widget.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
@@ -58,6 +59,7 @@ import org.netbeans.db.modeler.spec.DBEmbeddedAssociationColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
+import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
@@ -123,7 +125,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public void loadModelerFile(ModelerFile file) {
         try {
 
-//            EntityMappings entityMapping = (EntityMappings) file.getParentFile().getModelerScene().getBaseElementSpec();
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
@@ -244,6 +245,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                         } else if (column instanceof DBEmbeddedColumn) {
                             if (column instanceof DBEmbeddedAttributeColumn) {
                                 tableWidget.addEmbeddedAttributeColumn(column.getName(), column);
+                            } else if (column instanceof DBEmbeddedAttributeJoinColumn) {
+                                tableWidget.addEmbeddedAttributeJoinColumn(column.getName(), column);
                             } else if (column instanceof DBEmbeddedAssociationColumn) {
                                 if (column instanceof DBEmbeddedAssociationInverseJoinColumn) {
                                     tableWidget.addEmbeddedAssociationInverseJoinColumn(column.getName(), column);
@@ -408,6 +411,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new PrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(EmbeddedAttributeColumnWidget.class.getSimpleName())) {
             widget = new EmbeddedAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedAttributeJoinColumnWidget.class.getSimpleName())) {
+            widget = new EmbeddedAttributeJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationJoinColumnWidget.class.getSimpleName())) {
             widget = new EmbeddedAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName())) {
@@ -483,7 +488,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             default:
                 throw new InvalidElmentException("Invalid DB Element");
         }
-
         return (INodeWidget) widget;
     }
 
@@ -506,16 +510,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public PinWidgetInfo getEdgeSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget, ColumnWidget sourceColumnWidget) {
         if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget && edgeWidget instanceof ReferenceFlowWidget && sourceColumnWidget instanceof ForeignKeyWidget) {
             ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) edgeWidget;
-
-//            TableWidget sourceTableWidget = (TableWidget) sourceNodeWidget;
-//            Table sourceTable = (Table) sourceTableWidget.getBaseElementSpec();
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
-//            Table targetTable = (Table) targetTableWidget.getBaseElementSpec();
-
             DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getBaseElementSpec();
-            ColumnWidget targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
-//            Column targetColumn = targetColumnWidget.getBaseElementSpec();
-
+            ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
             referenceFlowWidget.setReferenceColumnWidget(targetColumnWidget);
             referenceFlowWidget.setForeignKeyWidget((ForeignKeyWidget) sourceColumnWidget);
             return sourceColumnWidget.getPinWidgetInfo();
@@ -538,5 +535,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
 
     }
+    
+    public static void inDev() {
+        JOptionPane.showMessageDialog(null, "This functionality is in developement");
+    }
+    
 
 }

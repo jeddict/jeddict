@@ -27,6 +27,7 @@ import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -78,12 +79,11 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
     
        private void setDefaultName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof PersistenceBaseAttribute) {
-            this.name = ((PersistenceBaseAttribute) attribute).getDefaultColumnName();
-            ((PersistenceBaseAttribute) attribute).getColumn().setName(null);
-        } else if (attribute instanceof ElementCollection) {
-            this.name = ((ElementCollection) attribute).getDefaultColumnName();
-            ((ElementCollection) attribute).getColumn().setName(null);
+        if (attribute instanceof ColumnHandler) {
+            this.name = ((ColumnHandler) attribute).getDefaultColumnName();
+            ((ColumnHandler) attribute).getColumn().setName(null);
+        } else {
+            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }
         setLabel(name);
     }
@@ -95,10 +95,11 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
 
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 Attribute attribute = this.getBaseElementSpec().getAttribute();
-
-                if (attribute instanceof PersistenceBaseAttribute) {
-                    PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
+                if (attribute instanceof ColumnHandler) {
+                    ColumnHandler baseAttribute = (ColumnHandler) attribute;
                     baseAttribute.getColumn().setName(this.name);
+                } else {
+                    throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
                 }
             }
         } else {

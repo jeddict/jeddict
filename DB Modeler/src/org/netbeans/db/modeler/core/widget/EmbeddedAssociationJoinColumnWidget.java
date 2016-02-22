@@ -85,7 +85,7 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
     private String getDefaultJoinColumnName() {
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Entity entity = table.getEntity();
-        List<Id> id = entity.getAttributes().getId();
+        List<Id> id = (List<Id>)entity.getAttributes().getId();
         return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
     }
 

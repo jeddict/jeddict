@@ -16,33 +16,21 @@
 package org.netbeans.db.modeler.specification.model.scene;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 import static java.util.stream.Collectors.toList;
+import org.netbeans.db.modeler.core.widget.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
-import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
-import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.theme.DBColorScheme;
-import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
@@ -64,87 +52,29 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
             if (baseElementWidget instanceof FlowNodeWidget) { //reverse ref
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
-                if (baseElementWidget instanceof JavaClassWidget) {
-                    JavaClassWidget<JavaClass> javaClassWidget = (JavaClassWidget) baseElementWidget;
-                    if (javaClassWidget.getOutgoingGeneralizationFlowWidget() != null) {
-                        javaClassWidget.getOutgoingGeneralizationFlowWidget().remove();
+                    if (baseElementWidget instanceof TableWidget) {
+                        TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
+                        tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
+                        for (ForeignKeyWidget foreignKeyWidget : tableWidget.getForeignKeyWidgets()) {
+                            foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> { ((ReferenceFlowWidget)w).remove();});
+                        }
+                        tableWidget.setLocked(false);
                     }
-                    for (GeneralizationFlowWidget generalizationFlowWidget : new CopyOnWriteArrayList<>(javaClassWidget.getIncomingGeneralizationFlowWidgets())) {
-                        generalizationFlowWidget.remove();
-                    }
-
-                    if (baseElementWidget instanceof PersistenceClassWidget) {
-                        PersistenceClassWidget<ManagedClass> persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
-                        persistenceClassWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
-                        for (RelationFlowWidget relationFlowWidget : new CopyOnWriteArrayList<>(persistenceClassWidget.getInverseSideRelationFlowWidgets())) {
-                            relationFlowWidget.remove();
-                        }
-                        for (RelationAttributeWidget relationAttributeWidget : persistenceClassWidget.getRelationAttributeWidgets()) {
-                            relationAttributeWidget.getRelationFlowWidget().remove();
-                        }
-                        for (EmbeddedAttributeWidget embeddedAttributeWidget : persistenceClassWidget.getEmbeddedAttributeWidgets()) {
-                            embeddedAttributeWidget.getEmbeddableFlowWidget().remove();
-                        }
-
-                        if (baseElementWidget instanceof EmbeddableWidget) {
-                            EmbeddableWidget embeddableWidget = (EmbeddableWidget) baseElementWidget;
-                            for (EmbeddableFlowWidget embeddableFlowWidget : new CopyOnWriteArrayList<>(embeddableWidget.getIncomingEmbeddableFlowWidgets())) {
-                                embeddableFlowWidget.remove();
-                            }
-                        }
-
-                        persistenceClassWidget.setLocked(false);
-                    }
-
-                }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
                 this.flowElements.remove(flowNodeWidget);
             } else if (baseElementWidget instanceof IFlowEdgeWidget) {
-                if (baseElementWidget instanceof RelationFlowWidget) {
-                    RelationFlowWidget relationFlowWidget = (RelationFlowWidget) baseElementWidget;
-                    relationFlowWidget.setLocked(true);
-                    RelationAttributeWidget sourceRelationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
-                    sourceRelationAttributeWidget.remove();
-
-                    if (relationFlowWidget instanceof Direction) {
-                        if (relationFlowWidget instanceof Unidirectional) {
-                            Unidirectional unidirectional = (Unidirectional) relationFlowWidget;
-                            unidirectional.getTargetEntityWidget().removeInverseSideRelationFlowWidget(relationFlowWidget);
-                        } else if (relationFlowWidget instanceof Bidirectional) {
-                            Bidirectional bidirectional = (Bidirectional) relationFlowWidget;
-                            RelationAttributeWidget targetRelationAttributeWidget = bidirectional.getTargetRelationAttributeWidget();
-                            targetRelationAttributeWidget.remove();
-                        }
-                    }
-                    relationFlowWidget.setLocked(false);
-
-                    relationFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(relationFlowWidget);
-                } else if (baseElementWidget instanceof GeneralizationFlowWidget) {
-                    GeneralizationFlowWidget generalizationFlowWidget = (GeneralizationFlowWidget) baseElementWidget;
-
-                    generalizationFlowWidget.getSubclassWidget().setOutgoingGeneralizationFlowWidget(null);
-                    generalizationFlowWidget.getSuperclassWidget().removeIncomingGeneralizationFlowWidget(generalizationFlowWidget);
-                    JavaClass javaSubclass = (JavaClass) generalizationFlowWidget.getSubclassWidget().getBaseElementSpec();
-                    JavaClass javaSuperclass = (JavaClass) generalizationFlowWidget.getSuperclassWidget().getBaseElementSpec();
-                    javaSubclass.removeSuperclass(javaSuperclass);
-
-                    generalizationFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(generalizationFlowWidget);
-
-                } else if (baseElementWidget instanceof EmbeddableFlowWidget) {
-                    EmbeddableFlowWidget embeddableFlowWidget = (EmbeddableFlowWidget) baseElementWidget;
-                    embeddableFlowWidget.setLocked(true);
-                    EmbeddedAttributeWidget sourceEmbeddedAttributeWidget = embeddableFlowWidget.getSourceEmbeddedAttributeWidget();
-                    sourceEmbeddedAttributeWidget.remove();
-                    embeddableFlowWidget.getTargetEmbeddableWidget().removeIncomingEmbeddableFlowWidget(embeddableFlowWidget);
-
-                    embeddableFlowWidget.setLocked(false);
-
-                    embeddableFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(embeddableFlowWidget);
-                } else {
+                if (baseElementWidget instanceof ReferenceFlowWidget) {
+                    ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) baseElementWidget;
+                    referenceFlowWidget.setLocked(true);
+                    ForeignKeyWidget foreignKeyWidget = referenceFlowWidget.getSourceWidget();
+                    foreignKeyWidget.remove();
+                    ColumnWidget columnWidget = referenceFlowWidget.getTargetWidget();
+                    columnWidget.remove();
+                    referenceFlowWidget.setLocked(false);
+                    referenceFlowWidget.setFlowElementsContainer(null);
+                    this.flowElements.remove(referenceFlowWidget);
+                }  else {
                     throw new InvalidElmentException("Invalid JPA Element");
                 }
 

@@ -17,20 +17,13 @@ package org.netbeans.db.modeler.core.widget;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBColumn;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
+import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 /**
  *
@@ -94,11 +87,22 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     }
 
     public boolean addReferenceFlowWidget(ReferenceFlowWidget flowWidget) {
-        return referenceFlowWidget.add(flowWidget);
+        return getReferenceFlowWidget().add(flowWidget);
     }
 
     public boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget) {
-        return referenceFlowWidget.remove(flowWidget);
+        return getReferenceFlowWidget().remove(flowWidget);
     }
 
+    @Override
+    public ContextPaletteModel getContextPaletteModel() {
+        return null;
+    }
+
+    /**
+     * @return the referenceFlowWidget
+     */
+    public List<ReferenceFlowWidget> getReferenceFlowWidget() {
+        return referenceFlowWidget;
+    }
 }

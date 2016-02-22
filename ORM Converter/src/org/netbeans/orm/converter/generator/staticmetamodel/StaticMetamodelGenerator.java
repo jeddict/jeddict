@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -77,7 +78,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
                 variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
             }
        }
-    private void processBase(List<? extends BaseAttribute> parsedBaseAttributes) {
+    private void processBase(Collection<? extends BaseAttribute> parsedBaseAttributes) {
         if (parsedBaseAttributes == null) {
             return;
         }
@@ -86,7 +87,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         }
     }
 
-    private void processRelation(List<? extends RelationAttribute> parsedRelations) {
+    private void processRelation(Collection<? extends RelationAttribute> parsedRelations) {
         if (parsedRelations == null) {
             return;
         }

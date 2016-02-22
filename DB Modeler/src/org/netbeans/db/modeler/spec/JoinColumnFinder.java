@@ -32,7 +32,7 @@ import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
  */
 public class JoinColumnFinder {
 
-    static List<JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse) {
+    public static List<JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse) {
         List<JoinColumn> joinColumns;
         if (attribute instanceof RelationAttribute) {
             if (!relationTableExist) {
@@ -56,7 +56,7 @@ public class JoinColumnFinder {
         return joinColumns;
     }
 
-    static List<JoinColumn> findJoinColumns(AssociationOverride associationOverride, Attribute attribute, boolean relationTableExist, boolean inverse) {
+    public static List<JoinColumn> findJoinColumns(AssociationOverride associationOverride, Attribute attribute, boolean relationTableExist, boolean inverse) {
         List<JoinColumn> joinColumns;
         if (attribute instanceof RelationAttribute) {
             if (!relationTableExist) {
@@ -76,7 +76,7 @@ public class JoinColumnFinder {
         return joinColumns;
     }
 
-    static JoinColumn findJoinColumn(String name, List<JoinColumn> joinColumns) {
+   public static JoinColumn findJoinColumn(String name, List<JoinColumn> joinColumns) {
         JoinColumn joinColumn = null;
         boolean created = false;
         for (Iterator<JoinColumn> it = joinColumns.iterator(); it.hasNext();) {

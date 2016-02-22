@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.Iterator;
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -25,23 +26,23 @@ public abstract class DBEmbeddedAssociationColumn extends DBEmbeddedColumn imple
 
     protected AssociationOverride associationOverride;
     protected final boolean relationTableExist;
-    
-    
+
     protected JoinColumn joinColumn;
     protected List<JoinColumn> joinColumns;
-    
-        protected JoinColumn joinColumnOverride;
+
+    protected JoinColumn joinColumnOverride;
     protected List<JoinColumn> joinColumnsOverride;
 
-    public DBEmbeddedAssociationColumn(String name, Embedded embedded, Attribute managedAttribute, boolean relationTableExist) {
-        super(name, embedded, managedAttribute);
+    public DBEmbeddedAssociationColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute, boolean relationTableExist) {
+        super(name, embeddedList, managedAttribute);
         this.relationTableExist = relationTableExist;
 
-        associationOverride = embedded.findAssociationOverride(managedAttribute.getName());
+   
+        associationOverride = embeddedList.get(0).findAssociationOverride(getKeyName());
         if (associationOverride == null) {
             associationOverride = new AssociationOverride();
             associationOverride.setName(managedAttribute.getName());
-            embedded.addAssociationOverride(associationOverride);
+            embeddedList.get(0).addAssociationOverride(associationOverride);
         }
     }
 
@@ -62,8 +63,8 @@ public abstract class DBEmbeddedAssociationColumn extends DBEmbeddedColumn imple
     public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }
-    
-        public JoinColumn getJoinColumnOverride() {
+
+    public JoinColumn getJoinColumnOverride() {
         return joinColumnOverride;
     }
 
@@ -71,7 +72,7 @@ public abstract class DBEmbeddedAssociationColumn extends DBEmbeddedColumn imple
         return joinColumnsOverride;
     }
 
-   /**
+    /**
      * Get the value of relationTableExist
      *
      * @return the value of relationTableExist

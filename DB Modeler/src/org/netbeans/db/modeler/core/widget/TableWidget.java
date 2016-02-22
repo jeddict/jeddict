@@ -63,6 +63,12 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         columnWidgets.put(column.getId(), widget);
         return widget;
     }
+    public ColumnWidget addEmbeddedAttributeJoinColumn(String name, DBColumn column) {
+        EmbeddedAttributeJoinColumnWidget widget = (EmbeddedAttributeJoinColumnWidget) createPinWidget(EmbeddedAttributeJoinColumnWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        foreignKeyWidgets.put(column.getId(), widget);
+        return widget;
+    }
         
      public ColumnWidget addEmbeddedAssociationInverseJoinColumn(String name, DBColumn column) {
         EmbeddedAssociationColumnWidget widget = (EmbeddedAssociationColumnWidget) createPinWidget(EmbeddedAssociationInverseJoinColumnWidget.create(column.getId(), name, column));

@@ -15,7 +15,11 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -23,11 +27,14 @@ import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -65,8 +72,13 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     private String getDefaultJoinColumnName() {
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         Entity entity = attribute.getConnectedEntity();
-        List<Id> id = entity.getAttributes().getId();//TODO
-        return attribute.getName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
+//        List<Id> id = entity.getAttributes().getId();//TODO
+        Id id = (Id)this.getBaseElementSpec().getReferenceColumn().getAttribute();
+        if(entity.getAttributes().getId().size() <= 1) {
+        return attribute.getName() + "_" + id.getColumnName().toUpperCase();
+        } else {
+         return id.getColumnName().toUpperCase();   
+        }
     }
 
     private void updateJoinColumn(String newName) {
@@ -104,6 +116,22 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     public void createPropertySet(ElementPropertySet set) {
         JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
         set.createPropertySet("INVERSE_JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+    }
+
+    @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuList = super.getPopupMenuItemList();
+        if (this.getTableWidget() instanceof BaseTableWidget) {
+            JMenuItem joinTable = new JMenuItem("Create Join Table");//, MICRO_DB);
+            joinTable.addActionListener((ActionEvent e) -> {
+                String joinTableName = JOptionPane.showInputDialog((Component) InverseJoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
+                convertToJoinTable(joinTableName);
+                ModelerFile parentFile = InverseJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
+                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+            });
+            menuList.add(0, joinTable);
+        }
+        return menuList;
     }
     
      void convertToJoinTable(String name){

@@ -128,7 +128,9 @@ public class EmbeddedAssociationColumnWidget<E extends DBEmbeddedAssociationColu
             }
 //            set.createPropertySet("EMBEDDABLE_COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
         }
-        AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
+//        AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
 //        set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
     }
+
+
 }

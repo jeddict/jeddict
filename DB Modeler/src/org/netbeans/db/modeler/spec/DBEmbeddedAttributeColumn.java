@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.List;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -26,18 +27,18 @@ public class DBEmbeddedAttributeColumn extends DBEmbeddedColumn {
     
     private AttributeOverride attributeOverride;
     
-    public DBEmbeddedAttributeColumn(String name, Embedded embedded, Attribute managedAttribute) {
-        super(name,embedded, managedAttribute);
+    public DBEmbeddedAttributeColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute) {
+        super(name,embeddedList, managedAttribute);
         if(managedAttribute instanceof ElementCollection){
             
         } else {
-       attributeOverride = embedded.findAttributeOverride(managedAttribute.getName());
-       if(attributeOverride == null){
-           attributeOverride = new AttributeOverride();
-           attributeOverride.setName(managedAttribute.getName());
-           attributeOverride.setColumn(new Column());
-           embedded.addAttributeOverride(attributeOverride);
-       }
+            attributeOverride = embeddedList.get(0).findAttributeOverride(getKeyName());
+            if (attributeOverride == null) {
+                attributeOverride = new AttributeOverride();
+                attributeOverride.setName(getKeyName());
+                attributeOverride.setColumn(new Column());
+                embeddedList.get(0).addAttributeOverride(attributeOverride);
+            }
         }
     }
 
