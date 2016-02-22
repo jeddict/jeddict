@@ -186,7 +186,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     public void initJavaInheritenceMapping() {
         List<JavaClass> javaClassList = this.getJavaClass();
         javaClassList.stream().filter((javaClass) -> (javaClass.getSuperclassId() != null)).forEach((javaClass) -> {
-            JavaClass javaSuperclass = findJavaClass(javaClass.getSuperclassId());
+            JavaClass javaSuperclass = getJavaClass(javaClass.getSuperclassId());
             javaClass.addSuperclass(javaSuperclass);
         });
     }
@@ -535,6 +535,17 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return this.mappedSuperclass;
     }
 
+    public MappedSuperclass getMappedSuperclass(String id) {
+        if (mappedSuperclass != null) {
+            for (MappedSuperclass mappedSuperclass_In : mappedSuperclass) {
+                if (id.equals(mappedSuperclass_In.getId())) {
+                    return mappedSuperclass_In;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Gets the value of the entity property.
      *
@@ -562,7 +573,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         }
         return this.entity;
     }
-    
+
     public void setEntity(List<Entity> entity) {
         if (this.entity == null) {
             this.entity = new ArrayList<>();
@@ -652,8 +663,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.version = value;
     }
 
-    
-      @Override
+    @Override
     public void removeBaseElement(IBaseElement baseElement_In) {
         if (baseElement_In instanceof Entity) {
             this.removeEntity((Entity) baseElement_In);
@@ -717,7 +727,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return null;
     }
 
-    public Embeddable getEmbedded(String id) {
+    public Embeddable getEmbeddable(String id) {
         if (embeddable != null) {
             for (Embeddable embeddable_In : embeddable) {
                 if (id.equals(embeddable_In.getId())) {
@@ -1092,7 +1102,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return javaClassList;
     }
 
-    public JavaClass findJavaClass(String classId) {
+    public JavaClass getJavaClass(String classId) {
         List<JavaClass> javaClassList = new ArrayList<>(this.getEntity());
         javaClassList.addAll(this.getMappedSuperclass());
         javaClassList.addAll(this.getEmbeddable());

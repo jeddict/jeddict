@@ -18,7 +18,10 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -103,6 +106,13 @@ public abstract class BaseAttributes implements IAttributes {
         }
         return this.basic;
     }
+    
+    public Optional<Basic> getBasic(String id) {
+        if (basic != null) {
+           return basic.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
+    }
 
     @Override
     public void addBasic(Basic basic) {
@@ -145,6 +155,19 @@ public abstract class BaseAttributes implements IAttributes {
         }
         return this.manyToOne;
     }
+    
+        public Optional<ManyToOne> getManyToOne(String id) {
+        if (manyToOne != null) {
+            return manyToOne.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
+    }
+        
+             public void addManyToOne(ManyToOne manyToOne) {
+        getManyToOne().add(manyToOne);
+    }
+             
+   
 
     /**
      * Gets the value of the oneToMany property.
@@ -175,6 +198,18 @@ public abstract class BaseAttributes implements IAttributes {
         }
         return this.oneToMany;
     }
+    
+    public Optional<OneToMany> getOneToMany(String id) {
+        if (oneToMany != null) {
+            return oneToMany.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
+    }
+    
+       public void addOneToMany(OneToMany oneToMany) {
+        getOneToMany().add(oneToMany);
+    }
+       
 
     /**
      * Gets the value of the oneToOne property.
@@ -205,7 +240,20 @@ public abstract class BaseAttributes implements IAttributes {
         }
         return this.oneToOne;
     }
+    
+   public void addOneToOne(OneToOne oneToOne) {
+        getOneToOne().add(oneToOne);
+    }
+    
+    public Optional<OneToOne> getOneToOne(String id) {
+        if (oneToOne != null) {
+            return oneToOne.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
+    }
 
+    
+        
     /**
      * Gets the value of the manyToMany property.
      *
@@ -235,6 +283,18 @@ public abstract class BaseAttributes implements IAttributes {
         }
         return this.manyToMany;
     }
+    
+    public Optional<ManyToMany> getManyToMany(String id) {
+        if (manyToMany != null) {
+            return manyToMany.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
+    }
+
+    public void addManyToMany(ManyToMany manyToMany) {
+        getManyToMany().add(manyToMany);
+    }
+      
 
     /**
      * Gets the value of the elementCollection property.
@@ -264,7 +324,16 @@ public abstract class BaseAttributes implements IAttributes {
             setElementCollection(new ArrayList<ElementCollection>());
         }
         return this.elementCollection;
+    }   
+    
+    
+    public Optional<ElementCollection> getElementCollection(String id) {
+        if (elementCollection != null) {
+            return elementCollection.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
     }
+    
 
     @Override
     public void addElementCollection(ElementCollection elementCollection) {
@@ -307,7 +376,15 @@ public abstract class BaseAttributes implements IAttributes {
         }
         return this.embedded;
     }
-
+    
+    public Optional<Embedded> getEmbedded(String id) {
+        if (embedded != null) {
+            return embedded.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
+    }
+    
+    
     @Override
     public void addEmbedded(Embedded embedded) {
         this.getEmbedded().add(embedded);
@@ -349,6 +426,13 @@ public abstract class BaseAttributes implements IAttributes {
         }
         return this._transient;
     }
+    
+    public Optional<Transient> getTransient(String id) {
+        if (_transient != null) {
+            return _transient.stream().filter(a->a.getId().equals(id)).findFirst();
+        }
+        return null;
+    }
 
     @Override
     public void addTransient(Transient _transient) {
@@ -368,6 +452,10 @@ public abstract class BaseAttributes implements IAttributes {
         relationAttributes.addAll(this.getManyToOne());
         relationAttributes.addAll(this.getManyToMany());
         return relationAttributes;
+    }
+    
+    public Optional<RelationAttribute> getRelationAttribute(String id) {
+        return getRelationAttributes().stream().filter(a -> a.getId().equals(id)).findFirst();
     }
 
     //does not need to extends BaseElement (id field hide)
@@ -409,6 +497,7 @@ public abstract class BaseAttributes implements IAttributes {
         }
     }
 
+   
     @Override
     public void addRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {

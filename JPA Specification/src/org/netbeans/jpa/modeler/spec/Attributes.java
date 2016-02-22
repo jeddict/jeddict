@@ -8,6 +8,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -269,6 +270,13 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         this.getId().remove(id);
         notifyListeners(id, "removeAttribute", null, null);
     }
+    
+    public Optional<Id> getId(String id_) {
+        if (id != null) {
+            return id.stream().filter(a -> a.getId().equals(id_)).findFirst();
+        }
+        return null;
+    }
 
     /**
      * Gets the value of the embeddedId property.
@@ -337,6 +345,13 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public void removeVersion(Version version) {
         this.getVersion().remove(version);
         notifyListeners(version, "removeAttribute", null, null);
+    }
+    
+        public Optional<Version> getVersion(String id_) {
+        if (version != null) {
+            return version.stream().filter(a -> a.getId().equals(id_)).findFirst();
+        }
+        return null;
     }
 
     @Override

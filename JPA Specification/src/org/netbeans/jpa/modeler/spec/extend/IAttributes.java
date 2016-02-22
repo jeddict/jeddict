@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Map;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
