@@ -8,14 +8,14 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
+import org.netbeans.jpa.modeler.spec.validator.column.ColumnValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -60,6 +60,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column")
+@XmlJavaTypeAdapter(value=ColumnValidator.class)
 public class Column extends BaseElement {
 
     @XmlAttribute(name = "name")
