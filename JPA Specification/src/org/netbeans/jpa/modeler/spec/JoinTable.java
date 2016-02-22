@@ -394,4 +394,15 @@ public class JoinTable {
         this.inverseJoinColumn = inverseJoinColumn;
     }
 
+    public void clear(){
+        this.catalog=null;
+        this.foreignKey= null;
+        this.getIndex().clear();
+        this.inverseForeignKey=null;
+        this.getInverseJoinColumn().clear();
+        this.getJoinColumn().clear();
+        this.name=null;
+        this.schema=null;
+        this.getUniqueConstraint().clear();
+    }
 }
