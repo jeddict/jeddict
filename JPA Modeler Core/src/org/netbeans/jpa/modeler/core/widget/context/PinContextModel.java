@@ -47,64 +47,8 @@ public class PinContextModel {
         };
     }
 
-    private static ContextPaletteButtonModel getContextPaletteGroupButtonModel(String tooltip, String imagePath, ContextPaletteModel contextPaletteModel) {
-        ContextPaletteButtonModel contextPaletteButtonModel = new DefaultGroupButtonModel();
-        contextPaletteButtonModel.setImage(ImageUtilities.loadImage(imagePath));
-        contextPaletteButtonModel.setTooltip(tooltip);
-        contextPaletteButtonModel.setPaletteModel(contextPaletteModel);
-        return contextPaletteButtonModel;
-    }
-
-    private static ContextPaletteButtonModel getContextPaletteButtonModel(String id, String tooltip, String imagePath, ContextPaletteModel contextPaletteModel) {
-        ContextPaletteButtonModel contextPaletteButtonModel = new DefaultGroupButtonModel();
-        contextPaletteButtonModel.setId(id);
-        contextPaletteButtonModel.setImage(ImageUtilities.loadImage(imagePath));
-        contextPaletteButtonModel.setTooltip(tooltip);
-        contextPaletteButtonModel.setPaletteModel(contextPaletteModel);
-        return contextPaletteButtonModel;
-    }
-
-    private static MouseListener getAddWidgetAction(final IPinWidget widget, final ContextPaletteButtonModel addAttributeModel) {
-        return new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (widget instanceof PersistenceClassWidget) {
-                    PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) widget;
-                    if (null != addAttributeModel.getId()) switch (addAttributeModel.getId()) {
-                        case "ID_ATTRIBUTE":
-                            persistenceClassWidget.addNewIdAttribute(persistenceClassWidget.getNextAttributeName("id"));
-                            break;
-                        case "BASIC_ATTRIBUTE":
-                            persistenceClassWidget.addNewBasicAttribute(persistenceClassWidget.getNextAttributeName());
-                            break;
-                        case "BASIC_COLLECTION_ATTRIBUTE":
-                            persistenceClassWidget.addNewBasicCollectionAttribute(persistenceClassWidget.getNextAttributeName());
-                            break;
-                        case "TRANSIENT_ATTRIBUTE":
-                            persistenceClassWidget.addNewTransientAttribute(persistenceClassWidget.getNextAttributeName());
-                            break;
-                        case "VERSION_ATTRIBUTE":
-                            persistenceClassWidget.addNewVersionAttribute(persistenceClassWidget.getNextAttributeName());
-                            break;
-                        default:
-                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
-                    }
-                    widget.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-
-                }
-            }
-        };
-    }
-
     public static ContextPaletteModel getContextPaletteModel(IPinWidget pinWidget) {
         ContextPaletteModel contextPaletteModel = new DefaultContextPaletteModel(pinWidget);
-
-//        ContextPaletteButtonModel setFocusModel = new DefaultPaletteButtonModel();
-//        contextPaletteModel.getChildren().add(setFocusModel);
-//        setFocusModel.setImage(Utilities.loadImage("org/netbeans/jpa/modeler/resource/image/attribute-association-override.png"));
-//        setFocusModel.setTooltip("Attribute/Association Override");
-//        setFocusModel.setPaletteModel(contextPaletteModel);
-//        setFocusModel.setMouseListener(getFocusWidgetAction(pinWidget));
         ContextPaletteButtonModel deleteModel = new DefaultPaletteButtonModel();
         contextPaletteModel.getChildren().add(deleteModel);
         deleteModel.setImage(Utilities.loadImage("org/netbeans/jpa/modeler/resource/image/delete.png"));

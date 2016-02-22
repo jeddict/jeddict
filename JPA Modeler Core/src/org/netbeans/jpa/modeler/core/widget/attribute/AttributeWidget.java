@@ -61,7 +61,6 @@ import org.openide.util.NbBundle;
  */
 public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget<E,JPAModelerScene> {
 
-//    private boolean selectedView;
     public AttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
@@ -260,7 +259,9 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
              getBaseElementSpec().setName(this.name);
+            }
         }
         if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
             errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);

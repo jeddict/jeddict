@@ -75,18 +75,20 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
-            getBaseElementSpec().setClazz(this.name);
-        }
-        if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
-            getErrorHandler().throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
-        } else {
-            getErrorHandler().clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
-        }
-        EntityMappings entityMapping = JavaClassWidget.this.getModelerScene().getBaseElementSpec();
-        if (entityMapping.findAllEntity(JavaClassWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
-        } else {
-            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                getBaseElementSpec().setClazz(this.name);
+            }
+            if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
+                getErrorHandler().throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+            } else {
+                getErrorHandler().clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+            }
+            EntityMappings entityMapping = JavaClassWidget.this.getModelerScene().getBaseElementSpec();
+            if (entityMapping.findAllEntity(JavaClassWidget.this.getName()).size() > 1) {
+                getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            } else {
+                getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            }
         }
 
     }

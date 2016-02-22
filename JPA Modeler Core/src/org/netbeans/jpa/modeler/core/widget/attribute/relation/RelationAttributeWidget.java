@@ -16,8 +16,10 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
@@ -28,9 +30,13 @@ import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.NANO_DB;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
@@ -177,4 +183,21 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
     public abstract String getIconPath();
 
     public abstract Image getIcon();
+    
+        
+        @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuList = super.getPopupMenuItemList();
+        if(this.getClassWidget().getBaseElementSpec() instanceof Entity){
+        JMenuItem visDB = new JMenuItem("Nano DB", NANO_DB);
+        visDB.addActionListener((ActionEvent e) -> {
+            ModelerFile file = this.getModelerScene().getModelerFile();
+            JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(),(Entity)this.getClassWidget().getBaseElementSpec(),(RelationAttribute)this.getBaseElementSpec()));
+        });            
+        
+        menuList.add(0, visDB);
+        }
+        return menuList;
+    }
+    
 }

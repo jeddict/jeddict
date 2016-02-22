@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -89,6 +90,8 @@ import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
+import org.netbeans.jpa.modeler.spec.Embeddable;
+import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -97,6 +100,7 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
@@ -219,11 +223,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     public static Icon GENERATE_SRC;
     public static Icon ENTITY_VISIBILITY;
-    public static Icon VIEW_DB;
     public static Icon SOCIAL_NETWORK_SHARING;
     public static Icon TWITTER;
     public static Icon LINKEDIN;
+    public static Icon VIEW_DB;
     public static Icon MICRO_DB;
+    public static Icon NANO_DB;
 
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
@@ -243,11 +248,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         ENTITY_VISIBILITY = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/entity-visibility.png"));
         VIEW_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/db.png"));
         MICRO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/micro-db.png"));
-        
+        NANO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/nano-db.png"));
         SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/share.png"));
         TWITTER = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/twitter.png"));
         LINKEDIN = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/linkedin.png"));
-        
+
 //        IO = IOProvider.getDefault().getIO("JPA Modeler", false);
     }
 
@@ -1380,6 +1385,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         relationClasses.add(entityClone);
         mappingClone.setEntity(new ArrayList<>());
         relationClasses.stream().forEach(mappingClone::addEntity);
+        mapToOrignalObject(mappings,mappingClone);
         return mappingClone;
     }
 
@@ -1414,7 +1420,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
         return definition_Load;
     }
-    
+
     public static void generateSourceCode(ModelerFile modelerFile) {
         GenerateCodeDialog dialog = new GenerateCodeDialog(modelerFile.getFileObject());
         dialog.setVisible(true);
@@ -1424,22 +1430,136 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             processor.post(task);
         }
     }
+
+    private static void makeSiblingOrphan(Entity entity, RelationAttribute relationAttribute, Entity siblingEntity, RelationAttribute siblingRelationAttribute) {
+        Attributes attr = entity.getAttributes();
+        if (relationAttribute != null) {
+            attr.getManyToMany().removeIf(r -> r != relationAttribute);
+            attr.getManyToOne().removeIf(r -> r != relationAttribute);
+            attr.getOneToMany().removeIf(r -> r != relationAttribute);
+            attr.getOneToOne().removeIf(r -> r != relationAttribute);
+        } else {
+            attr.getManyToMany().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
+            attr.getManyToOne().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
+            attr.getOneToMany().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
+            attr.getOneToOne().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
+        }
+               attr.setElementCollection(null);
+    }
+    private static void makeSiblingOrphan(Embeddable embeddable) {
+        EmbeddableAttributes attr = embeddable.getAttributes();
+        attr.setManyToMany(null);
+        attr.setManyToOne(null);
+        attr.setOneToMany(null);
+        attr.setOneToOne(null);
+        attr.setEmbedded(null);
+        attr.setElementCollection(null);
+    }
+    private static void makeSiblingOrphan(MappedSuperclass mappedSuperclass) {
+        Attributes attr = mappedSuperclass.getAttributes();
+        attr.setManyToMany(null);
+        attr.setManyToOne(null);
+        attr.setOneToMany(null);
+        attr.setOneToOne(null);
+        attr.setEmbedded(null);
+        attr.setElementCollection(null);
+    }
     
-    public static void openDBViewer(ModelerFile file , EntityMappings entityMappings) {
+    private static void mapToOrignalObject(EntityMappings orignalMappings, EntityMappings clonedMappings){
+        clonedMappings.getEntity().forEach(class_ -> {
+            Entity orignalEntity = orignalMappings.getEntity(class_.getId());
+            class_.setOrignalObject(orignalEntity);
+            mapToOrignalObject(orignalEntity.getAttributes(), class_.getAttributes());
+        });
+         clonedMappings.getEmbeddable().forEach(class_ -> {
+            Embeddable orignalEmbeddable = orignalMappings.getEmbeddable(class_.getId());
+            class_.setOrignalObject(orignalEmbeddable);
+            mapToOrignalObject(orignalEmbeddable.getAttributes(), class_.getAttributes());
+        });
+          clonedMappings.getMappedSuperclass().forEach(e -> {
+            MappedSuperclass orignalMappedSuperclass = orignalMappings.getMappedSuperclass(e.getId());
+            e.setOrignalObject(orignalMappedSuperclass);
+            mapToOrignalObject(orignalMappedSuperclass.getAttributes(), e.getAttributes());
+        });
+        
+    }
+    private static void mapToOrignalObject(BaseAttributes orignalAttributes, BaseAttributes clonedAttributes){
+        
+            clonedAttributes.getBasic().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getBasic(a.getId()).get());
+            });
+            clonedAttributes.getElementCollection().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getElementCollection(a.getId()).get());
+            });
+            clonedAttributes.getEmbedded().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getEmbedded(a.getId()).get());
+            });
+    
+            clonedAttributes.getManyToMany().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getManyToMany(a.getId()).get());
+            });
+            clonedAttributes.getManyToOne().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getManyToOne(a.getId()).get());
+            });
+            clonedAttributes.getOneToMany().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getOneToMany(a.getId()).get());
+            });
+             clonedAttributes.getOneToOne().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getOneToOne(a.getId()).get());
+            });
+             clonedAttributes.getTransient().forEach(a -> {
+                a.setOrignalObject(orignalAttributes.getTransient(a.getId()).get());
+            });
+             if(clonedAttributes instanceof Attributes){
+                 ((Attributes)clonedAttributes).getId().forEach(a -> {
+                a.setOrignalObject(((Attributes)orignalAttributes).getId(a.getId()).get());
+            });
+              ((Attributes)clonedAttributes).getVersion().forEach(a -> {
+                a.setOrignalObject(((Attributes)orignalAttributes).getVersion(a.getId()).get());
+            });
+             }
+       
+        
+    }
+    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity javaClass, RelationAttribute relationAttribute) {
+
+        EntityMappings mappingClone = cloneObject(mappings);
+        Entity entityClone = mappingClone.getEntity(javaClass.getId());
+        RelationAttribute relationAttributeClone = entityClone.getAttributes().getRelationAttribute(relationAttribute.getId()).get();
+
+        Entity mappedEntityClone = relationAttributeClone.getConnectedEntity();
+        RelationAttribute mappedRelationAttributeClone = relationAttributeClone.getConnectedAttribute();
+        
+        makeSiblingOrphan(entityClone,relationAttributeClone, mappedEntityClone, mappedRelationAttributeClone);
+        makeSiblingOrphan(mappedEntityClone,mappedRelationAttributeClone, entityClone, relationAttributeClone);
+        
+        mappingClone.getEmbeddable().stream().forEach((embeddable) -> makeSiblingOrphan(embeddable));
+        mappingClone.getMappedSuperclass().stream().forEach((mappedSuperclass) -> makeSiblingOrphan(mappedSuperclass));
+        
+        Set<Entity> relationClasses = new HashSet<>();
+        relationClasses.add(entityClone);
+        relationClasses.add(mappedEntityClone);
+        mappingClone.setEntity(new ArrayList<>());
+        relationClasses.stream().forEach(mappingClone::addEntity);
+        mapToOrignalObject(mappings,mappingClone);
+        return mappingClone;
+    }
+
+    public static void openDBViewer(ModelerFile file, EntityMappings entityMappings) {
         DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
-            dbModelerRequestManager.init(file, entityMappings);
-            
-            Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
-            if(dbChildModelerFile.isPresent()){
-                ModelerFile childModelerFile = dbChildModelerFile.get();
-                IModelerScene scene = childModelerFile.getModelerScene();
+        Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
+        
+        dbModelerRequestManager.init(file, entityMappings);
+        if (dbChildModelerFile.isPresent()) {
+            ModelerFile childModelerFile = dbChildModelerFile.get();
+            IModelerScene scene = childModelerFile.getModelerScene();
                 scene.getBaseElements().stream().filter(element-> element instanceof INodeWidget).forEach(element -> {
                     ((INodeWidget) element).remove(false);
-                });
-                childModelerFile.unload();
-                childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
-                childModelerFile.loaded();
-            }
+            });
+            childModelerFile.unload();
+            childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
+            childModelerFile.loaded();
+        }
     }
 
 }

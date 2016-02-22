@@ -15,13 +15,11 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
@@ -37,13 +35,12 @@ public abstract class FlowNodeWidget<E extends FlowNode,S extends IModelerScene>
     
     public FlowNodeWidget(S scene, NodeWidgetInfo node) {
         super(scene, node);
+        errorHandler = new ErrorHandler(this);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
             setLabel(value);
         });
         setAnchorGap(4);
-        
-        errorHandler = new ErrorHandler(this);
     }
 
     @Override

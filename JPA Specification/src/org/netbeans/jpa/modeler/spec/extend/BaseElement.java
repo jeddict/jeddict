@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 
@@ -44,6 +45,9 @@ public abstract class BaseElement implements IBaseElement {
     protected String id;
 
     private ExtensionElements extensionElement;
+    
+    @XmlTransient
+    private IBaseElement orignalObject;
 
     /**
      * Gets the value of the id property.
@@ -143,6 +147,20 @@ public abstract class BaseElement implements IBaseElement {
     @Override
     public void setRootElement(Object rootElement) {
         this.rootElement = (EntityMappings) rootElement;
+    }
+
+    /**
+     * @return the orignalObject
+     */
+    public IBaseElement getOrignalObject() {
+        return orignalObject;
+    }
+
+    /**
+     * @param orignalObject the orignalObject to set
+     */
+    public void setOrignalObject(IBaseElement orignalObject) {
+        this.orignalObject = orignalObject;
     }
 
 }
