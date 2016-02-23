@@ -55,7 +55,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "description",
     "column"
 })
-@XmlJavaTypeAdapter(value=AttributeValidator.class)
+//@XmlJavaTypeAdapter(value=AttributeValidator.class)
 public class AttributeOverride implements Comparable<AttributeOverride> {
 
     protected String description;

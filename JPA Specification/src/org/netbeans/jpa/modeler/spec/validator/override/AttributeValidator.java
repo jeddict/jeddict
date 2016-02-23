@@ -15,7 +15,13 @@
  */
 package org.netbeans.jpa.modeler.spec.validator.override;
 
+import java.util.Arrays;
+import java.util.Optional;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Embeddable;
+import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.ColumnValidator;
 
@@ -32,5 +38,34 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
     public static boolean isEmpty(AttributeOverride attributeOverride) {
         return ColumnValidator.isEmpty(attributeOverride.getColumn());
     }
+
+    public static void filter(Embedded embedded) {
+        embedded.getAttributeOverride().removeIf(attributeOverride
+                -> !isExist(attributeOverride.getName().split("\\."), embedded.getConnectedClass())
+                || AttributeValidator.isEmpty(attributeOverride)
+        );
+    }
+    
+    public static void filter(ElementCollection elementCollection) {
+        elementCollection.getAttributeOverride().removeIf(attributeOverride
+                -> !isExist(attributeOverride.getName().split("\\."), elementCollection.getConnectedClass())
+                || AttributeValidator.isEmpty(attributeOverride)
+        );
+    }
+
+    static boolean isExist(String[] keys, Embeddable embeddable) {
+        if (keys.length > 1) {
+            Optional<Embedded> embeddedOptional = embeddable.getAttributes().getEmbedded().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
+            if (embeddedOptional.isPresent()) {
+                return isExist(Arrays.copyOfRange(keys, 1, keys.length), embeddedOptional.get().getConnectedClass());
+            } else {
+                return false;
+            }
+        } else {
+            Optional<Attribute> attrOptional = embeddable.getAttributes().getAllAttribute().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
+            return attrOptional.isPresent();
+        }
+    }
+
 
 }

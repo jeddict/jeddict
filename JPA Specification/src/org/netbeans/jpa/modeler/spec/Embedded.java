@@ -14,6 +14,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,6 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -102,6 +105,11 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
 
         JavaSourceParserUtil.addNonEEAnnotation(embedded, element);
         return embedded;
+    }
+    
+     void beforeMarshal(Marshaller marshaller) {
+        AttributeValidator.filter(this);
+        AssociationValidator.filter(this);
     }
 
     /**

@@ -64,7 +64,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "foreignKey",
     "joinTable"
 })
-@XmlJavaTypeAdapter(value=AssociationValidator.class)
+//@XmlJavaTypeAdapter(value=AssociationValidator.class)
 public class AssociationOverride implements Comparable<AssociationOverride> {
 
     protected String description;

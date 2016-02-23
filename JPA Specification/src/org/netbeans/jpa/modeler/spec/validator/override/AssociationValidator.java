@@ -16,8 +16,11 @@
 package org.netbeans.jpa.modeler.spec.validator.override;
 
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
+import static org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator.isExist;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 
 public class AssociationValidator extends MarshalValidator<AssociationOverride> {
@@ -32,8 +35,22 @@ public class AssociationValidator extends MarshalValidator<AssociationOverride> 
 
     public static boolean isEmpty(AssociationOverride associationOverride) {
         JoinColumnValidator.filter(associationOverride.getJoinColumn());
-        return JoinTableValidator.isEmpty(associationOverride.getJoinTable()) &&
-               associationOverride.getJoinColumn().isEmpty();
+        return JoinTableValidator.isEmpty(associationOverride.getJoinTable())
+                && associationOverride.getJoinColumn().isEmpty();
+    }
+
+    public static void filter(Embedded embedded) {
+        embedded.getAssociationOverride().removeIf(associationOverride
+                -> !isExist(associationOverride.getName().split("\\."), embedded.getConnectedClass())
+                || AssociationValidator.isEmpty(associationOverride)
+        );
+    }
+
+    public static void filter(ElementCollection elementCollection) {
+        elementCollection.getAssociationOverride().removeIf(associationOverride
+                -> !isExist(associationOverride.getName().split("\\."), elementCollection.getConnectedClass())
+                || AssociationValidator.isEmpty(associationOverride)
+        );
     }
 
 }

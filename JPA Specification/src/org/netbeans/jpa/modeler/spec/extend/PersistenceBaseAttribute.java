@@ -91,11 +91,11 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
         return false;
     }
 
-    void beforeMarshal(Marshaller marshaller) {
-        if (NBModelerUtil.isEmptyObject(getColumn())) {
-            setColumn(null);
-        }
-    }
+//    void beforeMarshal(Marshaller marshaller) {
+//        if (NBModelerUtil.isEmptyObject(getColumn())) {
+//            setColumn(null);
+//        }
+//    }
 
     /**
      * Gets the value of the column property.

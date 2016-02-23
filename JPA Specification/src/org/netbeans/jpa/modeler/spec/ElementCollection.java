@@ -16,6 +16,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,6 +30,8 @@ import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -231,6 +234,12 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         JavaSourceParserUtil.addNonEEAnnotation(elementCollection, element);
 
         return elementCollection;
+    }
+    
+    
+     void beforeMarshal(Marshaller marshaller) {
+        AttributeValidator.filter(this);
+        AssociationValidator.filter(this);
     }
 
     /**
