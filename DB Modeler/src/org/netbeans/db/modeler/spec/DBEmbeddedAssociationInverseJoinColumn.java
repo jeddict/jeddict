@@ -17,11 +17,11 @@ package org.netbeans.db.modeler.spec;
 
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.Embedded;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
-public class DBEmbeddedAssociationInverseJoinColumn extends DBEmbeddedAssociationColumn {
+public class DBEmbeddedAssociationInverseJoinColumn extends DBEmbeddedAssociationColumn<RelationAttribute> {
 
-    public DBEmbeddedAssociationInverseJoinColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute, boolean relationTableExist) {
+    public DBEmbeddedAssociationInverseJoinColumn(String name, List<Embedded> embeddedList, RelationAttribute managedAttribute, boolean relationTableExist) {
         super(name, embeddedList, managedAttribute,relationTableExist);
         joinColumnsOverride = JoinColumnFinder.findJoinColumns(associationOverride, managedAttribute, relationTableExist, true);
         joinColumnOverride = JoinColumnFinder.findJoinColumn(name, joinColumnsOverride);

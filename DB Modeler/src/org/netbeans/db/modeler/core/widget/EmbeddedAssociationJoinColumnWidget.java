@@ -15,21 +15,27 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
-import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
+import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
-import org.netbeans.jpa.modeler.spec.AssociationOverride;
-import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -71,10 +77,13 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
     }
 
     private void setDefaultName() {
-        String name = getDefaultJoinColumnName();
+        Attribute attribute = this.getBaseElementSpec().getAttribute();
+        if(attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()){
+            return;//OneToMany by default creates JoinTable
+        }
         updateJoinColumn(null);
         this.name = null;
-        setLabel(name);
+        setLabel(getDefaultJoinColumnName());
     }
     
     private void updateJoinColumn(String newName){ 
@@ -94,8 +103,7 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
         if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
-                JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumnOverride();
-                joinColumn.setName(this.name);
+                updateJoinColumn(this.name);
             }
         } else {
             setDefaultName();
@@ -117,11 +125,32 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-//        JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
-//        set.createPropertySet("EMBEDDABLE_JOINCOLUMN", this, joinColumn, getPropertyChangeListeners());
-
-        JoinColumn joinColumnOverride = this.getBaseElementSpec().getJoinColumnOverride();
-        set.createPropertySet("ASSOCIATION_OVERRIDE", this, joinColumnOverride, getPropertyChangeListeners());
+        set.createPropertySet("EMBEDDABLE_JOINCOLUMN", this, this.getBaseElementSpec().getJoinColumn(), getPropertyChangeListeners());
+        set.createPropertySet("ASSOCIATION_OVERRIDE", this, this.getBaseElementSpec().getJoinColumnOverride(), getPropertyChangeListeners());
     }
+    
+//        @Override
+//    protected List<JMenuItem> getPopupMenuItemList() {
+//        List<JMenuItem> menuList = super.getPopupMenuItemList();
+//        if (this.getTableWidget() instanceof BaseTableWidget) {
+//            JMenuItem joinTable = new JMenuItem("Create Join Table");//, MICRO_DB);
+//            joinTable.addActionListener((ActionEvent e) -> {
+//                String joinTableName = JOptionPane.showInputDialog((Component)EmbeddedAssociationJoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
+//                convertToJoinTable(joinTableName);
+//                ModelerFile parentFile = EmbeddedAssociationJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
+//                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+//            });
+//            menuList.add(0, joinTable);
+//        }
+//        return menuList;
+//    }
+//    
+//    void convertToJoinTable(String name) {
+//        DBEmbeddedAssociationJoinColumn joinColumn = this.getBaseElementSpec();
+//        if (joinColumn.getAttribute() instanceof RelationAttribute) {
+//            joinColumn.getJoinColumns().clear();
+//            ((RelationAttribute) joinColumn.getAttribute()).getJoinTable().setName(name);
+//        }
+//    }
     
 }

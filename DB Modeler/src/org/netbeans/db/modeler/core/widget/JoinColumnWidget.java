@@ -65,10 +65,9 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         if(attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()){
             return;//OneToMany by default creates JoinTable
         }
-        String name = getDefaultJoinColumnName();
         updateJoinColumn(null);
         this.name = null;
-        setLabel(name);
+        setLabel(getDefaultJoinColumnName());
     }
     
     private void updateJoinColumn(String newName){ 
@@ -117,8 +116,7 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
-                JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
-                joinColumn.setName(this.name);
+                updateJoinColumn(this.name);
             }
         } else {
             setDefaultName();

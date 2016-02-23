@@ -387,4 +387,12 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         }
         return attr;
     }
+    
+    public List<Attribute> getNonRelationAttributes() {
+        List<Attribute> attributes = new ArrayList<Attribute>(this.getId());
+        attributes.addAll(this.getBasic());
+        attributes.addAll(this.getElementCollection().stream().filter(ec -> ec.getConnectedClass()==null).collect(toList()));
+        attributes.addAll(this.getVersion());
+        return attributes;
+    }
 }

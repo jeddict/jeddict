@@ -98,9 +98,9 @@ public class JPAMFieldDefinition extends FieldDefinition {
             
             if (managedAttribute instanceof RelationAttribute) {
                 if (inverse) {
-                    column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, managedAttribute, relationTable);
+                    column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
                 } else {
-                    column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, managedAttribute, relationTable);
+                    column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
                 }
             } else if (foriegnKey) {
                 column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);

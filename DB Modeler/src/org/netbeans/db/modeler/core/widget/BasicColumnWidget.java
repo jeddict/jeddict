@@ -56,28 +56,27 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
             }
         });
     }
-    
+
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
         pinWidgetInfo.setDocumentId(BasicColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
-        
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-            Attribute attribute = this.getBaseElementSpec().getAttribute();
-            if (attribute instanceof PersistenceBaseAttribute) {
-                PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
-                if (baseAttribute.getColumn() == null) {
-                    baseAttribute.setColumn(new Column());
-                }
-                set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
+        Attribute attribute = this.getBaseElementSpec().getAttribute();
+        if (attribute instanceof PersistenceBaseAttribute) {
+            PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
+            if (baseAttribute.getColumn() == null) {
+                baseAttribute.setColumn(new Column());
             }
+            set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
+        }
     }
-    
-       private void setDefaultName() {
+
+    private void setDefaultName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
         if (attribute instanceof ColumnHandler) {
             this.name = ((ColumnHandler) attribute).getDefaultColumnName();
@@ -88,7 +87,7 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
         setLabel(name);
     }
 
-           @Override
+    @Override
     public void setName(String name) {
         if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");

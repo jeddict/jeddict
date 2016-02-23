@@ -63,16 +63,14 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
 //        if(attribute instanceof OneToMany){
 //            return;
 //        }
-        String name = getDefaultJoinColumnName();
         updateJoinColumn(null);
         this.name = null;
-        setLabel(name);
+        setLabel(getDefaultJoinColumnName());
     }
 
     private String getDefaultJoinColumnName() {
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         Entity entity = attribute.getConnectedEntity();
-//        List<Id> id = entity.getAttributes().getId();//TODO
         Id id = (Id)this.getBaseElementSpec().getReferenceColumn().getAttribute();
         if(entity.getAttributes().getId().size() <= 1) {
         return attribute.getName() + "_" + id.getColumnName().toUpperCase();
@@ -91,8 +89,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
         if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
-                JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
-                joinColumn.setName(this.name);
+                updateJoinColumn(this.name);
             }
         } else {
             setDefaultName();
@@ -137,7 +134,6 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
      void convertToJoinTable(String name){
         DBInverseJoinColumn inverseJoinColumnSpec = (DBInverseJoinColumn)this.getBaseElementSpec();
         inverseJoinColumnSpec.getJoinColumns().removeIf(c -> true);
-//        JoinColumnFinder.findJoinColumns(inverseJoinColumnSpec.getAttribute(), true, true);
         inverseJoinColumnSpec.getAttribute().getJoinTable().setName(name);
     }
 }

@@ -15,14 +15,13 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import java.util.Iterator;
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public abstract class DBEmbeddedAssociationColumn extends DBEmbeddedColumn implements DBForeignKey {
+public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends DBEmbeddedColumn<E> implements DBForeignKey {
 
     protected AssociationOverride associationOverride;
     protected final boolean relationTableExist;
@@ -33,15 +32,14 @@ public abstract class DBEmbeddedAssociationColumn extends DBEmbeddedColumn imple
     protected JoinColumn joinColumnOverride;
     protected List<JoinColumn> joinColumnsOverride;
 
-    public DBEmbeddedAssociationColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute, boolean relationTableExist) {
+    public DBEmbeddedAssociationColumn(String name, List<Embedded> embeddedList, E managedAttribute, boolean relationTableExist) {
         super(name, embeddedList, managedAttribute);
         this.relationTableExist = relationTableExist;
 
-   
         associationOverride = embeddedList.get(0).findAssociationOverride(getKeyName());
         if (associationOverride == null) {
             associationOverride = new AssociationOverride();
-            associationOverride.setName(managedAttribute.getName());
+            associationOverride.setName(getKeyName());
             embeddedList.get(0).addAssociationOverride(associationOverride);
         }
     }

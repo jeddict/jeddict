@@ -53,7 +53,7 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
         );
     }
 
-    static boolean isExist(String[] keys, Embeddable embeddable) {
+   private static boolean isExist(String[] keys, Embeddable embeddable) {
         if (keys.length > 1) {
             Optional<Embedded> embeddedOptional = embeddable.getAttributes().getEmbedded().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
             if (embeddedOptional.isPresent()) {
@@ -62,7 +62,7 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
                 return false;
             }
         } else {
-            Optional<Attribute> attrOptional = embeddable.getAttributes().getAllAttribute().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
+            Optional<Attribute> attrOptional = embeddable.getAttributes().getNonRelationAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
             return attrOptional.isPresent();
         }
     }

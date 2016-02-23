@@ -19,13 +19,13 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public abstract class DBEmbeddedColumn extends DBColumn {
+public abstract class DBEmbeddedColumn<E extends Attribute> extends DBColumn<E> {
 
     private final List<Embedded> embeddedList;
     private String keyName;
 
 
-    public DBEmbeddedColumn(String name, List<Embedded> embedded, Attribute managedAttribute) {
+    public DBEmbeddedColumn(String name, List<Embedded> embedded, E managedAttribute) {
         super(name, managedAttribute);
         this.embeddedList = embedded;
     }

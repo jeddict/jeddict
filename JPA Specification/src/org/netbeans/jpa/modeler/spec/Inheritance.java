@@ -86,9 +86,8 @@ public class Inheritance {
     
         public InheritanceMetadata getAccessor() {
         InheritanceMetadata accessor = new InheritanceMetadata();
-                    System.out.println("strategy.value() : " + strategy.value());
-
-//        accessor.setStrategy(strategy.value());
+        System.out.println("strategy.value() : " + strategy.value());
+        accessor.setStrategy(strategy.value());
         return  accessor;
         }
 }
