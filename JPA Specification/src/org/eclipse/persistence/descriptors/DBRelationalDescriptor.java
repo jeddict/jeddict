@@ -15,7 +15,9 @@
  */
 package org.eclipse.persistence.descriptors;
 
+import java.util.List;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.MetadataAccessor;
+import org.eclipse.persistence.mappings.DatabaseMapping;
 
 public class DBRelationalDescriptor extends RelationalDescriptor {
 
@@ -33,4 +35,25 @@ public class DBRelationalDescriptor extends RelationalDescriptor {
         return accessor;
     }
 
+    /**
+     * @return the parentClassMapping
+     */
+    public List<DatabaseMapping> getParentClassMapping() {
+        return parentClassMapping;
+    }
+
+    /**
+     * @param parentClassMapping the parentClassMapping to set
+     */
+    public void setParentClassMapping(List<DatabaseMapping> parentClassMapping) {
+        this.parentClassMapping = parentClassMapping;
+    }
+    
+    /**
+     * Id : SUPERCLASS_ATTR_CLONE. Description : Fix for If class have super
+     * class then super class mapping is cloned and copied to subclass, to share
+     * the attributes but in the cloning process, Attribute Spec property is
+     * missed.
+     */
+    private List<DatabaseMapping> parentClassMapping;
 }

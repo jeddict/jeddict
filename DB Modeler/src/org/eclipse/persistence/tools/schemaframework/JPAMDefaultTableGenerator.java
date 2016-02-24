@@ -33,13 +33,11 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
 import org.eclipse.persistence.exceptions.DatabaseException;
@@ -86,6 +84,7 @@ import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -200,6 +199,21 @@ public class JPAMDefaultTableGenerator {
 //                return tblCreator;
 //            }
 
+            /**
+             * Id : SUPERCLASS_ATTR_CLONE. Description : Fix for If class have super
+             * class then super class mapping is cloned and copied to subclass,
+             * to share the attributes but in the cloning process, Attribute
+             * Spec property is missed.
+             */
+            List<DatabaseMapping> parentClassMapping = ((DBRelationalDescriptor) descriptor).getParentClassMapping();
+            if (parentClassMapping != null) {
+                parentClassMapping.stream().forEach((parentMapping) -> {
+                    descriptor.getMappings().stream().filter((childMapping) -> (parentMapping.getAttributeName().equals(childMapping.getAttributeName()))).forEach((childMapping) -> {
+                        childMapping.setProperty(Attribute.class, parentMapping.getProperty(Attribute.class));
+                        childMapping.setProperty(Inheritance.class, true);
+                    });
+                });
+            }
             // Aggregate descriptors do not contain table/field data and are 
             // processed through their owning entities. Aggregate descriptors
             // can not exist on their own.
@@ -340,7 +354,10 @@ public class JPAMDefaultTableGenerator {
 
             for (DatabaseField dbField : databaseMapping.getFields()) {
                 intrinsicAttribute = new LinkedList<>();
-                Attribute managedAttribute = (Attribute) databaseMapping.getProperty(Attribute.class);//intrinsicAttribute;
+                Attribute managedAttribute = (Attribute) databaseMapping.getProperty(Attribute.class);
+                Boolean isInherited = (Boolean) databaseMapping.getProperty(Inheritance.class);
+                isInherited = isInherited==null?false:isInherited;
+                
                 intrinsicAttribute.add(managedAttribute);
                 Attribute attribute = getManagedAttribute(refDescriptor, dbField, intrinsicAttribute);
                 if (attribute != null) {

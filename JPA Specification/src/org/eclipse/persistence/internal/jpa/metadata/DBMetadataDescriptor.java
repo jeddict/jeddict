@@ -15,10 +15,12 @@
  */
 package org.eclipse.persistence.internal.jpa.metadata;
 
+import java.util.List;
 import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
 import org.eclipse.persistence.descriptors.RelationalDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ClassAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataClass;
+import org.eclipse.persistence.mappings.DatabaseMapping;
 
 /**
  * Common metatata descriptor for the annotation and xml processors.
@@ -28,6 +30,13 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataC
  */
 public class DBMetadataDescriptor extends MetadataDescriptor {
 
+    /**
+     * @param parentClassMapping the parentClassMapping to set
+     */
+    public void setParentClassMapping(List<DatabaseMapping> parentClassMapping) {
+      ((DBRelationalDescriptor)getClassDescriptor()).setParentClassMapping(parentClassMapping);
+    }
+    
     public DBMetadataDescriptor(MetadataClass javaClass, ClassAccessor classAccessor) {
         super(javaClass);
         RelationalDescriptor des = new DBRelationalDescriptor(classAccessor);
