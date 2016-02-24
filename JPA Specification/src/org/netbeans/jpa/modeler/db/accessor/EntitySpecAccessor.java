@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
-import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -72,5 +71,5 @@ public class EntitySpecAccessor extends EntityAccessor {
     public Entity getEntity() {
         return entity;
     }
-
+   
 }
