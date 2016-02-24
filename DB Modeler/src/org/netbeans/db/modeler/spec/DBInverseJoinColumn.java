@@ -26,8 +26,8 @@ public class DBInverseJoinColumn extends DBColumn<RelationAttribute> implements 
     private final JoinColumn joinColumn;
     private final List<JoinColumn> joinColumns;
 
-    public DBInverseJoinColumn(String name, RelationAttribute attribute, boolean relationTableExist) {
-        super(name, attribute);
+    public DBInverseJoinColumn(String name, RelationAttribute attribute, boolean relationTableExist, boolean inherited) {
+        super(name, attribute, inherited);
         this.relationTableExist = relationTableExist;
         joinColumns = JoinColumnFinder.findJoinColumns(attribute, relationTableExist, true);
         joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);

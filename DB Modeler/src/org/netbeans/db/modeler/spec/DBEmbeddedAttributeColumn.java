@@ -27,8 +27,8 @@ public class DBEmbeddedAttributeColumn extends DBEmbeddedColumn {
     
     private AttributeOverride attributeOverride;
     
-    public DBEmbeddedAttributeColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute) {
-        super(name,embeddedList, managedAttribute);
+    public DBEmbeddedAttributeColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute, boolean inherited) {
+        super(name,embeddedList, managedAttribute, inherited);
         if(managedAttribute instanceof ElementCollection){
             
         } else {
