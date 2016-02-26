@@ -21,7 +21,10 @@ import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.OneToMany;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
@@ -45,6 +48,30 @@ public class AssociationValidator extends MarshalValidator<AssociationOverride> 
                 && associationOverride.getJoinColumn().isEmpty();
     }
 
+    public static void filter(Entity entity) {
+        entity.getAssociationOverride().removeIf(associationOverride
+                -> !isExist(associationOverride.getName(), entity.getSuperclass())
+                || AssociationValidator.isEmpty(associationOverride)
+        );
+    }
+    /**
+     * 
+     * @param key key of AttributeOverride
+     * @param javaClass parent class of entity to search AttributeOverride's key
+     * @return 
+     */
+    private static boolean isExist(String key, JavaClass javaClass) {
+        if(javaClass==null){
+            return false;
+        }
+        Optional<RelationAttribute> attrOptional = javaClass.getAttributes().getRelationAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(key)).findAny();
+        if (attrOptional.isPresent()) {
+            return true;
+        } else {
+            return isExist(key, javaClass.getSuperclass());
+        }
+    }
+    
     public static void filter(Embedded embedded) {
         embedded.getAssociationOverride().removeIf(associationOverride
                 -> !isExist(associationOverride.getName().split("\\."), embedded.getConnectedClass(), associationOverride)
@@ -58,7 +85,12 @@ public class AssociationValidator extends MarshalValidator<AssociationOverride> 
                 || AssociationValidator.isEmpty(associationOverride)
         );
     }
-
+   
+    /**
+     * 
+     * @param keys arrays path to managedAttr separated by dots
+     * @param embeddable next intrinsic element , incremented in each recursion
+     */
     private static boolean isExist(String[] keys, Embeddable embeddable, AssociationOverride associationOverride) {
         if (keys.length > 1) {
             Optional<Embedded> embeddedOptional = embeddable.getAttributes().getEmbedded().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();

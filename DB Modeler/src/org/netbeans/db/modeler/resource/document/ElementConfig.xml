@@ -6,6 +6,7 @@
         <group id="ASSOCIATION_OVERRIDE" name="AssociationOverride @JoinColumn"/>
         <group id="EMBEDDABLE_COLUMN" name="Embeddable @Column"/>
         <group id="EMBEDDABLE_JOINCOLUMN" name="Embeddable @JoinColumn"/>
+        <group id="COLUMN" name="@Column"/>
         <group id="JOIN_COLUMN" name="@JoinColumn"/>
         <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn"/>
         

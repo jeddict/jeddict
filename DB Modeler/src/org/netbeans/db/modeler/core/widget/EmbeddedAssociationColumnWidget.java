@@ -123,9 +123,6 @@ public class EmbeddedAssociationColumnWidget<E extends DBEmbeddedAssociationColu
         Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
         if (refAttribute instanceof PersistenceBaseAttribute) {
             PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
-            if (baseRefAttribute.getColumn() == null) {
-                baseRefAttribute.setColumn(new Column());
-            }
 //            set.createPropertySet("EMBEDDABLE_COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
         }
 //        AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();

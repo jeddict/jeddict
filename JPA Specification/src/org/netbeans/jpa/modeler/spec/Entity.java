@@ -576,6 +576,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     }
 
     @Override
+    @Deprecated
     public AttributeOverride getAttributeOverride(String attributePath) {
         Set<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
@@ -588,8 +589,26 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         attributeOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
     }
+    
+        public AttributeOverride findAttributeOverride(String name) {
+        for (AttributeOverride attributeOverride : getAttributeOverride()) {
+            if (StringUtils.equals(name, attributeOverride.getName())) {
+                return attributeOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().add(attributeOverride);
+    }
+
+    public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().remove(attributeOverride);
+    }
 
     @Override
+    @Deprecated
     public AssociationOverride getAssociationOverride(String attributePath) {
         Set<AssociationOverride> associationOverrides = getAssociationOverride();
         for (AssociationOverride associationOverride_TMP : associationOverrides) {
@@ -603,6 +622,22 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return attributeOverride_TMP;
     }
 
+    public AssociationOverride findAssociationOverride(String name) {
+        for (AssociationOverride associationOverride : getAssociationOverride()) {
+            if (StringUtils.equals(name, associationOverride.getName())) {
+                return associationOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().add(associationOverride);
+    }
+
+    public boolean removeAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().remove(associationOverride);
+    }
     /**
      * Sets the value of the clazz property.
      *

@@ -29,8 +29,8 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataC
 import org.eclipse.persistence.internal.jpa.metadata.converters.MixedConverterMetadata;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.MappedSuperclassSpecAccessor;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 
 /**
  * Object to hold onto the entity mappings metadata.
@@ -44,7 +44,7 @@ public class DBEntityMappings extends XMLEntityMappings {
 
         setPackage(mappings.getPackage());
         setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
-        setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclass::getAccessor).collect(toList()));
+        setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
         setEmbeddables(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
 
         setMixedConverters(new ArrayList<>());

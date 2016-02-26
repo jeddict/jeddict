@@ -22,5 +22,12 @@ public interface AttributeOverrideHandler {
 
     public Set<AttributeOverride> getAttributeOverride();
 
+    @Deprecated
     public AttributeOverride getAttributeOverride(String attributePath);
+    
+    public AttributeOverride findAttributeOverride(String name);
+
+    public boolean addAttributeOverride(AttributeOverride attributeOverride);
+
+    public boolean removeAttributeOverride(AttributeOverride attributeOverride);
 }

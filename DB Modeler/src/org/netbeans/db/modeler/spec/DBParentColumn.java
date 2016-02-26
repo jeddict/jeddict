@@ -15,43 +15,26 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import java.util.List;
-import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public abstract class DBEmbeddedColumn<E extends Attribute> extends DBColumn<E> {
+public abstract class DBParentColumn<E extends Attribute> extends DBColumn<E> {
 
-    private final List<Embedded> embeddedList;
+    private final Entity intrinsicClass;//parent class
     private String keyName;
 
 
-    public DBEmbeddedColumn(String name, List<Embedded> embedded, E managedAttribute) {
+    public DBParentColumn(String name, Entity intrinsicClass, E managedAttribute) {
         super(name, managedAttribute);
-        this.embeddedList = embedded;
+        this.intrinsicClass = intrinsicClass;
     }
 
-    /**
-     * @return the embedded
-     */
-    public List<Embedded> getEmbeddedList() {
-        return embeddedList;
-    }
 
     protected String getKeyName() {
         if (keyName != null) {
             return keyName;
         }
-        StringBuilder keyNameBuilder = new StringBuilder();
-        boolean skipFirst = true;
-        for (Embedded next : embeddedList) {
-            if (skipFirst) {
-                skipFirst = false;
-                continue;
-            }
-            keyNameBuilder.append(next.getName()).append('.');
-        }
-        keyNameBuilder.append(getAttribute().getName());
-        keyName = keyNameBuilder.toString();
+        keyName = getAttribute().getName();
         return keyName;
     }
 }

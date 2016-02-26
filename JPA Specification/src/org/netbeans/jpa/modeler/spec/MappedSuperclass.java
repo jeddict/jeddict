@@ -120,18 +120,5 @@ public class MappedSuperclass extends IdentifiableClass {
         this.attributes = (Attributes) attributes;
     }
 
-    public MappedSuperclassAccessor getAccessor() {
-        MappedSuperclassAccessor accessor = new MappedSuperclassAccessor();
-        accessor.setClassName(clazz);
-//        accessor.set
-//        accessor.setAccess("VIRTUAL");
-        accessor.setAttributes(attributes.getAccessor());
-        if (getSuperclass() != null) {
-            accessor.setParentClassName(getSuperclass().getClazz());
-        }
-        return accessor;
-
-    }
-
 }
     

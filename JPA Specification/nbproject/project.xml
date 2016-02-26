@@ -140,6 +140,8 @@
                 <friend>org.netbeans.jpa.modeler.dbre</friend>
                 <friend>org.netbeans.jpa.modeler.jcre</friend>
                 <friend>org.netbeans.orm.converter</friend>
+                <package>org.eclipse.persistence.descriptors</package>
+                <package>org.eclipse.persistence.internal.jpa.metadata</package>
                 <package>org.netbeans.db.modeler.manager</package>
                 <package>org.netbeans.jpa.modeler.db.accessor</package>
                 <package>org.netbeans.jpa.modeler.source</package>
@@ -150,6 +152,7 @@
                 <package>org.netbeans.jpa.modeler.spec.jaxb</package>
                 <package>org.netbeans.jpa.modeler.spec.validator</package>
                 <package>org.netbeans.jpa.modeler.spec.validator.column</package>
+                <package>org.netbeans.jpa.modeler.spec.validator.override</package>
                 <package>org.netbeans.jpa.modeler.spec.validator.table</package>
                 <package>org.netbeans.jpa.source</package>
             </friend-packages>

@@ -29,7 +29,6 @@ import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
@@ -42,6 +41,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidg
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
+import org.openide.util.Exceptions;
 
 public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
@@ -175,6 +175,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public void destroy() {
+        try {
         if (this.getModelerFile().isLoaded()) {
             this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
                     .filter(c -> c instanceof DBForeignKey).collect(toList())
@@ -187,6 +188,9 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                             joinColumns.remove(joinColumn);
                         }
                     });
+        }
+        }catch(Exception ex){
+            Exceptions.printStackTrace(ex);
         }
     }
 

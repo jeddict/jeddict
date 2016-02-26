@@ -436,7 +436,7 @@ public abstract class BaseAttributes implements IAttributes {
     }
 
     public List<RelationAttribute> getRelationAttributes() {
-        List<RelationAttribute> relationAttributes = new ArrayList<RelationAttribute>(this.getOneToOne());
+        List<RelationAttribute> relationAttributes = new ArrayList<>(this.getOneToOne());
         relationAttributes.addAll(this.getOneToMany());
         relationAttributes.addAll(this.getManyToOne());
         relationAttributes.addAll(this.getManyToMany());

@@ -17,12 +17,8 @@ package org.netbeans.jpa.modeler.db.metadata;
 
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.MetadataDescriptor;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.MetadataAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.MappedSuperclassAccessor;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.MappingAccessor;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataAnnotation;
 import org.eclipse.persistence.internal.jpa.metadata.inheritance.InheritanceMetadata;
 
 /**

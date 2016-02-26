@@ -48,6 +48,7 @@ import org.netbeans.db.modeler.core.widget.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.ParentAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.RelationTableWidget;
@@ -64,6 +65,8 @@ import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
+import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
+import org.netbeans.db.modeler.spec.DBParentColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -254,6 +257,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                     tableWidget.addEmbeddedAssociationJoinColumn(column.getName(), column);
                                 }
                             }
+                        }  else if (column instanceof DBParentColumn) {
+                            if (column instanceof DBParentAttributeColumn) {
+                                tableWidget.addParentAttributeColumn(column.getName(), column);
+                            } 
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
                         } else {
@@ -417,6 +424,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new EmbeddedAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName())) {
             widget = new EmbeddedAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAttributeColumnWidget.class.getSimpleName())) {
+            widget = new ParentAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }

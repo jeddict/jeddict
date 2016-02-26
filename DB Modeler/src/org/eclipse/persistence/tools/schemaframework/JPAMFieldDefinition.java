@@ -28,15 +28,18 @@ import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.core.NBModelerUtil;
 
 public class JPAMFieldDefinition extends FieldDefinition {
 
+    private final Entity intrinsicClass;
     private final LinkedList<Attribute> intrinsicAttribute = new LinkedList<>();
     private final Attribute managedAttribute;
     private final boolean inverse;
@@ -45,7 +48,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
     private final boolean inherited;
     
 
-    public JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable, boolean inherited) {
+    public JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
         intrinsicAttribute.stream().forEach((attr) -> {
             if(attr!=null && attr.getOrignalObject()!=null){
                 this.intrinsicAttribute.add((Attribute)attr.getOrignalObject());
@@ -57,7 +60,17 @@ public class JPAMFieldDefinition extends FieldDefinition {
         this.inverse = inverse;
         this.foriegnKey = foriegnKey;
         this.relationTable=relationTable;
-        this.inherited=inherited;
+        this.inherited=false;
+        this.intrinsicClass = null;
+    }
+    
+        public JPAMFieldDefinition(Entity intrinsicClass, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
+        this.intrinsicClass = intrinsicClass!=null&&intrinsicClass.getOrignalObject()!=null ? (Entity)intrinsicClass.getOrignalObject(): intrinsicClass;
+        this.managedAttribute = managedAttribute!=null&&managedAttribute.getOrignalObject()!=null ? (Attribute)managedAttribute.getOrignalObject(): managedAttribute;
+        this.inverse = inverse;
+        this.foriegnKey = foriegnKey;
+        this.relationTable=relationTable;
+        this.inherited=true;
     }
 
     /**
@@ -74,23 +87,33 @@ public class JPAMFieldDefinition extends FieldDefinition {
 
         DBColumn column = null;
         if(inherited){
-            
+            if (managedAttribute instanceof RelationAttribute) {
+//                if (inverse) {
+//                    column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
+//                } else {
+//                    column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
+//                }
+            } else if (foriegnKey) {
+//                column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
+            } else {
+                column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
+            }
         } else {
         if (intrinsicAttribute.size() == 1) {
             if (intrinsicAttribute.peek() instanceof RelationAttribute) {
                 if (inverse) {
-                    column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable,inherited);
+                    column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable);
                 } else {
-                    column = new DBJoinColumn(name, managedAttribute, relationTable,inherited);
+                    column = new DBJoinColumn(name, managedAttribute, relationTable);
                 }
             } else if (intrinsicAttribute.peek() instanceof ElementCollection) {
                 if (foriegnKey) {
-                    column = new DBJoinColumn(name, managedAttribute, relationTable,inherited);
+                    column = new DBJoinColumn(name, managedAttribute, relationTable);
                 } else {
-                    column = new DBColumn(name, managedAttribute,inherited);
+                    column = new DBColumn(name, managedAttribute);
                 }
             } else {
-                column = new DBColumn(name, managedAttribute,inherited);
+                column = new DBColumn(name, managedAttribute);
             }
         } else if (intrinsicAttribute.size() > 1) {
             List<Embedded> embeddedList = new ArrayList<>();
@@ -100,14 +123,14 @@ public class JPAMFieldDefinition extends FieldDefinition {
             
             if (managedAttribute instanceof RelationAttribute) {
                 if (inverse) {
-                    column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable,inherited);
+                    column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
                 } else {
-                    column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable,inherited);
+                    column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
                 }
             } else if (foriegnKey) {
-                column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute,inherited);
+                column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
             } else {
-                column = new DBEmbeddedAttributeColumn(name, embeddedList, managedAttribute,inherited);
+                column = new DBEmbeddedAttributeColumn(name, embeddedList, managedAttribute);
             }
         } 
         }

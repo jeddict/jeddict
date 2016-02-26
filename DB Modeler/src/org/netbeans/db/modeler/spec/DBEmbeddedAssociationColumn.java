@@ -32,8 +32,8 @@ public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends D
     protected JoinColumn joinColumnOverride;
     protected List<JoinColumn> joinColumnsOverride;
 
-    public DBEmbeddedAssociationColumn(String name, List<Embedded> embeddedList, E managedAttribute, boolean relationTableExist, boolean inherited) {
-        super(name, embeddedList, managedAttribute, inherited);
+    public DBEmbeddedAssociationColumn(String name, List<Embedded> embeddedList, E managedAttribute, boolean relationTableExist) {
+        super(name, embeddedList, managedAttribute);
         this.relationTableExist = relationTableExist;
 
         associationOverride = embeddedList.get(0).findAssociationOverride(getKeyName());

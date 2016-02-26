@@ -22,8 +22,8 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 public class DBEmbeddedAttributeJoinColumn extends DBEmbeddedColumn {
    
     
-    public DBEmbeddedAttributeJoinColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute, boolean inherited) {
-        super(name,embeddedList, managedAttribute, inherited);
+    public DBEmbeddedAttributeJoinColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute) {
+        super(name,embeddedList, managedAttribute);
 //             joinColumns = JoinColumnFinder.findJoinColumns(attribute, relationTableExist, false);
 //        joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
     }

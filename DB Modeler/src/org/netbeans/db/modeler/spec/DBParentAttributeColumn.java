@@ -15,29 +15,29 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import java.util.List;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
+import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.Column;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBEmbeddedAttributeColumn extends DBEmbeddedColumn {
+public class DBParentAttributeColumn extends DBParentColumn {
    
     
     private AttributeOverride attributeOverride;
     
-    public DBEmbeddedAttributeColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute) {
-        super(name,embeddedList, managedAttribute);
-        if(managedAttribute instanceof ElementCollection){
-            
-        } else {
-            attributeOverride = embeddedList.get(0).findAttributeOverride(getKeyName());
+    public DBParentAttributeColumn(String name, Entity intrinsicClass, Attribute managedAttribute) {
+        super(name,intrinsicClass, managedAttribute);
+        if(managedAttribute instanceof Id || managedAttribute instanceof Basic){
+            attributeOverride = intrinsicClass.findAttributeOverride(getKeyName());
             if (attributeOverride == null) {
                 attributeOverride = new AttributeOverride();
                 attributeOverride.setName(getKeyName());
-                embeddedList.get(0).addAttributeOverride(attributeOverride);
+                intrinsicClass.addAttributeOverride(attributeOverride);
             }
+        } else {
+            throw new IllegalStateException(managedAttribute + " not supported.");
         }
     }
 

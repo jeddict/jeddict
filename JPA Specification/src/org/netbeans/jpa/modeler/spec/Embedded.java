@@ -257,6 +257,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
     }
 
     @Override
+    @Deprecated
     public AttributeOverride getAttributeOverride(String attributePath) {
         Set<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
@@ -271,6 +272,7 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
     }
 
     @Override
+    @Deprecated
     public AssociationOverride getAssociationOverride(String attributePath) {
         Set<AssociationOverride> associationOverrides = getAssociationOverride();
         for (AssociationOverride associationOverride_TMP : associationOverrides) {

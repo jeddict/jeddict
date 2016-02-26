@@ -255,5 +255,9 @@ public interface IAttributes extends ReverseEngineeringController {
     void addChangeListener(PropertyChangeListener newListener);
 
     void removeChangeListener(PropertyChangeListener newListener);
+    
+    public List<Attribute> getNonRelationAttributes();
+    
+    public List<RelationAttribute> getRelationAttributes();
 
 }

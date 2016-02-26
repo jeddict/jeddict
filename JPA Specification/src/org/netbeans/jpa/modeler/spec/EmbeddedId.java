@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.EmbeddedIdAccessor;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
@@ -123,7 +124,20 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         }
         return this.attributeOverride;
     }
-
+        public AttributeOverride findAttributeOverride(String name) {
+        for (AttributeOverride attributeOverride : getAttributeOverride()) {
+            if (StringUtils.equals(name, attributeOverride.getName())) {
+                return attributeOverride;
+            }
+        }
+        return null;
+    }
+  public boolean addAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().add(attributeOverride);
+    }
+     public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().remove(attributeOverride);
+    }
     /**
      * Gets the value of the access property.
      *

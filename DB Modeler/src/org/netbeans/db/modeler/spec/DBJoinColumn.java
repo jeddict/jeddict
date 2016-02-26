@@ -25,8 +25,8 @@ public class DBJoinColumn extends DBColumn implements DBForeignKey {
     private final JoinColumn joinColumn;
     private final List<JoinColumn> joinColumns;
 
-    public DBJoinColumn(String name, Attribute attribute, boolean relationTableExist, boolean inherited) {
-        super(name, attribute, inherited);
+    public DBJoinColumn(String name, Attribute attribute, boolean relationTableExist) {
+        super(name, attribute);
         this.relationTableExist = relationTableExist;
         joinColumns = JoinColumnFinder.findJoinColumns(attribute, relationTableExist, false);
         joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);

@@ -16,16 +16,16 @@
 package org.netbeans.db.modeler.core.widget;
 
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.db.modeler.spec.DBColumn;
-import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
+import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
+import org.netbeans.db.modeler.spec.DBParentColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.inDev;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
@@ -35,16 +35,19 @@ import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class BasicColumnWidget extends ColumnWidget<DBColumn> {
+public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeColumn> {
 
-    public BasicColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public ParentAttributeColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
-            setName(value);
-            setLabel(name);
+            setDefaultName();
         });
 
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
+        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (String value) -> {
+            setDefaultName();
+        });
+
+        PropertyChangeListener propertyChangeListener = (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
                     errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -54,54 +57,58 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
             } else {
                 errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
-        });
+        };
+        this.addPropertyChangeListener("table_name", propertyChangeListener);
+        this.addPropertyChangeListener("attr_override_table_name", propertyChangeListener);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(BasicColumnWidget.class.getSimpleName());
+        pinWidgetInfo.setDocumentId(ParentAttributeColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
 
-    @Override
-    public void createPropertySet(ElementPropertySet set) {
-        Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof PersistenceBaseAttribute) {
-            PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
-            set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
+    private String evaluateLabel() {
+        AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+        Attribute refAttribute = ((DBParentColumn) this.getBaseElementSpec()).getAttribute();
+        if (refAttribute instanceof ColumnHandler) {
+            ColumnHandler baseRefAttribute = (ColumnHandler) refAttribute;
+            Column column = baseRefAttribute.getColumn();
+
+            if (StringUtils.isNotBlank(attributeOverride.getColumn().getName())) {
+                return attributeOverride.getColumn().getName();
+            } else if (StringUtils.isNotBlank(column.getName())) {
+                return column.getName();
+            } else {
+                return baseRefAttribute.getDefaultColumnName();
+            }
+        } else {
+            throw new IllegalStateException("Invalid attribute type : " + refAttribute.getClass().getSimpleName());
         }
     }
 
     private void setDefaultName() {
-        Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof ColumnHandler) {
-            this.name = ((ColumnHandler) attribute).getDefaultColumnName();
-            ((ColumnHandler) attribute).getColumn().setName(null);
-        } else {
-            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
-        }
-        setLabel(name);
+             this.name = evaluateLabel();
+            AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+            attributeOverride.getColumn().setName(null);
+        setLabel(name); //to re-write previous name
     }
 
     @Override
     public void setName(String name) {
         if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
-
             if (this.getModelerScene().getModelerFile().isLoaded()) {
-                Attribute attribute = this.getBaseElementSpec().getAttribute();
-                if (attribute instanceof ColumnHandler) {
-                    ColumnHandler baseAttribute = (ColumnHandler) attribute;
-                    baseAttribute.getColumn().setName(this.name);
-                } else {
-                    throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
-                }
+                  AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+                  attributeOverride.getColumn().setName(this.name);
             }
         } else {
             setDefaultName();
         }
-        if (SQLKeywords.isSQL99ReservedKeyword(BasicColumnWidget.this.getName())) {
+        
+        
+        if (SQLKeywords.isSQL99ReservedKeyword(ParentAttributeColumnWidget.this.getName())) {
             this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
             this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -113,7 +120,15 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
         } else {
             errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         }
-
     }
 
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        Attribute refAttribute = ((DBParentColumn) this.getBaseElementSpec()).getAttribute();
+            PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
+            set.createPropertySet("COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
+
+            AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+            set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
+    }
 }

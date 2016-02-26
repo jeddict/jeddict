@@ -34,12 +34,10 @@ public class DBColumn<E extends Attribute> extends FlowPin {
     private boolean foreignKey;
     private DBColumn referenceColumn;
     private DBTable referenceTable;
-    private boolean inherited; 
    
-    public DBColumn(String name, E attribute, boolean inherited) {
+    public DBColumn(String name, E attribute) {
         this.attribute = attribute;
         this.name=name;
-        this.inherited=inherited;
     }
 
 //    public Column() {
@@ -161,13 +159,6 @@ public class DBColumn<E extends Attribute> extends FlowPin {
      */
     public E getAttribute() {
         return attribute;
-    }
-
-    /**
-     * @return the inherited
-     */
-    public boolean isInherited() {
-        return inherited;
     }
 
 }
