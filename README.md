@@ -1,2 +1,2 @@
 # jpamodeler
-Dependency : NBModeler v1.3
+[http://jpamodeler.github.io/](http://jpamodeler.github.io/)
