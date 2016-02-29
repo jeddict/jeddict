@@ -32,7 +32,7 @@ import org.openide.util.ImageUtilities;
 public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
 
     private ForeignKeyWidget foreignKeyWidget;
-    private ColumnWidget referenceColumnWidget;
+    private IPrimaryKeyWidget referenceColumnWidget;
     private static final IconAnchorShape ANCHOR_SHAPE = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/single-value-anchor-shape.png"), true, 18, 7);
 
     public ReferenceFlowWidget(DBModelerScene scene, EdgeWidgetInfo edge) {
@@ -86,7 +86,7 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
 
     @Override
     public ColumnWidget getTargetWidget() {
-        return referenceColumnWidget;
+        return (ColumnWidget)referenceColumnWidget;
     }
 
     public ForeignKeyWidget getsetForeignKeyWidget() {
@@ -100,11 +100,11 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
         }
     }
 
-    public ColumnWidget getReferenceColumnWidget() {
+    public IPrimaryKeyWidget getReferenceColumnWidget() {
         return referenceColumnWidget;
     }
 
-    public void setReferenceColumnWidget(ColumnWidget referenceColumnWidget) {
+    public void setReferenceColumnWidget(IPrimaryKeyWidget referenceColumnWidget) {
         this.referenceColumnWidget = referenceColumnWidget;
         if (referenceColumnWidget != null) {
             referenceColumnWidget.addReferenceFlowWidget(this);

@@ -25,9 +25,9 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class PrimaryKeyWidget extends BasicColumnWidget implements IPrimaryKeyWidget {
+public class ParentAttributePrimaryKeyWidget extends ParentAttributeColumnWidget implements IPrimaryKeyWidget {
 
-    public PrimaryKeyWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public ParentAttributePrimaryKeyWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.PRIMARYKEY);
 
@@ -36,7 +36,7 @@ public class PrimaryKeyWidget extends BasicColumnWidget implements IPrimaryKeyWi
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(PrimaryKeyWidget.class.getSimpleName());
+        pinWidgetInfo.setDocumentId(ParentAttributePrimaryKeyWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
 

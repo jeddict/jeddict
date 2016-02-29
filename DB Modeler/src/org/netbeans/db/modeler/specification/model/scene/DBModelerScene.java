@@ -69,7 +69,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                     referenceFlowWidget.setLocked(true);
                     ForeignKeyWidget foreignKeyWidget = referenceFlowWidget.getSourceWidget();
                     foreignKeyWidget.remove();
-                    ColumnWidget columnWidget = referenceFlowWidget.getTargetWidget();
+                    ColumnWidget columnWidget = (ColumnWidget)referenceFlowWidget.getTargetWidget();
                     columnWidget.remove();
                     referenceFlowWidget.setLocked(false);
                     referenceFlowWidget.setFlowElementsContainer(null);

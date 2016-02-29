@@ -35,7 +35,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 
     private final Map<String, ColumnWidget> columnWidgets = new HashMap<>();
     private final Map<String, ForeignKeyWidget> foreignKeyWidgets = new HashMap<>();//ForeignKey Column
-    private final Map<String, PrimaryKeyWidget> primaryKeyWidgets = new HashMap<>();//PrimaryKey Column
+    private final Map<String, IPrimaryKeyWidget> primaryKeyWidgets = new HashMap<>();//PrimaryKey Column
 
     public TableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
@@ -64,7 +64,15 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         return widget;
     }
     
-    public ColumnWidget addParentAttributeColumn(String name, DBColumn column) {
+    
+            
+        public ColumnWidget addParentPrimaryKeyAttributeColumn(String name, DBColumn column) {
+        ParentAttributePrimaryKeyWidget widget = (ParentAttributePrimaryKeyWidget) createPinWidget(ParentAttributePrimaryKeyWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        primaryKeyWidgets.put(column.getId(), widget);
+        return widget;
+    }
+            public ColumnWidget addParentAttributeColumn(String name, DBColumn column) {
         ParentAttributeColumnWidget widget = (ParentAttributeColumnWidget) createPinWidget(ParentAttributeColumnWidget.create(column.getId(), name, column));
         widget.setDatatypeTooltip();
         columnWidgets.put(column.getId(), widget);
@@ -145,7 +153,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         if (!primaryKeyWidgets.isEmpty()) {
             List<Widget> primaryKeyCatWidget = new ArrayList<>();
             primaryKeyWidgets.values().stream().forEach((primaryKeyWidget) -> {
-                primaryKeyCatWidget.add(primaryKeyWidget);
+                primaryKeyCatWidget.add((Widget)primaryKeyWidget);
             });
             categories.put("Primary Key", primaryKeyCatWidget);
         }
@@ -207,14 +215,14 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     /**
      * @return the primaryKeyWidgets
      */
-    public PrimaryKeyWidget getPrimaryKeyWidget(String id) {
+    public IPrimaryKeyWidget getPrimaryKeyWidget(String id) {
         return primaryKeyWidgets.get(id);
     }
 
     /**
      * @return the primaryKeyWidgets
      */
-    public Collection<PrimaryKeyWidget> getPrimaryKeyWidgets() {
+    public Collection<IPrimaryKeyWidget> getPrimaryKeyWidgets() {
         return primaryKeyWidgets.values();
     }
 

@@ -46,9 +46,11 @@ import org.netbeans.db.modeler.core.widget.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.ParentAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.ParentAttributePrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.RelationTableWidget;
@@ -259,8 +261,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                             }
                         }  else if (column instanceof DBParentColumn) {
                             if (column instanceof DBParentAttributeColumn) {
-                                tableWidget.addParentAttributeColumn(column.getName(), column);
-                            } 
+                                  if (column.isPrimaryKey()) {
+                                    tableWidget.addParentPrimaryKeyAttributeColumn(column.getName(), column);
+                                } else {
+                                    tableWidget.addParentAttributeColumn(column.getName(), column);
+                                }
+                            }
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
                         } else {
@@ -292,8 +298,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 //       ReferenceColumn => Target      
         DBColumn sourceColumn = (DBColumn) foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
-        ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
-        if (targetColumnWidget == null) {
+        ColumnWidget targetColumnWidget = (ColumnWidget)targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+        if (targetColumnWidget == null) { // TODO remove this block
             targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
         }
 
@@ -426,6 +432,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new EmbeddedAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(ParentAttributeColumnWidget.class.getSimpleName())) {
             widget = new ParentAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAttributePrimaryKeyWidget.class.getSimpleName())) {
+            widget = new ParentAttributePrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }
@@ -521,7 +529,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) edgeWidget;
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
             DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getBaseElementSpec();
-            ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+            IPrimaryKeyWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
             referenceFlowWidget.setReferenceColumnWidget(targetColumnWidget);
             referenceFlowWidget.setForeignKeyWidget((ForeignKeyWidget) sourceColumnWidget);
             return sourceColumnWidget.getPinWidgetInfo();
