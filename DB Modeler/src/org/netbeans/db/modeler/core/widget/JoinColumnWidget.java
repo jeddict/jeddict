@@ -48,8 +48,7 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
     public JoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
-            setName(value);
-            setLabel(name);
+            setPropertyName(value);
         });
     }
 
@@ -59,20 +58,11 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         pinWidgetInfo.setDocumentId(JoinColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
-
-    private void setDefaultName() {
-        Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if(attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()){
-            return;//OneToMany by default creates JoinTable
-        }
-        updateJoinColumn(null);
-        this.name = null;
-        setLabel(getDefaultJoinColumnName());
-    }
     
-    private void updateJoinColumn(String newName){ 
+    @Override
+    protected void updateName(String name){ 
      JoinColumn column = this.getBaseElementSpec().getJoinColumn();
-        column.setName(newName);
+        column.setName(name);
     }
    
     //         BI-DIRECTIONAL              RelationTable                      CollectionTable
@@ -81,8 +71,18 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
     // nPK     True                        ConAttrName_IdColName              nIdColName
     // nPK     False                       Entity_IdColName                   nIdColName
 
+    @Override
+    protected boolean prePersistName(){
+        Attribute attribute = this.getBaseElementSpec().getAttribute();
+        if(attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()){
+            return false;//OneToMany by default creates JoinTable
+        }
+        return true;
+    }
     
-    private String getDefaultJoinColumnName() {
+    @Override
+    protected String evaluateName() {
+        
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
         Entity entity = table.getEntity();
@@ -111,30 +111,6 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         return null;
     }
 
-    @Override
-    public void setName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            this.name = name.replaceAll("\\s+", "");
-            if (this.getModelerScene().getModelerFile().isLoaded()) {
-                updateJoinColumn(this.name);
-            }
-        } else {
-            setDefaultName();
-        }
-        if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-            this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        } else {
-            this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        }
-
-        DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
-        if (tableSpec.findColumns(name).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        }
-
-    }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {

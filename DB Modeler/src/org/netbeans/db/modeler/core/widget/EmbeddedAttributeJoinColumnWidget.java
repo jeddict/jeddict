@@ -33,26 +33,15 @@ public class EmbeddedAttributeJoinColumnWidget extends ForeignKeyWidget<DBEmbedd
     public EmbeddedAttributeJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
-            setDefaultName();
+            setPropertyName(value);
         });
 
         this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (String value) -> {
-            setDefaultName();
+            setPropertyName(value);
         });
 
-        PropertyChangeListener propertyChangeListener = (PropertyChangeListener<String>) (String tableName) -> {
-            if (tableName != null && !tableName.trim().isEmpty()) {
-                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                } else {
-                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                }
-            } else {
-                errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-            }
-        };
-        this.addPropertyChangeListener("table_name", propertyChangeListener);
-        this.addPropertyChangeListener("attr_override_table_name", propertyChangeListener);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>)this::validateTableName);
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>)this::validateTableName);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -62,8 +51,15 @@ public class EmbeddedAttributeJoinColumnWidget extends ForeignKeyWidget<DBEmbedd
         return pinWidgetInfo;
     }
 
-    private String evaluateLabel() {
-//        AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+    @Override
+    protected void updateName(String name) {
+        //     AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+//            attributeOverride.getColumn().setName(null);
+    }
+
+    @Override
+    protected String evaluateName() {
+        //        AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
 //        Column embeddableColumn = null;
 //        Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
 //        PersistenceBaseAttribute baseRefAttribute = null;
@@ -79,43 +75,13 @@ public class EmbeddedAttributeJoinColumnWidget extends ForeignKeyWidget<DBEmbedd
 //        } else {
 //            return baseRefAttribute.getDefaultColumnName();
 //        }
-return null;
-
-    }
-
-    private void setDefaultName() {
-//        this.name = evaluateLabel();
-//     AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-//            attributeOverride.getColumn().setName(null);
-inDev();
-        setLabel(name);
+        return null;
     }
 
     @Override
-    public void setName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            this.name = name.replaceAll("\\s+", "");
-            if (this.getModelerScene().getModelerFile().isLoaded()) {
-                inDev();
-//                AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-//                attributeOverride.getColumn().setName(this.name);
-            }
-        } else {
-            setDefaultName();
-        }
-       
-        if (SQLKeywords.isSQL99ReservedKeyword(this.getName())) {
-            this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        } else {
-            this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        }
-
-        DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
-        if (tableSpec.findColumns(this.getName()).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        }
+    protected boolean prePersistName() {
+        inDev();
+        return false;
     }
 
     @Override

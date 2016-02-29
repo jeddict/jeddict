@@ -86,7 +86,7 @@ public class JoinColumnFinder {
                 created = true;
                 break;
             } else if (StringUtils.isBlank(column.getName())) {
-                it.remove();
+//                it.remove();
             }
         }
 

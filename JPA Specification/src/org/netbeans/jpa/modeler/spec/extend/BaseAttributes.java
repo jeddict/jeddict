@@ -652,7 +652,6 @@ public abstract class BaseAttributes implements IAttributes {
         attr.setVariableOneToOnes(new ArrayList<>());
         attr.setStructures(new ArrayList<>());
         attr.setArrays(new ArrayList<>());
-
         attr.setBasics(new ArrayList<>());
         attr.setElementCollections(new ArrayList<>());
         attr.setEmbeddeds(new ArrayList<>());
@@ -665,8 +664,8 @@ public abstract class BaseAttributes implements IAttributes {
 //        return updateAccessor(attr);
     }
 
-    public XMLAttributes updateAccessor(XMLAttributes attr) {
-        attr.getBasics().addAll(getBasic().stream().map(BasicSpecAccessor::getInstance).collect(toList()));
+    public XMLAttributes updateAccessor(XMLAttributes attr, boolean inherit) {
+        attr.getBasics().addAll(getBasic().stream().map(basic -> BasicSpecAccessor.getInstance(basic, inherit)).collect(toList()));
         attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollectionSpecAccessor::getInstance).collect(toList()));
         attr.getEmbeddeds().addAll(getEmbedded().stream().map(EmbeddedSpecAccessor::getInstance).collect(toList()));
         attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));

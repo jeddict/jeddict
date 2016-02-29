@@ -18,7 +18,6 @@ package org.netbeans.jpa.modeler.core.widget.context;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -27,11 +26,9 @@ import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextPaletteButtonModel;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.context.base.DefaultContextPaletteModel;
-import org.netbeans.modeler.widget.context.base.DefaultGroupButtonModel;
 import org.netbeans.modeler.widget.context.base.DefaultPaletteButtonModel;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
-import org.openide.util.ImageUtilities;
 import org.openide.util.Utilities;
 
 public class PinContextModel {

@@ -49,6 +49,8 @@ import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.ParentAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.ParentAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.ParentAttributePrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.PrimaryKeyWidget;
@@ -67,6 +69,9 @@ import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
+import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
 import org.netbeans.db.modeler.spec.DBParentColumn;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -266,6 +271,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                 } else {
                                     tableWidget.addParentAttributeColumn(column.getName(), column);
                                 }
+                            } else if (column instanceof DBParentAssociationColumn) {
+                                if (column instanceof DBParentAssociationInverseJoinColumn) {
+                                    tableWidget.addParentAssociationInverseJoinColumn(column.getName(), column);
+                                } else if (column instanceof DBParentAssociationJoinColumn) {
+                                    tableWidget.addParentAssociationJoinColumn(column.getName(), column);
+                                }
                             }
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
@@ -434,6 +445,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new ParentAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(ParentAttributePrimaryKeyWidget.class.getSimpleName())) {
             widget = new ParentAttributePrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAssociationJoinColumnWidget.class.getSimpleName())) {
+            widget = new ParentAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAssociationInverseJoinColumnWidget.class.getSimpleName())) {
+            widget = new ParentAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }

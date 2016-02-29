@@ -31,6 +31,7 @@ public class DBInverseJoinColumn extends DBColumn<RelationAttribute> implements 
         this.relationTableExist = relationTableExist;
         joinColumns = JoinColumnFinder.findJoinColumns(attribute, relationTableExist, true);
         joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
+        System.out.println("asssswee");
     }
 
     /**

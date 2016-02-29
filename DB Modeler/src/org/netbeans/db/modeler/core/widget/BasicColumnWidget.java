@@ -15,17 +15,9 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
-import org.apache.commons.lang.StringUtils;
+import static javax.swing.UIManager.getPropertyChangeListeners;
 import org.netbeans.db.modeler.spec.DBColumn;
-import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
-import org.netbeans.jpa.modeler.spec.AttributeOverride;
-import org.netbeans.jpa.modeler.spec.Column;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
@@ -40,21 +32,10 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
     public BasicColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
-            setName(value);
-            setLabel(name);
+            setPropertyName(value);
         });
 
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
-            if (tableName != null && !tableName.trim().isEmpty()) {
-                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                } else {
-                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                }
-            } else {
-                errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-            }
-        });
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>)this::validateTableName);//(PropertyChangeListener<String>) 
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -73,47 +54,24 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn> {
         }
     }
 
-    private void setDefaultName() {
+    @Override
+    protected String evaluateName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
         if (attribute instanceof ColumnHandler) {
-            this.name = ((ColumnHandler) attribute).getDefaultColumnName();
-            ((ColumnHandler) attribute).getColumn().setName(null);
+            return ((ColumnHandler) attribute).getDefaultColumnName();
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }
-        setLabel(name);
     }
 
     @Override
-    public void setName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            this.name = name.replaceAll("\\s+", "");
-
-            if (this.getModelerScene().getModelerFile().isLoaded()) {
-                Attribute attribute = this.getBaseElementSpec().getAttribute();
-                if (attribute instanceof ColumnHandler) {
-                    ColumnHandler baseAttribute = (ColumnHandler) attribute;
-                    baseAttribute.getColumn().setName(this.name);
-                } else {
-                    throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
-                }
+    protected void updateName(String newName) {
+            Attribute attribute = this.getBaseElementSpec().getAttribute();
+            if (attribute instanceof ColumnHandler) {
+                ColumnHandler baseAttribute = (ColumnHandler) attribute;
+                baseAttribute.getColumn().setName(this.name);
+            } else {
+                throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
             }
-        } else {
-            setDefaultName();
-        }
-        if (SQLKeywords.isSQL99ReservedKeyword(BasicColumnWidget.this.getName())) {
-            this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        } else {
-            this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        }
-
-        DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
-        if (tableSpec.findColumns(this.getName()).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        }
-
     }
-
 }

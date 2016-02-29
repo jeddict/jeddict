@@ -30,7 +30,6 @@ public class PrimaryKeyWidget extends BasicColumnWidget implements IPrimaryKeyWi
     public PrimaryKeyWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.PRIMARYKEY);
-
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {

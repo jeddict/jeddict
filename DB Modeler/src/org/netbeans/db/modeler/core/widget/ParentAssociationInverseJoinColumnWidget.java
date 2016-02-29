@@ -15,10 +15,9 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
-import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
-import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
@@ -26,38 +25,29 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
-public class EmbeddedAssociationInverseJoinColumnWidget extends EmbeddedAssociationColumnWidget<DBEmbeddedAssociationInverseJoinColumn> {
+public class ParentAssociationInverseJoinColumnWidget extends ParentAssociationColumnWidget<DBParentAssociationInverseJoinColumn> {
 
-    public EmbeddedAssociationInverseJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public ParentAssociationInverseJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName());
+        pinWidgetInfo.setDocumentId(ParentAssociationInverseJoinColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
 
     @Override
     protected String evaluateName() {
-        AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
         Column embeddableColumn = null;
-        Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
+        Attribute refAttribute = ((DBParentColumn) this.getBaseElementSpec()).getAttribute();
         PersistenceBaseAttribute baseRefAttribute = null;
         if (refAttribute instanceof PersistenceBaseAttribute) {
             baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
             embeddableColumn = baseRefAttribute.getColumn();
         }
-
-//        if (StringUtils.isNotBlank(associationOverride.getColumn().getName())) {
-//            return associationOverride.getColumn().getName();
-//        } else if (StringUtils.isNotBlank(embeddableColumn.getName())) {
-//            return embeddableColumn.getName();
-//        } else {
         return baseRefAttribute.getDefaultColumnName();
-//        }
-
     }
 
 }

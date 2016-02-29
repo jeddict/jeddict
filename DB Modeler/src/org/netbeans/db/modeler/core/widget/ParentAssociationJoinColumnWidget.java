@@ -16,34 +16,30 @@
 package org.netbeans.db.modeler.core.widget;
 
 import java.util.List;
-import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
-import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
-public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColumnWidget<DBEmbeddedAssociationJoinColumn> {
+public class ParentAssociationJoinColumnWidget extends ParentAssociationColumnWidget<DBParentAssociationJoinColumn> {
 
-    public EmbeddedAssociationJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
-         super(scene, nodeWidget, pinWidgetInfo);
+    public ParentAssociationJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+        super(scene, nodeWidget, pinWidgetInfo);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(EmbeddedAssociationJoinColumnWidget.class.getSimpleName());
+        pinWidgetInfo.setDocumentId(ParentAssociationJoinColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
 
-
-    
     @Override
     protected boolean prePersistName(){
         Attribute attribute = this.getBaseElementSpec().getAttribute();
@@ -54,26 +50,25 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
     }
     
 
-       @Override
+    @Override
     protected String evaluateName() {
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Entity entity = table.getEntity();
-        List<Id> id = (List<Id>)entity.getAttributes().getId();
+        List<Id> id = (List<Id>) entity.getAttributes().getId();
         return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
     }
 
 
 
-    
 //        @Override
 //    protected List<JMenuItem> getPopupMenuItemList() {
 //        List<JMenuItem> menuList = super.getPopupMenuItemList();
 //        if (this.getTableWidget() instanceof BaseTableWidget) {
 //            JMenuItem joinTable = new JMenuItem("Create Join Table");//, MICRO_DB);
 //            joinTable.addActionListener((ActionEvent e) -> {
-//                String joinTableName = JOptionPane.showInputDialog((Component)EmbeddedAssociationJoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
+//                String joinTableName = JOptionPane.showInputDialog((Component)ParentAssociationJoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
 //                convertToJoinTable(joinTableName);
-//                ModelerFile parentFile = EmbeddedAssociationJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
+//                ModelerFile parentFile = ParentAssociationJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
 //                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
 //            });
 //            menuList.add(0, joinTable);
@@ -82,11 +77,10 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
 //    }
 //    
 //    void convertToJoinTable(String name) {
-//        DBEmbeddedAssociationJoinColumn joinColumn = this.getBaseElementSpec();
+//        DBParentAssociationJoinColumn joinColumn = this.getBaseElementSpec();
 //        if (joinColumn.getAttribute() instanceof RelationAttribute) {
 //            joinColumn.getJoinColumns().clear();
 //            ((RelationAttribute) joinColumn.getAttribute()).getJoinTable().setName(name);
 //        }
 //    }
-    
 }

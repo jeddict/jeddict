@@ -7,6 +7,7 @@
         <group id="EMBEDDABLE_COLUMN" name="Embeddable @Column"/>
         <group id="EMBEDDABLE_JOINCOLUMN" name="Embeddable @JoinColumn"/>
         <group id="COLUMN" name="@Column"/>
+        <group id="PARENT_JOINCOLUMN" name="Superclass @JoinColumn"/>
         <group id="JOIN_COLUMN" name="@JoinColumn"/>
         <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn"/>
         
@@ -156,5 +157,35 @@
                 </attribute>
             </attributes>
         </element>
+        
+               <element id="JoinColumn" category="ASS_OVERRIDE" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.JoinColumn">
+            <attributes>
+                <attribute id="ass_override_JoinColumn_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Column Name</display-name>
+                </attribute>
+                <attribute id="JoinColumn_referencedname" groupId="BASIC_PROP" class="java.lang.String" name="referencedColumnName">
+                    <display-name>Referenced Column Name</display-name>
+                </attribute>
+                <attribute id="ass_override_table_name" groupId="BASIC_PROP" class="java.lang.String" name="table">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                <attribute id="unique" groupId="BASIC_PROP" class="java.lang.Boolean" name="unique">
+                    <display-name>Unique</display-name>
+                </attribute>
+                <attribute id="nullable" groupId="BASIC_PROP" class="java.lang.Boolean" name="nullable">
+                    <display-name>Nullable</display-name>
+                </attribute>
+                <attribute id="insertable" groupId="BASIC_PROP" class="java.lang.Boolean" name="insertable">
+                    <display-name>Insertable</display-name>
+                </attribute>
+                <attribute id="updatable" groupId="BASIC_PROP" class="java.lang.Boolean" name="updatable">
+                    <display-name>Updatable</display-name>
+                </attribute>
+                <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
+            </attributes>
+        </element>
+ 
     </elements>
 </element-config>

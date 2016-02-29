@@ -128,9 +128,8 @@ public class EmbeddableAttributes extends BaseAttributes {
         return updateAccessor(attr);
     }
     
-    @Override
     public XMLAttributes updateAccessor(XMLAttributes attr) {
-        super.updateAccessor(attr);
+        super.updateAccessor(attr,false);
         return attr;
     }
     

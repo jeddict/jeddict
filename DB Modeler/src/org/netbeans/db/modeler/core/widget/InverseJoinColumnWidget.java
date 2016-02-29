@@ -46,8 +46,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     public InverseJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
-            setName(value);
-            setLabel(name);
+            setPropertyName(value);
         });
     }
 
@@ -58,55 +57,22 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
         return pinWidgetInfo;
     }
 
-    private void setDefaultName() {
-//        Attribute attribute = this.getBaseElementSpec().getAttribute();
-//        if(attribute instanceof OneToMany){
-//            return;
-//        }
-        updateJoinColumn(null);
-        this.name = null;
-        setLabel(getDefaultJoinColumnName());
-    }
-
-    private String getDefaultJoinColumnName() {
+    @Override
+    protected String evaluateName() {
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         Entity entity = attribute.getConnectedEntity();
-        Id id = (Id)this.getBaseElementSpec().getReferenceColumn().getAttribute();
-        if(entity.getAttributes().getId().size() <= 1) {
-        return attribute.getName() + "_" + id.getColumnName().toUpperCase();
+        Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
+        if (entity.getAttributes().getId().size() <= 1) {
+            return attribute.getName() + "_" + id.getColumnName().toUpperCase();
         } else {
-         return id.getColumnName().toUpperCase();   
+            return id.getColumnName().toUpperCase();
         }
-    }
-
-    private void updateJoinColumn(String newName) {
-        JoinColumn column = this.getBaseElementSpec().getJoinColumn();
-        column.setName(newName);
     }
 
     @Override
-    public void setName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            this.name = name.replaceAll("\\s+", "");
-            if (this.getModelerScene().getModelerFile().isLoaded()) {
-                updateJoinColumn(this.name);
-            }
-        } else {
-            setDefaultName();
-        }
-        if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-            this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        } else {
-            this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
-        }
-
-        DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
-        if (tableSpec.findColumns(name).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        }
-
+    protected void updateName(String name) {
+        JoinColumn column = this.getBaseElementSpec().getJoinColumn();
+        column.setName(name);
     }
 
     @Override
@@ -130,9 +96,9 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
         }
         return menuList;
     }
-    
-     void convertToJoinTable(String name){
-        DBInverseJoinColumn inverseJoinColumnSpec = (DBInverseJoinColumn)this.getBaseElementSpec();
+
+    void convertToJoinTable(String name) {
+        DBInverseJoinColumn inverseJoinColumnSpec = (DBInverseJoinColumn) this.getBaseElementSpec();
         inverseJoinColumnSpec.getJoinColumns().removeIf(c -> true);
         inverseJoinColumnSpec.getAttribute().getJoinTable().setName(name);
     }

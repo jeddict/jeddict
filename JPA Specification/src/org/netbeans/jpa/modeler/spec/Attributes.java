@@ -270,7 +270,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         this.getId().remove(id);
         notifyListeners(id, "removeAttribute", null, null);
     }
-    
+
     public Optional<Id> getId(String id_) {
         if (id != null) {
             return id.stream().filter(a -> a.getId().equals(id_)).findFirst();
@@ -346,8 +346,8 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         this.getVersion().remove(version);
         notifyListeners(version, "removeAttribute", null, null);
     }
-    
-        public Optional<Version> getVersion(String id_) {
+
+    public Optional<Version> getVersion(String id_) {
         if (version != null) {
             return version.stream().filter(a -> a.getId().equals(id_)).findFirst();
         }
@@ -358,40 +358,53 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public List<Attribute> getAllAttribute() {
         List<Attribute> attributes = super.getAllAttribute();
         attributes.addAll(this.getId());
-       if(this.getEmbeddedId()!=null){ 
-           attributes.add(this.getEmbeddedId());
-       }
+        if (this.getEmbeddedId() != null) {
+            attributes.add(this.getEmbeddedId());
+        }
         attributes.addAll(this.getVersion());
         return attributes;
     }
 
     @Override
     public XMLAttributes getAccessor() {
+        return getAccessor(false);
+    }
+
+    /**
+     * Remove inherit functionality , once eclipse support dynamic mapped super
+     * class
+     *
+     */
+    public XMLAttributes getAccessor(boolean inherit) {
         XMLAttributes attr = super.getAccessor();
         attr.setIds(new ArrayList<>());
         attr.setVersions(new ArrayList<>());
-        return updateAccessor(attr);
+        return updateAccessor(attr, inherit);
     }
-    
-    @Override
+
     public XMLAttributes updateAccessor(XMLAttributes attr) {
-        super.updateAccessor(attr);
-        return processAccessor(attr);
+        return updateAccessor(attr, false);
     }
-    
-    private XMLAttributes processAccessor(XMLAttributes attr) {
-        attr.getIds().addAll(getId().stream().map(IdSpecAccessor::getInstance).collect(toList()));
+
+    @Override
+    public XMLAttributes updateAccessor(XMLAttributes attr, boolean inherit) {
+        super.updateAccessor(attr, inherit);
+        return processAccessor(attr, inherit);
+    }
+
+    private XMLAttributes processAccessor(XMLAttributes attr, boolean inherit) {
+        attr.getIds().addAll(getId().stream().map(id -> IdSpecAccessor.getInstance(id, inherit)).collect(toList()));
         attr.getVersions().addAll(getVersion().stream().map(VersionSpecAccessor::getInstance).collect(toList()));
         if (getEmbeddedId() != null) {
             attr.setEmbeddedId(getEmbeddedId().getAccessor());
         }
         return attr;
     }
-    
+
     public List<Attribute> getNonRelationAttributes() {
         List<Attribute> attributes = new ArrayList<Attribute>(this.getId());
         attributes.addAll(this.getBasic());
-        attributes.addAll(this.getElementCollection().stream().filter(ec -> ec.getConnectedClass()==null).collect(toList()));
+        attributes.addAll(this.getElementCollection().stream().filter(ec -> ec.getConnectedClass() == null).collect(toList()));
         attributes.addAll(this.getVersion());
         return attributes;
     }

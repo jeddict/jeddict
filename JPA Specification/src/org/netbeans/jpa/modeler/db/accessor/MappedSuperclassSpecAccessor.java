@@ -38,7 +38,7 @@ public class MappedSuperclassSpecAccessor extends EntityAccessor {
             accessor.setParentClassName(mappedSuperclass.getSuperclass().getClazz());
         }
 //        accessor.setAccess("VIRTUAL");
-        accessor.setAttributes(mappedSuperclass.getAttributes().getAccessor());
+        accessor.setAttributes(mappedSuperclass.getAttributes().getAccessor(true));
 //        accessor.setName(mappedSuperclass.getName());
 
 //        if (mappedSuperclass.getTable() != null) {
