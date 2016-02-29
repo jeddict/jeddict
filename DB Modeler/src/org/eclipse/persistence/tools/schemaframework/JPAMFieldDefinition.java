@@ -28,6 +28,8 @@ import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -88,12 +90,12 @@ public class JPAMFieldDefinition extends FieldDefinition {
         DBColumn column = null;
         if(inherited){
             if (managedAttribute instanceof RelationAttribute) {
-//                if (inverse) {
-//                    column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
-//                } else {
-//                    column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute)managedAttribute, relationTable);
-//                }
-            } else if (foriegnKey) {
+                if (inverse) {
+                    column = new DBParentAssociationInverseJoinColumn(name, intrinsicClass, (RelationAttribute)managedAttribute, relationTable);
+                } else {
+                    column = new DBParentAssociationJoinColumn(name, intrinsicClass, (RelationAttribute)managedAttribute, relationTable);
+                }
+//            } else if (foriegnKey) {
 //                column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
             } else {
                 column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
