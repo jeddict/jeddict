@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,6 +24,8 @@ import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
+import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -216,6 +219,11 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     }
 
+     void beforeMarshal(Marshaller marshaller) {
+        AttributeValidator.filter(this);
+        AssociationValidator.filter(this);
+    }
+     
     /**
      * Gets the value of the table property.
      *

@@ -31,6 +31,8 @@ import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -177,6 +179,10 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     public void destroy() {
         try {
         if (this.getModelerFile().isLoaded() && this.getBaseElementSpec()!=null) {
+            this.getBaseElementSpec().getTables().stream().map(t -> t.getEntity()).forEach(e -> {
+            AttributeValidator.filter(e);
+        AssociationValidator.filter(e);
+        });
             this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
                     .filter(c -> c instanceof DBForeignKey).collect(toList())
                     .forEach((DBColumn column) -> {

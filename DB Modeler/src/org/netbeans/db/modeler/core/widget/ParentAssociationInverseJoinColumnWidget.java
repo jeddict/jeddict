@@ -40,15 +40,7 @@ public class ParentAssociationInverseJoinColumnWidget extends ParentAssociationC
 
     @Override
     protected String evaluateName() {
-        Column column = null;
-        RelationAttribute attribute =  this.getBaseElementSpec().getAttribute();
-        Entity entity = attribute.getConnectedEntity();
-        Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
-        if (entity.getAttributes().getId().size() <= 1) {
-            return attribute.getName().toUpperCase() + "_" + id.getColumnName().toUpperCase();
-        } else {
-            return id.getColumnName().toUpperCase();
-        }
+        return InverseJoinColumnWidget.evaluateName(this.getBaseElementSpec().getAttribute(), this.getBaseElementSpec().getReferenceColumn());
     }
 
 }

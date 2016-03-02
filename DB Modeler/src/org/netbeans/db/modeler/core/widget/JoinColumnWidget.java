@@ -58,33 +58,35 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         pinWidgetInfo.setDocumentId(JoinColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
-    
+
     @Override
-    protected void updateName(String name){ 
-     JoinColumn column = this.getBaseElementSpec().getJoinColumn();
+    protected void updateName(String name) {
+        JoinColumn column = this.getBaseElementSpec().getJoinColumn();
         column.setName(name);
     }
-   
+
     //         BI-DIRECTIONAL              RelationTable                      CollectionTable
     // 1PK     True                        ConAttrName_IdColName
     // 1PK     False                       Entity_IdColName                   Entity_IdColName
     // nPK     True                        ConAttrName_IdColName              nIdColName
     // nPK     False                       Entity_IdColName                   nIdColName
-
     @Override
-    protected boolean prePersistName(){
+    protected boolean prePersistName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if(attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()){
+        if (attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()) {
             return false;//OneToMany by default creates JoinTable
         }
         return true;
     }
-    
+
     @Override
     protected String evaluateName() {
-        
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
+        return JoinColumnWidget.evaluateName(table, id);
+    }
+
+    public static String evaluateName(DBTable table, Id id) {
         Entity entity = table.getEntity();
         if (entity.getAttributes().getId().size() <= 1) {
             if (table instanceof DBRelationTable) {
@@ -94,10 +96,10 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
                     return entity.getClazz() + "_" + id.getColumnName().toUpperCase();
                 }
             } else if (table instanceof DBCollectionTable) {
-                    return entity.getClazz() + "_" + id.getColumnName().toUpperCase();
+                return entity.getClazz() + "_" + id.getColumnName().toUpperCase();
             }
         } else {
-             return id.getColumnName().toUpperCase();
+            return id.getColumnName().toUpperCase();
 //            if (table instanceof DBRelationTable) {
 //                if (((DBRelationTable) table).getAttribute().getConnectedAttribute() != null) {
 //                    return id.getColumnName().toUpperCase();
@@ -111,20 +113,19 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         return null;
     }
 
-
     @Override
     public void createPropertySet(ElementPropertySet set) {
-    JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
-    set.createPropertySet("JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+        JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
+        set.createPropertySet("JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
     }
-    
+
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         if (this.getTableWidget() instanceof BaseTableWidget) {
             JMenuItem joinTable = new JMenuItem("Create Join Table");//, MICRO_DB);
             joinTable.addActionListener((ActionEvent e) -> {
-                String joinTableName = JOptionPane.showInputDialog((Component)JoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
+                String joinTableName = JOptionPane.showInputDialog((Component) JoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
                 convertToJoinTable(joinTableName);
                 ModelerFile parentFile = JoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
                 JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
@@ -133,7 +134,7 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         }
         return menuList;
     }
-    
+
     void convertToJoinTable(String name) {
         DBJoinColumn joinColumn = this.getBaseElementSpec();
         if (joinColumn.getAttribute() instanceof RelationAttribute) {

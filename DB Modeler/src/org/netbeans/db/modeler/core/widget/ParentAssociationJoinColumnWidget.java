@@ -50,37 +50,18 @@ public class ParentAssociationJoinColumnWidget extends ParentAssociationColumnWi
     }
     
 
-    @Override
+//    @Override
+//    protected String evaluateName() {
+//        DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
+//        Entity entity = table.getEntity();
+//        List<Id> id = (List<Id>) entity.getAttributes().getId();
+//        return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
+//    }
+@Override
     protected String evaluateName() {
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
-        Entity entity = table.getEntity();
-        List<Id> id = (List<Id>) entity.getAttributes().getId();
-        return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
+        Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
+        return JoinColumnWidget.evaluateName(table, id);
     }
 
-
-
-//        @Override
-//    protected List<JMenuItem> getPopupMenuItemList() {
-//        List<JMenuItem> menuList = super.getPopupMenuItemList();
-//        if (this.getTableWidget() instanceof BaseTableWidget) {
-//            JMenuItem joinTable = new JMenuItem("Create Join Table");//, MICRO_DB);
-//            joinTable.addActionListener((ActionEvent e) -> {
-//                String joinTableName = JOptionPane.showInputDialog((Component)ParentAssociationJoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
-//                convertToJoinTable(joinTableName);
-//                ModelerFile parentFile = ParentAssociationJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
-//                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
-//            });
-//            menuList.add(0, joinTable);
-//        }
-//        return menuList;
-//    }
-//    
-//    void convertToJoinTable(String name) {
-//        DBParentAssociationJoinColumn joinColumn = this.getBaseElementSpec();
-//        if (joinColumn.getAttribute() instanceof RelationAttribute) {
-//            joinColumn.getJoinColumns().clear();
-//            ((RelationAttribute) joinColumn.getAttribute()).getJoinTable().setName(name);
-//        }
-//    }
 }

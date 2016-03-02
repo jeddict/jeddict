@@ -21,6 +21,7 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -59,9 +60,12 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
 
     @Override
     protected String evaluateName() {
-        RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
+        return InverseJoinColumnWidget.evaluateName(this.getBaseElementSpec().getAttribute(), this.getBaseElementSpec().getReferenceColumn());
+    }
+
+    public static String evaluateName(RelationAttribute attribute, DBColumn referenceColumn) {
         Entity entity = attribute.getConnectedEntity();
-        Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
+        Id id = (Id) referenceColumn.getAttribute();
         if (entity.getAttributes().getId().size() <= 1) {
             return attribute.getName() + "_" + id.getColumnName().toUpperCase();
         } else {

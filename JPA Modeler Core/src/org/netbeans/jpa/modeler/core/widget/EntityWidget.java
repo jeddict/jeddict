@@ -27,8 +27,8 @@ import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -37,12 +37,9 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
-import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
-import org.openide.util.Lookup;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
@@ -83,7 +80,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         setName(entity.getClazz());
         setLabel(entity.getClazz());
         changeAbstractionIcon(entity.getAbstract());
-        scanPrimaryKeyError();     
+        scanKeyError();     
     }
     
     private void changeAbstractionIcon(Boolean _abstract){
@@ -207,8 +204,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
 //    @Override
+    public void scanKeyError() {
+        scanPrimaryKeyError();
+        scanCompositeKeyError();
+    }
     public void scanPrimaryKeyError() {
-        
         InheritenceStateType inheritenceState = this.getInheritenceState();
         if (SINGLETON == inheritenceState || ROOT == inheritenceState) {
             // Issue Fix #6041 Start
@@ -223,6 +223,14 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             // Issue Fix #6041 End
         } else {
             getErrorHandler().clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
+        }
+    }
+    
+    public void scanCompositeKeyError() {
+        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == CompositePrimaryKeyType.NONE) {
+            getErrorHandler().throwError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
+        } else {
+            getErrorHandler().clearError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
         }
     }
     

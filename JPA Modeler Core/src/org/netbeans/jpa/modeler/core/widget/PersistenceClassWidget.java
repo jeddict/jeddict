@@ -317,10 +317,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             ((IPersistenceAttributes) attributes).getId().remove(((IdAttributeWidget) attributeWidget).getBaseElementSpec());
             AttributeValidator.validateEmbeddedIdAndIdFound(this);
             if (this instanceof EntityWidget) {
-                ((EntityWidget) this).scanPrimaryKeyError();
+                ((EntityWidget) this).scanKeyError();
             }
             this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
-                ((EntityWidget) classWidget).scanPrimaryKeyError();
+                ((EntityWidget) classWidget).scanKeyError();
             });
             isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute        
         } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
@@ -353,10 +353,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                 
                 if (oneToOneSpec.isPrimaryKey()) {
                     if (this instanceof EntityWidget) {
-                        ((EntityWidget) this).scanPrimaryKeyError();
+                        ((EntityWidget) this).scanKeyError();
                     }
                     this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
-                        ((EntityWidget) classWidget).scanPrimaryKeyError();
+                        ((EntityWidget) classWidget).scanKeyError();
                     });
                     isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  
                 }
@@ -381,10 +381,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                 
                  if (manyToOneSpec.isPrimaryKey()) {
                     if (this instanceof EntityWidget) {
-                        ((EntityWidget) this).scanPrimaryKeyError();
+                        ((EntityWidget) this).scanKeyError();
                     }
                     this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
-                        ((EntityWidget) classWidget).scanPrimaryKeyError();
+                        ((EntityWidget) classWidget).scanKeyError();
                     });
                     isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute  
                 }
@@ -456,10 +456,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         sortAttributes();
         AttributeValidator.validateEmbeddedIdAndIdFound(this);
         if (this instanceof EntityWidget) {
-            ((EntityWidget) this).scanPrimaryKeyError();
+            ((EntityWidget) this).scanKeyError();
         }
         this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
-            ((EntityWidget) classWidget).scanPrimaryKeyError();
+            ((EntityWidget) classWidget).scanKeyError();
         });
         isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute        
         return attributeWidget;
