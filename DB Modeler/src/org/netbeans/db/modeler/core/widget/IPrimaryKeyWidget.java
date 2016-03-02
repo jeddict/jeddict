@@ -15,14 +15,19 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
+import java.util.List;
 
 /**
  *
  * @author Shiwani Gupta
  */
 public interface IPrimaryKeyWidget {
-        public boolean addReferenceFlowWidget(ReferenceFlowWidget flowWidget);
+    boolean addReferenceFlowWidget(ReferenceFlowWidget flowWidget);
 
-    public boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget);
+    boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget);
+    
+    String getName();
+    
+    TableWidget getTableWidget();
+     List<ReferenceFlowWidget> getReferenceFlowWidget();
 }

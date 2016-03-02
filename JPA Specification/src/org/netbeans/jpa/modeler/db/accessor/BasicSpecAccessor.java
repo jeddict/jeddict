@@ -48,7 +48,7 @@ public class BasicSpecAccessor extends BasicAccessor{
     public void process(){
         super.process();
         getMapping().setProperty(Attribute.class, basic);
-        getMapping().setProperty(Inheritance.class, true);//Remove inherit functionality , once eclipse support dynamic mapped super class
+        getMapping().setProperty(Inheritance.class, inherit);//Remove inherit functionality , once eclipse support dynamic mapped super class
     }
     
 }

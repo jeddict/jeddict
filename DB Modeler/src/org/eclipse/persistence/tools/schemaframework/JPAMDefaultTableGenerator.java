@@ -984,6 +984,7 @@ public class JPAMDefaultTableGenerator {
         FieldDefinition fieldDef = this.fieldMap.get(dbField);
         if (fieldDef == null) {
             //not built yet, build one
+//            intrinsicEntity.getAttributes().findAllAttribute(name)
             if (inherited) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity, managedAttribute, inverse, foriegnKey, relationTable);
             } else {

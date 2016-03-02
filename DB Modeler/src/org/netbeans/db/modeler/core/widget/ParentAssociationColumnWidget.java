@@ -15,19 +15,12 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
+import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
-import org.netbeans.db.modeler.spec.DBParentColumn;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
-import org.netbeans.jpa.modeler.spec.AssociationOverride;
-import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -53,8 +46,43 @@ public abstract class ParentAssociationColumnWidget<E extends DBParentAssociatio
     protected void updateName(String name) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumnOverride();
         column.setName(name);
+        IPrimaryKeyWidget primaryKeyWidget = this.getReferenceFlowWidget().get(0).getReferenceColumnWidget();//TODO get(n)
+        if(primaryKeyWidget.getTableWidget().getPrimaryKeyWidgets().size() > 1){
+            column.setReferencedColumnName(primaryKeyWidget.getName());
+            syncronizeCompositeKeyJoincolumn(((PrimaryKeyWidget)primaryKeyWidget).getTableWidget(),this.getTableWidget());
+        }
     }
 
+    /**
+     * Exception Description: 
+     * The @JoinColumns on the annotated element [method get] from the entity class [class Employee] is incomplete. 
+     * When the source entity class uses a composite primary key, a @JoinColumn must be specified for each join column using the 
+     * @JoinColumns. Both the name and the referencedColumnName elements must be specified in each such @JoinColumn.
+     */
+    private void syncronizeCompositeKeyJoincolumn(TableWidget sourceTableWidget,final TableWidget targetTableWidget){
+        for(Object widget :sourceTableWidget.getPrimaryKeyWidgets()){
+            IPrimaryKeyWidget primaryKeyWidget =  (IPrimaryKeyWidget)widget;
+            Optional<ReferenceFlowWidget> optionalReferenceFlowWidget = primaryKeyWidget.getReferenceFlowWidget().stream().filter(r ->  r.getForeignKeyWidget().getTableWidget()==targetTableWidget).findFirst();
+            if(optionalReferenceFlowWidget.isPresent()){
+                ForeignKeyWidget foreignKeyWidget = optionalReferenceFlowWidget.get().getForeignKeyWidget();
+                JoinColumn joinColumn;
+                if (foreignKeyWidget instanceof ParentAssociationColumnWidget) {
+                    joinColumn = ((DBParentAssociationColumn) foreignKeyWidget.getBaseElementSpec()).getJoinColumnOverride();
+                } else {
+                    joinColumn = ((DBForeignKey) foreignKeyWidget.getBaseElementSpec()).getJoinColumn();
+                }
+                if (StringUtils.isEmpty(joinColumn.getReferencedColumnName())) {
+                    joinColumn.setReferencedColumnName(primaryKeyWidget.getName());
+                }
+                if (StringUtils.isEmpty(joinColumn.getName())) {
+                    joinColumn.setName(foreignKeyWidget.getName());
+                }
+            }
+        }
+    }
+    
+    
+    
         @Override
     public void createPropertySet(ElementPropertySet set) {
         set.createPropertySet("PARENT_JOINCOLUMN", this, this.getBaseElementSpec().getJoinColumn(), getPropertyChangeListeners());

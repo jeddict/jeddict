@@ -16,11 +16,11 @@
 package org.netbeans.db.modeler.core.widget;
 
 import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
-import org.netbeans.db.modeler.spec.DBParentColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.Column;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -40,14 +40,15 @@ public class ParentAssociationInverseJoinColumnWidget extends ParentAssociationC
 
     @Override
     protected String evaluateName() {
-        Column embeddableColumn = null;
-        Attribute refAttribute = ((DBParentColumn) this.getBaseElementSpec()).getAttribute();
-        PersistenceBaseAttribute baseRefAttribute = null;
-        if (refAttribute instanceof PersistenceBaseAttribute) {
-            baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
-            embeddableColumn = baseRefAttribute.getColumn();
+        Column column = null;
+        RelationAttribute attribute =  this.getBaseElementSpec().getAttribute();
+        Entity entity = attribute.getConnectedEntity();
+        Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
+        if (entity.getAttributes().getId().size() <= 1) {
+            return attribute.getName().toUpperCase() + "_" + id.getColumnName().toUpperCase();
+        } else {
+            return id.getColumnName().toUpperCase();
         }
-        return baseRefAttribute.getDefaultColumnName();
     }
 
 }

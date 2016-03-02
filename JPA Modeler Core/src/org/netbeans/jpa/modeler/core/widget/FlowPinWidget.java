@@ -34,6 +34,7 @@ public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends 
     
     public FlowPinWidget(S scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+        this.name=pinWidgetInfo.getName();
         errorHandler = new ErrorHandler(this);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);

@@ -176,7 +176,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     public void destroy() {
         try {
-        if (this.getModelerFile().isLoaded()) {
+        if (this.getModelerFile().isLoaded() && this.getBaseElementSpec()!=null) {
             this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
                     .filter(c -> c instanceof DBForeignKey).collect(toList())
                     .forEach((DBColumn column) -> {

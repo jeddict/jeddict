@@ -89,7 +89,7 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
         return (ColumnWidget)referenceColumnWidget;
     }
 
-    public ForeignKeyWidget getsetForeignKeyWidget() {
+    public ForeignKeyWidget getForeignKeyWidget() {
         return foreignKeyWidget;
     }
 

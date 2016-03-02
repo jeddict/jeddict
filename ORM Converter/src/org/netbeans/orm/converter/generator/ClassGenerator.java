@@ -684,7 +684,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
-            if (joinTable.isEmpty() && joinColumnsList.isEmpty()) {
+            if ((joinTable==null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
                 continue;
             }
             AssociationOverrideSnippet associationOverride = new AssociationOverrideSnippet();

@@ -15,13 +15,9 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.inDev;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
