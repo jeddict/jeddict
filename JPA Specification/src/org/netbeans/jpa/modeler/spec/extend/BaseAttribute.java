@@ -25,15 +25,10 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
  */
 public abstract class BaseAttribute extends Attribute {
 
-
-
     /**
      * @return the attributeType
      */
     public abstract String getAttributeType();
-
-
-
 
     @Override
     public List<JaxbVariableType> getJaxbVariableList() {

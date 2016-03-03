@@ -103,6 +103,6 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
 //    }
     @Override
     public InheritenceStateType getInheritenceState() {
-       return InheritenceStateType.NONE;
+        return InheritenceStateType.NONE;
     }
 }

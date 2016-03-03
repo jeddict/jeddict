@@ -22,9 +22,8 @@ import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.OneToMany;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
@@ -48,30 +47,41 @@ public class AssociationValidator extends MarshalValidator<AssociationOverride> 
                 && associationOverride.getJoinColumn().isEmpty();
     }
 
+    /**
+     * Used to remove all stale AssociationOverride (ex : if Parent JavaClass
+     * association is removed then AssociationOverride reference should be
+     * removed) There are two way : either to remove on attribute deletion or at
+     * the time of DB Modeler creation
+     *
+     */
     public static void filter(Entity entity) {
+        ManagedClass parentclass = entity.getSuperclass() instanceof ManagedClass ? (ManagedClass) entity.getSuperclass() : null;
         entity.getAssociationOverride().removeIf(associationOverride
-                -> !isExist(associationOverride.getName(), entity.getSuperclass())
+                -> !isExist(associationOverride.getName(), parentclass)
                 || AssociationValidator.isEmpty(associationOverride)
         );
     }
+
     /**
-     * 
+     *
      * @param key key of AttributeOverride
      * @param javaClass parent class of entity to search AttributeOverride's key
-     * @return 
+     * @return
      */
-    private static boolean isExist(String key, JavaClass javaClass) {
-        if(javaClass==null){
+    private static boolean isExist(String key, ManagedClass javaClass) {
+        if (javaClass == null) {
             return false;
         }
         Optional<RelationAttribute> attrOptional = javaClass.getAttributes().getRelationAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(key)).findAny();
         if (attrOptional.isPresent()) {
             return true;
+        } else if (javaClass.getSuperclass() instanceof ManagedClass) {
+            return isExist(key, (ManagedClass) javaClass.getSuperclass());
         } else {
-            return isExist(key, javaClass.getSuperclass());
+            return false;
         }
     }
-    
+
     public static void filter(Embedded embedded) {
         embedded.getAssociationOverride().removeIf(associationOverride
                 -> !isExist(associationOverride.getName().split("\\."), embedded.getConnectedClass(), associationOverride)
@@ -85,9 +95,9 @@ public class AssociationValidator extends MarshalValidator<AssociationOverride> 
                 || AssociationValidator.isEmpty(associationOverride)
         );
     }
-   
+
     /**
-     * 
+     *
      * @param keys arrays path to managedAttr separated by dots
      * @param embeddable next intrinsic element , incremented in each recursion
      */
@@ -95,19 +105,19 @@ public class AssociationValidator extends MarshalValidator<AssociationOverride> 
         if (keys.length > 1) {
             Optional<Embedded> embeddedOptional = embeddable.getAttributes().getEmbedded().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
             if (embeddedOptional.isPresent()) {
-                return isExist(Arrays.copyOfRange(keys, 1, keys.length), embeddedOptional.get().getConnectedClass(),associationOverride);
+                return isExist(Arrays.copyOfRange(keys, 1, keys.length), embeddedOptional.get().getConnectedClass(), associationOverride);
             } else {
                 return false;
             }
         } else {
             Optional<RelationAttribute> attrOptional = embeddable.getAttributes().getRelationAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
-            if(attrOptional.isPresent()){
+            if (attrOptional.isPresent()) {
                 RelationAttribute attribute = attrOptional.get();
-                if(attribute instanceof SingleRelationAttribute){
+                if (attribute instanceof SingleRelationAttribute) {
                     associationOverride.getJoinTable().clear();
-                } else if(attribute instanceof MultiRelationAttribute){
-                    if(attribute instanceof OneToMany){
-                    associationOverride.getJoinColumn().clear();
+                } else if (attribute instanceof MultiRelationAttribute) {
+                    if (attribute instanceof OneToMany) {
+                        associationOverride.getJoinColumn().clear();
                     }
                 }
                 return true;

@@ -46,7 +46,7 @@ public interface IAttributes extends ReverseEngineeringController {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getBasic().add(newItem);
+     *    addBasic(newItem);
      * </pre>
      *
      *
@@ -141,7 +141,7 @@ public interface IAttributes extends ReverseEngineeringController {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getManyToOne().add(newItem);
+     *    addManyToOne(newItem);
      * </pre>
      *
      *

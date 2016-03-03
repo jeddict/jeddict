@@ -230,7 +230,7 @@ public class OneToOne extends SingleRelationAttribute {
      * @return the owner
      */
     public boolean isOwner() {
-        if(owner==null){
+        if (owner == null) {
             return Boolean.FALSE;
         }
         return owner;

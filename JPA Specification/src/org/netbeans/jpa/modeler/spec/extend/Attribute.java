@@ -18,9 +18,12 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
+import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
@@ -200,5 +203,21 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     @Override
     public List<JaxbVariableType> getJaxbVariableList() {
         return Arrays.asList(JaxbVariableType.values());
+    }
+
+//    public abstract JavaClass getJavaClass();
+    @XmlTransient
+    private BaseAttributes attributes;
+
+    public JavaClass getJavaClass() {
+        return attributes.getJavaClass();
+    }
+
+    public void setAttributes(BaseAttributes attributes) {
+        this.attributes = attributes;
+    }
+
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        setAttributes((Attributes) parent);
     }
 }

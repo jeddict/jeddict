@@ -106,8 +106,8 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
         JavaSourceParserUtil.addNonEEAnnotation(embedded, element);
         return embedded;
     }
-    
-     void beforeMarshal(Marshaller marshaller) {
+
+    void beforeMarshal(Marshaller marshaller) {
         AttributeValidator.filter(this);
         AssociationValidator.filter(this);
     }

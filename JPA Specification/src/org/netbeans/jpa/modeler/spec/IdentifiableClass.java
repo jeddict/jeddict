@@ -180,6 +180,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     public Attributes getAttributes() {
         if (attributes == null) {
             attributes = new Attributes();
+            attributes.setJavaClass(this);
         }
         return attributes;
     }
@@ -520,20 +521,23 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
         if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
             compositePrimaryKeyClass = this.getClazz() + "PK";
         }
-        if (null != this.getCompositePrimaryKeyType()) switch (this.getCompositePrimaryKeyType()) {
-            case EMBEDDEDID:
-                //this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass); //todo urgent
-                this.idClass = null;
-                break;
-            case IDCLASS:
-                this.idClass = new IdClass(compositePrimaryKeyClass);
-                break;
-            default:
-                this.idClass = null;
-                compositePrimaryKeyClass = null;
-                if (getCompositePrimaryKeyType() == null) {
-                    setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
-                }   break;
+        if (null != this.getCompositePrimaryKeyType()) {
+            switch (this.getCompositePrimaryKeyType()) {
+                case EMBEDDEDID:
+                    //this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass); //todo urgent
+                    this.idClass = null;
+                    break;
+                case IDCLASS:
+                    this.idClass = new IdClass(compositePrimaryKeyClass);
+                    break;
+                default:
+                    this.idClass = null;
+                    compositePrimaryKeyClass = null;
+                    if (getCompositePrimaryKeyType() == null) {
+                        setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
+                    }
+                    break;
+            }
         }
     }
 

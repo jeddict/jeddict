@@ -6,23 +6,16 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -119,20 +112,17 @@ public class EmbeddableAttributes extends BaseAttributes {
 
     }
 
-    
-       @Override
+    @Override
     public XMLAttributes getAccessor() {
         XMLAttributes attr = super.getAccessor();
         attr.setIds(new ArrayList<>());
         attr.setVersions(new ArrayList<>());
         return updateAccessor(attr);
     }
-    
+
     public XMLAttributes updateAccessor(XMLAttributes attr) {
-        super.updateAccessor(attr,false);
+        super.updateAccessor(attr, false);
         return attr;
     }
-    
 
 }
- 

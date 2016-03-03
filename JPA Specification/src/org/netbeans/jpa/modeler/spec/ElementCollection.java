@@ -132,7 +132,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "collectionTable"
 })
 /**
- * For Basic ElementCollection    -> TargetClass<String>
+ * For Basic ElementCollection -> TargetClass<String>
  * For Embeddable ElementCollection -> ConnectedClass<Embeddable>
  */
 public class ElementCollection extends CompositionAttribute implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler { //CompositionAttribute/BaseAttributes
@@ -235,9 +235,8 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
         return elementCollection;
     }
-    
-    
-     void beforeMarshal(Marshaller marshaller) {
+
+    void beforeMarshal(Marshaller marshaller) {
         AttributeValidator.filter(this);
         AssociationValidator.filter(this);
     }
@@ -601,7 +600,8 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         }
         return this.attributeOverride;
     }
-        public AttributeOverride findAttributeOverride(String name) {
+
+    public AttributeOverride findAttributeOverride(String name) {
         for (AttributeOverride attributeOverride : getAttributeOverride()) {
             if (StringUtils.equals(name, attributeOverride.getName())) {
                 return attributeOverride;
@@ -609,10 +609,12 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         }
         return null;
     }
-      public boolean addAttributeOverride(AttributeOverride attributeOverride) {
+
+    public boolean addAttributeOverride(AttributeOverride attributeOverride) {
         return getAttributeOverride().add(attributeOverride);
     }
-     public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
+
+    public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
         return getAttributeOverride().remove(attributeOverride);
     }
 
@@ -646,7 +648,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         return this.associationOverride;
     }
 
-        public AssociationOverride findAssociationOverride(String name) {
+    public AssociationOverride findAssociationOverride(String name) {
         for (AssociationOverride associationOverride : getAssociationOverride()) {
             if (StringUtils.equals(name, associationOverride.getName())) {
                 return associationOverride;
@@ -831,9 +833,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             return Arrays.asList(JaxbVariableType.values());
         }
     }
-    
-    
-    
+
     @Override
     public String getAttributeType() {
         return this.getConnectedClass() != null ? super.getAttributeType() : targetClass;
@@ -865,5 +865,4 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         }
     }
 
-  
 }

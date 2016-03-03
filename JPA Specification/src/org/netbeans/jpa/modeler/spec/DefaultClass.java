@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 //created by gaurav gupta
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
     "description",
     "attributes"
 })
-public class DefaultClass {
+public class DefaultClass extends JavaClass {
 
     private boolean embeddable;
     private String description;
@@ -43,6 +44,7 @@ public class DefaultClass {
             this.attributes = new ArrayList<DefaultAttribute>();
         }
         this.attributes.add(attributes);
+        attributes.setJavaClass(this);
     }
 
     /**
@@ -85,5 +87,15 @@ public class DefaultClass {
      */
     public void setEmbeddable(boolean embeddable) {
         this.embeddable = embeddable;
+    }
+
+    @Override
+    public String getName() {
+        return clazz;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.clazz = clazz;
     }
 }

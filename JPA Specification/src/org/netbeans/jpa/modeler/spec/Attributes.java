@@ -117,38 +117,38 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")
                         && !(JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")
                         || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne"))) {
-                    this.getId().add(Id.load(element, variableElement));
+                    this.addId(Id.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
-                    this.getBasic().add(Basic.load(element, variableElement));
+                    this.addBasic(Basic.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
-                    this.getTransient().add(Transient.load(element, variableElement));
+                    this.addTransient(Transient.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Version")) {
-                    this.getVersion().add(Version.load(element, variableElement));
+                    this.addVersion(Version.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
-                    this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
+                    this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
                     OneToOne oneToOneObj = new OneToOne();
-                    this.getOneToOne().add(oneToOneObj);
+                    this.addOneToOne(oneToOneObj);
                     oneToOneObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
                     ManyToOne manyToOneObj = new ManyToOne();
-                    this.getManyToOne().add(manyToOneObj);
+                    this.addManyToOne(manyToOneObj);
                     manyToOneObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
                     OneToMany oneToManyObj = new OneToMany();
-                    this.getOneToMany().add(oneToManyObj);
+                    this.addOneToMany(oneToManyObj);
                     oneToManyObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
                     ManyToMany manyToManyObj = new ManyToMany();
-                    this.getManyToMany().add(manyToManyObj);
+                    this.addManyToMany(manyToManyObj);
                     manyToManyObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
                     this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
                     embeddedIdVariableElement = variableElement;
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
-                    this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
+                    this.addEmbedded(Embedded.load(entityMappings, element, variableElement));
                 } else {
-                    this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
+                    this.addBasic(Basic.load(element, variableElement)); //Default Annotation
                 }
 
             }
@@ -158,7 +158,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
         if (this.getEmbeddedId() != null) {
             for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
-                this.getId().add(Id.load(variableElement, variableElement));
+                this.addId(Id.load(variableElement, variableElement));
             }
         }
 
@@ -263,6 +263,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public void addId(Id id) {
         this.getId().add(id);
         notifyListeners(id, "addAttribute", null, null);
+        id.setAttributes(this);
     }
 
     @Override
@@ -302,6 +303,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
             notifyListeners(null, "removeAttribute", null, null);
         } else {
             notifyListeners(embeddedId, "addAttribute", null, null);
+            value.setAttributes(this);
         }
 
     }
@@ -339,6 +341,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public void addVersion(Version version) {
         this.getVersion().add(version);
         notifyListeners(version, "addAttribute", null, null);
+        version.setAttributes(this);
     }
 
     @Override

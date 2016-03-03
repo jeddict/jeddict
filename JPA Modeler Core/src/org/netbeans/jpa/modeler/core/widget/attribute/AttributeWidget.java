@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
@@ -30,12 +29,12 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -59,7 +58,7 @@ import org.openide.util.NbBundle;
  * @author Gaurav Gupta
  * @param <E>
  */
-public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget<E,JPAModelerScene> {
+public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget<E, JPAModelerScene> {
 
     public AttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
@@ -95,8 +94,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 errorHandler.clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
-        
-         this.addPropertyChangeListener("collectionType", (PropertyChangeListener<String>) (String collectionType) -> {
+
+        this.addPropertyChangeListener("collectionType", (PropertyChangeListener<String>) (String collectionType) -> {
             Attribute attribute = getBaseElementSpec();
             boolean valid = false;
             try {
@@ -111,12 +110,12 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             if (!valid) {
                 collectionType = java.util.Collection.class.getName();
             }
-            
-                ((CollectionTypeHandler) attribute).setCollectionType(collectionType.trim());
-                setAttributeTooltip();
+
+            ((CollectionTypeHandler) attribute).setCollectionType(collectionType.trim());
+            setAttributeTooltip();
 
         });
-        
+
     }
 
     @Override
@@ -132,7 +131,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 Exceptions.printStackTrace(ex);
             }
         }
-          PropertiesHandler.getJaxbVarTypeProperty(set , this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
+        PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
     }
 
     private EmbeddedPropertySupport getFieldTypeProperty() {
@@ -174,7 +173,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
             @Override
             public void setData(Attribute baseAttribute) {
-                AttributeWidget.this.setBaseElementSpec((E)baseAttribute);
+                AttributeWidget.this.setBaseElementSpec((E) baseAttribute);
             }
 
             @Override
@@ -217,7 +216,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id,baseElement);
+        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
         return pinWidgetInfo;
     }
@@ -260,7 +259,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
-             getBaseElementSpec().setName(this.name);
+                getBaseElementSpec().setName(this.name);
             }
         }
         if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
@@ -269,7 +268,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         }
 
-        JavaClass javaClass = (JavaClass) this.getClassWidget().getBaseElementSpec();
+        ManagedClass javaClass = (ManagedClass) this.getClassWidget().getBaseElementSpec();
         if (javaClass.getAttributes().findAllAttribute(this.getName()).size() > 1) {
             errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         } else {
@@ -290,9 +289,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-
     protected abstract void setAttributeTooltip();
-    
+
     @Override
     public void init() {
         setAttributeTooltip();
@@ -300,6 +298,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
     @Override
     public void destroy() {
+        clearDependencies();
     }
 
     /**
@@ -309,17 +308,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return (JavaClassWidget) this.getPNodeWidget();
     }
 
-//    /**
-//     * @return the selectedView
-//     */
-//    public boolean isSelectedView() {
-//        return selectedView;
-//    }
-//
-//    /**
-//     * @param selectedView the selectedView to set
-//     */
-//    public void setSelectedView(boolean selectedView) {
-//        this.selectedView = selectedView;
-//    }
+    private void clearDependencies() {
+
+    }
 }
