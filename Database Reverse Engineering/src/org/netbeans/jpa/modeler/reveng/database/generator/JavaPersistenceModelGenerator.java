@@ -270,19 +270,14 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                 entityModalGenerator.run();
             }
 
-  
             entityMappingsSpec.manageSiblingAttribute();
             // manageSiblingAttribute for MappedSuperClass and Embeddable is not required because it not generated DBRE CASE
 
-            
             FileObject parentFileObject = entityClasses[0].getPackageFileObject();
-            JPAModelerUtil.createNewModelerFile(entityMappingsSpec , parentFileObject,fileName, true);
-            
-            
+            JPAModelerUtil.createNewModelerFile(entityMappingsSpec, parentFileObject, fileName, true);
 
         }
 
-     
         private abstract class ModalGenerator {
 
             // the entity modal we are generating
@@ -337,8 +332,10 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
             }
 
             protected boolean isDecimalType(String type) {
-                if ("java.lang.Double".equals(type) || // NOI18N
-                        "java.lang.Float".equals(type) || // NOI18N
+                if ("java.lang.Double".equals(type)
+                        || // NOI18N
+                        "java.lang.Float".equals(type)
+                        || // NOI18N
                         "java.math.BigDecimal".equals(type)) { // NOI18N
                     return true;
                 }

@@ -143,6 +143,13 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         return widget;
     }
 
+    public ColumnWidget addNewPrimaryKeyJoinColumn(String name, DBColumn column) {
+        PrimaryKeyJoinColumnWidget widget = (PrimaryKeyJoinColumnWidget) createPinWidget(PrimaryKeyJoinColumnWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        foreignKeyWidgets.put(column.getId(), widget);
+        return widget;
+    }
+
     public ColumnWidget addNewPrimaryKey(String name, DBColumn column) {
 //        E table = this.getBaseElementSpec();
 //        if (column == null) {

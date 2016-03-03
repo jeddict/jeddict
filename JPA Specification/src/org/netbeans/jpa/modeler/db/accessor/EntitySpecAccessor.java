@@ -52,12 +52,12 @@ public class EntitySpecAccessor extends EntityAccessor {
             accessor.setDiscriminatorColumn(entity.getDiscriminatorColumn().getAccessor());
         }
         accessor.setDiscriminatorValue(entity.getDiscriminatorValue());
-        
+
         AttributeValidator.filter(entity);
         accessor.setAttributeOverrides(entity.getAttributeOverride().stream().map(AttributeOverrideSpecMetadata::getInstance).collect(toList()));
         AssociationValidator.filter(entity);
         accessor.setAssociationOverrides(entity.getAssociationOverride().stream().map(AssociationOverrideSpecMetadata::getInstance).collect(toList()));
-        
+
         return accessor;
 
     }
@@ -66,7 +66,7 @@ public class EntitySpecAccessor extends EntityAccessor {
         if (_class.getSuperclass() != null) {
             if (_class.getSuperclass() instanceof MappedSuperclass) {
                 MappedSuperclass superclass = (MappedSuperclass) _class.getSuperclass();
-                superclass.getAttributes().updateAccessor(accessor.getAttributes());
+                superclass.getAttributes().updateAccessor(accessor.getAttributes(), true);
                 processSuperClass(superclass, accessor);
             } else {
                 accessor.setParentClassName(_class.getSuperclass().getClazz());
@@ -80,5 +80,5 @@ public class EntitySpecAccessor extends EntityAccessor {
     public Entity getEntity() {
         return entity;
     }
-   
+
 }

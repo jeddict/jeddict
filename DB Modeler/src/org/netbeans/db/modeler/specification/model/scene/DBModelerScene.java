@@ -54,14 +54,16 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
             if (baseElementWidget instanceof FlowNodeWidget) { //reverse ref
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
-                    if (baseElementWidget instanceof TableWidget) {
-                        TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
-                        tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
-                        for (ForeignKeyWidget foreignKeyWidget : tableWidget.getForeignKeyWidgets()) {
-                            foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> { ((ReferenceFlowWidget)w).remove();});
-                        }
-                        tableWidget.setLocked(false);
+                if (baseElementWidget instanceof TableWidget) {
+                    TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
+                    tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
+                    for (ForeignKeyWidget foreignKeyWidget : tableWidget.getForeignKeyWidgets()) {
+                        foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
+                            ((ReferenceFlowWidget) w).remove();
+                        });
                     }
+                    tableWidget.setLocked(false);
+                }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
                 this.flowElements.remove(flowNodeWidget);
@@ -71,12 +73,12 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                     referenceFlowWidget.setLocked(true);
                     ForeignKeyWidget foreignKeyWidget = referenceFlowWidget.getSourceWidget();
                     foreignKeyWidget.remove();
-                    ColumnWidget columnWidget = (ColumnWidget)referenceFlowWidget.getTargetWidget();
+                    ColumnWidget columnWidget = (ColumnWidget) referenceFlowWidget.getTargetWidget();
                     columnWidget.remove();
                     referenceFlowWidget.setLocked(false);
                     referenceFlowWidget.setFlowElementsContainer(null);
                     this.flowElements.remove(referenceFlowWidget);
-                }  else {
+                } else {
                     throw new InvalidElmentException("Invalid JPA Element");
                 }
 
@@ -178,24 +180,24 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     public void destroy() {
         try {
-        if (this.getModelerFile().isLoaded() && this.getBaseElementSpec()!=null) {
-            this.getBaseElementSpec().getTables().stream().map(t -> t.getEntity()).forEach(e -> {
-            AttributeValidator.filter(e);
-        AssociationValidator.filter(e);
-        });
-            this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
-                    .filter(c -> c instanceof DBForeignKey).collect(toList())
-                    .forEach((DBColumn column) -> {
-                        List<JoinColumn> joinColumns;
-                        JoinColumn joinColumn;
-                        joinColumn = ((DBForeignKey) column).getJoinColumn();
-                        joinColumns = ((DBForeignKey) column).getJoinColumns();
-                        if (JoinColumnValidator.isEmpty(joinColumn)) {
-                            joinColumns.remove(joinColumn);
-                        }
-                    });
-        }
-        }catch(Exception ex){
+            if (this.getModelerFile().isLoaded() && this.getBaseElementSpec() != null) {
+                this.getBaseElementSpec().getTables().stream().map(t -> t.getEntity()).forEach(e -> {
+                    AttributeValidator.filter(e);
+                    AssociationValidator.filter(e);
+                });
+                this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
+                        .filter(c -> c instanceof DBForeignKey).collect(toList())
+                        .forEach((DBColumn column) -> {
+                            List<JoinColumn> joinColumns;
+                            JoinColumn joinColumn;
+                            joinColumn = ((DBForeignKey) column).getJoinColumn();
+                            joinColumns = ((DBForeignKey) column).getJoinColumns();
+                            if (joinColumn != null && JoinColumnValidator.isEmpty(joinColumn)) {
+                                joinColumns.remove(joinColumn);
+                            }
+                        });
+            }
+        } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
     }
