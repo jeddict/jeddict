@@ -1328,7 +1328,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         });
     }
 
-    public static void initReferencedColumnModel(javax.swing.JComboBox columnComboBox, Entity entity, String selectedColumnName) {
+    public static void initReferencedColumnModel(javax.swing.JComboBox columnComboBox, Entity entity, Id selectedColumn) {
         columnComboBox.setEditable(true);
         columnComboBox.removeAllItems();
         columnComboBox.addItem(new ComboBoxValue(null, ""));
@@ -1343,14 +1343,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             int i = 0;
             int selectedItemIndex = -1;
             for (Id id : entity.getAttributes().getId()) {
-                String columnName;
-                if (id.getColumn() != null && org.apache.commons.lang.StringUtils.isNotBlank(id.getColumn().getName())) {
-                    columnName = id.getColumn().getName();
-                } else {
-                    columnName = id.getName();
-                }
+                String columnName = id.getReferenceColumnName();
                 columnComboBox.addItem(new ComboBoxValue(id, columnName));
-                if (columnName.equalsIgnoreCase(selectedColumnName)) {
+                if (id == selectedColumn) {
                     selectedItemIndex = i;
                 }
                 i++;

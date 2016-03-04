@@ -11,9 +11,10 @@ import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -58,12 +59,15 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "join-column")
-@XmlJavaTypeAdapter(value=JoinColumnValidator.class)
+@XmlJavaTypeAdapter(value = JoinColumnValidator.class)
 public class JoinColumn {
 
     @XmlAttribute(name = "name")
     protected String name;
-    @XmlAttribute(name = "referenced-column-name")
+    @XmlAttribute(name = "referenced-column")
+    @XmlIDREF
+    private Id referencedColumn;
+    @XmlTransient
     protected String referencedColumnName;
     @XmlAttribute
     protected Boolean unique = false;
@@ -77,10 +81,9 @@ public class JoinColumn {
     protected String columnDefinition;
     @XmlAttribute(name = "table")
     protected String table;
-    
+
 //        @XmlTransient
 //    private String generatedName;
-
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
@@ -128,6 +131,9 @@ public class JoinColumn {
      *
      */
     public String getReferencedColumnName() {
+        if (referencedColumn != null) {
+            return referencedColumn.getReferenceColumnName();
+        }
         return referencedColumnName;
     }
 
@@ -272,6 +278,20 @@ public class JoinColumn {
         accessor.setUnique(unique);
         accessor.setUpdatable(updatable);
         return accessor;
+    }
+
+    /**
+     * @return the referencedColumn
+     */
+    public Id getReferencedColumn() {
+        return referencedColumn;
+    }
+
+    /**
+     * @param referencedColumn the referencedColumn to set
+     */
+    public void setReferencedColumn(Id referencedColumn) {
+        this.referencedColumn = referencedColumn;
     }
 
 }
