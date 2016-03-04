@@ -329,18 +329,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static EntityMappings getEntityMapping(File file) {
         EntityMappings definition_Load = null;
         try {
-//            if (MODELER_CONTEXT == null) {
-//
-//            }
-
             if (MODELER_UNMARSHALLER == null) {
                 MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
 //            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
-
             }
             definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
         } catch (JAXBException ex) {
 //            IO.getOut().println("Exception: " + ex.toString());
+            Exceptions.printStackTrace(ex);
             ex.printStackTrace();
         }
         return definition_Load;

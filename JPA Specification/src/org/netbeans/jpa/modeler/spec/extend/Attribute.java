@@ -218,6 +218,6 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     }
 
     void afterUnmarshal(Unmarshaller u, Object parent) {
-        setAttributes((Attributes) parent);
+        setAttributes((BaseAttributes) parent);
     }
 }
