@@ -31,10 +31,9 @@ public class ColumnUtil {
      * Exception Description: The @JoinColumns on the annotated element [method
      * get] from the entity class [class Employee] is incomplete. When the
      * source entity class uses a composite primary key, a @JoinColumn must be
-     * specified for each join column using the
-     *
-     * @JoinColumns. Both the name and the referencedColumnName elements must be
-     * specified in each such @JoinColumn.
+     * specified for each join column using the @JoinColumns. Both the name and
+     * the referencedColumnName elements must be specified in each such
+     * @JoinColumn.
      */
     public static void syncronizeCompositeKeyJoincolumn(TableWidget sourceTableWidget, final TableWidget targetTableWidget) {
         if (sourceTableWidget.getPrimaryKeyWidgets().size() > 1) {

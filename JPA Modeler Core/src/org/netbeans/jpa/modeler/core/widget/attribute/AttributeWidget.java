@@ -293,12 +293,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
     @Override
     public void init() {
+        super.init();
         setAttributeTooltip();
-    }
-
-    @Override
-    public void destroy() {
-        clearDependencies();
     }
 
     /**
@@ -308,7 +304,4 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return (JavaClassWidget) this.getPNodeWidget();
     }
 
-    private void clearDependencies() {
-
-    }
 }

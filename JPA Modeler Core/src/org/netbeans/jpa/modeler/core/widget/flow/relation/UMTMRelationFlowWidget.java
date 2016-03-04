@@ -47,10 +47,21 @@ public class UMTMRelationFlowWidget extends MTMRelationFlowWidget implements Uni
     @Override
     public void setTargetEntityWidget(EntityWidget targetEntityWidget) {
         this.targetEntityWidget = targetEntityWidget;
+        if (targetEntityWidget != null) {
+            targetEntityWidget.addUnidirectionalRelationFlowWidget(this);
+        }
     }
 
     @Override
     public IFlowElementWidget getTargetWidget() {
         return targetEntityWidget;
     }
+
+    @Override
+    public void destroy() {
+        if (targetEntityWidget != null) {
+            targetEntityWidget.removeUnidirectionalRelationFlowWidget(this);
+        }
+    }
+
 }

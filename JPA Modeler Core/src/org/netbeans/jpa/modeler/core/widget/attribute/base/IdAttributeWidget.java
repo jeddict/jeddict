@@ -16,10 +16,15 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.apache.velocity.util.StringUtils;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
@@ -34,7 +39,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class IdAttributeWidget extends BaseAttributeWidget <Id>{
+public class IdAttributeWidget extends BaseAttributeWidget<Id> {
 
     public IdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
@@ -97,4 +102,21 @@ public class IdAttributeWidget extends BaseAttributeWidget <Id>{
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+//        clearDependencies();
+    }
+
+//    private void clearDependencies() {
+//        PrimaryKeyContainerWidget<IdentifiableClass> classWidget = (PrimaryKeyContainerWidget) this.getClassWidget();
+//        for (RelationAttributeWidget relationAttributeWidget : classWidget.getRelationAttributeWidgets()) {
+////            relationAttributeWidget.getRelationFlowWidget().get
+//            if (relationAttributeWidget instanceof Bidirectional) {
+//                RelationAttributeWidget<RelationAttribute> targetRelationAttributeWidget = ((Bidirectional) relationAttributeWidget).getTargetRelationAttributeWidget();
+//                RelationAttribute targetRelationAttribute = targetRelationAttributeWidget.getBaseElementSpec();
+////                targetRelationAttribute.getJoinTable() //JoinColumnHandler
+//            }
+//        }
+//    }
 }
