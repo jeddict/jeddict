@@ -15,62 +15,53 @@
  */
 package org.netbeans.db.modeler.core.widget;
 
-import org.netbeans.db.modeler.spec.DBColumn;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.db.modeler.spec.DBDiscriminatorColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
-import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class BasicColumnWidget extends ColumnWidget<DBColumn<Attribute>> {
+public class DiscriminatorColumnWidget extends ColumnWidget<DBDiscriminatorColumn> {
 
-    public BasicColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public DiscriminatorColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setPropertyName(value);
         });
-
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);//(PropertyChangeListener<String>)
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(BasicColumnWidget.class.getSimpleName());
+        pinWidgetInfo.setDocumentId(DiscriminatorColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof PersistenceBaseAttribute) {
-            PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
-            set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
-        }
+        DiscriminatorColumn discriminatorColumn = this.getBaseElementSpec().getAttribute();
+        set.createPropertySet(this, discriminatorColumn, getPropertyChangeListeners());
     }
 
     @Override
     protected String evaluateName() {
-        Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof ColumnHandler) {
-            return ((ColumnHandler) attribute).getDefaultColumnName();
+        DiscriminatorColumn discriminatorColumn = this.getBaseElementSpec().getAttribute();
+        if (StringUtils.isBlank(discriminatorColumn.getName())) {
+            return "DTYPE";
         } else {
-            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+            return discriminatorColumn.getName();
         }
     }
 
     @Override
-    protected void updateName(String newName) {
-        Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof ColumnHandler) {
-            ColumnHandler baseAttribute = (ColumnHandler) attribute;
-            baseAttribute.getColumn().setName(this.name);
-        } else {
-            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
-        }
+    protected void updateName(String name) {
+        DiscriminatorColumn discriminatorColumn = this.getBaseElementSpec().getAttribute();
+        discriminatorColumn.setName(name);
     }
 }

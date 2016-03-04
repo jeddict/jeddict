@@ -41,6 +41,7 @@ import org.netbeans.db.modeler.core.widget.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.DiscriminatorColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.EmbeddedAttributeColumnWidget;
@@ -61,6 +62,7 @@ import org.netbeans.db.modeler.core.widget.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBDiscriminatorColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
@@ -251,7 +253,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {
-                        if (column instanceof DBJoinColumn) {
+                        if (column instanceof DBDiscriminatorColumn) {
+                            tableWidget.addDiscriminatorColumn(column.getName(), column);
+                        } else if (column instanceof DBJoinColumn) {
                             tableWidget.addNewJoinKey(column.getName(), column);
                         } else if (column instanceof DBInverseJoinColumn) {
                             tableWidget.addNewInverseJoinKey(column.getName(), column);
@@ -456,6 +460,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new ParentAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(PrimaryKeyJoinColumnWidget.class.getSimpleName())) {
             widget = new PrimaryKeyJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(DiscriminatorColumnWidget.class.getSimpleName())) {
+            widget = new DiscriminatorColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }

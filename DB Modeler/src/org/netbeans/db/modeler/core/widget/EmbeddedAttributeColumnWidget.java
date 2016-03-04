@@ -17,12 +17,8 @@ package org.netbeans.db.modeler.core.widget;
 
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
-import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.inDev;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -46,8 +42,8 @@ public class EmbeddedAttributeColumnWidget extends ColumnWidget<DBEmbeddedAttrib
         this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (String value) -> {
             setMultiPropertyName(value);
         });
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>)this::validateTableName);
-        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>)this::validateTableName);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -60,7 +56,7 @@ public class EmbeddedAttributeColumnWidget extends ColumnWidget<DBEmbeddedAttrib
     @Override
     protected String evaluateName() {
         AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-        Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
+        Attribute refAttribute = this.getBaseElementSpec().getAttribute();
         if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
             inDev();
         }
@@ -79,20 +75,20 @@ public class EmbeddedAttributeColumnWidget extends ColumnWidget<DBEmbeddedAttrib
             throw new IllegalStateException("Invalid attribute type : " + refAttribute.getClass().getSimpleName());
         }
     }
-  
+
     @Override
-    protected void updateName(String newName){
-            if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
-                inDev();
-            } else {
-                AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-                attributeOverride.getColumn().setName(newName);
-            }
+    protected void updateName(String newName) {
+        if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
+            inDev();
+        } else {
+            AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+            attributeOverride.getColumn().setName(newName);
+        }
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
+        Attribute refAttribute = this.getBaseElementSpec().getAttribute();
         if (refAttribute instanceof PersistenceBaseAttribute) {
             PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
             set.createPropertySet("EMBEDDABLE_COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());

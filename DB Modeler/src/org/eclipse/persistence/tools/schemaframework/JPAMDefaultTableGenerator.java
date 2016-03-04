@@ -34,11 +34,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
 import org.eclipse.persistence.exceptions.DatabaseException;
@@ -86,6 +88,7 @@ import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Inheritance;
+import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -191,14 +194,14 @@ public class JPAMDefaultTableGenerator {
     public JPAMTableCreator generateDefaultTableCreator() {
         JPAMTableCreator tblCreator = new JPAMTableCreator();
 
-        this.project.getOrderedDescriptors().forEach((descriptor) -> {
+        this.project.getOrderedDescriptors().stream().map(d -> (DBRelationalDescriptor) d).forEach((descriptor) -> {
             /**
              * Id : SUPERCLASS_ATTR_CLONE. Description : Fix for If class have
              * super class then super class mapping is cloned and copied to
              * subclass, to share the attributes but in the cloning process,
              * Attribute Spec property is missed.
              */
-            List<DatabaseMapping> parentClassMapping = ((DBRelationalDescriptor) descriptor).getParentClassMapping();
+            List<DatabaseMapping> parentClassMapping = descriptor.getParentClassMapping();
             if (parentClassMapping != null) {
                 parentClassMapping.stream().forEach((parentMapping) -> {
                     descriptor.getMappings().stream().filter((childMapping) -> (parentMapping.getAttributeName().equals(childMapping.getAttributeName()))).forEach((childMapping) -> {
@@ -207,6 +210,18 @@ public class JPAMDefaultTableGenerator {
                     });
                 });
             }
+
+            if (!descriptor.isChildDescriptor() && !descriptor.getDescriptorInheritancePolicy().getAllChildDescriptors().isEmpty()) {
+                if (descriptor.getAccessor() instanceof EntitySpecAccessor) {
+                    Entity entity = ((EntitySpecAccessor) descriptor.getAccessor()).getEntity();
+                    if (entity.getInheritance() != null && entity.getInheritance().getStrategy() == InheritanceType.SINGLE_TABLE) {
+                        descriptor.getInheritancePolicy().getAllChildDescriptors().stream().forEach((childDescriptor) -> {
+                            descriptor.getMappings().addAll(childDescriptor.getMappings());
+                        });
+                    }
+                }
+            }
+
         });
         //go through each descriptor and build the table/field definitions out of mappings
         for (ClassDescriptor descriptor : this.project.getOrderedDescriptors()) {
@@ -216,6 +231,11 @@ public class JPAMDefaultTableGenerator {
 //
 //                return tblCreator;
 //            }
+//descriptor.isChildDescriptor()
+//
+//
+//descriptor.getDescriptorInheritancePolicy().getAllChildDescriptors()
+//descriptor.getDescriptorInheritancePolicy().isJoinedStrategy()
             // Aggregate descriptors do not contain table/field data and are
             // processed through their owning entities. Aggregate descriptors
             // can not exist on their own.
@@ -346,13 +366,22 @@ public class JPAMDefaultTableGenerator {
             tableDefintion = getTableDefFromDBTable(intrinsicEntity.peek(), null, intrinsicEntity, table);
         }
 
+        Set<DatabaseField> remainingDatabaseFields = new HashSet<>(descriptor.getFields());
         //build each field definition and figure out which table it goes
         for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
             LinkedList<Attribute> intrinsicAttribute;
 
             ClassDescriptor refDescriptor = databaseMapping.getReferenceDescriptor();
 
-            for (DatabaseField dbField : databaseMapping.getFields()) {
+            List<DatabaseField> processDatabaseFields = new LinkedList<>();
+            if (databaseMapping.getFields() != null) {
+                processDatabaseFields.addAll(databaseMapping.getFields());
+            } else {
+                processDatabaseFields.add(databaseMapping.getField());
+            }
+
+            for (DatabaseField dbField : processDatabaseFields) {
+                remainingDatabaseFields.remove(dbField);
                 intrinsicAttribute = new LinkedList<>();
                 Attribute managedAttribute = (Attribute) databaseMapping.getProperty(Attribute.class);
                 Boolean isInherited = (Boolean) databaseMapping.getProperty(Inheritance.class);
@@ -411,6 +440,26 @@ public class JPAMDefaultTableGenerator {
                 }
             }
         }
+
+        for (DatabaseField dbField : remainingDatabaseFields) {
+            boolean isFKField = false;
+            boolean isInverse = false;
+
+            //build or retrieve the field definition.
+            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), null, null, isInverse, isFKField, false, false, dbField);
+
+            //find the table the field belongs to, and add it to the table, only if not already added.
+            tableDefintion = this.tableMap.get(dbField.getTableName());
+
+            if ((tableDefintion != null) && !tableDefintion.getFields().contains(fieldDef)) {
+                tableDefintion.addField(fieldDef);
+            }
+        }
+
+    }
+
+    private void initDatabaseField() {
+
     }
 
     /**
@@ -970,6 +1019,8 @@ public class JPAMDefaultTableGenerator {
 //            intrinsicEntity.getAttributes().findAllAttribute(name)
             if (inherited) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity, managedAttribute, inverse, foriegnKey, relationTable);
+            } else if (managedAttribute == null && intrinsicEntity.getDiscriminatorColumnName().equalsIgnoreCase(dbField.getNameDelimited(databasePlatform))) {
+                fieldDef = new JPAMFieldDefinition(intrinsicEntity);
             } else {
                 fieldDef = new JPAMFieldDefinition(intrinsicAttribute, managedAttribute, inverse, foriegnKey, relationTable);
             }

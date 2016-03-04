@@ -21,14 +21,13 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBParentAttributeColumn extends DBParentColumn {
-   
-    
+public class DBParentAttributeColumn extends DBParentColumn<Attribute> {
+
     private AttributeOverride attributeOverride;
-    
+
     public DBParentAttributeColumn(String name, Entity intrinsicClass, Attribute managedAttribute) {
-        super(name,intrinsicClass, managedAttribute);
-        if(managedAttribute instanceof Id || managedAttribute instanceof Basic){
+        super(name, intrinsicClass, managedAttribute);
+        if (managedAttribute instanceof Id || managedAttribute instanceof Basic) {
             attributeOverride = intrinsicClass.findAttributeOverride(getKeyName());
             if (attributeOverride == null) {
                 attributeOverride = new AttributeOverride();
@@ -40,8 +39,6 @@ public class DBParentAttributeColumn extends DBParentColumn {
         }
     }
 
-
-
     /**
      * @return the attributeOverride
      */
@@ -49,5 +46,4 @@ public class DBParentAttributeColumn extends DBParentColumn {
         return attributeOverride;
     }
 
-    
 }

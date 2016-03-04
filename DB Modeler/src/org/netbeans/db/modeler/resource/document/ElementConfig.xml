@@ -187,5 +187,19 @@
             </attributes>
         </element>
  
+    <element id="DiscriminatorColumn" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.DiscriminatorColumn ">
+            <attributes>
+                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+                <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
+                    <display-name>Length</display-name>
+                </attribute>
+                <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
+                <!--discriminatorType TODO-->
+            </attributes>
+        </element>
     </elements>
 </element-config>

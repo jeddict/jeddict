@@ -22,6 +22,7 @@ import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.databaseaccess.FieldTypeDefinition;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBDiscriminatorColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
@@ -33,6 +34,7 @@ import org.netbeans.db.modeler.spec.DBParentAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
 import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -43,24 +45,25 @@ import org.netbeans.modeler.core.NBModelerUtil;
 
 public class JPAMFieldDefinition extends FieldDefinition {
 
-    private final Entity intrinsicClass;
-    private final LinkedList<Attribute> intrinsicAttribute = new LinkedList<>();
-    private final Attribute managedAttribute;
-    private final boolean inverse;
-    private final boolean foriegnKey;
-    private final boolean relationTable;
-    private final boolean inherited;
+    private Entity intrinsicClass;
+    private LinkedList<Attribute> intrinsicAttribute = new LinkedList<>();
+    private Attribute managedAttribute;
+    private boolean inverse;
+    private boolean foriegnKey;
+    private boolean relationTable;
+    private boolean inherited;
+    private DiscriminatorColumn discriminatorColumn;
 
     public JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
-//       if(intrinsicAttribute!=null){
-        intrinsicAttribute.stream().forEach((attr) -> {
-            if (attr != null && attr.getOrignalObject() != null) {
-                this.intrinsicAttribute.add((Attribute) attr.getOrignalObject());
-            } else {
-                this.intrinsicAttribute.add(attr);
-            }
-        });
-//       }
+        if (intrinsicAttribute != null) {
+            intrinsicAttribute.stream().forEach((attr) -> {
+                if (attr != null && attr.getOrignalObject() != null) {
+                    this.intrinsicAttribute.add((Attribute) attr.getOrignalObject());
+                } else {
+                    this.intrinsicAttribute.add(attr);
+                }
+            });
+        }
 //       if(managedAttribute!=null){
         this.managedAttribute = managedAttribute != null && managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
 //       } else {
@@ -71,6 +74,14 @@ public class JPAMFieldDefinition extends FieldDefinition {
         this.relationTable = relationTable;
         this.inherited = false;
         this.intrinsicClass = null;
+    }
+
+    public JPAMFieldDefinition(Entity intrinsicClass) {
+        this.intrinsicClass = intrinsicClass != null && intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
+        if (intrinsicClass.getDiscriminatorColumn() == null) {
+            intrinsicClass.setDiscriminatorColumn(new DiscriminatorColumn());
+        }
+        this.discriminatorColumn = intrinsicClass.getDiscriminatorColumn();
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
@@ -102,8 +113,10 @@ public class JPAMFieldDefinition extends FieldDefinition {
     public void buildDBColumn(final DBTable table, final AbstractSession session,
             final JPAMTableDefinition tableDef) throws ValidationException {
 
-        DBColumn column = null;
-        if (inherited) {
+        DBColumn column;
+        if (discriminatorColumn != null) {
+            column = new DBDiscriminatorColumn(name, discriminatorColumn);
+        } else if (inherited) {
             if (managedAttribute instanceof RelationAttribute) {
                 if (inverse) {
                     column = new DBParentAssociationInverseJoinColumn(name, intrinsicClass, (RelationAttribute) managedAttribute, relationTable);

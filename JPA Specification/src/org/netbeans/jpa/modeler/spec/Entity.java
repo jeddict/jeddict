@@ -219,11 +219,11 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     }
 
-     void beforeMarshal(Marshaller marshaller) {
+    void beforeMarshal(Marshaller marshaller) {
         AttributeValidator.filter(this);
         AssociationValidator.filter(this);
     }
-     
+
     /**
      * Gets the value of the table property.
      *
@@ -237,7 +237,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return table;
     }
 
-    public String getDefaultTableName(){
+    public String getDefaultTableName() {
         return this.getClazz().toUpperCase();
     }
 
@@ -248,6 +248,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
             return getDefaultTableName();
         }
     }
+
     /**
      * Sets the value of the table property.
      *
@@ -597,8 +598,8 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         attributeOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
     }
-    
-        public AttributeOverride findAttributeOverride(String name) {
+
+    public AttributeOverride findAttributeOverride(String name) {
         for (AttributeOverride attributeOverride : getAttributeOverride()) {
             if (StringUtils.equals(name, attributeOverride.getName())) {
                 return attributeOverride;
@@ -646,6 +647,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     public boolean removeAssociationOverride(AssociationOverride associationOverride) {
         return getAssociationOverride().remove(associationOverride);
     }
+
     /**
      * Sets the value of the clazz property.
      *
@@ -707,13 +709,62 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * {@link NamedEntityGraph }
      *
      *
-     * @return 
+     * @return
      */
     public List<NamedEntityGraph> getNamedEntityGraph() {
         if (namedEntityGraph == null) {
             namedEntityGraph = new ArrayList<>();
         }
         return this.namedEntityGraph;
+    }
+
+    public Inheritance getRootInheritence() {
+        if (this.getInheritance() == null) {
+            if (this.getSuperclass() != null && this.getSuperclass() instanceof Entity) {
+                return ((Entity) this.getSuperclass()).getRootInheritence();
+            } else {
+                return null;
+            }
+        } else {
+            return this.getInheritance();
+        }
+    }
+
+    public DiscriminatorColumn getRootDiscriminatorColumn() {
+        if (this.getInheritance() == null) {
+            if (this.getDiscriminatorColumn() == null) {
+                if (this.getSuperclass() != null && this.getSuperclass() instanceof Entity) {
+                    return ((Entity) this.getSuperclass()).getRootDiscriminatorColumn();
+                } else {
+                    return null;
+                }
+            } else {
+                return this.getDiscriminatorColumn();
+            }
+        } else {
+            if (this.getDiscriminatorColumn() == null) {
+                this.setDiscriminatorColumn(new DiscriminatorColumn());
+            }
+            return this.getDiscriminatorColumn();
+        }
+    }
+
+    public String getRootDiscriminatorColumnName() {
+        DiscriminatorColumn rootDiscriminatorColumn = getRootDiscriminatorColumn();
+        if (rootDiscriminatorColumn == null || StringUtils.isBlank(rootDiscriminatorColumn.getName())) {
+            return "DTYPE";
+        } else {
+            return rootDiscriminatorColumn.getName();
+        }
+    }
+
+    public String getDiscriminatorColumnName() {
+        DiscriminatorColumn localDiscriminatorColumn = getDiscriminatorColumn();
+        if (localDiscriminatorColumn == null || StringUtils.isBlank(localDiscriminatorColumn.getName())) {
+            return "DTYPE";
+        } else {
+            return localDiscriminatorColumn.getName();
+        }
     }
 
 }

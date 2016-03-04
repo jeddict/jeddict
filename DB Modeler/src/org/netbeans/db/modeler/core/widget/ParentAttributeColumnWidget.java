@@ -47,8 +47,8 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
             setMultiPropertyName(value);
         });
 
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>)this::validateTableName);
-        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>)this::validateTableName);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -61,7 +61,7 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
     @Override
     protected String evaluateName() {
         AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-        Attribute refAttribute = ((DBParentColumn) this.getBaseElementSpec()).getAttribute();
+        Attribute refAttribute = this.getBaseElementSpec().getAttribute();
         if (refAttribute instanceof ColumnHandler) {
             ColumnHandler baseRefAttribute = (ColumnHandler) refAttribute;
             Column column = baseRefAttribute.getColumn();
@@ -86,11 +86,11 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        Attribute refAttribute = ((DBParentColumn) this.getBaseElementSpec()).getAttribute();
-            PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
-            set.createPropertySet("COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
+        Attribute refAttribute = this.getBaseElementSpec().getAttribute();
+        PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
+        set.createPropertySet("COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
 
-            AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-            set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
+        AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+        set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
     }
 }

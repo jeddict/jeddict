@@ -15,14 +15,13 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class DBColumn<E extends Attribute> extends FlowPin {
+public class DBColumn<E> extends FlowPin {
 
     private final E attribute;
     private String name;
@@ -34,10 +33,10 @@ public class DBColumn<E extends Attribute> extends FlowPin {
     private boolean foreignKey;
     private DBColumn referenceColumn;
     private DBTable referenceTable;
-   
+
     public DBColumn(String name, E attribute) {
         this.attribute = attribute;
-        this.name=name;
+        this.name = name;
     }
 
 //    public Column() {

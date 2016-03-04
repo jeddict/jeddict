@@ -43,7 +43,7 @@ public class EmbeddedAssociationInverseJoinColumnWidget extends EmbeddedAssociat
     protected String evaluateName() {
         AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();
         Column embeddableColumn = null;
-        Attribute refAttribute = ((DBEmbeddedColumn) this.getBaseElementSpec()).getAttribute();
+        Attribute refAttribute = this.getBaseElementSpec().getAttribute();
         PersistenceBaseAttribute baseRefAttribute = null;
         if (refAttribute instanceof PersistenceBaseAttribute) {
             baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
