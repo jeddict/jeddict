@@ -39,51 +39,17 @@ public abstract class ParentAssociationColumnWidget<E extends DBParentAssociatio
         });
 
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
-        this.addPropertyChangeListener("ass_override_table_name",(PropertyChangeListener<String>)this::validateTableName);
+        this.addPropertyChangeListener("ass_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
-    
-        @Override
+
+    @Override
     protected void updateName(String name) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumnOverride();
         column.setName(name);
-        IPrimaryKeyWidget primaryKeyWidget = this.getReferenceFlowWidget().get(0).getReferenceColumnWidget();//TODO get(n)
-        if(primaryKeyWidget.getTableWidget().getPrimaryKeyWidgets().size() > 1){
-            column.setReferencedColumnName(primaryKeyWidget.getName());
-            syncronizeCompositeKeyJoincolumn(((PrimaryKeyWidget)primaryKeyWidget).getTableWidget(),this.getTableWidget());
-        }
+        ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n)
     }
 
-    /**
-     * Exception Description: 
-     * The @JoinColumns on the annotated element [method get] from the entity class [class Employee] is incomplete. 
-     * When the source entity class uses a composite primary key, a @JoinColumn must be specified for each join column using the 
-     * @JoinColumns. Both the name and the referencedColumnName elements must be specified in each such @JoinColumn.
-     */
-    private void syncronizeCompositeKeyJoincolumn(TableWidget sourceTableWidget,final TableWidget targetTableWidget){
-        for(Object widget :sourceTableWidget.getPrimaryKeyWidgets()){
-            IPrimaryKeyWidget primaryKeyWidget =  (IPrimaryKeyWidget)widget;
-            Optional<ReferenceFlowWidget> optionalReferenceFlowWidget = primaryKeyWidget.getReferenceFlowWidget().stream().filter(r ->  r.getForeignKeyWidget().getTableWidget()==targetTableWidget).findFirst();
-            if(optionalReferenceFlowWidget.isPresent()){
-                ForeignKeyWidget foreignKeyWidget = optionalReferenceFlowWidget.get().getForeignKeyWidget();
-                JoinColumn joinColumn;
-                if (foreignKeyWidget instanceof ParentAssociationColumnWidget) {
-                    joinColumn = ((DBParentAssociationColumn) foreignKeyWidget.getBaseElementSpec()).getJoinColumnOverride();
-                } else {
-                    joinColumn = ((DBForeignKey) foreignKeyWidget.getBaseElementSpec()).getJoinColumn();
-                }
-                if (StringUtils.isEmpty(joinColumn.getReferencedColumnName())) {
-                    joinColumn.setReferencedColumnName(primaryKeyWidget.getName());
-                }
-                if (StringUtils.isEmpty(joinColumn.getName())) {
-                    joinColumn.setName(foreignKeyWidget.getName());
-                }
-            }
-        }
-    }
-    
-    
-    
-        @Override
+    @Override
     public void createPropertySet(ElementPropertySet set) {
         set.createPropertySet("PARENT_JOINCOLUMN", this, this.getBaseElementSpec().getJoinColumn(), getPropertyChangeListeners());
         set.createPropertySet("ASSOCIATION_OVERRIDE", this, this.getBaseElementSpec().getJoinColumnOverride(), getPropertyChangeListeners());

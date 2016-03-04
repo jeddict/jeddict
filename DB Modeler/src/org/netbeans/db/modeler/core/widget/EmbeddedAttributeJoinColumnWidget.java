@@ -36,8 +36,8 @@ public class EmbeddedAttributeJoinColumnWidget extends ForeignKeyWidget<DBEmbedd
             setPropertyName(value);
         });
 
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>)this::validateTableName);
-        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>)this::validateTableName);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -51,6 +51,7 @@ public class EmbeddedAttributeJoinColumnWidget extends ForeignKeyWidget<DBEmbedd
     protected void updateName(String name) {
         //     AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
 //            attributeOverride.getColumn().setName(null);
+//        ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n)
     }
 
     @Override

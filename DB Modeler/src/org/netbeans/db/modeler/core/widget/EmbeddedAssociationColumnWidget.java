@@ -35,14 +35,15 @@ public abstract class EmbeddedAssociationColumnWidget<E extends DBEmbeddedAssoci
             setMultiPropertyName(value);
         });
 
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>)this::validateTableName);
-        this.addPropertyChangeListener("ass_override_table_name", (PropertyChangeListener<String>)this::validateTableName);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("ass_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
 
     @Override
     protected void updateName(String newName) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumnOverride();
         column.setName(newName);
+        ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n)
     }
 
     @Override
