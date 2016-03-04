@@ -16,18 +16,23 @@
 package org.netbeans.db.modeler.core.widget;
 
 import java.util.List;
+import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 
 /**
  *
  * @author Shiwani Gupta
  */
-public interface IPrimaryKeyWidget {
+public interface IPrimaryKeyWidget<E extends BaseElement> {
+
     boolean addReferenceFlowWidget(ReferenceFlowWidget flowWidget);
 
     boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget);
-    
+
     String getName();
-    
+
     TableWidget getTableWidget();
-     List<ReferenceFlowWidget> getReferenceFlowWidget();
+
+    List<ReferenceFlowWidget> getReferenceFlowWidget();
+
+    public E getBaseElementSpec();
 }

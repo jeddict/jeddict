@@ -17,8 +17,10 @@ package org.netbeans.db.modeler.core.widget;
 
 import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 
 /**
@@ -33,12 +35,12 @@ public class ColumnUtil {
      * source entity class uses a composite primary key, a @JoinColumn must be
      * specified for each join column using the @JoinColumns. Both the name and
      * the referencedColumnName elements must be specified in each such
-     * @JoinColumn.
+     * '@JoinColumn'.
      */
     public static void syncronizeCompositeKeyJoincolumn(TableWidget sourceTableWidget, final TableWidget targetTableWidget) {
         if (sourceTableWidget.getPrimaryKeyWidgets().size() > 1) {
             for (Object widget : sourceTableWidget.getPrimaryKeyWidgets()) {
-                IPrimaryKeyWidget primaryKeyWidget = (IPrimaryKeyWidget) widget;
+                IPrimaryKeyWidget<DBColumn<Id>> primaryKeyWidget = (IPrimaryKeyWidget<DBColumn<Id>>) widget;
                 Optional<ReferenceFlowWidget> optionalReferenceFlowWidget = primaryKeyWidget.getReferenceFlowWidget().stream().filter(r -> r.getForeignKeyWidget().getTableWidget() == targetTableWidget).findFirst();
                 if (optionalReferenceFlowWidget.isPresent()) {
                     ForeignKeyWidget foreignKeyWidget = optionalReferenceFlowWidget.get().getForeignKeyWidget();
@@ -48,8 +50,8 @@ public class ColumnUtil {
                     } else {
                         joinColumn = ((DBForeignKey) foreignKeyWidget.getBaseElementSpec()).getJoinColumn();
                     }
-                    if (StringUtils.isEmpty(joinColumn.getReferencedColumnName())) {
-                        joinColumn.setReferencedColumnName(primaryKeyWidget.getName());
+                    if (joinColumn.getReferencedColumn() == null) {
+                        joinColumn.setReferencedColumn(primaryKeyWidget.getBaseElementSpec().getAttribute());
                     }
                     if (StringUtils.isEmpty(joinColumn.getName())) {
                         joinColumn.setName(foreignKeyWidget.getName());
@@ -57,7 +59,6 @@ public class ColumnUtil {
                 }
             }
         }
-
     }
 
 }

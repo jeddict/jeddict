@@ -77,6 +77,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     protected void updateName(String name) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumn();
         column.setName(name);
+        ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n)
     }
 
     @Override

@@ -63,7 +63,7 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
     protected void updateName(String name) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumn();
         column.setName(name);
-        ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n)
+        ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n) // TODO applicable here ?
     }
 
     //         BI-DIRECTIONAL              RelationTable                      CollectionTable
