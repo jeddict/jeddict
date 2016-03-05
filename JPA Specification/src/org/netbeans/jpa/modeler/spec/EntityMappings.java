@@ -9,7 +9,9 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,10 +20,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.cache.Cache;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -716,6 +720,15 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return null;
     }
 
+    public IdentifiableClass findIdentifiableClass(String className) {
+        Entity entity = findEntity(className);
+        if (entity == null) {
+            return findMappedSuperclass(className);
+        } else {
+            return entity;
+        }
+    }
+
     public Entity getEntity(String id) {
         if (entity != null) {
             for (Entity entity_In : entity) {
@@ -930,6 +943,35 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         }
     }
 
+    public List<IdentifiableClass> getIdentifiableClass() {
+        List<IdentifiableClass> identifiableClasses = new ArrayList<>(getEntity());
+        identifiableClasses.addAll(getMappedSuperclass());
+        return identifiableClasses;
+    }
+
+    public void manageJoinColumnRefName() {
+        BiConsumer<Entity, List<JoinColumn>> operateRefName = (Entity entity, List<JoinColumn> joinColumns) -> {
+            joinColumns.stream().filter(c -> StringUtils.isNotBlank(c.getReferencedColumnName())).forEach(column -> {
+                Optional<Id> idOptional = entity.getAttributes().getId().stream().filter(id -> column.getReferencedColumnName().equals(id.getReferenceColumnName())).findAny();
+                if (idOptional.isPresent()) {
+                    column.setReferencedColumn(idOptional.get());//TODO Embedded ID
+                }
+            });
+        };
+        EntityMappings entityMappingsSpec = this;
+        for (IdentifiableClass identifiableClass : entityMappingsSpec.getIdentifiableClass()) {
+            for (RelationAttribute attribute : new ArrayList<>(identifiableClass.getAttributes().getRelationAttributes())) {
+                if (attribute instanceof JoinColumnHandler) {
+                    operateRefName.accept(entityMappingsSpec.findEntity(attribute.getTargetEntity()), ((JoinColumnHandler) attribute).getJoinColumn());
+                }
+                if (attribute.getJoinTable() != null) {
+                    operateRefName.accept(entityMappingsSpec.findEntity(attribute.getTargetEntity()), attribute.getJoinTable().getJoinColumn());
+                    operateRefName.accept(entityMappingsSpec.findEntity(attribute.getTargetEntity()), attribute.getJoinTable().getInverseJoinColumn());
+                }
+            }
+        }
+    }
+
     public void manageSiblingAttribute() {
         EntityMappings entityMappingsSpec = this;
         for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappingsSpec.getEntity()) {
@@ -1013,7 +1055,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
 
             // If Include Referenced Classed Checkbox is Uncheked then remove attribute
-            for (RelationAttribute relationAttribute : new ArrayList<RelationAttribute>(embeddable.getAttributes().getRelationAttributes())) {
+            for (RelationAttribute relationAttribute : new ArrayList<>(embeddable.getAttributes().getRelationAttributes())) {
                 org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
                 if (targetEntity == null) {
                     embeddable.getAttributes().removeRelationAttribute(relationAttribute);

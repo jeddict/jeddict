@@ -49,7 +49,6 @@ public class JPAModelGenerator {
                     entitySpec.load(entityMappings, jc, fieldAccess[0]);
                     entityMappings.addEntity(entitySpec);
                 }
-
             }
         }, true);
     }

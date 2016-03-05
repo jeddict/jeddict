@@ -122,6 +122,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
         // -  the second invocation event of our runnable
         SwingUtilities.invokeLater(new Runnable() {
             private boolean first = true;
+
             @Override
             public void run() {
                 if (!first) {
@@ -153,10 +154,12 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
             reporter.progress(progressMsg, progressIndex++);
             JPAModelGenerator.generateJPAModel(entityMappingsSpec, project, entityClass, packageFileObject);
         }
+        entityMappingsSpec.manageJoinColumnRefName();
 
         entityMappingsSpec.manageSiblingAttribute();
-            
-        JPAModelerUtil.createNewModelerFile(entityMappingsSpec , packageFileObject,fileName, true);
+        entityMappingsSpec.manageJoinColumnRefName();
+
+        JPAModelerUtil.createNewModelerFile(entityMappingsSpec, packageFileObject, fileName, true);
     }
 
     @Override

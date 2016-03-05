@@ -1342,9 +1342,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 String columnName = id.getReferenceColumnName();
                 columnComboBox.addItem(new ComboBoxValue(id, columnName));
                 if (id == selectedColumn) {
-                    selectedItemIndex = i;
+                    selectedItemIndex = ++i;
                 }
-                i++;
             }
             columnComboBox.setSelectedIndex(selectedItemIndex);
         }

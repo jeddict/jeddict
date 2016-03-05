@@ -82,8 +82,6 @@ public class JoinColumn {
     @XmlAttribute(name = "table")
     protected String table;
 
-//        @XmlTransient
-//    private String generatedName;
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
@@ -273,7 +271,7 @@ public class JoinColumn {
         accessor.setInsertable(insertable);
         accessor.setName(name);
         accessor.setNullable(nullable);
-        accessor.setReferencedColumnName(referencedColumnName);
+        accessor.setReferencedColumnName(getReferencedColumnName());
         accessor.setTable(table);
         accessor.setUnique(unique);
         accessor.setUpdatable(updatable);
