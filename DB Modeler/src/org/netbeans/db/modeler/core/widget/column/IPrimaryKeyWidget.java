@@ -13,9 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.column;
 
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import java.util.List;
+import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 
 /**
@@ -34,5 +36,7 @@ public interface IPrimaryKeyWidget<E extends BaseElement> {
 
     List<ReferenceFlowWidget> getReferenceFlowWidget();
 
-    public E getBaseElementSpec();
+    E getBaseElementSpec();
+
+    void setAnchorGap(int anchorGap);
 }

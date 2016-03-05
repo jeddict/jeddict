@@ -13,12 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.column.embedded;
 
-import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
-import org.netbeans.db.modeler.spec.DBForeignKey;
-import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
+import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
+import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.spec.DBEmbeddedAssociationColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -26,15 +25,15 @@ import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public abstract class ParentAssociationColumnWidget<E extends DBParentAssociationColumn> extends ForeignKeyWidget<E> {
+public abstract class EmbeddedAssociationColumnWidget<E extends DBEmbeddedAssociationColumn> extends ForeignKeyWidget<E> {
 
-    public ParentAssociationColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public EmbeddedAssociationColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
             setMultiPropertyName(value);
         });
 
-        this.addPropertyChangeListener("ass_override_column_name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("ass_override_JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
             setMultiPropertyName(value);
         });
 
@@ -43,15 +42,15 @@ public abstract class ParentAssociationColumnWidget<E extends DBParentAssociatio
     }
 
     @Override
-    protected void updateName(String name) {
+    protected void updateName(String newName) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumnOverride();
-        column.setName(name);
+        column.setName(newName);
         ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n)
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        set.createPropertySet("PARENT_JOINCOLUMN", this, this.getBaseElementSpec().getJoinColumn(), getPropertyChangeListeners());
+        set.createPropertySet("EMBEDDABLE_JOINCOLUMN", this, this.getBaseElementSpec().getJoinColumn(), getPropertyChangeListeners());
         set.createPropertySet("ASSOCIATION_OVERRIDE", this, this.getBaseElementSpec().getJoinColumnOverride(), getPropertyChangeListeners());
     }
 }

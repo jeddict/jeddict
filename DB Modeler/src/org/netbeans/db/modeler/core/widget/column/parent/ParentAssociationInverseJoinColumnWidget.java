@@ -13,8 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.column.parent;
 
+import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.Column;

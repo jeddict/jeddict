@@ -980,7 +980,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     @Override
     public void attachEdgeSourceAnchor(JPAModelerScene scene, IEdgeWidget edgeWidget, IPinWidget sourcePinWidget) {
-        edgeWidget.setSourceAnchor(scene.getPinAnchor(sourcePinWidget));
+        edgeWidget.setSourceAnchor(sourcePinWidget.createAnchor());
 
     }
 
@@ -991,7 +991,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     @Override
     public void attachEdgeTargetAnchor(JPAModelerScene scene, IEdgeWidget edgeWidget, IPinWidget targetPinWidget) {
-        edgeWidget.setTargetAnchor(scene.getPinAnchor(targetPinWidget));
+        edgeWidget.setTargetAnchor(targetPinWidget.createAnchor());
     }
 
     @Override

@@ -13,8 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.column.embedded;
 
+import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.inDev;

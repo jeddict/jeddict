@@ -192,12 +192,14 @@ public class JPAMFieldDefinition extends FieldDefinition {
             }
 
             if (shouldAllowNull && fieldType.shouldAllowNull()) {
-                // NULL
+                column.setAllowNull(true);
             } else {
-                //NOT NULL
+                column.setAllowNull(false);
             }
         }
-        column.setPrimaryKey(isPrimaryKey && session.getPlatform().supportsPrimaryKeyConstraint());
+
+        column.setUniqueKey(isUnique());
+        column.setPrimaryKey(isPrimaryKey() && session.getPlatform().supportsPrimaryKeyConstraint());
 
         table.addColumn(column);
 

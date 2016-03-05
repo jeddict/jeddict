@@ -43,7 +43,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
     public GeneralizationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
         setTargetAnchorShape(GENERALIZATION_ANCHOR_SHAPE);
-        setAnchorGap(4);
+//        setAnchorGap(4);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
         }
         //BUG : https://java.net/bugzilla/show_bug.cgi?id=6756 - Diagram collapses on reload when using MappedSuperClass hierarchy
         if (this.getSubclassWidget() instanceof EntityWidget) {
-          ((EntityWidget) this.getSubclassWidget()).scanKeyError();
+            ((EntityWidget) this.getSubclassWidget()).scanKeyError();
         }
         this.setSubclassWidget(null);
         this.setSuperclassWidget(null);
@@ -179,7 +179,5 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
             subclassWidget.setOutgoingGeneralizationFlowWidget(this);
         }
     }
-
-   
 
 }

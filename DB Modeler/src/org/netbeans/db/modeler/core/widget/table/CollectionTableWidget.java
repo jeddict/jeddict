@@ -13,68 +13,76 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.table;
 
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBMapping;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.spec.CollectionTable;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class BaseTableWidget extends TableWidget<DBTable> {
-    
-    public BaseTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
+public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
+
+    public CollectionTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String value) -> {
-             setName(value);
-             setLabel(name);
+        this.addPropertyChangeListener("CollectionTable_name", (PropertyChangeListener<String>) (String value) -> {
+            setName(value);
+            setLabel(name);
         });
     }
-    
+
     private void setDefaultName() {
-        Entity entity = this.getBaseElementSpec().getEntity();
-        this.name = entity.getDefaultTableName();
-        entity.getTable().setName(null);
+        ElementCollection attribute = this.getBaseElementSpec().getAttribute();
+        this.name = getDefaultCollectionTableName();
+        attribute.getCollectionTable().setName(null);
         setLabel(name);
     }
-    
+
     @Override
-    public void setName(String name) {
-        
-        if (StringUtils.isNotBlank(name)) {
-            this.name = name.replaceAll("\\s+", "");
+    public void setName(String newName) {
+        if (StringUtils.isNotBlank(newName)) {
+            this.name = newName.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
-                Entity entity = this.getBaseElementSpec().getEntity();
-                entity.getTable().setName(this.name);
+                ElementCollection attribute = this.getBaseElementSpec().getAttribute();
+                attribute.getCollectionTable().setName(this.name);
             }
         } else {
-           setDefaultName(); 
+            setDefaultName();
         }
-        
-        if (SQLKeywords.isSQL99ReservedKeyword(BaseTableWidget.this.getName())) {
+
+        if (SQLKeywords.isSQL99ReservedKeyword(CollectionTableWidget.this.getName())) {
             this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
             this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
-        
-        DBMapping mapping = BaseTableWidget.this.getModelerScene().getBaseElementSpec();
-        if (mapping.findAllTable(BaseTableWidget.this.getName()).size() > 1) {
+
+        DBMapping mapping = CollectionTableWidget.this.getModelerScene().getBaseElementSpec();
+        if (mapping.findAllTable(CollectionTableWidget.this.getName()).size() > 1) {
             getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         } else {
             getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         }
-        
+
     }
-    
+
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        Entity entity = this.getBaseElementSpec().getEntity();
-        set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
+        ElementCollection attribute = this.getBaseElementSpec().getAttribute();
+        CollectionTable collectionTable = attribute.getCollectionTable();
+        set.createPropertySet(this, collectionTable, getPropertyChangeListeners());
     }
-    
+
+    private String getDefaultCollectionTableName() {
+        Entity entity = this.getBaseElementSpec().getEntity();
+        ElementCollection attribute = this.getBaseElementSpec().getAttribute();
+        return entity.getDefaultTableName().toUpperCase() + "_" + attribute.getName().toUpperCase();
+    }
+
 }

@@ -37,28 +37,28 @@ import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
-import org.netbeans.db.modeler.core.widget.BaseTableWidget;
-import org.netbeans.db.modeler.core.widget.BasicColumnWidget;
-import org.netbeans.db.modeler.core.widget.CollectionTableWidget;
-import org.netbeans.db.modeler.core.widget.ColumnWidget;
-import org.netbeans.db.modeler.core.widget.DiscriminatorColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAssociationJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAttributeColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAttributeJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
-import org.netbeans.db.modeler.core.widget.IPrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.ParentAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.ParentAssociationJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.ParentAttributeColumnWidget;
-import org.netbeans.db.modeler.core.widget.ParentAttributePrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.PrimaryKeyJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.PrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
-import org.netbeans.db.modeler.core.widget.RelationTableWidget;
-import org.netbeans.db.modeler.core.widget.TableWidget;
+import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
+import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
+import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
+import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -126,11 +126,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public void init() {
         if (COLUMN == null) {
             ClassLoader cl = DBModelerUtil.class.getClassLoader();
-            COLUMN = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/column.gif")).getImage();
-            FOREIGNKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/foreignkey.gif")).getImage();
-            PRIMARYKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/primarykey.gif")).getImage();
-            TAB_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/tab_icon.png")).getImage();
-            RELOAD_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/reload.png"));
+            COLUMN = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/COLUMN.gif")).getImage();
+            FOREIGNKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/FOREIGN_KEY.gif")).getImage();
+            PRIMARYKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/PRIMARY_KEY.gif")).getImage();
+            TAB_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/TAB_ICON.png")).getImage();
+            RELOAD_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/RELOAD.png"));
         }
 
     }
@@ -419,7 +419,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         INodeWidget nodeWidget = inodeWidget;
         Anchor sourceAnchor;
         if (nodeWidget instanceof IFlowNodeWidget) {
-            sourceAnchor = new CustomRectangularAnchor(nodeWidget, 0, true);
+            sourceAnchor = new CustomRectangularAnchor(nodeWidget, -5, true);
         } else {
             throw new InvalidElmentException("Invalid JPA Process Element : " + nodeWidget);
         }
@@ -480,7 +480,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     @Override
     public void attachEdgeSourceAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget sourcePinWidget) {
-        edgeWidget.setSourceAnchor(scene.getPinAnchor(sourcePinWidget));
+        edgeWidget.setSourceAnchor(sourcePinWidget.createAnchor());
 
     }
 
@@ -491,7 +491,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     @Override
     public void attachEdgeTargetAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget targetPinWidget) {
-        edgeWidget.setTargetAnchor(scene.getPinAnchor(targetPinWidget));
+        edgeWidget.setTargetAnchor(targetPinWidget.createAnchor());
     }
 
     @Override

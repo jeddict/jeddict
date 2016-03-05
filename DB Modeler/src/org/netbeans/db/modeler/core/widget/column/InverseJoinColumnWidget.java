@@ -13,14 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.column;
 
+import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;

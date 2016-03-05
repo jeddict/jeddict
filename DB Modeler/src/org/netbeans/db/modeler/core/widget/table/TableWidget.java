@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.table;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +24,25 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JMenuItem;
 import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;

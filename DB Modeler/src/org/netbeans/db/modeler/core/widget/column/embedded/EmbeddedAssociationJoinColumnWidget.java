@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.column.embedded;
 
 import java.util.List;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;

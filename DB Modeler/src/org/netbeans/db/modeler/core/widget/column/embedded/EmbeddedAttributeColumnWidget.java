@@ -13,16 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget;
+package org.netbeans.db.modeler.core.widget.column.embedded;
 
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
-import org.netbeans.db.modeler.spec.DBParentColumn;
-import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.inDev;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -35,9 +32,9 @@ import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeColumn> {
+public class EmbeddedAttributeColumnWidget extends ColumnWidget<DBEmbeddedAttributeColumn> {
 
-    public ParentAttributeColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public EmbeddedAttributeColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
             setMultiPropertyName(value);
@@ -46,7 +43,6 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
         this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (String value) -> {
             setMultiPropertyName(value);
         });
-
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
         this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
@@ -54,7 +50,7 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
         pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(ParentAttributeColumnWidget.class.getSimpleName());
+        pinWidgetInfo.setDocumentId(EmbeddedAttributeColumnWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
 
@@ -62,6 +58,9 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
     protected String evaluateName() {
         AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
         Attribute refAttribute = this.getBaseElementSpec().getAttribute();
+        if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
+            inDev();
+        }
         if (refAttribute instanceof ColumnHandler) {
             ColumnHandler baseRefAttribute = (ColumnHandler) refAttribute;
             Column column = baseRefAttribute.getColumn();
@@ -79,18 +78,27 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
     }
 
     @Override
-    protected void updateName(String name) {
-        AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-        attributeOverride.getColumn().setName(name);
+    protected void updateName(String newName) {
+        if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
+            inDev();
+        } else {
+            AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+            attributeOverride.getColumn().setName(newName);
+        }
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
         Attribute refAttribute = this.getBaseElementSpec().getAttribute();
-        PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
-        set.createPropertySet("COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
+        if (refAttribute instanceof PersistenceBaseAttribute) {
+            PersistenceBaseAttribute baseRefAttribute = (PersistenceBaseAttribute) refAttribute;
+            set.createPropertySet("EMBEDDABLE_COLUMN", this, baseRefAttribute.getColumn(), getPropertyChangeListeners());
 
-        AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
-        set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
+            AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
+            set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
+
+        } else if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
+            //in dev
+        }
     }
 }
