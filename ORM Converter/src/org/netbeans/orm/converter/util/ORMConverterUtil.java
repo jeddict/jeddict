@@ -38,6 +38,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.GuardedDocument;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.lib.editor.util.swing.PositionRegion;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
@@ -72,7 +73,6 @@ public class ORMConverterUtil {
     public static final String SOURCE_SUFFIX = ".java";
     public static final String SPACE = " ";
     public static final String UNDERSCORE = "_";
-    
 
     public static File createFile(String parentDir, String childDir,
             String fileName) throws IOException {
@@ -240,8 +240,8 @@ public class ORMConverterUtil {
         fos.write(content.getBytes(charset));
         fos.close();
     }
-    
-       public static void writeSnippet(WritableSnippet writableSnippet , File destDir)
+
+    public static void writeSnippet(WritableSnippet writableSnippet, File destDir)
             throws InvalidDataException, IOException {
 
         String content = writableSnippet.getSnippet();
@@ -257,37 +257,37 @@ public class ORMConverterUtil {
 
     public static void formatFile(File file) {
         final FileObject fo = FileUtil.toFileObject(file);
-        
+
         try {
             DataObject dobj = DataObject.find(fo);
             EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
             ec.close();
-                                StyledDocument sd;
+            StyledDocument sd;
+            try {
+                sd = ec.openDocument();
+            } catch (UserQuestionException uqe) {
+                uqe.confirmed();
+                sd = ec.openDocument();
+            }
+            final StyledDocument doc = sd;
+            final Reformat reformat = Reformat.get(doc);
+
+            reformat.lock();
+
+            try {
+                NbDocument.runAtomic(doc, () -> {
                     try {
-                        sd = ec.openDocument();
-                    } catch (UserQuestionException uqe) {
-                        uqe.confirmed();
-                        sd = ec.openDocument();
+                        reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
+                    } catch (BadLocationException ex) {
+                        ExceptionUtils.printStackTrace(ex);
                     }
-                    final StyledDocument doc = sd;
-                    final Reformat reformat = Reformat.get(doc);
+                });
+            } finally {
+                reformat.unlock();
+            }
 
-                    reformat.lock();
+            ec.saveDocument();
 
-                    try {
-                        NbDocument.runAtomic(doc, () -> {
-                            try {
-                                reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
-                            } catch (BadLocationException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                        });
-                    } finally {
-                        reformat.unlock();
-                    }
-
-                    ec.saveDocument();
-            
 ////            ec.close();
 //            StyledDocument document = ec.openDocument();
 //            if (document instanceof BaseDocument) {
@@ -301,7 +301,7 @@ public class ORMConverterUtil {
 //                                f.reformat(0, doc.getLength());
 //                            } catch (BadLocationException ex) {
 //                                Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
-//                                Exceptions.printStackTrace(ex);
+//                                ExceptionUtils.printStackTrace(ex);
 //                            }
 //
 //                        }
@@ -317,15 +317,15 @@ public class ORMConverterUtil {
 ////                    }
 //                } catch (IOException ex) {
 //                    Exceptions.attachMessage(ex, "Failure while formatting and saving " + FileUtil.getFileDisplayName(fo));
-//                    Exceptions.printStackTrace(ex);
+//                    ExceptionUtils.printStackTrace(ex);
 //                }
 //            }
-        }  catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+        } catch (IOException ex) {
+            ExceptionUtils.printStackTrace(ex);
+        }
     }
-    
-      //TODO: copied from org.netbeans.editor.ActionFactory:
+
+    //TODO: copied from org.netbeans.editor.ActionFactory:
     static void reformat(Reformat formatter, Document doc, int startPos, int endPos, AtomicBoolean canceled) throws BadLocationException {
         final GuardedDocument gdoc = (doc instanceof GuardedDocument)
                 ? (GuardedDocument) doc : null;
@@ -357,13 +357,14 @@ public class ORMConverterUtil {
             }
         }
 
-        if (canceled.get()) return;
+        if (canceled.get()) {
+            return;
+        }
         // Once we start formatting, the task can't be canceled
 
         for (PositionRegion region : regions) {
             formatter.reformat(region.getStartOffset(), region.getEndOffset());
         }
     }
-
 
 }

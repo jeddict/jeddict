@@ -18,10 +18,11 @@ package org.netbeans.jpa.modeler.network.social.linkedin;
 import java.awt.event.ActionEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.network.social.SharingHelper;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.LINKEDIN;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -29,24 +30,25 @@ import org.openide.util.Exceptions;
  */
 public class LinkedInSocialNetwork {
 
+    public static Icon LINKEDIN;
     private static final String INTENT = "https://www.linkedin.com/shareArticle?";
     private static String LINK;
-
-    static {
-        try {
-           LINK = new StringBuilder(INTENT)
-            .append("url=").append(URLEncoder.encode("http://jpamodeler.blogspot.in", "UTF-8"))
-            .append("&title=").append(URLEncoder.encode("JPA Modeler - your jpa assistant", "UTF-8"))
-            .append("&summary=").append(URLEncoder.encode("JPA Modeler assists to create, design and edit java persistence application business model and DB visually as graphical diagram. It automates JPA code generation, enable to import database into diagram or modify database from diagram visually and also supports existing JPA Classes Reverse Engineering. It is open-source and free. Check it out at http://jpamodeler.blogspot.in", "UTF-8"))
-            .append("&source=").append(URLEncoder.encode("http://jpamodeler.blogspot.in", "UTF-8")).toString();
-        } catch (UnsupportedEncodingException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
-    
-        private static LinkedInSocialNetwork instance;
+    private static LinkedInSocialNetwork instance;
 
     private LinkedInSocialNetwork() {
+        if (LINK == null) {
+            try {
+                LINK = new StringBuilder(INTENT)
+                        .append("url=").append(URLEncoder.encode("http://jpamodeler.blogspot.in", "UTF-8"))
+                        .append("&title=").append(URLEncoder.encode("JPA Modeler - your jpa assistant", "UTF-8"))
+                        .append("&summary=").append(URLEncoder.encode("JPA Modeler assists to create, design and edit java persistence application business model and DB visually as graphical diagram. It automates JPA code generation, enable to import database into diagram or modify database from diagram visually and also supports existing JPA Classes Reverse Engineering. It is open-source and free. Check it out at http://jpamodeler.blogspot.in", "UTF-8"))
+                        .append("&source=").append(URLEncoder.encode("http://jpamodeler.blogspot.in", "UTF-8")).toString();
+            } catch (UnsupportedEncodingException ex) {
+                ExceptionUtils.printStackTrace(ex);
+            }
+            ClassLoader cl = LinkedInSocialNetwork.class.getClassLoader();
+            LINKEDIN = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/collaborate/resource/image/socialnetwork/linkedin.png"));
+        }
     }
 
     public static LinkedInSocialNetwork getInstance() {
@@ -61,7 +63,7 @@ public class LinkedInSocialNetwork {
     }
 
     public JMenuItem getComponent() {
-        JMenuItem twitterShare = new JMenuItem("Linked In" , LINKEDIN);
+        JMenuItem twitterShare = new JMenuItem("Linked In", LINKEDIN);
         twitterShare.addActionListener((ActionEvent e) -> {
             SharingHelper.openWebpage(LINK);
         });

@@ -23,6 +23,7 @@ import javax.swing.JToolBar;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELOAD_ICON;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.cache.Cache.DBConnectionUtil;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -82,7 +83,11 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
                     ((INodeWidget) element).remove(false);
                 });
                 file.unload();
-                file.getModelerUtil().loadModelerFile(file);
+                try {
+                    file.getModelerUtil().loadModelerFile(file);
+                } catch (Exception ex) {
+                    file.handleException(ex);
+                }
                 file.loaded();
                 DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);
                 dbModelerRequestManager.init(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());

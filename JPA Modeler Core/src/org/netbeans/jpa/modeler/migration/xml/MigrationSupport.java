@@ -18,27 +18,24 @@ package org.netbeans.jpa.modeler.migration.xml;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.TreeMap;
-import org.openide.util.Exceptions;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 
 public class MigrationSupport {
-    
-    private static final TreeMap<Float,Properties> migrationList = new TreeMap<>();
-    
+
+    private static final TreeMap<Float, Properties> migrationList = new TreeMap<>();
+
     static {
         try {
             Properties properties = new Properties();
             properties.load(MigrationSupport.class.getClassLoader().getResourceAsStream("Migration_2_0.properties"));
-            migrationList.put(2.0F,properties);
+            migrationList.put(2.0F, properties);
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
-    
-    
-    public static void migrate(){
-        
+
+    public static void migrate() {
+
     }
-    
-    
-    
+
 }

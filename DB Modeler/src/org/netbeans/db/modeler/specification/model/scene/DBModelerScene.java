@@ -28,6 +28,7 @@ import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.theme.DBColorScheme;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
@@ -198,7 +199,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                         });
             }
         } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
 

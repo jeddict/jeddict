@@ -29,6 +29,7 @@ import org.netbeans.api.db.explorer.ConnectionManager;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.db.explorer.DatabaseException;
 import org.netbeans.api.db.explorer.support.DatabaseExplorerUIs;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Exceptions;
@@ -87,8 +88,9 @@ public class Cache {
 
         /**
          * Get connection from combobox
+         *
          * @param dbConComboBox
-         * @return 
+         * @return
          */
         public static DatabaseConnection getConnection(JComboBox dbConComboBox) {
             Object item = dbConComboBox.getSelectedItem();
@@ -101,8 +103,9 @@ public class Cache {
 
         /**
          * Save connection from combobox
+         *
          * @param file
-         * @param dbConComboBox 
+         * @param dbConComboBox
          */
         public static void saveConnection(ModelerFile file, JComboBox dbConComboBox) {
             DatabaseConnection connection = DBConnectionUtil.getConnection(dbConComboBox);
@@ -113,11 +116,11 @@ public class Cache {
                 dbCache.setUserName(connection.getUser());
                 dbCache.setPassword(connection.getPassword());
                 dbCache.setDriverClassName(connection.getDriverClass());
-                 try {
-                        dbCache.setDriverClass(connection.getJDBCDriver().getDriver().getClass());
-                    } catch (DatabaseException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
+                try {
+                    dbCache.setDriverClass(connection.getJDBCDriver().getDriver().getClass());
+                } catch (DatabaseException ex) {
+                    ExceptionUtils.printStackTrace(ex, file);
+                }
                 cache.setDatabaseConnection(dbCache);
             }
         }
@@ -125,11 +128,12 @@ public class Cache {
         public static void loadConnection(ModelerFile file, JComboBox dbConComboBox) {
             loadConnection((EntityMappings) file.getDefinitionElement(), dbConComboBox);
         }
-        
+
         /**
          * Load combobox with DB connection
+         *
          * @param entityMappings
-         * @param dbConComboBox 
+         * @param dbConComboBox
          */
         public static void loadConnection(EntityMappings entityMappings, JComboBox dbConComboBox) {
 //            DatabaseConnection connection = DBConnectionUtil.getConnection(dbConComboBox);
@@ -141,12 +145,12 @@ public class Cache {
 
             for (int i = 0; i < dbConComboBox.getItemCount(); i++) {
                 Object item = dbConComboBox.getItemAt(i);
-                if (dbCache!=null && item instanceof DatabaseConnection && ((DatabaseConnection) item).getDatabaseURL().equals(dbCache.getUrl())) {
+                if (dbCache != null && item instanceof DatabaseConnection && ((DatabaseConnection) item).getDatabaseURL().equals(dbCache.getUrl())) {
                     dbConComboBox.setSelectedIndex(i);
                     try {
                         dbCache.setDriverClass(((DatabaseConnection) item).getJDBCDriver().getDriver().getClass());
                     } catch (DatabaseException ex) {
-                        Exceptions.printStackTrace(ex);
+                        ExceptionUtils.printStackTrace(ex);
                     }
                     break;
                 }

@@ -80,6 +80,7 @@ import org.netbeans.db.modeler.spec.DBParentColumn;
 import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
@@ -112,7 +113,6 @@ import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.openide.*;
-import org.openide.util.Exceptions;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
@@ -136,7 +136,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     }
 
     @Override
-    public void loadModelerFile(ModelerFile file) {
+    public void loadModelerFile(ModelerFile file) throws Exception {
         try {
 
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
@@ -154,27 +154,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
         } catch (ValidationException ex) {
             file.getModelerPanelTopComponent().close();
-            Logger.getLogger(DBModelerUtil.class.getName()).log(Level.INFO, null, ex);
             String message = ex.getLocalizedMessage();
             int end = message.lastIndexOf("Runtime Exceptions:");
             end = end < 1 ? message.length() : end;
             int start = message.lastIndexOf("Exception Description:");
             start = start < 1 ? 0 : start;
-            final String errorMessage = message.substring(start, end);
-            NotifyDescriptor nd = new NotifyDescriptor.Message(errorMessage, NotifyDescriptor.ERROR_MESSAGE);
-            JButton copyErrorMessage = new JButton("Copy error message");
-            copyErrorMessage.addActionListener((ActionEvent e) -> {
-                Toolkit toolkit = Toolkit.getDefaultToolkit();
-                Clipboard clipboard = toolkit.getSystemClipboard();
-                StringSelection strSel = new StringSelection(errorMessage);
-                clipboard.setContents(strSel, null);
-            });
-            nd.setOptions(new Object[]{copyErrorMessage});
-            DialogDisplayer.getDefault().notify(nd);
-        } catch (Exception ex) {
-//            IO.getOut().println("Exception: " + ex.toString());
-            Exceptions.printStackTrace(ex);
-            ex.printStackTrace();
+            ExceptionUtils.printStackTrace(message.substring(start, end), ex, file);
         }
     }
 
@@ -234,7 +219,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             try {
                 document = modelerDocumentFactory.getModelerDocument(flowElement);
             } catch (ModelerException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex);
             }
 //            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), document, new Point(0, 0));

@@ -47,6 +47,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.source.SourceGroups;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.dbschema.SchemaElement;
@@ -307,7 +308,7 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
             try {
                 pud = ProviderUtil.getPUDataObject(project);
             } catch (InvalidPersistenceXmlException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex);
             }
             PersistenceUnit pu = (pud != null && pud.getPersistence().getPersistenceUnit().length == 1) ? pud.getPersistence().getPersistenceUnit()[0] : null;
             if (pu != null) {

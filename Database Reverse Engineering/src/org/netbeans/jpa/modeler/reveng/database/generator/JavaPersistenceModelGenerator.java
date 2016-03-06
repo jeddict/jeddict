@@ -79,7 +79,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
 //            pudo = ProviderUtil.getPUDataObject(helper.getProject());
 //            pudo.getPersistence().getPersistenceUnit();
 //        } catch (InvalidPersistenceXmlException ex) {
-//            Exceptions.printStackTrace(ex);
+//            ExceptionUtils.printStackTrace(ex);
 //        }
 
         generateModal(helper.getFileName(), helper.getBeans(),

@@ -18,10 +18,11 @@ package org.netbeans.jpa.modeler.network.social.twitter;
 import java.awt.event.ActionEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.network.social.SharingHelper;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.TWITTER;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -30,20 +31,22 @@ import org.openide.util.Exceptions;
 public class TwitterSocialNetwork {
 
     private static final String INTENT = "https://twitter.com/intent/tweet?source=webclient&text=";
-    private static final String message = "Check out #JPAModeler, to generate & reverse engineering #JPA code and visualize(modify) the DB and ER diagram (http://jpamodeler.blogspot.in)";
+    private static final String MESSAGE = "Check out #JPAModeler, to generate & reverse engineering #JPA code and visualize(modify) the DB and ER diagram (http://jpamodeler.blogspot.in)";
     private static String LINK;
-
-    static {
-        try {
-            LINK = INTENT + URLEncoder.encode(message, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
+    public static Icon TWITTER;
 
     private static TwitterSocialNetwork instance;
 
     private TwitterSocialNetwork() {
+        if (LINK == null) {
+            try {
+                LINK = INTENT + URLEncoder.encode(MESSAGE, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                ExceptionUtils.printStackTrace(ex);
+            }
+            ClassLoader cl = TwitterSocialNetwork.class.getClassLoader();
+            TWITTER = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/collaborate/resource/image/socialnetwork/twitter.png"));
+        }
     }
 
     public static TwitterSocialNetwork getInstance() {

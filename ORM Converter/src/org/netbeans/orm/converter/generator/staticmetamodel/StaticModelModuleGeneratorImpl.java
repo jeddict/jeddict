@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -55,9 +56,9 @@ public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
             }
             flushStaticMetamodel();
         } catch (InvalidDataException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
 

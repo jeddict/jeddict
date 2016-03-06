@@ -40,6 +40,7 @@ import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -106,7 +107,6 @@ import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.DiagramElement;
-import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
@@ -240,7 +240,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         try {
             MODELER_CONTEXT = JAXBContext.newInstance(new Class<?>[]{EntityMappings.class}); // unmarshaller will be always init before marshaller
         } catch (JAXBException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
 
         ClassLoader cl = JPAModelerUtil.class.getClassLoader();//Eager Initialization
@@ -249,9 +249,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         VIEW_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/db.png"));
         MICRO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/micro-db.png"));
         NANO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/nano-db.png"));
-        SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/share.png"));
-        TWITTER = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/twitter.png"));
-        LINKEDIN = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/socialnetwork/linkedin.png"));
+        SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/share.png"));
 
 //        IO = IOProvider.getDefault().getIO("JPA Modeler", false);
     }
@@ -326,65 +324,56 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
     }
 
-    public static EntityMappings getEntityMapping(File file) {
+    public static EntityMappings getEntityMapping(File file) throws JAXBException {
         EntityMappings definition_Load = null;
-        try {
-            if (MODELER_UNMARSHALLER == null) {
-                MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
+        if (MODELER_UNMARSHALLER == null) {
+            MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
 //            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
-            }
-            definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
-        } catch (JAXBException ex) {
-//            IO.getOut().println("Exception: " + ex.toString());
-            Exceptions.printStackTrace(ex);
-            ex.printStackTrace();
         }
+        definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
         return definition_Load;
     }
 
     @Override
-    public void loadModelerFile(ModelerFile file) {
-        try {
-            JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
-            File savedFile = file.getFile();
-            EntityMappings entityMappings = getEntityMapping(savedFile);
-            if (entityMappings == null) {
-                ElementConfigFactory elementConfigFactory = file.getVendorSpecification().getElementConfigFactory();
-                entityMappings = EntityMappings.getNewInstance();
-                elementConfigFactory.initializeObjectValue(entityMappings);
-            }
+    public void loadModelerFile(ModelerFile file) throws Exception {
 
-            Diagram diagram = entityMappings.getJPADiagram();
-            ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
-            modelerDiagram.setDefinitionElement(entityMappings);
-            scene.setBaseElementSpec(entityMappings);
-            long st = new Date().getTime();
-
-            scene.startSceneGeneration();
-            entityMappings.getEntity().stream().
-                    forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            entityMappings.getMappedSuperclass().stream().
-                    forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            entityMappings.getEmbeddable().stream().
-                    forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            System.out.println("EM PS Total time : " + (new Date().getTime() - st) + " sec");
-
-            entityMappings.initJavaInheritenceMapping();
-            loadFlowEdge(scene);
-            diagram.getJPAPlane().getDiagramElement().stream().
-                    forEach((diagramElement_Tmp) -> loadDiagram(scene, diagram, diagramElement_Tmp));
-
-            if (entityMappings.isGenerated() || (entityMappings.getEntity().size() + entityMappings.getMappedSuperclass().size()
-                    + entityMappings.getEmbeddable().size() != entityMappings.getJPADiagram().getJPAPlane().getDiagramElement().size())) {
-                scene.autoLayout();
-                entityMappings.setStatus(null);
-            }
-
-            scene.commitSceneGeneration();
-        } catch (IllegalStateException ex) {
-//            IO.getOut().println("Exception: " + ex.toString());
-            ex.printStackTrace();
+        JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
+        File savedFile = file.getFile();
+        EntityMappings entityMappings = getEntityMapping(savedFile);
+        if (entityMappings == null) {
+            ElementConfigFactory elementConfigFactory = file.getVendorSpecification().getElementConfigFactory();
+            entityMappings = EntityMappings.getNewInstance();
+            elementConfigFactory.initializeObjectValue(entityMappings);
         }
+
+        Diagram diagram = entityMappings.getJPADiagram();
+        ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
+        modelerDiagram.setDefinitionElement(entityMappings);
+        scene.setBaseElementSpec(entityMappings);
+        long st = new Date().getTime();
+
+        scene.startSceneGeneration();
+        entityMappings.getEntity().stream().
+                forEach(node -> loadFlowNode(scene, (Widget) scene, node));
+        entityMappings.getMappedSuperclass().stream().
+                forEach(node -> loadFlowNode(scene, (Widget) scene, node));
+        entityMappings.getEmbeddable().stream().
+                forEach(node -> loadFlowNode(scene, (Widget) scene, node));
+        System.out.println("EM PS Total time : " + (new Date().getTime() - st) + " sec");
+
+        entityMappings.initJavaInheritenceMapping();
+        loadFlowEdge(scene);
+        diagram.getJPAPlane().getDiagramElement().stream().
+                forEach((diagramElement_Tmp) -> loadDiagram(scene, diagram, diagramElement_Tmp));
+
+        if (entityMappings.isGenerated() || (entityMappings.getEntity().size() + entityMappings.getMappedSuperclass().size()
+                + entityMappings.getEmbeddable().size() != entityMappings.getJPADiagram().getJPAPlane().getDiagramElement().size())) {
+            scene.autoLayout();
+            entityMappings.setStatus(null);
+        }
+
+        scene.commitSceneGeneration();
+
     }
 
     private void loadFlowNode(JPAModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
@@ -401,7 +390,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             try {
                 document = modelerDocumentFactory.getModelerDocument(flowElement);
             } catch (ModelerException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex, scene.getModelerFile());
             }
             SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
@@ -586,63 +575,16 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             if (widget != null) {
                 if (widget instanceof INodeWidget) { //reverse ref
                     INodeWidget nodeWidget = (INodeWidget) widget;
-//                  nodeWidget.setPreferredSize(new Dimension((int) bounds.getWidth(), (int) bounds.getHeight()));
                     Point location = new Point((int) bounds.getX(), (int) bounds.getY());
                     nodeWidget.setPreferredLocation(location);
-//                    nodeWidget.setActiveStatus(false);//Active Status is used to prevent reloading SVGDocument until complete document is loaded
 //                    nodeWidget.setActiveStatus(true);
                 } else {
                     throw new InvalidElmentException("Invalid JPA Element : " + widget);
                 }
             }
-        } else if (diagramElement instanceof Edge) {
-//            JPAEdge edge = (JPAEdge) diagramElement;
-//            Widget widget = (Widget) scene.getBaseElement(edge.getJPAElement());
-//            if (widget != null && widget instanceof EdgeWidget) {
-//                if (widget instanceof SequenceFlowWidget) {
-//                    SequenceFlowWidget sequenceFlowWidget = (SequenceFlowWidget) widget;
-//                    sequenceFlowWidget.setControlPoints(edge.getWaypointCollection(), true);
-//                    if (edge.getJPALabel() != null) {
-//                        Bounds bound = edge.getJPALabel().getBounds();
-////                        sequenceFlowWidget.getLabelManager().getLabelWidget().getParentWidget().setPreferredLocation(bound.toPoint());
-//                        sequenceFlowWidget.getLabelManager().getLabelWidget().getParentWidget().setPreferredLocation(
-//                                sequenceFlowWidget.getLabelManager().getLabelWidget().convertSceneToLocal(bound.toPoint()));
-//                    }
-//                } else if (widget instanceof AssociationWidget) {
-//                    AssociationWidget associationWidget = (AssociationWidget) widget;
-//                    associationWidget.setControlPoints(edge.getWaypointCollection(), true);
-//                } else {
-//                    throw new InvalidElmentException("Invalid JPA Element");
-//                }
-////                EdgeWidget edgeWidget = (EdgeWidget)widget;
-////                edgeWidget.manageControlPoint();
-//
-//            }
-//
         }
     }
 
-    /*---------------------------------Load File End---------------------------------*/
- /*---------------------------------Save File Satrt---------------------------------*/
-//      public static void saveJPA(final JPAFile file) {
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                saveJPAImpl(file);
-//            }
-//        };
-//        final RequestProcessor.Task theTask = RP.create(runnable);
-//        final ProgressHandle ph = ProgressHandleFactory.createHandle("Saving JPA File...", theTask);
-//        theTask.addTaskListener(new TaskListener() {
-//            @Override
-//            public void taskFinished(org.openide.util.Task task) {
-//                ph.finish();
-//            }
-//        });
-//        ph.start();
-//        theTask.schedule(0);
-//    }
-//
     @Override
     public void saveModelerFile(ModelerFile file) {
         JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
@@ -760,10 +702,15 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                                             attribute.setAttributeType(targetEntitySpec.getCompositePrimaryKeyClass());
                                             attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute
 
-                                            if (targetEntitySpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
-                                            } else if (targetEntitySpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-                                            } else {
-                                                throw new UnsupportedOperationException("Not Supported Currently");
+                                            if (null != targetEntitySpec.getCompositePrimaryKeyType()) {
+                                                switch (targetEntitySpec.getCompositePrimaryKeyType()) {
+                                                    case IDCLASS:
+                                                        break;
+                                                    case EMBEDDEDID:
+                                                        break;
+                                                    default:
+                                                        throw new UnsupportedOperationException("Not Supported Currently");
+                                                }
                                             }
                                         }
                                         _class.addAttribute(attribute);
@@ -809,7 +756,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //            MODELER_MARSHALLER.marshal(entityMappings, sw);
 
         } catch (JAXBException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
 
@@ -822,7 +769,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             }
             saveFile(entityMappingsSpec, jpaFile);
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
         if (autoOpen) {
             FileObject jpaFileObject = FileUtil.toFileObject(jpaFile);
@@ -830,7 +777,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 JPAFileActionListener actionListener = new JPAFileActionListener((JPAFileDataObject) DataObject.find(jpaFileObject));
                 actionListener.actionPerformed(null);
             } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex);
             }
         }
 
@@ -1406,7 +1353,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             StringReader reader = new StringReader(sw.toString());
             definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(reader), EntityMappings.class).getValue();
         } catch (JAXBException ex) {
-            ex.printStackTrace();
+            ExceptionUtils.printStackTrace(ex);
         }
         return definition_Load;
     }
@@ -1550,7 +1497,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 ((INodeWidget) element).remove(false);
             });
             childModelerFile.unload();
-            childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
+            try {
+                childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
+            } catch (Exception ex) {
+                ExceptionUtils.printStackTrace(ex, file);
+            }
             childModelerFile.loaded();
         }
     }

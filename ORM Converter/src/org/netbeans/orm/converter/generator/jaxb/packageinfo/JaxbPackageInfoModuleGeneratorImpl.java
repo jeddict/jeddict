@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -51,7 +52,7 @@ public class JaxbPackageInfoModuleGeneratorImpl implements ModuleGenerator {
         destDir = FileUtil.toFile(sourceGroup.getRootFolder());
         this.packageName = parsedEntityMappings.getPackage();
         try {
-            if(parsedEntityMappings.getJaxbNameSpace()==null || parsedEntityMappings.getJaxbNameSpace().trim().isEmpty()){
+            if (parsedEntityMappings.getJaxbNameSpace() == null || parsedEntityMappings.getJaxbNameSpace().trim().isEmpty()) {
                 return;
             }
             JaxbPackageInfoGenerator packageInfoGenerator = new JaxbPackageInfoGenerator(parsedEntityMappings, packageName);
@@ -60,9 +61,9 @@ public class JaxbPackageInfoModuleGeneratorImpl implements ModuleGenerator {
             task.log("Generating JAXB package-info.java", true);
             ORMConverterUtil.writeSnippet(packageInfoDef, destDir);
         } catch (InvalidDataException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
 

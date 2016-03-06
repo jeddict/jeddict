@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -128,7 +129,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
                         "compositePrimaryKeyClass", "Field Type", "", null));
             } catch (NoSuchMethodException | NoSuchFieldException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex);
             }
         }
         PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());

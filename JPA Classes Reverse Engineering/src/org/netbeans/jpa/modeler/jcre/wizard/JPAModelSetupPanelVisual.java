@@ -26,6 +26,7 @@ import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.source.JavaIdentifiers;
 import org.netbeans.jpa.modeler.source.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
@@ -298,7 +299,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
             Templates.setTargetFolder(settings, targetFolder);
             Templates.setTargetName(wizard, this.getFileName());
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
 
