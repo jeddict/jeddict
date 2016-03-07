@@ -46,7 +46,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
 
     private EntityMappings mappings;
-    
+
     @Override
     public void initSpecification(final ModelerFile modelerFile) {
         modelerFile.setIcon(TAB_ICON);
@@ -54,8 +54,8 @@ public class DBViewerActionListener extends ModelerFileActionListener implements
     }
 
     @Override
-    public void init(ModelerFile file , EntityMappings mappings) {
-        this.mappings=mappings;
+    public void init(ModelerFile file, EntityMappings mappings) {
+        this.mappings = mappings;
         context = null;
         openModelerFile("DB", null, null, file);
     }

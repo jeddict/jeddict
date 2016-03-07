@@ -15,13 +15,12 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import org.netbeans.orm.converter.compiler.CallbackSnippet;
-import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.EntityListener;
+import org.netbeans.orm.converter.compiler.CallbackSnippet;
+import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
 
 public class GeneratorUtil {
 

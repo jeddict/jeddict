@@ -21,7 +21,7 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 public class DBParentAssociationInverseJoinColumn extends DBParentAssociationColumn<RelationAttribute> {
 
     public DBParentAssociationInverseJoinColumn(String name, Entity intrinsicClass, RelationAttribute managedAttribute, boolean relationTableExist) {
-        super(name, intrinsicClass, managedAttribute,relationTableExist);
+        super(name, intrinsicClass, managedAttribute, relationTableExist);
         joinColumnsOverride = JoinColumnFinder.findJoinColumns(associationOverride, managedAttribute, relationTableExist, true);
         joinColumnOverride = JoinColumnFinder.findJoinColumn(name, joinColumnsOverride);
 

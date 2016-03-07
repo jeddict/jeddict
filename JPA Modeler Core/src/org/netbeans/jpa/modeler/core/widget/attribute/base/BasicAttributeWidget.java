@@ -30,7 +30,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class BasicAttributeWidget extends BaseAttributeWidget <Basic>{
+public class BasicAttributeWidget extends BaseAttributeWidget<Basic> {
 
     public BasicAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);

@@ -48,7 +48,7 @@ public class DBRelationalDescriptor extends RelationalDescriptor {
     public void setParentClassMapping(List<DatabaseMapping> parentClassMapping) {
         this.parentClassMapping = parentClassMapping;
     }
-    
+
     /**
      * Id : SUPERCLASS_ATTR_CLONE. Description : Fix for If class have super
      * class then super class mapping is cloned and copied to subclass, to share

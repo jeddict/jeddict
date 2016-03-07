@@ -24,7 +24,7 @@ public interface AttributeOverrideHandler {
 
     @Deprecated
     public AttributeOverride getAttributeOverride(String attributePath);
-    
+
     public AttributeOverride findAttributeOverride(String name);
 
     public boolean addAttributeOverride(AttributeOverride attributeOverride);

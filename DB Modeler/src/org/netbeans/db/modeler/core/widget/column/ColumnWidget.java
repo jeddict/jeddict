@@ -15,11 +15,11 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
-import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -127,8 +127,8 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
      * Called when dev delete value
      */
     protected void setDefaultName() {
-        if(!prePersistName()){
-           return; 
+        if (!prePersistName()) {
+            return;
         }
         this.name = evaluateName();
         if (this.getModelerScene().getModelerFile().isLoaded()) {
@@ -154,8 +154,8 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
      * property available
      */
     protected void setPropertyName(String name) {
-        if(!prePersistName()){
-           return; 
+        if (!prePersistName()) {
+            return;
         }
         this.name = name;
         validateName(name);
@@ -163,8 +163,8 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     }
 
     protected void setMultiPropertyName(String name) {
-        if(!prePersistName()){
-           return; 
+        if (!prePersistName()) {
+            return;
         }
         this.name = evaluateName();
         validateName(name);

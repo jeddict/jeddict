@@ -30,26 +30,26 @@ import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
-import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
-import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
+import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
@@ -213,7 +213,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             try {
                 document = modelerDocumentFactory.getModelerDocument(flowElement);
             } catch (ModelerException ex) {
-                ExceptionUtils.printStackTrace(ex);
+                scene.getModelerFile().handleException(ex);
             }
 //            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), document, new Point(0, 0));

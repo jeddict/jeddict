@@ -15,13 +15,12 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class EntityResultSnippet implements Snippet {
 

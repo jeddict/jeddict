@@ -61,7 +61,6 @@ import org.netbeans.modeler.specification.export.IExportManager;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.node.INodeWidget;
-import org.openide.util.Exceptions;
 
 public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
 
@@ -211,7 +210,7 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
             ppt.write(out);
             out.close();
         } catch (IOException ex) {
-            ExceptionUtils.printStackTrace(ex);
+            scene.getModelerFile().handleException(ex);
         }
     }
 

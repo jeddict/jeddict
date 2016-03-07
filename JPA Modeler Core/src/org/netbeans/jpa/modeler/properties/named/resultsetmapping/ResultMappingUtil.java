@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package org.netbeans.jpa.modeler.properties.named.resultsetmapping;
 
 import java.util.ArrayList;
@@ -27,9 +26,9 @@ import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 
-
 public class ResultMappingUtil {
-    public static NAttributeEntity getColumnResult( final List<ColumnResult> columnResults, ModelerFile modelerFile) {
+
+    public static NAttributeEntity getColumnResult(final List<ColumnResult> columnResults, ModelerFile modelerFile) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ColumnResult", "Column Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Column Results", "One Column Result", " Column Results"});
         List<Column> columns = new ArrayList<>();
@@ -44,7 +43,7 @@ public class ResultMappingUtil {
 
             @Override
             public void initCount() {
-                if (columnResults!= null) {
+                if (columnResults != null) {
                     count = columnResults.size();
                 } else {
                     count = 0;
@@ -83,14 +82,15 @@ public class ResultMappingUtil {
                 }
                 for (Object[] row : data) {
                     ColumnResult column = (ColumnResult) row[0];
-                    columnResults.add(column); 
+                    columnResults.add(column);
                 }
                 initData();
             }
         });
         return attributeEntity;
     }
-    public static NAttributeEntity getFieldResult( final List<FieldResult> fieldResults, ModelerFile modelerFile) {
+
+    public static NAttributeEntity getFieldResult(final List<FieldResult> fieldResults, ModelerFile modelerFile) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("FieldResult", "Field Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Field Results", "One Field Result", " Field Results"});
         List<Column> columns = new ArrayList<>();
@@ -105,7 +105,7 @@ public class ResultMappingUtil {
 
             @Override
             public void initCount() {
-                if (fieldResults!= null) {
+                if (fieldResults != null) {
                     count = fieldResults.size();
                 } else {
                     count = 0;
@@ -144,7 +144,7 @@ public class ResultMappingUtil {
                 }
                 for (Object[] row : data) {
                     FieldResult field = (FieldResult) row[0];
-                    fieldResults.add(field); 
+                    fieldResults.add(field);
                 }
                 initData();
             }
@@ -152,5 +152,4 @@ public class ResultMappingUtil {
         return attributeEntity;
     }
 
-    
 }

@@ -20,19 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import javax.swing.JComboBox;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import org.netbeans.api.db.explorer.ConnectionManager;
-import org.netbeans.api.db.explorer.DatabaseConnection;
-import org.netbeans.api.db.explorer.DatabaseException;
-import org.netbeans.api.db.explorer.support.DatabaseExplorerUIs;
-import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
-import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
-import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
-import org.netbeans.modeler.core.ModelerFile;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Cache {

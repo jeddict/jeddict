@@ -27,7 +27,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class TransientAttributeWidget extends BaseAttributeWidget <Transient>{
+public class TransientAttributeWidget extends BaseAttributeWidget<Transient> {
 
     public TransientAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);

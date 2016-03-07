@@ -36,7 +36,6 @@ import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
-import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.GuardedDocument;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.lib.editor.util.swing.PositionRegion;
@@ -47,9 +46,7 @@ import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.text.NbDocument;
-import org.openide.util.Exceptions;
 import org.openide.util.UserQuestionException;
 
 public class ORMConverterUtil {
@@ -288,38 +285,6 @@ public class ORMConverterUtil {
 
             ec.saveDocument();
 
-////            ec.close();
-//            StyledDocument document = ec.openDocument();
-//            if (document instanceof BaseDocument) {
-//                final BaseDocument doc = (BaseDocument) document;
-//                final Reformat f = Reformat.get(doc);
-//                f.lock();
-//                try {
-//                    doc.runAtomic(new Runnable() {
-//                        public void run() {
-//                            try {
-//                                f.reformat(0, doc.getLength());
-//                            } catch (BadLocationException ex) {
-//                                Exceptions.attachMessage(ex, "Failure while formatting " + FileUtil.getFileDisplayName(fo));
-//                                ExceptionUtils.printStackTrace(ex);
-//                            }
-//
-//                        }
-//                    });
-//                } finally {
-//                    f.unlock();
-//                }
-//                try {
-//                    ec.saveDocument();
-////                    SaveCookie save = dobj.getLookup().lookup(SaveCookie.class);
-////                    if (save != null) {
-////                        save.save();
-////                    }
-//                } catch (IOException ex) {
-//                    Exceptions.attachMessage(ex, "Failure while formatting and saving " + FileUtil.getFileDisplayName(fo));
-//                    ExceptionUtils.printStackTrace(ex);
-//                }
-//            }
         } catch (IOException ex) {
             ExceptionUtils.printStackTrace(ex);
         }

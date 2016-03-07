@@ -15,12 +15,10 @@
  */
 package org.netbeans.db.modeler.core.widget.column.parent;
 
-import java.util.List;
 import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
 import org.netbeans.db.modeler.spec.DBParentAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -42,14 +40,13 @@ public class ParentAssociationJoinColumnWidget extends ParentAssociationColumnWi
     }
 
     @Override
-    protected boolean prePersistName(){
+    protected boolean prePersistName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if(attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()){
+        if (attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()) {
             return false;//OneToMany by default creates JoinTable
         }
         return true;
     }
-    
 
 //    @Override
 //    protected String evaluateName() {
@@ -58,7 +55,7 @@ public class ParentAssociationJoinColumnWidget extends ParentAssociationColumnWi
 //        List<Id> id = (List<Id>) entity.getAttributes().getId();
 //        return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
 //    }
-@Override
+    @Override
     protected String evaluateName() {
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();

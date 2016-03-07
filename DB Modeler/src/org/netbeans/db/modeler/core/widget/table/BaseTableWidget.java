@@ -27,25 +27,25 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public class BaseTableWidget extends TableWidget<DBTable> {
-    
+
     public BaseTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String value) -> {
-             setName(value);
-             setLabel(name);
+            setName(value);
+            setLabel(name);
         });
     }
-    
+
     private void setDefaultName() {
         Entity entity = this.getBaseElementSpec().getEntity();
         this.name = entity.getDefaultTableName();
         entity.getTable().setName(null);
         setLabel(name);
     }
-    
+
     @Override
     public void setName(String name) {
-        
+
         if (StringUtils.isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
@@ -53,28 +53,28 @@ public class BaseTableWidget extends TableWidget<DBTable> {
                 entity.getTable().setName(this.name);
             }
         } else {
-           setDefaultName(); 
+            setDefaultName();
         }
-        
+
         if (SQLKeywords.isSQL99ReservedKeyword(BaseTableWidget.this.getName())) {
             this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
             this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
-        
+
         DBMapping mapping = BaseTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(BaseTableWidget.this.getName()).size() > 1) {
             getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         } else {
             getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
         }
-        
+
     }
-    
+
     @Override
     public void createPropertySet(ElementPropertySet set) {
         Entity entity = this.getBaseElementSpec().getEntity();
         set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
     }
-    
+
 }

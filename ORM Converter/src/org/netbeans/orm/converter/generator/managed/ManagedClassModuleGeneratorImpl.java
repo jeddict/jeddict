@@ -39,13 +39,11 @@ import org.netbeans.orm.converter.generator.EmbeddableIdClassGenerator;
 import org.netbeans.orm.converter.generator.EntityGenerator;
 import org.netbeans.orm.converter.generator.LifecycleCallbackGenerator;
 import org.netbeans.orm.converter.generator.MappedSuperClassGenerator;
-import org.netbeans.orm.converter.generator.identifiable.IdentifiableClassDefSnippet;
 import org.netbeans.orm.converter.spec.ModuleGenerator;
 import org.netbeans.orm.converter.util.ClassType;
 import org.netbeans.orm.converter.util.ClassesRepository;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {

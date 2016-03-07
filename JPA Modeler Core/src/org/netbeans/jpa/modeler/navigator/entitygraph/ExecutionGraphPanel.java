@@ -31,25 +31,24 @@ public class ExecutionGraphPanel extends GenericDialog implements ExplorerManage
     private final EntityWidget entityWidget;
     private EGRootNode node;
 
-    public ExecutionGraphPanel(EntityWidget entityWidget,NamedEntityGraph namedEntityGraph) {
+    public ExecutionGraphPanel(EntityWidget entityWidget, NamedEntityGraph namedEntityGraph) {
         this.entityWidget = entityWidget;
-        this.namedEntityGraph=namedEntityGraph;
+        this.namedEntityGraph = namedEntityGraph;
         manager = new ExplorerManager();
         initComponents();
         this.setTitle("Execution graph");
         loadExecutionGraph();
     }
 
-    
-    private void loadExecutionGraph(){
+    private void loadExecutionGraph() {
         boolean loadGraph = "Load graph".equals(hintType_Combobox.getSelectedItem());
         SwingUtilities.invokeLater(() -> {
-                node = new EGRootNode(entityWidget ,namedEntityGraph, new ExecutionEGChildFactory(loadGraph));
+            node = new EGRootNode(entityWidget, namedEntityGraph, new ExecutionEGChildFactory(loadGraph));
             manager.setRootContext(node);
 //                    ((OutlineView)navigatorPane).getOutline().setRootVisible(false);
         });
     }
-    
+
     @Override
     public ExplorerManager getExplorerManager() {
         return manager;
@@ -157,15 +156,13 @@ public class ExecutionGraphPanel extends GenericDialog implements ExplorerManage
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
     private void hintType_ComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hintType_ComboboxActionPerformed
         loadExecutionGraph();
     }//GEN-LAST:event_hintType_ComboboxActionPerformed
 
     private void close_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_close_ButtonActionPerformed
-            cancelActionPerformed(evt);
+        cancelActionPerformed(evt);
     }//GEN-LAST:event_close_ButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton close_Button;

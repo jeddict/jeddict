@@ -16,7 +16,6 @@
 package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -299,8 +298,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setCollectionTable(collectionTable);
             variableDef.setColumnDef(columnDef);
             variableDef.setEnumerated(enumerated);
-            if(parsedElementCollection.getOrderBy()!=null){
-            variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
+            if (parsedElementCollection.getOrderBy() != null) {
+                variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
             }
             if (parsedTemporal != null) {
                 variableDef.setTemporal(true);
@@ -459,7 +458,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         List<JoinColumnSnippet> joinColumns = new ArrayList<>();
 
-            parsedJoinColumns.stream().filter(JoinColumnValidator::isNotEmpty).forEach(parsedJoinColumn -> {
+        parsedJoinColumns.stream().filter(JoinColumnValidator::isNotEmpty).forEach(parsedJoinColumn -> {
 
             JoinColumnSnippet joinColumn = new JoinColumnSnippet();
 
@@ -608,9 +607,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             namedSubgraphs.add(namedSubgraph);
         }
         return namedSubgraphs;
-    }    
-    
-    
+    }
+
     protected List<QueryHintSnippet> getQueryHints(
             List<QueryHint> parsedQueryHints) {
 
@@ -684,7 +682,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
-            if ((joinTable==null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
+            if ((joinTable == null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
                 continue;
             }
             AssociationOverrideSnippet associationOverride = new AssociationOverrideSnippet();
@@ -781,9 +779,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setIdClass(idClass);
     }
 
-    
-            
-      protected void processNamedEntityGraphs(List<NamedEntityGraph> parsedNamedEntityGraphs) {
+    protected void processNamedEntityGraphs(List<NamedEntityGraph> parsedNamedEntityGraphs) {
 
         if (parsedNamedEntityGraphs == null
                 || parsedNamedEntityGraphs.isEmpty()) {
@@ -805,9 +801,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             namedEntityGraphs.addNamedEntityGraph(namedEntityGraph);
         }
     }
-       
-      
-   protected void processNamedStoredProcedureQueries(EntityMappings entityMappings ,List<NamedStoredProcedureQuery> parsedNamedStoredProcedureQueries) {
+
+    protected void processNamedStoredProcedureQueries(EntityMappings entityMappings, List<NamedStoredProcedureQuery> parsedNamedStoredProcedureQueries) {
 
         if (parsedNamedStoredProcedureQueries == null || parsedNamedStoredProcedureQueries.isEmpty()) {
             return;
@@ -829,15 +824,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             namedStoredProcedureQueries.addNamedStoredProcedureQuery(namedStoredProcedureQuery);
         }
     }
-     
-      protected List<String> getResultClasses(EntityMappings entityMappings , List<String> parsedgetResultClasses) {
-          List<String> newParsedgetResultClasses = new ArrayList<String>();
-          
+
+    protected List<String> getResultClasses(EntityMappings entityMappings, List<String> parsedgetResultClasses) {
+        List<String> newParsedgetResultClasses = new ArrayList<String>();
+
         for (String resultClass : parsedgetResultClasses) {
-            if(resultClass.charAt(0) == '{' && resultClass.charAt(resultClass.length()-1) == '}'){
-                String id = resultClass.substring(1, resultClass.length()-1);
+            if (resultClass.charAt(0) == '{' && resultClass.charAt(resultClass.length() - 1) == '}') {
+                String id = resultClass.substring(1, resultClass.length() - 1);
                 Entity entity = entityMappings.getEntity(id);
-                if(entityMappings.getPackage()==null || entityMappings.getPackage().isEmpty()){
+                if (entityMappings.getPackage() == null || entityMappings.getPackage().isEmpty()) {
                     newParsedgetResultClasses.add(entity.getClazz());
                 } else {
                     newParsedgetResultClasses.add(entityMappings.getPackage() + "." + entity.getClazz());
@@ -846,13 +841,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 newParsedgetResultClasses.add(resultClass);
             }
         }
-          
-          
-          
-         return newParsedgetResultClasses; 
-      }
-            
-        protected List<StoredProcedureParameterSnippet> getStoredProcedureParameters(List<StoredProcedureParameter> parsedStoredProcedureParameters) {
+
+        return newParsedgetResultClasses;
+    }
+
+    protected List<StoredProcedureParameterSnippet> getStoredProcedureParameters(List<StoredProcedureParameter> parsedStoredProcedureParameters) {
 
         if (parsedStoredProcedureParameters == null || parsedStoredProcedureParameters.isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -864,16 +857,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             StoredProcedureParameterSnippet storedProcedureParameter = new StoredProcedureParameterSnippet();
             storedProcedureParameter.setName(parsedStoredProcedureParameter.getName());
             storedProcedureParameter.setType(parsedStoredProcedureParameter.getClazz());
-            if(parsedStoredProcedureParameter.getMode()!=null){
-            storedProcedureParameter.setMode(parsedStoredProcedureParameter.getMode().value());
+            if (parsedStoredProcedureParameter.getMode() != null) {
+                storedProcedureParameter.setMode(parsedStoredProcedureParameter.getMode().value());
             }
             storedProcedureParameters.add(storedProcedureParameter);
         }
         return storedProcedureParameters;
     }
-     
-            
-            
+
     protected void processNamedNativeQueries(
             List<NamedNativeQuery> parsedNamedNativeQueries) {
 
@@ -1047,10 +1038,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
                 if (parsedSequenceGenerator != null) {
                     SequenceGeneratorSnippet sequenceGenerator = new SequenceGeneratorSnippet();
-                    if(parsedSequenceGenerator.getAllocationSize()!=null){
+                    if (parsedSequenceGenerator.getAllocationSize() != null) {
                         sequenceGenerator.setAllocationSize(parsedSequenceGenerator.getAllocationSize());
                     }
-                    if(parsedSequenceGenerator.getInitialValue()!=null){
+                    if (parsedSequenceGenerator.getInitialValue() != null) {
                         sequenceGenerator.setInitialValue(parsedSequenceGenerator.getInitialValue());
                     }
                     sequenceGenerator.setName(parsedSequenceGenerator.getName());
@@ -1141,8 +1132,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             variableDef.setRelationDef(manyToMany);
             variableDef.setJoinTable(joinTable);
-            if(parsedManyToMany.getOrderBy()!=null){
-            variableDef.setOrderBy(new OrderBySnippet(parsedManyToMany.getOrderBy()));
+            if (parsedManyToMany.getOrderBy() != null) {
+                variableDef.setOrderBy(new OrderBySnippet(parsedManyToMany.getOrderBy()));
             }
 //            variableDef.setType(parsedManyToMany.getAttributeType());
 
@@ -1239,8 +1230,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setRelationDef(oneToMany);
             variableDef.setJoinTable(joinTable);
             variableDef.setJoinColumns(joinColumns);
-            if(parsedOneToMany.getOrderBy()!=null){
-            variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
+            if (parsedOneToMany.getOrderBy() != null) {
+                variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
             }
 //            variableDef.setType(parsedOneToMany.getAttributeType());
 

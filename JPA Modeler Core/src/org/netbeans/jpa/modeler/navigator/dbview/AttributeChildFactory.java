@@ -106,7 +106,7 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
                     if (persistenceBaseAttribute.getColumn() == null) {
                         persistenceBaseAttribute.setColumn(new Column());
                     }
-                    set.createPropertySet( columnDef.getAttributeWidget() , persistenceBaseAttribute.getColumn(), columnDef.getAttributeWidget().getPropertyChangeListeners(), columnDef.getAttributeWidget().getPropertyVisibilityHandlers());
+                    set.createPropertySet(columnDef.getAttributeWidget(), persistenceBaseAttribute.getColumn(), columnDef.getAttributeWidget().getPropertyChangeListeners(), columnDef.getAttributeWidget().getPropertyVisibilityHandlers());
                 }
             }
 

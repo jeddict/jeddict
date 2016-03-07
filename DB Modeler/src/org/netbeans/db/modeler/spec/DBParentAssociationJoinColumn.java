@@ -20,7 +20,6 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
 public class DBParentAssociationJoinColumn extends DBParentAssociationColumn<RelationAttribute> {
 
-
     public DBParentAssociationJoinColumn(String name, Entity intrinsicClass, RelationAttribute managedAttribute, boolean relationTableExist) {
         super(name, intrinsicClass, managedAttribute, relationTableExist);
 
@@ -30,6 +29,5 @@ public class DBParentAssociationJoinColumn extends DBParentAssociationColumn<Rel
         joinColumns = JoinColumnFinder.findJoinColumns(managedAttribute, relationTableExist, false);
         joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
     }
-
 
 }

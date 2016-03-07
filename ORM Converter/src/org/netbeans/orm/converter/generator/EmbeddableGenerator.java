@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;

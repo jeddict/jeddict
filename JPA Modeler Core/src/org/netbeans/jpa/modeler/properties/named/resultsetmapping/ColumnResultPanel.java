@@ -25,12 +25,14 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.enti
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
 
 public class ColumnResultPanel extends EntityComponent<ColumnResult> {
-private final ModelerFile modelerFile;
+
+    private final ModelerFile modelerFile;
+
     public ColumnResultPanel(ModelerFile modelerFile) {
-        this.modelerFile=modelerFile;
+        this.modelerFile = modelerFile;
     }
-    
-            @Override
+
+    @Override
     public void postConstruct() {
         initComponents();
     }
@@ -57,9 +59,9 @@ private final ModelerFile modelerFile;
             Object[] row = ((RowValue) entityValue).getRow();
             ColumnResult columnResult = (ColumnResult) row[0];
             name_TextField.setText(columnResult.getName());
-            
-            if(((DefaultComboBoxModel)class_ComboBox.getModel()).getIndexOf(columnResult.getClazz()) == -1 ) {
-                ((DefaultComboBoxModel)class_ComboBox.getModel()).addElement(columnResult.getClazz());
+
+            if (((DefaultComboBoxModel) class_ComboBox.getModel()).getIndexOf(columnResult.getClazz()) == -1) {
+                ((DefaultComboBoxModel) class_ComboBox.getModel()).addElement(columnResult.getClazz());
             }
             class_ComboBox.setSelectedItem(columnResult.getClazz());
         }

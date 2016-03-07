@@ -26,8 +26,8 @@ import org.netbeans.modeler.core.ModelerFile;
  * @author Gaurav Gupta
  */
 public class ShortcutListener extends KeyAdapter {
-    
-   private final ModelerFile file;
+
+    private final ModelerFile file;
 
     public ShortcutListener(ModelerFile file) {
         this.file = file;
@@ -35,15 +35,15 @@ public class ShortcutListener extends KeyAdapter {
 
     @Override
     public void keyPressed(KeyEvent e) {
-      super.keyPressed(e);
-      if (e.isControlDown() == true) {
+        super.keyPressed(e);
+        if (e.isControlDown() == true) {
             if (e.getKeyCode() == KeyEvent.VK_G) {
                 JPAModelerUtil.generateSourceCode(file);
             } else if (e.getKeyCode() == KeyEvent.VK_D) {
-                JPAModelerUtil.openDBViewer(file, (EntityMappings)file.getModelerScene().getBaseElementSpec());
+                JPAModelerUtil.openDBViewer(file, (EntityMappings) file.getModelerScene().getBaseElementSpec());
             }
         }
-      
+
     }
-    
+
 }

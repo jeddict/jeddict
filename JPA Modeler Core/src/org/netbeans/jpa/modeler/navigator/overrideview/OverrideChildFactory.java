@@ -19,7 +19,7 @@ import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.openide.nodes.ChildFactory;
 
-public abstract class OverrideChildFactory  extends ChildFactory<AttributeWidget> {
+public abstract class OverrideChildFactory extends ChildFactory<AttributeWidget> {
 
     protected final EntityWidget entityWidget;
 

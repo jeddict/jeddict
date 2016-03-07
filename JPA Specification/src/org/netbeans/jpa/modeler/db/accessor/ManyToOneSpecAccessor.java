@@ -27,15 +27,15 @@ import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
  *
  * @author Gaurav Gupta
  */
-public class ManyToOneSpecAccessor extends ManyToOneAccessor{
-    
+public class ManyToOneSpecAccessor extends ManyToOneAccessor {
+
     private final ManyToOne manyToOne;
 
     private ManyToOneSpecAccessor(ManyToOne manyToOne) {
         this.manyToOne = manyToOne;
     }
 
-    public static ManyToOneSpecAccessor getInstance(ManyToOne manyToOne){
+    public static ManyToOneSpecAccessor getInstance(ManyToOne manyToOne) {
         ManyToOneSpecAccessor accessor = new ManyToOneSpecAccessor(manyToOne);
         accessor.setName(manyToOne.getName());
         accessor.setTargetEntityName(manyToOne.getTargetEntity());
@@ -43,15 +43,15 @@ public class ManyToOneSpecAccessor extends ManyToOneAccessor{
         if (!JoinTableValidator.isEmpty(manyToOne.getJoinTable())) {
             accessor.setJoinTable(manyToOne.getJoinTable().getAccessor());
         }
-        JoinColumnValidator.filter(manyToOne.getJoinColumn());        
+        JoinColumnValidator.filter(manyToOne.getJoinColumn());
         accessor.setJoinColumns(manyToOne.getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
         return accessor;
     }
 
     @Override
-    public void process(){
+    public void process() {
         super.process();
         getMapping().setProperty(Attribute.class, manyToOne);
     }
-    
+
 }

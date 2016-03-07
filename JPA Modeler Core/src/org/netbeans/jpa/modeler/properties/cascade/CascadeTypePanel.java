@@ -69,27 +69,24 @@ public class CascadeTypePanel extends GenericEmbeddedEditor<CascadeType> {
         this.cascadeType = cascadeType;
         if (cascadeType == null) {
             manageCascadeAllState(false);
+        } else if (cascadeType.getCascadeAll() != null) {
+            manageCascadeAllState(true);
         } else {
-            if (cascadeType.getCascadeAll() != null) {
-                manageCascadeAllState(true);
-            } else {
-                if (cascadeType.getCascadeDetach() != null) {
-                    detach_CheckBox.setSelected(true);
-                }
-                if (cascadeType.getCascadeMerge() != null) {
-                    merge_CheckBox.setSelected(true);
-                }
-                if (cascadeType.getCascadePersist() != null) {
-                    persist_CheckBox.setSelected(true);
-                }
-                if (cascadeType.getCascadeRefresh() != null) {
-                    refresh_CheckBox.setSelected(true);
-                }
-                if (cascadeType.getCascadeRemove() != null) {
-                    remove_CheckBox.setSelected(true);
-                }
+            if (cascadeType.getCascadeDetach() != null) {
+                detach_CheckBox.setSelected(true);
             }
-
+            if (cascadeType.getCascadeMerge() != null) {
+                merge_CheckBox.setSelected(true);
+            }
+            if (cascadeType.getCascadePersist() != null) {
+                persist_CheckBox.setSelected(true);
+            }
+            if (cascadeType.getCascadeRefresh() != null) {
+                refresh_CheckBox.setSelected(true);
+            }
+            if (cascadeType.getCascadeRemove() != null) {
+                remove_CheckBox.setSelected(true);
+            }
         }
     }
 

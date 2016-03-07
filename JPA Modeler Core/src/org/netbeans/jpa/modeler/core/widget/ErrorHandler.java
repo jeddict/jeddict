@@ -22,7 +22,6 @@ import java.util.MissingResourceException;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
-import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.WidgetStateHandler;
 import org.openide.util.NbBundle;
 
@@ -33,7 +32,6 @@ import org.openide.util.NbBundle;
 public class ErrorHandler {
 
     private final IFlowElementWidget widget;
-    
 
     public ErrorHandler(IFlowElementWidget widget) {
         this.widget = widget;
@@ -49,8 +47,8 @@ public class ErrorHandler {
 //            errorList.put(key, ResourceBundleManager.get(key));
 //            printError();
 //        }
-  errorList.put(key, ResourceBundleManager.get(key,  widget.getName()));
-            printError();
+        errorList.put(key, ResourceBundleManager.get(key, widget.getName()));
+        printError();
     }
 
     public void clearError(String key) {
@@ -76,7 +74,6 @@ public class ErrorHandler {
         }
     }
 
-    
     private static class ResourceBundleManager {
 
         private static final Map<String, String> ERRORS = new HashMap<>();

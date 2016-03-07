@@ -88,7 +88,7 @@ public class OverrideEmbeddedAllChildFactory extends OverrideChildFactory {
 
                 @Override
                 public void createPropertySet(ElementPropertySet set) {
-                    
+
                     if (attributeWidget instanceof RelationAttributeWidget && initialAttributeWidget.getBaseElementSpec() instanceof AssociationOverrideHandler) {
                         Attribute attributeSpec = (Attribute) attributeWidget.getBaseElementSpec();
                         AssociationOverrideHandler associationOverrideHandler = (AssociationOverrideHandler) initialAttributeWidget.getBaseElementSpec();
@@ -102,8 +102,8 @@ public class OverrideEmbeddedAllChildFactory extends OverrideChildFactory {
                         if (attributeSpec instanceof JoinColumnHandler) {
                             set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinColumn()));
                         }
-                       
-                        set.createPropertySet( attributeWidget , associationOverride.getJoinTable());
+
+                        set.createPropertySet(attributeWidget, associationOverride.getJoinTable());
                         set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getJoinColumn()));
                         set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_InverseJoinColumns", "Inverse Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getInverseJoinColumn()));
                     } else if (initialAttributeWidget.getBaseElementSpec() instanceof AttributeOverrideHandler) {
@@ -115,7 +115,7 @@ public class OverrideEmbeddedAllChildFactory extends OverrideChildFactory {
                         } else {
                             attributeOverride = attributeOverrideHandler.getAttributeOverride(prefixAttributePath + "." + attributeSpec.getName());
                         }
-                        set.createPropertySet( attributeWidget , attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
+                        set.createPropertySet(attributeWidget, attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
                     }
                 }
 

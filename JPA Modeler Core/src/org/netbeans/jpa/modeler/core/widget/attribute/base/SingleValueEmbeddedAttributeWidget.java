@@ -28,7 +28,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class SingleValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget <Embedded>{
+public class SingleValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<Embedded> {
 
     private EmbeddableFlowWidget embeddableFlowWidget;
 

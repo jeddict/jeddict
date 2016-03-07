@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.properties.named.resultsetmapping;
 
-import org.netbeans.jpa.modeler.properties.named.resultsetmapping.*;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.FieldResult;
 import org.netbeans.modeler.core.ModelerFile;
@@ -25,7 +24,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 
 public class FieldResultPanel extends EntityComponent<FieldResult> {
 
-             @Override
+    @Override
     public void postConstruct() {
         initComponents();
     }

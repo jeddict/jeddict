@@ -15,7 +15,6 @@
  */
 package org.netbeans.orm.converter.generator.jaxb.packageinfo;
 
-import org.netbeans.orm.converter.generator.staticmetamodel.*;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 
 /**
@@ -34,7 +33,7 @@ public class JaxbPackageInfoClassDefSnippet extends ClassDefSnippet {
     }
 
     private String namespace;//ex : @XmlSchema(namespace = "http://www.example.org/customer", elementFormDefault = XmlNsForm.QUALIFIED)
- 
+
     /**
      * @return the namespace
      */

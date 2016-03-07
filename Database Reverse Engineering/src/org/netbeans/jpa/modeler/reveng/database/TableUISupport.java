@@ -216,12 +216,10 @@ public class TableUISupport {
                 disabledReason = tableItem.getDisabledReason();
                 if (disabledReason != null) {
                     displayName = NbBundle.getMessage(TableUISupport.class, "LBL_TableNameWithDisabledReason", tableItem.getName(), disabledReason.getDisplayName());
+                } else if (tableItem.isTable()) {
+                    displayName = tableItem.getName();
                 } else {
-                    if (tableItem.isTable()) {
-                        displayName = tableItem.getName();
-                    } else {
-                        displayName = tableItem.getName() + NbBundle.getMessage(TableUISupport.class, "LBL_DB_VIEW");
-                    }
+                    displayName = tableItem.getName() + NbBundle.getMessage(TableUISupport.class, "LBL_DB_VIEW");
                 }
             }
 
@@ -255,12 +253,10 @@ public class TableUISupport {
                 disabledReason = table.getDisabledReason();
                 if (disabledReason != null) {
                     displayName = NbBundle.getMessage(TableUISupport.class, "LBL_TableNameWithDisabledReason", table.getName(), disabledReason.getDisplayName());
+                } else if (((Table) value).isTable()) {
+                    displayName = table.getName();
                 } else {
-                    if (((Table) value).isTable()) {
-                        displayName = table.getName();
-                    } else {
-                        displayName = table.getName() + NbBundle.getMessage(TableUISupport.class, "LBL_DB_VIEW");
-                    }
+                    displayName = table.getName() + NbBundle.getMessage(TableUISupport.class, "LBL_DB_VIEW");
                 }
 
                 if (list.getModel() instanceof SelectedTablesModel) {

@@ -16,10 +16,7 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
-import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.Embeddable;
-import org.netbeans.jpa.modeler.spec.MappedSuperclass;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 /**
  *

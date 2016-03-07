@@ -15,12 +15,11 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class IdClassSnippet implements Snippet {
 
@@ -53,7 +52,7 @@ public class IdClassSnippet implements Snippet {
 
         importSnippets.add("javax.persistence.IdClass");
         if (classHelper.getFQClassName() != null) {
-        importSnippets.add(classHelper.getFQClassName());
+            importSnippets.add(classHelper.getFQClassName());
         }
 
         return importSnippets;

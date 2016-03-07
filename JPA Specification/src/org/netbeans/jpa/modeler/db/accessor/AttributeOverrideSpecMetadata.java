@@ -22,12 +22,12 @@ import org.netbeans.jpa.modeler.spec.AttributeOverride;
  *
  * @author Gaurav Gupta
  */
-public class AttributeOverrideSpecMetadata extends AttributeOverrideMetadata{
-    
+public class AttributeOverrideSpecMetadata extends AttributeOverrideMetadata {
 
     private AttributeOverrideSpecMetadata() {
     }
-    public static AttributeOverrideSpecMetadata getInstance(AttributeOverride attributeOverride){
+
+    public static AttributeOverrideSpecMetadata getInstance(AttributeOverride attributeOverride) {
         AttributeOverrideSpecMetadata accessor = new AttributeOverrideSpecMetadata();
         accessor.setName(attributeOverride.getName());
         if (attributeOverride.getColumn() != null) {
@@ -35,5 +35,5 @@ public class AttributeOverrideSpecMetadata extends AttributeOverrideMetadata{
         }
         return accessor;
     }
-    
+
 }

@@ -7,8 +7,6 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;

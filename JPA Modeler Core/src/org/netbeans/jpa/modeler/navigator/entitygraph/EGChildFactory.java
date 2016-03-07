@@ -37,4 +37,3 @@ public abstract class EGChildFactory extends ChildFactory<AttributeWidget> {
         this.parentNode = parentNode;
     }
 }
-

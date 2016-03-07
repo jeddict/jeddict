@@ -23,7 +23,10 @@ import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
  * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public interface EGNode {
-     public CheckableAttributeNode getCheckableNode();
-     public NamedEntityGraph getNamedEntityGraph();
-     public void refreshView();
+
+    public CheckableAttributeNode getCheckableNode();
+
+    public NamedEntityGraph getNamedEntityGraph();
+
+    public void refreshView();
 }

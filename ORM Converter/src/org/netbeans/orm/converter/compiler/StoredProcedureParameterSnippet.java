@@ -51,7 +51,7 @@ public class StoredProcedureParameterSnippet implements Snippet {
         if (classHelper.getClassName() == null) {
             throw new InvalidDataException("Type required");
         }
-        
+
         StringBuilder builder = new StringBuilder();
 
         builder.append("@StoredProcedureParameter(");

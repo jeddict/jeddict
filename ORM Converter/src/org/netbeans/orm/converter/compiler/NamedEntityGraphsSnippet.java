@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
-import org.openide.util.Exceptions;
 
 /**
  *

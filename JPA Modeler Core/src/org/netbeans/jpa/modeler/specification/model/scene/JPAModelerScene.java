@@ -239,17 +239,15 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 elementConfigFactory.initializeObjectValue(baseElement);
             }
 
-        } else {
-            if (baseElementWidget instanceof IFlowElementWidget) {
-                if (baseElementWidget instanceof FlowNodeWidget) {
-                    FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
-                    flowNodeWidget.setBaseElementSpec(flowNodeWidget.getNodeWidgetInfo().getBaseElementSpec());
-                } else {
-                    throw new InvalidElmentException("Invalid JPA Element");
-                }
+        } else if (baseElementWidget instanceof IFlowElementWidget) {
+            if (baseElementWidget instanceof FlowNodeWidget) {
+                FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
+                flowNodeWidget.setBaseElementSpec(flowNodeWidget.getNodeWidgetInfo().getBaseElementSpec());
             } else {
                 throw new InvalidElmentException("Invalid JPA Element");
             }
+        } else {
+            throw new InvalidElmentException("Invalid JPA Element");
         }
 
     }
@@ -276,13 +274,12 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
         });
     }
-    
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         JMenuItem generateCode = new JMenuItem("Generate Source Code", GENERATE_SRC);
-        generateCode.setAccelerator( KeyStroke.getKeyStroke(Character.valueOf('G'),InputEvent.CTRL_DOWN_MASK));
+        generateCode.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('G'), InputEvent.CTRL_DOWN_MASK));
         generateCode.addActionListener((ActionEvent e) -> {
             JPAModelerUtil.generateSourceCode(JPAModelerScene.this.getModelerFile());
         });
@@ -293,27 +290,25 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         });
 
         JMenuItem visDB = new JMenuItem("Visualize DB", VIEW_DB);
-        visDB.setAccelerator( KeyStroke.getKeyStroke(Character.valueOf('D'),InputEvent.CTRL_DOWN_MASK));
+        visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
         visDB.addActionListener((ActionEvent e) -> {
-             JPAModelerUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
+            JPAModelerUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
         });
 
         JMenu shareModeler = new JMenu("Share");
         shareModeler.setIcon(SOCIAL_NETWORK_SHARING);
         shareModeler.add(TwitterSocialNetwork.getInstance().getComponent());
         shareModeler.add(LinkedInSocialNetwork.getInstance().getComponent());
-        
+
         menuList.add(0, generateCode);
         menuList.add(1, visDB);
         menuList.add(2, null);
         menuList.add(3, manageVisibility);
         menuList.add(4, null);
         menuList.add(5, shareModeler);
-        
+
         return menuList;
     }
-    
-
 
     public static void fireEntityVisibilityAction(ModelerFile file) {
         ClassWidgetVisibilityController dialog = new ClassWidgetVisibilityController((EntityMappings) file.getDefinitionElement());

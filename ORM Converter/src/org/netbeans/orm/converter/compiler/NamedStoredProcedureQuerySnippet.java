@@ -15,12 +15,11 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
@@ -43,7 +42,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
         if (name == null || procedureName == null) {
             throw new InvalidDataException("Name and ProcedureName required");
         }
-        
+
         StringBuilder builder = new StringBuilder();
 
         builder.append("@NamedStoredProcedureQuery(");
@@ -61,28 +60,27 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
         if (!resultSetMappings.isEmpty()) {
             builder.append("resultSetMappings={");
             for (String resultSetMapping : resultSetMappings) {
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(resultSetMapping);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
+                builder.append(ORMConverterUtil.QUOTE);
+                builder.append(resultSetMapping);
+                builder.append(ORMConverterUtil.QUOTE);
+                builder.append(ORMConverterUtil.COMMA);
+            }
             builder.deleteCharAt(builder.length() - 1);
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
-        
+
         if (!resultClasses.isEmpty()) {
             builder.append("resultClasses={");
             for (ClassHelper resultClass : resultClasses) {
-            builder.append(resultClass.getClassNameWithClassSuffix());
-            builder.append(ORMConverterUtil.COMMA);
-        }
+                builder.append(resultClass.getClassNameWithClassSuffix());
+                builder.append(ORMConverterUtil.COMMA);
+            }
             builder.deleteCharAt(builder.length() - 1);
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
-       
-        
+
         if (!parameters.isEmpty()) {
             builder.append("parameters={");
             for (StoredProcedureParameterSnippet parameter : parameters) {
@@ -120,15 +118,15 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
         importSnippets.add("javax.persistence.NamedStoredProcedureQuery");
 
-        for(StoredProcedureParameterSnippet parameter : parameters) {
+        for (StoredProcedureParameterSnippet parameter : parameters) {
             importSnippets.addAll(parameter.getImportSnippets());
         }
-        
-         for(ClassHelper resultClass : resultClasses){
-             importSnippets.add(resultClass.getFQClassName());
+
+        for (ClassHelper resultClass : resultClasses) {
+            importSnippets.add(resultClass.getFQClassName());
         }
-        
-        for(QueryHintSnippet queryHint : queryHints) {
+
+        for (QueryHintSnippet queryHint : queryHints) {
             importSnippets.addAll(queryHint.getImportSnippets());
         }
         return importSnippets;
@@ -174,7 +172,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
      */
     public List<String> getResultClasses() {
         List<String> resultClassesText = new ArrayList<String>();
-        for(ClassHelper resultClass : resultClasses){
+        for (ClassHelper resultClass : resultClasses) {
             resultClassesText.add(resultClass.getClassNameWithClassSuffix());
         }
         return resultClassesText;
@@ -184,7 +182,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
      * @param resultClasses the resultClass to set
      */
     public void setResultClasses(List<String> resultClasses) {
-        for(String resultClass : resultClasses){
+        for (String resultClass : resultClasses) {
             addResultClasses(resultClass);
         }
     }

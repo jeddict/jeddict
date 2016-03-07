@@ -32,29 +32,29 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
 
-public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  implements ExplorerManager.Provider {
+public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> implements ExplorerManager.Provider {
 
-        private final ExplorerManager manager;
+    private final ExplorerManager manager;
 
     private NamedEntityGraph namedEntityGraph;
     private final EntityWidget entityWidget;
-    private EGRootNode  node;
+    private EGRootNode node;
 
     public NamedEntityGraphPanel(EntityWidget entityWidget) {
-        this.entityWidget=entityWidget;
-             manager = new ExplorerManager();
+        this.entityWidget = entityWidget;
+        manager = new ExplorerManager();
     }
-    
-        @Override
+
+    @Override
     public void postConstruct() {
         initComponents();
     }
 
     @Override
     public void init() {
-        
+
         SwingUtilities.invokeLater(() -> {
-                node = new EGRootNode(entityWidget ,namedEntityGraph, new NamedEGChildFactory(),new CheckableAttributeNode(namedEntityGraph!=null));
+            node = new EGRootNode(entityWidget, namedEntityGraph, new NamedEGChildFactory(), new CheckableAttributeNode(namedEntityGraph != null));
             manager.setRootContext(node);
 //                    ((OutlineView)navigatorPane).getOutline().setRootVisible(false);
         });
@@ -81,7 +81,6 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  im
         }
 
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -249,20 +248,19 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  im
         return true;
     }
 
-    
     void loadEntityGraph(NamedEntityGraph namedEntityGraph, EGNode parentNode) {
         if (parentNode instanceof EGRootNode) {
             for (EGNode childNode : ((EGRootNode) parentNode).getChildList()) {
-                loadSubGraph(namedEntityGraph,childNode);
+                loadSubGraph(namedEntityGraph, childNode);
             }
         } else if (parentNode instanceof EGInternalNode) {
             for (EGNode childNode : ((EGInternalNode) parentNode).getChildList()) {
-                loadSubGraph(namedEntityGraph,childNode);
+                loadSubGraph(namedEntityGraph, childNode);
             }
         }
 
     }
- 
+
     void loadSubGraph(NamedEntityGraph namedEntityGraph, EGNode childNode) {
         if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
             return;
@@ -276,16 +274,16 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  im
             for (EGNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
                 loadSubGraph(namedEntityGraph, subGraph, subChildNode);
             }
-            if(!subGraph.getNamedAttributeNode().isEmpty()){
+            if (!subGraph.getNamedAttributeNode().isEmpty()) {
                 namedEntityGraph.addSubgraph(subGraph);
-                attributeNode.setSubgraph(subGraph.getName()); 
+                attributeNode.setSubgraph(subGraph.getName());
             }
-            
+
         } else if (childNode instanceof EGLeafNode) {
             String name = ((Attribute) (((EGLeafNode) childNode).getLeafAttributeWidget().getBaseElementSpec())).getName();
-            if(childNode.getCheckableNode().isCheckEnabled()){
-                            namedEntityGraph.addNamedAttributeNode(new NamedAttributeNode(name));
-            } 
+            if (childNode.getCheckableNode().isCheckEnabled()) {
+                namedEntityGraph.addNamedAttributeNode(new NamedAttributeNode(name));
+            }
         }
     }
 
@@ -301,20 +299,18 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  im
             for (EGNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
                 loadSubGraph(namedEntityGraph, childSubGraph, subChildNode);
             }
-            if(!childSubGraph.getNamedAttributeNode().isEmpty()){
+            if (!childSubGraph.getNamedAttributeNode().isEmpty()) {
                 namedEntityGraph.addSubgraph(childSubGraph);
-                attributeNode.setSubgraph(childSubGraph.getName()); 
+                attributeNode.setSubgraph(childSubGraph.getName());
             }
         } else if (childNode instanceof EGLeafNode) {
             String name = ((Attribute) (((EGLeafNode) childNode).getLeafAttributeWidget().getBaseElementSpec())).getName();
-            if(childNode.getCheckableNode().isCheckEnabled()){
-            subGraph.addNamedAttributeNode(new NamedAttributeNode(name));
+            if (childNode.getCheckableNode().isCheckEnabled()) {
+                subGraph.addNamedAttributeNode(new NamedAttributeNode(name));
             }
         }
     }
-            
-            
-    
+
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
         if (!validateField()) {
             return;
@@ -325,14 +321,14 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  im
                 namedEntityGraph = new NamedEntityGraph();
             } else {
                 namedEntityGraph = (NamedEntityGraph) row[0];
-                       namedEntityGraph.getNamedAttributeNode().clear();
-                        namedEntityGraph.getSubclassSubgraph().clear();
-        namedEntityGraph.getSubgraph().clear();
+                namedEntityGraph.getNamedAttributeNode().clear();
+                namedEntityGraph.getSubclassSubgraph().clear();
+                namedEntityGraph.getSubgraph().clear();
             }
         }
 
         namedEntityGraph.setName(name_TextField.getText());
-        loadEntityGraph(namedEntityGraph,node);
+        loadEntityGraph(namedEntityGraph, node);
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -348,17 +344,16 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph>  im
 
     private void finalGraph_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finalGraph_ButtonActionPerformed
         NamedEntityGraph namedEntityGraph = new NamedEntityGraph();
-        loadEntityGraph(namedEntityGraph,node);
-        ExecutionGraphPanel dialog = new ExecutionGraphPanel(entityWidget,namedEntityGraph);
-            dialog.setVisible(true);
-            if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
+        loadEntityGraph(namedEntityGraph, node);
+        ExecutionGraphPanel dialog = new ExecutionGraphPanel(entityWidget, namedEntityGraph);
+        dialog.setVisible(true);
+        if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
 //                RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
 //                SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(JPAModelerScene.this.getModelerFile(), dialog.getTargetPoject(), dialog.getSourceGroup());
 //                processor.post(task);
-            }
+        }
     }//GEN-LAST:event_finalGraph_ButtonActionPerformed
 
-  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane actionLayeredPane;
     private javax.swing.JButton cancel_Button;

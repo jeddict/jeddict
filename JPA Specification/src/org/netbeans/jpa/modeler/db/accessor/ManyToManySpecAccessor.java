@@ -15,9 +15,7 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
-import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ManyToManyAccessor;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
@@ -26,14 +24,15 @@ import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
  *
  * @author Gaurav Gupta
  */
-public class ManyToManySpecAccessor extends ManyToManyAccessor{
-    
+public class ManyToManySpecAccessor extends ManyToManyAccessor {
+
     private final ManyToMany manyToMany;
 
     private ManyToManySpecAccessor(ManyToMany manyToMany) {
         this.manyToMany = manyToMany;
     }
-    public static ManyToManySpecAccessor getInstance(ManyToMany manyToMany){
+
+    public static ManyToManySpecAccessor getInstance(ManyToMany manyToMany) {
         ManyToManySpecAccessor accessor = new ManyToManySpecAccessor(manyToMany);
         accessor.setName(manyToMany.getName());
         accessor.setTargetEntityName(manyToMany.getTargetEntity());
@@ -42,13 +41,13 @@ public class ManyToManySpecAccessor extends ManyToManyAccessor{
         if (!JoinTableValidator.isEmpty(manyToMany.getJoinTable())) {
             accessor.setJoinTable(manyToMany.getJoinTable().getAccessor());
         }
-       return accessor;
+        return accessor;
     }
 
     @Override
-    public void process(){
+    public void process() {
         super.process();
         getMapping().setProperty(Attribute.class, manyToMany);
     }
-    
+
 }

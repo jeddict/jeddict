@@ -20,6 +20,6 @@ package org.netbeans.jpa.modeler.core.widget;
  * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
 public enum InheritenceStateType {
-    SINGLETON,ROOT,BRANCH,LEAF,NONE;
-    
+    SINGLETON, ROOT, BRANCH, LEAF, NONE;
+
 }

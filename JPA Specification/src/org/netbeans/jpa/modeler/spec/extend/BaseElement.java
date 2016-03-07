@@ -45,7 +45,7 @@ public abstract class BaseElement implements IBaseElement {
     protected String id;
 
     private ExtensionElements extensionElement;
-    
+
     @XmlTransient
     private IBaseElement orignalObject;
 
@@ -137,8 +137,7 @@ public abstract class BaseElement implements IBaseElement {
         }
         return true;
     }
-    
-    
+
     @Override
     public Object getRootElement() {
         return this.rootElement;

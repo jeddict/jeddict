@@ -15,21 +15,18 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class LifecycleListenerSnippet implements WritableSnippet {
 

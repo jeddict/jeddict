@@ -31,7 +31,7 @@ import org.openide.util.lookup.Lookups;
 
 //       EGChildFactory
 //             |
-//             | 
+//             |
 //             |
 //             |
 //           EGNode
@@ -40,40 +40,38 @@ import org.openide.util.lookup.Lookups;
 //       /     |    \
 //      /      |     \
 //     /       |      \
-//  Widget   Graph    CheckableAttributeNode  
-    
+//  Widget   Graph    CheckableAttributeNode
 public class EGRootNode extends AbstractNode implements EGParentNode {
 
     private CheckableAttributeNode checkableNode;
-            
+
     private final EntityWidget widget;
     private final NamedEntityGraph namedEntityGraph;
 
     private final List<EGChildNode> childList = new ArrayList<>();
 
-    public EGRootNode(EntityWidget entityWidget,NamedEntityGraph namedEntityGraph, EGChildFactory childFactory,CheckableAttributeNode checkableNode) {
+    public EGRootNode(EntityWidget entityWidget, NamedEntityGraph namedEntityGraph, EGChildFactory childFactory, CheckableAttributeNode checkableNode) {
         super(Children.create(childFactory, true), Lookups.singleton(checkableNode));
         this.widget = entityWidget;
         this.checkableNode = checkableNode;
         this.namedEntityGraph = namedEntityGraph;
         checkableNode.setNode(this);
         childFactory.setParentNode(this);
-        
+
         checkableNode.setSelected(true);
-        
+
         Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
         setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);
     }
-    
 
-    public EGRootNode(EntityWidget entityWidget,NamedEntityGraph namedEntityGraph, EGChildFactory childFactory) {
+    public EGRootNode(EntityWidget entityWidget, NamedEntityGraph namedEntityGraph, EGChildFactory childFactory) {
         super(Children.create(childFactory, true));
         this.widget = entityWidget;
         this.namedEntityGraph = namedEntityGraph;
         childFactory.setParentNode(this);
-        
+
         Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
@@ -96,10 +94,9 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
 
     @Override
     public CheckableAttributeNode getCheckableNode() {
-      return checkableNode;
+        return checkableNode;
     }
-    
-    
+
     /**
      * @return the childList
      */
@@ -118,6 +115,6 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
 
     @Override
     public void refreshView() {
-       fireIconChange();
+        fireIconChange();
     }
 }

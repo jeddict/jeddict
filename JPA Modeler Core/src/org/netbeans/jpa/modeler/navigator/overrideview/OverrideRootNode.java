@@ -23,7 +23,7 @@ import org.openide.nodes.Children;
 
 public class OverrideRootNode extends ModelerNavigationNode {
 
-    public OverrideRootNode(EntityWidget entityWidget , OverrideChildFactory factory) {
+    public OverrideRootNode(EntityWidget entityWidget, OverrideChildFactory factory) {
         super(Children.create(factory, true));
         Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());

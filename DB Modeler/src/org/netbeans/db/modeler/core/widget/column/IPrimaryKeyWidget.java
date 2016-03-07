@@ -15,9 +15,9 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
-import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import java.util.List;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 
 /**

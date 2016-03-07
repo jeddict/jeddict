@@ -190,27 +190,27 @@ public class DBEntityMappings extends XMLEntityMappings {
         for (int i = 0; i < preAttributes.getIds().size(); i++) {
             copyAttributesProperty(preAttributes.getIds().get(i), newAttributes.getIds().get(i));
         }
-        
+
         for (int i = 0; i < preAttributes.getBasics().size(); i++) {
             copyAttributesProperty(preAttributes.getBasics().get(i), newAttributes.getBasics().get(i));
         }
-        
+
         for (int i = 0; i < preAttributes.getEmbeddeds().size(); i++) {
             copyAttributesProperty(preAttributes.getEmbeddeds().get(i), newAttributes.getEmbeddeds().get(i));
         }
-        
+
         for (int i = 0; i < preAttributes.getElementCollections().size(); i++) {
             copyAttributesProperty(preAttributes.getElementCollections().get(i), newAttributes.getElementCollections().get(i));
         }
-        
+
         for (int i = 0; i < preAttributes.getBasicCollections().size(); i++) {
             copyAttributesProperty(preAttributes.getBasicCollections().get(i), newAttributes.getBasicCollections().get(i));
         }
-        
+
         for (int i = 0; i < preAttributes.getBasicMaps().size(); i++) {
             copyAttributesProperty(preAttributes.getBasicMaps().get(i), newAttributes.getBasicMaps().get(i));
         }
-        
+
         copyAttributesProperty(preAttributes.getEmbeddedId(), newAttributes.getEmbeddedId());
 
         for (int i = 0; i < preAttributes.getVersions().size(); i++) {

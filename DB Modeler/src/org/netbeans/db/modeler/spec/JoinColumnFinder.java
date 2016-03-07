@@ -76,7 +76,7 @@ public class JoinColumnFinder {
         return joinColumns;
     }
 
-   public static JoinColumn findJoinColumn(String name, List<JoinColumn> joinColumns) {
+    public static JoinColumn findJoinColumn(String name, List<JoinColumn> joinColumns) {
         JoinColumn joinColumn = null;
         boolean created = false;
         for (Iterator<JoinColumn> it = joinColumns.iterator(); it.hasNext();) {

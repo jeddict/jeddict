@@ -158,10 +158,8 @@ public class ColumnDefSnippet implements Snippet {
             } else {
                 builder.append("unique=false,");
             }
-        } else {
-            if (unique == true) {
-                builder.append("unique=true,");
-            }
+        } else if (unique == true) {
+            builder.append("unique=true,");
         }
 
         if (GeneratorUtil.isGenerateDefaultValue()) {
@@ -170,10 +168,8 @@ public class ColumnDefSnippet implements Snippet {
             } else {
                 builder.append("updatable=false,");
             }
-        } else {
-            if (updatable == false) {
-                builder.append("updatable=false,");
-            }
+        } else if (updatable == false) {
+            builder.append("updatable=false,");
         }
 
         if (GeneratorUtil.isGenerateDefaultValue()) {
@@ -182,10 +178,8 @@ public class ColumnDefSnippet implements Snippet {
             } else {
                 builder.append("insertable=false,");
             }
-        } else {
-            if (insertable == false) {
-                builder.append("insertable=false,");
-            }
+        } else if (insertable == false) {
+            builder.append("insertable=false,");
         }
 
         if (GeneratorUtil.isGenerateDefaultValue()) {
@@ -194,10 +188,8 @@ public class ColumnDefSnippet implements Snippet {
             } else {
                 builder.append("nullable=false,");
             }
-        } else {
-            if (nullable == false) {
-                builder.append("nullable=false,");
-            }
+        } else if (nullable == false) {
+            builder.append("nullable=false,");
         }
 
         if (GeneratorUtil.isGenerateDefaultValue() || length != 255) {

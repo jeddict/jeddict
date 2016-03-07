@@ -30,5 +30,4 @@ public abstract class MultiRelationAttributeWidget<E extends MultiRelationAttrib
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-
 }

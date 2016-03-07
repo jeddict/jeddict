@@ -592,8 +592,8 @@ public class DbSchemaEjbGenerator {
             for (ColumnElement col : cols) {
                 if (pk != null && pk.getColumn(col.getName()) != null) {
                     generatePkField(col, true, pk.getColumns().length == 1);
-                } else {
-                    // TODO add check to see if table is included
+                } else // TODO add check to see if table is included
+                {
                     if (!isForeignKey(fkeys, col)) {
                         generatePkField(col, false, false);
                     }

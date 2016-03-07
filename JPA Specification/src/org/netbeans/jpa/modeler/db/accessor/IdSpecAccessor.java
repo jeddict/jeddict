@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
-import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -25,17 +24,18 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
  *
  * @author Gaurav Gupta
  */
-public class IdSpecAccessor extends IdAccessor{
-    
+public class IdSpecAccessor extends IdAccessor {
+
     private Id id;
     private boolean inherit;
 
     private IdSpecAccessor(Id id) {
         this.id = id;
     }
-    public static IdSpecAccessor getInstance(Id id,boolean inherit){
+
+    public static IdSpecAccessor getInstance(Id id, boolean inherit) {
         IdSpecAccessor accessor = new IdSpecAccessor(id);
-        accessor.inherit=inherit;
+        accessor.inherit = inherit;
         accessor.setName(id.getName());
         accessor.setAttributeType(id.getAttributeType());
         if (id.getColumn() != null) {
@@ -44,10 +44,10 @@ public class IdSpecAccessor extends IdAccessor{
         return accessor;
     }
 
-    public void process(){
+    public void process() {
         super.process();
         getMapping().setProperty(Attribute.class, id);
         getMapping().setProperty(Inheritance.class, inherit);//Remove inherit functionality , once eclipse support dynamic mapped super class
     }
-    
+
 }

@@ -39,7 +39,7 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
 
     private CheckableAttributeNode checkableNode;
     private final PersistenceClassWidget parentWidget;//EmbeddableWidget
-    private final AttributeWidget parentAttributeWidget; //EmbeddedAttributeWidget 
+    private final AttributeWidget parentAttributeWidget; //EmbeddedAttributeWidget
 
     private NamedEntityGraph namedEntityGraph;
     private NamedSubgraph subgraph;
@@ -88,7 +88,7 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
     public String getHtmlDisplayName() {
         Attribute attribute = (Attribute) parentAttributeWidget.getBaseElementSpec();
         String htmlDisplayName = attribute.getName(); //NOI18N
-        if (checkableNode!=null && !checkableNode.isSelected()) {
+        if (checkableNode != null && !checkableNode.isSelected()) {
             htmlDisplayName = String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
         } else {
             htmlDisplayName = String.format("<font color=\"#0000E6\">%s</font>", htmlDisplayName); //NOI18N

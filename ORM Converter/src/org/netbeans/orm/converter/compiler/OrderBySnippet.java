@@ -16,12 +16,10 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.Collections;
-
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class OrderBySnippet implements Snippet {
 

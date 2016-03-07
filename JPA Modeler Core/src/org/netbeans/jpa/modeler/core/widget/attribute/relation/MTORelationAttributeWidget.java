@@ -31,7 +31,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav_Gupta
  */
-public class MTORelationAttributeWidget extends SingleRelationAttributeWidget <ManyToOne> {
+public class MTORelationAttributeWidget extends SingleRelationAttributeWidget<ManyToOne> {
 
     private MTORelationFlowWidget manyToOneRelationFlowWidget;
 
@@ -40,7 +40,7 @@ public class MTORelationAttributeWidget extends SingleRelationAttributeWidget <M
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name,  baseElement);
+        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
         pinWidgetInfo.setDocumentId(MTORelationAttributeWidget.class.getSimpleName());
         return pinWidgetInfo;
     }
@@ -62,35 +62,31 @@ public class MTORelationAttributeWidget extends SingleRelationAttributeWidget <M
 
     @Override
     public String getIconPath() {
-        if ( getBaseElementSpec().isPrimaryKey()) {
+        if (getBaseElementSpec().isPrimaryKey()) {
             if (manyToOneRelationFlowWidget instanceof Unidirectional) {
                 return JPAModelerUtil.PK_UMTO_ATTRIBUTE_ICON_PATH;
             } else {
                 return JPAModelerUtil.PK_BMTO_ATTRIBUTE_ICON_PATH;
             }
+        } else if (manyToOneRelationFlowWidget instanceof Unidirectional) {
+            return JPAModelerUtil.UMTO_ATTRIBUTE_ICON_PATH;
         } else {
-            if (manyToOneRelationFlowWidget instanceof Unidirectional) {
-                return JPAModelerUtil.UMTO_ATTRIBUTE_ICON_PATH;
-            } else {
-                return JPAModelerUtil.BMTO_ATTRIBUTE_ICON_PATH;
-            }
+            return JPAModelerUtil.BMTO_ATTRIBUTE_ICON_PATH;
         }
     }
 
     @Override
     public Image getIcon() {
-        if ( getBaseElementSpec().isPrimaryKey()) {
+        if (getBaseElementSpec().isPrimaryKey()) {
             if (manyToOneRelationFlowWidget instanceof Unidirectional) {
                 return JPAModelerUtil.PK_UMTO_ATTRIBUTE;
             } else {
                 return JPAModelerUtil.PK_BMTO_ATTRIBUTE;
             }
+        } else if (manyToOneRelationFlowWidget instanceof Unidirectional) {
+            return JPAModelerUtil.UMTO_ATTRIBUTE;
         } else {
-            if (manyToOneRelationFlowWidget instanceof Unidirectional) {
-                return JPAModelerUtil.UMTO_ATTRIBUTE;
-            } else {
-                return JPAModelerUtil.BMTO_ATTRIBUTE;
-            }
+            return JPAModelerUtil.BMTO_ATTRIBUTE;
         }
     }
 

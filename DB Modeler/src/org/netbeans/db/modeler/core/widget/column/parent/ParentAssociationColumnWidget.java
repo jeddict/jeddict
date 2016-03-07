@@ -15,11 +15,8 @@
  */
 package org.netbeans.db.modeler.core.widget.column.parent;
 
-import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
-import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.JoinColumn;

@@ -25,6 +25,7 @@ import java.io.StringWriter;
 import static org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils.ISSUES_URL;
 import org.netbeans.jpa.modeler.network.social.SharingHelper;
 import org.netbeans.modeler.core.ModelerFile;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -198,7 +199,7 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
             try {
                 stringWriter.close();
             } catch (IOException ex) {
-                ExceptionUtils.printStackTrace(ex);
+                Exceptions.printStackTrace(ex);
             }
 
         }

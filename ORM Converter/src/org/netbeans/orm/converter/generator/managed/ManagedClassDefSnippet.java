@@ -70,5 +70,4 @@ public class ManagedClassDefSnippet extends ClassDefSnippet {
 //        importSnippets.addAll(super.getImportSnippets());
 //        return importSnippets;
 //    }
-
 }

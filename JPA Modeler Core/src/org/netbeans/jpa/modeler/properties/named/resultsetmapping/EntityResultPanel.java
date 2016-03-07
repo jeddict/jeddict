@@ -36,9 +36,10 @@ public class EntityResultPanel extends EntityComponent<EntityResult> {
 
     public EntityResultPanel(ModelerFile modelerFile) {
         this.modelerFile = modelerFile;
-        this.entityMappings = (EntityMappings)  modelerFile.getModelerScene().getBaseElementSpec();
+        this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
     }
-             @Override
+
+    @Override
     public void postConstruct() {
         initComponents();
     }
@@ -71,7 +72,9 @@ public class EntityResultPanel extends EntityComponent<EntityResult> {
             entityResult = (EntityResult) row[0];
 
             org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) entityMappings.findEntity(entityResult.getEntityClass());
-            if(entity!=null){entityClass_ComboBox.setSelectedItem(new ComboBoxValue(entity, entity.getClazz()));}
+            if (entity != null) {
+                entityClass_ComboBox.setSelectedItem(new ComboBoxValue(entity, entity.getClazz()));
+            }
         }
         initColumnResultNAttributeEditor();
         fieldResultEntity = ResultMappingUtil.getFieldResult(entityResult.getFieldResult(), modelerFile);
@@ -234,8 +237,8 @@ public class EntityResultPanel extends EntityComponent<EntityResult> {
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean validateField() {
-       org.netbeans.jpa.modeler.spec.Entity entitySpec = ((ComboBoxValue<org.netbeans.jpa.modeler.spec.Entity>) entityClass_ComboBox.getSelectedItem()).getValue();
-        if(entitySpec==null){
+        org.netbeans.jpa.modeler.spec.Entity entitySpec = ((ComboBoxValue<org.netbeans.jpa.modeler.spec.Entity>) entityClass_ComboBox.getSelectedItem()).getValue();
+        if (entitySpec == null) {
             JOptionPane.showMessageDialog(this, "Entity can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
@@ -254,7 +257,9 @@ public class EntityResultPanel extends EntityComponent<EntityResult> {
             }
         }
         org.netbeans.jpa.modeler.spec.Entity entitySpec = ((ComboBoxValue<org.netbeans.jpa.modeler.spec.Entity>) entityClass_ComboBox.getSelectedItem()).getValue();
-        if(entitySpec!=null){entityResult.setEntityClass(entitySpec.getClazz());}
+        if (entitySpec != null) {
+            entityResult.setEntityClass(entitySpec.getClazz());
+        }
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = entityResult;

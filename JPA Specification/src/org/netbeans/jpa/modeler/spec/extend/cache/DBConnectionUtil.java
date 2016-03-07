@@ -63,7 +63,7 @@ public class DBConnectionUtil {
             try {
                 dbCache.setDriverClass(connection.getJDBCDriver().getDriver().getClass());
             } catch (DatabaseException ex) {
-                ExceptionUtils.printStackTrace(ex, file);
+                file.handleException(ex);
             }
             dbCache.setDatabaseConnection(connection);
             cache.setDatabaseConnection(dbCache);

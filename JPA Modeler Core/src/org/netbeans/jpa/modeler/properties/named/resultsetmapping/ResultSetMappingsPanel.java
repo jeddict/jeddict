@@ -56,8 +56,8 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
         this.entity = entity;
     }
-    
-             @Override
+
+    @Override
     public void postConstruct() {
         initComponents();
     }
@@ -105,10 +105,10 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
             Object[] row = ((RowValue) entityValue).getRow();
             resultSetMapping = (SqlResultSetMapping) row[0];
             name_TextField.setText(resultSetMapping.getName());
-             if (entity == null) {
-           org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) row[1];
-            entity_ComboBox.setSelectedItem(new ComboBoxValue(entity, entity.getClazz()));
-        } 
+            if (entity == null) {
+                org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) row[1];
+                entity_ComboBox.setSelectedItem(new ComboBoxValue(entity, entity.getClazz()));
+            }
         }
 
         initEntityResultNAttributeEditor();

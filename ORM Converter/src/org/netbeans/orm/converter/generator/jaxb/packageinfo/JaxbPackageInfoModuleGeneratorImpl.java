@@ -24,8 +24,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.task.ITaskSupervisor;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
@@ -34,7 +32,6 @@ import org.netbeans.orm.converter.util.ClassType;
 import org.netbeans.orm.converter.util.ClassesRepository;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class JaxbPackageInfoModuleGeneratorImpl implements ModuleGenerator {

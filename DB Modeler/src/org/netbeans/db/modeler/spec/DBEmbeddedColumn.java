@@ -24,7 +24,6 @@ public abstract class DBEmbeddedColumn<E extends Attribute> extends DBColumn<E> 
     private final List<Embedded> embeddedList;
     private String keyName;
 
-
     public DBEmbeddedColumn(String name, List<Embedded> embedded, E managedAttribute) {
         super(name, managedAttribute);
         this.embeddedList = embedded;

@@ -34,9 +34,9 @@ public class DBMetadataDescriptor extends MetadataDescriptor {
      * @param parentClassMapping the parentClassMapping to set
      */
     public void setParentClassMapping(List<DatabaseMapping> parentClassMapping) {
-      ((DBRelationalDescriptor)getClassDescriptor()).setParentClassMapping(parentClassMapping);
+        ((DBRelationalDescriptor) getClassDescriptor()).setParentClassMapping(parentClassMapping);
     }
-    
+
     public DBMetadataDescriptor(MetadataClass javaClass, ClassAccessor classAccessor) {
         super(javaClass);
         RelationalDescriptor des = new DBRelationalDescriptor(classAccessor);

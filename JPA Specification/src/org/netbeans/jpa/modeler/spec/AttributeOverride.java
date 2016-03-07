@@ -15,8 +15,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -164,7 +162,7 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
 
     @Override
     public int compareTo(AttributeOverride attributeOverride) {
-       return this.name.compareTo(attributeOverride.getName());
+        return this.name.compareTo(attributeOverride.getName());
     }
 
 }

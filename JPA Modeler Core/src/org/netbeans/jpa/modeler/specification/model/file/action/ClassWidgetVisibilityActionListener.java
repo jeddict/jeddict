@@ -73,7 +73,7 @@ public final class ClassWidgetVisibilityActionListener implements ActionListener
                     }
                 }
             } catch (JAXBException ex) {
-                ExceptionUtils.printStackTrace(ex, modelerFile);
+                ExceptionUtils.printStackTrace(ex);
             }
         } else {
             JPAModelerScene.fireEntityVisibilityAction(modelerFile);

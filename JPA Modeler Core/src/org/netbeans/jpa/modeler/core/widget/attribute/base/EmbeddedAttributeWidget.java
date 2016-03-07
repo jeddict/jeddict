@@ -29,7 +29,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends BaseAttributeWidget <E>{
+public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends BaseAttributeWidget<E> {
 
     private EmbeddableFlowWidget embeddableFlowWidget;
 
@@ -64,7 +64,7 @@ public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends Bas
     }
 
     public void showCompositionPath() {
-        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
+        IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
         if (this.getEmbeddableFlowWidget() != null) {
@@ -75,7 +75,7 @@ public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends Bas
     }
 
     public void hideCompositionPath() {
-        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
+        IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
         if (this.getEmbeddableFlowWidget() != null) {

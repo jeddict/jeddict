@@ -33,15 +33,15 @@ public abstract class CompositionAttribute extends BaseAttribute implements Acce
     private Embeddable connectedClass;
 
     @Override
-      public String getAttributeType() {
-          if(connectedClass!=null){
-        return connectedClass.getClazz();
-          } else {
-              return null;//TODO init called before initialization of connectedClass
-          }
+    public String getAttributeType() {
+        if (connectedClass != null) {
+            return connectedClass.getClazz();
+        } else {
+            return null;//TODO init called before initialization of connectedClass
+        }
     }
 
-      /**
+    /**
      * @return the connectedClass
      */
     public Embeddable getConnectedClass() {

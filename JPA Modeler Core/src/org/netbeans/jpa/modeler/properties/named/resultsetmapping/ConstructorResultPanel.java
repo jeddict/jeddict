@@ -27,16 +27,17 @@ import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
 
 public class ConstructorResultPanel extends EntityComponent<ConstructorResult> {
-private final ModelerFile modelerFile;
-private NAttributeEntity columnResultEntity;
-private ConstructorResult constructorResult;
+
+    private final ModelerFile modelerFile;
+    private NAttributeEntity columnResultEntity;
+    private ConstructorResult constructorResult;
 
     public ConstructorResultPanel(ModelerFile modelerFile) {
-        
-        this.modelerFile=modelerFile;
+
+        this.modelerFile = modelerFile;
     }
-    
-             @Override
+
+    @Override
     public void postConstruct() {
         initComponents();
     }
@@ -50,14 +51,14 @@ private ConstructorResult constructorResult;
         this.setTitle("Create new Constructor Result");
         if (entityWrapperType == RowValue.class) {
             this.setEntity(new RowValue(new Object[3]));
-             constructorResult = new ConstructorResult();
+            constructorResult = new ConstructorResult();
         }
         targetClass_ComboBox.setSelectedItem("");
-        
+
         initColumnResultNAttributeEditor();
-        columnResultEntity = ResultMappingUtil.getColumnResult(constructorResult.getColumn() , modelerFile);
+        columnResultEntity = ResultMappingUtil.getColumnResult(constructorResult.getColumn(), modelerFile);
         columnResultEditor.setAttributeEntity(columnResultEntity);
-        
+
     }
 
     @Override
@@ -67,19 +68,17 @@ private ConstructorResult constructorResult;
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             constructorResult = (ConstructorResult) row[0];
-            
-            if(((DefaultComboBoxModel)targetClass_ComboBox.getModel()).getIndexOf(constructorResult.getTargetClass()) == -1 ) {
-                ((DefaultComboBoxModel)targetClass_ComboBox.getModel()).addElement(constructorResult.getTargetClass());
+
+            if (((DefaultComboBoxModel) targetClass_ComboBox.getModel()).getIndexOf(constructorResult.getTargetClass()) == -1) {
+                ((DefaultComboBoxModel) targetClass_ComboBox.getModel()).addElement(constructorResult.getTargetClass());
             }
             targetClass_ComboBox.setSelectedItem(constructorResult.getTargetClass());
         }
         initColumnResultNAttributeEditor();
-        columnResultEntity = ResultMappingUtil.getColumnResult(constructorResult.getColumn() , modelerFile);
+        columnResultEntity = ResultMappingUtil.getColumnResult(constructorResult.getColumn(), modelerFile);
         columnResultEditor.setAttributeEntity(columnResultEntity);
-        
-    }
 
-    
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -246,14 +245,14 @@ private ConstructorResult constructorResult;
             }
         }
         constructorResult.setTargetClass(targetClass_ComboBox.getSelectedItem().toString());
-        
+
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = constructorResult;
             row[1] = constructorResult.getTargetClass();
             row[2] = constructorResult.getColumn().size();
         }
-        
+
         columnResultEntity.getTableDataListener().setData(columnResultEditor.getSavedModel());
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
@@ -283,13 +282,8 @@ private ConstructorResult constructorResult;
     private javax.swing.JButton targetClass_SearchAction;
     // End of variables declaration//GEN-END:variables
 
-
-   
-        private void initColumnResultNAttributeEditor() {
-      columnResultEditor = NEntityEditor.createInstance(columnResult_LayeredPane,534,431);
-   }
-    
-    
-
+    private void initColumnResultNAttributeEditor() {
+        columnResultEditor = NEntityEditor.createInstance(columnResult_LayeredPane, 534, 431);
+    }
 
 }

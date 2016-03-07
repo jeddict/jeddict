@@ -17,11 +17,9 @@ package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.apache.commons.lang.ClassUtils;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
-import org.openide.util.Exceptions;
 
 public class MetamodelVariableDefSnippet extends VariableDefSnippet {
 

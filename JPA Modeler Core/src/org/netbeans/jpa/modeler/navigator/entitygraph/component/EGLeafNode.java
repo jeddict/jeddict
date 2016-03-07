@@ -70,9 +70,9 @@ public class EGLeafNode extends PropertyNode implements EGChildNode {
             this.setIconBaseWithExtension(JPAModelerUtil.BASIC_ATTRIBUTE_ICON_PATH);
         } else if (leafAttributeWidget instanceof BasicCollectionAttributeWidget) {
             this.setIconBaseWithExtension(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH);
-        }else if (leafAttributeWidget instanceof VersionAttributeWidget) {
+        } else if (leafAttributeWidget instanceof VersionAttributeWidget) {
             this.setIconBaseWithExtension(JPAModelerUtil.VERSION_ATTRIBUTE_ICON_PATH);
-        }else if (leafAttributeWidget instanceof TransientAttributeWidget) {
+        } else if (leafAttributeWidget instanceof TransientAttributeWidget) {
             this.setIconBaseWithExtension(JPAModelerUtil.TRANSIENT_ATTRIBUTE_ICON_PATH);
         }
 
@@ -86,11 +86,11 @@ public class EGLeafNode extends PropertyNode implements EGChildNode {
     public String getHtmlDisplayName() {
         Attribute attribute = (Attribute) leafAttributeWidget.getBaseElementSpec();
         String htmlDisplayName = attribute.getName(); //NOI18N
-         if (checkableNode!=null && !checkableNode.isSelected()) {
+        if (checkableNode != null && !checkableNode.isSelected()) {
             htmlDisplayName = String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
         } else {
             htmlDisplayName = String.format("<font color=\"#0000E6\">%s</font>", htmlDisplayName); //NOI18N
-        } 
+        }
         return htmlDisplayName;
     }
 

@@ -156,7 +156,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 
@@ -390,7 +389,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             try {
                 document = modelerDocumentFactory.getModelerDocument(flowElement);
             } catch (ModelerException ex) {
-                ExceptionUtils.printStackTrace(ex, scene.getModelerFile());
+                scene.getModelerFile().handleException(ex);
             }
             SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
@@ -1500,7 +1499,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             try {
                 childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
             } catch (Exception ex) {
-                ExceptionUtils.printStackTrace(ex, file);
+                file.handleException(ex);
             }
             childModelerFile.loaded();
         }

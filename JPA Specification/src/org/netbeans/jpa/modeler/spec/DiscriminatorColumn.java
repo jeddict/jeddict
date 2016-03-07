@@ -8,13 +8,11 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.columns.DiscriminatorColumnMetadata;
-import org.eclipse.persistence.internal.jpa.metadata.inheritance.InheritanceMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**

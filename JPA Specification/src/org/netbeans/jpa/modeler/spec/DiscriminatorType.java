@@ -8,7 +8,6 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;

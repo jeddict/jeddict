@@ -23,12 +23,10 @@ public abstract class DBParentColumn<E extends Attribute> extends DBColumn<E> {
     private final Entity intrinsicClass;//parent class
     private String keyName;
 
-
     public DBParentColumn(String name, Entity intrinsicClass, E managedAttribute) {
         super(name, managedAttribute);
         this.intrinsicClass = intrinsicClass;
     }
-
 
     protected String getKeyName() {
         if (keyName != null) {

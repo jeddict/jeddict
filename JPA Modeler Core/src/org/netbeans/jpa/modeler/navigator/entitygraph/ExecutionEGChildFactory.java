@@ -65,7 +65,7 @@ public class ExecutionEGChildFactory extends EGChildFactory {
 
         if (classWidget != null) {
             for (AttributeWidget attributeWidget : classWidget.getAllAttributeWidgets()) {
-                if (attributeWidget instanceof IdAttributeWidget || attributeWidget instanceof EmbeddedIdAttributeWidget  || attributeWidget instanceof EmbeddedAttributeWidget || attributeWidget instanceof VersionAttributeWidget) {
+                if (attributeWidget instanceof IdAttributeWidget || attributeWidget instanceof EmbeddedIdAttributeWidget || attributeWidget instanceof EmbeddedAttributeWidget || attributeWidget instanceof VersionAttributeWidget) {
                     attributeWidgets.add(attributeWidget);
                 } else if (attributeWidget instanceof TransientAttributeWidget || (attributeWidget instanceof RelationAttributeWidget && !((RelationAttributeWidget<? extends RelationAttribute>) attributeWidget).getBaseElementSpec().isOwner())) {
                     // skip
@@ -76,7 +76,7 @@ public class ExecutionEGChildFactory extends EGChildFactory {
                     if (parentNode instanceof EGRootNode) {
                         namedAttributeNode = parentNode.getNamedEntityGraph().findNamedAttributeNode(attribute.getName());
                     } else if (parentNode instanceof EGInternalNode && ((EGInternalNode) parentNode).getSubgraph() != null) {//if sub graph not exist for relation node
-                            namedAttributeNode = ((EGInternalNode) parentNode).getSubgraph().findNamedAttributeNode(attribute.getName());
+                        namedAttributeNode = ((EGInternalNode) parentNode).getSubgraph().findNamedAttributeNode(attribute.getName());
                     }
 
                     if (namedAttributeNode != null) {

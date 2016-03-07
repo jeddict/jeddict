@@ -17,7 +17,7 @@ package org.netbeans.orm.converter.generator.staticmetamodel;
 
 public enum MetamodelAttributeType {
 
-    SINGULAR("SingularAttribute"),COLLECTION("CollectionAttribute"),SET("SetAttribute"),LIST("ListAttribute"),MAP("MapAttribute") ;
+    SINGULAR("SingularAttribute"), COLLECTION("CollectionAttribute"), SET("SetAttribute"), LIST("ListAttribute"), MAP("MapAttribute");
     private String type;
 
     MetamodelAttributeType(String type) {
@@ -37,7 +37,6 @@ public enum MetamodelAttributeType {
         return SINGULAR;
     }
 
-    
     /**
      * @return the type
      */
@@ -56,6 +55,5 @@ public enum MetamodelAttributeType {
     public String toString() {
         return type;
     }
-    
-    
+
 }

@@ -30,7 +30,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColumnWidget<DBEmbeddedAssociationJoinColumn> {
 
     public EmbeddedAssociationJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
-         super(scene, nodeWidget, pinWidgetInfo);
+        super(scene, nodeWidget, pinWidgetInfo);
     }
 
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
@@ -40,29 +40,23 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
         return pinWidgetInfo;
     }
 
-
-    
     @Override
-    protected boolean prePersistName(){
+    protected boolean prePersistName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if(attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()){
+        if (attribute instanceof OneToMany && !this.getBaseElementSpec().isRelationTableExist()) {
             return false;//OneToMany by default creates JoinTable
         }
         return true;
     }
-    
 
-       @Override
+    @Override
     protected String evaluateName() {
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Entity entity = table.getEntity();
-        List<Id> id = (List<Id>)entity.getAttributes().getId();
+        List<Id> id = (List<Id>) entity.getAttributes().getId();
         return entity.getDefaultTableName().toUpperCase() + "_" + id.get(0).getName().toUpperCase();
     }
 
-
-
-    
 //        @Override
 //    protected List<JMenuItem> getPopupMenuItemList() {
 //        List<JMenuItem> menuList = super.getPopupMenuItemList();
@@ -78,7 +72,7 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
 //        }
 //        return menuList;
 //    }
-//    
+//
 //    void convertToJoinTable(String name) {
 //        DBEmbeddedAssociationJoinColumn joinColumn = this.getBaseElementSpec();
 //        if (joinColumn.getAttribute() instanceof RelationAttribute) {
@@ -86,5 +80,4 @@ public class EmbeddedAssociationJoinColumnWidget extends EmbeddedAssociationColu
 //            ((RelationAttribute) joinColumn.getAttribute()).getJoinTable().setName(name);
 //        }
 //    }
-    
 }

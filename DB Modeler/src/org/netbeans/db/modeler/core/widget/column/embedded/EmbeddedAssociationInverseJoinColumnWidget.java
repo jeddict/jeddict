@@ -16,7 +16,6 @@
 package org.netbeans.db.modeler.core.widget.column.embedded;
 
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
-import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Column;

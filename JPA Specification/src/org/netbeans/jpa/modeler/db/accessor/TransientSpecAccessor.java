@@ -17,25 +17,25 @@ package org.netbeans.jpa.modeler.db.accessor;
 
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.TransientAccessor;
 import org.netbeans.jpa.modeler.spec.Transient;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class TransientSpecAccessor extends TransientAccessor{
-    
+public class TransientSpecAccessor extends TransientAccessor {
+
     private Transient _transient;
 
     private TransientSpecAccessor(Transient _transient) {
         this._transient = _transient;
     }
-    public static TransientSpecAccessor getInstance(Transient _transient){
+
+    public static TransientSpecAccessor getInstance(Transient _transient) {
         TransientSpecAccessor accessor = new TransientSpecAccessor(_transient);
         accessor.setName(_transient.getName());
         accessor.setAttributeType(_transient.getAttributeType());
         return accessor;
-        
+
     }
-    
+
 }

@@ -33,7 +33,6 @@ import org.netbeans.orm.converter.util.ClassType;
 import org.netbeans.orm.converter.util.ClassesRepository;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
@@ -46,7 +45,7 @@ public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
 
     @Override
     public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
-        this.staticMetamodelClass = new HashSet<StaticMetamodelGenerator>();
+        this.staticMetamodelClass = new HashSet<>();
         this.task = task;
         destDir = FileUtil.toFile(sourceGroup.getRootFolder());
         this.packageName = parsedEntityMappings.getPackage();

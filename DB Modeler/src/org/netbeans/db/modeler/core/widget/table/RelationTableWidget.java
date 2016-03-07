@@ -65,9 +65,9 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
                 RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
                 attribute.getJoinTable().setName(this.name);
             }
-            
+
         } else {
-          setDefaultName();
+            setDefaultName();
         }
         if (SQLKeywords.isSQL99ReservedKeyword(RelationTableWidget.this.getName())) {
             this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -90,22 +90,22 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         JoinTable joinTable = attribute.getJoinTable();
         set.createPropertySet(this, joinTable, getPropertyChangeListeners());
     }
-    
-    private String getDefaultJoinTableName(){
+
+    private String getDefaultJoinTableName() {
         Entity entity = this.getBaseElementSpec().getEntity();
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
-            if(attribute.isOwner()){
+        if (attribute.isOwner()) {
             return entity.getTableName().toUpperCase() + "_" + attribute.getConnectedEntity().getTableName().toUpperCase();
-            } else {
-                 return attribute.getConnectedEntity().getTableName().toUpperCase() + "_" + entity.getTableName().toUpperCase();
-            }
+        } else {
+            return attribute.getConnectedEntity().getTableName().toUpperCase() + "_" + entity.getTableName().toUpperCase();
+        }
     }
 
-        @Override
+    @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        DBRelationTable relationTable  = this.getBaseElementSpec();
-        if(relationTable.getAttribute() instanceof JoinColumnHandler){
+        DBRelationTable relationTable = this.getBaseElementSpec();
+        if (relationTable.getAttribute() instanceof JoinColumnHandler) {
             JMenuItem joinTable = new JMenuItem("Delete Join Table");//, MICRO_DB);
             joinTable.addActionListener((ActionEvent e) -> {
                 convertToJoinColumn();
@@ -116,18 +116,18 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         }
         return menuList;
     }
-    
-    private void convertToJoinColumn(){
-        DBRelationTable relationTable  = this.getBaseElementSpec();
+
+    private void convertToJoinColumn() {
+        DBRelationTable relationTable = this.getBaseElementSpec();
         relationTable.getAttribute().getJoinTable().clear();
-        if(relationTable.getAttribute() instanceof OneToMany){
-             String joinColumnName = JOptionPane.showInputDialog((Component)RelationTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join column name (required) :");
-               ((JoinColumnHandler)relationTable.getAttribute()).getJoinColumn().clear();
-               JoinColumn joinColumn = new JoinColumn();
-               joinColumn.setName(joinColumnName);
-               ((JoinColumnHandler)relationTable.getAttribute()).addJoinColumn(joinColumn);
+        if (relationTable.getAttribute() instanceof OneToMany) {
+            String joinColumnName = JOptionPane.showInputDialog((Component) RelationTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join column name (required) :");
+            ((JoinColumnHandler) relationTable.getAttribute()).getJoinColumn().clear();
+            JoinColumn joinColumn = new JoinColumn();
+            joinColumn.setName(joinColumnName);
+            ((JoinColumnHandler) relationTable.getAttribute()).addJoinColumn(joinColumn);
         }
-        
+
     }
 
 }

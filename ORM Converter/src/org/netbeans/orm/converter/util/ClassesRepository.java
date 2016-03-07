@@ -15,12 +15,11 @@
  */
 package org.netbeans.orm.converter.util;
 
-import org.netbeans.orm.converter.compiler.WritableSnippet;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.netbeans.orm.converter.compiler.WritableSnippet;
 
 public class ClassesRepository {
 

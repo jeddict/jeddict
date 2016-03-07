@@ -33,13 +33,11 @@ import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.db.modeler.theme.DBColorScheme;
-import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -204,7 +202,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                         });
             }
         } catch (Exception ex) {
-            ExceptionUtils.printStackTrace(ex);
+            this.getModelerFile().handleException(ex);
         }
     }
 

@@ -148,48 +148,40 @@ public class JoinColumnSnippet implements Snippet {
             builder.append("insertable=");
             builder.append(insertable);
             builder.append(ORMConverterUtil.COMMA);
-        } else {
-            if (insertable == false) {
-                builder.append("insertable=");
-                builder.append(insertable);
-                builder.append(ORMConverterUtil.COMMA);
-            }
+        } else if (insertable == false) {
+            builder.append("insertable=");
+            builder.append(insertable);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
         if (GeneratorUtil.isGenerateDefaultValue()) {
             builder.append("nullable=");
             builder.append(nullable);
             builder.append(ORMConverterUtil.COMMA);
-        } else {
-            if (nullable == false) {
-                builder.append("nullable=");
-                builder.append(nullable);
-                builder.append(ORMConverterUtil.COMMA);
-            }
+        } else if (nullable == false) {
+            builder.append("nullable=");
+            builder.append(nullable);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
         if (GeneratorUtil.isGenerateDefaultValue()) {
             builder.append("unique=");
             builder.append(unique);
             builder.append(ORMConverterUtil.COMMA);
-        } else {
-            if (unique == true) {
-                builder.append("unique=");
-                builder.append(unique);
-                builder.append(ORMConverterUtil.COMMA);
-            }
+        } else if (unique == true) {
+            builder.append("unique=");
+            builder.append(unique);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
         if (GeneratorUtil.isGenerateDefaultValue()) {
             builder.append("updatable=");
             builder.append(updatable);
             builder.append(ORMConverterUtil.COMMA);
-        } else {
-            if (updatable == false) {
-                builder.append("updatable=");
-                builder.append(updatable);
-                builder.append(ORMConverterUtil.COMMA);
-            }
+        } else if (updatable == false) {
+            builder.append("updatable=");
+            builder.append(updatable);
+            builder.append(ORMConverterUtil.COMMA);
         }
         return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }

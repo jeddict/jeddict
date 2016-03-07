@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.netbeans.jpa.modeler.db.metadata.InheritanceSpecMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.inheritance.InheritanceMetadata;
+import org.netbeans.jpa.modeler.db.metadata.InheritanceSpecMetadata;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -83,11 +83,10 @@ public class Inheritance {
         this.strategy = value;
     }
 
-    
-        public InheritanceMetadata getAccessor() {
+    public InheritanceMetadata getAccessor() {
         InheritanceMetadata accessor = new InheritanceSpecMetadata();
         System.out.println("strategy.value() : " + strategy.value());
         accessor.setStrategy(strategy.value());
-        return  accessor;
-        }
+        return accessor;
+    }
 }

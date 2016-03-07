@@ -30,28 +30,27 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
  *
  * @author Gaurav Gupta
  */
-public class BaseAttributeWidget<E extends BaseAttribute> extends AttributeWidget <E>{
+public class BaseAttributeWidget<E extends BaseAttribute> extends AttributeWidget<E> {
 
     public BaseAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("attributeType", (PropertyChangeListener<String>) (String attributeType) -> {
-            setAttributeTooltip();            
+            setAttributeTooltip();
         });
     }
-    
+
     @Override
-    protected void setAttributeTooltip(){
+    protected void setAttributeTooltip() {
         if (getBaseElementSpec() instanceof ElementCollection) {
-                ElementCollection elementCollection = (ElementCollection)getBaseElementSpec();
-                StringBuilder writer = new StringBuilder();
-                writer.append(elementCollection.getCollectionType().substring(elementCollection.getCollectionType().lastIndexOf('.')+1));
-                writer.append('<').append(elementCollection.getAttributeType()).append('>');
-                this.setToolTipText(writer.toString());
+            ElementCollection elementCollection = (ElementCollection) getBaseElementSpec();
+            StringBuilder writer = new StringBuilder();
+            writer.append(elementCollection.getCollectionType().substring(elementCollection.getCollectionType().lastIndexOf('.') + 1));
+            writer.append('<').append(elementCollection.getAttributeType()).append('>');
+            this.setToolTipText(writer.toString());
         } else {
             this.setToolTipText(this.getBaseElementSpec().getAttributeType());//TODO init called before initialization of connectedClass for CompositionAttribute
         }
     }
-    
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
@@ -62,21 +61,20 @@ public class BaseAttributeWidget<E extends BaseAttribute> extends AttributeWidge
             if (persistenceBaseAttribute.getColumn() == null) {
                 persistenceBaseAttribute.setColumn(new Column());
             }
-            
-            set.createPropertySet( this , persistenceBaseAttribute.getColumn(), getPropertyChangeListeners(), getPropertyVisibilityHandlers());
+
+            set.createPropertySet(this, persistenceBaseAttribute.getColumn(), getPropertyChangeListeners(), getPropertyVisibilityHandlers());
         } else if (this instanceof BasicCollectionAttributeWidget) {
             ElementCollection elementCollection = (ElementCollection) this.getBaseElementSpec();
             if (elementCollection.getColumn() == null) {
                 elementCollection.setColumn(new Column());
             }
-            
-            set.createPropertySet( this , elementCollection.getColumn(), getPropertyChangeListeners(), getPropertyVisibilityHandlers());
+
+            set.createPropertySet(this, elementCollection.getColumn(), getPropertyChangeListeners(), getPropertyVisibilityHandlers());
         }
 //        BasicCollectionAttributeWidget => ElementCollection [Column allowed]
 //        MultiValueEmbeddedAttributeWidget => ElementCollection [Column not allowed]
-        
-//        set.put("BASIC_PROP", getValidationProperty());
 
+//        set.put("BASIC_PROP", getValidationProperty());
     }
 
 //    public PropertySupport getValidationProperty() {

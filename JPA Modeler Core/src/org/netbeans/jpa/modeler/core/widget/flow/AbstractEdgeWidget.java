@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.core.widget.flow;
 
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IPModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IFlowEdge;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -25,7 +24,7 @@ import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 
-public abstract class AbstractEdgeWidget<S extends IPModelerScene> extends PEdgeWidget<S> implements IFlowEdgeWidget <IFlowEdge> {
+public abstract class AbstractEdgeWidget<S extends IPModelerScene> extends PEdgeWidget<S> implements IFlowEdgeWidget<IFlowEdge> {
 
     private Widget flowElementsContainer;
     private IFlowEdge baseElementSpec;
@@ -122,8 +121,8 @@ public abstract class AbstractEdgeWidget<S extends IPModelerScene> extends PEdge
     public ContextPaletteModel getContextPaletteModel() {
         return null;
     }
-    
-     @Override
+
+    @Override
     public void createVisualPropertySet(ElementPropertySet elementPropertySet) {
     }
 }

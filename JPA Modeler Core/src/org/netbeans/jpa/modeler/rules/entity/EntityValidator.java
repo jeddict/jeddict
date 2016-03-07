@@ -24,6 +24,5 @@ public class EntityValidator {
     public final static String NON_UNIQUE_ENTITY_NAME = "MSG_NonUniqueEntityName";
     public final static String NON_UNIQUE_TABLE_NAME = "MSG_NonUniqueTableName";
     public final static String NO_COMPOSITE_OPTION_DEFINED = "MSG_NoCompositeOptionDefined";
-       
 
 }

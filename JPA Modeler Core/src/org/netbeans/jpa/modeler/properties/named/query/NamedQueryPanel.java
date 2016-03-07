@@ -37,7 +37,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
     private NamedQuery namedQuery;
     private NAttributeEntity attributeEntity;
 
-        @Override
+    @Override
     public void postConstruct() {
         initComponents();
     }
@@ -102,7 +102,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> {
     }
 
     void initCustomNAttributeEditor() {
-          customNAttributeClientEditor = NEntityEditor.createInstance(queryHint_LayeredPane,602,249);
+        customNAttributeClientEditor = NEntityEditor.createInstance(queryHint_LayeredPane, 602, 249);
     }
 
     /**

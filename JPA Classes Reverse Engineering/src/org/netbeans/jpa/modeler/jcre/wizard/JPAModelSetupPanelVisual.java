@@ -37,7 +37,6 @@ import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ChangeSupport;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
 public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements DocumentListener {

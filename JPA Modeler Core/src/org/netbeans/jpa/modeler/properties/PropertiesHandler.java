@@ -44,7 +44,6 @@ import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;

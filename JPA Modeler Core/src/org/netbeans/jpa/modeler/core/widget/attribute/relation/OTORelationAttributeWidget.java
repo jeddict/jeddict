@@ -31,7 +31,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav_Gupta
  */
-public class OTORelationAttributeWidget extends SingleRelationAttributeWidget <OneToOne> {
+public class OTORelationAttributeWidget extends SingleRelationAttributeWidget<OneToOne> {
 
     private OTORelationFlowWidget oneToOneRelationFlowWidget;
 
@@ -68,29 +68,25 @@ public class OTORelationAttributeWidget extends SingleRelationAttributeWidget <O
             } else {
                 return JPAModelerUtil.PK_BOTO_ATTRIBUTE_ICON_PATH;
             }
+        } else if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+            return JPAModelerUtil.UOTO_ATTRIBUTE_ICON_PATH;
         } else {
-            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
-                return JPAModelerUtil.UOTO_ATTRIBUTE_ICON_PATH;
-            } else {
-                return JPAModelerUtil.BOTO_ATTRIBUTE_ICON_PATH;
-            }
+            return JPAModelerUtil.BOTO_ATTRIBUTE_ICON_PATH;
         }
     }
 
     @Override
     public Image getIcon() {
-        if ( getBaseElementSpec().isPrimaryKey()) {
+        if (getBaseElementSpec().isPrimaryKey()) {
             if (oneToOneRelationFlowWidget instanceof Unidirectional) {
                 return JPAModelerUtil.PK_UOTO_ATTRIBUTE;
             } else {
                 return JPAModelerUtil.PK_BOTO_ATTRIBUTE;
             }
+        } else if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+            return JPAModelerUtil.UOTO_ATTRIBUTE;
         } else {
-            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
-                return JPAModelerUtil.UOTO_ATTRIBUTE;
-            } else {
-                return JPAModelerUtil.BOTO_ATTRIBUTE;
-            }
+            return JPAModelerUtil.BOTO_ATTRIBUTE;
         }
     }
 

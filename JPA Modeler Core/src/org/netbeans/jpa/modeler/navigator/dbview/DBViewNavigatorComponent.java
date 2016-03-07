@@ -138,19 +138,17 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
                     if (basePropertyViewManager_Pre != basePropertyViewManager_Cur) {
                         basePropertyViewManager = basePropertyViewManager_Cur;
                         System.out.println("1-In checkNodes2 BPVM");
-                        update((JPAModelerScene)basePropertyViewManager.getModelerScene());
+                        update((JPAModelerScene) basePropertyViewManager.getModelerScene());
                     } else {
                         System.out.println("1-In checkNodes2 same BPVM");
                     }
 
+                } else if (arr[0].getClass().getPackage().getName().equals("org.netbeans.jpa.modeler.navigator.dbview")) {
+                    System.out.println("1-In checkNodes2 Self look");
                 } else {
-                    if (arr[0].getClass().getPackage().getName().equals("org.netbeans.jpa.modeler.navigator.dbview")) {
-                        System.out.println("1-In checkNodes2 Self look");
-                    } else {
-                        basePropertyViewManager = null;
-                        System.out.println("1-In checkNodes2 ^^BPVM");
-                        ((BeanTreeView) navigatorPane).setVisible(false);
-                    }
+                    basePropertyViewManager = null;
+                    System.out.println("1-In checkNodes2 ^^BPVM");
+                    ((BeanTreeView) navigatorPane).setVisible(false);
                 }
             } else {
                 System.out.println("M-In checkNodes2 multi " + arr);

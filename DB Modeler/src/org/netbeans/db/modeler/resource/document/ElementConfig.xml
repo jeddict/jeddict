@@ -158,7 +158,7 @@
             </attributes>
         </element>
         
-               <element id="JoinColumn" category="ASS_OVERRIDE" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.JoinColumn">
+        <element id="JoinColumn" category="ASS_OVERRIDE" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.JoinColumn">
             <attributes>
                 <attribute id="ass_override_JoinColumn_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Column Name</display-name>
@@ -187,7 +187,7 @@
             </attributes>
         </element>
  
-    <element id="DiscriminatorColumn" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.DiscriminatorColumn ">
+        <element id="DiscriminatorColumn" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.DiscriminatorColumn ">
             <attributes>
                 <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
