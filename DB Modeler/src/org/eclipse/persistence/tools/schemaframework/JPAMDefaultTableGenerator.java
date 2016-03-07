@@ -228,14 +228,8 @@ public class JPAMDefaultTableGenerator {
 //            if ((descriptor instanceof XMLDescriptor) || (descriptor instanceof EISDescriptor) || (descriptor instanceof ObjectRelationalDataTypeDescriptor)) {
 //                //default table generator does not support ox, eis and object-relational descriptor
 //                AbstractSessionLog.getLog().log(SessionLog.WARNING, SessionLog.DDL, "relational_descriptor_support_only", (Object[]) null, true);
-//
 //                return tblCreator;
 //            }
-//descriptor.isChildDescriptor()
-//
-//
-//descriptor.getDescriptorInheritancePolicy().getAllChildDescriptors()
-//descriptor.getDescriptorInheritancePolicy().isJoinedStrategy()
             // Aggregate descriptors do not contain table/field data and are
             // processed through their owning entities. Aggregate descriptors
             // can not exist on their own.

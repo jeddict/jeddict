@@ -151,22 +151,23 @@ public class JPAMTableCreator {
         buildConstraints(schemaManager, build);
 
         String sequenceTableName = getSequenceTableName(session);
-        List<TableDefinition> missingTables = new ArrayList<TableDefinition>();
-        for (TableDefinition table : getTableDefinitions()) {
+        List<TableDefinition> missingTables = new ArrayList<>();
+        for (TableDefinition tableDefinition : getTableDefinitions()) {
             // Must not create sequence table as done in createSequences.
-            if (!table.getName().equals(sequenceTableName)) {
+            if (!tableDefinition.getName().equals(sequenceTableName)) {
 //                boolean alreadyExists = false;
                 // Check if the table already exists, to avoid logging create error.
 //                if (check && CHECK_EXISTENCE && schemaManager.shouldWriteToDatabase()) {
 //                    alreadyExists = schemaManager.checkTableExists(table);
 //                }
 //                if (!alreadyExists) {
-                missingTables.add(table);
+                missingTables.add(tableDefinition);
                 try {
-                    schemaManager.createObject(table);
-                    session.getSessionLog().log(SessionLog.FINEST, SessionLog.DDL, "default_tables_created", table.getFullName());
+                    String query = schemaManager.createObject(tableDefinition);
+                    schemaManager.getDBMapping().putCreateQuery(tableDefinition.getName(), query);
+                    session.getSessionLog().log(SessionLog.FINEST, SessionLog.DDL, "default_tables_created", tableDefinition.getFullName());
                 } catch (DatabaseException ex) {
-                    session.getSessionLog().log(SessionLog.FINEST, SessionLog.DDL, "default_tables_already_existed", table.getFullName());
+                    session.getSessionLog().log(SessionLog.FINEST, SessionLog.DDL, "default_tables_already_existed", tableDefinition.getFullName());
                     if (!shouldIgnoreDatabaseException()) {
                         throw ex;
                     }
@@ -454,7 +455,7 @@ public class JPAMTableCreator {
                     //Assume the table exists, so lookup the column info
 
                     //While SQL is case insensitive, getColumnInfo is and will not return the table info unless the name is passed in
-                    //as it is stored internally.  
+                    //as it is stored internally.
                     String tableName = table.getTable() == null ? table.getName() : table.getTable().getName();
                     boolean usesDelimiting = (table.getTable() != null && table.getTable().shouldUseDelimiters());
                     List<DatabaseRecord> columnInfo = null;

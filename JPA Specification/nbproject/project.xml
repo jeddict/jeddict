@@ -180,6 +180,10 @@
                 <package>org.netbeans.jpa.modeler.spec.validator.table</package>
                 <package>org.netbeans.jpa.source</package>
             </friend-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/h2-1.4.190.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/h2-1.4.190.jar</binary-origin>
+            </class-path-extension>
         </data>
     </configuration>
 </project>

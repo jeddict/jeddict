@@ -17,14 +17,7 @@ package org.netbeans.db.modeler.specification.model.util;
 
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
@@ -89,6 +82,8 @@ import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
+import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
+import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -112,7 +107,6 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.*;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
@@ -163,9 +157,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
     }
 
-    private DBMapping createDBMapping(EntityMappings entityMapping) {
+    private DBMapping createDBMapping(EntityMappings entityMapping) throws ClassNotFoundException {
         DBMapping dbMapping = new DBMapping();
-        DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnection();
+        DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnectionCache();
 
         ClassLoader dynamicClassLoader;
 
@@ -173,10 +167,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         ClassLoader contextClassLoader = null;
         if (connection == null) {
             dynamicClassLoader = new DynamicDriverClassLoader();
-            databaseLogin.setDatabaseURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+            databaseLogin.setDatabaseURL(DEFAULT_URL);
             databaseLogin.setUserName("");
             databaseLogin.setPassword("");
-            databaseLogin.setDriverClass(org.h2.Driver.class);
+            databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
         } else {
             dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
             contextClassLoader = Thread.currentThread().getContextClassLoader();

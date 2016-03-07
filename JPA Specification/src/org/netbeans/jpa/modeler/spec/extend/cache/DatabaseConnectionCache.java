@@ -19,20 +19,29 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import org.netbeans.api.db.explorer.DatabaseConnection;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DatabaseConnectionCache {
-    @XmlAttribute(name="u")
+
+    @XmlTransient
+    public static final String DEFAULT_URL = "jdbc:h2:mem:JPA_MODELER_EDB;DB_CLOSE_DELAY=-1";
+    @XmlTransient
+    public static final String DEFAULT_DRIVER = "org.h2.Driver";
+
+    @XmlAttribute(name = "u")
     private String url;
-    @XmlAttribute(name="n")
+    @XmlAttribute(name = "n")
     private String userName;
-    @XmlAttribute(name="p")
+    @XmlAttribute(name = "p")
     private String password;
-    @XmlAttribute(name="d")
+    @XmlAttribute(name = "d")
     private String driverClassName;
-    
+
     @XmlTransient
     private Class driverClass;
+    @XmlTransient
+    private DatabaseConnection databaseConnection;
 
     /**
      * @return the url
@@ -104,5 +113,18 @@ public class DatabaseConnectionCache {
         this.driverClass = driverClass;
     }
 
+    /**
+     * @return the databaseConnection
+     */
+    public DatabaseConnection getDatabaseConnection() {
+        return databaseConnection;
+    }
+
+    /**
+     * @param databaseConnection the databaseConnection to set
+     */
+    public void setDatabaseConnection(DatabaseConnection databaseConnection) {
+        this.databaseConnection = databaseConnection;
+    }
 
 }

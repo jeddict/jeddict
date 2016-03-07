@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.swing.JComboBox;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import org.netbeans.api.db.explorer.ConnectionManager;
 import org.netbeans.api.db.explorer.DatabaseConnection;
@@ -31,8 +30,9 @@ import org.netbeans.api.db.explorer.DatabaseException;
 import org.netbeans.api.db.explorer.support.DatabaseExplorerUIs;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
+import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
 import org.netbeans.modeler.core.ModelerFile;
-import org.openide.util.Exceptions;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Cache {
@@ -73,7 +73,7 @@ public class Cache {
     /**
      * @return the databaseConnection
      */
-    public DatabaseConnectionCache getDatabaseConnection() {
+    public DatabaseConnectionCache getDatabaseConnectionCache() {
         return databaseConnection;
     }
 
@@ -82,80 +82,6 @@ public class Cache {
      */
     public void setDatabaseConnection(DatabaseConnectionCache databaseConnection) {
         this.databaseConnection = databaseConnection;
-    }
-
-    public static class DBConnectionUtil {
-
-        /**
-         * Get connection from combobox
-         *
-         * @param dbConComboBox
-         * @return
-         */
-        public static DatabaseConnection getConnection(JComboBox dbConComboBox) {
-            Object item = dbConComboBox.getSelectedItem();
-            if (item instanceof DatabaseConnection) {
-                return (DatabaseConnection) item;
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * Save connection from combobox
-         *
-         * @param file
-         * @param dbConComboBox
-         */
-        public static void saveConnection(ModelerFile file, JComboBox dbConComboBox) {
-            DatabaseConnection connection = DBConnectionUtil.getConnection(dbConComboBox);
-            if (connection != null) {
-                Cache cache = ((EntityMappings) file.getDefinitionElement()).getCache();
-                DatabaseConnectionCache dbCache = new DatabaseConnectionCache();
-                dbCache.setUrl(connection.getDatabaseURL());
-                dbCache.setUserName(connection.getUser());
-                dbCache.setPassword(connection.getPassword());
-                dbCache.setDriverClassName(connection.getDriverClass());
-                try {
-                    dbCache.setDriverClass(connection.getJDBCDriver().getDriver().getClass());
-                } catch (DatabaseException ex) {
-                    ExceptionUtils.printStackTrace(ex, file);
-                }
-                cache.setDatabaseConnection(dbCache);
-            }
-        }
-
-        public static void loadConnection(ModelerFile file, JComboBox dbConComboBox) {
-            loadConnection((EntityMappings) file.getDefinitionElement(), dbConComboBox);
-        }
-
-        /**
-         * Load combobox with DB connection
-         *
-         * @param entityMappings
-         * @param dbConComboBox
-         */
-        public static void loadConnection(EntityMappings entityMappings, JComboBox dbConComboBox) {
-//            DatabaseConnection connection = DBConnectionUtil.getConnection(dbConComboBox);
-            Cache cache = entityMappings.getCache();
-            DatabaseConnectionCache dbCache = cache.getDatabaseConnection();
-
-            DatabaseExplorerUIs.connect(dbConComboBox, ConnectionManager.getDefault());
-            dbConComboBox.setToolTipText("Available Database Connection");
-
-            for (int i = 0; i < dbConComboBox.getItemCount(); i++) {
-                Object item = dbConComboBox.getItemAt(i);
-                if (dbCache != null && item instanceof DatabaseConnection && ((DatabaseConnection) item).getDatabaseURL().equals(dbCache.getUrl())) {
-                    dbConComboBox.setSelectedIndex(i);
-                    try {
-                        dbCache.setDriverClass(((DatabaseConnection) item).getJDBCDriver().getDriver().getClass());
-                    } catch (DatabaseException ex) {
-                        ExceptionUtils.printStackTrace(ex);
-                    }
-                    break;
-                }
-            }
-        }
     }
 
 }

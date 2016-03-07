@@ -42,7 +42,7 @@ import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.jpa.modeler.spec.ParameterMode;
 import org.netbeans.jpa.modeler.spec.QueryHint;
 import org.netbeans.jpa.modeler.spec.StoredProcedureParameter;
-import org.netbeans.jpa.modeler.spec.extend.cache.Cache.DBConnectionUtil;
+import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
@@ -63,8 +63,9 @@ import org.netbeans.modules.db.metadata.model.api.SQLType;
 import org.openide.text.CloneableEditorSupport;
 import org.openide.util.RequestProcessor;
 
-public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredProcedureQuery> implements DocumentListener{
-private static final RequestProcessor RP = new RequestProcessor(NamedStoredProcedureQueryPanel.class);
+public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredProcedureQuery> implements DocumentListener {
+
+    private static final RequestProcessor RP = new RequestProcessor(NamedStoredProcedureQueryPanel.class);
     private NamedStoredProcedureQuery namedStoredProcedureQuery;
 
     private NAttributeEntity queryHintEntity;
@@ -83,7 +84,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
         initComponents();
         DBConnectionUtil.loadConnection(modelerFile, dbCon_jComboBox);
     }
-    
+
     @Override
     public void init() {
         jTabbedPane.setSelectedIndex(0);
@@ -605,8 +606,8 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
             JOptionPane.showMessageDialog(this, "Name field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
-        if(procedureName_jComboBox.getSelectedItem()==null){
-             JOptionPane.showMessageDialog(this, "Procedure can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+        if (procedureName_jComboBox.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Procedure can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (procedureName_jComboBox.getSelectedItem().toString().length() <= 0) {
@@ -620,7 +621,7 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
         if (!validateField()) {
             return;
         }
-//        
+//
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             if (row[0] == null) {
@@ -680,26 +681,26 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
         public void run() {
             DatabaseConnection dbCon = DBConnectionUtil.getConnection(dbCon_jComboBox);
             if (dbCon != null) {
-             MetadataModel metaDataModel = MetadataModelManager.get(dbCon);
-            if (metaDataModel != null) {
-                try {
-                    metaDataModel.runReadAction((Metadata metaData) -> {
-                        final Collection<Procedure> procedures = metaData.getDefaultSchema().getProcedures();
-                        SwingUtilities.invokeLater(() -> {
-                            if(!procedures.isEmpty()){
-                                procedureName_jComboBox.removeAllItems();
-                                for (Procedure procedure : procedures) {
-                                    procedureName_jComboBox.addItem(new ComboBoxValue(procedure, procedure.getName()));
+                MetadataModel metaDataModel = MetadataModelManager.get(dbCon);
+                if (metaDataModel != null) {
+                    try {
+                        metaDataModel.runReadAction((Metadata metaData) -> {
+                            final Collection<Procedure> procedures = metaData.getDefaultSchema().getProcedures();
+                            SwingUtilities.invokeLater(() -> {
+                                if (!procedures.isEmpty()) {
+                                    procedureName_jComboBox.removeAllItems();
+                                    for (Procedure procedure : procedures) {
+                                        procedureName_jComboBox.addItem(new ComboBoxValue(procedure, procedure.getName()));
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
 
-                } catch (MetadataModelException e) {
-                    e.printStackTrace();
+                    } catch (MetadataModelException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
         }
     }
 
@@ -759,21 +760,20 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
         }
     }//GEN-LAST:event_resultSetMappingTypeActionPerformed
 
-    
     private void jTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPaneStateChanged
-       if(jTabbedPane.getSelectedIndex() == 3){
-          System.out.println("ddddddd");
+        if (jTabbedPane.getSelectedIndex() == 3) {
+            System.out.println("ddddddd");
 //        EditorSettings.getDefault().getAllMimeTypes();
-        
-        setDocumentText(annotation_EditorPane.getDocument(), "private static void setDocumentText(Document doc, String text) {\n" +
-"        try {\n" +
-"            doc.remove(0, doc.getLength());\n" +
-"            doc.insertString(0, text, null);\n" +
-"        } catch (BadLocationException ble) {\n" +
-"            LOG.log(Level.WARNING, null, ble);\n" +
-"        }\n" +
-"    }");
-    }
+
+            setDocumentText(annotation_EditorPane.getDocument(), "private static void setDocumentText(Document doc, String text) {\n"
+                    + "        try {\n"
+                    + "            doc.remove(0, doc.getLength());\n"
+                    + "            doc.insertString(0, text, null);\n"
+                    + "        } catch (BadLocationException ble) {\n"
+                    + "            LOG.log(Level.WARNING, null, ble);\n"
+                    + "        }\n"
+                    + "    }");
+        }
     }//GEN-LAST:event_jTabbedPaneStateChanged
 
     private static void setDocumentText(Document doc, String text) {
@@ -785,35 +785,37 @@ private static final RequestProcessor RP = new RequestProcessor(NamedStoredProce
 //            LOG.log(Level.WARNING, null, ble);
         }
     }
-    
-    /**
-     * Gives notification that there was an insert into the document.  The
-     * range given by the DocumentEvent bounds the freshly inserted region.
-     *
-     * @param e the document event
-     */
-@Override
-    public void insertUpdate(javax.swing.event.DocumentEvent e){}
 
     /**
-     * Gives notification that a portion of the document has been
-     * removed.  The range is given in terms of what the view last
-     * saw (that is, before updating sticky positions).
+     * Gives notification that there was an insert into the document. The range
+     * given by the DocumentEvent bounds the freshly inserted region.
      *
      * @param e the document event
      */
-@Override
-    public void removeUpdate(javax.swing.event.DocumentEvent e){}
+    @Override
+    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+    }
+
+    /**
+     * Gives notification that a portion of the document has been removed. The
+     * range is given in terms of what the view last saw (that is, before
+     * updating sticky positions).
+     *
+     * @param e the document event
+     */
+    @Override
+    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+    }
 
     /**
      * Gives notification that an attribute or set of attributes changed.
      *
      * @param e the document event
      */
-@Override
-    public void changedUpdate(javax.swing.event.DocumentEvent e){}
-    
-    
+    @Override
+    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+    }
+
     private NAttributeEntity getResultSetMappings() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ResultSetMappings", "ResultSet Mappings", "");
         attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});

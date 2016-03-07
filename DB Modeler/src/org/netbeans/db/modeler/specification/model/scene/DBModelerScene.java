@@ -15,10 +15,14 @@
  */
 package org.netbeans.db.modeler.specification.model.scene;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.toList;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
@@ -27,6 +31,7 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -34,6 +39,7 @@ import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -44,7 +50,6 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidg
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
-import org.openide.util.Exceptions;
 
 public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
@@ -206,6 +211,19 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     public void init() {
         super.init();
+    }
+
+    @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuList = super.getPopupMenuItemList();
+        JMenuItem openSQLEditor = new JMenuItem("View SQL Query");
+        openSQLEditor.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('Q'), InputEvent.CTRL_DOWN_MASK));
+        openSQLEditor.addActionListener((ActionEvent e) -> {
+            SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
+        });
+
+        menuList.add(0, openSQLEditor);
+        return menuList;
     }
 
 }
