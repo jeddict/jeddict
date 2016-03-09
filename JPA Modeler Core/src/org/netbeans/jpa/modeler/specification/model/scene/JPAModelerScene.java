@@ -50,6 +50,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.specification.model.event.JPAEventListener;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -57,6 +58,7 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.G
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_DB;
 import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
+import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.ModelerCore;
 import org.netbeans.modeler.core.ModelerFile;
@@ -390,5 +392,9 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
      */
     public void setHighlightedWidget(IWidget highlightedWidget) {
         this.highlightedWidget = highlightedWidget;
+    }
+
+    protected IEventListener getEventListener() {
+        return new JPAEventListener();
     }
 }

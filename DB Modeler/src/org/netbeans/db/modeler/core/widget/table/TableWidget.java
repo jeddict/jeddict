@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget.table;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +48,9 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.core.widget.*;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
@@ -281,7 +285,24 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuItemList = new LinkedList<>();
+
+        JMenuItem openSQLEditor = new JMenuItem("Drive to Entity");
+        openSQLEditor.addActionListener((ActionEvent e) -> {
+            DBTable table = TableWidget.this.getBaseElementSpec();
+            Entity entity = table.getEntity();
+            ModelerFile modelerFile = TableWidget.this.getModelerScene().getModelerFile();
+            modelerFile = modelerFile.getParentFile();
+
+            modelerFile.getModelerScene().setFocusedWidget(
+                    (Widget) ((JPAModelerScene) modelerFile.getModelerScene()).getBaseElements().stream().filter(w -> w.getBaseElementSpec() == entity).findAny().get()
+            );
+            // SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
+        });
+
+        menuItemList.add(0, openSQLEditor);
+
         menuItemList.add(getPropertyMenu());
+
         return menuItemList;
     }
 

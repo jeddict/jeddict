@@ -33,8 +33,8 @@ import org.openide.util.Exceptions;
  */
 public class ExceptionReporterPanel extends javax.swing.JDialog {
 
-    private final static String buttonText = "<html>Click here to copy stacktrace and report bug </html>";
-    private final static String buttonAttachText = "<html>Click here to copy stacktrace and report bug (please attach modeler file)</html>";
+    private final static String buttonText = "<html>Click here to copy logs and report bug </html>";
+    private final static String buttonAttachText = "<html>Click here to copy logs and report bug (please attach modeler file)</html>";
 
     private final String bugDescription;
 

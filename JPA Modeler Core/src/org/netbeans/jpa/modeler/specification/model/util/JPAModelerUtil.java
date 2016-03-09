@@ -1484,6 +1484,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         return mappingClone;
     }
 
+    public static void openDBViewer(ModelerFile file) {
+        EntityMappings entityMappings = (EntityMappings) file.getModelerScene().getBaseElementSpec();
+        openDBViewer(file, entityMappings);
+    }
+
     public static void openDBViewer(ModelerFile file, EntityMappings entityMappings) {
         DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
         Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
