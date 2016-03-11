@@ -49,8 +49,9 @@ public class DelegatingWizardDescriptorPanel<Data> implements WizardDescriptor.F
      *
      * @param delegate the panel to wrap; must not be null.
      */
-    public DelegatingWizardDescriptorPanel(WizardDescriptor.Panel<Data> delegate) {
+    public DelegatingWizardDescriptorPanel(Project project, WizardDescriptor.Panel<Data> delegate) {
         Parameters.notNull("delegate", delegate); //NOI18N
+        this.project = project;
         this.delegate = delegate;
     }
 
@@ -77,7 +78,7 @@ public class DelegatingWizardDescriptorPanel<Data> implements WizardDescriptor.F
     public void readSettings(Data settings) {
         if (wizardDescriptor == null) {
             wizardDescriptor = (WizardDescriptor) settings;
-            project = Templates.getProject((WizardDescriptor) settings);
+//            project = Templates.getProject((WizardDescriptor) settings);
         }
         delegate.readSettings(settings);
     }

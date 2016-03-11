@@ -49,7 +49,8 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     /**
      * Creates new form CrudSetupPanel
      */
-    public JPAModelSetupPanelVisual(WizardDescriptor wizard) {
+    public JPAModelSetupPanelVisual(Project project, WizardDescriptor wizard) {
+        this.project = project;
         this.wizard = wizard;
         initComponents();
 
@@ -255,7 +256,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     void read(WizardDescriptor settings) {
 //        jsfFolder.setText((String) settings.getProperty(WizardProperties.JSF_FOLDER));
 
-        project = Templates.getProject(settings);
+//        project = Templates.getProject(settings);
         FileObject targetFolder = Templates.getTargetFolder(settings);
 
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());

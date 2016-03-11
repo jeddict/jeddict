@@ -41,6 +41,7 @@ import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.getModelerFileVersion;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModel;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModelAction;
@@ -229,7 +230,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
 
         public void runImpl() throws IOException {
 
-            EntityMappings entityMappingsSpec = EntityMappings.getNewInstance();
+            EntityMappings entityMappingsSpec = EntityMappings.getNewInstance(getModelerFileVersion());
             entityMappingsSpec.setGenerated();
 
             // first generate empty entity modal -- this is needed as
