@@ -70,7 +70,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                 }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
-                this.flowElements.remove(flowNodeWidget);
+                this.removeBaseElement(flowNodeWidget);
             } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                 if (baseElementWidget instanceof ReferenceFlowWidget) {
                     ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) baseElementWidget;
@@ -81,7 +81,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                     columnWidget.remove();
                     referenceFlowWidget.setLocked(false);
                     referenceFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(referenceFlowWidget);
+                    this.removeBaseElement(referenceFlowWidget);
                 } else {
                     throw new InvalidElmentException("Invalid JPA Element");
                 }
@@ -98,7 +98,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
         String baseElementId;
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
-            this.flowElements.add((IFlowElementWidget) baseElementWidget);
+            this.addBaseElement(baseElementWidget);
             if (baseElementWidget instanceof IFlowNodeWidget) { //reverse ref
                 ((FlowNodeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((FlowNodeWidget) baseElementWidget).getId();
@@ -214,8 +214,8 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem openSQLEditor = new JMenuItem("View SQL Query");
-        openSQLEditor.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('Q'), InputEvent.CTRL_DOWN_MASK));
+        JMenuItem openSQLEditor = new JMenuItem("View SQL");
+        openSQLEditor.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('L'), InputEvent.CTRL_DOWN_MASK));
         openSQLEditor.addActionListener((ActionEvent e) -> {
             SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
         });

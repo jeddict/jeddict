@@ -33,7 +33,7 @@ public class DBEventListener extends EventListener {
     @Override
     public void registerEvent(JComponent component, ModelerFile modelerFile) {
         super.registerEvent(component, modelerFile);
-        component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, InputEvent.CTRL_MASK), "GEN_SQL");
+        component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, InputEvent.CTRL_MASK), "GEN_SQL");
         component.getActionMap().put("GEN_SQL", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
