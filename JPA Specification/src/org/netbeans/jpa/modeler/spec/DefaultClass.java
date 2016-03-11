@@ -22,11 +22,8 @@ public class DefaultClass extends JavaClass {
     private String description;
     @XmlElement(name = "attribute")
     private List<DefaultAttribute> attributes;
-    @XmlAttribute(name = "class", required = true)
-    private String clazz;
 
     public DefaultClass() {
-        System.out.println("");
     }
 
     public DefaultClass(String clazz) {
@@ -67,20 +64,6 @@ public class DefaultClass extends JavaClass {
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    /**
-     * @return the clazz
-     */
-    public String getClazz() {
-        return clazz;
-    }
-
-    /**
-     * @param clazz the clazz to set
-     */
-    public void setClazz(String clazz) {
-        this.clazz = clazz;
     }
 
     /**

@@ -51,6 +51,7 @@ public final class UpdateHandler {
             available = findNewModules();
         }
         if (updates.isEmpty() && available.isEmpty()) {
+            JPAModelerInstaller.LOOKUP_BOOTSTRAP_UPDATE = false;
             // none for install
             JPAModelerInstaller.info("JPA Modeler plugin is up to date.");
             return;
@@ -167,6 +168,7 @@ public final class UpdateHandler {
             throw new UpdateHandlerException("A problem caught while installation of updates, cause: ", ex);
         }
 
+        JPAModelerInstaller.LOOKUP_BOOTSTRAP_UPDATE = false;
         // restart later
         support.doRestartLater(r);
     }

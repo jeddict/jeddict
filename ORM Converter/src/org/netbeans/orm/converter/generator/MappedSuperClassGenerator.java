@@ -61,7 +61,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         Attributes parsedAttributes = mappedSuperclass.getAttributes();
 
         if (parsedAttributes != null) {
-            processEmbeddedId(parsedAttributes.getEmbeddedId());
+            processEmbeddedId(mappedSuperclass, parsedAttributes.getEmbeddedId());
             if (parsedAttributes.getEmbeddedId() == null) {
                 processId(parsedAttributes.getId());
             }

@@ -7,6 +7,7 @@ import org.netbeans.api.autoupdate.UpdateManager;
 import org.netbeans.api.autoupdate.UpdateUnit;
 import org.openide.*;
 import org.openide.modules.ModuleInstall;
+import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.OnShowing;
 import org.openide.windows.WindowManager;
@@ -33,21 +34,29 @@ public class JPAModelerInstaller extends ModuleInstall implements Runnable {
         JPAModelerInstaller.log.log(Level.INFO, "Initializing JPA Modeler v{0} (https://jpamodeler.github.io/)", JPAModelerInstaller.VERSION);
 
         JPAModelerInstaller.info("Finished initializing JPA Modeler...");
+        lookupUpdates();
+    }
 
+    static boolean LOOKUP_BOOTSTRAP_UPDATE = true;
+
+    /**
+     * Generic method can be called either on IDE startup or modeler file
+     * startup
+     */
+    public static void lookupUpdates() {
+        if (LOOKUP_BOOTSTRAP_UPDATE) {
         // install update checker when UI is ready (main window shown)
-        WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
-            @Override
-            public void run() {
-                RequestProcessor.getDefault().post(() -> {
-                    try {
-                        UpdateHandler.checkAndHandleUpdates();
-                    } catch (NullPointerException e) {
-                        JPAModelerInstaller.error(e.toString());
-                    }
-                }, 1000);
+        WindowManager.getDefault().invokeWhenUIReady(() -> {
+            RequestProcessor.getDefault().post(() -> {
+                UpdateHandler.checkAndHandleUpdates();
+            }, getUpdateStartTime());
+            });
+        }
+    }
 
-            }
-        });
+    private static int getUpdateStartTime() {
+        String s = NbBundle.getBundle("org.netbeans.jpa.modeler.update.version.Bundle").getString("UpdateHandler.StartTime");
+        return Integer.parseInt(s);
     }
 
     public static void info(String msg) {

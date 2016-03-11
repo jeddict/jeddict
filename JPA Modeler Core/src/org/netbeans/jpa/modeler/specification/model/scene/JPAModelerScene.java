@@ -57,6 +57,7 @@ import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERATE_SRC;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_DB;
+import org.netbeans.jpa.modeler.update.version.JPAModelerInstaller;
 import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
 import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
@@ -258,6 +259,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
+//        JPAModelerInstaller.lookupUpdates();
         SwingUtilities.invokeLater(() -> {
             OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
             if (!window.isOpened()) {
@@ -265,6 +267,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
             window.requestActive();
         });
+
 
     }
 

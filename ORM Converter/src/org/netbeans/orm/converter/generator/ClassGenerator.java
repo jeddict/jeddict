@@ -46,6 +46,7 @@ import org.netbeans.jpa.modeler.spec.FieldResult;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.IdClass;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.Lob;
@@ -72,6 +73,7 @@ import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
@@ -990,14 +992,22 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    protected void processEmbeddedId(EmbeddedId parsedEmbeddedId) {
+    protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
         if (parsedEmbeddedId == null) {
             return;
         }
 
         VariableDefSnippet variableDef = getVariableDef(parsedEmbeddedId);
         variableDef.setEmbeddedId(true);
-        variableDef.setType(parsedEmbeddedId.getAttributeType());
+        /**
+         * Filter if Embeddable class is used in case of derived entities. Refer
+         * : JPA Spec 2.4.1.3 Example 5(b)
+         */
+        if (identifiableClass.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID && parsedEmbeddedId.getConnectedClass() == null) {
+            variableDef.setType(identifiableClass.getCompositePrimaryKeyClass());
+        } else {
+            variableDef.setType(parsedEmbeddedId.getAttributeType());
+        }
 
         processInternalAttributeOverride(variableDef, parsedEmbeddedId.getAttributeOverride());
     }

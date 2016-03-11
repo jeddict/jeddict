@@ -85,7 +85,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         Attributes parsedAttributes = entity.getAttributes();
 
         if (parsedAttributes != null) {
-            processEmbeddedId(parsedAttributes.getEmbeddedId());
+            processEmbeddedId(entity, parsedAttributes.getEmbeddedId());
             if (parsedAttributes.getEmbeddedId() == null) {
                 processId(parsedAttributes.getId());
             }
