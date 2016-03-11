@@ -25,13 +25,13 @@ import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
-import org.netbeans.jpa.source.ReverseEngineeringController;
+import org.netbeans.jpa.source.JCRELoader;
 
 /**
  *
  * @author Gaurav_Gupta
  */
-public interface IAttributes extends ReverseEngineeringController {
+public interface IAttributes extends JCRELoader {
 
     /**
      * Gets the value of the basic property.

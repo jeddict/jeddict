@@ -15,8 +15,8 @@
  */
 package org.netbeans.jpa.modeler.properties;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.netbeans.jpa.modeler.properties.named.resultsetmapping.*;
+import java.util.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,7 +29,6 @@ import org.netbeans.jpa.modeler.navigator.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
-import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
@@ -65,11 +64,7 @@ import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.nodes.PropertySupport;
-
-/**
- *
- * @author Gaurav Gupta
- */
+import org.openide.windows.WindowManager;
 public class PropertiesHandler {
 
     public static ComboBoxPropertySupport getAccessTypeProperty(JPAModelerScene modelerScene, final AccessTypeHandler accessTypeHandlerSpec) {
@@ -155,7 +150,7 @@ public class PropertiesHandler {
                 })
                         .afterCreation(e -> em.getCache().addCollectionClass(e.getValue()))
                         .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
-                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(null, "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
+                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
             }
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionType", "Collection Type", "", comboBoxListener);

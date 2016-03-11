@@ -167,6 +167,7 @@
                 <package>org.eclipse.persistence.descriptors</package>
                 <package>org.eclipse.persistence.internal.jpa.metadata</package>
                 <package>org.netbeans.db.modeler.manager</package>
+                <package>org.netbeans.jpa.modeler._import.javaclass</package>
                 <package>org.netbeans.jpa.modeler.db.accessor</package>
                 <package>org.netbeans.jpa.modeler.source</package>
                 <package>org.netbeans.jpa.modeler.spec</package>

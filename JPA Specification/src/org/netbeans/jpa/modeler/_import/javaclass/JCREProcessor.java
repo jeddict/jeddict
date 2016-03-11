@@ -13,16 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.source;
+package org.netbeans.jpa.modeler._import.javaclass;
 
-import javax.lang.model.element.TypeElement;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.modeler.core.ModelerFile;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public interface ReverseEngineeringController {
+public interface JCREProcessor {
 
-    void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess);
+    void process(ModelerFile file);
 }

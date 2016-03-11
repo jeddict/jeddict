@@ -30,15 +30,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.jpa.source.ReverseEngineeringController;
 import org.netbeans.modeler.core.NBModelerUtil;
+import org.netbeans.jpa.source.JCRELoader;
 
 /**
  *
  * @author Gaurav Gupta
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class JavaClass extends FlowNode implements ReverseEngineeringController {
+public abstract class JavaClass extends FlowNode implements JCRELoader {
 
     @XmlAttribute(name = "abs")
     protected Boolean _abstract = false;

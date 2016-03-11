@@ -477,7 +477,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
      */
     public Set<SqlResultSetMapping> getSqlResultSetMapping() {
         if (sqlResultSetMapping == null) {
-            sqlResultSetMapping = new HashSet<SqlResultSetMapping>();
+            sqlResultSetMapping = new HashSet<>();
         }
         return this.sqlResultSetMapping;
     }
@@ -513,15 +513,18 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @Override
     public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
         this.compositePrimaryKeyClass = compositePrimaryKeyClass;
-        manageCompositePrimaryKeyClass();
+        manageCompositePrimaryKeyType();
     }
 
-    @Override
-    public void manageCompositePrimaryKeyClass() {
+    private void manageCompositePrimaryKeyClass() {
         if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
             compositePrimaryKeyClass = this.getClazz() + "PK";
         }
+    }
+
+    private void manageCompositePrimaryKeyType() {
         if (null != this.getCompositePrimaryKeyType()) {
+
             switch (this.getCompositePrimaryKeyType()) {
                 case EMBEDDEDID:
                     //this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass); //todo urgent
@@ -539,6 +542,19 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
                     break;
             }
         }
+    }
+
+    @Override
+    public void manageCompositePrimaryKey() {
+        manageCompositePrimaryKeyClass();
+        manageCompositePrimaryKeyType();
+    }
+
+    @Override
+    public void clearCompositePrimaryKey() {
+        this.idClass = null;
+        this.compositePrimaryKeyClass = null;
+        this.compositePrimaryKeyType = null;
     }
 
 }

@@ -9,6 +9,7 @@ import org.netbeans.jpa.modeler.spec.TableGenerator;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.widget.properties.customattr.Property;
+import org.openide.windows.WindowManager;
 
 /**
  * Copyright [2014] Gaurav Gupta
@@ -67,7 +68,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         if (generationType == GenerationType.SEQUENCE) {
             SequenceGenerator sequenceGenerator = new SequenceGenerator();
             if (seqgen_name_TextField.getText() == null || seqgen_name_TextField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Sequence Generator name can not be empty", "Name required", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "Sequence Generator name can not be empty", "Name required", JOptionPane.INFORMATION_MESSAGE);
                 throw new IllegalStateException();
             }
             sequenceGenerator.setName(seqgen_name_TextField.getText());
@@ -88,7 +89,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         } else if (generationType == GenerationType.TABLE) {
             TableGenerator tableGenerator = new TableGenerator();
             if (tabgen_name_TextField.getText() == null || tabgen_name_TextField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Table Generator name can not be empty", "Name required", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "Table Generator name can not be empty", "Name required", JOptionPane.INFORMATION_MESSAGE);
                 return null;
             }
             tableGenerator.setName(tabgen_name_TextField.getText());

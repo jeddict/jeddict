@@ -31,6 +31,7 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.NbBundle;
+import org.openide.windows.WindowManager;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
@@ -41,7 +42,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         super(scene, node);
         this.addPropertyChangeListener("class", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
+                JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
                 setName(JavaClassWidget.this.getLabel());//rollback
             } else {
                 setName(value);

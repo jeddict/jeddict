@@ -44,6 +44,7 @@ import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
@@ -56,6 +57,7 @@ import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
@@ -63,7 +65,6 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.list
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ComboBoxListener;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
@@ -133,28 +134,25 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) this.getBaseElementSpec();
             InheritenceStateType inheritenceState = this.getInheritenceState();
             CompositePKProperty property = CompositePKProperty.NONE;
+            List<RelationAttributeWidget> derivedRelationAttributes = getDerivedRelationAttributeWidgets();
+
             boolean visible = false;
             if (this instanceof EntityWidget) {
-                visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1 && (inheritenceState == ROOT || inheritenceState == SINGLETON);
+                visible = getIdAttributeWidgets().size() + derivedRelationAttributes.size() > 1 && (inheritenceState == ROOT || inheritenceState == SINGLETON);
             } else if (this instanceof MappedSuperclassWidget) {
-                visible = getIdAttributeWidgets().size() + getDerivedRelationAttributeWidgets().size() > 1;
+                visible = getIdAttributeWidgets().size() + derivedRelationAttributes.size() > 1;
             }
 
+            if (!visible) {
 //                2.4.1.3 Examples of Derived Identities
 //                Example 5: The parent entity uses IdClass. The dependent's primary key class is of same type as that of the parent entity.
 //                Case (a): The dependent entity uses IdClass:
-//            CompositePKProperty.FIXED_CLASS
-            if (!visible && getDerivedRelationAttributeWidgets().size() == 1) {//check for parent entity pk count
+//                CompositePKProperty.FIXED_CLASS
+                if (derivedRelationAttributes.size() == 1) {//check for parent entity pk count
                 if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && (inheritenceState == ROOT || inheritenceState == SINGLETON))) {
                     RelationAttributeWidget relationAttributeWidget = getDerivedRelationAttributeWidgets().get(0);
-                    IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
-                    EntityWidget targetEntityWidget = null;
-                    if (targetElementWidget instanceof EntityWidget) {
-                        targetEntityWidget = (EntityWidget) targetElementWidget;
-                    } else if (targetElementWidget instanceof RelationAttributeWidget) {
-                        RelationAttributeWidget targetRelationAttributeWidget = (RelationAttributeWidget) targetElementWidget;
-                        targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
-                    }
+                    Entity targetEntitySpec = ((RelationAttribute) relationAttributeWidget.getBaseElementSpec()).getConnectedEntity();
+                    EntityWidget targetEntityWidget = (EntityWidget) getModelerScene().getBaseElement(targetEntitySpec.getId());
                     if (targetEntityWidget.isCompositePKPropertyAllow() == CompositePKProperty.NONE) {
                         visible = false;
                     } else {
@@ -163,19 +161,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     if (visible) {
                         property = CompositePKProperty.AUTO_CLASS;
                     }
+                    }
+                }
+            } else {
+                if ((primaryKeyContainerSpec.getCompositePrimaryKeyClass() == null || primaryKeyContainerSpec.getCompositePrimaryKeyClass().trim().isEmpty())
+                        && (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID || primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
+                    primaryKeyContainerSpec.manageCompositePrimaryKey();
+                    getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
+                }
+                if (property == CompositePKProperty.NONE) {
+                    property = CompositePKProperty.ALL;
                 }
             }
 
-            if (visible) {
-                if ((primaryKeyContainerSpec.getCompositePrimaryKeyClass() == null || primaryKeyContainerSpec.getCompositePrimaryKeyClass().trim().isEmpty())
-                        && (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID || primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
-                    primaryKeyContainerSpec.manageCompositePrimaryKeyClass();
-                    getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-                }
-            }
-            if (visible && property == CompositePKProperty.NONE) {
-                property = CompositePKProperty.ALL;
-            }
 
             return property;
         }
@@ -412,6 +410,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     public EmbeddedIdAttributeWidget addNewEmbeddedIdAttribute(String name, EmbeddedId embeddedId) {
         ManagedClass javaClass = this.getBaseElementSpec();
         if (embeddedId == null) {
+            embeddedId = new EmbeddedId();
             embeddedId.setId(NBModelerUtil.getAutoGeneratedStringId());
             embeddedId.setName(name);
             ((IPersistenceAttributes) javaClass.getAttributes()).setEmbeddedId(embeddedId);

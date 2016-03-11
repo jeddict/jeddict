@@ -35,6 +35,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.WindowManager;
 
 @ActionID(
         category = "Bugtracking",
@@ -66,7 +67,7 @@ public final class ClassWidgetVisibilityActionListener implements ActionListener
                 dialog.setVisible(true);
                 if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
                     JPAModelerUtil.saveFile(entityMapping, file);
-                    int option = JOptionPane.showConfirmDialog(null, "Are you want to open diagram now ?", "Open Diagram", JOptionPane.YES_NO_OPTION);
+                    int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you want to open diagram now ?", "Open Diagram", JOptionPane.YES_NO_OPTION);
                     if (option == javax.swing.JOptionPane.OK_OPTION) {
                         JPAFileActionListener fileListener = new JPAFileActionListener((JPAFileDataObject) context);
                         fileListener.actionPerformed(null);

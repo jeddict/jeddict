@@ -25,6 +25,14 @@ public class DefaultClass extends JavaClass {
     @XmlAttribute(name = "class", required = true)
     private String clazz;
 
+    public DefaultClass() {
+        System.out.println("");
+    }
+
+    public DefaultClass(String clazz) {
+        this.clazz = clazz;
+    }
+
     /**
      * @return the attributes
      */

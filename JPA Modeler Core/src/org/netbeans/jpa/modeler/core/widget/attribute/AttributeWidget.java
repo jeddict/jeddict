@@ -51,6 +51,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.openide.util.NbBundle;
+import org.openide.windows.WindowManager;
 
 /**
  *
@@ -63,7 +64,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         super(scene, nodeWidget, pinWidgetInfo);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
+                JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
                 setName(AttributeWidget.this.getLabel());//rollback
             } else {
                 setName(value);

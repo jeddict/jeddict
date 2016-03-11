@@ -74,14 +74,15 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
+import org.openide.windows.WindowManager;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
     public List<EntityWidget> getEntityWidgets() {
         List<EntityWidget> entityWidgets = new ArrayList<>();
-        for (IFlowElementWidget flowElement : flowElements) {
-            if (flowElement instanceof EntityWidget) {
-                entityWidgets.add((EntityWidget) flowElement);
+        for (IBaseElementWidget baseElement : getBaseElements()) {
+            if (baseElement instanceof EntityWidget) {
+                entityWidgets.add((EntityWidget) baseElement);
             }
         }
         return entityWidgets;
@@ -129,7 +130,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
-                this.flowElements.remove(flowNodeWidget);
+                this.removeBaseElement(flowNodeWidget);
             } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                 if (baseElementWidget instanceof RelationFlowWidget) {
                     RelationFlowWidget relationFlowWidget = (RelationFlowWidget) baseElementWidget;
@@ -150,7 +151,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     relationFlowWidget.setLocked(false);
 
                     relationFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(relationFlowWidget);
+                    this.removeBaseElement(relationFlowWidget);
                 } else if (baseElementWidget instanceof GeneralizationFlowWidget) {
                     GeneralizationFlowWidget generalizationFlowWidget = (GeneralizationFlowWidget) baseElementWidget;
 
@@ -161,7 +162,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     javaSubclass.removeSuperclass(javaSuperclass);
 
                     generalizationFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(generalizationFlowWidget);
+                    this.removeBaseElement(generalizationFlowWidget);
 
                 } else if (baseElementWidget instanceof EmbeddableFlowWidget) {
                     EmbeddableFlowWidget embeddableFlowWidget = (EmbeddableFlowWidget) baseElementWidget;
@@ -173,7 +174,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     embeddableFlowWidget.setLocked(false);
 
                     embeddableFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(embeddableFlowWidget);
+                    this.removeBaseElement(embeddableFlowWidget);
                 } else {
                     throw new InvalidElmentException("Invalid JPA Element");
                 }
@@ -190,7 +191,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         String baseElementId = "";
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
-            this.flowElements.add((IFlowElementWidget) baseElementWidget);
+            this.addBaseElement((IFlowElementWidget) baseElementWidget);
             if (baseElementWidget instanceof IFlowNodeWidget) { //reverse ref
                 ((FlowNodeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((FlowNodeWidget) baseElementWidget).getId();
@@ -318,7 +319,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
             file.getModelerPanelTopComponent().changePersistenceState(false);
             file.save();
-            int option = JOptionPane.showConfirmDialog(null, "Are you want to reload diagram now ?", "Reload Diagram", JOptionPane.YES_NO_OPTION);
+            int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you want to reload diagram now ?", "Reload Diagram", JOptionPane.YES_NO_OPTION);
             if (option == javax.swing.JOptionPane.OK_OPTION) {
                 file.getModelerPanelTopComponent().close();
                 JPAFileActionListener fileListener = new JPAFileActionListener((JPAFileDataObject) file.getModelerFileDataObject());
