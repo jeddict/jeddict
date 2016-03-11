@@ -25,7 +25,10 @@ import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.sessions.DatabaseLogin;
-import org.eclipse.persistence.tools.schemaframework.*;
+import org.eclipse.persistence.tools.schemaframework.JPAMSchemaManager;
+import org.netbeans.api.db.explorer.ConnectionManager;
+import org.netbeans.api.db.explorer.DatabaseConnection;
+import org.netbeans.api.db.explorer.DatabaseException;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
@@ -107,6 +110,8 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.openide.util.Exceptions;
+import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
@@ -130,13 +135,13 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     }
 
     @Override
-    public void loadModelerFile(ModelerFile file) throws Exception {
+    public void loadModelerFile(ModelerFile file) throws org.netbeans.modeler.core.exception.ProcessInterruptedException {
         try {
 
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
-            DBMapping dbMapping = createDBMapping(entityMapping);
+            DBMapping dbMapping = createDBMapping(file, entityMapping);
             scene.setBaseElementSpec(dbMapping);
 
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
@@ -154,10 +159,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             int start = message.lastIndexOf("Exception Description:");
             start = start < 1 ? 0 : start;
             ExceptionUtils.printStackTrace(message.substring(start, end), ex, file);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
-    private DBMapping createDBMapping(EntityMappings entityMapping) throws ClassNotFoundException {
+    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException {
         DBMapping dbMapping = new DBMapping();
         DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnectionCache();
 
@@ -172,6 +179,17 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             databaseLogin.setPassword("");
             databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
         } else {
+            for (DatabaseConnection con : ConnectionManager.getDefault().getConnections()) {
+                if (con.getDriverClass().equals(connection.getDriverClassName())) {
+                    try {
+                        connection.setDriverClass(con.getJDBCDriver().getDriver().getClass());
+                        connection.setDatabaseConnection(con);
+                    } catch (DatabaseException ex) {
+                        file.handleException(ex);
+                    }
+                }
+            }
+
             dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
             contextClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(dynamicClassLoader);
@@ -561,7 +579,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     }
 
     public static void inDev() {
-        JOptionPane.showMessageDialog(null, "This functionality is in developement");
+        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "This functionality is in developement");
     }
 
 }

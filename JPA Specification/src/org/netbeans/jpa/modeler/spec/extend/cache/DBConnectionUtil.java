@@ -88,19 +88,19 @@ public class DBConnectionUtil {
         DatabaseExplorerUIs.connect(dbConComboBox, ConnectionManager.getDefault());
         dbConComboBox.setToolTipText("Available Database Connection");
 
-        for (int i = 0; i < dbConComboBox.getItemCount(); i++) {
-            Object item = dbConComboBox.getItemAt(i);
-            if (dbCache != null && item instanceof DatabaseConnection && ((DatabaseConnection) item).getDatabaseURL().equals(dbCache.getUrl())) {
-                dbConComboBox.setSelectedIndex(i);
-                try {
-                    dbCache.setDriverClass(((DatabaseConnection) item).getJDBCDriver().getDriver().getClass());
-                    dbCache.setDatabaseConnection((DatabaseConnection) item);
-                } catch (DatabaseException ex) {
-                    ExceptionUtils.printStackTrace(ex);
-                }
-                break;
-            }
-        }
+//        for (int i = 0; i < dbConComboBox.getItemCount(); i++) {
+//            Object item = dbConComboBox.getItemAt(i);
+//            if (dbCache != null && item instanceof DatabaseConnection && ((DatabaseConnection) item).getDatabaseURL().equals(dbCache.getUrl())) {
+//                dbConComboBox.setSelectedIndex(i);
+//                try {
+//                    dbCache.setDriverClass(((DatabaseConnection) item).getJDBCDriver().getDriver().getClass());
+//                    dbCache.setDatabaseConnection((DatabaseConnection) item);
+//                } catch (DatabaseException ex) {
+//                    ExceptionUtils.printStackTrace(ex);
+//                }
+//                break;
+//            }
+//        }
     }
 
     public static DatabaseConnection getConnection(ModelerFile file) {
