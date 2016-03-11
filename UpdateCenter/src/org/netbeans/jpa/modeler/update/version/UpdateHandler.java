@@ -1,0 +1,338 @@
+package org.netbeans.jpa.modeler.update.version;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import org.netbeans.api.autoupdate.InstallSupport;
+import org.netbeans.api.autoupdate.InstallSupport.Installer;
+import org.netbeans.api.autoupdate.InstallSupport.Validator;
+import org.netbeans.api.autoupdate.OperationContainer;
+import org.netbeans.api.autoupdate.OperationContainer.OperationInfo;
+import org.netbeans.api.autoupdate.OperationException;
+import org.netbeans.api.autoupdate.OperationSupport.Restarter;
+import org.netbeans.api.autoupdate.UpdateElement;
+import org.netbeans.api.autoupdate.UpdateManager;
+import org.netbeans.api.autoupdate.UpdateUnit;
+import org.netbeans.api.autoupdate.UpdateUnitProvider;
+import org.netbeans.api.autoupdate.UpdateUnitProviderFactory;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.util.Cancellable;
+import org.openide.util.NbBundle;
+
+public final class UpdateHandler {
+
+    public static boolean timeToCheck() {
+        // every startup
+        return true;
+    }
+
+    public static class UpdateHandlerException extends Exception {
+        public UpdateHandlerException(String msg) {
+            super(msg);
+        }
+        public UpdateHandlerException(String msg, Throwable th) {
+            super(msg, th);
+        }
+    }
+
+    public static void checkAndHandleUpdates() {
+
+        JPAModelerInstaller.info("Checking for updates to JPA Modeler plugin...");
+
+        // refresh silent update center first
+        refreshSilentUpdateProvider();
+
+        Collection<UpdateElement> updates = findUpdates();
+        Collection<UpdateElement> available = Collections.emptySet();
+        if (installNewModules()) {
+            available = findNewModules();
+        }
+        if (updates.isEmpty() && available.isEmpty()) {
+            // none for install
+            JPAModelerInstaller.info("JPA Modeler plugin is up to date.");
+            return;
+        }
+
+        JPAModelerInstaller.info("Found new JPA Modeler plugin version, updating...");
+
+        // create a container for install
+        OperationContainer<InstallSupport> containerForInstall = feedContainer(available, false);
+        if (containerForInstall != null) {
+            try {
+                handleInstall(containerForInstall);
+                JPAModelerInstaller.info("JPA Modeler plugin installation finished.");
+            } catch (UpdateHandlerException ex) {
+                JPAModelerInstaller.error(ex.toString());
+
+                // cancel progress bar
+                InstallSupport support = containerForInstall.getSupport();
+                try {
+                    support.doCancel();
+                } catch (OperationException ex1) {
+                    JPAModelerInstaller.error(ex1.toString());
+                }
+
+                return;
+            }
+        }
+
+        // create a container for update
+        OperationContainer<InstallSupport> containerForUpdate = feedContainer(updates, true);
+        if (containerForUpdate != null) {
+            try {
+                handleInstall(containerForUpdate);
+                JPAModelerInstaller.info("JPA Modeler plugin update finished.");
+            } catch (UpdateHandlerException ex) {
+                JPAModelerInstaller.error(ex.toString());
+
+                // cancel progress bar
+                InstallSupport support = containerForUpdate.getSupport();
+                try {
+                    support.doCancel();
+                } catch (OperationException ex1) {
+                    JPAModelerInstaller.error(ex1.toString());
+                }
+
+                return;
+            }
+        }
+
+    }
+
+    public static boolean isLicenseApproved(String license) {
+        // place your code there
+        return true;
+    }
+
+    // package private methods
+    static Collection<UpdateElement> findUpdates() {
+        // check updates
+        Collection<UpdateElement> elements4update = new HashSet<UpdateElement>();
+        List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
+        for (UpdateUnit unit : updateUnits) {
+            if (unit.getInstalled() != null) { // means the plugin already installed
+                if (unit.getCodeName().equals(JPAModelerInstaller.CODENAME)) { // this is our current plugin
+                    if (!unit.getAvailableUpdates().isEmpty()) { // has updates
+                        elements4update.add(unit.getAvailableUpdates().get(0)); // add plugin with highest version
+                    }
+                }
+            }
+        }
+        return elements4update;
+    }
+
+    static void handleInstall(OperationContainer<InstallSupport> container) throws UpdateHandlerException {
+        // check licenses
+        if (!allLicensesApproved(container)) {
+            // have a problem => cannot continue
+            throw new UpdateHandlerException("Cannot continue because license approval is missing.");
+        }
+        
+        InstallSupport support = container.getSupport();
+
+        // download
+        Validator v = null;
+        try {
+            v = doDownload(support);
+        } catch (OperationException | NullPointerException ex) {
+            throw new UpdateHandlerException("A problem caught while downloading, cause: ", ex);
+        }
+        if (v == null) {
+            // have a problem => cannot continue
+            throw new UpdateHandlerException("Missing Update Validator => cannot continue.");
+        }
+
+        // verify
+        Installer i = null;
+        try {
+            i = doVerify(support, v);
+        } catch (OperationException ex) {
+            // caught a exception
+            throw new UpdateHandlerException("A problem caught while verification of updates, cause: ", ex);
+        }
+        if (i == null) {
+            // have a problem => cannot continue
+            throw new UpdateHandlerException("Missing Update Installer => cannot continue.");
+        }
+
+        // install
+        Restarter r = null;
+        try {
+            r = doInstall(support, i);
+        } catch (OperationException ex) {
+            // caught a exception
+            throw new UpdateHandlerException("A problem caught while installation of updates, cause: ", ex);
+        }
+
+        // restart later
+        support.doRestartLater(r);
+    }
+
+    static Collection<UpdateElement> findNewModules() {
+        // check updates
+        Collection<UpdateElement> elements4install = new HashSet<>();
+        List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
+        for (UpdateUnit unit : updateUnits) {
+            if (unit.getInstalled() == null) { // means the plugin is not installed yet
+                if (unit.getCodeName().equals(JPAModelerInstaller.CODENAME)) { // this is our current plugin
+                    if (!unit.getAvailableUpdates().isEmpty()) { // is available
+                        elements4install.add(unit.getAvailableUpdates().get(0)); // add plugin with highest version
+                    }
+                }
+            }
+        }
+        return elements4install;
+    }
+
+    static void refreshSilentUpdateProvider() {
+        UpdateUnitProvider silentUpdateProvider = getSilentUpdateProvider();
+        if (silentUpdateProvider == null) {
+            // have a problem => cannot continue
+            JPAModelerInstaller.info("Missing Silent Update Provider => cannot continue.");
+            return ;
+        }
+        try {
+            final String displayName = "Checking for updates to JPA Modeler plugin...";
+            silentUpdateProvider.refresh(
+                ProgressHandleFactory.createHandle(
+                    displayName,
+                    new Cancellable () {
+                        @Override
+                        public boolean cancel () {
+                            return true;
+                        }
+                    }
+                ),
+                true
+            );
+        } catch (IOException ex) {
+            // caught a exception
+            JPAModelerInstaller.error("A problem caught while refreshing Update Centers, cause: " + ex.toString());
+        }
+    }
+
+    static UpdateUnitProvider getSilentUpdateProvider() {
+        List<UpdateUnitProvider> providers = UpdateUnitProviderFactory.getDefault().getUpdateUnitProviders(true);
+        String oldCodename = "org.netbeans.jpa.modeler";
+        for (UpdateUnitProvider p : providers) {
+            JPAModelerInstaller.info("Silent Update Provider " + p.getName());
+            if (p.getName().equals(oldCodename) || p.getName().equals(JPAModelerInstaller.CODENAME)) { // this is our current plugin
+                try {
+                    final String displayName = "Checking for updates to JPA Modeler plugin...";
+                    p.refresh(
+                        ProgressHandleFactory.createHandle(
+                            displayName,
+                            new Cancellable () {
+                                @Override
+                                public boolean cancel () {
+                                    return true;
+                                }
+                            }
+                        ),
+                        true
+                    );
+                } catch (IOException ex) {
+                    // caught a exception
+                    JPAModelerInstaller.error("A problem caught while refreshing Update Centers, cause: " + ex.toString());
+                }
+                return p;
+            }
+        }
+        return null;
+    }
+
+    static OperationContainer<InstallSupport> feedContainer(Collection<UpdateElement> updates, boolean update) {
+        if (updates == null || updates.isEmpty()) {
+            return null;
+        }
+        // create a container for update
+        OperationContainer<InstallSupport> container;
+        if (update) {
+            container = OperationContainer.createForUpdate();
+        } else {
+            container = OperationContainer.createForInstall();
+        }
+
+        // loop all updates and add to container for update
+        for (UpdateElement ue : updates) {
+            if (container.canBeAdded(ue.getUpdateUnit(), ue) && ue.getCodeName().equals(JPAModelerInstaller.CODENAME)) {
+                JPAModelerInstaller.info("Update to JPA Modeler plugin found: " + ue);
+                OperationInfo<InstallSupport> operationInfo = container.add(ue);
+                if (operationInfo == null) {
+                    continue;
+                }
+                container.add(operationInfo.getRequiredElements());
+                if (!operationInfo.getBrokenDependencies().isEmpty()) {
+                    // have a problem => cannot continue
+                    JPAModelerInstaller.info("There are broken dependencies => cannot continue, broken deps: " + operationInfo.getBrokenDependencies());
+                    return null;
+                }
+            }
+        }
+        return container;
+    }
+
+    static boolean allLicensesApproved(OperationContainer<InstallSupport> container) {
+        if (!container.listInvalid().isEmpty()) {
+            return false;
+        }
+        for (OperationInfo<InstallSupport> info : container.listAll()) {
+            String license = info.getUpdateElement().getLicence();
+            if (!isLicenseApproved(license)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static Validator doDownload(InstallSupport support) throws OperationException {
+        final String displayName = "Downloading new version of JPA Modeler plugin...";
+        ProgressHandle downloadHandle = ProgressHandleFactory.createHandle(
+            displayName,
+            new Cancellable () {
+                @Override
+                public boolean cancel () {
+                    return true;
+                }
+            }
+        );
+        return support.doDownload(downloadHandle, true);
+    }
+
+    static Installer doVerify(InstallSupport support, Validator validator) throws OperationException {
+        final String displayName = "Validating JPA Modeler plugin...";
+        ProgressHandle validateHandle = ProgressHandleFactory.createHandle(
+            displayName,
+            new Cancellable () {
+                @Override
+                public boolean cancel () {
+                    return true;
+                }
+            }
+        );
+        Installer installer = support.doValidate(validator, validateHandle);
+        return installer;
+    }
+
+    static Restarter doInstall(InstallSupport support, Installer installer) throws OperationException {
+        final String displayName = "Installing JPA Modeler plugin...";
+        ProgressHandle installHandle = ProgressHandleFactory.createHandle(
+            displayName,
+            new Cancellable () {
+                @Override
+                public boolean cancel () {
+                    return true;
+                }
+            }
+        );
+        return support.doInstall(installer, installHandle);
+    }
+
+    private static boolean installNewModules() {
+        String s = NbBundle.getBundle("org.netbeans.jpa.modeler.update.version.Bundle").getString("UpdateHandler.NewModules");
+        return Boolean.parseBoolean(s);
+    }
+}
