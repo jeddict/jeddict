@@ -26,8 +26,6 @@ import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.tools.schemaframework.JPAMSchemaManager;
-import org.netbeans.api.db.explorer.ConnectionManager;
-import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.db.explorer.DatabaseException;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
@@ -110,7 +108,8 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.util.Exceptions;
+import org.netbeans.modules.db.explorer.ConnectionList;
+import org.netbeans.modules.db.explorer.action.ConnectAction;
 import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
@@ -120,7 +119,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public static Image PRIMARYKEY;
     public static Image TAB_ICON;
     public static ImageIcon RELOAD_ICON;
+    public static ImageIcon VIEW_SQL;
 
+    static {// required to load before init
+            ClassLoader cl = DBModelerUtil.class.getClassLoader();
+            VIEW_SQL = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/VIEW_SQL.png"));
+    }
     @Override
     public void init() {
         if (COLUMN == null) {
@@ -167,57 +171,61 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException {
         DBMapping dbMapping = new DBMapping();
         DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnectionCache();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        DatabaseLogin databaseLogin = new DatabaseLogin();
 
         ClassLoader dynamicClassLoader;
+        try {
 
-        DatabaseLogin databaseLogin = new DatabaseLogin();
-        ClassLoader contextClassLoader = null;
-        if (connection == null) {
-            dynamicClassLoader = new DynamicDriverClassLoader();
-            databaseLogin.setDatabaseURL(DEFAULT_URL);
-            databaseLogin.setUserName("");
-            databaseLogin.setPassword("");
-            databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
-        } else {
-            for (DatabaseConnection con : ConnectionManager.getDefault().getConnections()) {
-                if (con.getDriverClass().equals(connection.getDriverClassName())) {
-                    try {
-                        connection.setDriverClass(con.getJDBCDriver().getDriver().getClass());
-                        connection.setDatabaseConnection(con);
-                    } catch (DatabaseException ex) {
-                        file.handleException(ex);
+            if (connection == null) {
+                dynamicClassLoader = new DynamicDriverClassLoader();
+                databaseLogin.setDatabaseURL(DEFAULT_URL);
+                databaseLogin.setUserName("");
+                databaseLogin.setPassword("");
+                databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
+            } else {
+                if (connection.getDriverClass() == null) {
+                    for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
+                        if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
+                            new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
+                            try {
+                                connection.setDriverClass(con.getDatabaseConnection().getJDBCDriver().getDriver().getClass());
+                                connection.setDatabaseConnection(con.getDatabaseConnection());
+                            } catch (DatabaseException ex) {
+                                file.handleException(ex);
+                            }
+                            break;
+                        }
                     }
                 }
+                dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
+                Thread.currentThread().setContextClassLoader(dynamicClassLoader);
+                databaseLogin.setDatabaseURL(connection.getUrl());
+                databaseLogin.setUserName(connection.getUserName());
+                databaseLogin.setPassword(connection.getPassword());
+                databaseLogin.setDriverClass(connection.getDriverClass());
             }
+            DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
+            JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
+            XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
+            JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
 
-            dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
-            contextClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(dynamicClassLoader);
-            databaseLogin.setDatabaseURL(connection.getUrl());
-            databaseLogin.setUserName(connection.getUserName());
-            databaseLogin.setPassword(connection.getPassword());
-            databaseLogin.setDriverClass(connection.getDriverClass());
-        }
-        DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
-        JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
-        XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
-        JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
+            processor.setClassLoader(dynamicClassLoader);
+            processor.createDynamicClasses();
+            processor.createRestInterfaces();
+            processor.addEntityListeners();
+            session.getProject().convertClassNamesToClasses(dynamicClassLoader);
+            processor.processCustomizers();
+            session.loginAndDetectDatasource();
 
-        processor.setClassLoader(dynamicClassLoader);
-        processor.createDynamicClasses();
-        processor.createRestInterfaces();
-        processor.addEntityListeners();
-        session.getProject().convertClassNamesToClasses(dynamicClassLoader);
-        processor.processCustomizers();
-        session.loginAndDetectDatasource();
+            JPAMSchemaManager mgr = new JPAMSchemaManager(dbMapping, session);
+            mgr.createDefaultTables(true);
 
-        JPAMSchemaManager mgr = new JPAMSchemaManager(dbMapping, session);
-        mgr.createDefaultTables(true);
-
-        session.logout();
-
-        if (connection != null) {
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
+            session.logout();
+        } finally {
+            if (connection != null) {
+                Thread.currentThread().setContextClassLoader(contextClassLoader);
+            }
         }
         return dbMapping;
     }

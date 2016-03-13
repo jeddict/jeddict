@@ -23,6 +23,8 @@ import org.netbeans.api.db.explorer.support.DatabaseExplorerUIs;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modules.db.explorer.ConnectionList;
+import org.netbeans.modules.db.explorer.action.ConnectAction;
 
 /**
  *
@@ -70,37 +72,28 @@ public class DBConnectionUtil {
         }
     }
 
-    public static void loadConnection(ModelerFile file, JComboBox dbConComboBox) {
-        loadConnection((EntityMappings) file.getDefinitionElement(), dbConComboBox);
-    }
-
     /**
      * Load combobox with DB connection
      *
      * @param entityMappings
      * @param dbConComboBox
      */
-    public static void loadConnection(EntityMappings entityMappings, JComboBox dbConComboBox) {
-//            DatabaseConnection connection = DBConnectionUtil.getConnection(dbConComboBox);
+    public static void loadConnection(ModelerFile file, JComboBox dbConComboBox) {
+        EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
         Cache cache = entityMappings.getCache();
         DatabaseConnectionCache dbCache = cache.getDatabaseConnectionCache();
 
         DatabaseExplorerUIs.connect(dbConComboBox, ConnectionManager.getDefault());
         dbConComboBox.setToolTipText("Available Database Connection");
 
-//        for (int i = 0; i < dbConComboBox.getItemCount(); i++) {
-//            Object item = dbConComboBox.getItemAt(i);
-//            if (dbCache != null && item instanceof DatabaseConnection && ((DatabaseConnection) item).getDatabaseURL().equals(dbCache.getUrl())) {
-//                dbConComboBox.setSelectedIndex(i);
-//                try {
-//                    dbCache.setDriverClass(((DatabaseConnection) item).getJDBCDriver().getDriver().getClass());
-//                    dbCache.setDatabaseConnection((DatabaseConnection) item);
-//                } catch (DatabaseException ex) {
-//                    ExceptionUtils.printStackTrace(ex);
-//                }
-//                break;
-//            }
-//        }
+        for (int i = 0; i < dbConComboBox.getItemCount(); i++) {
+            Object item = dbConComboBox.getItemAt(i);
+            if (dbCache != null && item instanceof DatabaseConnection && ((DatabaseConnection) item).getDatabaseURL().equals(dbCache.getUrl())) {
+                dbConComboBox.setSelectedIndex(i);
+                break;
+            }
+        }
+     
     }
 
     public static DatabaseConnection getConnection(ModelerFile file) {
