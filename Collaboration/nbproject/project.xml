@@ -81,6 +81,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>org.netbeans.jpa.modeler.collaborate.enhancement</package>
                 <package>org.netbeans.jpa.modeler.collaborate.issues</package>
                 <package>org.netbeans.jpa.modeler.network.social</package>
                 <package>org.netbeans.jpa.modeler.network.social.linkedin</package>

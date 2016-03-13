@@ -31,7 +31,7 @@ import org.netbeans.modeler.core.IExceptionHandler;
  */
 public final class ExceptionUtils implements IExceptionHandler {
 
-    final static String ISSUES_URL = "https://github.com/jGauravGupta/jpamodeler/issues/new";
+    public static final String ISSUES_URL = "https://github.com/jGauravGupta/jpamodeler/issues/new";
 
     static final Logger LOG = Logger.getLogger(ExceptionUtils.class.getName());
 
