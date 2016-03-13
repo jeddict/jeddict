@@ -28,6 +28,7 @@ import org.eclipse.persistence.dynamic.DynamicClassWriter;
 public class DynamicDriverClassLoader extends DynamicClassLoader {
 
     private ChildClassLoader childClassLoader;
+    private ChildClassLoader driverClassLoader;
 
     /**
      * Create a DynamicClassLoader providing the delegate loader and leaving the
@@ -35,24 +36,32 @@ public class DynamicDriverClassLoader extends DynamicClassLoader {
      */
     public DynamicDriverClassLoader(Class loadClass) {
         super(Thread.currentThread().getContextClassLoader());
-        childClassLoader = new ChildClassLoader(loadClass.getClassLoader(), new DetectClass(this.getParent()));
+        childClassLoader = new ChildClassLoader(this.getClass().getClassLoader(), new DetectClass(this.getParent()));
+        driverClassLoader = new ChildClassLoader(loadClass.getClassLoader(), new DetectClass(this.getParent()));
     }
 
     @Override
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (childClassLoader == null) {
-            return super.loadClass(name, resolve);
-        } else {
-            try {
-                return childClassLoader.searchClass(name);
-            } catch (ClassNotFoundException e) {
-                return super.loadClass(name, resolve);
+        Class<?> _class;
+        try {
+            _class = childClassLoader.searchClass(name);// To load class Object,Long,String etc.
+        } catch (ClassNotFoundException e) {
+            if (driverClassLoader != null) {
+                try {
+                    _class = driverClassLoader.searchClass(name);// To load driver class e.g : Oracle, MySql etc
+                } catch (ClassNotFoundException e2) {
+                    _class = super.loadClass(name, resolve);
+                }
+            } else {
+                _class = super.loadClass(name, resolve);//To Load DynamicEntity e.g : Entity1, Entity2 etc
             }
         }
+        return _class;
     }
 
     public DynamicDriverClassLoader() {
         super(Thread.currentThread().getContextClassLoader());
+        childClassLoader = new ChildClassLoader(this.getClass().getClassLoader(), new DetectClass(this.getParent()));
     }
 
     /**
