@@ -15,23 +15,30 @@
  */
 package org.netbeans.db.modeler.specification.model.scene;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.toList;
-import org.netbeans.db.modeler.core.widget.ColumnWidget;
-import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
-import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
-import org.netbeans.db.modeler.core.widget.TableWidget;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.VIEW_SQL;
+import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -52,29 +59,31 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
             if (baseElementWidget instanceof FlowNodeWidget) { //reverse ref
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
-                    if (baseElementWidget instanceof TableWidget) {
-                        TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
-                        tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
-                        for (ForeignKeyWidget foreignKeyWidget : tableWidget.getForeignKeyWidgets()) {
-                            foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> { ((ReferenceFlowWidget)w).remove();});
-                        }
-                        tableWidget.setLocked(false);
+                if (baseElementWidget instanceof TableWidget) {
+                    TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
+                    tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
+                    for (ForeignKeyWidget foreignKeyWidget : tableWidget.getForeignKeyWidgets()) {
+                        foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
+                            ((ReferenceFlowWidget) w).remove();
+                        });
                     }
+                    tableWidget.setLocked(false);
+                }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
-                this.flowElements.remove(flowNodeWidget);
+                this.removeBaseElement(flowNodeWidget);
             } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                 if (baseElementWidget instanceof ReferenceFlowWidget) {
                     ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) baseElementWidget;
                     referenceFlowWidget.setLocked(true);
                     ForeignKeyWidget foreignKeyWidget = referenceFlowWidget.getSourceWidget();
                     foreignKeyWidget.remove();
-                    ColumnWidget columnWidget = referenceFlowWidget.getTargetWidget();
+                    ColumnWidget columnWidget = (ColumnWidget) referenceFlowWidget.getTargetWidget();
                     columnWidget.remove();
                     referenceFlowWidget.setLocked(false);
                     referenceFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(referenceFlowWidget);
-                }  else {
+                    this.removeBaseElement(referenceFlowWidget);
+                } else {
                     throw new InvalidElmentException("Invalid JPA Element");
                 }
 
@@ -90,7 +99,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
         String baseElementId;
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
-            this.flowElements.add((IFlowElementWidget) baseElementWidget);
+            this.addBaseElement(baseElementWidget);
             if (baseElementWidget instanceof IFlowNodeWidget) { //reverse ref
                 ((FlowNodeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((FlowNodeWidget) baseElementWidget).getId();
@@ -175,24 +184,44 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public void destroy() {
-        if (this.getModelerFile().isLoaded()) {
-            this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
-                    .filter(c -> c instanceof DBForeignKey).collect(toList())
-                    .forEach((DBColumn column) -> {
-                        List<JoinColumn> joinColumns;
-                        JoinColumn joinColumn;
-                        joinColumn = ((DBForeignKey) column).getJoinColumn();
-                        joinColumns = ((DBForeignKey) column).getJoinColumns();
-                        if (JoinColumnValidator.isEmpty(joinColumn)) {
-                            joinColumns.remove(joinColumn);
-                        }
-                    });
+        try {
+            if (this.getModelerFile().isLoaded() && this.getBaseElementSpec() != null) {
+                this.getBaseElementSpec().getTables().stream().map(t -> t.getEntity()).forEach(e -> {
+                    AttributeValidator.filter(e);
+                    AssociationValidator.filter(e);
+                });
+                this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
+                        .filter(c -> c instanceof DBForeignKey).collect(toList())
+                        .forEach((DBColumn column) -> {
+                            List<JoinColumn> joinColumns;
+                            JoinColumn joinColumn;
+                            joinColumn = ((DBForeignKey) column).getJoinColumn();
+                            joinColumns = ((DBForeignKey) column).getJoinColumns();
+                            if (joinColumn != null && JoinColumnValidator.isEmpty(joinColumn)) {
+                                joinColumns.remove(joinColumn);
+                            }
+                        });
+            }
+        } catch (Exception ex) {
+            this.getModelerFile().handleException(ex);
         }
     }
 
     @Override
     public void init() {
         super.init();
+    }
+
+    @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuList = super.getPopupMenuItemList();
+        JMenuItem openSQLEditor = new JMenuItem("View SQL",VIEW_SQL);
+        openSQLEditor.addActionListener((ActionEvent e) -> {
+            SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
+        });
+
+        menuList.add(0, openSQLEditor);
+        return menuList;
     }
 
 }

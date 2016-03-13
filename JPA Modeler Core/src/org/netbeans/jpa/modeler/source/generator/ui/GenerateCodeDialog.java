@@ -252,7 +252,7 @@ public class GenerateCodeDialog extends GenericDialog
     }//GEN-LAST:event_cencelGenerateCodeActionPerformed
 
     private void generateDefaultValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateDefaultValueActionPerformed
-           GeneratorUtil.setGenerateDefaultValue(generateDefaultValue.isSelected());
+        GeneratorUtil.setGenerateDefaultValue(generateDefaultValue.isSelected());
     }//GEN-LAST:event_generateDefaultValueActionPerformed
 
     public String getSelectedFolderName() {
@@ -266,7 +266,6 @@ public class GenerateCodeDialog extends GenericDialog
         return null;
     }
 
- 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         String propName = "";
@@ -357,7 +356,7 @@ public class GenerateCodeDialog extends GenericDialog
             } else {
                 targetProjectCombo.setSelectedIndex(-1);
             }
-             // Issue Fix #5850 End
+            // Issue Fix #5850 End
 
             // When the selected index was set to -1 it reset the targetPrj
             // value.  Since the targetPrj was simply initialized with the

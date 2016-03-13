@@ -15,18 +15,16 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Column;
 import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public abstract class PersistenceBaseAttribute extends BaseAttribute implements ColumnHandler{
+public abstract class PersistenceBaseAttribute extends BaseAttribute implements ColumnHandler {
 
     @XmlAttribute(name = "attribute-type", required = true)
     private String attributeType;
@@ -96,7 +94,6 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
 //            setColumn(null);
 //        }
 //    }
-
     /**
      * Gets the value of the column property.
      *

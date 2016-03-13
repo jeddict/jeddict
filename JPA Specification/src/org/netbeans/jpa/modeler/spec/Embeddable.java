@@ -6,19 +6,12 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -88,6 +81,7 @@ public class Embeddable extends ManagedClass {
     public EmbeddableAttributes getAttributes() {
         if (attributes == null) {
             attributes = new EmbeddableAttributes();
+            attributes.setJavaClass(this);
         }
         return attributes;
     }
@@ -116,7 +110,5 @@ public class Embeddable extends ManagedClass {
     public void setAttributes(IAttributes attributes) {
         this.attributes = (EmbeddableAttributes) attributes;
     }
-
- 
 
 }

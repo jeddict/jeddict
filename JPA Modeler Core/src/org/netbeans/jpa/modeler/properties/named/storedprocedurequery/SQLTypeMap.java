@@ -21,14 +21,15 @@ import java.sql.Types;
  * Converts database types to Java class types.
  */
 public class SQLTypeMap {
+
     /**
      * Translates a data type from an integer (java.sql.Types value) to a string
      * that represents the corresponding class.
-     * 
-     * @param type
-     *            The java.sql.Types value to convert to its corresponding class.
-     * @return The class that corresponds to the given java.sql.Types
-     *         value, or Object.class if the type has no known mapping.
+     *
+     * @param type The java.sql.Types value to convert to its corresponding
+     * class.
+     * @return The class that corresponds to the given java.sql.Types value, or
+     * Object.class if the type has no known mapping.
      */
     public static Class<?> toClass(int type) {
         Class<?> result = Object.class;
@@ -44,12 +45,11 @@ public class SQLTypeMap {
             case Types.DECIMAL:
                 result = java.math.BigDecimal.class;
                 break;
-                
+
             case Types.BOOLEAN:
             case Types.BIT:
                 result = Boolean.class;
                 break;
-                
 
             case Types.TINYINT:
                 result = Byte.class;

@@ -104,8 +104,8 @@ public class JPAMSchemaManager {
      */
     public void appendToDDLWriter(String stringToWrite) {
         // If this method is called, we know that it is the old case and
-        // it would not matter which schemaWriter we use as both the 
-        // create and drop schemaWriters are essentially the same. 
+        // it would not matter which schemaWriter we use as both the
+        // create and drop schemaWriters are essentially the same.
         // So just pick one.
         appendToDDLWriter(createSchemaWriter, stringToWrite);
     }
@@ -227,7 +227,7 @@ public class JPAMSchemaManager {
         for (ForeignKeyConstraint foreignKey : tableDefinition.getForeignKeyMap().values()) {
             if (!foreignKey.disableForeignKey()) {
                 String query = tableDefinition.buildConstraintCreationWriter(session, foreignKey, new StringWriter()).toString();
-                System.out.println("GG foreign : " + query);
+                getDBMapping().putAlterQuery(tableDefinition.getName(), query);
 
             }
         }
@@ -236,14 +236,14 @@ public class JPAMSchemaManager {
 
     public void createMapping(DatabaseObjectDefinition databaseObjectDefinition) {
         JPAMTableDefinition tableDefinition = ((JPAMTableDefinition) databaseObjectDefinition);
-        tableDefinition.buildDBTable(session, dbMapping);
+        tableDefinition.buildDBTable(session, getDBMapping());
 
     }
 
     public void createReference(DatabaseObjectDefinition databaseObjectDefinition) {
 
         JPAMTableDefinition tableDefinition = ((JPAMTableDefinition) databaseObjectDefinition);
-        DBTable sourceTable = dbMapping.getTable(tableDefinition.getFullName());
+        DBTable sourceTable = getDBMapping().getTable(tableDefinition.getFullName());
 
         if ((!session.getPlatform().supportsForeignKeyConstraints()) || tableDefinition.getForeignKeyMap().isEmpty()) {
             return;
@@ -257,7 +257,7 @@ public class JPAMSchemaManager {
                 if (foreignKey.hasForeignKeyDefinition()) {
                     //TODO : foreignKey.getForeignKeyDefinition()
                 } else {
-                    DBTable targetTable = dbMapping.getTable(foreignKey.getTargetTable());
+                    DBTable targetTable = getDBMapping().getTable(foreignKey.getTargetTable());
 
                     for (int i = 0; i < foreignKey.getSourceFields().size(); i++) {
                         DBColumn sourceColumn = sourceTable.getColumn(foreignKey.getSourceFields().get(i));
@@ -278,7 +278,7 @@ public class JPAMSchemaManager {
      * Use the definition object to create the schema entity on the database.
      * This is used for creating tables, views, procedures ... etc ...
      */
-    public void createObject(DatabaseObjectDefinition databaseObjectDefinition) throws EclipseLinkException {
+    public String createObject(DatabaseObjectDefinition databaseObjectDefinition) throws EclipseLinkException {
         //        boolean usesBatchWriting = false;
         //
         //        if (getSession().getPlatform().usesBatchWriting()) {
@@ -288,32 +288,32 @@ public class JPAMSchemaManager {
 
         //        try {
         //            if (shouldWriteToDatabase()) {
-        //                // Check if we should create a database schema for this 
-        //                // database object definition on the database. It is only 
+        //                // Check if we should create a database schema for this
+        //                // database object definition on the database. It is only
         //                // create once and for the first database object definition
         //                // that references it.
         //                if (shouldCreateDatabaseSchema(databaseObjectDefinition, createdDatabaseSchemasOnDatabase)) {
         //                    databaseObjectDefinition.createDatabaseSchemaOnDatabase(getSession(), createdDatabaseSchemasOnDatabase);
         //                }
-        //                
+        //
         //                databaseObjectDefinition.createOnDatabase(getSession());
         String query = ((TableDefinition) databaseObjectDefinition).buildCreationWriter(session, new StringWriter()).toString();
         System.out.println("query : " + query);
         //            } else {
-        //                // Check if we should create a database schema for this 
-        //                // database object definition on the database. It is only 
+        //                // Check if we should create a database schema for this
+        //                // database object definition on the database. It is only
         //                // create once and for the first database object definition
         //                // that references it.
-        //                if (shouldCreateDatabaseSchema(databaseObjectDefinition, createdDatabaseSchemas)) {
-        //                    databaseObjectDefinition.createDatabaseSchema(getSession(), createSchemaWriter, createdDatabaseSchemas);
-        //                    appendToDDLWriter(createSchemaWriter, "\n");
-        //                }
-        //                
-        //                databaseObjectDefinition.createObject(getSession(), createSchemaWriter);
-        //                if (createSQLFiles){
-        //                    this.appendToDDLWriter(createSchemaWriter, getSession().getPlatform().getStoredProcedureTerminationToken());
-        //                }
-        //                this.appendToDDLWriter(createSchemaWriter, "\n");
+        //        if (shouldCreateDatabaseSchema(databaseObjectDefinition, createdDatabaseSchemas)) {
+        //        databaseObjectDefinition.createDatabaseSchema(getSession(), createSchemaWriter, createdDatabaseSchemas);
+        //        appendToDDLWriter(createSchemaWriter, "\n");
+        ////        }
+        //
+        //        databaseObjectDefinition.createObject(getSession(), createSchemaWriter);
+        //        if (createSQLFiles) {
+        //            this.appendToDDLWriter(createSchemaWriter, getSession().getPlatform().getStoredProcedureTerminationToken());
+        //        }
+        //        this.appendToDDLWriter(createSchemaWriter, "\n");
         //            }
         //            databaseObjectDefinition.postCreateObject(getSession(), createSchemaWriter, createSQLFiles);
         //        } finally {
@@ -321,6 +321,7 @@ public class JPAMSchemaManager {
         //                getSession().getPlatform().setUsesBatchWriting(true);
         //            }
         //        }
+        return query;
     }
 
     /**
@@ -412,7 +413,7 @@ public class JPAMSchemaManager {
                 if (!createdTableNames.contains(tableDefinition.getFullName())) {
                     createdTableNames.add(tableDefinition.getFullName());
 
-                    // Check if it exists on the database. NOTE: when writing to scripts only with 
+                    // Check if it exists on the database. NOTE: when writing to scripts only with
                     // no connection, this of course will always return false hence the need for
                     // the createdSequenceTableNames collection above.
                     boolean exists = checkTableExists(tableDefinition);
@@ -423,18 +424,20 @@ public class JPAMSchemaManager {
                         if ((shouldWriteToDatabase() && !exists) || !shouldWriteToDatabase()) {
                             createObject(tableDefinition);
                         }
-                    } else // Don't check exists since if writing to scripts only with no connection, 
-                    // we'll never write the sql out. When executing to the database, the drop 
-                    // will fail and we'll ignore it. Note: TableSequenceDefinition's will drop 
-                    // their table definitions as needed (i.e.) when the jpa create database 
+                    } else // Don't check exists since if writing to scripts only with no connection,
+                    // we'll never write the sql out. When executing to the database, the drop
+                    // will fail and we'll ignore it. Note: TableSequenceDefinition's will drop
+                    // their table definitions as needed (i.e.) when the jpa create database
                     // schemas flag is set and the table definition has a schema. Otherwise,
                     // we should not drop sequence tables since they may be re-used across
                     // persistence units (default behavior right now).
                     // TODO: We should drop them really unless it is the default SEQUENCE table??
-                     if (replace) {
+                    {
+                        if (replace) {
                             dropObject(tableDefinition);
                             createObject(tableDefinition);
                         }
+                    }
                 }
             }
         } catch (DatabaseException exception) {
@@ -447,8 +450,8 @@ public class JPAMSchemaManager {
                 createObject(definition);
             } else {
                 try {
-                    // If the sequence definition has and will drop a table definition, then check 
-                    // if we have already dropped it. Table definitions are dropped as a whole if 
+                    // If the sequence definition has and will drop a table definition, then check
+                    // if we have already dropped it. Table definitions are dropped as a whole if
                     // they have a schema name and the jpa create database schemas flag is set to true.
                     if (definition.isTableSequenceDefinition()) {
                         if (((TableSequenceDefinition) definition).shouldDropTableDefinition()) {
@@ -1060,7 +1063,7 @@ public class JPAMSchemaManager {
      * with.
      */
     public void createDefaultTables(boolean generateFKConstraints) {
-        //Create each table w/o throwing exception and/or exit if some of them are already existed in the db. 
+        //Create each table w/o throwing exception and/or exit if some of them are already existed in the db.
         //If a table is already existed, skip the creation.
 
         //        boolean shouldLogExceptionStackTrace = getSession().getSessionLog().shouldLogExceptionStackTrace();
@@ -1112,7 +1115,7 @@ public class JPAMSchemaManager {
             // Drop the sequences.
             dropSequences();
 
-            // Drop all the database schemas now if set to do so. This must be 
+            // Drop all the database schemas now if set to do so. This must be
             // called after all the constraints, tables etc. are dropped.
             dropDatabaseSchemas();
         } catch (DatabaseException ex) {
@@ -1155,7 +1158,7 @@ public class JPAMSchemaManager {
             JPAMTableCreator tableCreator = getDefaultTableCreator(generateFKConstraints);
             tableCreator.replaceTables(this.session, this, createSequenceTables, createSequences);
 
-            // Drop all the database schemas now if set to do so. This must be 
+            // Drop all the database schemas now if set to do so. This must be
             // called after all the constraints, tables etc. are dropped.
             dropDatabaseSchemas();
         } catch (DatabaseException exception) {
@@ -1239,6 +1242,13 @@ public class JPAMSchemaManager {
 //            this.session.getDatabaseEventListener().remove(this.session);
 //            this.session.getDatabaseEventListener().register(this.session);
 //        }
+    }
+
+    /**
+     * @return the dbMapping
+     */
+    public DBMapping getDBMapping() {
+        return dbMapping;
     }
 
 }

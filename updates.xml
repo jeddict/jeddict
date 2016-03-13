@@ -1,0 +1,7 @@
+<module_updates timestamp="2016/03/13/00/00">
+    <module releasedate="2016/03/13" distribution="http://jpamodeler.github.io/release.nbm" 
+            homepage="http://jpamodeler.github.io" moduleauthor="Gaurav Gupta" codenamebase="org.netbeans.jpa.modeler">
+        <manifest OpenIDE-Module-Specification-Version="1.4" AutoUpdate-Show-In-Client="true" 
+                  OpenIDE-Module="org.netbeans.jpa.modeler" OpenIDE-Module-Name="JPA Modeler" OpenIDE-Module-Display-Category="Enterprise Applications" />
+    </module>
+</module_updates>

@@ -16,19 +16,22 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.awt.event.ActionEvent;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JMenuItem;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.BRANCH;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.LEAF;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -37,20 +40,18 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
-import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
-import org.openide.util.Lookup;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
     private Boolean abstractEntity;
-    
+    private Set<RelationFlowWidget> unidirectionalRelationFlowWidget = new HashSet<>();
+
     public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
-        
+
         this.addPropertyVisibilityHandler("inheritence", (PropertyVisibilityHandler<String>) () -> {
             GeneralizationFlowWidget outgoingGeneralizationFlowWidget1 = EntityWidget.this.getOutgoingGeneralizationFlowWidget();
             List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets1 = EntityWidget.this.getIncomingGeneralizationFlowWidgets();
@@ -62,31 +63,29 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             }
             return false;
         });
-        
-       this.addPropertyChangeListener("abstract", (input) -> changeAbstractionIcon((Boolean) input));
-        
+
+        this.addPropertyChangeListener("abstract", (input) -> changeAbstractionIcon((Boolean) input));
 
     }
 
     @Override
     public void init() {
         Entity entity = this.getBaseElementSpec();
-        if (entity.getAttributes().getAllAttribute().isEmpty()) {
+        if (entity.getAttributes().getAllAttribute().isEmpty() && this.getModelerScene().getModelerFile().isLoaded()) {
             addNewIdAttribute("id");
-            sortAttributes();
         }
 
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
             entity.setClazz(this.getModelerScene().getNextClassName("Entity_"));
         }
-            
+
         setName(entity.getClazz());
         setLabel(entity.getClazz());
         changeAbstractionIcon(entity.getAbstract());
-        scanPrimaryKeyError();     
+        scanKeyError();
     }
-    
-    private void changeAbstractionIcon(Boolean _abstract){
+
+    private void changeAbstractionIcon(Boolean _abstract) {
         if (_abstract) {
             this.setImage(JPAModelerUtil.ABSTRACT_ENTITY);
         } else {
@@ -98,7 +97,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         Entity entity = this.getBaseElementSpec();
-        set.createPropertySet( this , entity.getTable(), getPropertyChangeListeners());
+        set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
 
         if (entity instanceof InheritenceHandler) {
             set.put("BASIC_PROP", getInheritenceProperty());
@@ -108,7 +107,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         set.put("BASIC_PROP", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity.getNamedNativeQuery()));
         set.put("BASIC_PROP", PropertiesHandler.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
         set.put("BASIC_PROP", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));
-        
+
     }
 
     private EmbeddedPropertySupport getInheritenceProperty() {
@@ -135,7 +134,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
             @Override
             public void setData(InheritenceHandler classSpec) {
-                EntityWidget.this.setBaseElementSpec((Entity)classSpec);
+                EntityWidget.this.setBaseElementSpec((Entity) classSpec);
             }
 
             @Override
@@ -183,7 +182,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
 
-    
     @Override
     public InheritenceStateType getInheritenceState() {
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = this.getOutgoingGeneralizationFlowWidget();
@@ -201,20 +199,24 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         } else if (outgoingGeneralizationFlowWidget != null && !incomingGeneralizationFlowWidgets.isEmpty()) {
             type = BRANCH;
         } else {
-            throw new IllegalStateException("Illegal Inheritence State Exception Entity : "+ this.getName());
+            throw new IllegalStateException("Illegal Inheritence State Exception Entity : " + this.getName());
         }
         return type;
     }
 
 //    @Override
+    public void scanKeyError() {
+        scanPrimaryKeyError();
+        scanCompositeKeyError();
+    }
+
     public void scanPrimaryKeyError() {
-        
         InheritenceStateType inheritenceState = this.getInheritenceState();
         if (SINGLETON == inheritenceState || ROOT == inheritenceState) {
             // Issue Fix #6041 Start
-           boolean relationKey = this.getOneToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey())?true:
-                   this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
-                    
+            boolean relationKey = this.getOneToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey()) ? true
+                    : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
+
             if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
                 getErrorHandler().throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
@@ -225,26 +227,32 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             getErrorHandler().clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
         }
     }
-    
-    
-        @Override
+
+    public void scanCompositeKeyError() {
+        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == CompositePrimaryKeyType.NONE) {
+            getErrorHandler().throwError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
+        } else {
+            getErrorHandler().clearError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
+        }
+    }
+
+    @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         JMenuItem visDB = new JMenuItem("Micro DB", MICRO_DB);
         visDB.addActionListener((ActionEvent e) -> {
             ModelerFile file = this.getModelerScene().getModelerFile();
-            JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(),this.getBaseElementSpec()));
-        });            
-        
+            JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), this.getBaseElementSpec()));
+        });
+
         menuList.add(0, visDB);
         return menuList;
     }
-    
 
     /**
      * @return the abstractEntity
      */
-     public Boolean isAbstractEntity() {
+    public Boolean isAbstractEntity() {
         return abstractEntity;
     }
 
@@ -255,5 +263,15 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         this.abstractEntity = abstractEntity;
     }
 
+    public boolean addUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
+        return unidirectionalRelationFlowWidget.add(e);
+    }
 
+    public boolean removeUnidirectionalRelationFlowWidget(Object o) {
+        return unidirectionalRelationFlowWidget.remove(o);
+    }
+
+    public void clearUnidirectionalRelationFlowWidget() {
+        unidirectionalRelationFlowWidget.clear();
+    }
 }

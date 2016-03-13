@@ -30,5 +30,4 @@ public abstract class SingleRelationAttributeWidget<E extends SingleRelationAttr
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-
 }

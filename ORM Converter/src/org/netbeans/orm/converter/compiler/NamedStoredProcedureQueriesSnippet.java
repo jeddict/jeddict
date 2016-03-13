@@ -15,12 +15,11 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
@@ -88,7 +87,7 @@ public class NamedStoredProcedureQueriesSnippet implements Snippet {
         ArrayList<String> importSnippets = new ArrayList<String>();
 
         importSnippets.add("javax.persistence.NamedStoredProcedureQueries");
-        
+
         for (NamedStoredProcedureQuerySnippet namedStoredProcedureQuery : namedStoredProcedureQueries) {
             importSnippets.addAll(namedStoredProcedureQuery.getImportSnippets());
         }

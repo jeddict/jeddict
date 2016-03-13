@@ -15,14 +15,13 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class DBColumn<E extends Attribute> extends FlowPin {
+public class DBColumn<E> extends FlowPin {
 
     private final E attribute;
     private String name;
@@ -30,14 +29,16 @@ public class DBColumn<E extends Attribute> extends FlowPin {
     private int size;
     private int subSize;
     private boolean primaryKey;
+    private boolean shouldAllowNull;
+    private boolean uniqueKey;
 
     private boolean foreignKey;
     private DBColumn referenceColumn;
     private DBTable referenceTable;
-   
+
     public DBColumn(String name, E attribute) {
         this.attribute = attribute;
-        this.name=name;
+        this.name = name;
     }
 
 //    public Column() {
@@ -159,6 +160,34 @@ public class DBColumn<E extends Attribute> extends FlowPin {
      */
     public E getAttribute() {
         return attribute;
+    }
+
+    /**
+     * @return the shouldAllowNull
+     */
+    public boolean isAllowNull() {
+        return shouldAllowNull;
+    }
+
+    /**
+     * @param shouldAllowNull the shouldAllowNull to set
+     */
+    public void setAllowNull(boolean shouldAllowNull) {
+        this.shouldAllowNull = shouldAllowNull;
+    }
+
+    /**
+     * @return the uniqueKey
+     */
+    public boolean isUniqueKey() {
+        return uniqueKey;
+    }
+
+    /**
+     * @param uniqueKey the uniqueKey to set
+     */
+    public void setUniqueKey(boolean uniqueKey) {
+        this.uniqueKey = uniqueKey;
     }
 
 }

@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.jcre.wizard;
 
-import org.netbeans.jpa.source.JavaSourceParserUtil;
 import java.io.IOException;
 import javax.lang.model.element.TypeElement;
 import org.netbeans.api.java.source.ClasspathInfo;
@@ -24,6 +23,7 @@ import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.java.source.Task;
 import org.netbeans.api.project.Project;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.openide.filesystems.FileObject;
 
 public class JPAModelGenerator {
@@ -49,7 +49,6 @@ public class JPAModelGenerator {
                     entitySpec.load(entityMappings, jc, fieldAccess[0]);
                     entityMappings.addEntity(entitySpec);
                 }
-
             }
         }, true);
     }

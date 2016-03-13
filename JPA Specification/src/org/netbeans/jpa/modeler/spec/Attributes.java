@@ -117,38 +117,38 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")
                         && !(JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")
                         || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne"))) {
-                    this.getId().add(Id.load(element, variableElement));
+                    this.addId(Id.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
-                    this.getBasic().add(Basic.load(element, variableElement));
+                    this.addBasic(Basic.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
-                    this.getTransient().add(Transient.load(element, variableElement));
+                    this.addTransient(Transient.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Version")) {
-                    this.getVersion().add(Version.load(element, variableElement));
+                    this.addVersion(Version.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
-                    this.getElementCollection().add(ElementCollection.load(entityMappings, element, variableElement));
+                    this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
                     OneToOne oneToOneObj = new OneToOne();
-                    this.getOneToOne().add(oneToOneObj);
+                    this.addOneToOne(oneToOneObj);
                     oneToOneObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
                     ManyToOne manyToOneObj = new ManyToOne();
-                    this.getManyToOne().add(manyToOneObj);
+                    this.addManyToOne(manyToOneObj);
                     manyToOneObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
                     OneToMany oneToManyObj = new OneToMany();
-                    this.getOneToMany().add(oneToManyObj);
+                    this.addOneToMany(oneToManyObj);
                     oneToManyObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
                     ManyToMany manyToManyObj = new ManyToMany();
-                    this.getManyToMany().add(manyToManyObj);
+                    this.addManyToMany(manyToManyObj);
                     manyToManyObj.load(element, variableElement);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
                     this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
                     embeddedIdVariableElement = variableElement;
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
-                    this.getEmbedded().add(Embedded.load(entityMappings, element, variableElement));
+                    this.addEmbedded(Embedded.load(entityMappings, element, variableElement));
                 } else {
-                    this.getBasic().add(Basic.load(element, variableElement)); //Default Annotation
+                    this.addBasic(Basic.load(element, variableElement)); //Default Annotation
                 }
 
             }
@@ -158,7 +158,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
         if (this.getEmbeddedId() != null) {
             for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
-                this.getId().add(Id.load(variableElement, variableElement));
+                this.addId(Id.load(variableElement, variableElement));
             }
         }
 
@@ -263,6 +263,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public void addId(Id id) {
         this.getId().add(id);
         notifyListeners(id, "addAttribute", null, null);
+        id.setAttributes(this);
     }
 
     @Override
@@ -270,7 +271,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         this.getId().remove(id);
         notifyListeners(id, "removeAttribute", null, null);
     }
-    
+
     public Optional<Id> getId(String id_) {
         if (id != null) {
             return id.stream().filter(a -> a.getId().equals(id_)).findFirst();
@@ -302,6 +303,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
             notifyListeners(null, "removeAttribute", null, null);
         } else {
             notifyListeners(embeddedId, "addAttribute", null, null);
+            value.setAttributes(this);
         }
 
     }
@@ -339,6 +341,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public void addVersion(Version version) {
         this.getVersion().add(version);
         notifyListeners(version, "addAttribute", null, null);
+        version.setAttributes(this);
     }
 
     @Override
@@ -346,8 +349,8 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         this.getVersion().remove(version);
         notifyListeners(version, "removeAttribute", null, null);
     }
-    
-        public Optional<Version> getVersion(String id_) {
+
+    public Optional<Version> getVersion(String id_) {
         if (version != null) {
             return version.stream().filter(a -> a.getId().equals(id_)).findFirst();
         }
@@ -358,40 +361,53 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public List<Attribute> getAllAttribute() {
         List<Attribute> attributes = super.getAllAttribute();
         attributes.addAll(this.getId());
-       if(this.getEmbeddedId()!=null){ 
-           attributes.add(this.getEmbeddedId());
-       }
+        if (this.getEmbeddedId() != null) {
+            attributes.add(this.getEmbeddedId());
+        }
         attributes.addAll(this.getVersion());
         return attributes;
     }
 
     @Override
     public XMLAttributes getAccessor() {
+        return getAccessor(false);
+    }
+
+    /**
+     * Remove inherit functionality , once eclipse support dynamic mapped super
+     * class
+     *
+     */
+    public XMLAttributes getAccessor(boolean inherit) {
         XMLAttributes attr = super.getAccessor();
         attr.setIds(new ArrayList<>());
         attr.setVersions(new ArrayList<>());
-        return updateAccessor(attr);
+        return updateAccessor(attr, inherit);
     }
-    
-    @Override
+
     public XMLAttributes updateAccessor(XMLAttributes attr) {
-        super.updateAccessor(attr);
-        return processAccessor(attr);
+        return updateAccessor(attr, false);
     }
-    
-    private XMLAttributes processAccessor(XMLAttributes attr) {
-        attr.getIds().addAll(getId().stream().map(IdSpecAccessor::getInstance).collect(toList()));
+
+    @Override
+    public XMLAttributes updateAccessor(XMLAttributes attr, boolean inherit) {
+        super.updateAccessor(attr, inherit);
+        return processAccessor(attr, inherit);
+    }
+
+    private XMLAttributes processAccessor(XMLAttributes attr, boolean inherit) {
+        attr.getIds().addAll(getId().stream().map(id -> IdSpecAccessor.getInstance(id, inherit)).collect(toList()));
         attr.getVersions().addAll(getVersion().stream().map(VersionSpecAccessor::getInstance).collect(toList()));
         if (getEmbeddedId() != null) {
             attr.setEmbeddedId(getEmbeddedId().getAccessor());
         }
         return attr;
     }
-    
+
     public List<Attribute> getNonRelationAttributes() {
         List<Attribute> attributes = new ArrayList<Attribute>(this.getId());
         attributes.addAll(this.getBasic());
-        attributes.addAll(this.getElementCollection().stream().filter(ec -> ec.getConnectedClass()==null).collect(toList()));
+        attributes.addAll(this.getElementCollection().stream().filter(ec -> ec.getConnectedClass() == null).collect(toList()));
         attributes.addAll(this.getVersion());
         return attributes;
     }

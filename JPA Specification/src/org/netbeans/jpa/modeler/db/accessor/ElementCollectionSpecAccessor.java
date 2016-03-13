@@ -15,9 +15,12 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
+import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 
 /**
  *
@@ -34,16 +37,22 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
     public static ElementCollectionSpecAccessor getInstance(ElementCollection elementCollection) {
         ElementCollectionSpecAccessor accessor = new ElementCollectionSpecAccessor(elementCollection);
         accessor.setName(elementCollection.getName());
-        
-            accessor.setAttributeType(elementCollection.getCollectionType());
-            accessor.setTargetClassName(elementCollection.getAttributeType());
-        
+
+        accessor.setAttributeType(elementCollection.getCollectionType());
+        accessor.setTargetClassName(elementCollection.getAttributeType());
+
         if (elementCollection.getColumn() != null) {
             accessor.setColumn(elementCollection.getColumn().getAccessor());
         }
         if (elementCollection.getCollectionTable() != null) {
             accessor.setCollectionTable(elementCollection.getCollectionTable().getAccessor());
         }
+
+        AttributeValidator.filter(elementCollection);
+        accessor.setAttributeOverrides(elementCollection.getAttributeOverride().stream().map(AttributeOverrideSpecMetadata::getInstance).collect(toList()));
+        AssociationValidator.filter(elementCollection);
+        accessor.setAssociationOverrides(elementCollection.getAssociationOverride().stream().map(AssociationOverrideSpecMetadata::getInstance).collect(toList()));
+
         return accessor;
 
     }

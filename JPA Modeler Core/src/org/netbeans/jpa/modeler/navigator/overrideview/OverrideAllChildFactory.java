@@ -43,7 +43,6 @@ import org.openide.nodes.Node;
 
 public class OverrideAllChildFactory extends OverrideChildFactory {
 
-
     public OverrideAllChildFactory(EntityWidget entityWidget) {
         super(entityWidget);
     }
@@ -73,7 +72,7 @@ public class OverrideAllChildFactory extends OverrideChildFactory {
             node = new PropertyNode<JPAModelerScene>(entityWidget.getModelerScene(), Children.LEAF) {
                 @Override
                 public void createPropertySet(ElementPropertySet set) {
-                                       
+
                     if (attributeWidget instanceof RelationAttributeWidget && entityWidget.getBaseElementSpec() instanceof AssociationOverrideHandler) {
                         Attribute attributeSpec = (Attribute) attributeWidget.getBaseElementSpec();
                         AssociationOverrideHandler associationOverrideHandler = (AssociationOverrideHandler) entityWidget.getBaseElementSpec();
@@ -81,8 +80,8 @@ public class OverrideAllChildFactory extends OverrideChildFactory {
                         if (attributeSpec instanceof JoinColumnHandler) {
                             set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinColumn()));
                         }
-                        
-                        set.createPropertySet( attributeWidget , associationOverride.getJoinTable());
+
+                        set.createPropertySet(attributeWidget, associationOverride.getJoinTable());
                         set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getJoinColumn()));
                         set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_InverseJoinColumns", "Inverse Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getInverseJoinColumn()));
 
@@ -90,7 +89,7 @@ public class OverrideAllChildFactory extends OverrideChildFactory {
                         Attribute attributeSpec = (Attribute) attributeWidget.getBaseElementSpec();
                         AttributeOverrideHandler attributeOverrideHandler = (AttributeOverrideHandler) entityWidget.getBaseElementSpec();
                         AttributeOverride attributeOverride = attributeOverrideHandler.getAttributeOverride(attributeSpec.getName());
-                        set.createPropertySet( attributeWidget , attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
+                        set.createPropertySet(attributeWidget, attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
                     }
                 }
 
@@ -98,9 +97,8 @@ public class OverrideAllChildFactory extends OverrideChildFactory {
         }
         node.setDisplayName(attribute.getName());
         node.setShortDescription(attribute.getName());
-        
-        
-         if (attributeWidget instanceof RelationAttributeWidget) {
+
+        if (attributeWidget instanceof RelationAttributeWidget) {
             node.setIconBaseWithExtension(((RelationAttributeWidget) attributeWidget).getIconPath());
         } else if (attributeWidget instanceof IdAttributeWidget) {
             node.setIconBaseWithExtension(JPAModelerUtil.ID_ATTRIBUTE_ICON_PATH);

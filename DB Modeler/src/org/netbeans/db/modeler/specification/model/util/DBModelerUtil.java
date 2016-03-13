@@ -17,14 +17,7 @@ package org.netbeans.db.modeler.specification.model.util;
 
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
@@ -32,29 +25,38 @@ import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.sessions.DatabaseLogin;
-import org.eclipse.persistence.tools.schemaframework.*;
+import org.eclipse.persistence.tools.schemaframework.JPAMSchemaManager;
+import org.netbeans.api.db.explorer.DatabaseException;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
-import org.netbeans.db.modeler.core.widget.BaseTableWidget;
-import org.netbeans.db.modeler.core.widget.BasicColumnWidget;
-import org.netbeans.db.modeler.core.widget.CollectionTableWidget;
-import org.netbeans.db.modeler.core.widget.ColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAssociationJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAttributeColumnWidget;
-import org.netbeans.db.modeler.core.widget.EmbeddedAttributeJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.ForeignKeyWidget;
-import org.netbeans.db.modeler.core.widget.InverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.JoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.PrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.ReferenceFlowWidget;
-import org.netbeans.db.modeler.core.widget.RelationTableWidget;
-import org.netbeans.db.modeler.core.widget.TableWidget;
+import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
+import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
+import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBDiscriminatorColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
@@ -64,8 +66,15 @@ import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
+import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentAssociationJoinColumn;
+import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
+import org.netbeans.db.modeler.spec.DBParentColumn;
+import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
@@ -74,6 +83,8 @@ import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
+import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
+import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -97,8 +108,9 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.openide.*;
-import org.openide.util.Exceptions;
+import org.netbeans.modules.db.explorer.ConnectionList;
+import org.netbeans.modules.db.explorer.action.ConnectAction;
+import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
@@ -107,28 +119,33 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public static Image PRIMARYKEY;
     public static Image TAB_ICON;
     public static ImageIcon RELOAD_ICON;
+    public static ImageIcon VIEW_SQL;
 
+    static {// required to load before init
+            ClassLoader cl = DBModelerUtil.class.getClassLoader();
+            VIEW_SQL = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/VIEW_SQL.png"));
+    }
     @Override
     public void init() {
         if (COLUMN == null) {
             ClassLoader cl = DBModelerUtil.class.getClassLoader();
-            COLUMN = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/column.gif")).getImage();
-            FOREIGNKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/foreignkey.gif")).getImage();
-            PRIMARYKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/primarykey.gif")).getImage();
-            TAB_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/tab_icon.png")).getImage();
-            RELOAD_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/reload.png"));
+            COLUMN = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/COLUMN.gif")).getImage();
+            FOREIGNKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/FOREIGN_KEY.gif")).getImage();
+            PRIMARYKEY = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/PRIMARY_KEY.gif")).getImage();
+            TAB_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/TAB_ICON.png")).getImage();
+            RELOAD_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/RELOAD.png"));
         }
 
     }
 
     @Override
-    public void loadModelerFile(ModelerFile file) {
+    public void loadModelerFile(ModelerFile file) throws org.netbeans.modeler.core.exception.ProcessInterruptedException {
         try {
 
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
-            DBMapping dbMapping = createDBMapping(entityMapping);
+            DBMapping dbMapping = createDBMapping(file, entityMapping);
             scene.setBaseElementSpec(dbMapping);
 
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
@@ -140,72 +157,75 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
         } catch (ValidationException ex) {
             file.getModelerPanelTopComponent().close();
-            Logger.getLogger(DBModelerUtil.class.getName()).log(Level.INFO, null, ex);
             String message = ex.getLocalizedMessage();
             int end = message.lastIndexOf("Runtime Exceptions:");
             end = end < 1 ? message.length() : end;
             int start = message.lastIndexOf("Exception Description:");
             start = start < 1 ? 0 : start;
-            final String errorMessage = message.substring(start, end);
-            NotifyDescriptor nd = new NotifyDescriptor.Message(errorMessage, NotifyDescriptor.ERROR_MESSAGE);
-            JButton copyErrorMessage = new JButton("Copy error message");
-            copyErrorMessage.addActionListener((ActionEvent e) -> {
-                Toolkit toolkit = Toolkit.getDefaultToolkit();
-                Clipboard clipboard = toolkit.getSystemClipboard();
-                StringSelection strSel = new StringSelection(errorMessage);
-                clipboard.setContents(strSel, null);
-            });
-            nd.setOptions(new Object[]{copyErrorMessage});
-            DialogDisplayer.getDefault().notify(nd);
-        } catch (Exception ex) {
-//            IO.getOut().println("Exception: " + ex.toString());
-            ex.printStackTrace();
+            ExceptionUtils.printStackTrace(message.substring(start, end), ex, file);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
-    private DBMapping createDBMapping(EntityMappings entityMapping) {
+    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException {
         DBMapping dbMapping = new DBMapping();
-        DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnection();
+        DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnectionCache();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        DatabaseLogin databaseLogin = new DatabaseLogin();
 
         ClassLoader dynamicClassLoader;
+        try {
 
-        DatabaseLogin databaseLogin = new DatabaseLogin();
-        ClassLoader contextClassLoader = null;
-        if (connection == null) {
-            dynamicClassLoader = new DynamicDriverClassLoader();
-            databaseLogin.setDatabaseURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
-            databaseLogin.setUserName("");
-            databaseLogin.setPassword("");
-            databaseLogin.setDriverClass(org.h2.Driver.class);
-        } else {
-            dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
-            contextClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(dynamicClassLoader);
-            databaseLogin.setDatabaseURL(connection.getUrl());
-            databaseLogin.setUserName(connection.getUserName());
-            databaseLogin.setPassword(connection.getPassword());
-            databaseLogin.setDriverClass(connection.getDriverClass());
-        }
-        DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
-        JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
-        XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
-        JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
+            if (connection == null) {
+                dynamicClassLoader = new DynamicDriverClassLoader();
+                databaseLogin.setDatabaseURL(DEFAULT_URL);
+                databaseLogin.setUserName("");
+                databaseLogin.setPassword("");
+                databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
+            } else {
+                if (connection.getDriverClass() == null) {
+                    for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
+                        if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
+                            new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
+                            try {
+                                connection.setDriverClass(con.getDatabaseConnection().getJDBCDriver().getDriver().getClass());
+                                connection.setDatabaseConnection(con.getDatabaseConnection());
+                            } catch (DatabaseException ex) {
+                                file.handleException(ex);
+                            }
+                            break;
+                        }
+                    }
+                }
+                dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
+                Thread.currentThread().setContextClassLoader(dynamicClassLoader);
+                databaseLogin.setDatabaseURL(connection.getUrl());
+                databaseLogin.setUserName(connection.getUserName());
+                databaseLogin.setPassword(connection.getPassword());
+                databaseLogin.setDriverClass(connection.getDriverClass());
+            }
+            DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
+            JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
+            XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
+            JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
 
-        processor.setClassLoader(dynamicClassLoader);
-        processor.createDynamicClasses();
-        processor.createRestInterfaces();
-        processor.addEntityListeners();
-        session.getProject().convertClassNamesToClasses(dynamicClassLoader);
-        processor.processCustomizers();
-        session.loginAndDetectDatasource();
+            processor.setClassLoader(dynamicClassLoader);
+            processor.createDynamicClasses();
+            processor.createRestInterfaces();
+            processor.addEntityListeners();
+            session.getProject().convertClassNamesToClasses(dynamicClassLoader);
+            processor.processCustomizers();
+            session.loginAndDetectDatasource();
 
-        JPAMSchemaManager mgr = new JPAMSchemaManager(dbMapping, session);
-        mgr.createDefaultTables(true);
+            JPAMSchemaManager mgr = new JPAMSchemaManager(dbMapping, session);
+            mgr.createDefaultTables(true);
 
-        session.logout();
-
-        if (connection != null) {
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
+            session.logout();
+        } finally {
+            if (connection != null) {
+                Thread.currentThread().setContextClassLoader(contextClassLoader);
+            }
         }
         return dbMapping;
     }
@@ -219,7 +239,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             try {
                 document = modelerDocumentFactory.getModelerDocument(flowElement);
             } catch (ModelerException ex) {
-                Exceptions.printStackTrace(ex);
+                scene.getModelerFile().handleException(ex);
             }
 //            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), document, new Point(0, 0));
@@ -238,10 +258,14 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {
-                        if (column instanceof DBJoinColumn) {
+                        if (column instanceof DBDiscriminatorColumn) {
+                            tableWidget.addDiscriminatorColumn(column.getName(), column);
+                        } else if (column instanceof DBJoinColumn) {
                             tableWidget.addNewJoinKey(column.getName(), column);
                         } else if (column instanceof DBInverseJoinColumn) {
                             tableWidget.addNewInverseJoinKey(column.getName(), column);
+                        } else if (column instanceof DBPrimaryKeyJoinColumn) {
+                            tableWidget.addNewPrimaryKeyJoinColumn(column.getName(), column);
                         } else if (column instanceof DBEmbeddedColumn) {
                             if (column instanceof DBEmbeddedAttributeColumn) {
                                 tableWidget.addEmbeddedAttributeColumn(column.getName(), column);
@@ -252,6 +276,20 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                     tableWidget.addEmbeddedAssociationInverseJoinColumn(column.getName(), column);
                                 } else if (column instanceof DBEmbeddedAssociationJoinColumn) {
                                     tableWidget.addEmbeddedAssociationJoinColumn(column.getName(), column);
+                                }
+                            }
+                        } else if (column instanceof DBParentColumn) {
+                            if (column instanceof DBParentAttributeColumn) {
+                                if (column.isPrimaryKey()) {
+                                    tableWidget.addParentPrimaryKeyAttributeColumn(column.getName(), column);
+                                } else {
+                                    tableWidget.addParentAttributeColumn(column.getName(), column);
+                                }
+                            } else if (column instanceof DBParentAssociationColumn) {
+                                if (column instanceof DBParentAssociationInverseJoinColumn) {
+                                    tableWidget.addParentAssociationInverseJoinColumn(column.getName(), column);
+                                } else if (column instanceof DBParentAssociationJoinColumn) {
+                                    tableWidget.addParentAssociationJoinColumn(column.getName(), column);
                                 }
                             }
                         } else if (column.isPrimaryKey()) {
@@ -274,7 +312,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             TableWidget tableWidget = (TableWidget) baseElementWidget;
 
             tableWidget.getForeignKeyWidgets().stream().forEach((foreignKeyWidget) -> {
-                loadEdge(scene, tableWidget,  (ForeignKeyWidget)foreignKeyWidget);
+                loadEdge(scene, tableWidget, (ForeignKeyWidget) foreignKeyWidget);
             });
 
         });
@@ -282,11 +320,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     private void loadEdge(DBModelerScene scene, TableWidget sourceTableWidget, ForeignKeyWidget foreignKeyWidget) {
 //       ForeignKey => Source
-//       ReferenceColumn => Target      
+//       ReferenceColumn => Target
         DBColumn sourceColumn = (DBColumn) foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
-        ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
-        if (targetColumnWidget == null) {
+        ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+        if (targetColumnWidget == null) { // TODO remove this block
             targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
         }
 
@@ -386,7 +424,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         INodeWidget nodeWidget = inodeWidget;
         Anchor sourceAnchor;
         if (nodeWidget instanceof IFlowNodeWidget) {
-            sourceAnchor = new CustomRectangularAnchor(nodeWidget, 0, true);
+            sourceAnchor = new CustomRectangularAnchor(nodeWidget, -5, true);
         } else {
             throw new InvalidElmentException("Invalid JPA Process Element : " + nodeWidget);
         }
@@ -417,6 +455,18 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new EmbeddedAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName())) {
             widget = new EmbeddedAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAttributeColumnWidget.class.getSimpleName())) {
+            widget = new ParentAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAttributePrimaryKeyWidget.class.getSimpleName())) {
+            widget = new ParentAttributePrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAssociationJoinColumnWidget.class.getSimpleName())) {
+            widget = new ParentAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(ParentAssociationInverseJoinColumnWidget.class.getSimpleName())) {
+            widget = new ParentAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(PrimaryKeyJoinColumnWidget.class.getSimpleName())) {
+            widget = new PrimaryKeyJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(DiscriminatorColumnWidget.class.getSimpleName())) {
+            widget = new DiscriminatorColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }
@@ -435,7 +485,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     @Override
     public void attachEdgeSourceAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget sourcePinWidget) {
-        edgeWidget.setSourceAnchor(scene.getPinAnchor(sourcePinWidget));
+        edgeWidget.setSourceAnchor(sourcePinWidget.createAnchor());
 
     }
 
@@ -446,7 +496,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     @Override
     public void attachEdgeTargetAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget targetPinWidget) {
-        edgeWidget.setTargetAnchor(scene.getPinAnchor(targetPinWidget));
+        edgeWidget.setTargetAnchor(targetPinWidget.createAnchor());
     }
 
     @Override
@@ -512,7 +562,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) edgeWidget;
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
             DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getBaseElementSpec();
-            ColumnWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+            IPrimaryKeyWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
             referenceFlowWidget.setReferenceColumnWidget(targetColumnWidget);
             referenceFlowWidget.setForeignKeyWidget((ForeignKeyWidget) sourceColumnWidget);
             return sourceColumnWidget.getPinWidgetInfo();
@@ -535,10 +585,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
 
     }
-    
+
     public static void inDev() {
-        JOptionPane.showMessageDialog(null, "This functionality is in developement");
+        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "This functionality is in developement");
     }
-    
 
 }

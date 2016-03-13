@@ -9,19 +9,23 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.cache.Cache;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -124,6 +128,7 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EntityMappings extends BaseElement implements IDefinitionElement, IRootElement {
 
+
     protected String description;
     @XmlElement(name = "persistence-unit-metadata")
     protected PersistenceUnitMetadata persistenceUnitMetadata;
@@ -152,9 +157,12 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected List<Entity> entity;
     protected List<Embeddable> embeddable;
     protected List<Converter> converter;//REVENG PENDING
-    @XmlAttribute(name = "version", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String version;
+    @XmlAttribute(name = "v", required = true)
+    protected float version;
+    @XmlTransient
+    private float previousVersion;
+    @XmlAttribute(name = "dv")
+    private String diagramVersion;
     @XmlElement(name = "diagram")
     private Diagram jpaDiagram;//Custom Added
     @XmlAttribute
@@ -163,8 +171,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private String theme;
     @XmlAttribute
     private String persistenceUnitName;
-    @XmlAttribute
-    private Float buildOn;//JPA Modeler version
 
     @XmlElement(name = "c")
     private Cache cache;
@@ -645,21 +651,17 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      * @return possible object is {@link String }
      *
      */
-    public String getVersion() {
-        if (version == null) {
-            return "2.0";
-        } else {
-            return version;
-        }
+    public float getVersion() {
+        return version;
     }
 
     /**
      * Sets the value of the version property.
      *
-     * @param value allowed object is {@link String }
+     * @param value allowed object is {@link float }
      *
      */
-    public void setVersion(String value) {
+    public void setVersion(float value) {
         this.version = value;
     }
 
@@ -714,6 +716,15 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         }
         return null;
+    }
+
+    public IdentifiableClass findIdentifiableClass(String className) {
+        Entity entity = findEntity(className);
+        if (entity == null) {
+            return findMappedSuperclass(className);
+        } else {
+            return entity;
+        }
     }
 
     public Entity getEntity(String id) {
@@ -850,6 +861,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public DefaultClass addDefaultClass(String _class) {
+        if (StringUtils.isBlank(_class)) {
+            throw new IllegalStateException("Class name can't empty");
+        }
         if (this.defaultClass == null) {
             this.defaultClass = new ArrayList<DefaultClass>();
         }
@@ -865,8 +879,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 //        } else
 
         if (existDefaultClass == null) {
-            existDefaultClass = new DefaultClass();
-            existDefaultClass.setClazz(_class);
+            existDefaultClass = new DefaultClass(_class);
             this.defaultClass.add(existDefaultClass);
         }
         return existDefaultClass;
@@ -930,96 +943,73 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         }
     }
 
+    public List<IdentifiableClass> getIdentifiableClass() {
+        List<IdentifiableClass> identifiableClasses = new ArrayList<>(getEntity());
+        identifiableClasses.addAll(getMappedSuperclass());
+        return identifiableClasses;
+    }
+
+    public void manageJoinColumnRefName() {
+        BiConsumer<Entity, List<JoinColumn>> operateRefName = (Entity entity, List<JoinColumn> joinColumns) -> {
+            joinColumns.stream().filter(c -> StringUtils.isNotBlank(c.getReferencedColumnName())).forEach(column -> {
+                Optional<Id> idOptional = entity.getAttributes().getId().stream().filter(id -> column.getReferencedColumnName().equals(id.getReferenceColumnName())).findAny();
+                if (idOptional.isPresent()) {
+                    column.setReferencedColumn(idOptional.get());//TODO Embedded ID
+                }
+            });
+        };
+        EntityMappings entityMappingsSpec = this;
+        for (IdentifiableClass identifiableClass : entityMappingsSpec.getIdentifiableClass()) {
+            for (RelationAttribute attribute : new ArrayList<>(identifiableClass.getAttributes().getRelationAttributes())) {
+                if (attribute instanceof JoinColumnHandler) {
+                    operateRefName.accept(entityMappingsSpec.findEntity(attribute.getTargetEntity()), ((JoinColumnHandler) attribute).getJoinColumn());
+                }
+                if (attribute.getJoinTable() != null) {
+                    operateRefName.accept(entityMappingsSpec.findEntity(attribute.getTargetEntity()), attribute.getJoinTable().getJoinColumn());
+                    operateRefName.accept(entityMappingsSpec.findEntity(attribute.getTargetEntity()), attribute.getJoinTable().getInverseJoinColumn());
+                }
+            }
+        }
+    }
+
     public void manageSiblingAttribute() {
         EntityMappings entityMappingsSpec = this;
-        for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappingsSpec.getEntity()) {
-            for (ManyToMany manyToMany : new ArrayList<>(entity.getAttributes().getManyToMany())) {
-                if (manyToMany.getMappedBy() == null) {
-                    manageSiblingAttribute(entity, manyToMany);
-                }
-            }
-            for (OneToMany oneToMany : new ArrayList<>(entity.getAttributes().getOneToMany())) {
-                if (oneToMany.getMappedBy() == null) {
-                    manageSiblingAttribute(entity, oneToMany);
-                }
-            }
-            for (ManyToOne manyToOne : new ArrayList<>(entity.getAttributes().getManyToOne())) {
-                manageSiblingAttribute(entity, manyToOne);
-            }
-            for (OneToOne oneToOne : new ArrayList<>(entity.getAttributes().getOneToOne())) {
-                if (oneToOne.getMappedBy() == null) {
-                    manageSiblingAttribute(entity, oneToOne);
-                }
-            }
 
-            // If Include Referenced Classed Checkbox is Uncheked then remove attribute
-            for (RelationAttribute relationAttribute : new ArrayList<>(entity.getAttributes().getRelationAttributes())) {
-                org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
-                if (targetEntity == null) {
-                    entity.getAttributes().removeRelationAttribute(relationAttribute);
-                }
-            }
-
-        }
-
+        List<ManagedClass> classes = new ArrayList<>(entityMappingsSpec.getEntity());
         // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
-        for (org.netbeans.jpa.modeler.spec.MappedSuperclass mappedSuperclass : entityMappingsSpec.getMappedSuperclass()) {
-            for (ManyToMany manyToMany : new ArrayList<>(mappedSuperclass.getAttributes().getManyToMany())) {
+        classes.addAll(entityMappingsSpec.getMappedSuperclass());
+        classes.addAll(entityMappingsSpec.getEmbeddable());
+
+        for (ManagedClass managedClass : classes) {
+            for (ManyToMany manyToMany : new ArrayList<>(managedClass.getAttributes().getManyToMany())) {
                 if (manyToMany.getMappedBy() == null) {
-                    manageSiblingAttribute(mappedSuperclass, manyToMany);
+                    manageSiblingAttribute(managedClass, manyToMany);
                 }
             }
-            for (OneToMany oneToMany : new ArrayList<>(mappedSuperclass.getAttributes().getOneToMany())) {
+            for (OneToMany oneToMany : new ArrayList<>(managedClass.getAttributes().getOneToMany())) {
                 if (oneToMany.getMappedBy() == null) {
-                    manageSiblingAttribute(mappedSuperclass, oneToMany);
+                    manageSiblingAttribute(managedClass, oneToMany);
                 }
             }
-            for (ManyToOne manyToOne : new ArrayList<>(mappedSuperclass.getAttributes().getManyToOne())) {
-                manageSiblingAttribute(mappedSuperclass, manyToOne);
+            for (ManyToOne manyToOne : new ArrayList<>(managedClass.getAttributes().getManyToOne())) {
+                manageSiblingAttribute(managedClass, manyToOne);
             }
-            for (OneToOne oneToOne : new ArrayList<>(mappedSuperclass.getAttributes().getOneToOne())) {
+            for (OneToOne oneToOne : new ArrayList<>(managedClass.getAttributes().getOneToOne())) {
                 if (oneToOne.getMappedBy() == null) {
-                    manageSiblingAttribute(mappedSuperclass, oneToOne);
+                    manageSiblingAttribute(managedClass, oneToOne);
                 }
             }
 
             // If Include Referenced Classed Checkbox is Uncheked then remove attribute
-            for (RelationAttribute relationAttribute : new ArrayList<>(mappedSuperclass.getAttributes().getRelationAttributes())) {
+            for (RelationAttribute relationAttribute : new ArrayList<>(managedClass.getAttributes().getRelationAttributes())) {
                 org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
                 if (targetEntity == null) {
-                    mappedSuperclass.getAttributes().removeRelationAttribute(relationAttribute);
+                    managedClass.getAttributes().removeRelationAttribute(relationAttribute);
                 }
             }
 
         }
-        for (org.netbeans.jpa.modeler.spec.Embeddable embeddable : entityMappingsSpec.getEmbeddable()) {
-            for (ManyToMany manyToMany : new ArrayList<>(embeddable.getAttributes().getManyToMany())) {
-                if (manyToMany.getMappedBy() == null) {
-                    manageSiblingAttribute(embeddable, manyToMany);
-                }
-            }
-            for (OneToMany oneToMany : new ArrayList<>(embeddable.getAttributes().getOneToMany())) {
-                if (oneToMany.getMappedBy() == null) {
-                    manageSiblingAttribute(embeddable, oneToMany);
-                }
-            }
-            for (ManyToOne manyToOne : new ArrayList<>(embeddable.getAttributes().getManyToOne())) {
-                manageSiblingAttribute(embeddable, manyToOne);
-            }
-            for (OneToOne oneToOne : new ArrayList<>(embeddable.getAttributes().getOneToOne())) {
-                if (oneToOne.getMappedBy() == null) {
-                    manageSiblingAttribute(embeddable, oneToOne);
-                }
-            }
 
-            // If Include Referenced Classed Checkbox is Uncheked then remove attribute
-            for (RelationAttribute relationAttribute : new ArrayList<RelationAttribute>(embeddable.getAttributes().getRelationAttributes())) {
-                org.netbeans.jpa.modeler.spec.Entity targetEntity = entityMappingsSpec.findEntity(relationAttribute.getTargetEntity());
-                if (targetEntity == null) {
-                    embeddable.getAttributes().removeRelationAttribute(relationAttribute);
-                }
-            }
-        }
     }
 
     // Issue Fix #5949 Start
@@ -1171,14 +1161,12 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.jaxbNameSpace = jaxbNameSpace;
     }
 
-    public static final float INSTALLATION_VERSION = 2.0F;
-
-    public static EntityMappings getNewInstance() {
+    public static EntityMappings getNewInstance(float version) {
 
         EntityMappings entityMappingsSpec = new EntityMappings();
         entityMappingsSpec.setId(NBModelerUtil.getAutoGeneratedStringId());
-        entityMappingsSpec.setBuildOn(INSTALLATION_VERSION);
-
+        entityMappingsSpec.setVersion(version);
+        entityMappingsSpec.setPreviousVersion(version);
         Diagram diagram = new Diagram();
         Plane plane = new Plane();
         diagram.setJPAPlane(plane);
@@ -1215,17 +1203,36 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.cache = cache;
     }
 
-    /**
-     * @return the buildOn
-     */
-    float getBuildOn() {
-        return buildOn;
+
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        setPreviousVersion(version);
     }
 
     /**
-     * @param buildOn the buildOn to set
+     * @param previousVersion the previousVersion to set
      */
-    void setBuildOn(float buildOn) {
-        this.buildOn = buildOn;
+    public void setPreviousVersion(float previousVersion) {
+        this.previousVersion = previousVersion;
+    }
+
+    /**
+     * @return the previousVersion
+     */
+    public float getPreviousVersion() {
+        return previousVersion;
+    }
+
+    /**
+     * @return the diagramVersion
+     */
+    public String getDiagramVersion() {
+        return diagramVersion;
+    }
+
+    /**
+     * @param diagramVersion the diagramVersion to set
+     */
+    public void setDiagramVersion(String diagramVersion) {
+        this.diagramVersion = diagramVersion;
     }
 }

@@ -17,7 +17,6 @@ package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
@@ -41,18 +40,15 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
 
     private ManagedClass managedClass = null;
 
-
-
     public StaticMetamodelGenerator(ManagedClass managedClass, String packageName) {
         super(new StaticMetamodelClassDefSnippet());
         this.managedClass = managedClass;
         this.packageName = packageName;
     }
 
-    
     @Override
-   protected MetamodelVariableDefSnippet getVariableDef(Attribute attr) {
-        MetamodelVariableDefSnippet variableDef = (MetamodelVariableDefSnippet)variables.get(attr.getName());//GG_REMOVE hard cast
+    protected MetamodelVariableDefSnippet getVariableDef(Attribute attr) {
+        MetamodelVariableDefSnippet variableDef = (MetamodelVariableDefSnippet) variables.get(attr.getName());//GG_REMOVE hard cast
         if (variableDef == null) {
             variableDef = new MetamodelVariableDefSnippet();
             variableDef.setName(attr.getName());
@@ -61,29 +57,30 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         }
         return variableDef;
     }
-    
-       private void processBase(BaseAttribute parsedBaseAttribute) {
-            MetamodelVariableDefSnippet variableDef = getVariableDef(parsedBaseAttribute);
-            if (parsedBaseAttribute instanceof CompositionAttribute) {
-                if (parsedBaseAttribute instanceof ElementCollection) {
-                    ElementCollection elementCollection = (ElementCollection) parsedBaseAttribute;
-                    variableDef.setType(parsedBaseAttribute.getAttributeType());
-                    variableDef.setAttributeType(MetamodelAttributeType.getInstance(elementCollection.getCollectionType()));
-                } else {
-                    variableDef.setType(parsedBaseAttribute.getAttributeType());
-                    variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
-                }
-            } else if (parsedBaseAttribute instanceof PersistenceBaseAttribute) {
+
+    private void processBase(BaseAttribute parsedBaseAttribute) {
+        MetamodelVariableDefSnippet variableDef = getVariableDef(parsedBaseAttribute);
+        if (parsedBaseAttribute instanceof CompositionAttribute) {
+            if (parsedBaseAttribute instanceof ElementCollection) {
+                ElementCollection elementCollection = (ElementCollection) parsedBaseAttribute;
+                variableDef.setType(parsedBaseAttribute.getAttributeType());
+                variableDef.setAttributeType(MetamodelAttributeType.getInstance(elementCollection.getCollectionType()));
+            } else {
                 variableDef.setType(parsedBaseAttribute.getAttributeType());
                 variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
             }
-       }
+        } else if (parsedBaseAttribute instanceof PersistenceBaseAttribute) {
+            variableDef.setType(parsedBaseAttribute.getAttributeType());
+            variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
+        }
+    }
+
     private void processBase(Collection<? extends BaseAttribute> parsedBaseAttributes) {
         if (parsedBaseAttributes == null) {
             return;
         }
         for (BaseAttribute parsedBaseAttribute : parsedBaseAttributes) {
-           processBase(parsedBaseAttribute);
+            processBase(parsedBaseAttribute);
         }
     }
 
@@ -103,14 +100,13 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
             } else {
                 variableDef.setAttributeType(MetamodelAttributeType.SINGULAR);
             }
-            
+
         }
     }
-    
-    
+
     @Override
     public StaticMetamodelClassDefSnippet getClassDef() {
-      
+
         //Attributes -- Method level annotations
         IAttributes parsedAttributes = managedClass.getAttributes();
         if (parsedAttributes != null) {
@@ -123,7 +119,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
                 }
                 processBase(persistenceAttributes.getVersion());
             }
-            
+
             processBase(parsedAttributes.getBasic());
 //            processTransient(parsedAttributes.getTransient());
             processBase(parsedAttributes.getElementCollection());
@@ -134,42 +130,39 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
             processRelation(parsedAttributes.getOneToOne());
         }
 
-        // Classlevel annotations 
-       
+        // Classlevel annotations
         //Class decorations
         ClassHelper classHelper = new ClassHelper(managedClass.getClazz() + "_"); //For each managed class X in package p, a metamodel class X_ in package p is created.
         classHelper.setPackageName(packageName);
 //The name of the metamodel class is derived from the name of the managed class by appending "_" to the name of the managed class.
-       if(managedClass.getSuperclass()!=null){
-        ClassHelper superClassHelper = new ClassHelper(managedClass.getSuperclass().getClazz() + "_");//If class X extends another class S, where S is the most derived managed class (i.e., entity or mapped superclass) extended by X, then class X_ must extend class S_, where S_ is the metamodel class created for S.
-        superClassHelper.setPackageName(packageName);
-        classDef.setSuperClassName(superClassHelper.getFQClassName());
-       }
-        
+        if (managedClass.getSuperclass() != null) {
+            ClassHelper superClassHelper = new ClassHelper(managedClass.getSuperclass().getClazz() + "_");//If class X extends another class S, where S is the most derived managed class (i.e., entity or mapped superclass) extended by X, then class X_ must extend class S_, where S_ is the metamodel class created for S.
+            superClassHelper.setPackageName(packageName);
+            classDef.setSuperClassName(superClassHelper.getFQClassName());
+        }
 
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
-       
+
         classDef.setPackageName(classHelper.getPackageName());
 //        classDef.setStaticMetamodel(true);
-        
+
         classDef.setValue(managedClass.getClazz());//@StaticMetamodel( Person.class )
 
         return classDef;
     }
-    
+
 //    public boolean isManagedSuperClassExist(){
 //        return managedClass.getSuperclass()!=null;
 //    }
 //    public String getManagedSuperClass(){
 //        return managedClass.getSuperclass().getClazz();
 //    }
-    public ManagedClass getManagedClass(){
+    public ManagedClass getManagedClass() {
         return managedClass;
     }
 
-    
-        @Override
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 47 * hash + (this.managedClass.getId() != null ? this.managedClass.getId().hashCode() : 0);
@@ -190,8 +183,6 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         }
         return true;
     }
-    
-    
 
 //    @Override
 //    public boolean equals(Object obj) {
@@ -207,5 +198,4 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
 //        }
 //        return true;
 //    }
-  
 }

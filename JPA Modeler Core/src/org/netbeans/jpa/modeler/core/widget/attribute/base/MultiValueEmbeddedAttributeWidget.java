@@ -30,7 +30,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<ElementCollection>{
+public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<ElementCollection> {
 
     private EmbeddableFlowWidget embeddableFlowWidget;
 
@@ -44,9 +44,9 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
         super.createPropertySet(set);
 
         ElementCollection elementCollectionSpec = this.getBaseElementSpec();
-          set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
-        
-        set.createPropertySet( this , elementCollectionSpec.getCollectionTable());
+        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
+
+        set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
 
     }

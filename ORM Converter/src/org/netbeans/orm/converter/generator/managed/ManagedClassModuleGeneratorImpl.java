@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -38,13 +39,11 @@ import org.netbeans.orm.converter.generator.EmbeddableIdClassGenerator;
 import org.netbeans.orm.converter.generator.EntityGenerator;
 import org.netbeans.orm.converter.generator.LifecycleCallbackGenerator;
 import org.netbeans.orm.converter.generator.MappedSuperClassGenerator;
-import org.netbeans.orm.converter.generator.identifiable.IdentifiableClassDefSnippet;
 import org.netbeans.orm.converter.spec.ModuleGenerator;
 import org.netbeans.orm.converter.util.ClassType;
 import org.netbeans.orm.converter.util.ClassesRepository;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
 
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
@@ -73,11 +72,11 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
                     generateIdClasses(defaultClass);
                 }
             }
-           // generateLifeCycleClasses(); // TODO 
+            // generateLifeCycleClasses(); // TODO
         } catch (InvalidDataException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
 
@@ -86,8 +85,8 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         for (Embeddable parsedEmbeddable : parsedEmbeddables) {
             task.log("Generating Embeddable Class : " + parsedEmbeddable.getClazz(), true);
             ManagedClassDefSnippet classDef = new EmbeddableGenerator(parsedEmbeddable, packageName).getClassDef();
-            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport()); 
-            
+            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
+
             classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
             ORMConverterUtil.writeSnippet(classDef, destDir);
         }
@@ -98,8 +97,8 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         for (Entity parsedEntity : parsedEntities) {
             task.log("Generating Entity Class : " + parsedEntity.getClazz(), true);
             ManagedClassDefSnippet classDef = new EntityGenerator(parsedEntity, packageName).getClassDef();
-            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport()); 
-            
+            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
+
             classesRepository.addWritableSnippet(ClassType.ENTITY_CLASS, classDef);
             ORMConverterUtil.writeSnippet(classDef, destDir);
         }
@@ -110,8 +109,8 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
             task.log("Generating MappedSuperclass Class : " + parsedMappedSuperclass.getClazz(), true);
             ManagedClassDefSnippet classDef = new MappedSuperClassGenerator(parsedMappedSuperclass, packageName).getClassDef();
-            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport()); 
-            
+            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
+
             classesRepository.addWritableSnippet(ClassType.SUPER_CLASS, classDef);
             ORMConverterUtil.writeSnippet(classDef, destDir);
         }

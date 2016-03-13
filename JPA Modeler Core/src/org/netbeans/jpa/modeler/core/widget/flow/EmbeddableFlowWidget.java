@@ -17,7 +17,6 @@ package org.netbeans.jpa.modeler.core.widget.flow;
 
 import java.awt.Color;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
-import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -37,42 +36,11 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
 
     public EmbeddableFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
-        setAnchorGap(0);
-
-    }
-
-    @Override
-    public void createPropertySet(ElementPropertySet elementPropertySet) {
-    }
-
-    /**
-     * @return the sourceNode
-     */
-//    public IFlowNodeWidget getSourceNode() {
-//        return sourceNode;
-//    }
-    /**
-     * @param sourceNode the sourceNode to set
-     */
-    public void setSourceNode(FlowNodeWidget sourceNode) {
-
-    }
-
-    /**
-     * @return the targetNode
-     */
-//    public IFlowNodeWidget getTargetNode() {
-//        return targetNode;
-//    }
-    /**
-     * @param targetNode the targetNode to set
-     */
-    public void setTargetNode(FlowNodeWidget targetNode) {
+//        setAnchorGap(0);
 
     }
 
     private Color color;
-    // private Float size;
 
     public Sheet.Set getVisualPropertiesSet(Sheet.Set set) throws NoSuchMethodException, NoSuchFieldException {
         set.put(new ElementPropertySupport(this, Color.class, "color", "Color", "The Line Color of the SequenceFlow Element."));
@@ -94,20 +62,6 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
         this.setLineColor(color);
     }
 
-    /**
-     * @return the sequenceFlowSpec
-     */
-//    public TSequenceFlow getSequenceFlowSpec() {
-//        return (TSequenceFlow) baseElementSpec;
-//    }
-    @Override
-    public void init() {
-    }
-
-    @Override
-    public void destroy() {
-    }
-
     @Override
     public IFlowNodeWidget getSourceWidget() {
         throw new UnsupportedOperationException("Not supported yet."); //  return sourceNode;
@@ -118,39 +72,6 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
         return getTargetEmbeddableWidget();
     }
 
-//    /**
-//     * @return the superclassWidget
-//     */
-//    public JavaClassWidget getSuperclassWidget() {
-//        return getTargetEmbeddableWidget();
-//    }
-//
-//    /**
-//     * @param superclassWidget the superclassWidget to set
-//     */
-//    public void setSuperclassWidget(JavaClassWidget superclassWidget) {
-//        this.setTargetEmbeddableWidget(superclassWidget);
-////        if (superclassWidget != null) {
-////            superclassWidget.addIncomingGeneralizationFlowWidget(this);
-////        }
-//    }
-//
-//    /**
-//     * @return the subclassWidget
-//     */
-//    public JavaClassWidget getSubclassWidget() {
-//        return getSourceJavaClassWidget();
-//    }
-//
-//    /**
-//     * @param subclassWidget the subclassWidget to set
-//     */
-//    public void setSubclassWidget(JavaClassWidget subclassWidget) {
-//        this.setSourceJavaClassWidget(subclassWidget);
-////        if (subclassWidget != null) {
-////            subclassWidget.setOutgoingGeneralizationFlowWidget(this);
-////        }
-//    }
     /**
      * @return the targetEmbeddableWidget
      */
@@ -178,6 +99,18 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
      */
     public void setSourceEmbeddedAttributeWidget(EmbeddedAttributeWidget sourceEmbeddedAttributeWidget) {
         this.sourceEmbeddedAttributeWidget = sourceEmbeddedAttributeWidget;
+    }
+
+    @Override
+    public void createPropertySet(ElementPropertySet elementPropertySet) {
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void destroy() {
     }
 
 }

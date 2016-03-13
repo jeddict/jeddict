@@ -39,7 +39,6 @@
  *
  * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
-
 package org.netbeans.jpa.modeler.properties.named.storedprocedurequery;
 
 import java.sql.Connection;
@@ -52,8 +51,8 @@ import org.openide.util.Mutex;
 
 /**
  * Provides access to the database model for DB Explorer database connections.
- * This class is temporary, as such acess should be provided directly by
- * the DB Explorer through a {@code DatabaseConnection.getMetadataModel()} method.
+ * This class is temporary, as such acess should be provided directly by the DB
+ * Explorer through a {@code DatabaseConnection.getMetadataModel()} method.
  *
  * @author Andrei Badea
  */
@@ -61,11 +60,10 @@ public class MetadataModelManager {
 
     // XXX test against memory leak.
     // XXX test if DatabaseConnection can be GC'd.
-
     private final static WeakHashMap<DatabaseConnection, MetadataModel> conn2Model = new WeakHashMap<>();
 
-
-    private MetadataModelManager() {}
+    private MetadataModelManager() {
+    }
 
     public static MetadataModel get(final DatabaseConnection dbconn) {
         synchronized (MetadataModelManager.class) {
@@ -82,7 +80,7 @@ public class MetadataModelManager {
     public static void update(final DatabaseConnection dbconn, MetadataModel model) {
         conn2Model.put(dbconn, model);
     }
-    
+
     private static Connection checkAndGetConnection(final DatabaseConnection dbconn) {
         Connection conn = dbconn.getJDBCConnection();
 
@@ -164,6 +162,4 @@ public class MetadataModelManager {
 //
 //        }
 //    }
-
-
 }

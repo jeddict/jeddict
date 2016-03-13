@@ -27,13 +27,15 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.enti
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
 
 public class StoredProcedureParameterPanel extends EntityComponent<StoredProcedureParameter> {
-private final ModelerFile modelerFile;
+
+    private final ModelerFile modelerFile;
+
     public StoredProcedureParameterPanel(ModelerFile modelerFile) {
-        
-        this.modelerFile=modelerFile;
+
+        this.modelerFile = modelerFile;
     }
-    
-             @Override
+
+    @Override
     public void postConstruct() {
         initComponents();
     }
@@ -67,17 +69,16 @@ private final ModelerFile modelerFile;
             Object[] row = ((RowValue) entityValue).getRow();
             StoredProcedureParameter storedProcedureParameter = (StoredProcedureParameter) row[0];
             name_TextField.setText(storedProcedureParameter.getName());
-            
-            if(((DefaultComboBoxModel)type_jComboBox.getModel()).getIndexOf(storedProcedureParameter.getClazz()) == -1 ) {
-                ((DefaultComboBoxModel)type_jComboBox.getModel()).addElement(storedProcedureParameter.getClazz());
+
+            if (((DefaultComboBoxModel) type_jComboBox.getModel()).getIndexOf(storedProcedureParameter.getClazz()) == -1) {
+                ((DefaultComboBoxModel) type_jComboBox.getModel()).addElement(storedProcedureParameter.getClazz());
             }
             type_jComboBox.setSelectedItem(storedProcedureParameter.getClazz());
-            
+
             setParameterMode(storedProcedureParameter.getMode());
         }
     }
 
-    
     private void setParameterMode(ParameterMode parameterMode) {
         if (parameterMode == null) {
             mode_jComboBox.setSelectedIndex(0);
@@ -89,10 +90,11 @@ private final ModelerFile modelerFile;
             }
         }
     }
+
     private ParameterMode getParameterMode() {
-       return ((ComboBoxValue<ParameterMode>) mode_jComboBox.getSelectedItem()).getValue();
+        return ((ComboBoxValue<ParameterMode>) mode_jComboBox.getSelectedItem()).getValue();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -295,7 +297,7 @@ private final ModelerFile modelerFile;
             JOptionPane.showMessageDialog(this, "Type can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
-      
+
         return true;
     }
 
@@ -315,7 +317,7 @@ private final ModelerFile modelerFile;
         storedProcedureParameter.setName(name_TextField.getText());
         storedProcedureParameter.setClazz(type_jComboBox.getSelectedItem().toString());
         storedProcedureParameter.setMode(getParameterMode());
-        
+
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = storedProcedureParameter;

@@ -29,7 +29,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class EmbeddedIdAttributeWidget extends BaseAttributeWidget <EmbeddedId>{
+public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
 
     public EmbeddedIdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);

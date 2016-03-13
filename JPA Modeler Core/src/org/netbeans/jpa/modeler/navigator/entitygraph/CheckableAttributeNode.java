@@ -30,14 +30,14 @@ public class CheckableAttributeNode implements CheckableNode {
     private boolean checked = false;
     private boolean checkEnabled = true;
     private boolean enableWithParent = false;
-    
 
     public CheckableAttributeNode(boolean checked) {
-        this.checked= checked;
+        this.checked = checked;
     }
+
     public CheckableAttributeNode() {
     }
-    
+
     /**
      * Tell the view to display a check-box for this node.
      *
@@ -85,12 +85,12 @@ public class CheckableAttributeNode implements CheckableNode {
         if (selected) {     //For parent and child_pk
             CheckableAttributeNode parentCheckableNode = null;
             if (node instanceof EGChildNode) {  //for parent
-                parentCheckableNode = ((EGChildNode)node).getParent().getCheckableNode();
+                parentCheckableNode = ((EGChildNode) node).getParent().getCheckableNode();
                 if (parentCheckableNode != null && !parentCheckableNode.isSelected()) {
                     parentCheckableNode.setSelected(Boolean.TRUE);
-                } 
+                }
             }
-            
+
             if (node instanceof EGParentNode) {//For child_pk
                 for (EGChildNode childNode : ((EGParentNode) node).getChildList()) {
                     if (childNode.getCheckableNode().isEnableWithParent()) {
@@ -98,9 +98,10 @@ public class CheckableAttributeNode implements CheckableNode {
                     }
                 }
             }
-            
-        } else { //if unselected
-            //For children : uncheck the child if parent unchecked
+
+        } else //if unselected
+        //For children : uncheck the child if parent unchecked
+        {
             if (!selected && node instanceof EGParentNode) {
                 for (EGChildNode childNode : ((EGParentNode) node).getChildList()) {
                     if (childNode.getCheckableNode().isSelected()) {
@@ -109,9 +110,9 @@ public class CheckableAttributeNode implements CheckableNode {
                 }
             }
         }
-        
-        if(node!=null){
-        node.refreshView();
+
+        if (node != null) {
+            node.refreshView();
         }
     }
 
@@ -148,8 +149,7 @@ public class CheckableAttributeNode implements CheckableNode {
      */
     public void setEnableWithParent(boolean enableWithParent) {
         this.enableWithParent = enableWithParent;
-        
-        
+
         if (enableWithParent && node instanceof EGChildNode) {  //for parent
             CheckableAttributeNode parentCheckableNode = ((EGChildNode) node).getParent().getCheckableNode();
             if (parentCheckableNode != null && parentCheckableNode.isSelected()) {

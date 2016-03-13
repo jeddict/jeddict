@@ -26,6 +26,7 @@ import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.source.JavaIdentifiers;
 import org.netbeans.jpa.modeler.source.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
@@ -36,7 +37,6 @@ import org.openide.WizardDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.ChangeSupport;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
 public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements DocumentListener {
@@ -49,7 +49,8 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     /**
      * Creates new form CrudSetupPanel
      */
-    public JPAModelSetupPanelVisual(WizardDescriptor wizard) {
+    public JPAModelSetupPanelVisual(Project project, WizardDescriptor wizard) {
+        this.project = project;
         this.wizard = wizard;
         initComponents();
 
@@ -255,7 +256,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     void read(WizardDescriptor settings) {
 //        jsfFolder.setText((String) settings.getProperty(WizardProperties.JSF_FOLDER));
 
-        project = Templates.getProject(settings);
+//        project = Templates.getProject(settings);
         FileObject targetFolder = Templates.getTargetFolder(settings);
 
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
@@ -298,7 +299,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
             Templates.setTargetFolder(settings, targetFolder);
             Templates.setTargetName(wizard, this.getFileName());
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ExceptionUtils.printStackTrace(ex);
         }
     }
 

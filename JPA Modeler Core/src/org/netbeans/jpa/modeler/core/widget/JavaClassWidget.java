@@ -31,8 +31,9 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.NbBundle;
+import org.openide.windows.WindowManager;
 
-public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E,JPAModelerScene> {
+public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
     private GeneralizationFlowWidget outgoingGeneralizationFlowWidget;
     private final List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<>();
@@ -41,7 +42,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         super(scene, node);
         this.addPropertyChangeListener("class", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
+                JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
                 setName(JavaClassWidget.this.getLabel());//rollback
             } else {
                 setName(value);
@@ -64,8 +65,6 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
     }
 
-    
-     
     public abstract void deleteAttribute(AttributeWidget attributeWidget);
 
     public abstract void sortAttributes();
@@ -197,7 +196,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
 ////    private static final Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25) ,2, new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25));
     public void showInheritencePath() {
-        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
+        IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
 //        this.setBorder(colorScheme.);
@@ -210,7 +209,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     }
 
     public void hideInheritencePath() {
-        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
+        IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
         if (this.getOutgoingGeneralizationFlowWidget() != null) {
@@ -221,18 +220,15 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     }
 
     public void showCompositionPath() {
-        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
+        IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
     }
 
     public void hideCompositionPath() {
-        IColorScheme colorScheme =  this.getModelerScene().getColorScheme();
+        IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
     }
-
-    
-
 
 }

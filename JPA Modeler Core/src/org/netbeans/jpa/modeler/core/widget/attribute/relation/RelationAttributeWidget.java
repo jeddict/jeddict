@@ -22,15 +22,12 @@ import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
 import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -50,26 +47,24 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  */
 public abstract class RelationAttributeWidget<E extends RelationAttribute> extends AttributeWidget<E> {
 
-
     public RelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-       
 
     }
 
-        @Override
-    protected void setAttributeTooltip(){
+    @Override
+    protected void setAttributeTooltip() {
         if (getBaseElementSpec() instanceof CollectionTypeHandler) {
-                CollectionTypeHandler collectionTypeHandler = (CollectionTypeHandler)getBaseElementSpec();
-                StringBuilder writer = new StringBuilder();
-                writer.append(collectionTypeHandler.getCollectionType().substring(collectionTypeHandler.getCollectionType().lastIndexOf('.')+1));
+            CollectionTypeHandler collectionTypeHandler = (CollectionTypeHandler) getBaseElementSpec();
+            StringBuilder writer = new StringBuilder();
+            writer.append(collectionTypeHandler.getCollectionType().substring(collectionTypeHandler.getCollectionType().lastIndexOf('.') + 1));
 //                writer.append('<').append(this.getBaseElementSpec().get()).append('>');//TODO
-            this.setToolTipText(writer.toString());    
+            this.setToolTipText(writer.toString());
         } else {
             this.setToolTipText(this.getBaseElementSpec().getTargetEntity());//TODO
         }
     }
-    
+
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
@@ -78,26 +73,14 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
         set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         // Issue Fix #6153 End
         RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
-        
-        // find source and target entity
-//        Entity sourceEntity = ((EntityWidget)getModelerScene().getBaseElement(relationAttributeSpec.getConnectedEntity().getId())).getBaseElementSpec();
-        Entity targetEntity;
-        
-        RelationFlowWidget flowWidget = this.getRelationFlowWidget();
-        if(flowWidget instanceof Bidirectional){
-           RelationAttribute targetRelationAttributeSpec = ((Bidirectional)flowWidget).getTargetRelationAttributeWidget().getBaseElementSpec();
-            targetEntity = ((EntityWidget)getModelerScene().getBaseElement(targetRelationAttributeSpec.getConnectedEntity().getId())).getBaseElementSpec();
-        } else {
-            targetEntity = ((Unidirectional)flowWidget).getTargetEntityWidget().getBaseElementSpec();
-        }
-        
-        
+
         if (relationAttributeSpec.isOwner()) {
             if (this.getBaseElementSpec() instanceof JoinColumnHandler) {
+                Entity targetEntity = ((RelationAttribute) this.getBaseElementSpec()).getConnectedEntity();
                 JoinColumnHandler joinColumnHandlerSpec = (JoinColumnHandler) this.getBaseElementSpec();
-                set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), joinColumnHandlerSpec.getJoinColumn(),targetEntity));
+                set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), joinColumnHandlerSpec.getJoinColumn(), targetEntity));
             }
-            set.createPropertySet( this , relationAttributeSpec.getJoinTable());
+            set.createPropertySet(this, relationAttributeSpec.getJoinTable());
             set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_JoinColumns", "Join Columns", "", this.getModelerScene(), relationAttributeSpec.getJoinTable().getJoinColumn()));
             set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_InverseJoinColumns", "Inverse Join Columns", "", this.getModelerScene(), relationAttributeSpec.getJoinTable().getInverseJoinColumn()));
         }
@@ -133,28 +116,26 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
                 CascadeType cascadeType = relationAttribute.getCascade();
                 if (cascadeType == null) {
                     display.append("None");
+                } else if (cascadeType.getCascadeAll() != null) {
+                    display.append("All");
                 } else {
-                    if (cascadeType.getCascadeAll() != null) {
-                        display.append("All");
-                    } else {
-                        if (cascadeType.getCascadeDetach() != null) {
-                            display.append("Detach,");
-                        }
-                        if (cascadeType.getCascadeMerge() != null) {
-                            display.append("Merge,");
-                        }
-                        if (cascadeType.getCascadePersist() != null) {
-                            display.append("Persist,");
-                        }
-                        if (cascadeType.getCascadeRefresh() != null) {
-                            display.append("Refresh,");
-                        }
-                        if (cascadeType.getCascadeRemove() != null) {
-                            display.append("Remove,");
-                        }
-                        if (display.length() != 0) {
-                            display.setLength(display.length() - 1);
-                        }
+                    if (cascadeType.getCascadeDetach() != null) {
+                        display.append("Detach,");
+                    }
+                    if (cascadeType.getCascadeMerge() != null) {
+                        display.append("Merge,");
+                    }
+                    if (cascadeType.getCascadePersist() != null) {
+                        display.append("Persist,");
+                    }
+                    if (cascadeType.getCascadeRefresh() != null) {
+                        display.append("Refresh,");
+                    }
+                    if (cascadeType.getCascadeRemove() != null) {
+                        display.append("Remove,");
+                    }
+                    if (display.length() != 0) {
+                        display.setLength(display.length() - 1);
                     }
                 }
 
@@ -164,7 +145,6 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
         });
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
-
 
     public void setConnectedSibling(EntityWidget classWidget) {
         RelationAttribute relationAttribute = this.getBaseElementSpec();
@@ -183,21 +163,20 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
     public abstract String getIconPath();
 
     public abstract Image getIcon();
-    
-        
-        @Override
+
+    @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        if(this.getClassWidget().getBaseElementSpec() instanceof Entity){
-        JMenuItem visDB = new JMenuItem("Nano DB", NANO_DB);
-        visDB.addActionListener((ActionEvent e) -> {
-            ModelerFile file = this.getModelerScene().getModelerFile();
-            JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(),(Entity)this.getClassWidget().getBaseElementSpec(),(RelationAttribute)this.getBaseElementSpec()));
-        });            
-        
-        menuList.add(0, visDB);
+        if (this.getClassWidget().getBaseElementSpec() instanceof Entity) {
+            JMenuItem visDB = new JMenuItem("Nano DB", NANO_DB);
+            visDB.addActionListener((ActionEvent e) -> {
+                ModelerFile file = this.getModelerScene().getModelerFile();
+                JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), (Entity) this.getClassWidget().getBaseElementSpec(), (RelationAttribute) this.getBaseElementSpec()));
+            });
+
+            menuList.add(0, visDB);
         }
         return menuList;
     }
-    
+
 }

@@ -48,7 +48,7 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
     @Override
     public Component getComponent() {
         if (component == null) {
-            component = new JPAModelSetupPanelVisual(wizardDescriptor);
+            component = new JPAModelSetupPanelVisual(project, wizardDescriptor);
             component.addChangeListener(this);
         }
         return component;

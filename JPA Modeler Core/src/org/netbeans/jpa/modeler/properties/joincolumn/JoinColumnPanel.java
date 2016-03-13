@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.properties.joincolumn;
 
 import javax.swing.JOptionPane;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
@@ -31,8 +32,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         this.entity = entity;
     }
 
-    
-            @Override
+    @Override
     public void postConstruct() {
         initComponents();
     }
@@ -54,7 +54,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         nullable_CheckBox.setSelected(true);
         insertable_CheckBox.setSelected(true);
         updatable_CheckBox.setSelected(true);
-                JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity,null);
+        JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, null);
 
     }
 
@@ -66,7 +66,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
             Object[] row = ((RowValue) entityValue).getRow();
             JoinColumn joinColumn = (JoinColumn) row[0];
             name_TextField.setText(joinColumn.getName());
-            JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity,joinColumn.getReferencedColumnName());
+            JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, joinColumn.getReferencedColumn());
             table_TextField.setText(joinColumn.getTable());
             columnDefinition_TextArea.setText(joinColumn.getColumnDefinition());
             unique_CheckBox.setSelected(joinColumn.getUnique());
@@ -344,13 +344,12 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
 
         joinColumn.setName(name_TextField.getText());
         Object selectedItem = referencedColumnName_ComboBox.getSelectedItem();
-        if(selectedItem!=null && selectedItem instanceof ComboBoxValue){
-            joinColumn.setReferencedColumnName(((ComboBoxValue)selectedItem).getDisplayValue());
-        }
-        else if(selectedItem!=null) {
-            joinColumn.setReferencedColumnName(selectedItem.toString());
-        }else {
-            joinColumn.setReferencedColumnName(null);
+        if (selectedItem != null && selectedItem instanceof ComboBoxValue) {
+            joinColumn.setReferencedColumn((Id) ((ComboBoxValue) selectedItem).getValue());
+//        } else if (selectedItem != null) {
+//            joinColumn.setReferencedColumnName(selectedItem.toString());
+        } else {
+            joinColumn.setReferencedColumn(null);
         }
         joinColumn.setTable(table_TextField.getText());
         joinColumn.setColumnDefinition(columnDefinition_TextArea.getText());
@@ -363,7 +362,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = joinColumn;
             row[1] = joinColumn.getName();
-            row[2] = joinColumn.getReferencedColumnName();
+            row[2] = joinColumn.getReferencedColumnName();//for representation
         }
 
         saveActionPerformed(evt);

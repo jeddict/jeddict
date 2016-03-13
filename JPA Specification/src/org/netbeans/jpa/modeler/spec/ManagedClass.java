@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 public abstract class ManagedClass extends JavaClass {
@@ -31,9 +32,14 @@ public abstract class ManagedClass extends JavaClass {
 
     protected String description;
 
+    public abstract IAttributes getAttributes();
+
+    public abstract void setAttributes(IAttributes attributes);
+
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
         super.load(entityMappings, element, fieldAccess);
+        this.getAttributes().load(entityMappings, element, fieldAccess);
         this.access = AccessType.load(element);
     }
 

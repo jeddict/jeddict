@@ -140,6 +140,7 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
         attributeWidgets.addAll(this.getManyToManyRelationAttributeWidgets());
         return attributeWidgets;
     }
+
     public List<AttributeWidget> getEmbeddedOverrideWidgets() {
         List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
@@ -150,8 +151,5 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
         attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
-
-  
-    
 
 }

@@ -199,31 +199,28 @@ public class ClassWidgetVisibilityController extends GenericDialog {
 
     private void manageInheritenceVisibility() {
         for (JavaClass javaClass : entityMappings.getJavaClass()) {
-             isChildVisibile(entityMappings , javaClass);
+            isChildVisibile(entityMappings, javaClass);
         }
     }
-    
-    private boolean isChildVisibile(EntityMappings entityMappings , JavaClass javaClass) {
-            if (!javaClass.isVisibile()) {
-                List<JavaClass> javaClassList = entityMappings.getAllSubClass(javaClass.getId());
-                boolean hidden = true;
-                for (JavaClass javaClass_TMP : javaClassList) {
-                   if (javaClass_TMP.isVisibile()){
-                        hidden = false;
-                       break;
-                   } else if (!javaClass_TMP.isVisibile() && isChildVisibile(entityMappings , javaClass_TMP)) {
-                        hidden = false;
-                    }
+
+    private boolean isChildVisibile(EntityMappings entityMappings, JavaClass javaClass) {
+        if (!javaClass.isVisibile()) {
+            List<JavaClass> javaClassList = entityMappings.getAllSubClass(javaClass.getId());
+            boolean hidden = true;
+            for (JavaClass javaClass_TMP : javaClassList) {
+                if (javaClass_TMP.isVisibile()) {
+                    hidden = false;
+                    break;
+                } else if (!javaClass_TMP.isVisibile() && isChildVisibile(entityMappings, javaClass_TMP)) {
+                    hidden = false;
                 }
-                if(!hidden){
-                  javaClass.setVisibile(true);
-                }
-            } 
-            return javaClass.isVisibile();
+            }
+            if (!hidden) {
+                javaClass.setVisibile(true);
+            }
+        }
+        return javaClass.isVisibile();
     }
-    
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.

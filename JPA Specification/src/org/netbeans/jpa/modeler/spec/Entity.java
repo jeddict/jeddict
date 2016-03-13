@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,6 +24,8 @@ import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
+import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
+import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -216,6 +219,11 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     }
 
+    void beforeMarshal(Marshaller marshaller) {
+        AttributeValidator.filter(this);
+        AssociationValidator.filter(this);
+    }
+
     /**
      * Gets the value of the table property.
      *
@@ -229,7 +237,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return table;
     }
 
-    public String getDefaultTableName(){
+    public String getDefaultTableName() {
         return this.getClazz().toUpperCase();
     }
 
@@ -240,6 +248,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
             return getDefaultTableName();
         }
     }
+
     /**
      * Sets the value of the table property.
      *
@@ -576,6 +585,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     }
 
     @Override
+    @Deprecated
     public AttributeOverride getAttributeOverride(String attributePath) {
         Set<AttributeOverride> attributeOverrides = getAttributeOverride();
         for (AttributeOverride attributeOverride_TMP : attributeOverrides) {
@@ -589,7 +599,25 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         return attributeOverride_TMP;
     }
 
+    public AttributeOverride findAttributeOverride(String name) {
+        for (AttributeOverride attributeOverride : getAttributeOverride()) {
+            if (StringUtils.equals(name, attributeOverride.getName())) {
+                return attributeOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().add(attributeOverride);
+    }
+
+    public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().remove(attributeOverride);
+    }
+
     @Override
+    @Deprecated
     public AssociationOverride getAssociationOverride(String attributePath) {
         Set<AssociationOverride> associationOverrides = getAssociationOverride();
         for (AssociationOverride associationOverride_TMP : associationOverrides) {
@@ -601,6 +629,23 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         attributeOverride_TMP.setName(attributePath);
         associationOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
+    }
+
+    public AssociationOverride findAssociationOverride(String name) {
+        for (AssociationOverride associationOverride : getAssociationOverride()) {
+            if (StringUtils.equals(name, associationOverride.getName())) {
+                return associationOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().add(associationOverride);
+    }
+
+    public boolean removeAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().remove(associationOverride);
     }
 
     /**
@@ -664,13 +709,62 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      * {@link NamedEntityGraph }
      *
      *
-     * @return 
+     * @return
      */
     public List<NamedEntityGraph> getNamedEntityGraph() {
         if (namedEntityGraph == null) {
             namedEntityGraph = new ArrayList<>();
         }
         return this.namedEntityGraph;
+    }
+
+    public Inheritance getRootInheritence() {
+        if (this.getInheritance() == null) {
+            if (this.getSuperclass() != null && this.getSuperclass() instanceof Entity) {
+                return ((Entity) this.getSuperclass()).getRootInheritence();
+            } else {
+                return null;
+            }
+        } else {
+            return this.getInheritance();
+        }
+    }
+
+    public DiscriminatorColumn getRootDiscriminatorColumn() {
+        if (this.getInheritance() == null) {
+            if (this.getDiscriminatorColumn() == null) {
+                if (this.getSuperclass() != null && this.getSuperclass() instanceof Entity) {
+                    return ((Entity) this.getSuperclass()).getRootDiscriminatorColumn();
+                } else {
+                    return null;
+                }
+            } else {
+                return this.getDiscriminatorColumn();
+            }
+        } else {
+            if (this.getDiscriminatorColumn() == null) {
+                this.setDiscriminatorColumn(new DiscriminatorColumn());
+            }
+            return this.getDiscriminatorColumn();
+        }
+    }
+
+    public String getRootDiscriminatorColumnName() {
+        DiscriminatorColumn rootDiscriminatorColumn = getRootDiscriminatorColumn();
+        if (rootDiscriminatorColumn == null || StringUtils.isBlank(rootDiscriminatorColumn.getName())) {
+            return "DTYPE";
+        } else {
+            return rootDiscriminatorColumn.getName();
+        }
+    }
+
+    public String getDiscriminatorColumnName() {
+        DiscriminatorColumn localDiscriminatorColumn = getDiscriminatorColumn();
+        if (localDiscriminatorColumn == null || StringUtils.isBlank(localDiscriminatorColumn.getName())) {
+            return "DTYPE";
+        } else {
+            return localDiscriminatorColumn.getName();
+        }
     }
 
 }

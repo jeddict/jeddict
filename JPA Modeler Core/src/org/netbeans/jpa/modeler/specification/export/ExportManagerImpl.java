@@ -41,6 +41,7 @@ import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
@@ -60,7 +61,6 @@ import org.netbeans.modeler.specification.export.IExportManager;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.node.INodeWidget;
-import org.openide.util.Exceptions;
 
 public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
 
@@ -210,7 +210,7 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
             ppt.write(out);
             out.close();
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            scene.getModelerFile().handleException(ex);
         }
     }
 
@@ -247,7 +247,7 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
         // Return the buffered image
         return bimage;
     }
-    
+
     private byte[] getImageArray(Image image) {
         byte[] bytes = icons.get(image);
         if (bytes == null) {
@@ -257,7 +257,7 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
                 bytes = byteArrayStream.toByteArray();
                 icons.put(image, bytes);
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex);
             }
         }
         return bytes;

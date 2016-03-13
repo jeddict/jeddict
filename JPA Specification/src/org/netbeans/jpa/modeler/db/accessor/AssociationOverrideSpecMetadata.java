@@ -26,21 +26,21 @@ import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
  *
  * @author Gaurav Gupta
  */
-public class AssociationOverrideSpecMetadata extends AssociationOverrideMetadata{
-    
+public class AssociationOverrideSpecMetadata extends AssociationOverrideMetadata {
 
     private AssociationOverrideSpecMetadata() {
     }
-    public static AssociationOverrideSpecMetadata getInstance(AssociationOverride associationOverride){
+
+    public static AssociationOverrideSpecMetadata getInstance(AssociationOverride associationOverride) {
         AssociationOverrideSpecMetadata accessor = new AssociationOverrideSpecMetadata();
         accessor.setName(associationOverride.getName());
         if (!JoinTableValidator.isEmpty(associationOverride.getJoinTable())) {
             accessor.setJoinTable(associationOverride.getJoinTable().getAccessor());
         }
-        JoinColumnValidator.filter(associationOverride.getJoinColumn());        
+        JoinColumnValidator.filter(associationOverride.getJoinColumn());
         accessor.setJoinColumns(associationOverride.getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
-        
+
         return accessor;
     }
-    
+
 }

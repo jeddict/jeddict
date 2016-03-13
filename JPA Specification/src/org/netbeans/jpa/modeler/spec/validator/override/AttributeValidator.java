@@ -21,6 +21,8 @@ import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.ColumnValidator;
@@ -39,13 +41,56 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
         return ColumnValidator.isEmpty(attributeOverride.getColumn());
     }
 
+    /**
+     * Used to remove all stale AttributeOverride (ex : if Parent JavaClass
+     * attribute is removed then AttributeOverride reference should be removed)
+     */
+    public static void filter(Entity entity) {
+        ManagedClass parentclass = entity.getSuperclass() instanceof ManagedClass ? (ManagedClass) entity.getSuperclass() : null;
+        entity.getAttributeOverride().removeIf(attributeOverride
+                -> !isExist(attributeOverride.getName(), parentclass)
+                || AttributeValidator.isEmpty(attributeOverride)
+        );
+    }
+
+    /**
+     * Used to remove all stale AttributeOverride by nested scanning
+     *
+     * @param key key of AttributeOverride
+     * @param javaClass parent class of entity to search AttributeOverride's key
+     * @return
+     */
+    private static boolean isExist(String key, ManagedClass javaClass) {
+        if (javaClass == null) {
+            return false;
+        }
+        Optional<Attribute> attrOptional = javaClass.getAttributes().getNonRelationAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(key)).findAny();
+        if (attrOptional.isPresent()) {
+            return true;
+        } else if (javaClass.getSuperclass() instanceof ManagedClass) {
+            return isExist(key, (ManagedClass) javaClass.getSuperclass());
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Used to remove all stale AttributeOverride (ex : if Embeddable attribute
+     * is removed then AttributeOverride reference should be removed)
+     *
+     * @param embedded
+     */
     public static void filter(Embedded embedded) {
         embedded.getAttributeOverride().removeIf(attributeOverride
                 -> !isExist(attributeOverride.getName().split("\\."), embedded.getConnectedClass())
                 || AttributeValidator.isEmpty(attributeOverride)
         );
     }
-    
+
+    /**
+     * Used to remove all stale AttributeOverride (ex : if Embeddable attribute
+     * is removed then AttributeOverride reference should be removed)
+     */
     public static void filter(ElementCollection elementCollection) {
         elementCollection.getAttributeOverride().removeIf(attributeOverride
                 -> !isExist(attributeOverride.getName().split("\\."), elementCollection.getConnectedClass())
@@ -53,7 +98,12 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
         );
     }
 
-   private static boolean isExist(String[] keys, Embeddable embeddable) {
+    /**
+     *
+     * @param keys arrays path to managedAttr separated by dots
+     * @param embeddable next intrinsic element , incremented in each recursion
+     */
+    private static boolean isExist(String[] keys, Embeddable embeddable) {
         if (keys.length > 1) {
             Optional<Embedded> embeddedOptional = embeddable.getAttributes().getEmbedded().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
             if (embeddedOptional.isPresent()) {
@@ -66,6 +116,5 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
             return attrOptional.isPresent();
         }
     }
-
 
 }

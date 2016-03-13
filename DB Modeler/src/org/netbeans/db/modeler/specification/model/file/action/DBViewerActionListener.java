@@ -38,7 +38,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         document = "org/netbeans/db/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/db/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA_DB", version = 2.0F, name = "JPA DB Viewer", displayName = "JPA 2.0 Specification - DB Viewer")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "DB Viewer", name = "DB Viewer",
+@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "DB Viewer", name = "DB Viewer", version = 1.4f,
         modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class, exportManager = ExportManagerImpl.class,
         relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class)
 //        modelerPanel=DBPanel.class)
@@ -46,7 +46,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
 
     private EntityMappings mappings;
-    
+
     @Override
     public void initSpecification(final ModelerFile modelerFile) {
         modelerFile.setIcon(TAB_ICON);
@@ -54,8 +54,8 @@ public class DBViewerActionListener extends ModelerFileActionListener implements
     }
 
     @Override
-    public void init(ModelerFile file , EntityMappings mappings) {
-        this.mappings=mappings;
+    public void init(ModelerFile file, EntityMappings mappings) {
+        this.mappings = mappings;
         context = null;
         openModelerFile("DB", null, null, file);
     }

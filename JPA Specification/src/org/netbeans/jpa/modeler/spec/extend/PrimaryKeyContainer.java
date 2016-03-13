@@ -31,6 +31,8 @@ public interface PrimaryKeyContainer {
 
     public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass);
 
-    public void manageCompositePrimaryKeyClass();
+    public void manageCompositePrimaryKey();
+
+    public void clearCompositePrimaryKey();
 
 }

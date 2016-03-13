@@ -23,12 +23,7 @@ import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.geom.Point2D;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
-import javax.swing.GrayFilter;
 import javax.swing.border.Border;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.border.BorderFactory;
@@ -153,7 +148,7 @@ public class DBColorScheme implements IColorScheme {
         WIDGET_SELECT_LBACKGROUND = new Color(50, 49, 46);
         WIDGET_LBACKGROUND = new Color(63, 62, 57);
 
-        WIDGET_BORDER = new ShadowBorder(null, 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
+        WIDGET_BORDER = new ShadowBorder(new Color(230, 230, 230, 230), 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
         WIDGET_SELECT_BORDER = new ShadowBorder(new Color(130, 130, 130, 230), 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
         WIDGET_HOVER_BORDER = new ShadowBorder(new Color(200, 200, 200, 150), 2, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5);
 
@@ -302,9 +297,9 @@ public class DBColorScheme implements IColorScheme {
     }
 
     public Image getMinimizeWidgetImage(ObjectState state, IPNodeWidget widget) {
-        return widget.isMinimized() ? 
-                (state.isHovered() ? BUTTON_E_H : (state.isSelected()? BUTTON_E_F : BUTTON_E)) : 
-                (state.isHovered() ? BUTTON_C_H : (state.isSelected()? BUTTON_C_F : BUTTON_C));
+        return widget.isMinimized()
+                ? (state.isHovered() ? BUTTON_E_H : (state.isSelected() ? BUTTON_E_F : BUTTON_E))
+                : (state.isHovered() ? BUTTON_C_H : (state.isSelected() ? BUTTON_C_F : BUTTON_C));
     }
 
     @Override

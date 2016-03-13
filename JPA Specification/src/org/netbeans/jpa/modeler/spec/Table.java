@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.tables.TableMetadata;
 import org.netbeans.jpa.modeler.spec.validator.table.TableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -61,7 +60,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "uniqueConstraint",
     "index"
 })
-    @XmlJavaTypeAdapter(value=TableValidator.class)
+@XmlJavaTypeAdapter(value = TableValidator.class)
 
 public class Table {
 
@@ -74,7 +73,7 @@ public class Table {
     protected String catalog;
     @XmlAttribute(name = "schema")
     protected String schema;
-    
+
     public static Table load(Element element) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Table");
         Table table = null;
@@ -218,6 +217,6 @@ public class Table {
         accessor.setSchema(schema);
 
         return accessor;
-    }   
-    
+    }
+
 }

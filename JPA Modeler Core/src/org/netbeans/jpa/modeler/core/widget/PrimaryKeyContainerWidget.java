@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
@@ -75,7 +74,8 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         attributeWidgets.addAll(this.getManyToManyRelationAttributeWidgets());
         return attributeWidgets;
     }
-      public List<AttributeWidget> getEmbeddedOverrideWidgets() {
+
+    public List<AttributeWidget> getEmbeddedOverrideWidgets() {
         List<AttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (classWidget instanceof PrimaryKeyContainerWidget) {
@@ -96,9 +96,5 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
     }
-    
-    
-    
-    
 
 }

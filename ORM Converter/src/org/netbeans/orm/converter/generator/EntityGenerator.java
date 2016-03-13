@@ -35,7 +35,7 @@ import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
-public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
+public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
     private static Logger logger = ORMConvLogger.getLogger(EntityGenerator.class);
 
@@ -74,20 +74,18 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
         //Queries
         processNamedQueries(entity.getNamedQuery());
         processNamedNativeQueries(entity.getNamedNativeQuery());
-        
+
         //EntityGraphs
         processNamedEntityGraphs(entity.getNamedEntityGraph());
-        
-        //StoredProcedures
-        processNamedStoredProcedureQueries((EntityMappings)entity.getRootElement(),entity.getNamedStoredProcedureQuery());
 
-        
-        
+        //StoredProcedures
+        processNamedStoredProcedureQueries((EntityMappings) entity.getRootElement(), entity.getNamedStoredProcedureQuery());
+
         //Attributes -- Method level annotations
         Attributes parsedAttributes = entity.getAttributes();
 
         if (parsedAttributes != null) {
-            processEmbeddedId(parsedAttributes.getEmbeddedId());
+            processEmbeddedId(entity, parsedAttributes.getEmbeddedId());
             if (parsedAttributes.getEmbeddedId() == null) {
                 processId(parsedAttributes.getId());
             }
@@ -115,12 +113,11 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
         classHelper.setPackageName(packageName);
         classDef.setAbstractClass(entity.getAbstract());
         classDef.setInterfaces(entity.getInterfaces());
-        if(entity.getSuperclass()!=null){
-        ClassHelper superClassHelper = new ClassHelper(entity.getSuperclass().getClazz());
-        superClassHelper.setPackageName(packageName);
-                classDef.setSuperClassName(superClassHelper.getFQClassName());
+        if (entity.getSuperclass() != null) {
+            ClassHelper superClassHelper = new ClassHelper(entity.getSuperclass().getClazz());
+            superClassHelper.setPackageName(packageName);
+            classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
-
 
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
@@ -131,7 +128,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet>{
         }
         classDef.setEntity(true);
         classDef.setAnnotation(entity.getAnnotation());
-        
+
         classDef.setXmlRootElement(entity.getXmlRootElement());
 
         return classDef;

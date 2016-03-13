@@ -38,7 +38,7 @@
                 <attribute id="catalog" groupId="BASIC_PROP" class="java.lang.String" name="catalog">
                     <display-name>Catalog</display-name>
                 </attribute>
-                <attribute id="version" groupId="BASIC_PROP" class="java.lang.String" name="version">
+                <attribute id="diagramVersion" groupId="BASIC_PROP" class="java.lang.String" name="diagramVersion">
                     <display-name>Version</display-name>
                 </attribute>
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
@@ -369,7 +369,7 @@
                     </attributes>
                 </element>
         -->
-<!--           <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
+        <!--           <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
             <attributes>
                 <attribute id="jaxbXmlList" groupId="JAXB_PROP" class="java.lang.Boolean" name="jaxbXmlList">
                     <display-name>Is Xml List</display-name>

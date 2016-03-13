@@ -41,6 +41,7 @@ import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.getModelerFileVersion;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModel;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModelAction;
@@ -79,7 +80,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
 //            pudo = ProviderUtil.getPUDataObject(helper.getProject());
 //            pudo.getPersistence().getPersistenceUnit();
 //        } catch (InvalidPersistenceXmlException ex) {
-//            Exceptions.printStackTrace(ex);
+//            ExceptionUtils.printStackTrace(ex);
 //        }
 
         generateModal(helper.getFileName(), helper.getBeans(),
@@ -229,7 +230,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
 
         public void runImpl() throws IOException {
 
-            EntityMappings entityMappingsSpec = EntityMappings.getNewInstance();
+            EntityMappings entityMappingsSpec = EntityMappings.getNewInstance(getModelerFileVersion());
             entityMappingsSpec.setGenerated();
 
             // first generate empty entity modal -- this is needed as
@@ -270,19 +271,14 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                 entityModalGenerator.run();
             }
 
-  
             entityMappingsSpec.manageSiblingAttribute();
             // manageSiblingAttribute for MappedSuperClass and Embeddable is not required because it not generated DBRE CASE
 
-            
             FileObject parentFileObject = entityClasses[0].getPackageFileObject();
-            JPAModelerUtil.createNewModelerFile(entityMappingsSpec , parentFileObject,fileName, true);
-            
-            
+            JPAModelerUtil.createNewModelerFile(entityMappingsSpec, parentFileObject, fileName, true);
 
         }
 
-     
         private abstract class ModalGenerator {
 
             // the entity modal we are generating
@@ -337,8 +333,10 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
             }
 
             protected boolean isDecimalType(String type) {
-                if ("java.lang.Double".equals(type) || // NOI18N
-                        "java.lang.Float".equals(type) || // NOI18N
+                if ("java.lang.Double".equals(type)
+                        || // NOI18N
+                        "java.lang.Float".equals(type)
+                        || // NOI18N
                         "java.math.BigDecimal".equals(type)) { // NOI18N
                     return true;
                 }

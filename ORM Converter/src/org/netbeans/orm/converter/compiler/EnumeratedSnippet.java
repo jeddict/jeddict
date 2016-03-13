@@ -60,12 +60,10 @@ public class EnumeratedSnippet implements Snippet {
             } else {
                 return "@Enumerated(EnumType.STRING)";
             }
+        } else if (value == null || value.equals(TYPE_ORDINAL)) {
+            return "@Enumerated";
         } else {
-            if (value == null || value.equals(TYPE_ORDINAL)) {
-                return "@Enumerated";
-            } else {
-                return "@Enumerated(EnumType.STRING)";
-            }
+            return "@Enumerated(EnumType.STRING)";
         }
     }
 

@@ -20,9 +20,8 @@ import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.task.ITaskSupervisor;
 
-
 public interface ModuleGenerator {
-    
+
     void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings);
-    
+
 }

@@ -39,6 +39,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.source.JavaIdentifiers;
 import org.netbeans.jpa.modeler.source.SourceGroups;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
@@ -55,10 +56,8 @@ import org.netbeans.modules.j2ee.persistence.wizard.library.PersistenceLibrarySu
 import org.netbeans.spi.java.project.support.ui.PackageView;
 import org.netbeans.spi.project.ui.templates.support.Templates;
 import org.openide.WizardDescriptor;
-import org.openide.awt.*;
 import org.openide.filesystems.FileObject;
 import org.openide.util.ChangeSupport;
-import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
@@ -198,7 +197,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
             }
 //            selectedTables.ensureUniqueClassNames();
         } catch (IOException e) {
-            Exceptions.printStackTrace(e);
+            ExceptionUtils.printStackTrace(e);
         }
 
         TableUISupport.connectClassNames(classNamesTable, selectedTables);
@@ -315,7 +314,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
             try {
                 selectedTables.setTargetFolder(getLocationValue(), getPackageName());
             } catch (IOException e) {
-                Exceptions.printStackTrace(e);
+                ExceptionUtils.printStackTrace(e);
             }
         }
     }

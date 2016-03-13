@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>
@@ -80,7 +79,7 @@ public abstract class AbstractPlane
      *
      * <p>
      * Objects of the following type(s) are allowed in the list null null null
-     * null null null null null null     {@link JAXBElement }{@code <}{@link DiagramElement }{@code >}
+     * null null null null null null null null null null null null     {@link JAXBElement }{@code <}{@link DiagramElement }{@code >}
      * {@link JAXBElement }{@code <}{@link Shape }{@code >}
      * {@link JAXBElement }{@code <}{@link Edge }{@code >}
      *

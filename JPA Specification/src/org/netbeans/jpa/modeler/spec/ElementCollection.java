@@ -132,7 +132,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "collectionTable"
 })
 /**
- * For Basic ElementCollection    -> TargetClass<String>
+ * For Basic ElementCollection -> TargetClass<String>
  * For Embeddable ElementCollection -> ConnectedClass<Embeddable>
  */
 public class ElementCollection extends CompositionAttribute implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler { //CompositionAttribute/BaseAttributes
@@ -235,9 +235,8 @@ public class ElementCollection extends CompositionAttribute implements FetchType
 
         return elementCollection;
     }
-    
-    
-     void beforeMarshal(Marshaller marshaller) {
+
+    void beforeMarshal(Marshaller marshaller) {
         AttributeValidator.filter(this);
         AssociationValidator.filter(this);
     }
@@ -602,6 +601,23 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         return this.attributeOverride;
     }
 
+    public AttributeOverride findAttributeOverride(String name) {
+        for (AttributeOverride attributeOverride : getAttributeOverride()) {
+            if (StringUtils.equals(name, attributeOverride.getName())) {
+                return attributeOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().add(attributeOverride);
+    }
+
+    public boolean removeAttributeOverride(AttributeOverride attributeOverride) {
+        return getAttributeOverride().remove(attributeOverride);
+    }
+
     /**
      * Gets the value of the associationOverride property.
      *
@@ -615,12 +631,12 @@ public class ElementCollection extends CompositionAttribute implements FetchType
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAssociationOverride().add(newItem);
+     * {@link AssociationOverride }
      * </pre>
      *
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link AssociationOverride }
      *
      *
      */
@@ -630,6 +646,23 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             associationOverride = new TreeSet<>();
         }
         return this.associationOverride;
+    }
+
+    public AssociationOverride findAssociationOverride(String name) {
+        for (AssociationOverride associationOverride : getAssociationOverride()) {
+            if (StringUtils.equals(name, associationOverride.getName())) {
+                return associationOverride;
+            }
+        }
+        return null;
+    }
+
+    public boolean addAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().add(associationOverride);
+    }
+
+    public boolean removeAssociationOverride(AssociationOverride associationOverride) {
+        return getAssociationOverride().remove(associationOverride);
     }
 
     /**
@@ -800,9 +833,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             return Arrays.asList(JaxbVariableType.values());
         }
     }
-    
-    
-    
+
     @Override
     public String getAttributeType() {
         return this.getConnectedClass() != null ? super.getAttributeType() : targetClass;
@@ -833,4 +864,5 @@ public class ElementCollection extends CompositionAttribute implements FetchType
             return getDefaultColumnName();
         }
     }
+
 }

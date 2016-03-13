@@ -45,7 +45,8 @@ public class OverrideAttributeChildFactory extends OverrideChildFactory {
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
         for (AttributeWidget attributeWidget : entityWidget.getAttributeOverrideWidgets()) {
             attributeWidgets.add(attributeWidget);
-        }for (AttributeWidget attributeWidget : entityWidget.getEmbeddedOverrideWidgets()) {
+        }
+        for (AttributeWidget attributeWidget : entityWidget.getEmbeddedOverrideWidgets()) {
             attributeWidgets.add(attributeWidget);
         }
 
@@ -69,7 +70,7 @@ public class OverrideAttributeChildFactory extends OverrideChildFactory {
                         Attribute attributeSpec = (Attribute) attributeWidget.getBaseElementSpec();
                         AttributeOverrideHandler attributeOverrideHandler = (AttributeOverrideHandler) entityWidget.getBaseElementSpec();
                         AttributeOverride attributeOverride = attributeOverrideHandler.getAttributeOverride(attributeSpec.getName());
-                        set.createPropertySet( attributeWidget , attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
+                        set.createPropertySet(attributeWidget, attributeOverride.getColumn(), attributeWidget.getPropertyChangeListeners(), attributeWidget.getPropertyVisibilityHandlers());
                     }
                 }
 

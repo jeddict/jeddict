@@ -25,7 +25,6 @@ import org.netbeans.modeler.specification.model.document.core.IFlowNode;
  */
 public abstract class FlowNode extends BaseElement implements IFlowNode {
 
-    
     @XmlAttribute
     private boolean minimized = false;
 

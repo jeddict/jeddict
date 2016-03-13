@@ -35,8 +35,6 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
         MappedSuperclass mappedSuperclass = this.getBaseElementSpec();
         if (mappedSuperclass.getAttributes() == null) {
             mappedSuperclass.setAttributes(new Attributes());
-//            addNewIdAttribute("id");
-//            sortAttributes();
         }
         if (mappedSuperclass.getClazz() == null || mappedSuperclass.getClazz().isEmpty()) {
             mappedSuperclass.setClazz(this.getModelerScene().getNextClassName("MappedSuperclass_"));
@@ -103,6 +101,6 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
 //    }
     @Override
     public InheritenceStateType getInheritenceState() {
-       return InheritenceStateType.NONE;
+        return InheritenceStateType.NONE;
     }
 }

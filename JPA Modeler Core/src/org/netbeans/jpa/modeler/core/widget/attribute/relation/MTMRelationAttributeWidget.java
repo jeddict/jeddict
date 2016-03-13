@@ -40,7 +40,7 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
     public MTMRelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
     }
-    
+
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);

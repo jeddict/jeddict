@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.db.accessor.BasicSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.ElementCollectionSpecAccessor;
@@ -36,6 +38,7 @@ import org.netbeans.jpa.modeler.db.accessor.TransientSpecAccessor;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
@@ -76,6 +79,21 @@ public abstract class BaseAttributes implements IAttributes {
     @XmlElement(name = "transient")
     private List<Transient> _transient;
 
+    @XmlTransient
+    private ManagedClass _class;
+
+    public ManagedClass getJavaClass() {
+        return _class;
+    }
+
+    public void setJavaClass(ManagedClass _class) {
+        this._class = _class;
+    }
+
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        setJavaClass((ManagedClass) parent);
+    }
+
     /**
      * Gets the value of the basic property.
      *
@@ -88,7 +106,7 @@ public abstract class BaseAttributes implements IAttributes {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getBasic().add(newItem);
+     *    addBasic(newItem);
      * </pre>
      *
      *
@@ -116,6 +134,7 @@ public abstract class BaseAttributes implements IAttributes {
     public void addBasic(Basic basic) {
         this.getBasic().add(basic);
         notifyListeners(basic, "addAttribute", null, null);
+        basic.setAttributes(this);
     }
 
     @Override
@@ -136,7 +155,7 @@ public abstract class BaseAttributes implements IAttributes {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getManyToOne().add(newItem);
+     *    addManyToOne(newItem);
      * </pre>
      *
      *
@@ -163,6 +182,11 @@ public abstract class BaseAttributes implements IAttributes {
 
     public void addManyToOne(ManyToOne manyToOne) {
         getManyToOne().add(manyToOne);
+        manyToOne.setAttributes(this);
+    }
+
+    public void removeManyToOne(ManyToOne manyToOne) {
+        getManyToOne().remove(manyToOne);
     }
 
     /**
@@ -204,6 +228,7 @@ public abstract class BaseAttributes implements IAttributes {
 
     public void addOneToMany(OneToMany oneToMany) {
         getOneToMany().add(oneToMany);
+        oneToMany.setAttributes(this);
     }
 
     /**
@@ -238,6 +263,7 @@ public abstract class BaseAttributes implements IAttributes {
 
     public void addOneToOne(OneToOne oneToOne) {
         getOneToOne().add(oneToOne);
+        oneToOne.setAttributes(this);
     }
 
     public Optional<OneToOne> getOneToOne(String id) {
@@ -286,6 +312,7 @@ public abstract class BaseAttributes implements IAttributes {
 
     public void addManyToMany(ManyToMany manyToMany) {
         getManyToMany().add(manyToMany);
+        manyToMany.setAttributes(this);
     }
 
     /**
@@ -329,6 +356,7 @@ public abstract class BaseAttributes implements IAttributes {
     public void addElementCollection(ElementCollection elementCollection) {
         this.getElementCollection().add(elementCollection);
         notifyListeners(elementCollection, "addAttribute", null, null);
+        elementCollection.setAttributes(this);
     }
 
     @Override
@@ -378,6 +406,7 @@ public abstract class BaseAttributes implements IAttributes {
     public void addEmbedded(Embedded embedded) {
         this.getEmbedded().add(embedded);
         notifyListeners(embedded, "addAttribute", null, null);
+        embedded.setAttributes(this);
     }
 
     @Override
@@ -427,6 +456,7 @@ public abstract class BaseAttributes implements IAttributes {
     public void addTransient(Transient _transient) {
         this.getTransient().add(_transient);
         notifyListeners(_transient, "addAttribute", null, null);
+        _transient.setAttributes(this);
     }
 
     @Override
@@ -436,7 +466,7 @@ public abstract class BaseAttributes implements IAttributes {
     }
 
     public List<RelationAttribute> getRelationAttributes() {
-        List<RelationAttribute> relationAttributes = new ArrayList<RelationAttribute>(this.getOneToOne());
+        List<RelationAttribute> relationAttributes = new ArrayList<>(this.getOneToOne());
         relationAttributes.addAll(this.getOneToMany());
         relationAttributes.addAll(this.getManyToOne());
         relationAttributes.addAll(this.getManyToMany());
@@ -489,16 +519,16 @@ public abstract class BaseAttributes implements IAttributes {
     @Override
     public void addRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
-            this.getManyToMany().add((ManyToMany) relationAttribute);
+            this.addManyToMany((ManyToMany) relationAttribute);
             notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof OneToMany) {
-            this.getOneToMany().add((OneToMany) relationAttribute);
+            this.addOneToMany((OneToMany) relationAttribute);
             notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof ManyToOne) {
-            this.getManyToOne().add((ManyToOne) relationAttribute);
+            this.addManyToOne((ManyToOne) relationAttribute);
             notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof OneToOne) {
-            this.getOneToOne().add((OneToOne) relationAttribute);
+            this.addOneToOne((OneToOne) relationAttribute);
             notifyListeners(relationAttribute, "addAttribute", null, null);
         } else {
             throw new IllegalStateException("Invalid Type Relation Attribute");
@@ -652,7 +682,6 @@ public abstract class BaseAttributes implements IAttributes {
         attr.setVariableOneToOnes(new ArrayList<>());
         attr.setStructures(new ArrayList<>());
         attr.setArrays(new ArrayList<>());
-
         attr.setBasics(new ArrayList<>());
         attr.setElementCollections(new ArrayList<>());
         attr.setEmbeddeds(new ArrayList<>());
@@ -665,8 +694,8 @@ public abstract class BaseAttributes implements IAttributes {
 //        return updateAccessor(attr);
     }
 
-    public XMLAttributes updateAccessor(XMLAttributes attr) {
-        attr.getBasics().addAll(getBasic().stream().map(BasicSpecAccessor::getInstance).collect(toList()));
+    public XMLAttributes updateAccessor(XMLAttributes attr, boolean inherit) {
+        attr.getBasics().addAll(getBasic().stream().map(basic -> BasicSpecAccessor.getInstance(basic, inherit)).collect(toList()));
         attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollectionSpecAccessor::getInstance).collect(toList()));
         attr.getEmbeddeds().addAll(getEmbedded().stream().map(EmbeddedSpecAccessor::getInstance).collect(toList()));
         attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));

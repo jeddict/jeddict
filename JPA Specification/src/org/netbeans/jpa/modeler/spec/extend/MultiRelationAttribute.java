@@ -346,6 +346,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     public void setMapKeyForeignKey(ForeignKey value) {
         this.mapKeyForeignKey = value;
     }
+
     /**
      * Gets the value of the mappedBy property.
      *
@@ -373,6 +374,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
         this.mappedBy = value;
         this.setOwner((Boolean) false);
     }
+
     /**
      * @return the collectionType
      */
@@ -403,7 +405,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      * @return the owner
      */
     public boolean isOwner() {
-        if(owner==null){
+        if (owner == null) {
             return Boolean.FALSE;
         }
         return owner;

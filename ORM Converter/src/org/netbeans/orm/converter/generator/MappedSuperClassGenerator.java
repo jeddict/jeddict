@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
@@ -31,7 +30,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
 
     private MappedSuperclass mappedSuperclass = null;
 
-    public MappedSuperClassGenerator(MappedSuperclass parsedMappedSuperclass,String packageName) {
+    public MappedSuperClassGenerator(MappedSuperclass parsedMappedSuperclass, String packageName) {
         super(new ManagedClassDefSnippet());
         this.mappedSuperclass = parsedMappedSuperclass;
         this.packageName = packageName;
@@ -62,7 +61,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         Attributes parsedAttributes = mappedSuperclass.getAttributes();
 
         if (parsedAttributes != null) {
-            processEmbeddedId(parsedAttributes.getEmbeddedId());
+            processEmbeddedId(mappedSuperclass, parsedAttributes.getEmbeddedId());
             if (parsedAttributes.getEmbeddedId() == null) {
                 processId(parsedAttributes.getId());
             }
@@ -84,19 +83,19 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         classHelper.setPackageName(packageName);
         classDef.setAbstractClass(mappedSuperclass.getAbstract());
         classDef.setInterfaces(mappedSuperclass.getInterfaces());
-        if(mappedSuperclass.getSuperclass()!=null){
-        ClassHelper superClassHelper = new ClassHelper(mappedSuperclass.getSuperclass().getClazz());
-        classDef.setSuperClassName(superClassHelper.getFQClassName());
+        if (mappedSuperclass.getSuperclass() != null) {
+            ClassHelper superClassHelper = new ClassHelper(mappedSuperclass.getSuperclass().getClazz());
+            classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
 
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
-        
+
         classDef.setPackageName(classHelper.getPackageName());
 
         classDef.setMappedSuperClass(true);
         classDef.setAnnotation(mappedSuperclass.getAnnotation());
-        
+
         classDef.setXmlRootElement(mappedSuperclass.getXmlRootElement());
         return classDef;
     }

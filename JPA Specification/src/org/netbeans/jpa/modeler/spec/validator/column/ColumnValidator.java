@@ -31,8 +31,8 @@ public class ColumnValidator extends MarshalValidator<Column> {
 
     public static boolean isEmpty(Column column) {
         return StringUtils.isBlank(column.getName()) && StringUtils.isBlank(column.getColumnDefinition()) && StringUtils.isBlank(column.getTable())
-                && column.getNullable() && column.getInsertable() && column.getUpdatable() && !column.getUnique() &&
-                column.getLength()==255 && column.getScale()==0 && column.getPrecision()==0;
+                && column.getNullable() && column.getInsertable() && column.getUpdatable() && !column.getUnique()
+                && column.getLength() == 255 && column.getScale() == 0 && column.getPrecision() == 0;
     }
-    
+
 }

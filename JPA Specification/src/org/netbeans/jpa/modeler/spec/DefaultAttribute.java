@@ -1,8 +1,10 @@
 package org.netbeans.jpa.modeler.spec;
 
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 //created by gaurav gupta
@@ -11,6 +13,21 @@ public class DefaultAttribute extends Attribute {
 
     @XmlAttribute(name = "attribute-type")
     private String attributeType;
+
+    @XmlTransient
+    private DefaultClass _class;
+
+    public DefaultClass getJavaClass() {
+        return _class;
+    }
+
+    public void setJavaClass(DefaultClass _class) {
+        this._class = _class;
+    }
+
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        setJavaClass((DefaultClass) parent);
+    }
 
     /**
      * @return the attributeType

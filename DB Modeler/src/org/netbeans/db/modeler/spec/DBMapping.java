@@ -33,7 +33,9 @@ public class DBMapping implements IDefinitionElement, IRootElement {
 
     private String id;
     private String name;
-    private Map<String, DBTable> tables = new HashMap<>();
+    private final Map<String, DBTable> tables = new HashMap<>();
+    private final Map<String, String> creationQueries = new HashMap<>();
+    private final Map<String, List<String>> alterationQueries = new HashMap<>();
 
     /**
      * @return the tables
@@ -71,10 +73,10 @@ public class DBMapping implements IDefinitionElement, IRootElement {
         return tablesResult;
     }
 
-          @Override
+    @Override
     public void removeBaseElement(IBaseElement baseElement_In) {
         if (baseElement_In instanceof DBTable) {
-            removeTable((DBTable)baseElement_In);
+            removeTable((DBTable) baseElement_In);
         } else {
             throw new InvalidElmentException("Invalid JPA Element");
         }
@@ -83,7 +85,7 @@ public class DBMapping implements IDefinitionElement, IRootElement {
     @Override
     public void addBaseElement(IBaseElement baseElement_In) {
         if (baseElement_In instanceof DBTable) {
-            addTable((DBTable)baseElement_In);
+            addTable((DBTable) baseElement_In);
         } else {
             throw new InvalidElmentException("Invalid JPA Element");
         }
@@ -138,4 +140,35 @@ public class DBMapping implements IDefinitionElement, IRootElement {
         this.name = name;
     }
 
+    public String getCreateQuery(String table) {
+        return creationQueries.get(table);
+    }
+
+    public String putCreateQuery(String table, String query) {
+        return creationQueries.put(table, query);
+    }
+
+    public List<String> getAlterQuery(String table) {
+        return alterationQueries.get(table);
+    }
+
+    public void putAlterQuery(String table, String query) {
+        if(getAlterQuery(table)==null){
+            alterationQueries.put(table, new ArrayList<>());
+        }
+        getAlterQuery(table).add(query);
+    }
+
+    public String getSQL() {
+        StringBuilder queryList = new StringBuilder();
+        creationQueries.values().stream().forEach((query) -> {
+            queryList.append(query).append(";\n");
+        });
+
+        alterationQueries.values().stream().flatMap(queries -> queries.stream()).forEach((query) -> {
+            queryList.append(query).append(";\n");
+        });
+
+        return queryList.toString();
+    }
 }

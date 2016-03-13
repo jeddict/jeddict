@@ -29,10 +29,10 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public abstract class FlowNodeWidget<E extends FlowNode,S extends IModelerScene> extends PNodeWidget<S> implements IFlowNodeWidget<E> {
+public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene> extends PNodeWidget<S> implements IFlowNodeWidget<E> {
 
     private final ErrorHandler errorHandler;
-    
+
     public FlowNodeWidget(S scene, NodeWidgetInfo node) {
         super(scene, node);
         errorHandler = new ErrorHandler(this);
@@ -45,7 +45,7 @@ public abstract class FlowNodeWidget<E extends FlowNode,S extends IModelerScene>
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        set.createPropertySet( this , this.getBaseElementSpec(), getPropertyChangeListeners(), this.getPropertyVisibilityHandlers());
+        set.createPropertySet(this, this.getBaseElementSpec(), getPropertyChangeListeners(), this.getPropertyVisibilityHandlers());
 
     }
 
@@ -144,9 +144,9 @@ public abstract class FlowNodeWidget<E extends FlowNode,S extends IModelerScene>
     public void setName(String name) {
         this.name = name;
         if (name != null && !name.trim().isEmpty()) {
-             FlowNodeWidget.this.getBaseElementSpec().setName(name);
+            FlowNodeWidget.this.getBaseElementSpec().setName(name);
         } else {
-             FlowNodeWidget.this.getBaseElementSpec().setName(null);
+            FlowNodeWidget.this.getBaseElementSpec().setName(null);
         }
     }
 
@@ -166,7 +166,5 @@ public abstract class FlowNodeWidget<E extends FlowNode,S extends IModelerScene>
     public ErrorHandler getErrorHandler() {
         return errorHandler;
     }
-
-   
 
 }

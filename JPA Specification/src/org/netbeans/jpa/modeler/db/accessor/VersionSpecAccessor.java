@@ -23,14 +23,15 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
  *
  * @author Gaurav Gupta
  */
-public class VersionSpecAccessor extends VersionAccessor{
-    
+public class VersionSpecAccessor extends VersionAccessor {
+
     private Version version;
 
     private VersionSpecAccessor(Version version) {
         this.version = version;
     }
-    public static VersionSpecAccessor getInstance(Version version){
+
+    public static VersionSpecAccessor getInstance(Version version) {
         VersionSpecAccessor accessor = new VersionSpecAccessor(version);
         accessor.setName(version.getName());
         accessor.setAttributeType(version.getAttributeType());
@@ -40,9 +41,9 @@ public class VersionSpecAccessor extends VersionAccessor{
         return accessor;
     }
 
-    public void process(){
+    public void process() {
         super.process();
         getMapping().setProperty(Attribute.class, version);
     }
-    
+
 }

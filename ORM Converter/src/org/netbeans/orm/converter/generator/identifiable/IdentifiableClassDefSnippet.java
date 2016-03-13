@@ -25,5 +25,4 @@ import org.netbeans.orm.converter.generator.managed.*;
  */
 public class IdentifiableClassDefSnippet extends ManagedClassDefSnippet {
 
-  
 }

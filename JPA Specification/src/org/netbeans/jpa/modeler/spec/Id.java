@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.IdAccessor;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -224,4 +224,12 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
 ////                jaxbVariableTypeList.add(JaxbVariableType.);
 //        return jaxbVariableTypeList;
 //    }
+    public String getReferenceColumnName() {
+        Id id = this;
+        if (id.getColumn() != null && StringUtils.isNotBlank(id.getColumn().getName())) {
+            return id.getColumn().getName();
+        } else {
+            return id.getName();
+        }
+    }
 }

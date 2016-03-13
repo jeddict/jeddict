@@ -15,13 +15,6 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import org.netbeans.orm.converter.compiler.CallbackSnippet;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
-import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
-import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
-import org.netbeans.orm.converter.compiler.LifecycleListenerSnippet;
-import org.netbeans.orm.converter.compiler.MethodDefSnippet;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +23,12 @@ import org.netbeans.jpa.modeler.spec.EntityListener;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.PersistenceUnitDefaults;
 import org.netbeans.jpa.modeler.spec.PersistenceUnitMetadata;
+import org.netbeans.orm.converter.compiler.CallbackSnippet;
+import org.netbeans.orm.converter.compiler.ClassDefSnippet;
+import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
+import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
+import org.netbeans.orm.converter.compiler.LifecycleListenerSnippet;
+import org.netbeans.orm.converter.compiler.MethodDefSnippet;
 
 /*
  * Takes a list of generated entity classes, Finds the list of EntityListeners

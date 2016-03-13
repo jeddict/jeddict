@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.reveng.database;
 
-import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.dbschema.ColumnElement;
 import org.netbeans.modules.dbschema.ForeignKeyElement;
 import org.netbeans.modules.dbschema.SchemaElement;

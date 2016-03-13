@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.tables.JoinTableMetadata;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -76,7 +75,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "uniqueConstraint",
     "index"
 })
-    @XmlJavaTypeAdapter(value=JoinTableValidator.class)
+@XmlJavaTypeAdapter(value = JoinTableValidator.class)
 
 public class JoinTable {
 
@@ -97,7 +96,7 @@ public class JoinTable {
     protected String catalog;
     @XmlAttribute(name = "schema")
     protected String schema;
-    
+
     @XmlTransient
     private String generatedName;
 
@@ -354,8 +353,6 @@ public class JoinTable {
         this.schema = value;
     }
 
-
-    
     public JoinTableMetadata getAccessor() {
         JoinTableMetadata accessor = new JoinTableMetadata();
         accessor.setName(name);
@@ -394,15 +391,15 @@ public class JoinTable {
         this.inverseJoinColumn = inverseJoinColumn;
     }
 
-    public void clear(){
-        this.catalog=null;
-        this.foreignKey= null;
+    public void clear() {
+        this.catalog = null;
+        this.foreignKey = null;
         this.getIndex().clear();
-        this.inverseForeignKey=null;
+        this.inverseForeignKey = null;
         this.getInverseJoinColumn().clear();
         this.getJoinColumn().clear();
-        this.name=null;
-        this.schema=null;
+        this.name = null;
+        this.schema = null;
         this.getUniqueConstraint().clear();
     }
 }

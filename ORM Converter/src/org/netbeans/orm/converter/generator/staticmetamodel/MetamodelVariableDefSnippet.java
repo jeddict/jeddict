@@ -17,12 +17,12 @@ package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.apache.commons.lang.ClassUtils;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
-import org.openide.util.Exceptions;
 
 public class MetamodelVariableDefSnippet extends VariableDefSnippet {
+
     private MetamodelAttributeType attributeType;
 
     /**
@@ -38,26 +38,26 @@ public class MetamodelVariableDefSnippet extends VariableDefSnippet {
     public void setAttributeType(MetamodelAttributeType attributeType) {
         this.attributeType = attributeType;
     }
-    
+
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         Collection<String> importSnippets = new ArrayList<String>();
         importSnippets.addAll(super.getImportSnippets());
-        if(attributeType==MetamodelAttributeType.SINGULAR){
+        if (attributeType == MetamodelAttributeType.SINGULAR) {
             importSnippets.add("javax.persistence.metamodel.SingularAttribute");
-        } else if(attributeType==MetamodelAttributeType.COLLECTION) {
-          importSnippets.add("javax.persistence.metamodel.CollectionAttribute");  
-        } else if(attributeType==MetamodelAttributeType.SET) {
-          importSnippets.add("javax.persistence.metamodel.SetAttribute");  
-        } else if(attributeType==MetamodelAttributeType.LIST) {
-          importSnippets.add("javax.persistence.metamodel.ListAttribute");  
-        } else if(attributeType==MetamodelAttributeType.MAP) {
-          importSnippets.add("javax.persistence.metamodel.MapAttribute");  
+        } else if (attributeType == MetamodelAttributeType.COLLECTION) {
+            importSnippets.add("javax.persistence.metamodel.CollectionAttribute");
+        } else if (attributeType == MetamodelAttributeType.SET) {
+            importSnippets.add("javax.persistence.metamodel.SetAttribute");
+        } else if (attributeType == MetamodelAttributeType.LIST) {
+            importSnippets.add("javax.persistence.metamodel.ListAttribute");
+        } else if (attributeType == MetamodelAttributeType.MAP) {
+            importSnippets.add("javax.persistence.metamodel.MapAttribute");
         }
         return importSnippets;
     }
-    
+
     @Override
     public String getType() {
         String type = super.getType();
@@ -69,12 +69,12 @@ public class MetamodelVariableDefSnippet extends VariableDefSnippet {
             try {
                 return this.getWrapper(type).getSimpleName();
             } catch (ClassNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex);
                 throw new RuntimeException("No Wrapper Class found for " + type + " : " + ex.getMessage());
             }
         } else {
             return type;
         }
     }
-    
+
 }

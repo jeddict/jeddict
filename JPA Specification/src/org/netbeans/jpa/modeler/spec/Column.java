@@ -60,7 +60,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column")
-@XmlJavaTypeAdapter(value=ColumnValidator.class)
+@XmlJavaTypeAdapter(value = ColumnValidator.class)
 public class Column extends BaseElement {
 
     @XmlAttribute(name = "name")

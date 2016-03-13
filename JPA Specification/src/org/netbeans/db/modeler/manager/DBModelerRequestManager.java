@@ -24,6 +24,6 @@ import org.netbeans.modeler.core.ModelerFile;
  */
 public interface DBModelerRequestManager {
 
-    void init(ModelerFile file , EntityMappings mappings);
+    void init(ModelerFile file, EntityMappings mappings);
 
 }

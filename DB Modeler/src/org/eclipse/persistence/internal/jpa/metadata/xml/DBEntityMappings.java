@@ -23,12 +23,14 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.Converter
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.MappedSuperclassAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.MappingAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataClass;
 import org.eclipse.persistence.internal.jpa.metadata.converters.MixedConverterMetadata;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.MappedSuperclassSpecAccessor;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 
 /**
  * Object to hold onto the entity mappings metadata.
@@ -42,7 +44,7 @@ public class DBEntityMappings extends XMLEntityMappings {
 
         setPackage(mappings.getPackage());
         setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
-        setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclass::getAccessor).collect(toList()));
+        setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
         setEmbeddables(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
 
         setMixedConverters(new ArrayList<>());
@@ -162,6 +164,97 @@ public class DBEntityMappings extends XMLEntityMappings {
                 getProject().addConverterAccessor(converterAccessor);
             }
         }
+    }
+
+    protected XMLEntityMappings reloadXMLEntityMappingsObject(XMLEntityMappings xmlEntityMappings) {
+        XMLEntityMappings newXMLEntityMappings = super.reloadXMLEntityMappingsObject(xmlEntityMappings);
+        if (xmlEntityMappings.getEntities() != null) {
+            for (int i = 0; i < xmlEntityMappings.getEntities().size(); i++) {
+                copyAttributesProperty(xmlEntityMappings.getEntities().get(i).getAttributes(), newXMLEntityMappings.getEntities().get(i).getAttributes());
+            }
+        }
+        if (xmlEntityMappings.getEmbeddables() != null) {
+            for (int i = 0; i < xmlEntityMappings.getEmbeddables().size(); i++) {
+                copyAttributesProperty(xmlEntityMappings.getEmbeddables().get(i).getAttributes(), newXMLEntityMappings.getEmbeddables().get(i).getAttributes());
+            }
+        }
+        if (xmlEntityMappings.getMappedSuperclasses() != null) {
+            for (int i = 0; i < xmlEntityMappings.getMappedSuperclasses().size(); i++) {
+                copyAttributesProperty(xmlEntityMappings.getMappedSuperclasses().get(i).getAttributes(), newXMLEntityMappings.getMappedSuperclasses().get(i).getAttributes());
+            }
+        }
+        return newXMLEntityMappings;
+    }
+
+    private void copyAttributesProperty(XMLAttributes preAttributes, XMLAttributes newAttributes) {
+        for (int i = 0; i < preAttributes.getIds().size(); i++) {
+            copyAttributesProperty(preAttributes.getIds().get(i), newAttributes.getIds().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getBasics().size(); i++) {
+            copyAttributesProperty(preAttributes.getBasics().get(i), newAttributes.getBasics().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getEmbeddeds().size(); i++) {
+            copyAttributesProperty(preAttributes.getEmbeddeds().get(i), newAttributes.getEmbeddeds().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getElementCollections().size(); i++) {
+            copyAttributesProperty(preAttributes.getElementCollections().get(i), newAttributes.getElementCollections().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getBasicCollections().size(); i++) {
+            copyAttributesProperty(preAttributes.getBasicCollections().get(i), newAttributes.getBasicCollections().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getBasicMaps().size(); i++) {
+            copyAttributesProperty(preAttributes.getBasicMaps().get(i), newAttributes.getBasicMaps().get(i));
+        }
+
+        copyAttributesProperty(preAttributes.getEmbeddedId(), newAttributes.getEmbeddedId());
+
+        for (int i = 0; i < preAttributes.getVersions().size(); i++) {
+            copyAttributesProperty(preAttributes.getVersions().get(i), newAttributes.getVersions().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getTransients().size(); i++) {
+            copyAttributesProperty(preAttributes.getTransients().get(i), newAttributes.getTransients().get(i));
+        }
+        for (int i = 0; i < preAttributes.getAccessors().size(); i++) {
+            copyAttributesProperty(preAttributes.getAccessors().get(i), newAttributes.getAccessors().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getArrays().size(); i++) {
+            copyAttributesProperty(preAttributes.getArrays().get(i), newAttributes.getArrays().get(i));
+        }
+        for (int i = 0; i < preAttributes.getVariableOneToOnes().size(); i++) {
+            copyAttributesProperty(preAttributes.getVariableOneToOnes().get(i), newAttributes.getVariableOneToOnes().get(i));
+        }
+        for (int i = 0; i < preAttributes.getStructures().size(); i++) {
+            copyAttributesProperty(preAttributes.getStructures().get(i), newAttributes.getStructures().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getTransformations().size(); i++) {
+            copyAttributesProperty(preAttributes.getTransformations().get(i), newAttributes.getTransformations().get(i));
+        }
+
+        for (int i = 0; i < preAttributes.getManyToManys().size(); i++) {
+            copyAttributesProperty(preAttributes.getManyToManys().get(i), newAttributes.getManyToManys().get(i));
+        }
+        for (int i = 0; i < preAttributes.getManyToOnes().size(); i++) {
+            copyAttributesProperty(preAttributes.getManyToOnes().get(i), newAttributes.getManyToOnes().get(i));
+        }
+        for (int i = 0; i < preAttributes.getOneToManys().size(); i++) {
+            copyAttributesProperty(preAttributes.getOneToManys().get(i), newAttributes.getOneToManys().get(i));
+        }
+        for (int i = 0; i < preAttributes.getOneToOnes().size(); i++) {
+            copyAttributesProperty(preAttributes.getOneToOnes().get(i), newAttributes.getOneToOnes().get(i));
+        }
+
+    }
+
+    private void copyAttributesProperty(MappingAccessor preAttributes, MappingAccessor newAttributes) {
+//        newAttributes.getMapping().setProperties(preAttributes.getMapping().getProperties());
     }
 
 }

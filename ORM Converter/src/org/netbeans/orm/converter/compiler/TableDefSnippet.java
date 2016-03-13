@@ -15,11 +15,10 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TableDefSnippet implements Snippet {
 

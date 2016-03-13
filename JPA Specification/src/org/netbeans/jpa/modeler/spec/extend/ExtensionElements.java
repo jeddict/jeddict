@@ -72,7 +72,7 @@ public class ExtensionElements {
      *
      * <p>
      * Objects of the following type(s) are allowed in the list null null null
-     * null null     {@link Element }
+     * null null null null null null null null     {@link Element }
      * {@link Object }
      *
      *

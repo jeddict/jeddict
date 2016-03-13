@@ -27,12 +27,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import org.netbeans.jpa.modeler.collaborate.enhancement.EnhancementRequestHandler;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
@@ -50,6 +52,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.specification.model.event.JPAEventListener;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -57,6 +60,7 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.G
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_DB;
 import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
+import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.ModelerCore;
 import org.netbeans.modeler.core.ModelerFile;
@@ -72,19 +76,59 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
+import org.openide.windows.WindowManager;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
     public List<EntityWidget> getEntityWidgets() {
         List<EntityWidget> entityWidgets = new ArrayList<>();
-        for (IFlowElementWidget flowElement : flowElements) {
-            if (flowElement instanceof EntityWidget) {
-                entityWidgets.add((EntityWidget) flowElement);
+        for (IBaseElementWidget baseElement : getBaseElements()) {
+            if (baseElement instanceof EntityWidget) {
+                entityWidgets.add((EntityWidget) baseElement);
             }
         }
         return entityWidgets;
     }
 
+    public boolean compile() {
+        boolean compiled = true;
+        StringBuilder errorMessage = new StringBuilder();
+        for (IBaseElementWidget e : getBaseElements()) {
+            boolean failure = false;
+            if (e instanceof PersistenceClassWidget) {
+                PersistenceClassWidget<ManagedClass> p = ((PersistenceClassWidget<ManagedClass>) e);
+                if (!p.getErrorHandler().getErrorList().isEmpty()) {
+                    errorMessage.append(p.getName()).append(':').append('\n');
+                    p.getErrorHandler().getErrorList().values().forEach(v -> {
+                        errorMessage.append('\t').append(v).append('\n');
+                    });
+                    failure = true;
+                }
+                for (AttributeWidget attributeWidget : p.getAllAttributeWidgets()) {
+                    if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
+                        errorMessage.append('\t').append(p.getName()).append('.').append(attributeWidget.getName()).append(':').append('\n');
+                        attributeWidget.getErrorHandler().getErrorList().values().forEach(v -> {
+                            errorMessage.append('\t').append('\t').append(v).append('\n');
+                        });
+                        failure = true;
+                    }
+                }
+            }
+            if (failure) {
+                compiled = false;
+                errorMessage.append('\n');
+            }
+        }
+
+        if (!compiled) {
+            NotifyDescriptor nd = new NotifyDescriptor.Message(errorMessage, NotifyDescriptor.ERROR_MESSAGE);
+            DialogDisplayer.getDefault().notify(nd);
+        }
+
+        return compiled;
+    }
     @Override
     public void deleteBaseElement(IBaseElementWidget baseElementWidget) {
         EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getModelerScene().getBaseElementSpec();
@@ -108,7 +152,9 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                             relationFlowWidget.remove();
                         }
                         for (RelationAttributeWidget relationAttributeWidget : persistenceClassWidget.getRelationAttributeWidgets()) {
-                            relationAttributeWidget.getRelationFlowWidget().remove();
+                            if (relationAttributeWidget.getRelationFlowWidget() != null) {//Bug : compatibility issue
+                                relationAttributeWidget.getRelationFlowWidget().remove();
+                            }
                         }
                         for (EmbeddedAttributeWidget embeddedAttributeWidget : persistenceClassWidget.getEmbeddedAttributeWidgets()) {
                             embeddedAttributeWidget.getEmbeddableFlowWidget().remove();
@@ -127,7 +173,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
-                this.flowElements.remove(flowNodeWidget);
+                this.removeBaseElement(flowNodeWidget);
             } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                 if (baseElementWidget instanceof RelationFlowWidget) {
                     RelationFlowWidget relationFlowWidget = (RelationFlowWidget) baseElementWidget;
@@ -148,7 +194,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     relationFlowWidget.setLocked(false);
 
                     relationFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(relationFlowWidget);
+                    this.removeBaseElement(relationFlowWidget);
                 } else if (baseElementWidget instanceof GeneralizationFlowWidget) {
                     GeneralizationFlowWidget generalizationFlowWidget = (GeneralizationFlowWidget) baseElementWidget;
 
@@ -159,7 +205,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     javaSubclass.removeSuperclass(javaSuperclass);
 
                     generalizationFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(generalizationFlowWidget);
+                    this.removeBaseElement(generalizationFlowWidget);
 
                 } else if (baseElementWidget instanceof EmbeddableFlowWidget) {
                     EmbeddableFlowWidget embeddableFlowWidget = (EmbeddableFlowWidget) baseElementWidget;
@@ -171,7 +217,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     embeddableFlowWidget.setLocked(false);
 
                     embeddableFlowWidget.setFlowElementsContainer(null);
-                    this.flowElements.remove(embeddableFlowWidget);
+                    this.removeBaseElement(embeddableFlowWidget);
                 } else {
                     throw new InvalidElmentException("Invalid JPA Element");
                 }
@@ -188,7 +234,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         String baseElementId = "";
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
-            this.flowElements.add((IFlowElementWidget) baseElementWidget);
+            this.addBaseElement((IFlowElementWidget) baseElementWidget);
             if (baseElementWidget instanceof IFlowNodeWidget) { //reverse ref
                 ((FlowNodeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((FlowNodeWidget) baseElementWidget).getId();
@@ -239,17 +285,15 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 elementConfigFactory.initializeObjectValue(baseElement);
             }
 
-        } else {
-            if (baseElementWidget instanceof IFlowElementWidget) {
-                if (baseElementWidget instanceof FlowNodeWidget) {
-                    FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
-                    flowNodeWidget.setBaseElementSpec(flowNodeWidget.getNodeWidgetInfo().getBaseElementSpec());
-                } else {
-                    throw new InvalidElmentException("Invalid JPA Element");
-                }
+        } else if (baseElementWidget instanceof IFlowElementWidget) {
+            if (baseElementWidget instanceof FlowNodeWidget) {
+                FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
+                flowNodeWidget.setBaseElementSpec(flowNodeWidget.getNodeWidgetInfo().getBaseElementSpec());
             } else {
                 throw new InvalidElmentException("Invalid JPA Element");
             }
+        } else {
+            throw new InvalidElmentException("Invalid JPA Element");
         }
 
     }
@@ -257,6 +301,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
+//        JPAModelerInstaller.lookupUpdates();
         SwingUtilities.invokeLater(() -> {
             OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
             if (!window.isOpened()) {
@@ -264,6 +309,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
             window.requestActive();
         });
+
 
     }
 
@@ -276,13 +322,12 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
         });
     }
-    
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         JMenuItem generateCode = new JMenuItem("Generate Source Code", GENERATE_SRC);
-        generateCode.setAccelerator( KeyStroke.getKeyStroke(Character.valueOf('G'),InputEvent.CTRL_DOWN_MASK));
+        generateCode.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('G'), InputEvent.CTRL_DOWN_MASK));
         generateCode.addActionListener((ActionEvent e) -> {
             JPAModelerUtil.generateSourceCode(JPAModelerScene.this.getModelerFile());
         });
@@ -293,27 +338,26 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         });
 
         JMenuItem visDB = new JMenuItem("Visualize DB", VIEW_DB);
-        visDB.setAccelerator( KeyStroke.getKeyStroke(Character.valueOf('D'),InputEvent.CTRL_DOWN_MASK));
+        visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
         visDB.addActionListener((ActionEvent e) -> {
-             JPAModelerUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
+            JPAModelerUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
         });
 
         JMenu shareModeler = new JMenu("Share");
         shareModeler.setIcon(SOCIAL_NETWORK_SHARING);
         shareModeler.add(TwitterSocialNetwork.getInstance().getComponent());
         shareModeler.add(LinkedInSocialNetwork.getInstance().getComponent());
-        
+
         menuList.add(0, generateCode);
         menuList.add(1, visDB);
         menuList.add(2, null);
         menuList.add(3, manageVisibility);
         menuList.add(4, null);
         menuList.add(5, shareModeler);
-        
+        menuList.add(5, EnhancementRequestHandler.getInstance().getComponent());
+
         return menuList;
     }
-    
-
 
     public static void fireEntityVisibilityAction(ModelerFile file) {
         ClassWidgetVisibilityController dialog = new ClassWidgetVisibilityController((EntityMappings) file.getDefinitionElement());
@@ -321,7 +365,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
             file.getModelerPanelTopComponent().changePersistenceState(false);
             file.save();
-            int option = JOptionPane.showConfirmDialog(null, "Are you want to reload diagram now ?", "Reload Diagram", JOptionPane.YES_NO_OPTION);
+            int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you want to reload diagram now ?", "Reload Diagram", JOptionPane.YES_NO_OPTION);
             if (option == javax.swing.JOptionPane.OK_OPTION) {
                 file.getModelerPanelTopComponent().close();
                 JPAFileActionListener fileListener = new JPAFileActionListener((JPAFileDataObject) file.getModelerFileDataObject());
@@ -395,5 +439,9 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
      */
     public void setHighlightedWidget(IWidget highlightedWidget) {
         this.highlightedWidget = highlightedWidget;
+    }
+
+    protected IEventListener getEventListener() {
+        return new JPAEventListener();
     }
 }

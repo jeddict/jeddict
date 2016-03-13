@@ -45,7 +45,8 @@ public class OverrideAssociationChildFactory extends OverrideChildFactory {
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
         for (AttributeWidget attributeWidget : entityWidget.getAssociationOverrideWidgets()) {
             attributeWidgets.add(attributeWidget);
-        }for (AttributeWidget attributeWidget : entityWidget.getEmbeddedOverrideWidgets()) {
+        }
+        for (AttributeWidget attributeWidget : entityWidget.getEmbeddedOverrideWidgets()) {
             attributeWidgets.add(attributeWidget);
         }
 
@@ -72,8 +73,8 @@ public class OverrideAssociationChildFactory extends OverrideChildFactory {
                         if (attributeSpec instanceof JoinColumnHandler) {
                             set.put("JOIN_COLUMN_PROP", PropertiesHandler.getJoinColumnsProperty("JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinColumn()));
                         }
-                        
-                        set.createPropertySet( attributeWidget , associationOverride.getJoinTable());
+
+                        set.createPropertySet(attributeWidget, associationOverride.getJoinTable());
                         set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_JoinColumns", "Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getJoinColumn()));
                         set.put("JOIN_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("JoinTable_InverseJoinColumns", "Inverse Join Columns", "", this.getModelerScene(), associationOverride.getJoinTable().getInverseJoinColumn()));
 

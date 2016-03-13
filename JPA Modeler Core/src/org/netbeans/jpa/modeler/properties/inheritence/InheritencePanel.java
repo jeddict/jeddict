@@ -90,7 +90,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     @Override
     public InheritenceHandler getValue() {
         InheritanceType inheritanceType = (InheritanceType) ((Property) strategy_ComboBox.getSelectedItem()).getKey();
-        if (type == ROOT ||type == BRANCH) {
+        if (type == ROOT || type == BRANCH) {
             if (classSpec.getInheritance() == null) {
                 classSpec.setInheritance(new Inheritance());
             }
@@ -113,7 +113,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
             classSpec.setInheritance(null);
             classSpec.setDiscriminatorColumn(null);
         }
-        if (type == LEAF ||type == BRANCH) {
+        if (type == LEAF || type == BRANCH) {
             classSpec.setDiscriminatorValue(value_TextField.getText());
         } else {
             classSpec.setDiscriminatorValue(null);

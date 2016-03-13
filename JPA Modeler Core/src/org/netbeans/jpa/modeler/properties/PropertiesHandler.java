@@ -15,8 +15,8 @@
  */
 package org.netbeans.jpa.modeler.properties;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import org.netbeans.jpa.modeler.properties.named.resultsetmapping.*;
+import java.util.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,7 +29,6 @@ import org.netbeans.jpa.modeler.navigator.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
-import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
@@ -44,7 +43,6 @@ import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
@@ -66,11 +64,7 @@ import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.nodes.PropertySupport;
-
-/**
- *
- * @author Gaurav Gupta
- */
+import org.openide.windows.WindowManager;
 public class PropertiesHandler {
 
     public static ComboBoxPropertySupport getAccessTypeProperty(JPAModelerScene modelerScene, final AccessTypeHandler accessTypeHandlerSpec) {
@@ -111,6 +105,7 @@ public class PropertiesHandler {
         ModelerFile modelerFile = modelerScene.getModelerFile();
         ComboBoxListener<String> comboBoxListener = new ComboBoxListener<String>() {
             private final Set<String> value = new HashSet<>();
+
             @Override
             public void setItem(ComboBoxValue<String> value) {
                 colSpec.setCollectionType(value.getValue());
@@ -119,7 +114,7 @@ public class PropertiesHandler {
 
             @Override
             public ComboBoxValue<String> getItem() {
-                if(!value.contains(colSpec.getCollectionType())){
+                if (!value.contains(colSpec.getCollectionType())) {
                     value.add(colSpec.getCollectionType());
                     em.getCache().addCollectionClass(colSpec.getCollectionType());
                 }
@@ -155,7 +150,7 @@ public class PropertiesHandler {
                 })
                         .afterCreation(e -> em.getCache().addCollectionClass(e.getValue()))
                         .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
-                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(null, "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
+                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
             }
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionType", "Collection Type", "", comboBoxListener);
@@ -200,10 +195,12 @@ public class PropertiesHandler {
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "fetchType", "Fetch Type", "", comboBoxListener);
     }
- public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec) {
-   return getJoinColumnsProperty( id, name, desc, modelerScene,joinColumnsSpec,null);
- }
-    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec,Entity entity) {
+
+    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec) {
+        return getJoinColumnsProperty(id, name, desc, modelerScene, joinColumnsSpec, null);
+    }
+
+    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec, Entity entity) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
 
@@ -238,7 +235,7 @@ public class PropertiesHandler {
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = joinColumn;
                     row[1] = joinColumn.getName();
-                    row[2] = joinColumn.getReferencedColumnName();
+                    row[2] = joinColumn.getReferencedColumnName();//for representation
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -570,7 +567,7 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-     public static void getJaxbVarTypeProperty(final ElementPropertySet set, final AttributeWidget attributeWidget, final JaxbVariableTypeHandler varHandlerSpec) {
+    public static void getJaxbVarTypeProperty(final ElementPropertySet set, final AttributeWidget attributeWidget, final JaxbVariableTypeHandler varHandlerSpec) {
 
         final List<JaxbVariableType> jaxbVariableList = varHandlerSpec.getJaxbVariableList();
 

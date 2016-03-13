@@ -180,6 +180,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     public Attributes getAttributes() {
         if (attributes == null) {
             attributes = new Attributes();
+            attributes.setJavaClass(this);
         }
         return attributes;
     }
@@ -476,7 +477,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
      */
     public Set<SqlResultSetMapping> getSqlResultSetMapping() {
         if (sqlResultSetMapping == null) {
-            sqlResultSetMapping = new HashSet<SqlResultSetMapping>();
+            sqlResultSetMapping = new HashSet<>();
         }
         return this.sqlResultSetMapping;
     }
@@ -512,29 +513,48 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @Override
     public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
         this.compositePrimaryKeyClass = compositePrimaryKeyClass;
-        manageCompositePrimaryKeyClass();
+        manageCompositePrimaryKeyType();
     }
 
-    @Override
-    public void manageCompositePrimaryKeyClass() {
+    private void manageCompositePrimaryKeyClass() {
         if (compositePrimaryKeyClass == null || compositePrimaryKeyClass.trim().isEmpty()) {
             compositePrimaryKeyClass = this.getClazz() + "PK";
         }
-        if (null != this.getCompositePrimaryKeyType()) switch (this.getCompositePrimaryKeyType()) {
-            case EMBEDDEDID:
-                //this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass); //todo urgent
-                this.idClass = null;
-                break;
-            case IDCLASS:
-                this.idClass = new IdClass(compositePrimaryKeyClass);
-                break;
-            default:
-                this.idClass = null;
-                compositePrimaryKeyClass = null;
-                if (getCompositePrimaryKeyType() == null) {
-                    setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
-                }   break;
+    }
+
+    private void manageCompositePrimaryKeyType() {
+        if (null != this.getCompositePrimaryKeyType()) {
+
+            switch (this.getCompositePrimaryKeyType()) {
+                case EMBEDDEDID:
+                    //this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass); //todo urgent
+                    this.idClass = null;
+                    break;
+                case IDCLASS:
+                    this.idClass = new IdClass(compositePrimaryKeyClass);
+                    break;
+                default:
+                    this.idClass = null;
+                    compositePrimaryKeyClass = null;
+                    if (getCompositePrimaryKeyType() == null) {
+                        setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
+                    }
+                    break;
+            }
         }
+    }
+
+    @Override
+    public void manageCompositePrimaryKey() {
+        manageCompositePrimaryKeyClass();
+        manageCompositePrimaryKeyType();
+    }
+
+    @Override
+    public void clearCompositePrimaryKey() {
+        this.idClass = null;
+        this.compositePrimaryKeyClass = null;
+        this.compositePrimaryKeyType = null;
     }
 
 }

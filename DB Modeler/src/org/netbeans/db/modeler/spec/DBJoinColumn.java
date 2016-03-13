@@ -19,7 +19,7 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBJoinColumn extends DBColumn implements DBForeignKey {
+public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
 
     private final boolean relationTableExist;
     private final JoinColumn joinColumn;

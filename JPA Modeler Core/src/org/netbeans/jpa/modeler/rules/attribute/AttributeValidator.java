@@ -83,7 +83,7 @@ public class AttributeValidator {
     }
 
     public static void scanInheritenceError(EntityWidget entityWidget) {
-        if (entityWidget.getInheritenceState() == SINGLETON  || entityWidget.getInheritenceState() == ROOT ) {
+        if (entityWidget.getInheritenceState() == SINGLETON || entityWidget.getInheritenceState() == ROOT) {
             for (IdAttributeWidget attributeWidget : entityWidget.getIdAttributeWidgets()) {
                 attributeWidget.getErrorHandler().clearError(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             }

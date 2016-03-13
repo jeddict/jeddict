@@ -26,6 +26,5 @@ public enum ClassType {
     JAVA_SINGLETON,
     STATIC_METAMODEL_CLASS,
     JAXB_PACKAGE_INFO;
-    
 
 }

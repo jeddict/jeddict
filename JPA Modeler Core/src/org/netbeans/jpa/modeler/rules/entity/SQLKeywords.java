@@ -41,18 +41,15 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.jpa.modeler.rules.entity;
 
-// This file is included from Database APIs org.netbeans.modules.dbapi 
+// This file is included from Database APIs org.netbeans.modules.dbapi
 // org.netbeans.modules.db.api.sql.SQLKeywords import cause "Plugin has hard dependency to other modules defined in info.xml module descriptor, therefore can't be subject of verification. For more information see issue #226906"
-
-
 import java.util.Arrays;
 
 /**
- * An utility class for working with SQL keywords. Currently it provides
- * the list of reserved and non-reserved SQL-99 keywords.
+ * An utility class for working with SQL keywords. Currently it provides the
+ * list of reserved and non-reserved SQL-99 keywords.
  *
  * @author Andrei Badea
  *
@@ -62,10 +59,8 @@ public final class SQLKeywords {
 
     // the following lists are searched using binary search
     // so they should be lexicographically sorted
-
     // the source of the SQL-99 keyword lists is
     // the SQL-99 Complete book by Gulutzan and Pelzer
-
     /**
      * The list of SQL-99 reserved keywords. Not private because of the tests.
      */
@@ -392,7 +387,8 @@ public final class SQLKeywords {
     };
 
     /**
-     * The list of SQL-99 non-reserved keywords. Not private because of the tests.
+     * The list of SQL-99 non-reserved keywords. Not private because of the
+     * tests.
      */
     static final String[] SQL99_NON_RESERVED = {
         "ABS", //NOI18N
@@ -561,9 +557,10 @@ public final class SQLKeywords {
     /**
      * Returns true if the given identifier is a SQL-99 reserved keyword.
      *
-     * @param  identifier the identifier to test; case does not matter; cannot be null.
+     * @param identifier the identifier to test; case does not matter; cannot be
+     * null.
      * @return true if <code>identifier</code> is a SQL-99 reserved keyword,
-     *         false otherwise.
+     * false otherwise.
      * @throws NullPointerException if <code>identifier</code> is null.
      */
     public static boolean isSQL99ReservedKeyword(String identifier) {
@@ -576,9 +573,10 @@ public final class SQLKeywords {
     /**
      * Returns true if the given identifier is a SQL-99 non-reserved keyword.
      *
-     * @param  identifier the identifier to test; case does not matter; cannot be null.
+     * @param identifier the identifier to test; case does not matter; cannot be
+     * null.
      * @return true if <code>identifier</code> is a SQL-99 non-reserved keyword,
-     *         false otherwise.
+     * false otherwise.
      * @throws NullPointerException if <code>identifier</code> is null.
      */
     public static boolean isSQL99NonReservedKeyword(String identifier) {
@@ -592,9 +590,10 @@ public final class SQLKeywords {
      * Returns true if the given identifier is a SQL-99 keyword (reserved or
      * non-reserved).
      *
-     * @param  identifier the identifier to test; case does not matter; cannot be null.
+     * @param identifier the identifier to test; case does not matter; cannot be
+     * null.
      * @return true if <code>identifier</code> is a SQL-99 non-reserved keyword,
-     *         false otherwise.
+     * false otherwise.
      * @throws NullPointerException if <code>identifier</code> is null.
      */
     public static boolean isSQL99Keyword(String identifier) {
@@ -605,10 +604,11 @@ public final class SQLKeywords {
      * Returns true if the given identifier is a SQL-99 keyword (reserved or
      * non-reserved).
      *
-     * @param  identifier the identifier to test; use upper case only; cannot be null.
+     * @param identifier the identifier to test; use upper case only; cannot be
+     * null.
      * @param upperOnly only upper case allowed
      * @return true if <code>identifier</code> is a SQL-99 non-reserved keyword,
-     *         false otherwise.
+     * false otherwise.
      * @throws NullPointerException if <code>identifier</code> is null.
      */
     public static boolean isSQL99Keyword(String identifier, boolean upperOnly) {

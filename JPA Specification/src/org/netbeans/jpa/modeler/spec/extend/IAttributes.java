@@ -17,7 +17,6 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.Map;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -26,13 +25,13 @@ import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
-import org.netbeans.jpa.source.ReverseEngineeringController;
+import org.netbeans.jpa.source.JCRELoader;
 
 /**
  *
  * @author Gaurav_Gupta
  */
-public interface IAttributes extends ReverseEngineeringController {
+public interface IAttributes extends JCRELoader {
 
     /**
      * Gets the value of the basic property.
@@ -46,7 +45,7 @@ public interface IAttributes extends ReverseEngineeringController {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getBasic().add(newItem);
+     *    addBasic(newItem);
      * </pre>
      *
      *
@@ -141,7 +140,7 @@ public interface IAttributes extends ReverseEngineeringController {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getManyToOne().add(newItem);
+     *    addManyToOne(newItem);
      * </pre>
      *
      *
@@ -255,5 +254,9 @@ public interface IAttributes extends ReverseEngineeringController {
     void addChangeListener(PropertyChangeListener newListener);
 
     void removeChangeListener(PropertyChangeListener newListener);
+
+    public List<Attribute> getNonRelationAttributes();
+
+    public List<RelationAttribute> getRelationAttributes();
 
 }

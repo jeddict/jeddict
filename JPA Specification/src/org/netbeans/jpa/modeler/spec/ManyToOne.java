@@ -6,7 +6,6 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -94,7 +93,7 @@ public class ManyToOne extends SingleRelationAttribute {
         this.mapsId = value;
     }
 
-     /**
+    /**
      * @return the owner
      */
     public boolean isOwner() {
@@ -105,7 +104,7 @@ public class ManyToOne extends SingleRelationAttribute {
      * @param owner the owner to set
      */
     public void setOwner(boolean owner) {
-            //skip
+        //skip
     }
 
 }

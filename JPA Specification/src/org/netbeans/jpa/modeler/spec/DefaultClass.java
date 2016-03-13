@@ -1,3 +1,18 @@
+/**
+ * Copyright [2016] Gaurav Gupta
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
@@ -7,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 //created by gaurav gupta
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -15,14 +31,19 @@ import javax.xml.bind.annotation.XmlType;
     "description",
     "attributes"
 })
-public class DefaultClass {
+public class DefaultClass extends JavaClass {
 
     private boolean embeddable;
     private String description;
     @XmlElement(name = "attribute")
     private List<DefaultAttribute> attributes;
-    @XmlAttribute(name = "class", required = true)
-    private String clazz;
+
+    public DefaultClass() {
+    }
+
+    public DefaultClass(String clazz) {
+        this.clazz = clazz;
+    }
 
     /**
      * @return the attributes
@@ -43,6 +64,7 @@ public class DefaultClass {
             this.attributes = new ArrayList<DefaultAttribute>();
         }
         this.attributes.add(attributes);
+        attributes.setJavaClass(this);
     }
 
     /**
@@ -60,20 +82,6 @@ public class DefaultClass {
     }
 
     /**
-     * @return the clazz
-     */
-    public String getClazz() {
-        return clazz;
-    }
-
-    /**
-     * @param clazz the clazz to set
-     */
-    public void setClazz(String clazz) {
-        this.clazz = clazz;
-    }
-
-    /**
      * @return the embeddable
      */
     public boolean isEmbeddable() {
@@ -85,5 +93,15 @@ public class DefaultClass {
      */
     public void setEmbeddable(boolean embeddable) {
         this.embeddable = embeddable;
+    }
+
+    @Override
+    public String getName() {
+        return clazz;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.clazz = clazz;
     }
 }

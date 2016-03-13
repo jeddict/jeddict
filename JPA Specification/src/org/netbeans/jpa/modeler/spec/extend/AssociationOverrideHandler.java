@@ -22,5 +22,12 @@ public interface AssociationOverrideHandler {
 
     public Set<AssociationOverride> getAssociationOverride();
 
+    @Deprecated
     public AssociationOverride getAssociationOverride(String attributePath);
+
+    public AssociationOverride findAssociationOverride(String name);
+
+    public boolean addAssociationOverride(AssociationOverride associationOverride);
+
+    public boolean removeAssociationOverride(AssociationOverride associationOverride);
 }

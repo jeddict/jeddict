@@ -30,7 +30,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementCollection>{
+public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementCollection> {
 
     public BasicCollectionAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
@@ -44,9 +44,9 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
         set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
 
         ElementCollection elementCollectionSpec = this.getBaseElementSpec();
-        
-          set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
-        set.createPropertySet( this , elementCollectionSpec.getCollectionTable());
+
+        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
+        set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
     }
 //

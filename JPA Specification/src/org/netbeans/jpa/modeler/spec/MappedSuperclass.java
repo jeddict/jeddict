@@ -10,7 +10,6 @@ import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.MappedSuperclassAccessor;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -120,18 +119,4 @@ public class MappedSuperclass extends IdentifiableClass {
         this.attributes = (Attributes) attributes;
     }
 
-    public MappedSuperclassAccessor getAccessor() {
-        MappedSuperclassAccessor accessor = new MappedSuperclassAccessor();
-        accessor.setClassName(clazz);
-//        accessor.set
-//        accessor.setAccess("VIRTUAL");
-        accessor.setAttributes(attributes.getAccessor());
-        if (getSuperclass() != null) {
-            accessor.setParentClassName(getSuperclass().getClazz());
-        }
-        return accessor;
-
-    }
-
 }
-    

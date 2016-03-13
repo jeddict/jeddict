@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.netbeans.jpa.modeler.spec.ColumnResult;
 
 public class ConstructorResultSnippet implements Snippet {
 

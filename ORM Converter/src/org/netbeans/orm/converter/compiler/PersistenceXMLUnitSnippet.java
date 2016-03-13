@@ -15,7 +15,6 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -24,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class PersistenceXMLUnitSnippet implements Snippet {
 

@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
-import org.netbeans.modeler.widget.node.IWidget;
+import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.WidgetStateHandler;
 import org.openide.util.NbBundle;
 
@@ -31,23 +31,33 @@ import org.openide.util.NbBundle;
  */
 public class ErrorHandler {
 
-    private final IWidget widget;
-    
+    private final IFlowElementWidget widget;
 
-    public ErrorHandler(IWidget widget) {
+    public ErrorHandler(IFlowElementWidget widget) {
         this.widget = widget;
     }
 
-    private final java.util.Map<String, String> errorList = new HashMap<>();
+    private final Map<String, String> errorList = new HashMap<>();
 
     public void throwError(String key) {
-        errorList.put(key, ResourceBundleManager.get(key));//NbBundle.getMessage(bundle.getClass(), key));
+//        if (widget instanceof IFlowElementWidget) {
+//            errorList.put(key, ResourceBundleManager.get(key, ((IFlowElementWidget) widget).getName()));
+//            printError();
+//        } else {
+//            errorList.put(key, ResourceBundleManager.get(key));
+//            printError();
+//        }
+        errorList.put(key, ResourceBundleManager.get(key, widget.getName()));
         printError();
     }
 
     public void clearError(String key) {
         errorList.remove(key);
         printError();
+    }
+
+    public Map<String, String> getErrorList() {
+        return errorList;
     }
 
     public void printError() {
@@ -68,20 +78,19 @@ public class ErrorHandler {
         }
     }
 
-    
     private static class ResourceBundleManager {
 
         private static final Map<String, String> ERRORS = new HashMap<>();
         private static final Class[] VALIDATORS = {EntityValidator.class, AttributeValidator.class};
 
-        private static String get(String key) {
+        private static String get(String key, Object... param) {
             String value = ERRORS.get(key);
             if (value != null) {
                 return value;
             }
             for (Class validator : VALIDATORS) {
                 try {
-                    value = NbBundle.getMessage(validator, key);
+                    value = NbBundle.getMessage(validator, key, param);
                     ERRORS.put(key, value);
                     return value;
                 } catch (MissingResourceException resourceException) {

@@ -17,14 +17,8 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import org.apache.commons.lang.ClassUtils;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
@@ -32,7 +26,6 @@ import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
-import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -342,11 +335,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             classHelper.setClassName(typeIdentifier.getVariableType());
 
             importSnippets.addAll(typeIdentifier.getImportSnippets());
-        } else {
-
-            if (classHelper.getPackageName() != null) {
-                importSnippets.add(classHelper.getFQClassName());
-            }
+        } else if (classHelper.getPackageName() != null) {
+            importSnippets.add(classHelper.getFQClassName());
         }
 
         if (basic != null) {

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.openide.util.Exceptions;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 
 /**
  *
@@ -89,12 +89,12 @@ public class NamedEntityGraphsSnippet implements Snippet {
         ArrayList<String> importSnippets = new ArrayList<String>();
 
         importSnippets.add("javax.persistence.NamedEntityGraphs");
-        namedEntityGraphs.stream().forEach(e ->
-        {
+        namedEntityGraphs.stream().forEach(e
+                -> {
             try {
                 importSnippets.addAll(e.getImportSnippets());
             } catch (InvalidDataException ex) {
-                Exceptions.printStackTrace(ex);
+                ExceptionUtils.printStackTrace(ex);
             }
         }
         );

@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import java.awt.Image;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.PinContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
@@ -31,13 +30,14 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends PinWidget<S> implements IFlowPinWidget<E> {
 
     protected final ErrorHandler errorHandler;
-    
+
     public FlowPinWidget(S scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+        this.name = pinWidgetInfo.getName();
         errorHandler = new ErrorHandler(this);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
-            
+
             if (value != null && !value.trim().isEmpty()) {
                 FlowPinWidget.this.setLabel(value);
             } else {
@@ -49,7 +49,6 @@ public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends 
     protected String id;
     protected String name;
 
-    
     @Override
     public String getId() {
         return id;
@@ -69,9 +68,9 @@ public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends 
     public void setName(String name) {
         this.name = name;
         if (name != null && !name.trim().isEmpty()) {
-             FlowPinWidget.this.getBaseElementSpec().setName(name);
+            FlowPinWidget.this.getBaseElementSpec().setName(name);
         } else {
-             FlowPinWidget.this.getBaseElementSpec().setName(null);
+            FlowPinWidget.this.getBaseElementSpec().setName(null);
         }
 
     }
@@ -96,8 +95,8 @@ public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends 
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        
-        set.createPropertySet( this , this.getBaseElementSpec(), getPropertyChangeListeners());
+
+        set.createPropertySet(this, this.getBaseElementSpec(), getPropertyChangeListeners());
     }
 
     @Override

@@ -6,7 +6,6 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
-import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;

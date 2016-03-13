@@ -125,7 +125,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
             }
             version.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
         }
-        
+
         return baseAttribute;
     }
 
@@ -165,7 +165,6 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
         dataType_Action.setVisible(true);
 
     }
-
 
     private void initDataTypeComboBox() {
         String[] dataType = null;

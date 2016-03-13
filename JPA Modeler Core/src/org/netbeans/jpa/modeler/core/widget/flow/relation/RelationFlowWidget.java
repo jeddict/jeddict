@@ -21,6 +21,8 @@ import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.IPNodeWidget;
+import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.openide.nodes.Sheet;
@@ -35,7 +37,17 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerSc
             setName(value);
             RelationFlowWidget.this.setLabel(name);
         });
-        setAnchorGap(4);
+//        setAnchorGap(4);
+    }
+
+    @Override
+    public void init() {
+        sourceRelationAttributeWidget.setAnchorGap(4);
+        if (this.getTargetWidget() instanceof IPNodeWidget) {
+            ((IPNodeWidget) this.getTargetWidget()).setAnchorGap(4);
+        } else if (this.getTargetWidget() instanceof IPinWidget) {
+            ((IPinWidget) this.getTargetWidget()).setAnchorGap(4);
+        }
     }
 
     @Override
@@ -83,10 +95,6 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerSc
     public void setColor(Color color) {
         this.color = color;
         this.setLineColor(color);
-    }
-
-    @Override
-    public void init() {
     }
 
     @Override

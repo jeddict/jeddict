@@ -33,19 +33,21 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav_Gupta
  */
-public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget <OneToMany> {
+public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget<OneToMany> {
 
     private HierarchicalRelationFlowWidget hierarchicalRelationFlowWidget;
 
     public OTMRelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
     }
+
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        OneToMany otmSpec =  this.getBaseElementSpec();
+        OneToMany otmSpec = this.getBaseElementSpec();
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), otmSpec));
     }
+
     public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
         PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
         pinWidgetInfo.setDocumentId(OTMRelationAttributeWidget.class.getSimpleName());
