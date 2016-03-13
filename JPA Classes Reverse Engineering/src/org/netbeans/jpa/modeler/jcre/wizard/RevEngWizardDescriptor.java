@@ -329,7 +329,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
                 javax.swing.JOptionPane.showInputDialog("Entity closure have more entity");
             }
 
-            String backupFileName = fileName + "_backup_<1.4";
+            String backupFileName = fileName + "_backup";
             FileObject backupFile = null;
             try {
                 backupFile = org.openide.filesystems.FileUtil.copyFile(file.getFileObject(), packageFileObject, backupFileName);
@@ -345,6 +345,9 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
     }
 
     private static void notifyBackupCreation(ModelerFile file, FileObject backupFile) {
+        if(backupFile==null){
+            return;
+        }
         NotificationDisplayer.getDefault().notify("Backup created",
                 ImageUtilities.image2Icon(file.getIcon()),// ImageUtilities.loadImageIcon("org/netbeans/jpa/modeler/specification/model/file/JPA_FILE_ICON.png", false),
                 "Previous state of file has been saved to " + backupFile.getName() + ". Click here to delete it", (ActionEvent e) -> {

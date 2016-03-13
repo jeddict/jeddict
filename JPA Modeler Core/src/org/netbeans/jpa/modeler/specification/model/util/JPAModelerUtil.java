@@ -339,6 +339,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
 //            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
+        
         definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
         return definition_Load;
     }
@@ -349,7 +350,16 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         try {
             JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
             File savedFile = file.getFile();
-            EntityMappings entityMappings = getEntityMapping(savedFile);
+            EntityMappings entityMappings = null;
+            try {
+                entityMappings = getEntityMapping(savedFile);
+            } catch (JAXBException ex) {
+                if(StringUtils.isBlank(file.getContent())){
+                    entityMappings = null;
+                } else {
+                   throw ex; 
+                }
+            }
             if (entityMappings == null) {
                 ElementConfigFactory elementConfigFactory = file.getVendorSpecification().getElementConfigFactory();
                 entityMappings = EntityMappings.getNewInstance(file.getCurrentVersion());

@@ -27,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import org.netbeans.jpa.modeler.collaborate.enhancement.EnhancementRequestHandler;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -312,6 +313,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         menuList.add(3, manageVisibility);
         menuList.add(4, null);
         menuList.add(5, shareModeler);
+        menuList.add(5, EnhancementRequestHandler.getInstance().getComponent());
 
         return menuList;
     }
