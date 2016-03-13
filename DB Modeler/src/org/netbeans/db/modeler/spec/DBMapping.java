@@ -35,7 +35,7 @@ public class DBMapping implements IDefinitionElement, IRootElement {
     private String name;
     private final Map<String, DBTable> tables = new HashMap<>();
     private final Map<String, String> creationQueries = new HashMap<>();
-    private final Map<String, String> alterationQueries = new HashMap<>();
+    private final Map<String, List<String>> alterationQueries = new HashMap<>();
 
     /**
      * @return the tables
@@ -148,12 +148,15 @@ public class DBMapping implements IDefinitionElement, IRootElement {
         return creationQueries.put(table, query);
     }
 
-    public String getAlterQuery(String table) {
+    public List<String> getAlterQuery(String table) {
         return alterationQueries.get(table);
     }
 
-    public String putAlterQuery(String table, String query) {
-        return alterationQueries.put(table, query);
+    public void putAlterQuery(String table, String query) {
+        if(getAlterQuery(table)==null){
+            alterationQueries.put(table, new ArrayList<>());
+        }
+        getAlterQuery(table).add(query);
     }
 
     public String getSQL() {
@@ -162,7 +165,7 @@ public class DBMapping implements IDefinitionElement, IRootElement {
             queryList.append(query).append(";\n");
         });
 
-        alterationQueries.values().stream().forEach((query) -> {
+        alterationQueries.values().stream().flatMap(queries -> queries.stream()).forEach((query) -> {
             queryList.append(query).append(";\n");
         });
 

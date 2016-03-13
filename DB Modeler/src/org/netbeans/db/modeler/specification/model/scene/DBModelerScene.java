@@ -31,6 +31,7 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.VIEW_SQL;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
@@ -214,8 +215,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem openSQLEditor = new JMenuItem("View SQL");
-        openSQLEditor.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('L'), InputEvent.CTRL_DOWN_MASK));
+        JMenuItem openSQLEditor = new JMenuItem("View SQL",VIEW_SQL);
         openSQLEditor.addActionListener((ActionEvent e) -> {
             SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
         });

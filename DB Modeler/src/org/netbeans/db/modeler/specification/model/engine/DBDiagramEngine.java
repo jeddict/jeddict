@@ -66,7 +66,7 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
 
     private void buildDBCon(JToolBar bar) {
         dbConComboBox = new javax.swing.JComboBox();
-        DBConnectionUtil.loadConnection((EntityMappings) file.getParentFile().getDefinitionElement(), dbConComboBox);
+        DBConnectionUtil.loadConnection(file.getParentFile(), dbConComboBox);
         bar.add(dbConComboBox);
         dbConComboBox.addItemListener(this::dbConComboBoxItemStateChanged);
     }
