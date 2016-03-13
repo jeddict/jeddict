@@ -557,7 +557,7 @@ public class JPAMDefaultTableGenerator {
             } else if (mapping.isTransformationMapping()) {
                 resetTransformedFieldType((TransformationMapping) mapping);
             } else if (mapping.isAggregateObjectMapping()) {
-                postInitTableSchema(((AggregateObjectMapping) mapping).getReferenceDescriptor(), intrinsicEntity, intrinsicAttribute);
+                postInitTableSchema(((AggregateObjectMapping) mapping).getReferenceDescriptor(), new LinkedList<>(intrinsicEntity), new LinkedList<>(intrinsicAttribute));
             }
             intrinsicAttribute.clear();
         }
