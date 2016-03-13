@@ -34,6 +34,7 @@ import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
@@ -45,6 +46,7 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
+import org.netbeans.jpa.modeler.source.compiler.task.SourceCodeCompilerTask;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -58,7 +60,6 @@ import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERATE_SRC;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_DB;
-import org.netbeans.jpa.modeler.update.version.JPAModelerInstaller;
 import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
 import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
@@ -76,6 +77,9 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
+import org.openide.util.RequestProcessor;
 import org.openide.windows.WindowManager;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
@@ -90,6 +94,43 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         return entityWidgets;
     }
 
+    public boolean compile() {
+        boolean compiled = true;
+        StringBuilder errorMessage = new StringBuilder();
+        for (IBaseElementWidget e : getBaseElements()) {
+            boolean failure = false;
+            if (e instanceof PersistenceClassWidget) {
+                PersistenceClassWidget<ManagedClass> p = ((PersistenceClassWidget<ManagedClass>) e);
+                if (!p.getErrorHandler().getErrorList().isEmpty()) {
+                    errorMessage.append(p.getName()).append(':').append('\n');
+                    p.getErrorHandler().getErrorList().values().forEach(v -> {
+                        errorMessage.append('\t').append(v).append('\n');
+                    });
+                    failure = true;
+                }
+                for (AttributeWidget attributeWidget : p.getAllAttributeWidgets()) {
+                    if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
+                        errorMessage.append('\t').append(p.getName()).append('.').append(attributeWidget.getName()).append(':').append('\n');
+                        attributeWidget.getErrorHandler().getErrorList().values().forEach(v -> {
+                            errorMessage.append('\t').append('\t').append(v).append('\n');
+                        });
+                        failure = true;
+                    }
+                }
+            }
+            if (failure) {
+                compiled = false;
+                errorMessage.append('\n');
+            }
+        }
+
+        if (!compiled) {
+            NotifyDescriptor nd = new NotifyDescriptor.Message(errorMessage, NotifyDescriptor.ERROR_MESSAGE);
+            DialogDisplayer.getDefault().notify(nd);
+        }
+
+        return compiled;
+    }
     @Override
     public void deleteBaseElement(IBaseElementWidget baseElementWidget) {
         EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getModelerScene().getBaseElementSpec();

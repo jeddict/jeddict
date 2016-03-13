@@ -1510,16 +1510,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         GenerateCodeDialog dialog = new GenerateCodeDialog(modelerFile.getFileObject());
         dialog.setVisible(true);
         if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
-//            if (mappings.getPreviousVersion() < mappings.getVersion()) {
-//                int reply = javax.swing.JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
-//                        org.openide.util.NbBundle.getMessage(JPAModelerUtil.class, "Notification.GEN_SRC_WITHOUT_JCRE.text"),
-//                        org.openide.util.NbBundle.getMessage(JPAModelerUtil.class, "Notification.GEN_SRC_WITHOUT_JCRE.title"),
-//                        JOptionPane.YES_NO_OPTION);
-//                if (reply == JOptionPane.NO_OPTION) {
-//                    return;
-//                }
-//            }
-
             RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
             SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(modelerFile, dialog.getTargetPoject(), dialog.getSourceGroup());
             processor.post(task);
@@ -1649,6 +1639,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     public static void openDBViewer(ModelerFile file, EntityMappings entityMappings) {
+        if (!((JPAModelerScene) file.getModelerScene()).compile()) {
+            return;
+        }
+
         DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
         Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
 
@@ -1662,6 +1656,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             childModelerFile.unload();
             try {
                 childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
+                scene.validate();
             } catch (Exception ex) {
                 file.handleException(ex);
             }

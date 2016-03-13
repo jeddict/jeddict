@@ -37,7 +37,7 @@ public class ErrorHandler {
         this.widget = widget;
     }
 
-    private final java.util.Map<String, String> errorList = new HashMap<>();
+    private final Map<String, String> errorList = new HashMap<>();
 
     public void throwError(String key) {
 //        if (widget instanceof IFlowElementWidget) {
@@ -54,6 +54,10 @@ public class ErrorHandler {
     public void clearError(String key) {
         errorList.remove(key);
         printError();
+    }
+
+    public Map<String, String> getErrorList() {
+        return errorList;
     }
 
     public void printError() {
