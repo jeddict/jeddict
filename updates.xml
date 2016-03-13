@@ -1,5 +1,7 @@
-<module_updates timestamp="2016/02/07/08/43/00">
-    <module releasedate="2016/02/07" distribution="https://github.com/jpamodelertime/netbeans-jpamodelertime/releases/download/4.0.4/netbeans-jpamodelertime-v4.0.4.nbm" homepage="https://github.com/jpamodelertime/netbeans-jpamodelertime" moduleauthor="jpamodelerTime" needsrestart="false" codenamebase="org.netbeans.jpa.modeler">
-        <manifest OpenIDE-Module-Specification-Version="4.0.4" OpenIDE-Module-Implementation-Version="201602070843" AutoUpdate-Show-In-Client="true" OpenIDE-Module="org.netbeans.jpa.modeler" OpenIDE-Module-Name="jpamodelerTime" OpenIDE-Module-Display-Category="Fun Stuff" />
+<module_updates timestamp="2016/03/13/00/00">
+    <module releasedate="2016/03/13" distribution="http://jpamodeler.github.io/release.nbm" 
+            homepage="http://jpamodeler.github.io" moduleauthor="Gaurav Gupta" codenamebase="org.netbeans.jpa.modeler">
+        <manifest OpenIDE-Module-Specification-Version="1.4" AutoUpdate-Show-In-Client="true" 
+                  OpenIDE-Module="org.netbeans.jpa.modeler" OpenIDE-Module-Name="JPA Modeler" OpenIDE-Module-Display-Category="Enterprise Applications" />
     </module>
 </module_updates>

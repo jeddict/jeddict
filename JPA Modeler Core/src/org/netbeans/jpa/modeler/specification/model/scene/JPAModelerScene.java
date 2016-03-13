@@ -46,7 +46,6 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
-import org.netbeans.jpa.modeler.source.compiler.task.SourceCodeCompilerTask;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -79,7 +78,6 @@ import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import org.openide.util.RequestProcessor;
 import org.openide.windows.WindowManager;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
@@ -154,7 +152,9 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                             relationFlowWidget.remove();
                         }
                         for (RelationAttributeWidget relationAttributeWidget : persistenceClassWidget.getRelationAttributeWidgets()) {
-                            relationAttributeWidget.getRelationFlowWidget().remove();
+                            if (relationAttributeWidget.getRelationFlowWidget() != null) {//Bug : compatibility issue
+                                relationAttributeWidget.getRelationFlowWidget().remove();
+                            }
                         }
                         for (EmbeddedAttributeWidget embeddedAttributeWidget : persistenceClassWidget.getEmbeddedAttributeWidgets()) {
                             embeddedAttributeWidget.getEmbeddableFlowWidget().remove();
