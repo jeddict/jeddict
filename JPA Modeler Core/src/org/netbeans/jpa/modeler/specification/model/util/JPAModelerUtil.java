@@ -122,6 +122,7 @@ import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -165,11 +166,11 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.WindowManager;
-import static org.openide.util.NbBundle.getMessage;
+import org.openide.windows.IOProvider;
+import org.openide.windows.InputOutput;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
@@ -242,7 +243,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
     public static Marshaller MODELER_MARSHALLER;
-//    private final static InputOutput IO;
+    public final static InputOutput IO;
 
     static {
 
@@ -260,7 +261,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         NANO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/nano-db.png"));
         SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/share.png"));
 
-//        IO = IOProvider.getDefault().getIO("JPA Modeler", false);
+        IO = IOProvider.getDefault().getIO("JPA Modeler", false);
     }
 
     @Override
@@ -362,10 +363,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             }
             if (entityMappings == null) {
                 ElementConfigFactory elementConfigFactory = file.getVendorSpecification().getElementConfigFactory();
-                entityMappings = EntityMappings.getNewInstance(file.getCurrentVersion());
+                entityMappings = EntityMappings.getNewInstance(file.getCurrentVersion().getValue());
                 elementConfigFactory.initializeObjectValue(entityMappings);
             } else {
-                if (entityMappings.getVersion() < file.getCurrentVersion()) {
+                if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getArchitectureVersion()) < 0) {
                     int reply = javax.swing.JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
                             getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.text", file.getCurrentVersion()),
                             getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.title"), JOptionPane.YES_NO_OPTION);
@@ -381,8 +382,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                                 getMessage(JPAModelerUtil.class, "Notification.SVC_WARNING.text"), null,
                                 NotificationDisplayer.Priority.HIGH, NotificationDisplayer.Category.INFO);
                     }
+
                 }
             }
+            
+            
 
             Diagram diagram = entityMappings.getJPADiagram();
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
@@ -391,11 +395,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             long st = new Date().getTime();
 
             scene.startSceneGeneration();
-            entityMappings.getEntity().stream().
-                    forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            entityMappings.getMappedSuperclass().stream().
-                    forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            entityMappings.getEmbeddable().stream().
+            entityMappings.repairDefinition(IO);
+            entityMappings.getAllManagedClass().stream().
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
             System.out.println("EM PS Total time : " + (new Date().getTime() - st) + " sec");
 
@@ -1645,11 +1646,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
         DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
         Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
-
         dbModelerRequestManager.init(file, entityMappings);
+        IModelerScene scene;
         if (dbChildModelerFile.isPresent()) {
             ModelerFile childModelerFile = dbChildModelerFile.get();
-            IModelerScene scene = childModelerFile.getModelerScene();
+            scene = childModelerFile.getModelerScene();
             scene.getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
                 ((INodeWidget) element).remove(false);
             });
@@ -1661,6 +1662,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 file.handleException(ex);
             }
             childModelerFile.loaded();
+        } else {
+            dbChildModelerFile = file.getChildrenFile("DB");
+            if(dbChildModelerFile.isPresent()){
+                scene = dbChildModelerFile.get().getModelerScene();
+                scene.validate();//TODO remove it// should be called from framework
+            }
         }
     }
 
@@ -1670,7 +1677,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
      *
      * @return
      */
-    public static float getModelerFileVersion() {
+    public static String getModelerFileVersion() {
         Class _class = JPAFileActionListener.class;//.get
         Annotation[] annotations = _class.getAnnotations();
 
@@ -1680,7 +1687,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 return diagramModel.version();
             }
         }
-        return 0.0f;
+        return "0.0";
     }
 
 }

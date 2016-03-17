@@ -27,7 +27,7 @@ import org.netbeans.modeler.widget.pin.PinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends PinWidget<S> implements IFlowPinWidget<E> {
+public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends PinWidget<S> implements IFlowPinWidget<E> {
 
     protected final ErrorHandler errorHandler;
 
@@ -119,14 +119,6 @@ public class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends 
     @Override
     public void setBaseElementSpec(E baseElementSpec) {
         this.baseElementSpec = baseElementSpec;
-    }
-
-    @Override
-    public void init() {
-    }
-
-    @Override
-    public void destroy() {
     }
 
     private ContextPaletteModel contextPaletteModel;

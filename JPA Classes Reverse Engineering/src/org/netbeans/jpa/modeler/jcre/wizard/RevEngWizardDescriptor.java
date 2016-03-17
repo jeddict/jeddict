@@ -60,7 +60,6 @@ import org.netbeans.spi.project.ui.templates.support.Templates;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.WizardDescriptor;
-import org.openide.awt.Notification;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
@@ -175,7 +174,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
         String progressMsg = NbBundle.getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Model_Pre"); //NOI18N;
         reporter.progress(progressMsg, progressIndex++);
 
-        float version = getModelerFileVersion();
+        String version = getModelerFileVersion();
 
         EntityMappings entityMappingsSpec = EntityMappings.getNewInstance(version);
         entityMappingsSpec.setGenerated();
@@ -211,6 +210,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
         }
 
         entityMappingsSpec.manageSiblingAttribute();
+        entityMappingsSpec.repairDefinition(JPAModelerUtil.IO,true);
         entityMappingsSpec.manageJoinColumnRefName();
 
         JPAModelerUtil.createNewModelerFile(entityMappingsSpec, packageFileObject, fileName, softWrite, autoOpen);

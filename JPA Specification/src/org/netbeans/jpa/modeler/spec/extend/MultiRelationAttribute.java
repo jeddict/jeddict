@@ -416,5 +416,6 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      */
     public void setOwner(boolean owner) {
         this.owner = owner;
+        mappedBy = null;
     }
 }

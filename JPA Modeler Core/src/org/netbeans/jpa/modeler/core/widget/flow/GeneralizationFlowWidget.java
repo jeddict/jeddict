@@ -113,6 +113,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
         //BUG : https://java.net/bugzilla/show_bug.cgi?id=6756 - Diagram collapses on reload when using MappedSuperClass hierarchy
         if (this.getSubclassWidget() instanceof EntityWidget) {
             ((EntityWidget) this.getSubclassWidget()).scanKeyError();
+            ((EntityWidget) this.getSubclassWidget()).scanDuplicateInheritedAttributes();
         }
 
     }
@@ -130,6 +131,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
         //BUG : https://java.net/bugzilla/show_bug.cgi?id=6756 - Diagram collapses on reload when using MappedSuperClass hierarchy
         if (this.getSubclassWidget() instanceof EntityWidget) {
             ((EntityWidget) this.getSubclassWidget()).scanKeyError();
+            ((EntityWidget) this.getSubclassWidget()).scanDuplicateInheritedAttributes();
         }
         this.setSubclassWidget(null);
         this.setSuperclassWidget(null);

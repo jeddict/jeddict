@@ -253,9 +253,21 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return false;
     }
 
+    
+    @Override
+    public void init() {
+        setAttributeTooltip();
+        this.getClassWidget().scanDuplicateAttributes(null, this.name);
+    }
+
+    @Override
+    public void destroy() {
+        this.getClassWidget().scanDuplicateAttributes(this.name, null);
+    }
+    
     @Override
     public void setName(String name) {
-
+        String previousName = this.name;
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
@@ -274,6 +286,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         } else {
             errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
         }
+        this.getClassWidget().scanDuplicateAttributes(previousName, name);
 
     }
 
@@ -291,17 +304,13 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
     protected abstract void setAttributeTooltip();
 
-    @Override
-    public void init() {
-        super.init();
-        setAttributeTooltip();
-    }
+
 
     /**
      * @return the classWidget
      */
-    public JavaClassWidget getClassWidget() {
-        return (JavaClassWidget) this.getPNodeWidget();
+    public PersistenceClassWidget getClassWidget() {
+        return (PersistenceClassWidget) this.getPNodeWidget();
     }
 
 }

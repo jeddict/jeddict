@@ -15,8 +15,13 @@
  */
 package org.netbeans.db.modeler.persistence.internal.jpa.metadata;
 
+import java.util.Map;
+import org.eclipse.persistence.dynamic.DynamicClassLoader;
+import org.eclipse.persistence.dynamic.DynamicType;
+import org.eclipse.persistence.internal.jpa.metadata.MetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.MetadataProject;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
+import org.netbeans.db.modeler.dynamic.builder.JPAMDynamicTypeBuilder;
 
 /**
  *
@@ -31,6 +36,35 @@ public class JPAMMetadataProject extends MetadataProject {
     @Override
     public boolean isSharedCacheModeAll() {
         return false;
+    }
+    
+        /**
+     * INTERNAL:
+     * Create the dynamic types using JPA metadata processed descriptors. Called 
+     * at deploy time after all metadata processing has completed.
+     */
+    protected void createDynamicType(MetadataDescriptor descriptor, Map<String, DynamicType> dynamicTypes, DynamicClassLoader dcl) {
+        // Build the dynamic class only if we have not already done so.
+        if (! dynamicTypes.containsKey(descriptor.getJavaClassName())) {
+            JPAMDynamicTypeBuilder typeBuilder = null;
+            
+            if (descriptor.isInheritanceSubclass()) {
+                // Get the parent descriptor
+                MetadataDescriptor parentDescriptor = descriptor.getInheritanceParentDescriptor();
+                
+                // Recursively call up the parents.
+                createDynamicType(parentDescriptor, dynamicTypes, dcl);
+                
+                // Create the dynamic type using the parent type.
+                typeBuilder = new JPAMDynamicTypeBuilder(dcl, descriptor.getClassDescriptor(), dynamicTypes.get(parentDescriptor.getJavaClassName()));
+            } else {
+                // Create the dynamic type
+                typeBuilder = new JPAMDynamicTypeBuilder(dcl, descriptor.getClassDescriptor(), null);
+            }
+            
+            // Store the type builder by java class name.
+            dynamicTypes.put(descriptor.getJavaClassName(), typeBuilder.getType());
+        }
     }
 
 }

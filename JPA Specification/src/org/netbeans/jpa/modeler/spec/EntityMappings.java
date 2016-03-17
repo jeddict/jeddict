@@ -27,12 +27,14 @@ import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.jpa.modeler.spec.extend.cache.Cache;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
 import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.openide.windows.InputOutput;
 
 /**
  *
@@ -128,7 +130,6 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EntityMappings extends BaseElement implements IDefinitionElement, IRootElement {
 
-
     protected String description;
     @XmlElement(name = "persistence-unit-metadata")
     protected PersistenceUnitMetadata persistenceUnitMetadata;
@@ -158,9 +159,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected List<Embeddable> embeddable;
     protected List<Converter> converter;//REVENG PENDING
     @XmlAttribute(name = "v", required = true)
-    protected float version;
+    protected String version;
     @XmlTransient
-    private float previousVersion;
+    private SoftwareVersion previousVersion;
     @XmlAttribute(name = "dv")
     private String diagramVersion;
     @XmlElement(name = "diagram")
@@ -651,7 +652,10 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      * @return possible object is {@link String }
      *
      */
-    public float getVersion() {
+    public String getVersion() {
+        if(StringUtils.isBlank(version)){
+            version = "0.0";
+        }
         return version;
     }
 
@@ -661,8 +665,12 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      * @param value allowed object is {@link float }
      *
      */
-    public void setVersion(float value) {
+    public void setVersion(String value) {
         this.version = value;
+    }
+    
+    public void setVersion(SoftwareVersion value) {
+        this.version = value.getValue();
     }
 
     @Override
@@ -708,6 +716,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Entity findEntity(String entityName) {
+        if(StringUtils.isBlank(entityName)){
+            return null;
+        }
         if (entity != null) {
             for (Entity entity_In : entity) {
                 if (entityName.equals(entity_In.getClazz())) {
@@ -1069,6 +1080,85 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         }
     }
+//
+//    public void repairDefinition(boolean manageSiblingAttribute) {
+//        repairDefinition(null, manageSiblingAttribute);
+//    }
+
+    public void repairDefinition(InputOutput IO) {
+        repairDefinition(IO, false);
+    }
+
+    /**
+     * Helps in compatibility support, helps to repair wrong jpa relation in JCRE
+     * @param IO
+     * @param manageSiblingAttribute 
+     */
+    public void repairDefinition(InputOutput IO, boolean manageSiblingAttribute) {
+
+        for (ManagedClass managedClass : this.getAllManagedClass()) {
+            for (RelationAttribute attribute : managedClass.getAttributes().getRelationAttributes()) {
+                //if no connected-entity-id exist
+                if(attribute.getConnectedEntity()==null){
+                    if (IO != null) {
+                            StringBuilder message = new StringBuilder();
+                            message.append("Repair action > ").append(managedClass.getClazz()).append('[');
+                            message.append(attribute.getName()).append("]: ");
+                            message.append("No connected entity reference found, so removing attribute").append('\n');
+                            IO.getErr().print(message.toString());
+                        }
+                    if (attribute.getConnectedAttribute() != null) {
+                        if (IO != null) {
+                            StringBuilder message = new StringBuilder();
+                            message.append("Repair action > ").append(managedClass.getClazz()).append('[');
+                            message.append(attribute.getName()).append(" -> ").append(attribute.getConnectedAttribute().getName()).append("]: ");
+                            message.append("Also removing connected attribute").append('\n');
+                            IO.getErr().print(message.toString());
+                        }
+                        //remove the connected attribute from its owning class
+                        ((ManagedClass)attribute.getConnectedAttribute().getJavaClass()).getAttributes().removeRelationAttribute(attribute.getConnectedAttribute());
+                    }
+                    //remove to self from owning class
+                    managedClass.getAttributes().removeRelationAttribute(attribute);
+                    continue;
+                }
+                //if own is missing/found form both side
+                if (attribute.getConnectedAttribute() != null) {
+                    if (attribute.isOwner() && attribute.getConnectedAttribute().isOwner()) {//if both true
+                        if (IO != null) {
+                            StringBuilder message = new StringBuilder();
+                            message.append("Repair action > ").append(managedClass.getClazz()).append('[');
+                            message.append(attribute.getName()).append(" -> ").append(attribute.getConnectedAttribute().getName()).append("]: ");
+                            message.append("Both are owner so automatic removing owner role from ").append(attribute.getConnectedAttribute().getName()).append(" (converting to mappedBy)").append('\n');
+                            IO.getErr().print(message.toString());
+                        }
+                        attribute.getConnectedAttribute().setOwner(false);
+                    } else if (!attribute.isOwner() && !attribute.getConnectedAttribute().isOwner()) {//if both false
+                        if (IO != null) {
+                            StringBuilder message = new StringBuilder();
+                            message.append("Repair action > ").append(managedClass.getClazz()).append('[');
+                            message.append(attribute.getName()).append(" -> ").append(attribute.getConnectedAttribute().getName()).append("]: ");
+                            message.append("Both are not owner so automatic adding owner role (not mappedBy) to ").append(attribute.getName()).append('\n');
+                            IO.getErr().print(message.toString());
+                        }
+                            attribute.setOwner(true);
+                            manageSiblingAttribute(managedClass, attribute);
+                        }
+                } else {
+                    if (!attribute.isOwner()) {
+                    if (IO != null) {
+                        StringBuilder message = new StringBuilder();
+                        message.append("Repair action > ").append(managedClass.getClazz()).append('[').append(attribute.getName()).append("]: ");
+                        message.append("It is Unidirection relationship so automatic adding owner role and removing mappedBy").append('\n');
+                        IO.getErr().print(message.toString());
+                    }
+                        attribute.setOwner(true);
+                        manageSiblingAttribute(managedClass, attribute);
+                    }
+                }
+            }
+        }
+    }
 
     // Issue Fix #5949 End
     /**
@@ -1161,7 +1251,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.jaxbNameSpace = jaxbNameSpace;
     }
 
-    public static EntityMappings getNewInstance(float version) {
+    public static EntityMappings getNewInstance(String version) {
 
         EntityMappings entityMappingsSpec = new EntityMappings();
         entityMappingsSpec.setId(NBModelerUtil.getAutoGeneratedStringId());
@@ -1203,7 +1293,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.cache = cache;
     }
 
-
     void afterUnmarshal(Unmarshaller u, Object parent) {
         setPreviousVersion(version);
     }
@@ -1211,14 +1300,17 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     /**
      * @param previousVersion the previousVersion to set
      */
-    public void setPreviousVersion(float previousVersion) {
-        this.previousVersion = previousVersion;
+    public void setPreviousVersion(String previousVersion) {
+        if(StringUtils.isBlank(previousVersion)){
+            previousVersion = "0.0";
+        }
+        this.previousVersion = new SoftwareVersion(previousVersion);
     }
 
     /**
      * @return the previousVersion
      */
-    public float getPreviousVersion() {
+    public SoftwareVersion getPreviousVersion() {
         return previousVersion;
     }
 
@@ -1234,5 +1326,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      */
     public void setDiagramVersion(String diagramVersion) {
         this.diagramVersion = diagramVersion;
+    }
+
+    public List<ManagedClass> getAllManagedClass() {
+        List<ManagedClass> managedClasses = new ArrayList<>();
+        managedClasses.addAll(getEntity());
+        managedClasses.addAll(getMappedSuperclass());
+        managedClasses.addAll(getEmbeddable());
+        return managedClasses;
     }
 }

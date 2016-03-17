@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -174,6 +175,7 @@ public class OneToOne extends SingleRelationAttribute {
      */
     public void setMappedBy(String value) {
         this.mappedBy = value;
+        //if(StringUtils.isBlank(value)) //TODO
         this.setOwner((Boolean) false);
     }
 
@@ -241,6 +243,7 @@ public class OneToOne extends SingleRelationAttribute {
      */
     public void setOwner(boolean owner) {
         this.owner = owner;
+        mappedBy = null;
     }
 
 }

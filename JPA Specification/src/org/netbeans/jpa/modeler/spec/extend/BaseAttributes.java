@@ -547,7 +547,13 @@ public abstract class BaseAttributes implements IAttributes {
 
     @Override
     public boolean isAttributeExist(String name) {
-
+        //check from parent entities
+        if(this.getJavaClass().getSuperclass()!=null){
+            if(((ManagedClass)this.getJavaClass().getSuperclass()).getAttributes().isAttributeExist(name)){
+                return true;
+            }
+        }
+        
         if (basic != null) {
             for (Basic basic_TMP : basic) {
                 if (basic_TMP.getName() != null && basic_TMP.getName().equals(name)) {
@@ -611,7 +617,16 @@ public abstract class BaseAttributes implements IAttributes {
 
     @Override
     public List<Attribute> findAllAttribute(String name) {
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        return findAllAttribute(name,false);
+    }
+    
+    @Override
+    public List<Attribute> findAllAttribute(String name,boolean includeParentClassAttibute) {
+        List<Attribute> attributes = new ArrayList<>();
+        
+        if(includeParentClassAttibute && this.getJavaClass().getSuperclass()!=null){
+            attributes.addAll(((ManagedClass)this.getJavaClass().getSuperclass()).getAttributes().findAllAttribute(name,true));
+        }
 
         if (basic != null) {
             for (Basic basic_TMP : basic) {

@@ -184,7 +184,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 databaseLogin.setPassword("");
                 databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
             } else {
-                if (connection.getDriverClass() == null) {
+//                if (connection.getDriverClass() == null) {
                     for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
                         if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
                             new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
@@ -197,7 +197,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                             break;
                         }
                     }
-                }
+//                }
                 dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
                 Thread.currentThread().setContextClassLoader(dynamicClassLoader);
                 databaseLogin.setDatabaseURL(connection.getUrl());

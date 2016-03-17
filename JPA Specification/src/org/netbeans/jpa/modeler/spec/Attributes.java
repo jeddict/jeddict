@@ -166,7 +166,12 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
     @Override
     public List<Attribute> findAllAttribute(String name) {
-        List<Attribute> attributes = super.findAllAttribute(name);
+        return findAllAttribute(name,false);
+    }
+    
+    @Override
+    public List<Attribute> findAllAttribute(String name,boolean includeParentClassAttibute) {
+       List<Attribute> attributes = super.findAllAttribute(name,includeParentClassAttibute);
         if (id != null) {
             for (Id id_TMP : id) {
                 if (id_TMP.getName() != null && id_TMP.getName().equals(name)) {
