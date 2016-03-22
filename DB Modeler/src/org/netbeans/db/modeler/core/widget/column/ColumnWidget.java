@@ -89,7 +89,7 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
     @Override
     public void init() {
-//        super.init();
+        validateName(this.getName());
     }
 
     @Override

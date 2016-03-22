@@ -258,6 +258,11 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void init() {
         setAttributeTooltip();
         this.getClassWidget().scanDuplicateAttributes(null, this.name);
+        if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
+            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        } else {
+            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        }
     }
 
     @Override
@@ -280,6 +285,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         }
 
+        //TODO 
         ManagedClass javaClass = (ManagedClass) this.getClassWidget().getBaseElementSpec();
         if (javaClass.getAttributes().findAllAttribute(this.getName()).size() > 1) {
             errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
