@@ -375,6 +375,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
                         file.getModelerDiagramModel().setDefinitionElement(entityMappings);
                         processor.process(file);
+                        throw new ProcessInterruptedException("Reverse engineering initiated");
                     } else {
                         entityMappings.setVersion(file.getCurrentVersion());
                         NotificationDisplayer.getDefault().notify(getMessage(JPAModelerUtil.class, "Notification.SVC_WARNING.title"),

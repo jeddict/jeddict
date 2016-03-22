@@ -266,6 +266,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      *
      */
     public String getPackage() {
+        if(StringUtils.isBlank(_package)){
+            return null;
+        }
         return _package;
     }
 

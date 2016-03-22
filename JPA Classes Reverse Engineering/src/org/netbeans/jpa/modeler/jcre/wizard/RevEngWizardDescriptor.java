@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.jcre.wizard;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +27,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toSet;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
@@ -43,6 +50,7 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.getModelerFileVersion;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.core.exception.ProcessInterruptedException;
 import org.netbeans.modules.j2ee.persistence.api.EntityClassScope;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
@@ -67,6 +75,7 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.openide.util.lookup.ServiceProvider;
+import org.openide.windows.WindowManager;
 
 @ServiceProvider(service = JCREProcessor.class)
 @TemplateRegistration(folder = "Persistence", position = 2, displayName = "#RevEngWizardDescriptor_displayName", iconBase = "org/netbeans/jpa/modeler/jcre/wizard/resource/JPA_FILE_ICON.png", description = "resource/JPA_JCRE_DESC.html")
@@ -119,6 +128,8 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
                     Logger.getLogger(RevEngWizardDescriptor.class.getName()).log(Level.INFO, null, ioe);
                     NotifyDescriptor nd = new NotifyDescriptor.Message(ioe.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
                     DialogDisplayer.getDefault().notify(nd);
+                } catch (ProcessInterruptedException ce) {
+                    Logger.getLogger(RevEngWizardDescriptor.class.getName()).log(Level.INFO, null, ce);
                 } finally {
                     progressContributor.finish();
                     SwingUtilities.invokeLater(new Runnable() {
@@ -165,18 +176,18 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
         return entityCount + 2;
     }
 
-    public static EntityMappings generateJPAModel(ProgressReporter reporter, Set<String> entities, Project project, FileObject packageFileObject, String fileName) throws IOException {
+    public static EntityMappings generateJPAModel(ProgressReporter reporter, Set<String> entities, Project project, FileObject packageFileObject, String fileName) throws IOException, ProcessInterruptedException {
         return generateJPAModel(reporter, entities, project, packageFileObject, fileName, false, true, true);
     }
 
-    public static EntityMappings generateJPAModel(ProgressReporter reporter, Set<String> entities, Project project, FileObject packageFileObject, String fileName, boolean includeReference, boolean softWrite, boolean autoOpen) throws IOException {
+    public static EntityMappings generateJPAModel(ProgressReporter reporter, Set<String> entities, Project project, FileObject packageFileObject, String fileName, boolean includeReference, boolean softWrite, boolean autoOpen) throws IOException, ProcessInterruptedException {
         int progressIndex = 0;
         String progressMsg = NbBundle.getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Model_Pre"); //NOI18N;
         reporter.progress(progressMsg, progressIndex++);
 
         String version = getModelerFileVersion();
 
-        EntityMappings entityMappingsSpec = EntityMappings.getNewInstance(version);
+        final EntityMappings entityMappingsSpec = EntityMappings.getNewInstance(version);
         entityMappingsSpec.setGenerated();
 
         if (!entities.isEmpty()) {
@@ -184,10 +195,11 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
             entityMappingsSpec.setPackage(JavaIdentifiers.getPackageName(entity));
         }
 
+        List<String> missingEntities = new ArrayList<>();
         for (String entityClass : entities) {
             progressMsg = NbBundle.getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + ".java");//NOI18N
             reporter.progress(progressMsg, progressIndex++);
-            JPAModelGenerator.generateJPAModel(entityMappingsSpec, project, entityClass, packageFileObject);
+            JPAModelGenerator.generateJPAModel(entityMappingsSpec, project, entityClass, packageFileObject, missingEntities);
         }
 
         if (includeReference) {
@@ -202,19 +214,70 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
                     if (!entities.contains(entityClass)) {
                         progressMsg = NbBundle.getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + ".java");//NOI18N
                         reporter.progress(progressMsg, progressIndex++);
-                        JPAModelGenerator.generateJPAModel(entityMappingsSpec, project, entityClass, packageFileObject);
+                        JPAModelGenerator.generateJPAModel(entityMappingsSpec, project, entityClass, packageFileObject,missingEntities);
                         entities.add(entityClass);
                     }
                 }
             }
         }
 
+        if (!missingEntities.isEmpty()) {
+           final String title, message,_package;
+            if (missingEntities.size() == 1) {
+                title = "Conflict detected - Entity not found";
+                message = missingEntities.get(0) + " Entity is ";
+            } else {
+                title = "Conflict detected - Entities not found";
+                message = missingEntities + " Entities are ";
+            }
+            if(StringUtils.isEmpty(entityMappingsSpec.getPackage())){
+                _package = "<default_root_package>";
+            } else { 
+                _package = entityMappingsSpec.getPackage();
+            }
+         final String errorMessage = message + "missing in Project classpath["+_package+"]. \n Would like to cancel the process ?";
+            SwingUtilities.invokeLater(() -> {
+                JButton cancel = new JButton("Cancel import process (Recommended)");
+                JButton procced = new JButton("Procced");
+                cancel.addActionListener((ActionEvent e) -> {
+                    Window w = SwingUtilities.getWindowAncestor(cancel);
+                    if (w != null) {
+                      w.setVisible(false);
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    sb.append('\n').append("You have following option to resolve conflict :").append('\n').append('\n');
+                    sb.append("1- New File > Persistence > JPA Diagram from Reverse Engineering (Manually select entities)").append('\n');
+                    sb.append("2- Recover missing entities manually > Reopen diagram file >  Import entities again");
+                    NotifyDescriptor nd = new NotifyDescriptor.Message(sb.toString(), NotifyDescriptor.INFORMATION_MESSAGE);
+                    DialogDisplayer.getDefault().notify(nd);
+                 });
+                procced.addActionListener((ActionEvent e) -> {
+                     Window w = SwingUtilities.getWindowAncestor(cancel);
+                    if (w != null) {
+                      w.setVisible(false);
+                    }
+                    manageEntityMappingspec(entityMappingsSpec);
+                    JPAModelerUtil.createNewModelerFile(entityMappingsSpec, packageFileObject, fileName, softWrite, autoOpen);
+                });
+                
+                
+               JOptionPane.showOptionDialog(WindowManager.getDefault().getMainWindow(), errorMessage, title,OK_CANCEL_OPTION,
+                         ERROR_MESSAGE,UIManager.getIcon("OptionPane.errorIcon"), new Object[]{cancel,procced},cancel);
+            });
+            
+        } else {
+            manageEntityMappingspec(entityMappingsSpec);
+            JPAModelerUtil.createNewModelerFile(entityMappingsSpec, packageFileObject, fileName, softWrite, autoOpen);
+            return entityMappingsSpec;
+        }
+        
+       throw new ProcessInterruptedException();
+    }
+    
+    private static void manageEntityMappingspec(EntityMappings entityMappingsSpec) {
         entityMappingsSpec.manageSiblingAttribute();
-        entityMappingsSpec.repairDefinition(JPAModelerUtil.IO,true);
+        entityMappingsSpec.repairDefinition(JPAModelerUtil.IO, true);
         entityMappingsSpec.manageJoinColumnRefName();
-
-        JPAModelerUtil.createNewModelerFile(entityMappingsSpec, packageFileObject, fileName, softWrite, autoOpen);
-        return entityMappingsSpec;
     }
 
     @Override

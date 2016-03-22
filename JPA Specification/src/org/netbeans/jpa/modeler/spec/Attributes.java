@@ -90,6 +90,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
         VariableElement embeddedIdVariableElement = null;
         for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {
+            try {
             String methodName = method.getSimpleName().toString();
             if (methodName.startsWith("get")) {
                 Element element;
@@ -128,20 +129,20 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                     this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
                     OneToOne oneToOneObj = new OneToOne();
-                    this.addOneToOne(oneToOneObj);
                     oneToOneObj.load(element, variableElement);
+                    this.addOneToOne(oneToOneObj);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
                     ManyToOne manyToOneObj = new ManyToOne();
-                    this.addManyToOne(manyToOneObj);
                     manyToOneObj.load(element, variableElement);
+                    this.addManyToOne(manyToOneObj);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
                     OneToMany oneToManyObj = new OneToMany();
-                    this.addOneToMany(oneToManyObj);
                     oneToManyObj.load(element, variableElement);
+                    this.addOneToMany(oneToManyObj);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
                     ManyToMany manyToManyObj = new ManyToMany();
-                    this.addManyToMany(manyToManyObj);
                     manyToManyObj.load(element, variableElement);
+                    this.addManyToMany(manyToManyObj);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
                     this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
                     embeddedIdVariableElement = variableElement;
@@ -154,6 +155,10 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
             }
 //            else if (!methodName.startsWith("set")) {
 //            }
+            }catch(TypeNotPresentException ex){
+                //Ignore Erroneous variable Type : ClassA have relation with List<ClassB>. And ClassB does not exist on classpath 
+                //LOG TODO access to IO
+            }
         }
 
         if (this.getEmbeddedId() != null) {

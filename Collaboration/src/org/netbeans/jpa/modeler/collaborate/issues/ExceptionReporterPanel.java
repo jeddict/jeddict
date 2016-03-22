@@ -188,7 +188,9 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
             report.append("Message : ").append(bugDescription).append('\n').append('\n');
             throwable.printStackTrace(new PrintWriter(stringWriter));
             report.append("StackTrace : ").append('\n').append(stringWriter.toString()).append('\n').append('\n');
+             if(file!=null){
             report.append("ModelerFile : ").append('\n').append(file.getContent());
+            }
             Toolkit toolkit = Toolkit.getDefaultToolkit();
             Clipboard clipboard = toolkit.getSystemClipboard();
             StringSelection strSel = new StringSelection(report.toString());

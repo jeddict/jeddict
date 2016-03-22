@@ -161,6 +161,9 @@ public class OneToOne extends SingleRelationAttribute {
             if (mappedBy != null) {
                 return mappedBy;
             }
+            if(getConnectedAttribute()==null){
+                return null;
+            }
             return getConnectedAttribute().getName();
         } else {
             return null;
@@ -173,10 +176,9 @@ public class OneToOne extends SingleRelationAttribute {
      * @param value allowed object is {@link String }
      *
      */
-    public void setMappedBy(String value) {
+      public void setMappedBy(String value) {
         this.mappedBy = value;
-        //if(StringUtils.isBlank(value)) //TODO
-        this.setOwner((Boolean) false);
+        this.owner =  StringUtils.isBlank(mappedBy);
     }
 
     /**
@@ -243,7 +245,10 @@ public class OneToOne extends SingleRelationAttribute {
      */
     public void setOwner(boolean owner) {
         this.owner = owner;
-        mappedBy = null;
+        if(owner){
+            mappedBy = null;
+        } 
+        
     }
 
 }

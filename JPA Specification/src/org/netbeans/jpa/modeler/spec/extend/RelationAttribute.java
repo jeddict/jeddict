@@ -21,6 +21,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.ErrorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
@@ -102,7 +103,17 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         if (declaredType == null) { // Issue Fix #5925 Start
 //            declaredType = (DeclaredType) variableElement.asType();
             String variable = variableElement.asType().toString();
-            this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1, variable.length() - 1); //java.util.Set<com.jpa.Entity1>
+            if(variableElement.asType() instanceof ErrorType){ //variable => "<any>"
+                throw new TypeNotPresentException(this.name + " type not found", null);
+            }
+            if (variable.charAt(variable.length() - 1) != '>') { //instanceof SingleRelationAttribute
+                this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1); // com.jpa.Entity1
+            } else { //or instanceof MultiRelationAttribute  //java.util.Set<com.jpa.Entity1>
+                //Detect map or collection => Collection.class.isAssignableFrom(Class.forName(((DeclaredType) variableElement.asType()).asElement().toString()))) 
+               variable = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0).toString();//TODO 0
+               this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1);
+            }
+            
         } else {
             this.targetEntity = declaredType.asElement().getSimpleName().toString();
         }
