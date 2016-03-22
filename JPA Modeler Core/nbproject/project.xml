@@ -15,6 +15,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.apache.commons.lang</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>2.6</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.api.progress</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -378,14 +386,6 @@
                 <package>org.netbeans.jpa.modeler.widget.connection.relation</package>
             </friend-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-lang-2.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-lang-2.4.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-collections-3.2.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-collections-3.2.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/velocity-1.6.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/velocity-1.6.1.jar</binary-origin>
             </class-path-extension>
@@ -394,16 +394,12 @@
                 <binary-origin>release/modules/ext/activation.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-logging-1.1.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-logging-1.1.3.jar</binary-origin>
+                <runtime-relative-path>ext/ApachePOI.jar</runtime-relative-path>
+                <binary-origin>/home/quikr/Pictures/GAURAV 21 MAR/jpamodeler/JPA Modeler Core/release/modules/ext/ApachePOI.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jsr173_api.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jsr173_api.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/ApachePOI.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/ApachePOI.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>
