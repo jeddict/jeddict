@@ -1061,43 +1061,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     variableDef.setSequenceGenerator(sequenceGenerator);
                 }
 
-                TableGenerator parsedTableGenerator
-                        = parsedId.getTableGenerator();
-
+                TableGenerator parsedTableGenerator = parsedId.getTableGenerator();
                 if (parsedTableGenerator != null) {
-                    TableGeneratorSnippet tableGenerator = new TableGeneratorSnippet();
-
-                    tableGenerator.setAllocationSize(
-                            parsedTableGenerator.getAllocationSize());
-                    tableGenerator.setCatalog(parsedTableGenerator.getCatalog());
-                    tableGenerator.setInitialValue(
-                            parsedTableGenerator.getInitialValue());
-                    tableGenerator.setName(parsedTableGenerator.getName());
-                    tableGenerator.setPkColumnName(
-                            parsedTableGenerator.getPkColumnName());
-                    tableGenerator.setPkColumnValue(
-                            parsedTableGenerator.getPkColumnValue());
-                    tableGenerator.setSchema(parsedTableGenerator.getSchema());
-                    tableGenerator.setTable(parsedTableGenerator.getTable());
-                    tableGenerator.setValueColumnName(
-                            parsedTableGenerator.getValueColumnName());
-
-                    List<UniqueConstraint> parsedUniqueConstraints
-                            = parsedTableGenerator.getUniqueConstraint();
-
-                    List<UniqueConstraintSnippet> uniqueConstraints
-                            = new ArrayList<UniqueConstraintSnippet>();
-
-                    for (UniqueConstraint parsedUniqueConstraint : parsedUniqueConstraints) {
-                        UniqueConstraintSnippet uniqueConstraint = new UniqueConstraintSnippet();
-
-                        uniqueConstraint.setUniqueConstraints(
-                                parsedUniqueConstraint.getColumnName());
-                    }
-
-                    tableGenerator.setUniqueConstraints(uniqueConstraints);
-
-                    variableDef.setTableGenerator(tableGenerator);
+                    variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
                 }
             }
 
@@ -1464,15 +1430,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         classDef.setTableDef(table);
     }
-
-    protected void processTableGenerator(
-            TableGenerator parsedTableGenerator) {
-
-        if (parsedTableGenerator == null) {
-            return;
+    
+    protected TableGeneratorSnippet processTableGenerator(TableGenerator parsedTableGenerator) {
+       
+         if (parsedTableGenerator == null) {
+            return null;
         }
-
-        TableGeneratorSnippet tableGenerator = new TableGeneratorSnippet();
+         
+         TableGeneratorSnippet tableGenerator = new TableGeneratorSnippet();
 
         if (parsedTableGenerator.getAllocationSize() != null) {
             tableGenerator.setAllocationSize(
@@ -1496,6 +1461,18 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         tableGenerator.setUniqueConstraints(getUniqueConstraints(
                 parsedTableGenerator.getUniqueConstraint()));
 
+        return tableGenerator;
+    }
+
+
+    protected void processTableGeneratorEntity(TableGenerator parsedTableGenerator) {
+
+       
+        TableGeneratorSnippet tableGenerator =  processTableGenerator(parsedTableGenerator);
+        if(tableGenerator==null){
+            return ;
+        }
+        
         VariableDefSnippet variableDef = null;
         boolean found = false;
         //The name of the TableGenerator must match the generator name in a
