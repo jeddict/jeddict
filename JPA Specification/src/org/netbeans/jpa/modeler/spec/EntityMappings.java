@@ -108,7 +108,7 @@ import org.openide.windows.InputOutput;
 @XmlType(name = "entity-mappings", propOrder = {
     "description",
     "persistenceUnitMetadata",
-    //    "_package",
+    "_package_dep",
     "schema",
     "catalog",
     "access",
@@ -136,6 +136,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     protected PersistenceUnitMetadata persistenceUnitMetadata;
     @XmlAttribute(name = "pkg")
     protected String _package;
+    @XmlElement(name = "package")
+    protected String _package_dep;//Compatibility support
     protected String schema;
     protected String catalog;
     protected AccessType access;
@@ -1309,6 +1311,10 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     void afterUnmarshal(Unmarshaller u, Object parent) {
+        if(StringUtils.isBlank(_package) && StringUtils.isNotBlank(_package_dep)){
+            _package = _package_dep;//TODO remove in future release // compatibility support
+            _package_dep = null;
+        }
         setPreviousVersion(version);
     }
 

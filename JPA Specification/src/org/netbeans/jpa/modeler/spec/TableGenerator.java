@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -67,6 +69,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "uniqueConstraint",
     "index"
 })
+@XmlJavaTypeAdapter(value = TableGeneratorValidator.class)
 public class TableGenerator {
 
     protected String description;

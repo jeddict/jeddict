@@ -103,10 +103,10 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         }
 
         // Classlevel annotations - Special case
-        // processTableGeneratorEntity() && processSequenceGenerator()
+        // processTableGeneratorEntity() && processSequenceGeneratorEntity()
         //depends on @GeneratedValue annotation - So process it after @GeneratedValue
         processTableGeneratorEntity(entity.getTableGenerator());
-        processSequenceGenerator(entity.getSequenceGenerator());
+        processSequenceGeneratorEntity(entity.getSequenceGenerator());
 
         //Class decorations
         ClassHelper classHelper = new ClassHelper(entity.getClazz());
