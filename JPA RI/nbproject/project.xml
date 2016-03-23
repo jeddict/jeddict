@@ -326,20 +326,12 @@
                 <package>org.eclipse.persistence.transaction.wls</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/h2-1.4.190.jar</runtime-relative-path>
-                <binary-origin>/home/quikr/Pictures/GAURAV 21 MAR/jpamodeler/JPA RI/release/modules/ext/h2-1.4.190.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/javax.persistence_2.1.1.v201509150925.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/javax.persistence_2.1.1.v201509150925.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/eclipselink.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/eclipselink.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/ant.jar</runtime-relative-path>
-                <binary-origin>/home/quikr/Pictures/GAURAV 21 MAR/jpamodeler/JPA RI/release/modules/ext/ant.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

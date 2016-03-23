@@ -1203,47 +1203,42 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
                 otoRelationAttributeWidget.setOneToOneRelationFlowWidget(otoRelationFlowWidget);
                 relationAttributeWidget = otoRelationAttributeWidget;
-            } else {
-                if (relationFlowWidget instanceof OTMRelationFlowWidget) {
-                    OTMRelationAttributeWidget otmRelationAttributeWidget;
-                    if (sourceAttributeWidget == null) {
-                        otmRelationAttributeWidget = sourcePersistenceWidget.addNewOneToManyRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
-                    } else {
-                        otmRelationAttributeWidget = (OTMRelationAttributeWidget) sourceAttributeWidget;
-                    }
-                    otmRelationAttributeWidget.setHierarchicalRelationFlowWidget((OTMRelationFlowWidget) relationFlowWidget);
-                    relationAttributeWidget = otmRelationAttributeWidget;
+            } else if (relationFlowWidget instanceof OTMRelationFlowWidget) {
+                OTMRelationAttributeWidget otmRelationAttributeWidget;
+                if (sourceAttributeWidget == null) {
+                    otmRelationAttributeWidget = sourcePersistenceWidget.addNewOneToManyRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName(), true));
                 } else {
-                    if (relationFlowWidget instanceof MTORelationFlowWidget) {
-                        MTORelationFlowWidget mtoRelationFlowWidget = (MTORelationFlowWidget) relationFlowWidget;
-                        MTORelationAttributeWidget mtoRelationAttributeWidget;
-                        if (sourceAttributeWidget == null) {
-                            mtoRelationAttributeWidget = sourcePersistenceWidget.addNewManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
-                        } else {
-                            mtoRelationAttributeWidget = (MTORelationAttributeWidget) sourceAttributeWidget;
-                        }
-                        if (mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION")) {
-                            mtoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
-                        }
-                        mtoRelationAttributeWidget.setManyToOneRelationFlowWidget(mtoRelationFlowWidget);
-                        relationAttributeWidget = mtoRelationAttributeWidget;
-
-                    } else {
-                        if (relationFlowWidget instanceof MTMRelationFlowWidget) {
-                            MTMRelationAttributeWidget mtmRelationAttributeWidget;
-                            if (sourceAttributeWidget == null) {
-                                mtmRelationAttributeWidget = sourcePersistenceWidget.addNewManyToManyRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
-                            } else {
-                                mtmRelationAttributeWidget = (MTMRelationAttributeWidget) sourceAttributeWidget;
-                            }
-                            mtmRelationAttributeWidget.setManyToManyRelationFlowWidget((MTMRelationFlowWidget) relationFlowWidget);
-                            relationAttributeWidget = mtmRelationAttributeWidget;
-                        } else {
-                            throw new UnsupportedOperationException("Not supported yet.");
-                        }
-                    }
+                    otmRelationAttributeWidget = (OTMRelationAttributeWidget) sourceAttributeWidget;
                 }
+                otmRelationAttributeWidget.setHierarchicalRelationFlowWidget((OTMRelationFlowWidget) relationFlowWidget);
+                relationAttributeWidget = otmRelationAttributeWidget;
+            } else if (relationFlowWidget instanceof MTORelationFlowWidget) {
+                MTORelationFlowWidget mtoRelationFlowWidget = (MTORelationFlowWidget) relationFlowWidget;
+                MTORelationAttributeWidget mtoRelationAttributeWidget;
+                if (sourceAttributeWidget == null) {
+                    mtoRelationAttributeWidget = sourcePersistenceWidget.addNewManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
+                } else {
+                    mtoRelationAttributeWidget = (MTORelationAttributeWidget) sourceAttributeWidget;
+                }
+                if (mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION")) {
+                    mtoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
+                }
+                mtoRelationAttributeWidget.setManyToOneRelationFlowWidget(mtoRelationFlowWidget);
+                relationAttributeWidget = mtoRelationAttributeWidget;
+
+            } else if (relationFlowWidget instanceof MTMRelationFlowWidget) {
+                MTMRelationAttributeWidget mtmRelationAttributeWidget;
+                if (sourceAttributeWidget == null) {
+                    mtmRelationAttributeWidget = sourcePersistenceWidget.addNewManyToManyRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName(), true));
+                } else {
+                    mtmRelationAttributeWidget = (MTMRelationAttributeWidget) sourceAttributeWidget;
+                }
+                mtmRelationAttributeWidget.setManyToManyRelationFlowWidget((MTMRelationFlowWidget) relationFlowWidget);
+                relationAttributeWidget = mtmRelationAttributeWidget;
+            } else {
+                throw new UnsupportedOperationException("Not supported yet.");
             }
+                 
 
             relationFlowWidget.setSourceRelationAttributeWidget(relationAttributeWidget);
             relationAttributeWidget.getBaseElementSpec().setOwner(true);
@@ -1280,7 +1275,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         if (edgeWidget instanceof MultiValueEmbeddableFlowWidget) {
                             MultiValueEmbeddedAttributeWidget multiValueEmbeddedAttributeWidget;
                             if (sourceAttributeWidget == null) {
-                                multiValueEmbeddedAttributeWidget = sourcePersistenceWidget.addNewMultiValueEmbeddedAttribute(sourcePersistenceWidget.getNextAttributeName(targetEmbeddableWidget.getName()));
+                                multiValueEmbeddedAttributeWidget = sourcePersistenceWidget.addNewMultiValueEmbeddedAttribute(sourcePersistenceWidget.getNextAttributeName(targetEmbeddableWidget.getName(),true));
                             } else {
                                 multiValueEmbeddedAttributeWidget = (MultiValueEmbeddedAttributeWidget) sourceAttributeWidget;
                             }
@@ -1341,7 +1336,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             BMTORelationFlowWidget bmtoRelationFlowWidget = (BMTORelationFlowWidget) edgeWidget;
                             OTMRelationAttributeWidget targetMTORelationAttributeWidget;
                             if (targetRelationAttributeWidget == null) {
-                                targetMTORelationAttributeWidget = targetEntityWidget.addNewOneToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName()));
+                                targetMTORelationAttributeWidget = targetEntityWidget.addNewOneToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(),true));
                                 RelationAttributeWidget sourceMTORelationAttributeWidget = bmtoRelationFlowWidget.getSourceRelationAttributeWidget();
                                 sourceMTORelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetMTORelationAttributeWidget);
                                 targetMTORelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceMTORelationAttributeWidget);
@@ -1356,7 +1351,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                                 BMTMRelationFlowWidget bmtmRelationFlowWidget = (BMTMRelationFlowWidget) edgeWidget;
                                 MTMRelationAttributeWidget targetMTMRelationAttributeWidget;
                                 if (targetRelationAttributeWidget == null) {
-                                    targetMTMRelationAttributeWidget = targetEntityWidget.addNewManyToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName()));
+                                    targetMTMRelationAttributeWidget = targetEntityWidget.addNewManyToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(),true));
                                     RelationAttributeWidget sourceMTMRelationAttributeWidget = bmtmRelationFlowWidget.getSourceRelationAttributeWidget();
                                     sourceMTMRelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetMTMRelationAttributeWidget);
                                     targetMTMRelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceMTMRelationAttributeWidget);

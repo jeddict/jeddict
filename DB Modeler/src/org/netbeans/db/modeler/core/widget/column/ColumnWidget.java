@@ -15,14 +15,9 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JMenuItem;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -32,11 +27,6 @@ import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
-import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.core.ModelerFile;
-import static org.netbeans.modeler.core.engine.ModelerDiagramEngine.NODE_WIDGET_SELECT_PROVIDER;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -190,9 +180,9 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
         DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
         if (tableSpec.findColumns(name).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+            errorHandler.throwError(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+            errorHandler.clearError(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         }
     }
 

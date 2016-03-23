@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.core.widget.attribute;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
@@ -258,18 +259,27 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void init() {
         setAttributeTooltip();
         this.getClassWidget().scanDuplicateAttributes(null, this.name);
-        if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
-            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
-        } else {
-            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
-        }
+        validateName(null, this.getName());
     }
 
     @Override
     public void destroy() {
         this.getClassWidget().scanDuplicateAttributes(this.name, null);
     }
-    
+    private void validateName(String previousName,String name){
+        if (JavaPersistenceQLKeywords.isKeyword(name)) {
+            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        } else {
+            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        }
+        if(SourceVersion.isName(name)){
+            errorHandler.clearError(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+        } else {
+            errorHandler.throwError(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+        }
+        this.getClassWidget().scanDuplicateAttributes(previousName, name);
+
+    }
     @Override
     public void setName(String name) {
         String previousName = this.name;
@@ -279,21 +289,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 getBaseElementSpec().setName(this.name);
             }
         }
-        if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
-            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
-        } else {
-            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
-        }
-
-        //TODO 
-        ManagedClass javaClass = (ManagedClass) this.getClassWidget().getBaseElementSpec();
-        if (javaClass.getAttributes().findAllAttribute(this.getName()).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        }
-        this.getClassWidget().scanDuplicateAttributes(previousName, name);
-
+       validateName(previousName,this.getName());
     }
 
     @Override

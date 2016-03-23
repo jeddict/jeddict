@@ -83,6 +83,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         setLabel(entity.getClazz());
         changeAbstractionIcon(entity.getAbstract());
         scanKeyError();
+        validateName(null, this.getName());
     }
 
     private void changeAbstractionIcon(Boolean _abstract) {

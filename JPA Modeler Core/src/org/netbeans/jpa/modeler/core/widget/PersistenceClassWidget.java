@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.*;
 import org.netbeans.api.visual.widget.Widget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
@@ -68,6 +69,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.supp
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
+import org.atteo.evo.inflector.*;
 
 /**
  *
@@ -692,14 +694,21 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     public String getNextAttributeName() {
         return getNextAttributeName(null);
     }
-
     public String getNextAttributeName(String attrName) {
+        return getNextAttributeName(attrName, false);
+    }
+    public String getNextAttributeName(String attrName, boolean multi) {
         int index = 0;
         if (attrName == null || attrName.trim().isEmpty()) {
             attrName = "attribute";
         }
         attrName = Character.toLowerCase(attrName.charAt(0)) + (attrName.length() > 1 ? attrName.substring(1) : "");
-        String nextAttrName = attrName + ++index;
+        String nextAttrName = attrName;
+        if(multi){
+            nextAttrName = English.plural(nextAttrName);
+        } else {
+            System.out.println("");
+        }
         ManagedClass javaClass = this.getBaseElementSpec();
         if (javaClass.getAttributes() == null) {
             return nextAttrName;

@@ -64,9 +64,9 @@ public class BaseTableWidget extends TableWidget<DBTable> {
 
         DBMapping mapping = BaseTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(BaseTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

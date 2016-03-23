@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import static java.util.stream.Collectors.toList;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -1195,6 +1196,17 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             }
         }
         return null;
+    }
+    public List<JavaClass> getAllJavaClass() {
+        List<JavaClass> classes = new ArrayList<>();
+        classes.addAll(getEntity());
+        classes.addAll(getMappedSuperclass());
+        classes.addAll(getEmbeddable());
+        classes.addAll(getDefaultClass());
+        return classes;
+    }
+     public List<JavaClass> findAllJavaClass(String className) {
+        return getAllJavaClass().stream().filter((_class) -> (className.equals(_class.getClazz()))).collect(toList());
     }
 
     public List<JavaClass> getSubClass(String classId) {

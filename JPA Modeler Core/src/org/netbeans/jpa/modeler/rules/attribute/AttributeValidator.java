@@ -27,6 +27,8 @@ public class AttributeValidator {
 
     public final static String EMPTY_ATTRIBUTE_NAME = "MSG_EmptyAttributeName";
     public final static String NON_UNIQUE_ATTRIBUTE_NAME = "MSG_NonUniqueAttributeName";
+    public final static String NON_UNIQUE_COLUMN_NAME = "MSG_NonUniqueColumnName";
+    public final static String INVALID_ATTRIBUTE_NAME = "MSG_InvalidAttrName";
     public final static String ATTRIBUTE_NAME_WITH_JPQL_KEYWORD = "MSG_AttrNamedWithJavaPersistenceQLKeyword";
     public final static String ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_AttrTableNamedWithReservedSQLKeyword";
     public final static String ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_AttrColumnNamedWithReservedSQLKeyword";

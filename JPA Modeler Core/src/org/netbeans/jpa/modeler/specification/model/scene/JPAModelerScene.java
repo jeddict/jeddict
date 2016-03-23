@@ -91,6 +91,16 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         }
         return entityWidgets;
     }
+    
+     public List<JavaClassWidget> getJavaClassWidges() {
+        List<JavaClassWidget> classWidgets = new ArrayList<>();
+        for (IBaseElementWidget baseElement : getBaseElements()) {
+            if (baseElement instanceof JavaClassWidget) {
+                classWidgets.add((JavaClassWidget) baseElement);
+            }
+        }
+        return classWidgets;
+    }
 
     public boolean compile() {
         boolean compiled = true;
