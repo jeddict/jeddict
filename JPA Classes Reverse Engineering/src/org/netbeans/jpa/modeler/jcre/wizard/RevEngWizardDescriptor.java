@@ -26,13 +26,13 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
-import static javax.swing.JOptionPane.YES_OPTION;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
@@ -49,6 +49,7 @@ import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.getModelerFileVersion;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
 import org.netbeans.modules.j2ee.persistence.api.EntityClassScope;
@@ -222,20 +223,23 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
         }
 
         if (!missingEntities.isEmpty()) {
-           final String title, message,_package;
+           final String title,_package;
+StringBuilder message = new StringBuilder();
             if (missingEntities.size() == 1) {
                 title = "Conflict detected - Entity not found";
-                message = missingEntities.get(0) + " Entity is ";
+                message.append(JavaSourceParserUtil.simpleClassName(missingEntities.get(0))).append(" Entity is ");
             } else {
                 title = "Conflict detected - Entities not found";
-                message = missingEntities + " Entities are ";
+                message.append("Entities ").append(
+                       missingEntities.stream().map(e -> JavaSourceParserUtil.simpleClassName(e)).collect(toList()))
+                        .append(" are ");
             }
             if(StringUtils.isEmpty(entityMappingsSpec.getPackage())){
                 _package = "<default_root_package>";
             } else { 
                 _package = entityMappingsSpec.getPackage();
             }
-         final String errorMessage = message + "missing in Project classpath["+_package+"]. \n Would like to cancel the process ?";
+            message.append("missing in Project classpath[").append(_package).append("]. \n Would like to cancel the process ?");
             SwingUtilities.invokeLater(() -> {
                 JButton cancel = new JButton("Cancel import process (Recommended)");
                 JButton procced = new JButton("Procced");
@@ -261,7 +265,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
                 });
                 
                 
-               JOptionPane.showOptionDialog(WindowManager.getDefault().getMainWindow(), errorMessage, title,OK_CANCEL_OPTION,
+               JOptionPane.showOptionDialog(WindowManager.getDefault().getMainWindow(), message.toString(), title,OK_CANCEL_OPTION,
                          ERROR_MESSAGE,UIManager.getIcon("OptionPane.errorIcon"), new Object[]{cancel,procced},cancel);
             });
             
