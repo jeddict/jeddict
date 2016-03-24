@@ -23,6 +23,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.jpa.modeler.lib</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.jpa.ri</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -71,15 +79,6 @@
                     <run-dependency>
                         <release-version>1</release-version>
                         <specification-version>1.57.1</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>org.netbeans.modules.hibernate4lib</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <release-version>1</release-version>
-                        <specification-version>1.7.0.238</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -206,10 +205,6 @@
                 <package>org.netbeans.orm.converter.spec</package>
                 <package>org.netbeans.orm.converter.util</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/velocity-1.6.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/velocity-1.6.1.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>

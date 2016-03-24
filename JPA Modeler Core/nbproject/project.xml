@@ -393,22 +393,6 @@
                 <package>org.netbeans.jpa.modeler.visiblity.javaclass</package>
                 <package>org.netbeans.jpa.modeler.widget.connection.relation</package>
             </friend-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/velocity-1.6.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/velocity-1.6.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/activation.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/activation.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/ApachePOI.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/ApachePOI.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jsr173_api.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jsr173_api.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>
