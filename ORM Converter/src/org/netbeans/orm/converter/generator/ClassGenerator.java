@@ -74,6 +74,7 @@ import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
+import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
@@ -81,6 +82,7 @@ import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.TableValidator;
+import org.netbeans.orm.converter.compiler.AnnotationSnippet;
 import org.netbeans.orm.converter.compiler.AssociationOverrideSnippet;
 import org.netbeans.orm.converter.compiler.AssociationOverridesSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverrideSnippet;
@@ -191,12 +193,22 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return columnDef;
     }
 
+    protected List<AnnotationSnippet> getAnnotationSnippet(List<Annotation> annotations) {
+        List<AnnotationSnippet> snippets = new ArrayList<>();
+        for (Annotation annotation : annotations) {
+            AnnotationSnippet snippet = new AnnotationSnippet();
+            snippet.setName(annotation.getName());
+            snippets.add(snippet);
+        }
+        return snippets;
+    }
+    
     protected VariableDefSnippet getVariableDef(Attribute attr) {
         VariableDefSnippet variableDef = variables.get(attr.getName());
         if (variableDef == null) {
             variableDef = new VariableDefSnippet();
             variableDef.setName(attr.getName());
-//            variableDef.setAnnotation(attr.getAnnotation());
+            variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
 
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
             if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {

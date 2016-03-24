@@ -68,7 +68,7 @@ public class Version extends PersistenceBaseAttribute implements AccessTypeHandl
         version.name = variableElement.getSimpleName().toString();
         version.access = AccessType.load(element);
         version.setAttributeType(variableElement.asType().toString());
-        JavaSourceParserUtil.addNonEEAnnotation(version, element);
+        version.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
         return version;
     }
 

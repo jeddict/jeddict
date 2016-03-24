@@ -21,12 +21,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -49,6 +52,7 @@ import org.netbeans.api.java.source.WorkingCopy;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
+import org.netbeans.jpa.modeler.spec.extend.annotation.AnnotationElement;
 import static org.netbeans.jpa.source.Package.JEE_PACKAGE;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
@@ -132,32 +136,33 @@ public class JavaSourceParserUtil {
 
     //"javax.persistence|javax.xml.bind.annotation"
     private static final Pattern JEE_PACKAGE_PATTERN = Pattern.compile(JEE_PACKAGE);
+    
 
-    public static void addNonEEAnnotation(JavaClass _class, Element element) {
+    public static List<Annotation> getNonEEAnnotation(Element element) {
+        List<Annotation> annotations = new ArrayList<>();
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
             Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
             if (!matcher.find()) {
-                _class.addAnnotation(annotationMirror.toString());
-            }
-        }
-    }
-
-    public static void addNonEEAnnotation(Attribute attribute, Element element) {
-        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
-            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
-            if (!matcher.find()) {
-//                attribute.addAnnotation(annotationMirror.toString());
-
-//                annotationMirror.getAnnotationType().getTypeArguments()
                 Annotation annotation = new Annotation();
-                annotation.setName(annotationMirror.getAnnotationType().toString());
-                attribute.addAnnotation(annotation);
-
-//                attribute.addAnnotationMirror(annotationMirror);
+                //TODO parse annotation
+//        Iterator itr = annotationMirror.getElementValues().entrySet().iterator();
+//        while(itr.hasNext()){
+//            Entry entry = (Entry)itr.next();
+//            ExecutableElement executableElement = (ExecutableElement)entry.getKey();
+//            AnnotationValue annotationValue = (AnnotationValue)entry.getValue();
+//            AnnotationElement annotationElement = new AnnotationElement();
+//            annotationElement.setName(executableElement.getSimpleName().toString());
+//            annotationElement.setValue(annotationValue.getValue());
+//            annotation.addAnnotationElement(annotationElement);
+//        }
+//        annotation.setName(annotationMirror.getAnnotationType().toString());
+//        
+                annotation.setName(annotationMirror.toString());
+                annotations.add(annotation);
             }
         }
+        return annotations;
     }
 
     public static AnnotationMirror findAnnotation(Element element, String annotationFqn) {

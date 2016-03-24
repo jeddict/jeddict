@@ -64,26 +64,24 @@ $classDef.getDiscriminatorValue().getSnippet()
 #if ($classDef.getDiscriminatorColumn())
 $classDef.getDiscriminatorColumn().getSnippet()
 #end
-#####################named queries ###############################
+##################### named queries ###############################
 #if ($classDef.getNamedQueries() )
 $classDef.getNamedQueries().getSnippet()
 #end
 #if ($classDef.getNamedNativeQueries() )
 $classDef.getNamedNativeQueries().getSnippet()
 #end
-#####################named entity graphs ###############################
+##################### named entity graphs ###############################
 #if ($classDef.getNamedEntityGraphs() )
 $classDef.getNamedEntityGraphs().getSnippet()
 #end
-#####################named entity graphs ###############################
+##################### named stored procedure ###############################
 #if ($classDef.getNamedStoredProcedureQueries() )
 $classDef.getNamedStoredProcedureQueries().getSnippet()
 #end
-
-
-
+##################### custom annotation ###############################
 #foreach($annotation in $classDef.getAnnotation() )
-$annotation
+    $annotation.getSnippet()
 #end
 public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end implements#foreach($interface in $classDef.getInterfaces()) $interface,#end Serializable {
 
@@ -95,9 +93,6 @@ public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstrac
 #if($jaxbAnnotationSnippet != "")
     $jaxbAnnotationSnippet
 #end
-#end
-#foreach($annotation in $varDef.getAnnotation() )
-    $annotation
 #end
 #if($varDef.getColumnDef())
     $varDef.getColumnDef().getSnippet()
@@ -167,6 +162,9 @@ $varDef.getAssociationOverrides().getSnippet()
 #end
 #if ($varDef.getAttributeOverrides())
 $varDef.getAttributeOverrides().getSnippet()
+#end
+#foreach($annotation in $varDef.getAnnotation() )
+    $annotation.getSnippet()
 #end
 ## $varDef.type => $varDef.getTypeIdentifier().getVariableType() ## to resolve problem Collection => Collection<Entity>
     private $varDef.type $varDef.name;

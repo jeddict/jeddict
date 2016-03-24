@@ -35,7 +35,7 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
  */
 public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandler {
 
-//    private List<String> annotation;
+    @XmlElement(name="an")
     private List<Annotation> annotation;
     @XmlAttribute
     private boolean visibile = true;

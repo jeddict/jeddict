@@ -15,13 +15,26 @@
  */
 package org.netbeans.jpa.modeler.spec.extend.annotation;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  *
  * @author Gaurav Gupta
  */
-public class Annotation {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Annotation implements Serializable {
 
+    @XmlAttribute(name="n")
     private String name;
+    @XmlElement(name="e")
+    private List<AnnotationElement> elements;
+  
 
     /**
      * @return the name
@@ -36,5 +49,37 @@ public class Annotation {
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * @return the elements
+     */
+    public List<AnnotationElement> getAnnotationElements() {
+        if(elements==null){
+            elements = new ArrayList<>();
+        }
+        return elements;
+    }
+
+    public boolean addAnnotationElement(AnnotationElement e) {
+        return getAnnotationElements().add(e);
+    }
+
+    public boolean removeAnnotationElement(AnnotationElement e) {
+        return getAnnotationElements().remove(e);
+    }
+
+    /**
+     * @param elements the elements to set
+     */
+    public void setAnnotationElements(List<AnnotationElement> elements) {
+        this.elements = elements;
+    }
+
+    @Override
+    public String toString() {
+        return "Annotation{" + "name=" + name + ", elements=" + elements + '}';
+    }
+    
+    
 
 }

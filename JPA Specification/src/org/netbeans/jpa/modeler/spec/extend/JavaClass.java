@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.jpa.source.JCRELoader;
@@ -62,7 +63,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     @XmlAttribute
     private boolean visibile = true;
 
-    private List<String> annotation;
+    private List<Annotation> annotation;
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -78,15 +79,15 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
             }
             this.addInterface(mirror.toString());
         }
-        JavaSourceParserUtil.addNonEEAnnotation(this, element);
+        this.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
     }
 
     /**
      * @return the annotation
      */
-    public List<String> getAnnotation() {
+    public List<Annotation> getAnnotation() {
         if (annotation == null) {
-            annotation = new ArrayList<String>();
+            annotation = new ArrayList<>();
         }
         return annotation;
     }
@@ -94,20 +95,20 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<String> annotation) {
+    public void setAnnotation(List<Annotation> annotation) {
         this.annotation = annotation;
     }
 
-    public void addAnnotation(String annotation_In) {
+    public void addAnnotation(Annotation annotation_In) {
         if (annotation == null) {
-            annotation = new ArrayList<String>();
+            annotation = new ArrayList<>();
         }
         this.annotation.add(annotation_In);
     }
 
-    public void removeAnnotation(String annotation_In) {
+    public void removeAnnotation(Annotation annotation_In) {
         if (annotation == null) {
-            annotation = new ArrayList<String>();
+            annotation = new ArrayList<>();
         }
         this.annotation.remove(annotation_In);
     }

@@ -119,7 +119,7 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         }
         this.fetch = FetchType.load(element, relationAnnotationMirror);
         this.access = AccessType.load(element);
-        JavaSourceParserUtil.addNonEEAnnotation(this, element);
+        this.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
     }
 
     /**

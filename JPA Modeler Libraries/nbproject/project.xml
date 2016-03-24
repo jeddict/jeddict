@@ -11,11 +11,11 @@
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/h2-1.4.190.jar</runtime-relative-path>
-                <binary-origin>/home/quikr/Pictures/GAURAV 21 MAR/jpamodeler/JPA_Modeler_Libraries/release/modules/ext/h2-1.4.190.jar</binary-origin>
+                <binary-origin>release/modules/ext/h2-1.4.190.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/velocity-1.6.1.jar</runtime-relative-path>
-                <binary-origin>/home/quikr/Pictures/GAURAV 21 MAR/jpamodeler/JPA_Modeler_Libraries/release/modules/ext/velocity-1.6.1.jar</binary-origin>
+                <binary-origin>release/modules/ext/velocity-1.6.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/evo-inflector-1.2.1.jar</runtime-relative-path>
@@ -23,7 +23,7 @@
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/ant.jar</runtime-relative-path>
-                <binary-origin>/home/quikr/Pictures/GAURAV 21 MAR/jpamodeler/JPA_Modeler_Libraries/release/modules/ext/ant.jar</binary-origin>
+                <binary-origin>release/modules/ext/ant.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

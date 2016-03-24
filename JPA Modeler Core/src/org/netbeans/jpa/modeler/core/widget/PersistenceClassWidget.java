@@ -706,8 +706,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         String nextAttrName = attrName;
         if(multi){
             nextAttrName = English.plural(nextAttrName);
-        } else {
-            System.out.println("");
         }
         ManagedClass javaClass = this.getBaseElementSpec();
         if (javaClass.getAttributes() == null) {

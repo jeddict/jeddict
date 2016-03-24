@@ -29,6 +29,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
@@ -108,6 +109,13 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
           }
       }
     }
+    
+    public void ref(){
+        for(IFlowEdgeWidget edgeWidget : this.getIncommingFlowEdgeWidget()){
+            edgeWidget.getSourceWidget();
+            edgeWidget.getTargetWidget();
+        }
+    }
 
     @Override
     public void setName(String name) {
@@ -116,6 +124,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setClazz(this.name);
+                ref();
             }
             validateName(previousName, this.getName());
         }

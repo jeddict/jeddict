@@ -8,7 +8,9 @@
         namespace = "http://java.sun.com/xml/ns/persistence/orm",
         elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
         xmlns = {
-            @XmlNs(prefix = "xsi",
+            @XmlNs(prefix = "xs",
+                    namespaceURI = "http://www.w3.org/2001/XMLSchema"),
+             @XmlNs(prefix = "xsi",
                     namespaceURI = "http://www.w3.org/2001/XMLSchema-instance"),
             @XmlNs(prefix = "java",
                     namespaceURI = "http://jcp.org/en/jsr/detail?id=270"),

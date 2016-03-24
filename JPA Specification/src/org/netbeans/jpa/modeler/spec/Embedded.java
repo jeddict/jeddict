@@ -103,7 +103,8 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
         }
         embedded.setConnectedClass(embeddableClassSpec);
 
-        JavaSourceParserUtil.addNonEEAnnotation(embedded, element);
+        embedded.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
+
         return embedded;
     }
 

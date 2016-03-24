@@ -87,7 +87,7 @@ public class Id extends PersistenceBaseAttribute implements AccessTypeHandler {
         id.access = AccessType.load(element);
         id.setAttributeType(variableElement.asType().toString());
 
-        JavaSourceParserUtil.addNonEEAnnotation(id, element);
+        id.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
         return id;
     }
 

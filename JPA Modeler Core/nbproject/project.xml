@@ -403,7 +403,7 @@
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/ApachePOI.jar</runtime-relative-path>
-                <binary-origin>/home/quikr/Pictures/GAURAV 21 MAR/jpamodeler/JPA Modeler Core/release/modules/ext/ApachePOI.jar</binary-origin>
+                <binary-origin>release/modules/ext/ApachePOI.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/jsr173_api.jar</runtime-relative-path>

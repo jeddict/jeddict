@@ -67,7 +67,11 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
             modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);//remove * from header
         }
         // Issue Fix #5847 End
+        try {
         exportCode();
+        }catch(Throwable t){
+            modelerFile.handleException(t);
+        }
     }
 
     @Override

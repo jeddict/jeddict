@@ -127,7 +127,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
             classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()
         }
         classDef.setEntity(true);
-        classDef.setAnnotation(entity.getAnnotation());
+        classDef.setAnnotation(getAnnotationSnippet(entity.getAnnotation()));
 
         classDef.setXmlRootElement(entity.getXmlRootElement());
 

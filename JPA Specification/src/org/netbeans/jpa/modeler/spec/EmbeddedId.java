@@ -90,7 +90,7 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         }
         embeddedId.setConnectedClass(embeddableClassSpec);
 
-        JavaSourceParserUtil.addNonEEAnnotation(embeddedId, element);
+        embeddedId.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
         return embeddedId;
     }
 
