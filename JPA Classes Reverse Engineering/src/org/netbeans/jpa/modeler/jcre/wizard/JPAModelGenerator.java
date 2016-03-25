@@ -23,6 +23,7 @@ import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.java.source.Task;
 import org.netbeans.api.project.Project;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.openide.filesystems.FileObject;
@@ -40,6 +41,7 @@ public class JPAModelGenerator {
         javaSource.runUserActionTask(new Task<CompilationController>() {
             @Override
             public void run(CompilationController controller) throws IOException {
+                try {
                 controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
                 TypeElement jc = controller.getElements().getTypeElement(entityClass);
                 if (jc != null) {
@@ -51,6 +53,9 @@ public class JPAModelGenerator {
                     }
                 } else {
                     missingEntities.add(entityClass);
+                }
+                } catch(Throwable t){
+                    ExceptionUtils.printStackTrace(t);
                 }
             }
         }, true);

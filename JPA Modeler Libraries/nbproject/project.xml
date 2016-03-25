@@ -7,6 +7,26 @@
             <suite-component/>
             <module-dependencies/>
             <public-packages>
+                <package>org.apache.commons.collections</package>
+                <package>org.apache.commons.collections.bag</package>
+                <package>org.apache.commons.collections.bidimap</package>
+                <package>org.apache.commons.collections.buffer</package>
+                <package>org.apache.commons.collections.collection</package>
+                <package>org.apache.commons.collections.comparators</package>
+                <package>org.apache.commons.collections.functors</package>
+                <package>org.apache.commons.collections.iterators</package>
+                <package>org.apache.commons.collections.keyvalue</package>
+                <package>org.apache.commons.collections.list</package>
+                <package>org.apache.commons.collections.map</package>
+                <package>org.apache.commons.collections.set</package>
+                <package>org.apache.commons.lang</package>
+                <package>org.apache.commons.lang.builder</package>
+                <package>org.apache.commons.lang.enums</package>
+                <package>org.apache.commons.lang.exception</package>
+                <package>org.apache.commons.lang.math</package>
+                <package>org.apache.commons.lang.mutable</package>
+                <package>org.apache.commons.lang.text</package>
+                <package>org.apache.commons.lang.time</package>
                 <package>org.apache.poi</package>
                 <package>org.apache.poi.common.usermodel</package>
                 <package>org.apache.poi.ddf</package>
@@ -205,8 +225,16 @@
                 <package>org.h2.value</package>
             </public-packages>
             <class-path-extension>
+                <runtime-relative-path>ext/commons-lang-2.4.jar</runtime-relative-path>
+                <binary-origin>/home/jGauravGupta/nb/NB5/GAURAV 21 MAR/jpamodeler/JPA Modeler Libraries/release/modules/ext/commons-lang-2.4.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/h2-1.4.190.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/h2-1.4.190.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-collections-3.2.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-collections-3.2.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/velocity-1.6.1.jar</runtime-relative-path>

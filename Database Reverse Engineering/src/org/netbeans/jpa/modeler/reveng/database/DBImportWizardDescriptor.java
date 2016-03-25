@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
@@ -32,6 +30,7 @@ import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceGeneratorProvider;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.jpa.modeler.source.SourceGroups;
@@ -92,10 +91,8 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
                 try {
                     handle.start();
                     createModel(wizardDescriptor, progressContributor);
-                } catch (Exception ioe) {
-                    Logger.getLogger("global").log(Level.INFO, null, ioe);
-                    NotifyDescriptor nd = new NotifyDescriptor.Message(ioe.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
-                    DialogDisplayer.getDefault().notify(nd);
+                } catch(Throwable t){
+                    ExceptionUtils.printStackTrace(t);
                 } finally {
                     generator.uninit();
                     handle.finish();

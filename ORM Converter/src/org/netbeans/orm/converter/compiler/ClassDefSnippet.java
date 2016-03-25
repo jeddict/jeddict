@@ -422,7 +422,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
         if (!variableDefs.isEmpty()) {
             for (VariableDefSnippet variableDef : variableDefs) {
-                System.out.println("variableDef.getImportSnippets() : " + variableDef.getImportSnippets());
                 importSnippets.addAll(variableDef.getImportSnippets());
             }
         }
