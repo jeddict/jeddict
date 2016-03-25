@@ -6,7 +6,7 @@
 [http://jpamodeler.github.io/](http://jpamodeler.github.io/)
 
 JPA Modeler is an open source graphical tool that enhances productivity and simplifies development tasks of creating complex entity relationship models. Using it developers can create JPA class & Database visually and automates Java code generation. The JPA Modeler provides forward & reverse engineering capabilities, import models from existing database, generate complex SQL/DDL and much more.
-
+hy
 ## Quick Start
 
 See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStart) for demonstration, examples, and other information.
@@ -26,7 +26,7 @@ See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStar
 ## Communication
 
 - Google Group: [JPA Modeler](https://groups.google.com/forum/#!forum/jpamodeler)
-- Twitter: [@JPAModeler](http://twitter.com/HystrixOSS)
+- Twitter: [@JPAModeler](http://twitter.com/JPAModeler)
 - [GitHub Issues](https://github.com/jGauravGupta/jpamodeler/issues)
 
 
