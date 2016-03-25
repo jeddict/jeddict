@@ -265,14 +265,28 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
     public boolean addUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
-        return unidirectionalRelationFlowWidget.add(e);
+        return getUnidirectionalRelationFlowWidget().add(e);
     }
 
     public boolean removeUnidirectionalRelationFlowWidget(Object o) {
-        return unidirectionalRelationFlowWidget.remove(o);
+        return getUnidirectionalRelationFlowWidget().remove(o);
     }
 
     public void clearUnidirectionalRelationFlowWidget() {
-        unidirectionalRelationFlowWidget.clear();
+        getUnidirectionalRelationFlowWidget().clear();
+    }
+
+    /**
+     * @return the unidirectionalRelationFlowWidget
+     */
+    public Set<RelationFlowWidget> getUnidirectionalRelationFlowWidget() {
+        return unidirectionalRelationFlowWidget;
+    }
+
+    /**
+     * @param unidirectionalRelationFlowWidget the unidirectionalRelationFlowWidget to set
+     */
+    public void setUnidirectionalRelationFlowWidget(Set<RelationFlowWidget> unidirectionalRelationFlowWidget) {
+        this.unidirectionalRelationFlowWidget = unidirectionalRelationFlowWidget;
     }
 }

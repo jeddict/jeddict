@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.*;
 import org.netbeans.api.visual.widget.Widget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
@@ -70,6 +69,11 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.atteo.evo.inflector.*;
+import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
+import org.netbeans.modeler.core.ModelerFile;
+import org.openide.util.RequestProcessor;
 
 /**
  *
@@ -102,6 +106,22 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         attributeWidgets.addAll(manyToOneRelationAttributeWidgets);
         attributeWidgets.addAll(manyToManyRelationAttributeWidgets);
         attributeWidgets.addAll(transientAttributeWidgets);
+        return attributeWidgets;
+    }
+    
+        public List<RelationAttributeWidget> getAllRelationAttributeWidgets() {
+            return getAllRelationAttributeWidgets(false);
+        }
+        public List<RelationAttributeWidget> getAllRelationAttributeWidgets(boolean includeParentClassAttibute) {
+        List<RelationAttributeWidget> attributeWidgets = new ArrayList<>();
+        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (includeParentClassAttibute && classWidget instanceof PersistenceClassWidget) {
+            attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllRelationAttributeWidgets(includeParentClassAttibute));
+        }
+        attributeWidgets.addAll(oneToOneRelationAttributeWidgets);
+        attributeWidgets.addAll(oneToManyRelationAttributeWidgets);
+        attributeWidgets.addAll(manyToOneRelationAttributeWidgets);
+        attributeWidgets.addAll(manyToManyRelationAttributeWidgets);
         return attributeWidgets;
     }
 
@@ -703,10 +723,11 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             attrName = "attribute";
         }
         attrName = Character.toLowerCase(attrName.charAt(0)) + (attrName.length() > 1 ? attrName.substring(1) : "");
-        String nextAttrName = attrName;
         if(multi){
-            nextAttrName = English.plural(nextAttrName);
+            attrName = English.plural(attrName);
         }
+        String nextAttrName = attrName;
+
         ManagedClass javaClass = this.getBaseElementSpec();
         if (javaClass.getAttributes() == null) {
             return nextAttrName;
@@ -923,4 +944,84 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
 
+    public void refactorRelationSynchronously(String previousName, String newName) {
+        if (previousName == null) {
+            return;
+        }
+        ModelerFile modelerFile = this.getModelerScene().getModelerFile();
+        RequestProcessor.getDefault().post(() -> {
+            try {
+
+            String singularPreName = Character.toLowerCase(previousName.charAt(0)) + (previousName.length() > 1 ? previousName.substring(1) : "");
+            String pluralPreName = English.plural(singularPreName);
+            String singularNewName = Character.toLowerCase(newName.charAt(0)) + (newName.length() > 1 ? newName.substring(1) : "");
+            String pluralNewName = English.plural(singularNewName);
+            for (RelationAttributeWidget attributeWidget : this.getAllRelationAttributeWidgets(true)) {
+                if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
+                    Bidirectional flowWidget = (Bidirectional) attributeWidget.getRelationFlowWidget();
+                    RelationAttributeWidget<RelationAttribute> relationAttributeWidget = flowWidget.getTargetRelationAttributeWidget();
+                    if (relationAttributeWidget == attributeWidget) { // refactoring not from owner side
+                        relationAttributeWidget = flowWidget.getSourceRelationAttributeWidget();
+                    }
+                    if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
+                        if (relationAttributeWidget.getName().equals(pluralPreName)) {
+                            relationAttributeWidget.setName(pluralNewName);
+                            relationAttributeWidget.setLabel(pluralNewName);
+                        }
+                    } else if (relationAttributeWidget.getName().equals(singularPreName)) {
+                        relationAttributeWidget.setName(singularNewName);
+                        relationAttributeWidget.setLabel(singularNewName);
+                    }
+                }
+            }
+
+            if (this instanceof EntityWidget) {
+                for (RelationFlowWidget relationFlowWidget : ((EntityWidget) this).getUnidirectionalRelationFlowWidget()) {
+                    RelationAttributeWidget<RelationAttribute> relationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
+                    if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
+                        if (relationAttributeWidget.getName().equals(pluralPreName)) {
+                            relationAttributeWidget.setName(pluralNewName);
+                            relationAttributeWidget.setLabel(pluralNewName);
+                        }
+                    } else if (relationAttributeWidget.getName().equals(singularPreName)) {
+                        relationAttributeWidget.setName(singularNewName);
+                        relationAttributeWidget.setLabel(singularNewName);
+                    }
+                }
+            }
+            
+            if (this instanceof EmbeddableWidget) {
+                for (EmbeddableFlowWidget embeddableFlowWidget : ((EmbeddableWidget) this).getIncomingEmbeddableFlowWidgets()) {
+                    EmbeddedAttributeWidget embeddedAttributeWidget = embeddableFlowWidget.getSourceEmbeddedAttributeWidget();
+                    if (embeddedAttributeWidget.getBaseElementSpec() instanceof ElementCollection) {
+                        if (embeddedAttributeWidget.getName().equals(pluralPreName)) {
+                            embeddedAttributeWidget.setName(pluralNewName);
+                            embeddedAttributeWidget.setLabel(pluralNewName);
+                        }
+                    } else if (embeddedAttributeWidget.getName().equals(singularPreName)) {
+                        embeddedAttributeWidget.setName(singularNewName);
+                        embeddedAttributeWidget.setLabel(singularNewName);
+                    }
+                }
+            }
+
+            } catch(Throwable t){
+                modelerFile.handleException(t);
+            }
+        });
+    }
+
+    @Override
+    public void setName(String name) {
+        String previousName = this.name;
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name.replaceAll("\\s+", "");
+            if (this.getModelerScene().getModelerFile().isLoaded()) {
+                getBaseElementSpec().setClazz(this.name);
+                refactorRelationSynchronously(previousName,this.name);
+            }
+            validateName(previousName, this.getName());
+        }
+
+    }
 }

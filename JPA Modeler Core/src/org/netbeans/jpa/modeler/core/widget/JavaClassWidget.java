@@ -110,26 +110,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
       }
     }
     
-    public void ref(){
-        for(IFlowEdgeWidget edgeWidget : this.getIncommingFlowEdgeWidget()){
-            edgeWidget.getSourceWidget();
-            edgeWidget.getTargetWidget();
-        }
-    }
 
-    @Override
-    public void setName(String name) {
-        String previousName = this.name;
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name.replaceAll("\\s+", "");
-            if (this.getModelerScene().getModelerFile().isLoaded()) {
-                getBaseElementSpec().setClazz(this.name);
-                ref();
-            }
-            validateName(previousName, this.getName());
-        }
-
-    }
 
     @Override
     public void setLabel(String label) {
