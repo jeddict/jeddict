@@ -11,6 +11,18 @@ JPA Modeler is an open source graphical tool that enhances productivity and simp
 
 See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStart) for demonstration, examples, and other information.
 
+
+## What does it do?
+
+#### 1) Visualize architecture
+#### 2) JPA 2.1 source generation
+#### 3) Reverse Engineering of Java Source Code
+#### 4) Visual creation of database structures
+#### 5) DB Reverse Engineering
+#### 6) SQL/DDL script generation
+#### 7) Model documentation
+#### 8) Improves your productivity
+
 ## Communication
 
 - Google Group: [JPA Modeler](https://groups.google.com/forum/#!forum/jpamodeler)
@@ -23,7 +35,7 @@ See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStar
 For bugs, questions and discussions please use the [Github Issues](https://github.com/jGauravGupta/jpamodeler/issues).
 
  
-### LICENSE
+#### LICENSE
 
 Copyright [2016] Gaurav Gupta.
 
