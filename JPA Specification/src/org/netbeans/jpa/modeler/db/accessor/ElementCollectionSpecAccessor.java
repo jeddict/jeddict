@@ -39,11 +39,12 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
         ElementCollectionSpecAccessor accessor = new ElementCollectionSpecAccessor(elementCollection);
         accessor.setName(elementCollection.getName());
         accessor.setAttributeType(elementCollection.getCollectionType());
-        AccessorUtil.setEnumerated(accessor,elementCollection.getEnumerated());
-        AccessorUtil.setLob(accessor, elementCollection.getLob());
-        AccessorUtil.setTemporal(accessor, elementCollection.getTemporal());
-        
         accessor.setTargetClassName(elementCollection.getAttributeType());
+
+        AccessorUtil.setEnumerated(accessor,elementCollection.getEnumerated(), true);
+        AccessorUtil.setLob(accessor, elementCollection.getLob(), elementCollection.getAttributeType(), true);
+        AccessorUtil.setTemporal(accessor, elementCollection.getTemporal(), true);
+        
         if (elementCollection.getColumn() != null) {
             accessor.setColumn(elementCollection.getColumn().getAccessor());
         }

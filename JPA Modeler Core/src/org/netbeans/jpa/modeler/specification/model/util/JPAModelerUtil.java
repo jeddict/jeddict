@@ -1639,7 +1639,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         if (!((JPAModelerScene) file.getModelerScene()).compile()) {
             return;
         }
-
+        try {
         DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
         Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
         dbModelerRequestManager.init(file, entityMappings);
@@ -1664,6 +1664,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 scene = dbChildModelerFile.get().getModelerScene();
                 scene.validate();//TODO remove it// should be called from framework
             }
+        }
+        } catch(Throwable t){
+            file.handleException(t);
         }
     }
 
