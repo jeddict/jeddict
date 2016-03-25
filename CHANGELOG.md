@@ -1,6 +1,6 @@
 # JPA Modeler Releases #
 
-### [Version 1.5] (https://github.com/jGauravGupta/jpamodeler/commits/1.5) ###
+### Version 1.5 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.5) ###
 
 *  Enumerated, Temporal, Lob support added for DB Modeler
 *  Plural words converter added
@@ -8,7 +8,7 @@
 *  Synchronous Refactoring of relation name
 
 
-### Version 1.4 (https://github.com/jGauravGupta/jpamodeler/commits/1.4) ###
+### Version 1.4 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.4) ###
 
 *  Compiler check added before DB Viewer
 *  Update center support added
@@ -18,13 +18,13 @@
 *  Micro DB Viewer
 
 
-### Version 1.3 (https://github.com/jGauravGupta/jpamodeler/commits/1.3) ###
+### Version 1.3 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.3) ###
 
 *  Database Modeler
 *  DB Theme
 
 
-### Version 1.2 (https://github.com/jGauravGupta/jpamodeler/commits/1.2) ###
+### Version 1.2 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.2) ###
 
 *  NamedEntityGraph, EntityGraph, StoredProcedure 	
 *  PPT Export 
