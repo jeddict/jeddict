@@ -1,6 +1,6 @@
 # JPA Modeler Releases #
 
-### Version 1.5 (https://github.com/jGauravGupta/jpamodeler/commits/1.5) ###
+### [Version 1.5] (https://github.com/jGauravGupta/jpamodeler/commits/1.5) ###
 
 *  Enumerated, Temporal, Lob support added for DB Modeler
 *  Plural words converter added
