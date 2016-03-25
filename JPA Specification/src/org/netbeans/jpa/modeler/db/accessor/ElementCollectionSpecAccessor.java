@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.converters.LobMetadata;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
@@ -37,10 +38,12 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
     public static ElementCollectionSpecAccessor getInstance(ElementCollection elementCollection) {
         ElementCollectionSpecAccessor accessor = new ElementCollectionSpecAccessor(elementCollection);
         accessor.setName(elementCollection.getName());
-
         accessor.setAttributeType(elementCollection.getCollectionType());
+        AccessorUtil.setEnumerated(accessor,elementCollection.getEnumerated());
+        AccessorUtil.setLob(accessor, elementCollection.getLob());
+        AccessorUtil.setTemporal(accessor, elementCollection.getTemporal());
+        
         accessor.setTargetClassName(elementCollection.getAttributeType());
-
         if (elementCollection.getColumn() != null) {
             accessor.setColumn(elementCollection.getColumn().getAccessor());
         }

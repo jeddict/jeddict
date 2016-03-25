@@ -34,7 +34,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlEnum
 public enum EnumType {
 
-    ORDINAL,
+    ORDINAL, //default
     STRING;
 
     public String value() {
