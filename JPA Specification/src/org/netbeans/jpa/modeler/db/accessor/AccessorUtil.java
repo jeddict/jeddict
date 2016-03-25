@@ -62,7 +62,7 @@ public class AccessorUtil {
     }
     
     public static enum ProxyEnum {
-        DEFAULT;
+          DEFAULT;
     }
 
 }
