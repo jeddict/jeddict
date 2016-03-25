@@ -1,7 +1,6 @@
-<img src="http://jpamodeler.github.io/images/logo.png">
+<img src="http://jpamodeler.github.io/images/logo.png">(http://jpamodeler.github.io/)
 
-# jpamodeler  
-[![][release img]][release]
+# jpamodeler(http://jpamodeler.github.io/)
 [![][license img]][license]
 
 
@@ -41,9 +40,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-
-[release]:https://github.com/netflix/hystrix/releases
-[release img]:https://img.shields.io/github/release/netflix/hystrix.svg
 
 [license]:LICENSE-2.0.txt
 [license img]:https://img.shields.io/badge/License-Apache%202-blue.svg
