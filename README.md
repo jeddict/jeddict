@@ -1,6 +1,6 @@
 <img src="http://jpamodeler.github.io/images/logo.png">
 
-JPA Modeler[![][license img]][license]
+# JPA Modeler[![][license img]][license]
 
 
 [http://jpamodeler.github.io/](http://jpamodeler.github.io/)
@@ -23,7 +23,7 @@ See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStar
 For bugs, questions and discussions please use the [Github Issues](https://github.com/jGauravGupta/jpamodeler/issues).
 
  
-## LICENSE
+### LICENSE
 
 Copyright [2016] Gaurav Gupta.
 
