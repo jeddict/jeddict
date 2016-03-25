@@ -1,6 +1,6 @@
 <img src="http://jpamodeler.github.io/images/logo.png">
 
-# JPA Modeler[![][license img]][license]
+# JPA Modeler [![][license img]][license]
 
 
 [http://jpamodeler.github.io/](http://jpamodeler.github.io/)
