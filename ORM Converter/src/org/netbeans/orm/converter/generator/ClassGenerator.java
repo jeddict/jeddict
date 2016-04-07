@@ -17,7 +17,7 @@ package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -147,15 +147,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected T classDef;
 
     public ClassGenerator(T classDef) {
-//        if(classDef==null){
-//            this.classDef = ;
-//        } else {
         this.classDef = classDef;
-//        }
     }
 
-    protected Map<String, VariableDefSnippet> variables
-            = new HashMap<String, VariableDefSnippet>();
+    protected Map<String, VariableDefSnippet> variables  = new LinkedHashMap<>();
 
     public abstract T getClassDef();
 
