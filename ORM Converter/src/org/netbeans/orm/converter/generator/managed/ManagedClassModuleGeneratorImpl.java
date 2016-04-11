@@ -22,13 +22,16 @@ import java.util.Collection;
 import java.util.List;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.console.Console;
+import static org.netbeans.jcode.console.Console.BOLD;
+import static org.netbeans.jcode.console.Console.FG_RED;
+import org.netbeans.jcode.task.ITaskSupervisor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
-import org.netbeans.modeler.task.ITaskSupervisor;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.LifecycleListenerSnippet;
@@ -94,8 +97,10 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
 
     private void generateEntityClasses() throws InvalidDataException, IOException {
         List<Entity> parsedEntities = parsedEntityMappings.getEntity();
+        task.log(Console.wrap("Generating Entity Class : " , FG_RED, BOLD), true);
+           
         for (Entity parsedEntity : parsedEntities) {
-            task.log("Generating Entity Class : " + parsedEntity.getClazz(), true);
+            task.log(parsedEntity.getClazz(), true);
             ManagedClassDefSnippet classDef = new EntityGenerator(parsedEntity, packageName).getClassDef();
             classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
 

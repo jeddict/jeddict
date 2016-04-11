@@ -1503,12 +1503,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     public static void generateSourceCode(ModelerFile modelerFile) {
-        EntityMappings mappings = (EntityMappings) modelerFile.getDefinitionElement();
-        GenerateCodeDialog dialog = new GenerateCodeDialog(modelerFile.getFileObject());
+        GenerateCodeDialog dialog = new GenerateCodeDialog(modelerFile);
         dialog.setVisible(true);
         if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
             RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
-            SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(modelerFile, dialog.getTargetPoject(), dialog.getSourceGroup());
+            SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(modelerFile,dialog.getConfigData());
             processor.post(task);
         }
     }

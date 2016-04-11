@@ -15,32 +15,41 @@
  */
 package org.netbeans.jpa.modeler.source.generator.task;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javax.swing.SwingUtilities;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.api.java.source.ui.ScanDialog;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.stack.app.generator.JEEApplicationGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm.ORMInputDefiniton;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.task.AbstractNBTask;
+import org.netbeans.jcode.task.AbstractNBTask;
 import org.openide.util.Lookup;
+import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
+import org.netbeans.jcode.task.progress.ProgressHandler;
+import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 
 public class SourceCodeGeneratorTask extends AbstractNBTask {
 
-    private ModelerFile modelerFile;
-    private Project project;
-    private SourceGroup sourceGroup;
+    private final ModelerFile modelerFile;
+    private final ApplicationConfigData appicationConfigData;
 
     private final static int SUBTASK_TOT = 1;
 
-    public SourceCodeGeneratorTask(ModelerFile modelerFile, Project project, SourceGroup sourceGroup) {
+    public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appicationConfigData) {
         this.modelerFile = modelerFile;
-        this.project = project;
-        this.sourceGroup = sourceGroup;
+        this.appicationConfigData = appicationConfigData;
     }
 
     @Override
@@ -68,8 +77,8 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         }
         // Issue Fix #5847 End
         try {
-        exportCode();
-        }catch(Throwable t){
+            exportCode();
+        } catch (Throwable t) {
             modelerFile.handleException(t);
         }
     }
@@ -83,11 +92,19 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
      *
      */
     private void exportCode() {
-        ISourceCodeGeneratorFactory sourceGeneratorFactory = Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
+        ISourceCodeGeneratorFactory sourceGeneratorFactory = Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);
         ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
         InputDefinition definiton = new ORMInputDefiniton();
         definiton.setModelerFile(modelerFile);
-        sourceGenerator.generate(this, project, sourceGroup, definiton);
+        sourceGenerator.generate(this, appicationConfigData.getProject(), appicationConfigData.getSourceGroup(), definiton);
+
+        if (appicationConfigData.getBussinesLayerConfig() != null) {
+            EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
+            appicationConfigData.setEntities(entityMappings.getEntity().stream().map(e -> StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + e.getClazz() : e.getClazz()).collect(Collectors.toList()));
+
+            ProgressHandler handler = new ProgressConsoleHandler(this);
+            JEEApplicationGenerator.generate(handler, appicationConfigData);
+        }
     }
 
     private static String getBundleMessage(String key) {

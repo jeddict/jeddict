@@ -21,11 +21,11 @@ import java.util.HashSet;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.task.ITaskSupervisor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.modeler.task.ITaskSupervisor;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.spec.ModuleGenerator;
@@ -38,7 +38,7 @@ import org.openide.filesystems.FileUtil;
 public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
 
     private Set<StaticMetamodelGenerator> staticMetamodelClass;//Required Generation based on inheritence means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
-    private ITaskSupervisor task;
+    private org.netbeans.jcode.task.ITaskSupervisor task;
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
     private String packageName;
     private File destDir;

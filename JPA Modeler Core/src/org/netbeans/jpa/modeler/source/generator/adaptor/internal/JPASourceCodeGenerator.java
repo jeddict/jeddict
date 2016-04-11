@@ -19,7 +19,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.modeler.task.ITaskSupervisor;
+import org.netbeans.jcode.task.ITaskSupervisor;
 import org.netbeans.orm.converter.compiler.CompilerConfig;
 import org.netbeans.orm.converter.compiler.CompilerConfigManager;
 import org.netbeans.orm.converter.spec.ModuleGenerator;
