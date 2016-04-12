@@ -15,24 +15,27 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
  * @author Gaurav Gupta
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Constraints {
+@XmlJavaTypeAdapter(value = ConstraintsValidator.class)
+@XmlSeeAlso({NotNull.class,Size.class,Max.class,Min.class})
+public abstract class Constraints {
+//
+//    @Transient
+//    private Attribute attribute;
 
-    @Transient
-    private Attribute attribute;
-
-    @Transient
-    private Boolean selected = true;
+    @XmlTransient
+    private Boolean selected = false;
 
     @XmlAttribute(name = "m")
     private String message;
@@ -40,10 +43,10 @@ public class Constraints {
     public Constraints() {
     }
 
-    public Constraints(Attribute attribute, Boolean selected) {
-        this.attribute = attribute;
-        this.selected = selected;
-    }
+//    public Constraints(Attribute attribute, Boolean selected) {
+//        this.attribute = attribute;
+//        this.selected = selected;
+//    }
 
     public String getMessage() {
         return message;
@@ -52,14 +55,14 @@ public class Constraints {
     public void setMessage(String message) {
         this.message = message;
     }
-
-    public Attribute getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(Attribute attribute) {
-        this.attribute = attribute;
-    }
+//
+//    public Attribute getAttribute() {
+//        return attribute;
+//    }
+//
+//    public void setAttribute(Attribute attribute) {
+//        this.attribute = attribute;
+//    }
 
     public Boolean getSelected() {
         return selected;

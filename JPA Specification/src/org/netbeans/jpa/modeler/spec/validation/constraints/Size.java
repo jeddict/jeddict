@@ -15,10 +15,14 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  *
  * @author Gaurav Gupta
  */
+@XmlRootElement(name="si")
 public class Size extends Constraints {
 
     private int min;

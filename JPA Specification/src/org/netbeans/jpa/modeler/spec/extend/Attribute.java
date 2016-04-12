@@ -28,6 +28,7 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Constraints;
 
 /**
  *
@@ -219,4 +220,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     void afterUnmarshal(Unmarshaller u, Object parent) {
         setAttributes((BaseAttributes) parent);
     }
+
+
+
 }

@@ -14,7 +14,6 @@
                         <specification-version>2.4.0</specification-version>
                     </run-dependency>
                 </dependency>
-              
                 <dependency>
                     <code-name-base>org.netbeans.api.java</code-name-base>
                     <build-prerequisite/>
@@ -150,7 +149,6 @@
                         <specification-version>8.24.1</specification-version>
                     </run-dependency>
                 </dependency>
-                
             </module-dependencies>
             <friend-packages>
                 <friend>org.netbeans.db.modeler</friend>
@@ -170,6 +168,7 @@
                 <package>org.netbeans.jpa.modeler.spec.extend.annotation</package>
                 <package>org.netbeans.jpa.modeler.spec.extend.cache</package>
                 <package>org.netbeans.jpa.modeler.spec.jaxb</package>
+                <package>org.netbeans.jpa.modeler.spec.validation.constraints</package>
                 <package>org.netbeans.jpa.modeler.spec.validator</package>
                 <package>org.netbeans.jpa.modeler.spec.validator.column</package>
                 <package>org.netbeans.jpa.modeler.spec.validator.override</package>

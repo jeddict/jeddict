@@ -6,6 +6,16 @@
             <code-name-base>org.netbeans.jpa.modeler.dbre</code-name-base>
             <suite-component/>
             <module-dependencies>
+                
+                <dependency>
+                    <code-name-base>org.netbeans.modules.j2ee.core.utilities</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>0</release-version>
+                        <implementation-version/>
+                    </run-dependency>
+                </dependency>
                 <dependency>
                     <code-name-base>org.apache.commons.io</code-name-base>
                     <build-prerequisite/>
@@ -30,6 +40,14 @@
                     <run-dependency>
                         <release-version>1</release-version>
                         <specification-version>1.37.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.jcode.core</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>

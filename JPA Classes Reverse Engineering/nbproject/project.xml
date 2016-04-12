@@ -40,7 +40,14 @@
                         <specification-version>1.37.1</specification-version>
                     </run-dependency>
                 </dependency>
-               
+                <dependency>
+                    <code-name-base>org.netbeans.jcode.core</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
                 <dependency>
                     <code-name-base>org.netbeans.jpa.modeler</code-name-base>
                     <build-prerequisite/>
@@ -99,6 +106,15 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.j2ee.core.utilities</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>0</release-version>
+                        <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.j2ee.metadata</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -133,7 +149,6 @@
                         <specification-version>1.58.1</specification-version>
                     </run-dependency>
                 </dependency>
-               
                 <dependency>
                     <code-name-base>org.netbeans.modules.java.source</code-name-base>
                     <build-prerequisite/>
@@ -233,7 +248,6 @@
                         <specification-version>8.24.1</specification-version>
                     </run-dependency>
                 </dependency>
-             
                 <dependency>
                     <code-name-base>org.openide.windows</code-name-base>
                     <build-prerequisite/>

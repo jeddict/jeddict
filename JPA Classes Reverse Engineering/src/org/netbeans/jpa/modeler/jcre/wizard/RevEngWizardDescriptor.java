@@ -43,7 +43,6 @@ import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.jpa.modeler._import.javaclass.JCREProcessor;
-import org.netbeans.jpa.modeler.source.JavaIdentifiers;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -52,6 +51,7 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.g
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
+import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.api.EntityClassScope;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;

@@ -33,7 +33,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import static org.netbeans.jcode.helper.ProjectHelper.getJavaProjects;
+import static org.netbeans.jcode.core.util.ProjectHelper.getJavaProjects;
 import org.netbeans.jcode.source.ProjectCellRenderer;
 import static org.netbeans.jcode.source.SourceGroupSupport.getPackageForFolder;
 import org.netbeans.jcode.source.SourceRootCellRenderer;

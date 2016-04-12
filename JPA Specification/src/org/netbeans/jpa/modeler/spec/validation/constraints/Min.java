@@ -15,10 +15,13 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Gaurav Gupta
  */
+@XmlRootElement(name="mi")
 public class Min extends Constraints {
 
     private long value;

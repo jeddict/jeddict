@@ -127,7 +127,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         } else {
             try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
                 set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
-                        "compositePrimaryKeyClass", "Field Type", "", null));
+                       "compositePrimaryKeyClass", "compositePrimaryKeyClass", "Field Type", "", null));
             } catch (NoSuchMethodException | NoSuchFieldException ex) {
                 this.getModelerScene().getModelerFile().handleException(ex);;
             }
