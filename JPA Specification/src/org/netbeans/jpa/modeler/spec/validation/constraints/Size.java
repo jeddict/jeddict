@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -25,35 +24,35 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name="si")
 public class Size extends Constraints {
 
-    private int min;
+    private Integer min;
 
-    private int max;
+    private Integer max;
 
     /**
      * @return the min
      */
-    public int getMin() {
+    public Integer getMin() {
         return min;
     }
 
     /**
      * @param min the min to set
      */
-    public void setMin(int min) {
+    public void setMin(Integer min) {
         this.min = min;
     }
 
     /**
      * @return the max
      */
-    public int getMax() {
+    public Integer getMax() {
         return max;
     }
 
     /**
      * @param max the max to set
      */
-    public void setMax(int max) {
+    public void setMax(Integer max) {
         this.max = max;
     }
 }

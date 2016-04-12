@@ -22,6 +22,18 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
+import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGINTEGER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.INT;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.INT_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.LONG;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.LONG_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SHORT;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SHORT_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.STRING;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraints;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Max;
@@ -105,15 +117,29 @@ public abstract class BaseAttribute extends Attribute {
    
    public List<Class<? extends Constraints>> getConstraintsClass(){
        List<Class<? extends Constraints>> classes = new ArrayList<>();
-       classes.add(NotNull.class);
-
-       if("String".equals(getAttributeType())){
-           classes.add(Size.class);
-       } else {
-           
-       }
-           return classes;
-   }
+        classes.add(NotNull.class);
+        if (StringUtils.isNotBlank(getAttributeType())) {
+            switch (getAttributeType()) {
+                case STRING:
+                    classes.add(Size.class);
+                    break;
+                case BIGDECIMAL:
+                case BIGINTEGER:
+                case BYTE:
+                case SHORT:
+                case INT:
+                case LONG:
+                case BYTE_WRAPPER:
+                case SHORT_WRAPPER:
+                case INT_WRAPPER:
+                case LONG_WRAPPER:
+                    classes.add(Max.class);
+                    classes.add(Min.class);
+                    break;
+            }
+        }
+        return classes;
+    }
    
    
    

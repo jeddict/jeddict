@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
@@ -840,14 +841,14 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     }
 
     public boolean isPrecisionAttributeType() {
-        if ("java.math.BigDecimal".equals(getAttributeType())) {
+        if (BIGDECIMAL.equals(getAttributeType())) {
             return true;
         }
         return false;
     }
 
     public boolean isScaleAttributeType() {
-        if ("java.math.BigDecimal".equals(getAttributeType())) {
+        if (BIGDECIMAL.equals(getAttributeType())) {
             return true;
         }
         return false;

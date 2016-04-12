@@ -27,6 +27,34 @@ import org.netbeans.jpa.modeler.spec.Lob;
 import org.netbeans.jpa.modeler.spec.TemporalType;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.Version;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGINTEGER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BOOLEAN;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BOOLEAN_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE_ARRAY;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE_WRAPPER_ARRAY;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.CALENDAR;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.CHAR;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.CHAR_ARRAY;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.CHAR_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.CHAR_WRAPPER_ARRAY;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.DATE;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.DOUBLE;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.DOUBLE_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.FLOAT;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.FLOAT_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.INT;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.INT_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.LONG;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.LONG_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SHORT;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SHORT_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SQL_DATE;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SQL_TIME;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SQL_TIMESTAMP;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.STRING;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -174,34 +202,34 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
             if ("Enumerated".equals(type_ComboBox.getSelectedItem())) {
                 //skip
             } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
-                dataType = new String[]{"java.util.Date", "java.util.Calendar"};
+                dataType = new String[]{DATE, CALENDAR};
             } else {
-                dataType = new String[]{"String", "char", "boolean", "byte", "short", "int", "long", "float", "double", "Character", "Boolean", "Byte", "Short", "Integer", "Long", "Float", "Double", "java.math.BigInteger", "java.math.BigDecimal",
+                dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
                     //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
-                    /*"java.util.Date", "java.util.Calendar",*/
-                    "java.sql.Date", "java.sql.Time", "java.sql.Timestamp", "byte[]", "Byte[]", "char[]", "Character[]"};
+                    /*DATE, CALENDAR,*/
+                    SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
             }
         } else if (baseAttribute instanceof ElementCollection) {
             if ("Enumerated".equals(type_ComboBox.getSelectedItem())) {
                 //skip
             } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
-                dataType = new String[]{"java.util.Date", "java.util.Calendar"};
+                dataType = new String[]{DATE, CALENDAR};
             } else {
-                dataType = new String[]{"String", "Character", "Boolean", "Byte", "Short", "Integer", "Long", "Float", "Double",
-                    "java.math.BigInteger", "java.math.BigDecimal",
+                dataType = new String[]{STRING, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER,
+                    BIGINTEGER, BIGDECIMAL,
                     //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
-                    /*"java.util.Date", "java.util.Calendar",*/
-                    "java.sql.Date", "java.sql.Time", "java.sql.Timestamp", "byte[]", "Byte[]", "char[]", "Character[]"};
+                    /*DATE, CALENDAR,*/
+                    SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
             }
         } else if (baseAttribute instanceof Id) {
             if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
-                dataType = new String[]{"java.util.Date"};
+                dataType = new String[]{DATE};
             } else {
-                dataType = new String[]{"String", "char", "boolean", "byte", "short", "int", "long", "float", "double", "Character", "Boolean", "Byte", "Short", "Integer", "Long", "Float", "Double",
-                    "java.math.BigInteger", "java.math.BigDecimal", "java.util.Date", "java.sql.Date"};
+                dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER,
+                    BIGINTEGER, BIGDECIMAL, DATE, SQL_DATE};
             }
         } else if (baseAttribute instanceof Version) {
-            dataType = new String[]{"int", "Integer", "short", "Short", "long", "Long", "java.sql.Timestamp"};
+            dataType = new String[]{INT, INT_WRAPPER, SHORT, SHORT_WRAPPER, LONG, LONG_WRAPPER, SQL_TIMESTAMP};
         } else if (baseAttribute instanceof Transient) {
             //skip
         }

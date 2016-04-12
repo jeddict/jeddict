@@ -331,6 +331,9 @@
             <attributes>
                 <attribute id="notnull.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>NotNull</display-name>
+                    <description>
+                        Specifies that the configuration property decorated with this annotation must not have a null value. That is, the property is required. This constraint accepts any type.
+                    </description>
                 </attribute>
                 <attribute id="notnull.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
                     <display-name>NotNull Message</display-name>
@@ -342,9 +345,20 @@
             <attributes>
                 <attribute id="size.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>Size</display-name>
+                    <description>
+                        Specifies that the configuration property decorated with this annotation must have a value between the specified boundaries (included). Supported value types are String (string length is evaluated), Collection (collection size is evaluated), Map (map size is evaluated), Array (array length is evaluated). Null elements are considered valid.
+                    </description>
                 </attribute>
                 <attribute id="size.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
                     <display-name>Size Message</display-name>
+                    <visible><![CDATA[_this.selected==true]]></visible>
+                </attribute>
+                <attribute id="size.max" groupId="CONSTRAINTS" class="java.lang.Integer" name="max">
+                    <display-name>Max size</display-name>
+                    <visible><![CDATA[_this.selected==true]]></visible>
+                </attribute>
+               <attribute id="size.min" groupId="CONSTRAINTS" class="java.lang.Integer" name="min">
+                    <display-name>Min size</display-name>
                     <visible><![CDATA[_this.selected==true]]></visible>
                 </attribute>
             </attributes>
