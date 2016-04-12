@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,7 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name="pt")
 public class Pattern extends Constraints {
-
+    
+    @XmlAttribute(name="r")
     private String regexp;
 
     public String getRegexp() {

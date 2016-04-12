@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="dma")
 public class DecimalMax extends Constraints {
 
+    @XmlAttribute(name="v")
     private String value;
 
     public String getValue() {

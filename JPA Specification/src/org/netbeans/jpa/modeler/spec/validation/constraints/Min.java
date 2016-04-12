@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="mi")
 public class Min extends Constraints {
 
+    @XmlAttribute(name="v")
     private Long value;
 
     public Long getValue() {

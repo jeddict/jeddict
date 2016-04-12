@@ -21,8 +21,8 @@ import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
@@ -30,7 +30,6 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -175,6 +174,10 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             @Override
             public void setData(Attribute baseAttribute) {
                 AttributeWidget.this.setBaseElementSpec((E) baseAttribute);
+                if (AttributeWidget.this instanceof BaseAttributeWidget) {
+                    ((BaseAttributeWidget)AttributeWidget.this).createBeanValidationPropertySet(AttributeWidget.this.getPropertyManager().getElementPropertySet());
+                    AttributeWidget.this.refreshProperties();
+                }
             }
 
             @Override

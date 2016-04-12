@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,8 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="di")
 public class Digits extends Constraints {
 
+    @XmlAttribute(name="f")
     private Integer fraction ;
 
+    @XmlAttribute(name="i")
     private Integer integer;
 
     /**

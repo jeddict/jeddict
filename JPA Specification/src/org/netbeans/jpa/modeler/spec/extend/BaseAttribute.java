@@ -81,10 +81,19 @@ public abstract class BaseAttribute extends Attribute {
 
     @XmlElementWrapper(name = "bv")
     @XmlElements({
+        @XmlElement(name = "nu", type = Null.class),
         @XmlElement(name = "nn", type = NotNull.class),
+        @XmlElement(name = "af", type = AssertFalse.class),
+        @XmlElement(name = "at", type = AssertTrue.class),
+        @XmlElement(name = "pa", type = Past.class),
+        @XmlElement(name = "fu", type = Future.class),
         @XmlElement(name = "si", type = Size.class),
+        @XmlElement(name = "pt", type = Pattern.class),
+        @XmlElement(name = "mi", type = Min.class),
         @XmlElement(name = "ma", type = Max.class),
-        @XmlElement(name = "mi", type = Min.class)
+        @XmlElement(name = "dmi", type = DecimalMin.class),
+        @XmlElement(name = "dma", type = DecimalMax.class),
+        @XmlElement(name = "di", type = Digits.class)
     })
     private Set<Constraints> constraints;
 
@@ -114,23 +123,24 @@ public abstract class BaseAttribute extends Attribute {
     }
 
     public Set<Constraints> getNewConstraints() {
-        constraints = new LinkedHashSet<>();
+      Set<Constraints> newConstraints = new LinkedHashSet<>();
         List<Class<? extends Constraints>> classes = getConstraintsClass();
+        Map<String, Constraints> constraintsMapTmp = getConstraintsMap();
         for (Class<? extends Constraints> constraintClass : classes) {
-            Constraints constraint = getConstraintsMap().get(constraintClass.getSimpleName());
+            Constraints constraint = constraintsMapTmp.get(constraintClass.getSimpleName());
             if (constraint != null) {
-                constraints.add(constraint);
-                constraint.setSelected(Boolean.TRUE);
+                newConstraints.add(constraint);
             } else {
                 try {
-                    constraints.add(constraintClass.newInstance());
+                    newConstraints.add(constraintClass.newInstance());
                 } catch (InstantiationException | IllegalAccessException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
         }
-        constraintsMap = null;//reset
-        return constraints;
+        this.constraintsMap = null;//reset
+        this.constraints = newConstraints;
+        return newConstraints;
     }
 
     public List<Class<? extends Constraints>> getConstraintsClass() {

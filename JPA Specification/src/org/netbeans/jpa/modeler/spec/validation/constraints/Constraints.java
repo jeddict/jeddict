@@ -16,10 +16,10 @@
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
 import java.util.Objects;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -29,25 +29,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlJavaTypeAdapter(value = ConstraintsValidator.class)
-@XmlSeeAlso({NotNull.class,Size.class,Max.class,Min.class})
+//@XmlSeeAlso({NotNull.class,Size.class,Max.class,Min.class})
 public abstract class Constraints {
-//
-//    @Transient
-//    private Attribute attribute;
 
     @XmlTransient
     private Boolean selected = false;
 
     @XmlAttribute(name = "m")
     private String message;
-
-    public Constraints() {
-    }
-
-//    public Constraints(Attribute attribute, Boolean selected) {
-//        this.attribute = attribute;
-//        this.selected = selected;
-//    }
 
     public String getMessage() {
         return message;
@@ -56,14 +45,6 @@ public abstract class Constraints {
     public void setMessage(String message) {
         this.message = message;
     }
-//
-//    public Attribute getAttribute() {
-//        return attribute;
-//    }
-//
-//    public void setAttribute(Attribute attribute) {
-//        this.attribute = attribute;
-//    }
 
     public Boolean getSelected() {
         return selected;
@@ -73,6 +54,9 @@ public abstract class Constraints {
         this.selected = selected;
     }
 
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        setSelected(true);
+    }
     @Override
     public int hashCode() {
         int hash = 7;
