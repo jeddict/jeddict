@@ -21,17 +21,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="mi")
-public class Min extends Constraints {
+@XmlRootElement(name="pa")
+public class Past extends Constraints {
 
-    private Long value;
-
-    public Long getValue() {
-        return value;
+    public Past() {
     }
-
-    public void setValue(Long value) {
-        this.value = value;
-    }
-
+ 
 }

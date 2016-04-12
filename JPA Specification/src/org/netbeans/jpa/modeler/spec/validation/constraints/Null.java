@@ -21,17 +21,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="mi")
-public class Min extends Constraints {
+@XmlRootElement(name="nu")
+public class Null extends Constraints {
 
-    private Long value;
-
-    public Long getValue() {
-        return value;
+    public Null() {
     }
-
-    public void setValue(Long value) {
-        this.value = value;
-    }
-
+ 
+//    public NotNull(Attribute attribute, Boolean selected) {
+//        super( attribute, selected);
+//    }
 }

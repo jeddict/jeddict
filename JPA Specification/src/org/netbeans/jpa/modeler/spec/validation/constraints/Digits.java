@@ -21,17 +21,39 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="mi")
-public class Min extends Constraints {
+@XmlRootElement(name="di")
+public class Digits extends Constraints {
 
-    private Long value;
+    private Integer fraction ;
 
-    public Long getValue() {
-        return value;
+    private Integer integer;
+
+    /**
+     * @return the fraction
+     */
+    public Integer getFraction() {
+        return fraction;
     }
 
-    public void setValue(Long value) {
-        this.value = value;
+    /**
+     * @param fraction the fraction to set
+     */
+    public void setFraction(Integer fraction) {
+        this.fraction = fraction;
+    }
+
+    /**
+     * @return the integer
+     */
+    public Integer getInteger() {
+        return integer;
+    }
+
+    /**
+     * @param integer the integer to set
+     */
+    public void setInteger(Integer integer) {
+        this.integer = integer;
     }
 
 }

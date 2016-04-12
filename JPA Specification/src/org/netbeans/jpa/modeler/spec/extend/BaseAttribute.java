@@ -17,16 +17,23 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGINTEGER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BOOLEAN;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BYTE_WRAPPER;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.CALENDAR;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.DATE;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.INT;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.INT_WRAPPER;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.LONG;
@@ -35,10 +42,19 @@ import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SHORT;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SHORT_WRAPPER;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.STRING;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse;
+import org.netbeans.jpa.modeler.spec.validation.constraints.AssertTrue;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraints;
+import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMax;
+import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Digits;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Future;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Max;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Min;
 import org.netbeans.jpa.modeler.spec.validation.constraints.NotNull;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Null;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Past;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Pattern;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Size;
 import org.openide.util.Exceptions;
 
@@ -62,66 +78,82 @@ public abstract class BaseAttribute extends Attribute {
         jaxbVariableTypeList.add(JaxbVariableType.XML_TRANSIENT);
         return jaxbVariableTypeList;
     }
-    
+
     @XmlElementWrapper(name = "bv")
     @XmlElements({
-        @XmlElement(name="nn", type = NotNull.class),
-        @XmlElement(name="si", type = Size.class),
-        @XmlElement(name="ma", type = Max.class),
-        @XmlElement(name="mi", type = Min.class)
+        @XmlElement(name = "nn", type = NotNull.class),
+        @XmlElement(name = "si", type = Size.class),
+        @XmlElement(name = "ma", type = Max.class),
+        @XmlElement(name = "mi", type = Min.class)
     })
-    private List<Constraints> constraints;
+    private Set<Constraints> constraints;
 
-    
-        /**
+    /**
      * @return the constraints
      */
-    public List<Constraints> getConstraints() {
-        if(constraints == null){
-            constraints = new ArrayList<>();
+    public Set<Constraints> getConstraints() {
+        if (constraints == null) {
+            constraints = new LinkedHashSet<>();
         }
         return constraints;
     }
+
+    @XmlTransient
+    Map<String, Constraints> constraintsMap;
     
-    public Map<Class<? extends Constraints>,Constraints> getConstraintsMap() {
-        Map<Class<? extends Constraints>,Constraints> constraintsMap = new HashMap<>();
-        if(constraints == null){
-            constraints = new ArrayList<>();
-        }
-        for(Constraints constraint :constraints){
-            constraintsMap.put(constraint.getClass(), constraint);
-        }
+    public Map<String, Constraints> getConstraintsMap() {
+        if (constraintsMap == null) {
+            constraintsMap = new HashMap<>();
+            for (Constraints constraint : getConstraints()) {
+                constraintsMap.put(constraint.getClass().getSimpleName(), constraint);
+            }
+        }        
+
         return constraintsMap;
+        
     }
-    
-   public List<Constraints> getNewConstraints() {
-//       List<Constraints> savedConstraints = constraints;
-        Map<Class<? extends Constraints>,Constraints> constraintsMap = getConstraintsMap();
-        constraints = new ArrayList<>();
+
+    public Set<Constraints> getNewConstraints() {
+        constraints = new LinkedHashSet<>();
         List<Class<? extends Constraints>> classes = getConstraintsClass();
-        for(Class<? extends Constraints> constraintClass : classes){
-           Constraints constraint = constraintsMap.get(constraintClass);
-           if(constraint!=null){
-               constraints.add(constraint);
-               constraint.setSelected(Boolean.TRUE);
-           } else {
-               try {
-                   constraints.add(constraintClass.newInstance());
-               } catch (InstantiationException | IllegalAccessException ex) {
-                   Exceptions.printStackTrace(ex);
-               }
-           }
+        for (Class<? extends Constraints> constraintClass : classes) {
+            Constraints constraint = getConstraintsMap().get(constraintClass.getSimpleName());
+            if (constraint != null) {
+                constraints.add(constraint);
+                constraint.setSelected(Boolean.TRUE);
+            } else {
+                try {
+                    constraints.add(constraintClass.newInstance());
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
         }
+        constraintsMap = null;//reset
         return constraints;
     }
-   
-   public List<Class<? extends Constraints>> getConstraintsClass(){
-       List<Class<? extends Constraints>> classes = new ArrayList<>();
+
+    public List<Class<? extends Constraints>> getConstraintsClass() {
+        List<Class<? extends Constraints>> classes = new ArrayList<>();
         classes.add(NotNull.class);
+        classes.add(Null.class);
         if (StringUtils.isNotBlank(getAttributeType())) {
             switch (getAttributeType()) {
+                case BOOLEAN:
+                    classes.add(AssertTrue.class);
+                    classes.add(AssertFalse.class);
+                    break;
                 case STRING:
-                    classes.add(Size.class);
+                    classes.add(Size.class);//array, collection, map pending
+                    classes.add(Pattern.class);
+                    classes.add(DecimalMin.class);
+                    classes.add(DecimalMax.class);
+                    classes.add(Digits.class);
+                    break;
+                case CALENDAR:
+                case DATE:
+                    classes.add(Past.class);
+                    classes.add(Future.class);
                     break;
                 case BIGDECIMAL:
                 case BIGINTEGER:
@@ -133,21 +165,21 @@ public abstract class BaseAttribute extends Attribute {
                 case SHORT_WRAPPER:
                 case INT_WRAPPER:
                 case LONG_WRAPPER:
-                    classes.add(Max.class);
                     classes.add(Min.class);
+                    classes.add(Max.class);
+                    classes.add(DecimalMin.class);
+                    classes.add(DecimalMax.class);
+                    classes.add(Digits.class);
                     break;
             }
         }
         return classes;
     }
-   
-   
-   
 
     /**
      * @param constraints the constraints to set
      */
-    public void setConstraints(List<Constraints> constraints) {
+    public void setConstraints(Set<Constraints> constraints) {
         this.constraints = constraints;
     }
 

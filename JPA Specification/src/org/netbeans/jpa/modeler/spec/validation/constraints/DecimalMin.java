@@ -21,16 +21,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="mi")
-public class Min extends Constraints {
+@XmlRootElement(name="dmi")
+public class DecimalMin extends Constraints {
 
-    private Long value;
+    private String value;
 
-    public Long getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Long value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

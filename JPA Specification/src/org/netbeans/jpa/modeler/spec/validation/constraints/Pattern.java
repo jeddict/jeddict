@@ -21,17 +21,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="mi")
-public class Min extends Constraints {
+@XmlRootElement(name="pt")
+public class Pattern extends Constraints {
 
-    private Long value;
+    private String regexp;
 
-    public Long getValue() {
-        return value;
+    public String getRegexp() {
+        return regexp;
     }
 
-    public void setValue(Long value) {
-        this.value = value;
+    public void setRegexp(String regexp) {
+        this.regexp = regexp;
     }
 
 }

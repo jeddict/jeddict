@@ -21,17 +21,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="mi")
-public class Min extends Constraints {
+@XmlRootElement(name="at")
+public class AssertTrue extends Constraints {
 
-    private Long value;
-
-    public Long getValue() {
-        return value;
+    public AssertTrue() {
     }
-
-    public void setValue(Long value) {
-        this.value = value;
-    }
-
 }

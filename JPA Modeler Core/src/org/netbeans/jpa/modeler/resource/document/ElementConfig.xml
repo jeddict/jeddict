@@ -330,40 +330,232 @@
         <element id="NotNull" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.NotNull">
             <attributes>
                 <attribute id="notnull.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
-                    <display-name>NotNull</display-name>
+                    <display-name>@NotNull</display-name>
                     <description>
-                        Specifies that the configuration property decorated with this annotation must not have a null value. That is, the property is required. This constraint accepts any type.
+                        The value of the field or property must not be null.
                     </description>
                 </attribute>
                 <attribute id="notnull.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
                     <display-name>NotNull Message</display-name>
-                    <visible><![CDATA[_this.selected==true]]></visible>
+                    <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+                 <visible><![CDATA[node.getConstraintsMap().get("Null").selected==false]]></visible>
         </element>
+        <element id="Null" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Null">
+            <attributes>
+                <attribute id="null.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Null</display-name>
+                    <description>
+                            The value of the field or property must be null.
+                    </description>
+                </attribute>
+                <attribute id="null.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>Null Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("NotNull").selected==false]]></visible>
+        </element>
+          <element id="AssertFalse" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse">
+            <attributes>
+                <attribute id="assertFalse.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertFalse</display-name>
+                    <description>
+                        The value of the field or property must be false.
+                    </description>
+                </attribute>
+                <attribute id="assertFalse.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>AssertFalse Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("AssertTrue").selected==false]]></visible>
+        </element>
+        
+        <element id="AssertTrue" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertTrue">
+            <attributes>
+                <attribute id="assertTrue.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertTrue</display-name>
+                    <description>
+                            The value of the field or property must be true.
+                    </description>
+                </attribute>
+                <attribute id="assertTrue.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>AssertTrue Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("AssertFalse").selected==false]]></visible>
+        </element>
+           <element id="Past" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Past">
+            <attributes>
+                <attribute id="past.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Past</display-name>
+                    <description>
+			The value of the field or property must be a date in the past.
+                    </description>
+                </attribute>
+                <attribute id="past.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>Past Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("Future").selected==false]]></visible>
+        </element>
+        <element id="Future" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Future">
+            <attributes>
+                <attribute id="future.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Future</display-name>
+                    <description>
+                        The value of the field or property must be a date in the future.
+                    </description>
+                </attribute>
+                <attribute id="future.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>Future Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("Past").selected==false]]></visible>
+        </element>
+        
+       
         <element id="Size" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Size">
             <attributes>
                 <attribute id="size.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
-                    <display-name>Size</display-name>
+                    <display-name>@Size</display-name>
                     <description>
-                        Specifies that the configuration property decorated with this annotation must have a value between the specified boundaries (included). Supported value types are String (string length is evaluated), Collection (collection size is evaluated), Map (map size is evaluated), Array (array length is evaluated). Null elements are considered valid.
+                        The size of the field or property is evaluated and must match the specified boundaries. 
                     </description>
                 </attribute>
                 <attribute id="size.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
                     <display-name>Size Message</display-name>
-                    <visible><![CDATA[_this.selected==true]]></visible>
+                    <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="size.max" groupId="CONSTRAINTS" class="java.lang.Integer" name="max">
                     <display-name>Max size</display-name>
-                    <visible><![CDATA[_this.selected==true]]></visible>
+                    <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                <attribute id="size.min" groupId="CONSTRAINTS" class="java.lang.Integer" name="min">
                     <display-name>Min size</display-name>
-                    <visible><![CDATA[_this.selected==true]]></visible>
+                    <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
         </element>
-       
+        <element id="Pattern" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Pattern">
+            <attributes>
+                <attribute id="pattern.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Pattern</display-name>
+                    <description>
+                        The value of the field or property must match the regular expression defined in the regexp element.
+                    </description>
+                </attribute>
+                <attribute id="pattern.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>Pattern Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="pattern.regexp" groupId="CONSTRAINTS" class="java.lang.String" name="regexp">
+                    <display-name>regexp</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+        
+            <element id="Digits" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Digits">
+            <attributes>
+                <attribute id="digits.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Digits</display-name>
+                    <description>
+                        The size of the field or property is evaluated and must match the specified boundaries. 
+                    </description>
+                </attribute>
+                <attribute id="digits.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>Size Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="digits.fraction" groupId="CONSTRAINTS" class="java.lang.Integer" name="fraction">
+                    <display-name>Fraction</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+               <attribute id="digits.integer" groupId="CONSTRAINTS" class="java.lang.Integer" name="integer">
+                    <display-name>Integer</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Min" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Min">
+            <attributes>
+                <attribute id="min.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Min</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="min.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>Min Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="min.value" groupId="CONSTRAINTS" class="java.lang.Long" name="value">
+                    <display-name>Min value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+         <element id="Max" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Max">
+            <attributes>
+                <attribute id="max.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Max</display-name>
+                    <description>
+                        The value of the field or property must be an integer value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="max.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>Max Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="max.value" groupId="CONSTRAINTS" class="java.lang.Long" name="value">
+                    <display-name>Max value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+               <element id="DecimalMin" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin">
+            <attributes>
+                <attribute id="decimalMin.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@DecimalMin</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="decimalMin.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>DecimalMin Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="decimalMin.value" groupId="CONSTRAINTS" class="java.lang.String" name="value">
+                    <display-name>DecimalMin value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+         <element id="DecimalMax" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMax">
+            <attributes>
+                <attribute id="decimalMax.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@DecimalMax</display-name>
+                    <description>
+                        The value of the field or property must be a decimal value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="decimalMax.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
+                    <display-name>DecimalMax Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="decimalMax.value" groupId="CONSTRAINTS" class="java.lang.String" name="value">
+                    <display-name>DecimalMax value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+        
         <element id="JaxbXmlAttribute" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute">
             <attributes>
                 <attribute id="JaxbXmlAttribute.name" groupId="JAXB_ATTR_PROP" class="java.lang.String" name="name">

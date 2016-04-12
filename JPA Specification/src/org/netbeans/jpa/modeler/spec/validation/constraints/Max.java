@@ -24,13 +24,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="ma")
 public class Max extends Constraints {
 
-    private long value;
+    private Long value;
 
-    public long getValue() {
+    public Long getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(Long value) {
         this.value = value;
     }
 

@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -71,4 +72,27 @@ public abstract class Constraints {
     public void setSelected(Boolean selected) {
         this.selected = selected;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.getClass().getSimpleName());
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if(!this.getClass().getSimpleName().equals(obj.getClass().getSimpleName())) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
