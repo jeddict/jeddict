@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="pt")
-public class Pattern extends Constraints {
+public class Pattern extends Constraint {
     
     @XmlAttribute(name="r")
     private String regexp;

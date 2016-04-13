@@ -44,7 +44,7 @@ import static org.netbeans.jpa.modeler.spec.extend.AttributeType.STRING;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse;
 import org.netbeans.jpa.modeler.spec.validation.constraints.AssertTrue;
-import org.netbeans.jpa.modeler.spec.validation.constraints.Constraints;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
 import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMax;
 import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Digits;
@@ -95,12 +95,12 @@ public abstract class BaseAttribute extends Attribute {
         @XmlElement(name = "dma", type = DecimalMax.class),
         @XmlElement(name = "di", type = Digits.class)
     })
-    private Set<Constraints> constraints;
+    private Set<Constraint> constraints;
 
     /**
      * @return the constraints
      */
-    public Set<Constraints> getConstraints() {
+    public Set<Constraint> getConstraints() {
         if (constraints == null) {
             constraints = new LinkedHashSet<>();
         }
@@ -108,12 +108,12 @@ public abstract class BaseAttribute extends Attribute {
     }
 
     @XmlTransient
-    Map<String, Constraints> constraintsMap;
+    Map<String, Constraint> constraintsMap;
     
-    public Map<String, Constraints> getConstraintsMap() {
+    public Map<String, Constraint> getConstraintsMap() {
         if (constraintsMap == null) {
             constraintsMap = new HashMap<>();
-            for (Constraints constraint : getConstraints()) {
+            for (Constraint constraint : getConstraints()) {
                 constraintsMap.put(constraint.getClass().getSimpleName(), constraint);
             }
         }        
@@ -122,12 +122,12 @@ public abstract class BaseAttribute extends Attribute {
         
     }
 
-    public Set<Constraints> getNewConstraints() {
-      Set<Constraints> newConstraints = new LinkedHashSet<>();
-        List<Class<? extends Constraints>> classes = getConstraintsClass();
-        Map<String, Constraints> constraintsMapTmp = getConstraintsMap();
-        for (Class<? extends Constraints> constraintClass : classes) {
-            Constraints constraint = constraintsMapTmp.get(constraintClass.getSimpleName());
+    public Set<Constraint> getNewConstraints() {
+      Set<Constraint> newConstraints = new LinkedHashSet<>();
+        List<Class<? extends Constraint>> classes = getConstraintsClass();
+        Map<String, Constraint> constraintsMapTmp = getConstraintsMap();
+        for (Class<? extends Constraint> constraintClass : classes) {
+            Constraint constraint = constraintsMapTmp.get(constraintClass.getSimpleName());
             if (constraint != null) {
                 newConstraints.add(constraint);
             } else {
@@ -143,8 +143,8 @@ public abstract class BaseAttribute extends Attribute {
         return newConstraints;
     }
 
-    public List<Class<? extends Constraints>> getConstraintsClass() {
-        List<Class<? extends Constraints>> classes = new ArrayList<>();
+    public List<Class<? extends Constraint>> getConstraintsClass() {
+        List<Class<? extends Constraint>> classes = new ArrayList<>();
         classes.add(NotNull.class);
         classes.add(Null.class);
         if (StringUtils.isNotBlank(getAttributeType())) {
@@ -189,15 +189,15 @@ public abstract class BaseAttribute extends Attribute {
     /**
      * @param constraints the constraints to set
      */
-    public void setConstraints(Set<Constraints> constraints) {
+    public void setConstraints(Set<Constraint> constraints) {
         this.constraints = constraints;
     }
 
-    public boolean add(Constraints constraints) {
+    public boolean add(Constraint constraints) {
         return getConstraints().add(constraints);
     }
 
-    public boolean remove(Constraints constraints) {
+    public boolean remove(Constraint constraints) {
         return getConstraints().remove(constraints);
     }
 

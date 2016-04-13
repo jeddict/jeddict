@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="fu")
-public class Future extends Constraints {
+public class Future extends Constraint {
 
     public Future() {
     }

@@ -36,6 +36,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private static final List<String> temporalTypes = getTemporalTypes();
 
     private List<AnnotationSnippet> annotation = new ArrayList<>();
+    private List<ConstraintSnippet> constraints = new ArrayList<>();
 
     private JaxbVariableType jaxbVariableType;
     private JaxbXmlAttribute jaxbXmlAttribute;
@@ -448,8 +449,12 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (this.getAssociationOverrides() != null) {
             importSnippets.addAll(this.getAssociationOverrides().getImportSnippets());
         }
-        
+
         for (AnnotationSnippet snippet : this.getAnnotation()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+        
+        for (ConstraintSnippet snippet : this.getConstraints()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
@@ -576,6 +581,20 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setAnnotation(List<AnnotationSnippet> annotation) {
         this.annotation = annotation;
+    }
+
+    /**
+     * @return the constraints
+     */
+    public List<ConstraintSnippet> getConstraints() {
+        return constraints;
+    }
+
+    /**
+     * @param constraints the constraints to set
+     */
+    public void setConstraints(List<ConstraintSnippet> constraints) {
+        this.constraints = constraints;
     }
 
     /**

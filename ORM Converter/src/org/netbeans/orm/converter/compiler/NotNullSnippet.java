@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,18 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.spec.validation.constraints;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package org.netbeans.orm.converter.compiler;
 
 /**
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="pa")
-public class Past extends Constraint {
+public class NotNullSnippet extends ConstraintSnippet {
 
-    public Past() {
+    @Override
+    protected String getAPI() {
+        return "NotNull";
     }
- 
+  
+    
 }

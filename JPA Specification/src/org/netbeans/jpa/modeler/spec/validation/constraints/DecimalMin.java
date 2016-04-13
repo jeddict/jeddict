@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="dmi")
-public class DecimalMin extends Constraints {
+public class DecimalMin extends Constraint {
 
     @XmlAttribute(name="v")
     private String value;

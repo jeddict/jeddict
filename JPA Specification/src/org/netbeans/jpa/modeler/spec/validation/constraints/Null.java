@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="nu")
-public class Null extends Constraints {
+public class Null extends Constraint {
 
     public Null() {
     }

@@ -24,7 +24,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="nn")
-public class NotNull extends Constraints {
+public class NotNull extends Constraint {
 
     public NotNull() {
     }

@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="at")
-public class AssertTrue extends Constraints {
+public class AssertTrue extends Constraint {
 
     public AssertTrue() {
     }

@@ -73,9 +73,11 @@ import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
@@ -92,6 +94,8 @@ import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.CollectionTableSnippet;
 import org.netbeans.orm.converter.compiler.ColumnDefSnippet;
 import org.netbeans.orm.converter.compiler.ColumnResultSnippet;
+import org.netbeans.orm.converter.compiler.ConstraintSnippet;
+import org.netbeans.orm.converter.compiler.ConstraintSnippetFactory;
 import org.netbeans.orm.converter.compiler.ConstructorResultSnippet;
 import org.netbeans.orm.converter.compiler.ElementCollectionSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
@@ -198,12 +202,29 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippets;
     }
     
+    protected List<ConstraintSnippet> getConstraintSnippet(Set<Constraint> constraints) {
+        List<ConstraintSnippet> snippets = new ArrayList<>();
+        for (Constraint constraint : constraints) {
+            if(!constraint.getSelected()){
+                continue;
+            }
+            ConstraintSnippet snippet = ConstraintSnippetFactory.getInstance(constraint);
+            if (snippet != null) {
+                snippets.add(snippet);
+            }
+        }
+        return snippets;
+    }
+
     protected VariableDefSnippet getVariableDef(Attribute attr) {
         VariableDefSnippet variableDef = variables.get(attr.getName());
         if (variableDef == null) {
             variableDef = new VariableDefSnippet();
             variableDef.setName(attr.getName());
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
+            if(attr instanceof BaseAttribute){
+                variableDef.setConstraints(getConstraintSnippet(((BaseAttribute)attr).getConstraints()));
+            }
 
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
             if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="dma")
-public class DecimalMax extends Constraints {
+public class DecimalMax extends Constraint {
 
     @XmlAttribute(name="v")
     private String value;

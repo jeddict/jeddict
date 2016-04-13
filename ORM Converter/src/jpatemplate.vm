@@ -166,6 +166,9 @@ $varDef.getAttributeOverrides().getSnippet()
 #foreach($annotation in $varDef.getAnnotation() )
     $annotation.getSnippet()
 #end
+#foreach($constraint in $varDef.getConstraints() )
+    $constraint.getSnippet()
+#end
 ## $varDef.type => $varDef.getTypeIdentifier().getVariableType() ## to resolve problem Collection => Collection<Entity>
     private $varDef.type $varDef.name;
 

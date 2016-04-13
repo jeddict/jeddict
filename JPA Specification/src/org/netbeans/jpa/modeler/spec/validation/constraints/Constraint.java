@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlJavaTypeAdapter(value = ConstraintsValidator.class)
 //@XmlSeeAlso({NotNull.class,Size.class,Max.class,Min.class})
-public abstract class Constraints {
+public abstract class Constraint {
 
     @XmlTransient
     private Boolean selected = false;

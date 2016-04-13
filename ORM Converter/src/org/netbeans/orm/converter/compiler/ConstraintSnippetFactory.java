@@ -13,22 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.spec.validation.constraints;
+package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
+import org.netbeans.jpa.modeler.spec.validation.constraints.NotNull;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Null;
 
-public class ConstraintsValidator extends MarshalValidator<Constraint> {
+/**
+ *
+ * @author Gaurav Gupta
+ */
+public class ConstraintSnippetFactory {
 
-    @Override
-    public Constraint marshal(Constraint constraint) throws Exception {
-        if (constraint != null && isEmpty(constraint)) {
-            return null;
+    public static ConstraintSnippet getInstance(Constraint constraint){
+        if(constraint instanceof NotNull){
+            return new NotNullSnippet();
+        } else if(constraint instanceof Null){
+            return new NullSnippet();
         }
-        return constraint;
+        
+        return null;
+        
     }
-
-    public static boolean isEmpty(Constraint constraint) {
-        return !constraint.getSelected();
-    }
-
 }

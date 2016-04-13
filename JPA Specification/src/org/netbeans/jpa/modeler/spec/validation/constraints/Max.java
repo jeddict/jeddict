@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="ma")
-public class Max extends Constraints {
+public class Max extends Constraint {
 
     @XmlAttribute(name="v")
     private Long value;

@@ -336,7 +336,7 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getConstraintsMap().get("Null").selected==false]]></visible>
+            <visible><![CDATA[(node.getConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getConstraintsMap().get("Null").selected==false]]></visible>
         </element>
         <element id="Null" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Null">
             <attributes>
@@ -351,7 +351,7 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getConstraintsMap().get("NotNull").selected==false]]></visible>
+            <visible><![CDATA[(node.getConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getConstraintsMap().get("NotNull").selected==false]]></visible>
         </element>
         <element id="AssertFalse" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse">
             <attributes>
@@ -366,7 +366,7 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getConstraintsMap().get("AssertTrue").selected==false]]></visible>
+            <visible><![CDATA[(node.getConstraintsMap().get("AssertTrue").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertTrue").selected==false]]></visible>
         </element>
         <element id="AssertTrue" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertTrue">
             <attributes>
@@ -381,7 +381,7 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getConstraintsMap().get("AssertFalse").selected==false]]></visible>
+            <visible><![CDATA[(node.getConstraintsMap().get("AssertFalse").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertFalse").selected==false]]></visible>
         </element>
         <element id="Past" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Past">
             <attributes>
@@ -396,7 +396,7 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getConstraintsMap().get("Future").selected==false]]></visible>
+            <visible><![CDATA[(node.getConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getConstraintsMap().get("Future").selected==false]]></visible>
         </element>
         <element id="Future" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Future">
             <attributes>
@@ -411,7 +411,7 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getConstraintsMap().get("Past").selected==false]]></visible>
+            <visible><![CDATA[(node.getConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getConstraintsMap().get("Past").selected==false]]></visible>
         </element>
         <element id="Size" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Size">
             <attributes>

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="mi")
-public class Min extends Constraints {
+public class Min extends Constraint {
 
     @XmlAttribute(name="v")
     private Long value;

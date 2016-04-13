@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="di")
-public class Digits extends Constraints {
+public class Digits extends Constraint {
 
     @XmlAttribute(name="f")
     private Integer fraction ;

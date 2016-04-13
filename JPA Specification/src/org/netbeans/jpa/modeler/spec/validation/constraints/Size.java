@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Gaurav Gupta
  */
 @XmlRootElement(name="si")
-public class Size extends Constraints {
+public class Size extends Constraint {
 
     @XmlAttribute(name="mi")
     private Integer min;
