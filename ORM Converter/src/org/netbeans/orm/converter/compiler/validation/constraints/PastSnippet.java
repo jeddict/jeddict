@@ -13,17 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.orm.converter.compiler;
+package org.netbeans.orm.converter.compiler.validation.constraints;
+
+import org.netbeans.jpa.modeler.spec.validation.constraints.Past;
+import org.netbeans.orm.converter.compiler.*;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class NotNullSnippet extends ConstraintSnippet {
+public class PastSnippet extends ConstraintSnippet<Past> {
+
+    public PastSnippet(Past past) {
+        super(past);
+    }
 
     @Override
     protected String getAPI() {
-        return "NotNull";
+        return "Past";
     }
   
     

@@ -15,6 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

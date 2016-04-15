@@ -13,26 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.orm.converter.compiler;
+package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
-import org.netbeans.jpa.modeler.spec.validation.constraints.NotNull;
-import org.netbeans.jpa.modeler.spec.validation.constraints.Null;
+import org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse;
+import org.netbeans.orm.converter.compiler.*;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class ConstraintSnippetFactory {
+public class AssertFalseSnippet extends ConstraintSnippet<AssertFalse> {
 
-    public static ConstraintSnippet getInstance(Constraint constraint){
-        if(constraint instanceof NotNull){
-            return new NotNullSnippet();
-        } else if(constraint instanceof Null){
-            return new NullSnippet();
-        }
-        
-        return null;
-        
+    public AssertFalseSnippet(AssertFalse assertFalse) {
+        super(assertFalse);
     }
+
+    @Override
+    protected String getAPI() {
+        return "AssertFalse";
+    }
+  
+    
 }

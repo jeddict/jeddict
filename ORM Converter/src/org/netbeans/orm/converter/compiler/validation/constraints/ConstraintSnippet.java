@@ -13,38 +13,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.orm.converter.compiler;
+package org.netbeans.orm.converter.compiler.validation.constraints;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
+import org.netbeans.orm.converter.compiler.InvalidDataException;
+import org.netbeans.orm.converter.compiler.Snippet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public abstract class ConstraintSnippet implements Snippet {
+public abstract class ConstraintSnippet<T extends Constraint> implements Snippet {
 
-    private String message;
-
-    public String getMessage() {
-        return message;
+    protected final T constraint;
+    public ConstraintSnippet(T constraint) {
+        this.constraint = constraint;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    
-    
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (getMessage() == null) {
+        if (constraint.getMessage() == null) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();
         builder.append("@").append(getAPI()).append("(message=\"");
-        builder.append(getMessage());
+        builder.append(constraint.getMessage());
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
         return builder.toString();
