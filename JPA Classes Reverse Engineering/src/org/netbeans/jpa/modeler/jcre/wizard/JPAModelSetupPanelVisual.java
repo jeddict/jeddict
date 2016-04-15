@@ -26,7 +26,7 @@ import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
-import org.netbeans.jcode.source.SourceGroups;
+import org.netbeans.jcode.core.util.SourceGroups;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;

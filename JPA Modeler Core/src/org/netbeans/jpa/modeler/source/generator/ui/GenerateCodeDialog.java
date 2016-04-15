@@ -33,10 +33,10 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
+import org.netbeans.jcode.core.util.ProjectHelper;
 import static org.netbeans.jcode.core.util.ProjectHelper.getJavaProjects;
-import org.netbeans.jcode.source.ProjectCellRenderer;
-import static org.netbeans.jcode.source.SourceGroupSupport.getPackageForFolder;
-import org.netbeans.jcode.source.SourceRootCellRenderer;
+import static org.netbeans.jcode.core.util.SourceGroups.getPackageForFolder;
 import org.netbeans.jcode.stack.BusinessLayer;
 import org.netbeans.jcode.stack.ControllerLayer;
 import org.netbeans.jcode.stack.TechnologyLayer;
@@ -45,6 +45,8 @@ import org.netbeans.jcode.stack.ViewerLayer;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
 import org.netbeans.jcode.stack.config.panel.DefaultConfigPanel;
 import org.netbeans.jcode.stack.config.panel.LayerConfigPanel;
+import org.netbeans.jcode.ui.source.ProjectCellRenderer;
+import org.netbeans.jcode.ui.source.SourceRootCellRenderer;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.window.GenericDialog;
@@ -91,13 +93,23 @@ public class GenerateCodeDialog extends GenericDialog
     }
 
     void initLayer() {
+        configPane.removeAll();
+        configPane.setVisible(false);
+        if (!ProjectHelper.isJavaEE6AndHigher(getTargetPoject())) {
+            businessLayerCombo.setEnabled(false);
+            controllerLayerCombo.setEnabled(false);
+            viewerLayerCombo.setEnabled(false);
+            this.pack();
+            return;
+        } else {
+            businessLayerCombo.setEnabled(true);
+        }
         businessLayerCombo.setModel(new DefaultComboBoxModel(BusinessLayer.values()));
         controllerLayerCombo.setModel(new DefaultComboBoxModel(ControllerLayer.values()));
         viewerLayerCombo.setModel(new DefaultComboBoxModel(ControllerLayer.NONE.getViewerLayers()));
         controllerLayerCombo.setEnabled(false);
         viewerLayerCombo.setEnabled(false);
-        configPane.removeAll();
-        configPane.setVisible(false);
+     
 
         BusinessLayer businessLayer = BusinessLayer.valueOf(technologyLayerPref.get(BusinessLayer.class.getName(), BusinessLayer.NONE.name()));
         ControllerLayer controllerLayer = ControllerLayer.valueOf(technologyLayerPref.get(ControllerLayer.class.getName(), ControllerLayer.NONE.name()));
@@ -136,14 +148,14 @@ public class GenerateCodeDialog extends GenericDialog
             layerConfigPanels[index]= techPanel;
             if (index == business_PANEL_INDEX) {
                 getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
-                addLayerTab(getbusinessLayer().getLabel(), businessPanel);
+                addLayerTab(getBusinessLayer().getLabel(), businessPanel);
             } else if (index == CONTROLLER_PANEL_INDEX) {
                 getConfigData().setControllerLayerConfig(techPanel.getConfigData());
-                addLayerTab(getbusinessLayer().getLabel(), businessPanel);
+                addLayerTab(getBusinessLayer().getLabel(), businessPanel);
                 addLayerTab(getControllerLayer().getLabel(), controllerPanel);
             } else if (index == VIEWER_PANEL_INDEX) {
                 getConfigData().setViewerLayerConfig(techPanel.getConfigData());
-                addLayerTab(getbusinessLayer().getLabel(), businessPanel);
+                addLayerTab(getBusinessLayer().getLabel(), businessPanel);
                 addLayerTab(getControllerLayer().getLabel(), controllerPanel);
                 addLayerTab(getViewerLayer().getLabel(), viewerPanel);
             }
@@ -336,8 +348,8 @@ public class GenerateCodeDialog extends GenericDialog
                         .addComponent(viewerLayerLabel))
                     .addComponent(viewerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(configPane, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(configPane, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addContainerGap())
         );
         optionPane.setLayer(packageLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(resourcePackageCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -435,8 +447,8 @@ public class GenerateCodeDialog extends GenericDialog
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(optionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(optionPane)
+                .addGap(18, 18, 18)
                 .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -462,6 +474,8 @@ public class GenerateCodeDialog extends GenericDialog
         String prop = getTargetPoject() == null ? PROP_NO_TARGET_PROJECT : PROP_TARGET_PROJECT;
 
         getPropertyChangeSupport().firePropertyChange(prop, null, evt);
+        
+        initLayer();
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
     private void sourceFolderComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sourceFolderComboItemStateChanged
@@ -507,7 +521,7 @@ public class GenerateCodeDialog extends GenericDialog
     
     private void store(){
         entityMappings.setPackage(getPackage());
-            technologyLayerPref.put(BusinessLayer.class.getName(), getbusinessLayer().name());
+            technologyLayerPref.put(BusinessLayer.class.getName(), getBusinessLayer().name());
             technologyLayerPref.put(ControllerLayer.class.getName(), getControllerLayer().name());
             technologyLayerPref.put(ViewerLayer.class.getName(), getViewerLayer().name());
     }
@@ -527,7 +541,7 @@ public class GenerateCodeDialog extends GenericDialog
 
     private void businessLayerComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_businessLayerComboItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            BusinessLayer businessLayer = getbusinessLayer();
+            BusinessLayer businessLayer = getBusinessLayer();
             changebusinessLayer(businessLayer);
         }
     }//GEN-LAST:event_businessLayerComboItemStateChanged
@@ -566,7 +580,7 @@ public class GenerateCodeDialog extends GenericDialog
         setTechPanel(VIEWER_PANEL_INDEX, viewerPanel, viewerLayer);
     }
 
-    public BusinessLayer getbusinessLayer() {
+    public BusinessLayer getBusinessLayer() {
         return (BusinessLayer) businessLayerCombo.getModel().getSelectedItem();
     }
 

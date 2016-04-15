@@ -37,10 +37,10 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Component id="optionPane" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <Component id="optionPane" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="actionPane" min="-2" pref="40" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -73,9 +73,9 @@
                               <Component id="resourcePackageCombo" min="-2" pref="687" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="bussinessLayerLabel" min="-2" pref="126" max="-2" attributes="0"/>
+                              <Component id="businessLayerLabel" min="-2" pref="126" max="-2" attributes="0"/>
                               <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
-                              <Component id="bussinessLayerCombo" min="-2" pref="687" max="-2" attributes="0"/>
+                              <Component id="businessLayerCombo" min="-2" pref="687" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="controllerLayerLabel" min="-2" pref="126" max="-2" attributes="0"/>
@@ -120,9 +120,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
-                          <Component id="bussinessLayerLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="businessLayerLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="bussinessLayerCombo" min="-2" max="-2" attributes="0"/>
+                      <Component id="businessLayerCombo" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -141,8 +141,8 @@
                       <Component id="viewerLayerCombo" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="configPane" min="-2" pref="212" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="configPane" pref="323" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -167,19 +167,19 @@
             <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="GenerateCodeDialog_resourcePackageCombo"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JComboBox" name="bussinessLayerCombo">
+        <Component class="javax.swing.JComboBox" name="businessLayerCombo">
           <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="bussinessLayerComboItemStateChanged"/>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="businessLayerComboItemStateChanged"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="resourcePackageCombo.setEditable(true);"/>
             <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="GenerateCodeDialog_resourcePackageCombo"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="bussinessLayerLabel">
+        <Component class="javax.swing.JLabel" name="businessLayerLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.bussinessLayerLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.businessLayerLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -258,12 +258,12 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="bussinessPanel">
+            <Container class="javax.swing.JPanel" name="businessPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Bussiness Layer">
+                  <JTabbedPaneConstraints tabName="Business Layer">
                     <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.bussinessPanel.TabConstraints.tabTitle" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="GenerateCodeDialog.businessPanel.TabConstraints.tabTitle" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </JTabbedPaneConstraints>
                 </Constraint>
