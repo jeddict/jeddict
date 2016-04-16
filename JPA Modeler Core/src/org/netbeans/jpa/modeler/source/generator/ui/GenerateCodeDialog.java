@@ -140,6 +140,7 @@ public class GenerateCodeDialog extends GenericDialog
             }
 
             techPanel.init(modelerFilePackage, targetPoject, sourceGroup);
+            techPanel.read();
             techLayerPanel.removeAll();
             techLayerPanel.add(techPanel);
 
