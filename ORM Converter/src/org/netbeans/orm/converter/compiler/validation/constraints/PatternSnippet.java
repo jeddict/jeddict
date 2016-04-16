@@ -47,16 +47,17 @@ public class PatternSnippet extends ConstraintSnippet<Pattern> {
             builder.append("regexp=\"");
             builder.append(constraint.getRegexp());
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
         }
        
         if (constraint.getMessage() != null) {
             builder.append("message=\"");
             builder.append(constraint.getMessage());
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
 }

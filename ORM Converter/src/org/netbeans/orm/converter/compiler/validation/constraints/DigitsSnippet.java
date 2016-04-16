@@ -36,7 +36,7 @@ public class DigitsSnippet extends ConstraintSnippet<Digits> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && constraint.getFraction()== null && constraint.getInteger()== null) {
+        if (constraint.getMessage() == null && constraint.getFraction() == null && constraint.getInteger() == null) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();
@@ -45,19 +45,21 @@ public class DigitsSnippet extends ConstraintSnippet<Digits> {
         if (constraint.getFraction() != null) {
             builder.append("fraction=");
             builder.append(constraint.getFraction());
+            builder.append(ORMConverterUtil.COMMA);
         }
         if (constraint.getInteger() != null) {
             builder.append("integer=");
             builder.append(constraint.getInteger());
+            builder.append(ORMConverterUtil.COMMA);
         }
         if (constraint.getMessage() != null) {
             builder.append("message=\"");
             builder.append(constraint.getMessage());
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
 }

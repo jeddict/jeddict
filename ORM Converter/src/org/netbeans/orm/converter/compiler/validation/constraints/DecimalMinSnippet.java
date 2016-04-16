@@ -47,10 +47,17 @@ public class DecimalMinSnippet extends ConstraintSnippet<DecimalMin> {
             builder.append("value=\"");
             builder.append(constraint.getValue());
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
+         if (constraint.getMessage() != null) {
+            builder.append("message=\"");
+            builder.append(constraint.getMessage());
+            builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
 }

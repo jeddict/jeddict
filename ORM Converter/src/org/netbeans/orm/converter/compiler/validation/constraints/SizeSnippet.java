@@ -45,19 +45,21 @@ public class SizeSnippet extends ConstraintSnippet<Size> {
         if (constraint.getMin() != null) {
             builder.append("min=");
             builder.append(constraint.getMin());
+            builder.append(ORMConverterUtil.COMMA);
         }
         if (constraint.getMax() != null) {
             builder.append("max=");
             builder.append(constraint.getMax());
+            builder.append(ORMConverterUtil.COMMA);
         }
         if (constraint.getMessage() != null) {
             builder.append("message=\"");
             builder.append(constraint.getMessage());
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
 }

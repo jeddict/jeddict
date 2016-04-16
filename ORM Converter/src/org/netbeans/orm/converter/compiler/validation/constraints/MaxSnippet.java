@@ -44,13 +44,19 @@ public class MaxSnippet extends ConstraintSnippet<Max> {
         builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
 
         if (constraint.getValue() != null) {
-            builder.append("value=\"");
+            builder.append("value=");
             builder.append(constraint.getValue());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
+         if (constraint.getMessage() != null) {
+            builder.append("message=\"");
+            builder.append(constraint.getMessage());
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
         }
 
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
 }
