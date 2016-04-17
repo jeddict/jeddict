@@ -578,7 +578,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     }
 
     public PinWidgetInfo getEdgeTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget, ColumnWidget targetColumnWidget) {
-        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget && edgeWidget instanceof ReferenceFlowWidget && targetColumnWidget instanceof ColumnWidget) {
+        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget &&
+                edgeWidget instanceof ReferenceFlowWidget && targetColumnWidget instanceof ColumnWidget) {
             return targetColumnWidget.getPinWidgetInfo();
         } else {
             throw new UnsupportedOperationException("Not supported yet.");
