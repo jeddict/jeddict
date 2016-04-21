@@ -244,7 +244,7 @@ public class ORMConverterUtil {
         fos.close();
     }
 
-    public static void writeSnippet(WritableSnippet writableSnippet, File destDir)
+    public static FileObject writeSnippet(WritableSnippet writableSnippet, File destDir)
             throws InvalidDataException, IOException {
 
         String content = writableSnippet.getSnippet();
@@ -257,6 +257,7 @@ public class ORMConverterUtil {
         ORMConverterUtil.writeContent(content, sourceFile);
         final FileObject fo = FileUtil.toFileObject(sourceFile);
         formatFile(fo);
+        return fo;
     }
 
     public static void formatFile(FileObject fo) {

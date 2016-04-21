@@ -91,7 +91,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
             classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
 
             classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
-            ORMConverterUtil.writeSnippet(classDef, destDir);
+            parsedEmbeddable.setFileObject(ORMConverterUtil.writeSnippet(classDef, destDir));
         }
     }
 
@@ -105,7 +105,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
             classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
 
             classesRepository.addWritableSnippet(ClassType.ENTITY_CLASS, classDef);
-            ORMConverterUtil.writeSnippet(classDef, destDir);
+            parsedEntity.setFileObject(ORMConverterUtil.writeSnippet(classDef, destDir));
         }
     }
 
@@ -117,7 +117,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
             classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
 
             classesRepository.addWritableSnippet(ClassType.SUPER_CLASS, classDef);
-            ORMConverterUtil.writeSnippet(classDef, destDir);
+            parsedMappedSuperclass.setFileObject(ORMConverterUtil.writeSnippet(classDef, destDir));
         }
     }
 
@@ -136,14 +136,14 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         task.log("Generating EmbeddedId Class : " + defaultClass.getClazz(), true);
         ClassDefSnippet classDef = new EmbeddableIdClassGenerator(defaultClass, packageName).getClassDef();
         classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
-        ORMConverterUtil.writeSnippet(classDef, destDir);
+        ORMConverterUtil.writeSnippet(classDef, destDir);//TODO set file object
     }
 
     private void generateIdClasses(DefaultClass defaultClass) throws InvalidDataException, IOException {
         task.log("Generating IdClass Class : " + defaultClass.getClazz(), true);
         ClassDefSnippet classDef = new DefaultClassGenerator(defaultClass, packageName).getClassDef();
         classesRepository.addWritableSnippet(ClassType.SERIALIZER_CLASS, classDef);
-        ORMConverterUtil.writeSnippet(classDef, destDir);
+        ORMConverterUtil.writeSnippet(classDef, destDir);//TODO set file object
     }
 
     private List<ClassDefSnippet> getPUXMLEntries() {

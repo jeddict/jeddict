@@ -33,6 +33,7 @@ import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.jpa.source.JCRELoader;
+import org.openide.filesystems.FileObject;
 
 /**
  *
@@ -64,6 +65,9 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     private boolean visibile = true;
 
     private List<Annotation> annotation;
+            
+    @XmlTransient
+    private FileObject fileObject;
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -262,6 +266,20 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
      */
     public void setClazz(String value) {
         this.clazz = value;
+    }
+
+    /**
+     * @return the fileObject
+     */
+    public FileObject getFileObject() {
+        return fileObject;
+    }
+
+    /**
+     * @param fileObject the fileObject to set
+     */
+    public void setFileObject(FileObject fileObject) {
+        this.fileObject = fileObject;
     }
 
 }

@@ -38,7 +38,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
 
 @ActionID(
-        category = "Bugtracking",
+        category = "Edit",
         id = "org.netbeans.jpa.modeler.specification.model.file.action.ClassWidgetVisibilityActionListener"
 )
 @ActionRegistration(

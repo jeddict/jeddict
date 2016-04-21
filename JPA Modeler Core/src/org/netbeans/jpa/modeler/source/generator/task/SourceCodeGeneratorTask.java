@@ -15,13 +15,7 @@
  */
 package org.netbeans.jpa.modeler.source.generator.task;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javax.swing.SwingUtilities;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.api.java.source.ui.ScanDialog;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.jcode.stack.app.generator.JEEApplicationGenerator;
@@ -36,9 +30,9 @@ import org.openide.util.Lookup;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
 import org.netbeans.jcode.task.progress.ProgressHandler;
 import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.openide.util.NbBundle;
-import static org.openide.util.NbBundle.getMessage;
 
 public class SourceCodeGeneratorTask extends AbstractNBTask {
 
@@ -100,8 +94,10 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
         if (appicationConfigData.getBussinesLayerConfig() != null) {
             EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-            appicationConfigData.setEntities(entityMappings.getEntity().stream().map(e -> StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + e.getClazz() : e.getClazz()).collect(Collectors.toList()));
-
+            for (Entity entity : entityMappings.getEntity()) {
+                String entiyFQN = StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + entity.getClazz() : entity.getClazz();
+                appicationConfigData.putEntity(entiyFQN, entity.getFileObject());
+            }
             ProgressHandler handler = new ProgressConsoleHandler(this);
             JEEApplicationGenerator.generate(handler, appicationConfigData);
         }

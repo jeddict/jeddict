@@ -136,10 +136,19 @@ public class JavaSourceParserUtil {
 
     //"javax.persistence|javax.xml.bind.annotation"
     private static final Pattern JEE_PACKAGE_PATTERN = Pattern.compile(JEE_PACKAGE);
+    private static final String BEAN_VALIDATION_PACKAGE = "javax.validation.constraints";
+    private static final String[] BEAN_VALIDATION_REVENG_CLASS = new String[]{
+    "AssertFalse", "AssertTrue", "Null", " NotNull", "Size" , "DecimalMax", "DecimalMin",
+    "Max", "Min" , "Digits", "Future", "Past", "Pattern"};
     
+    
+    public static List<Annotation> getBeanValidation(Element element) {
 
+        System.out.println("");  
+        return null;
+    }
     public static List<Annotation> getNonEEAnnotation(Element element) {
-        List<Annotation> annotations = new ArrayList<>();
+List<Annotation> annotations = new ArrayList<>();
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
             Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);

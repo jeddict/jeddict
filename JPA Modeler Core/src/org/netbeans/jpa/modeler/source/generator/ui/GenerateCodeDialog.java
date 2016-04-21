@@ -217,11 +217,17 @@ public class GenerateCodeDialog extends GenericDialog
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         org.openide.awt.Mnemonics.setLocalizedText(packageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.packageLabel.text")); // NOI18N
+        packageLabel.setPreferredSize(new java.awt.Dimension(150, 17));
 
         resourcePackageCombo.setEditable(true);
         resourcePackageCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 resourcePackageComboItemStateChanged(evt);
+            }
+        });
+        resourcePackageCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resourcePackageComboActionPerformed(evt);
             }
         });
 
@@ -234,6 +240,7 @@ public class GenerateCodeDialog extends GenericDialog
 
         org.openide.awt.Mnemonics.setLocalizedText(businessLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.businessLayerLabel.text")); // NOI18N
 
+        targetProjectCombo.setMinimumSize(new java.awt.Dimension(50, 20));
         targetProjectCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 targetProjectComboItemStateChanged(evt);
@@ -241,6 +248,7 @@ public class GenerateCodeDialog extends GenericDialog
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(targetProjectLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetProjectLabel.text")); // NOI18N
+        targetProjectLabel.setPreferredSize(new java.awt.Dimension(150, 17));
 
         sourceFolderCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -282,54 +290,53 @@ public class GenerateCodeDialog extends GenericDialog
         optionPaneLayout.setHorizontalGroup(
             optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(configPane, javax.swing.GroupLayout.PREFERRED_SIZE, 835, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(optionPaneLayout.createSequentialGroup()
-                            .addComponent(targetProjectLabel)
-                            .addGap(34, 34, 34)
-                            .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(43, 43, 43)
-                            .addComponent(sourceFolderLabel)
-                            .addGap(12, 12, 12)
-                            .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(optionPaneLayout.createSequentialGroup()
-                            .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(resourcePackageCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 687, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(optionPaneLayout.createSequentialGroup()
-                            .addComponent(businessLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(12, 12, 12)
-                            .addComponent(businessLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 687, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(optionPaneLayout.createSequentialGroup()
-                            .addComponent(controllerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(12, 12, 12)
-                            .addComponent(controllerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 687, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(optionPaneLayout.createSequentialGroup()
-                            .addComponent(viewerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(12, 12, 12)
-                            .addComponent(viewerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 687, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(optionPaneLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(optionPaneLayout.createSequentialGroup()
+                                .addComponent(targetProjectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(40, 40, 40)
+                                .addComponent(sourceFolderLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(optionPaneLayout.createSequentialGroup()
+                                .addComponent(viewerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)
+                                .addComponent(viewerLayerCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(optionPaneLayout.createSequentialGroup()
+                                .addComponent(controllerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)
+                                .addComponent(controllerLayerCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(optionPaneLayout.createSequentialGroup()
+                                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(businessLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(packageLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(12, 12, 12)
+                                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(resourcePackageCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(businessLayerCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                    .addGroup(optionPaneLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(configPane)))
                 .addContainerGap())
         );
         optionPaneLayout.setVerticalGroup(
             optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionPaneLayout.createSequentialGroup()
-                .addGap(27, 27, 27)
+                .addGap(29, 29, 29)
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(optionPaneLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(targetProjectLabel)
-                            .addComponent(sourceFolderLabel))))
-                .addGap(12, 12, 12)
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(optionPaneLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(packageLabel))
-                    .addComponent(resourcePackageCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(targetProjectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(sourceFolderLabel)
+                        .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(resourcePackageCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(optionPaneLayout.createSequentialGroup()
@@ -349,7 +356,7 @@ public class GenerateCodeDialog extends GenericDialog
                         .addComponent(viewerLayerLabel))
                     .addComponent(viewerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(configPane, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addComponent(configPane, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                 .addContainerGap())
         );
         optionPane.setLayer(packageLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -414,9 +421,9 @@ public class GenerateCodeDialog extends GenericDialog
         actionPaneLayout.setHorizontalGroup(
             actionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actionPaneLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addContainerGap()
                 .addComponent(generateDefaultValue)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 301, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
         );
@@ -436,12 +443,13 @@ public class GenerateCodeDialog extends GenericDialog
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(optionPane)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(actionPane))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(optionPane)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -449,8 +457,8 @@ public class GenerateCodeDialog extends GenericDialog
             .addGroup(layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addComponent(optionPane)
-                .addGap(18, 18, 18)
-                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -500,13 +508,13 @@ public class GenerateCodeDialog extends GenericDialog
             NotifyDescriptor d = new NotifyDescriptor.Message("Please select the Source Folder .", NotifyDescriptor.INFORMATION_MESSAGE);
             d.setTitle("Source Folder");
             DialogDisplayer.getDefault().notify(d);
-            return false;
+            return true;
         }
         if(!SourceVersion.isName(getPackage())){
-            NotifyDescriptor d = new NotifyDescriptor.Message("Please select the Package .", NotifyDescriptor.INFORMATION_MESSAGE);
+            NotifyDescriptor d = new NotifyDescriptor.Message("Please select the Entity Package .", NotifyDescriptor.INFORMATION_MESSAGE);
             d.setTitle("Entity Package");
             DialogDisplayer.getDefault().notify(d);
-            return false;
+            return true;
         }
         
         for (int i = 0; i < configPane.getComponentCount(); i++) {
@@ -522,9 +530,15 @@ public class GenerateCodeDialog extends GenericDialog
     
     private void store(){
         entityMappings.setPackage(getPackage());
+        if (getBusinessLayer() != null) {
             technologyLayerPref.put(BusinessLayer.class.getName(), getBusinessLayer().name());
-            technologyLayerPref.put(ControllerLayer.class.getName(), getControllerLayer().name());
-            technologyLayerPref.put(ViewerLayer.class.getName(), getViewerLayer().name());
+            if (getControllerLayer() != null) {
+                technologyLayerPref.put(ControllerLayer.class.getName(), getControllerLayer().name());
+                if (getViewerLayer() != null) {
+                    technologyLayerPref.put(ViewerLayer.class.getName(), getViewerLayer().name());
+                }
+            }
+        }
     }
     
     
@@ -559,6 +573,10 @@ public class GenerateCodeDialog extends GenericDialog
             changeControllerLayer(controllerLayer);
         }
     }//GEN-LAST:event_controllerLayerComboItemStateChanged
+
+    private void resourcePackageComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resourcePackageComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_resourcePackageComboActionPerformed
 
     private void changebusinessLayer(BusinessLayer businessLayer) {
         controllerLayerCombo.setModel(new DefaultComboBoxModel(businessLayer.getControllerLayer()));

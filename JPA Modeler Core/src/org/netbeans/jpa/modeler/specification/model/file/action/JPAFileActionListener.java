@@ -31,7 +31,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
-        category = "Build",
+        category = "Edit",
         id = "jpa.file.JPAFileActionListener")
 @ActionRegistration(
         displayName = "#CTL_JPAFileActionListener")
