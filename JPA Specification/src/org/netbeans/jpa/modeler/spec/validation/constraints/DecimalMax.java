@@ -15,17 +15,19 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="dma")
+@XmlRootElement(name = "dma")
 public class DecimalMax extends Constraint {
 
-    @XmlAttribute(name="v")
+    @XmlAttribute(name = "v")
     private String value;
 
     public String getValue() {
@@ -34,6 +36,12 @@ public class DecimalMax extends Constraint {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public void load(AnnotationMirror annotationMirror) {
+        super.load(annotationMirror);
+        this.value = JavaSourceParserUtil.findAnnotationValueAsString(annotationMirror, "value");
     }
 
 }

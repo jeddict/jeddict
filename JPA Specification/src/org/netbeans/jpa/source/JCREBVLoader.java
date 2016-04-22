@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,8 +15,13 @@
  */
 package org.netbeans.jpa.source;
 
-public class Package {
+import javax.lang.model.element.AnnotationMirror;
 
-    public static final String LANG_PACKAGE = "java.lang";
-    public static final String JPA_PACKAGE = "javax.persistence";
+/**
+ *Java Class Reverse Engineering Bean validation Loader
+ * @author Gaurav Gupta
+ */
+public interface JCREBVLoader {
+
+    void load(AnnotationMirror annotationMirror);
 }

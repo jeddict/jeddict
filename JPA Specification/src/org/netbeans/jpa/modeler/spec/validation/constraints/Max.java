@@ -15,17 +15,19 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="ma")
+@XmlRootElement(name = "ma")
 public class Max extends Constraint {
 
-    @XmlAttribute(name="v")
+    @XmlAttribute(name = "v")
     private Long value;
 
     public Long getValue() {
@@ -34,6 +36,12 @@ public class Max extends Constraint {
 
     public void setValue(Long value) {
         this.value = value;
+    }
+
+    @Override
+    public void load(AnnotationMirror annotationMirror) {
+        super.load(annotationMirror);
+        this.value = (Long) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
     }
 
 }

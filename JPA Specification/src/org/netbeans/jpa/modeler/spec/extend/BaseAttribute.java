@@ -113,9 +113,9 @@ public abstract class BaseAttribute extends Attribute {
     public Map<String, Constraint> getConstraintsMap() {
         if (constraintsMap == null) {
             constraintsMap = new HashMap<>();
-            for (Constraint constraint : getConstraints()) {
+            getConstraints().stream().forEach((constraint) -> {
                 constraintsMap.put(constraint.getClass().getSimpleName(), constraint);
-            }
+            });
         }        
 
         return constraintsMap;

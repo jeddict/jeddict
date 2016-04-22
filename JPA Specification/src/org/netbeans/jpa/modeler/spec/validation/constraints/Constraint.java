@@ -16,12 +16,15 @@
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
 import java.util.Objects;
+import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.netbeans.jpa.source.JCREBVLoader;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -30,7 +33,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlJavaTypeAdapter(value = ConstraintsValidator.class)
 //@XmlSeeAlso({NotNull.class,Size.class,Max.class,Min.class})
-public abstract class Constraint {
+public abstract class Constraint implements JCREBVLoader {
 
     @XmlTransient
     private Boolean selected = false;
@@ -76,6 +79,13 @@ public abstract class Constraint {
             return false;
         }
         return true;
+    }
+    
+    
+    @Override
+    public void load(AnnotationMirror annotationMirror) {
+        this.setSelected(true);
+        this.message = JavaSourceParserUtil.findAnnotationValueAsString(annotationMirror, "message");
     }
     
     

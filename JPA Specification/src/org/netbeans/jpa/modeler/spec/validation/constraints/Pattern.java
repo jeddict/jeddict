@@ -15,17 +15,19 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="pt")
+@XmlRootElement(name = "pt")
 public class Pattern extends Constraint {
-    
-    @XmlAttribute(name="r")
+
+    @XmlAttribute(name = "r")
     private String regexp;
 
     public String getRegexp() {
@@ -36,4 +38,9 @@ public class Pattern extends Constraint {
         this.regexp = regexp;
     }
 
+    @Override
+    public void load(AnnotationMirror annotationMirror) {
+        super.load(annotationMirror);
+        this.regexp = JavaSourceParserUtil.findAnnotationValueAsString(annotationMirror, "regexp");
+    }
 }

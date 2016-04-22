@@ -15,20 +15,22 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
  * @author Gaurav Gupta
  */
-@XmlRootElement(name="si")
+@XmlRootElement(name = "si")
 public class Size extends Constraint {
 
-    @XmlAttribute(name="mi")
+    @XmlAttribute(name = "mi")
     private Integer min;
 
-    @XmlAttribute(name="ma")
+    @XmlAttribute(name = "ma")
     private Integer max;
 
     /**
@@ -57,5 +59,12 @@ public class Size extends Constraint {
      */
     public void setMax(Integer max) {
         this.max = max;
+    }
+
+    @Override
+    public void load(AnnotationMirror annotationMirror) {
+        super.load(annotationMirror);
+        this.min = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "min");
+        this.max = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "max");
     }
 }

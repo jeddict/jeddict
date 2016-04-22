@@ -15,8 +15,10 @@
  */
 package org.netbeans.jpa.modeler.spec.validation.constraints;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -57,6 +59,14 @@ public class Digits extends Constraint {
      */
     public void setInteger(Integer integer) {
         this.integer = integer;
+    }
+    
+    
+    @Override
+    public void load(AnnotationMirror annotationMirror) {
+        super.load(annotationMirror);
+         this.integer = (Integer)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "integer");
+         this.fraction = (Integer)JavaSourceParserUtil.findAnnotationValue(annotationMirror, "fraction");
     }
 
 }
