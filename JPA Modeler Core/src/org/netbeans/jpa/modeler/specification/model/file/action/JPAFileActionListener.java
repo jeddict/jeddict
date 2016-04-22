@@ -25,23 +25,12 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionRegistration;
-import org.openide.util.NbBundle.Messages;
 
-@ActionID(
-        category = "Edit",
-        id = "jpa.file.JPAFileActionListener")
-@ActionRegistration(
-        displayName = "#CTL_JPAFileActionListener")
-@ActionReference(path = "Loaders/text/jpa+xml/Actions", position = 0, separatorAfter = +50) // Issue Fix #5846
-@Messages("CTL_JPAFileActionListener=Edit in Modeler")
 @ModelerConfig(palette = "org/netbeans/jpa/modeler/resource/document/PaletteConfig.xml",
         document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/jpa/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA", name = "JPA", displayName = "JPA 2.1 Specification")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "", version = "1.5.4", architectureVersion = "1.4",
+@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "", version = "1.5.5", architectureVersion = "1.4",
         modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class, exportManager = ExportManagerImpl.class,
         relationValidator = RelationValidator.class, exceptionHandler = ExceptionUtils.class)
 public class JPAFileActionListener extends ModelerFileActionListener {
