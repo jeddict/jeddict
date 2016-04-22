@@ -2,6 +2,7 @@
 
 ### Version 1.5 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.5) ###
 
+*  MVC 1.0 Generator
 *  Enumerated, Temporal, Lob support added for DB Modeler
 *  Plural words converter added
 *  Custom annotation support
