@@ -33,13 +33,19 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jcode.core.util.ProjectHelper;
 import static org.netbeans.jcode.core.util.ProjectHelper.getJavaProjects;
 import static org.netbeans.jcode.core.util.SourceGroups.getPackageForFolder;
+import org.netbeans.jcode.layer.DefaultBusinessLayer;
+import org.netbeans.jcode.layer.DefaultControllerLayer;
+import org.netbeans.jcode.layer.DefaultViewerLayer;
+import org.netbeans.jcode.layer.Generator;
+import org.netbeans.jcode.layer.TechContext;
+import static org.netbeans.jcode.layer.Technology.Type.BUSINESS;
+import static org.netbeans.jcode.layer.Technology.Type.CONTROLLER;
+import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
 import org.netbeans.jcode.stack.BusinessLayer;
 import org.netbeans.jcode.stack.ControllerLayer;
-import org.netbeans.jcode.stack.TechnologyLayer;
 import static org.netbeans.jcode.stack.TechnologyLayer.NONE_LABEL;
 import org.netbeans.jcode.stack.ViewerLayer;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
@@ -66,7 +72,7 @@ import org.openide.util.NbPreferences;
 public class GenerateCodeDialog extends GenericDialog
         implements PropertyChangeListener {
 
-    private static final Preferences technologyLayerPref = NbPreferences.forModule(TechnologyLayer.class);//ProjectUtils.getPreferences(prj, ProjectUtils.class, true);
+    private static final Preferences technologyLayerPref = NbPreferences.forModule(Generator.class);//ProjectUtils.getPreferences(prj, ProjectUtils.class, true);
     private FileObject modelerFileObject;
     private final String modelerFilePackage;
     private final EntityMappings entityMappings;
@@ -104,22 +110,22 @@ public class GenerateCodeDialog extends GenericDialog
         } else {
             businessLayerCombo.setEnabled(true);
         }
-        businessLayerCombo.setModel(new DefaultComboBoxModel(BusinessLayer.values()));
-        controllerLayerCombo.setModel(new DefaultComboBoxModel(ControllerLayer.values()));
-        viewerLayerCombo.setModel(new DefaultComboBoxModel(ControllerLayer.NONE.getViewerLayers()));
+        businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
+        controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultControllerLayer())}));
+        viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
         controllerLayerCombo.setEnabled(false);
         viewerLayerCombo.setEnabled(false);
      
 
-        BusinessLayer businessLayer = BusinessLayer.valueOf(technologyLayerPref.get(BusinessLayer.class.getName(), BusinessLayer.NONE.name()));
-        ControllerLayer controllerLayer = ControllerLayer.valueOf(technologyLayerPref.get(ControllerLayer.class.getName(), ControllerLayer.NONE.name()));
-        ViewerLayer viewerLayer = ViewerLayer.valueOf(technologyLayerPref.get(ViewerLayer.class.getName(), ViewerLayer.NONE.name()));
-        if (businessLayer != null) {
-            businessLayerCombo.setSelectedItem(businessLayer);
-            if (businessLayer!=BusinessLayer.NONE && controllerLayer != null) {
-                controllerLayerCombo.setSelectedItem(controllerLayer);
-                if (controllerLayer!=ControllerLayer.NONE && viewerLayer != null) {
-                    viewerLayerCombo.setSelectedItem(viewerLayer);
+        TechContext businessContext = Generator.get(technologyLayerPref.get(BUSINESS.name(), DefaultBusinessLayer.class.getSimpleName()));
+        TechContext controllerContext = Generator.get(technologyLayerPref.get(CONTROLLER.name(), DefaultControllerLayer.class.getSimpleName()));
+        TechContext viewerContext = Generator.get(technologyLayerPref.get(VIEWER.name(), DefaultViewerLayer.class.getSimpleName()));
+        if (businessContext != null) {
+            businessLayerCombo.setSelectedItem(businessContext);
+            if (businessContext.isValid() && controllerContext != null) {
+                controllerLayerCombo.setSelectedItem(controllerContext);
+                if (controllerContext.isValid() && viewerContext != null) {
+                    viewerLayerCombo.setSelectedItem(viewerContext);
                 }
             }
         }
@@ -130,11 +136,11 @@ public class GenerateCodeDialog extends GenericDialog
     private final static int business_PANEL_INDEX = 0, CONTROLLER_PANEL_INDEX = 1, VIEWER_PANEL_INDEX = 2;
     private LayerConfigPanel[] layerConfigPanels = new LayerConfigPanel[3];
 
-    private void setTechPanel(int index, JPanel techLayerPanel, TechnologyLayer technologyLayer) {
+    private void setTechPanel(int index, JPanel techLayerPanel, TechContext technologyLayer) {
         try {
             LayerConfigPanel techPanel;
-            if (technologyLayer.getConfigPanel() != null) {
-                techPanel = technologyLayer.getConfigPanel().newInstance();
+            if (technologyLayer.isValid()) {
+                techPanel = technologyLayer.getTechnology().panel().newInstance();
             } else {
                 techPanel = new DefaultConfigPanel();
             }
@@ -149,16 +155,16 @@ public class GenerateCodeDialog extends GenericDialog
             layerConfigPanels[index]= techPanel;
             if (index == business_PANEL_INDEX) {
                 getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
-                addLayerTab(getBusinessLayer().getLabel(), businessPanel);
+                addLayerTab(getBusinessLayer().toString(), businessPanel);
             } else if (index == CONTROLLER_PANEL_INDEX) {
                 getConfigData().setControllerLayerConfig(techPanel.getConfigData());
-                addLayerTab(getBusinessLayer().getLabel(), businessPanel);
-                addLayerTab(getControllerLayer().getLabel(), controllerPanel);
+                addLayerTab(getBusinessLayer().toString(), businessPanel);
+                addLayerTab(getControllerLayer().toString(), controllerPanel);
             } else if (index == VIEWER_PANEL_INDEX) {
                 getConfigData().setViewerLayerConfig(techPanel.getConfigData());
-                addLayerTab(getBusinessLayer().getLabel(), businessPanel);
-                addLayerTab(getControllerLayer().getLabel(), controllerPanel);
-                addLayerTab(getViewerLayer().getLabel(), viewerPanel);
+                addLayerTab(getBusinessLayer().toString(), businessPanel);
+                addLayerTab(getControllerLayer().toString(), controllerPanel);
+                addLayerTab(getViewerLayer().toString(), viewerPanel);
             }
 
             if (configPane.getComponentCount() > index) {
@@ -531,11 +537,11 @@ public class GenerateCodeDialog extends GenericDialog
     private void store(){
         entityMappings.setPackage(getPackage());
         if (getBusinessLayer() != null) {
-            technologyLayerPref.put(BusinessLayer.class.getName(), getBusinessLayer().name());
+            technologyLayerPref.put(BusinessLayer.class.getName(), getBusinessLayer().getGenerator().getClass().getSimpleName());
             if (getControllerLayer() != null) {
-                technologyLayerPref.put(ControllerLayer.class.getName(), getControllerLayer().name());
+                technologyLayerPref.put(ControllerLayer.class.getName(), getControllerLayer().getGenerator().getClass().getSimpleName());
                 if (getViewerLayer() != null) {
-                    technologyLayerPref.put(ViewerLayer.class.getName(), getViewerLayer().name());
+                    technologyLayerPref.put(ViewerLayer.class.getName(), getViewerLayer().getGenerator().getClass().getSimpleName());
                 }
             }
         }
@@ -556,8 +562,7 @@ public class GenerateCodeDialog extends GenericDialog
 
     private void businessLayerComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_businessLayerComboItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            BusinessLayer businessLayer = getBusinessLayer();
-            changebusinessLayer(businessLayer);
+            changebusinessLayer(getBusinessLayer());
         }
     }//GEN-LAST:event_businessLayerComboItemStateChanged
 
@@ -569,8 +574,7 @@ public class GenerateCodeDialog extends GenericDialog
 
     private void controllerLayerComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_controllerLayerComboItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            ControllerLayer controllerLayer = getControllerLayer();
-            changeControllerLayer(controllerLayer);
+            changeControllerLayer(getControllerLayer());
         }
     }//GEN-LAST:event_controllerLayerComboItemStateChanged
 
@@ -578,37 +582,38 @@ public class GenerateCodeDialog extends GenericDialog
         // TODO add your handling code here:
     }//GEN-LAST:event_resourcePackageComboActionPerformed
 
-    private void changebusinessLayer(BusinessLayer businessLayer) {
-        controllerLayerCombo.setModel(new DefaultComboBoxModel(businessLayer.getControllerLayer()));
-        controllerLayerCombo.setEnabled(businessLayer != BusinessLayer.NONE);
+    private void changebusinessLayer(TechContext businessLayer) {
+        System.out.println("Generator.getController(businessLayer) " + Generator.getController(businessLayer));
+        controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
+        controllerLayerCombo.setEnabled(businessLayer.isValid());
         viewerLayerCombo.setModel(new DefaultComboBoxModel(ControllerLayer.NONE.getViewerLayers()));
         viewerLayerCombo.setEnabled(false);
         setTechPanel(business_PANEL_INDEX, businessPanel, businessLayer);
-        if (businessLayer == BusinessLayer.NONE) {
+        if (!businessLayer.isValid()) {
             viewerLayerCombo.setEnabled(false);
         }
     }
 
-    private void changeControllerLayer(ControllerLayer controllerLayer) {
-        viewerLayerCombo.setModel(new DefaultComboBoxModel(controllerLayer.getViewerLayers()));
-        viewerLayerCombo.setEnabled(controllerLayer != ControllerLayer.NONE);
+    private void changeControllerLayer(TechContext controllerLayer) {
+        viewerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getViewer(controllerLayer).toArray()));
+        viewerLayerCombo.setEnabled(controllerLayer.isValid());
         setTechPanel(CONTROLLER_PANEL_INDEX, controllerPanel, controllerLayer);
     }
 
-    private void changeViewerLayer(ViewerLayer viewerLayer) {
+    private void changeViewerLayer(TechContext viewerLayer) {
         setTechPanel(VIEWER_PANEL_INDEX, viewerPanel, viewerLayer);
     }
 
-    public BusinessLayer getBusinessLayer() {
-        return (BusinessLayer) businessLayerCombo.getModel().getSelectedItem();
+    public TechContext getBusinessLayer() {
+        return (TechContext) businessLayerCombo.getModel().getSelectedItem();
     }
 
-    public ViewerLayer getViewerLayer() {
-        return (ViewerLayer) viewerLayerCombo.getModel().getSelectedItem();
+    public TechContext getViewerLayer() {
+        return (TechContext) viewerLayerCombo.getModel().getSelectedItem();
     }
 
-    public ControllerLayer getControllerLayer() {
-        return (ControllerLayer) controllerLayerCombo.getModel().getSelectedItem();
+    public TechContext getControllerLayer() {
+        return (TechContext) controllerLayerCombo.getModel().getSelectedItem();
     }
 
     @Override
