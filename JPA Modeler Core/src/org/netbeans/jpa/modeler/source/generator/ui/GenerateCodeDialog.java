@@ -41,13 +41,10 @@ import org.netbeans.jcode.layer.DefaultControllerLayer;
 import org.netbeans.jcode.layer.DefaultViewerLayer;
 import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.TechContext;
+import static org.netbeans.jcode.layer.Technology.NONE_LABEL;
 import static org.netbeans.jcode.layer.Technology.Type.BUSINESS;
 import static org.netbeans.jcode.layer.Technology.Type.CONTROLLER;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
-import org.netbeans.jcode.stack.BusinessLayer;
-import org.netbeans.jcode.stack.ControllerLayer;
-import static org.netbeans.jcode.stack.TechnologyLayer.NONE_LABEL;
-import org.netbeans.jcode.stack.ViewerLayer;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
 import org.netbeans.jcode.stack.config.panel.DefaultConfigPanel;
 import org.netbeans.jcode.stack.config.panel.LayerConfigPanel;
@@ -155,13 +152,16 @@ public class GenerateCodeDialog extends GenericDialog
             layerConfigPanels[index]= techPanel;
             if (index == business_PANEL_INDEX) {
                 getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
+                getConfigData().setBussinesLayerGenerator(technologyLayer.getGenerator());
                 addLayerTab(getBusinessLayer().toString(), businessPanel);
             } else if (index == CONTROLLER_PANEL_INDEX) {
                 getConfigData().setControllerLayerConfig(techPanel.getConfigData());
+                getConfigData().setControllerLayerGenerator(technologyLayer.getGenerator());
                 addLayerTab(getBusinessLayer().toString(), businessPanel);
                 addLayerTab(getControllerLayer().toString(), controllerPanel);
             } else if (index == VIEWER_PANEL_INDEX) {
                 getConfigData().setViewerLayerConfig(techPanel.getConfigData());
+                getConfigData().setViewerLayerGenerator(technologyLayer.getGenerator());
                 addLayerTab(getBusinessLayer().toString(), businessPanel);
                 addLayerTab(getControllerLayer().toString(), controllerPanel);
                 addLayerTab(getViewerLayer().toString(), viewerPanel);
@@ -537,11 +537,11 @@ public class GenerateCodeDialog extends GenericDialog
     private void store(){
         entityMappings.setPackage(getPackage());
         if (getBusinessLayer() != null) {
-            technologyLayerPref.put(BusinessLayer.class.getName(), getBusinessLayer().getGenerator().getClass().getSimpleName());
+            technologyLayerPref.put(BUSINESS.name(), getBusinessLayer().getGenerator().getClass().getSimpleName());
             if (getControllerLayer() != null) {
-                technologyLayerPref.put(ControllerLayer.class.getName(), getControllerLayer().getGenerator().getClass().getSimpleName());
+                technologyLayerPref.put(CONTROLLER.name(), getControllerLayer().getGenerator().getClass().getSimpleName());
                 if (getViewerLayer() != null) {
-                    technologyLayerPref.put(ViewerLayer.class.getName(), getViewerLayer().getGenerator().getClass().getSimpleName());
+                    technologyLayerPref.put(VIEWER.name(), getViewerLayer().getGenerator().getClass().getSimpleName());
                 }
             }
         }
@@ -586,7 +586,7 @@ public class GenerateCodeDialog extends GenericDialog
         System.out.println("Generator.getController(businessLayer) " + Generator.getController(businessLayer));
         controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
         controllerLayerCombo.setEnabled(businessLayer.isValid());
-        viewerLayerCombo.setModel(new DefaultComboBoxModel(ControllerLayer.NONE.getViewerLayers()));
+        viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
         viewerLayerCombo.setEnabled(false);
         setTechPanel(business_PANEL_INDEX, businessPanel, businessLayer);
         if (!businessLayer.isValid()) {

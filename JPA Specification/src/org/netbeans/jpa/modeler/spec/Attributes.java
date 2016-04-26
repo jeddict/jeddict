@@ -152,7 +152,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                     this.addBasic(Basic.load(element, variableElement)); //Default Annotation
                 }
 
-            }
+            } 
 //            else if (!methodName.startsWith("set")) {
 //            }
             }catch(TypeNotPresentException ex){

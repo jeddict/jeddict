@@ -110,6 +110,7 @@ import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.db.explorer.ConnectionList;
 import org.netbeans.modules.db.explorer.action.ConnectAction;
+import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
@@ -145,7 +146,17 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
-            DBMapping dbMapping = createDBMapping(file, entityMapping);
+            DBMapping dbMapping = null;
+            try {
+            dbMapping = createDBMapping(file, entityMapping);
+            } catch(DBConnectionNotFound ex){
+                entityMapping.getCache().setDatabaseConnection(null);
+                try {
+                    dbMapping = createDBMapping(file, entityMapping);
+                } catch (DBConnectionNotFound ex1) {
+                   file.handleException(ex1);
+                }
+            }
             scene.setBaseElementSpec(dbMapping);
 
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
@@ -168,7 +179,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
     }
 
-    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException {
+    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException, DBConnectionNotFound {
         DBMapping dbMapping = new DBMapping();
         DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnectionCache();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
@@ -198,8 +209,13 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                         }
                     }
 //                }
+                  try {  
                 dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
-                Thread.currentThread().setContextClassLoader(dynamicClassLoader);
+                
+                  } catch(NullPointerException ex){
+                      throw new DBConnectionNotFound();
+                  }
+                  Thread.currentThread().setContextClassLoader(dynamicClassLoader);
                 databaseLogin.setDatabaseURL(connection.getUrl());
                 databaseLogin.setUserName(connection.getUserName());
                 databaseLogin.setPassword(connection.getPassword());

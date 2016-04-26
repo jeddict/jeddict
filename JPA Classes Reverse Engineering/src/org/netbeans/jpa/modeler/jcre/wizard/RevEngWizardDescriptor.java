@@ -224,7 +224,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
 
         if (!missingEntities.isEmpty()) {
            final String title,_package;
-StringBuilder message = new StringBuilder();
+            StringBuilder message = new StringBuilder();
             if (missingEntities.size() == 1) {
                 title = "Conflict detected - Entity not found";
                 message.append(JavaSourceParserUtil.simpleClassName(missingEntities.get(0))).append(" Entity is ");
