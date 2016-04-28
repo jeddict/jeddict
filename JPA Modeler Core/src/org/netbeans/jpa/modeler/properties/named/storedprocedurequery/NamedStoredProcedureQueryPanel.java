@@ -199,12 +199,12 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         root_jLayeredPane = new javax.swing.JLayeredPane();
         jTabbedPane = new javax.swing.JTabbedPane();
         base_jLayeredPane = new javax.swing.JLayeredPane();
-        name_LayeredPane = new javax.swing.JLayeredPane();
-        name_Label = new javax.swing.JLabel();
-        name_TextField = new javax.swing.JTextField();
         procedureName_LayeredPane = new javax.swing.JLayeredPane();
         procedureName_Label = new javax.swing.JLabel();
         procedureName_jComboBox = new javax.swing.JComboBox();
+        name_LayeredPane = new javax.swing.JLayeredPane();
+        name_Label = new javax.swing.JLabel();
+        name_TextField = new javax.swing.JTextField();
         dbCon_LayeredPane = new javax.swing.JLayeredPane();
         dbCon_Label = new javax.swing.JLabel();
         dbCon_jComboBox = new javax.swing.JComboBox();
@@ -239,39 +239,10 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.name_Label.text")); // NOI18N
-
-        name_TextField.setText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.name_TextField.text")); // NOI18N
-        name_TextField.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.name_TextField.toolTipText")); // NOI18N
-        name_TextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                name_TextFieldActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout name_LayeredPaneLayout = new javax.swing.GroupLayout(name_LayeredPane);
-        name_LayeredPane.setLayout(name_LayeredPaneLayout);
-        name_LayeredPaneLayout.setHorizontalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        name_LayeredPaneLayout.setVerticalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name_Label)
-                    .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        name_LayeredPane.setLayer(name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        name_LayeredPane.setLayer(name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        procedureName_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(procedureName_Label, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.procedureName_Label.text")); // NOI18N
+        procedureName_LayeredPane.add(procedureName_Label, java.awt.BorderLayout.WEST);
 
         procedureName_jComboBox.setEditable(true);
         procedureName_jComboBox.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.procedureName_jComboBox.toolTipText")); // NOI18N
@@ -280,58 +251,33 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                 procedureName_jComboBoxActionPerformed(evt);
             }
         });
+        procedureName_LayeredPane.add(procedureName_jComboBox, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout procedureName_LayeredPaneLayout = new javax.swing.GroupLayout(procedureName_LayeredPane);
-        procedureName_LayeredPane.setLayout(procedureName_LayeredPaneLayout);
-        procedureName_LayeredPaneLayout.setHorizontalGroup(
-            procedureName_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(procedureName_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(procedureName_Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(procedureName_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        procedureName_LayeredPaneLayout.setVerticalGroup(
-            procedureName_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(procedureName_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(procedureName_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(procedureName_Label)
-                    .addComponent(procedureName_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        procedureName_LayeredPane.setLayer(procedureName_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        procedureName_LayeredPane.setLayer(procedureName_jComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        name_LayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.name_Label.text")); // NOI18N
+        name_LayeredPane.add(name_Label, java.awt.BorderLayout.WEST);
+
+        name_TextField.setText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.name_TextField.text")); // NOI18N
+        name_TextField.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.name_TextField.toolTipText")); // NOI18N
+        name_TextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                name_TextFieldActionPerformed(evt);
+            }
+        });
+        name_LayeredPane.add(name_TextField, java.awt.BorderLayout.CENTER);
+
+        dbCon_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(dbCon_Label, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.dbCon_Label.text")); // NOI18N
+        dbCon_LayeredPane.add(dbCon_Label, java.awt.BorderLayout.WEST);
 
         dbCon_jComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 dbCon_jComboBoxItemStateChanged(evt);
             }
         });
-
-        javax.swing.GroupLayout dbCon_LayeredPaneLayout = new javax.swing.GroupLayout(dbCon_LayeredPane);
-        dbCon_LayeredPane.setLayout(dbCon_LayeredPaneLayout);
-        dbCon_LayeredPaneLayout.setHorizontalGroup(
-            dbCon_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dbCon_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(dbCon_Label)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(dbCon_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        dbCon_LayeredPaneLayout.setVerticalGroup(
-            dbCon_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(dbCon_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(dbCon_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dbCon_Label)
-                    .addComponent(dbCon_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        dbCon_LayeredPane.setLayer(dbCon_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        dbCon_LayeredPane.setLayer(dbCon_jComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        dbCon_LayeredPane.add(dbCon_jComboBox, java.awt.BorderLayout.CENTER);
 
         parameters_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.parameters_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         parameters_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
@@ -340,12 +286,12 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         parameters_LayeredPane.setLayout(parameters_LayeredPaneLayout);
         parameters_LayeredPaneLayout.setHorizontalGroup(
             parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(parametersEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+            .addComponent(parametersEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         parameters_LayeredPaneLayout.setVerticalGroup(
             parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(parameters_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(parametersEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                .addComponent(parametersEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
                 .addContainerGap())
         );
         parameters_LayeredPane.setLayer(parametersEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -357,28 +303,27 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             .addGroup(base_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(base_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(base_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(name_LayeredPane, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(procedureName_LayeredPane, javax.swing.GroupLayout.Alignment.LEADING))
-                    .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(procedureName_LayeredPane)
+                    .addComponent(name_LayeredPane)
+                    .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+                    .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
+                .addContainerGap())
         );
         base_jLayeredPaneLayout.setVerticalGroup(
             base_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(base_jLayeredPaneLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addContainerGap()
                 .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(procedureName_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        base_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         base_jLayeredPane.setLayer(procedureName_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        base_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         base_jLayeredPane.setLayer(dbCon_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         base_jLayeredPane.setLayer(parameters_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -491,7 +436,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
         queryHint_LayeredPaneLayout.setHorizontalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+            .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
         );
         queryHint_LayeredPaneLayout.setVerticalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -513,7 +458,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         annotation_LayeredPane.setLayout(annotation_LayeredPaneLayout);
         annotation_LayeredPaneLayout.setHorizontalGroup(
             annotation_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(annotation_ScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+            .addComponent(annotation_ScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
         );
         annotation_LayeredPaneLayout.setVerticalGroup(
             annotation_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -549,7 +494,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             }
         });
         action_jLayeredPane.add(Save);
-        Save.setBounds(0, 0, 70, 23);
+        Save.setBounds(0, 0, 70, 29);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.cancel_Button.toolTipText")); // NOI18N
@@ -571,7 +516,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         root_jLayeredPaneLayout.setVerticalGroup(
