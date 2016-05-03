@@ -118,7 +118,7 @@ import org.openide.windows.InputOutput;
     "namedNativeQuery",
     "namedStoredProcedureQuery",
     "sqlResultSetMapping",
-    "defaultClass",
+//    "defaultClass",
     "mappedSuperclass",
     "entity",
     "embeddable",
@@ -154,7 +154,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     @XmlElement(name = "srsm")//(name = "sql-result-set-mapping")
     protected Set<SqlResultSetMapping> sqlResultSetMapping;
 
-    @XmlElement(name = "default-class")
+//    @XmlElement(name = "default-class")
+    @XmlTransient
     private List<DefaultClass> defaultClass;
     @XmlElement(name = "mapped-superclass")
     protected List<MappedSuperclass> mappedSuperclass;

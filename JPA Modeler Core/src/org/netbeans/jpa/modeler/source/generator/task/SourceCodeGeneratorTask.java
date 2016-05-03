@@ -32,6 +32,7 @@ import org.netbeans.jcode.task.progress.ProgressHandler;
 import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.openide.util.NbBundle;
 
 public class SourceCodeGeneratorTask extends AbstractNBTask {
@@ -68,6 +69,8 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 //            modelerFile.save();//asynchronous : causes to generate code before saving
             modelerFile.getModelerUtil().saveModelerFile(modelerFile);//synchronous
             modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);//remove * from header
+        } else {
+            JPAModelerUtil.preExecution(modelerFile);
         }
         // Issue Fix #5847 End
         try {

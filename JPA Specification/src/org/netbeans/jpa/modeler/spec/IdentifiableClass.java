@@ -23,6 +23,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -32,7 +33,8 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @XmlAttribute(name = "xre")//(name = "jaxb-root-element")//
     private Boolean xmlRootElement = false;
 
-    @XmlElement(name = "id-class")
+//    @XmlElement(name = "id-class")
+    @XmlTransient
     protected IdClass idClass;
     protected Attributes attributes;
 

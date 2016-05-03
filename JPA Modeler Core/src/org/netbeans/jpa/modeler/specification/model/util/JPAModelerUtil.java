@@ -389,6 +389,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     }
 
                 }
+                 
             }
             
             
@@ -634,11 +635,18 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     @Override
     public void saveModelerFile(ModelerFile file) {
+        EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
+        JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
+        updateJPADiagram(scene, entityMappings.getJPADiagram());
+        preExecution(file);
+        saveFile(entityMappings, file.getFile());
+    }
+    
+    public static void preExecution(ModelerFile file){
         JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
         EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
-        updateJPADiagram(scene, entityMappings.getJPADiagram());
-        entityMappings.getDefaultClass().clear();
 
+        entityMappings.getDefaultClass().clear();
         for (IBaseElementWidget baseElementWidget : scene.getBaseElements()) {
             if (baseElementWidget instanceof FlowNodeWidget) {
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
@@ -672,10 +680,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         executeCompositePrimaryKeyEvaluation(scene.getBaseElements(), entityMappings);
 //        addDefaultJoinColumnForCompositePK(scene.getBaseElements(), entityMappings);
 
-        saveFile(entityMappings, file.getFile());
     }
 
-    private void executeCompositePrimaryKeyEvaluation(List<IBaseElementWidget> baseElements, EntityMappings entityMappings) {
+    private static void executeCompositePrimaryKeyEvaluation(List<IBaseElementWidget> baseElements, EntityMappings entityMappings) {
         List<IBaseElementWidget> baseElementWidgetPending = new ArrayList<>();
         for (IBaseElementWidget baseElementWidget : baseElements) {
             if (baseElementWidget instanceof PersistenceClassWidget) {
@@ -690,7 +697,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
     }
 
-    private boolean manageCompositePrimaryKey(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, EntityMappings entityMappings) {
+    private static boolean manageCompositePrimaryKey(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, EntityMappings entityMappings) {
         //Start : IDCLASS,EMBEDDEDID //((Entity) persistenceClassWidget.getBaseElementSpec()).getClazz()
         if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) persistenceClassWidget.getBaseElementSpec();
@@ -802,16 +809,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                                 attribute.setAttributeType(targetEntitySpec.getCompositePrimaryKeyClass());
                                 attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute//PK
                                 attribute.setDerived(true);
-                                if (null != targetEntitySpec.getCompositePrimaryKeyType()) {
-                                    switch (targetEntitySpec.getCompositePrimaryKeyType()) {
-                                        case IDCLASS:
-                                            break;
-                                        case EMBEDDEDID:
-                                            break;
-                                        default:
-                                            throw new UnsupportedOperationException("Not Supported Currently");
-                                    }
-                                }
                             }
                             _class.addAttribute(attribute);
                             //Start : if dependent class is Embedded that add @MapsId to Derived PK
@@ -840,6 +837,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     }
 
             }
+            pkContainerSpec.manageCompositePrimaryKey();
+
         }
         return true;
 //End : IDCLASS,EMBEDDEDID
@@ -1697,6 +1696,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             return;
         }
         try {
+        JPAModelerUtil.preExecution(file);
         DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
         Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
         dbModelerRequestManager.init(file, entityMappings);

@@ -19,19 +19,25 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import static org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils.ISSUES_URL;
 import org.netbeans.jpa.modeler.network.social.SharingHelper;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.properties.window.GenericDialog;
+import org.openide.awt.NotificationDisplayer;
 import org.openide.util.Exceptions;
+import org.openide.util.ImageUtilities;
+import static org.openide.util.NbBundle.getMessage;
+import org.openide.windows.WindowManager;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class ExceptionReporterPanel extends javax.swing.JDialog {
+public class ExceptionReporterPanel extends GenericDialog {
 
     private final static String buttonText = "<html>Click here to copy logs and report bug </html>";
     private final static String buttonAttachText = "<html>Click here to copy logs and report bug (please attach modeler file)</html>";
@@ -42,7 +48,7 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
     private final Throwable throwable;
 
     public ExceptionReporterPanel(String bugDescription, Throwable throwable, ModelerFile file) {
-        super((Frame) null, true);
+        super((Frame) WindowManager.getDefault().getMainWindow(), getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.title"),true);
         this.file = file;
         this.throwable = throwable;
         this.bugDescription = bugDescription;
@@ -71,8 +77,6 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
         setTitle(org.openide.util.NbBundle.getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.title")); // NOI18N
         setAlwaysOnTop(true);
         setIconImage(null);
-        setLocationByPlatform(true);
-        setModal(true);
         setName("errorDialog"); // NOI18N
 
         iconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/collaborate/resource/image/BUG_ICON.png"))); // NOI18N
@@ -100,23 +104,24 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
             }
         });
 
-        actionPane.setLayer(submitButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        actionPane.setLayer(cancelButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout actionPaneLayout = new javax.swing.GroupLayout(actionPane);
         actionPane.setLayout(actionPaneLayout);
         actionPaneLayout.setHorizontalGroup(
             actionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actionPaneLayout.createSequentialGroup()
-                .addComponent(submitButton, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(submitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         actionPaneLayout.setVerticalGroup(
             actionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(submitButton, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
         );
+        actionPane.setLayer(submitButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        actionPane.setLayer(cancelButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         bugDescriptionTextPane.setForeground(new java.awt.Color(255, 255, 255));
         bugDescriptionTextPane.setText(bugDescription);
@@ -126,48 +131,47 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(bugDescriptionLabel, org.openide.util.NbBundle.getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.bugDescriptionLabel.text")); // NOI18N
 
-        root.setLayer(iconLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root.setLayer(actionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root.setLayer(bugDescriptionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root.setLayer(bugDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout rootLayout = new javax.swing.GroupLayout(root);
         root.setLayout(rootLayout);
         rootLayout.setHorizontalGroup(
             rootLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rootLayout.createSequentialGroup()
+                .addComponent(iconLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(rootLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(rootLayout.createSequentialGroup()
-                        .addComponent(iconLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(rootLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(bugDescriptionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(bugDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(bugDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 273, Short.MAX_VALUE))
+                    .addComponent(bugDescriptionPane))
+                .addContainerGap())
+            .addComponent(actionPane, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         rootLayout.setVerticalGroup(
             rootLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rootLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(rootLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(iconLabel)
+                    .addGroup(rootLayout.createSequentialGroup()
+                        .addComponent(iconLabel)
+                        .addGap(0, 56, Short.MAX_VALUE))
                     .addGroup(rootLayout.createSequentialGroup()
                         .addComponent(bugDescriptionLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bugDescriptionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                        .addComponent(bugDescriptionPane)))
+                .addGap(18, 18, 18)
                 .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+        root.setLayer(iconLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root.setLayer(actionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root.setLayer(bugDescriptionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root.setLayer(bugDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(root, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 2, Short.MAX_VALUE))
+            .addComponent(root)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,8 +192,8 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
             report.append("Message : ").append(bugDescription).append('\n').append('\n');
             throwable.printStackTrace(new PrintWriter(stringWriter));
             report.append("StackTrace : ").append('\n').append(stringWriter.toString()).append('\n').append('\n');
-             if(file!=null){
-            report.append("ModelerFile : ").append('\n').append("```xml").append('\n').append(file.getContent()).append("```");
+            if (file != null) {
+                report.append("ModelerFile : ").append('\n').append("```xml").append('\n').append(file.getContent()).append("```");
             }
             Toolkit toolkit = Toolkit.getDefaultToolkit();
             Clipboard clipboard = toolkit.getSystemClipboard();
@@ -205,6 +209,11 @@ public class ExceptionReporterPanel extends javax.swing.JDialog {
             }
 
         }
+        NotificationDisplayer.getDefault().notify("Logs coppied",
+                ImageUtilities.image2Icon(file.getIcon()),
+                "Logs coppied to clipboard, please report the issue with these logs", (ActionEvent e) -> {
+
+                }, NotificationDisplayer.Priority.NORMAL, NotificationDisplayer.Category.INFO);
     }//GEN-LAST:event_submitButtonActionPerformed
 
 //    /**

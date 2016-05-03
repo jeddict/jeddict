@@ -73,6 +73,7 @@ import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidg
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
+import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
@@ -311,7 +312,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
-//        JPAModelerInstaller.lookupUpdates();
         SwingUtilities.invokeLater(() -> {
             OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
             if (!window.isOpened()) {
@@ -319,8 +319,13 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
             window.requestActive();
         });
-
-
+        
+        //After installation of new version, auto save file 
+        ModelerFile file = this.getModelerFile();
+        EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
+        if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getCurrentVersion()) < 0) {
+            file.getModelerUtil().saveModelerFile(file);
+        }
     }
 
     @Override

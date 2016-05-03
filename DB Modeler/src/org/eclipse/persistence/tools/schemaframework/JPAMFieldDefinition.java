@@ -120,7 +120,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
      */
     public void buildDBColumn(final DBTable table, final AbstractSession session,
             final JPAMTableDefinition tableDef) throws ValidationException {
-
+        System.out.println("name : " + name);
         DBColumn column = null;
         if (discriminatorColumn != null) {
             column = new DBDiscriminatorColumn(name, discriminatorColumn);
