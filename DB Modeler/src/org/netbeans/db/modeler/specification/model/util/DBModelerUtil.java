@@ -15,11 +15,23 @@
  */
 package org.netbeans.db.modeler.specification.model.util;
 
+import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import java.awt.Image;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
+import org.eclipse.persistence.exceptions.DescriptorException;
+import static org.eclipse.persistence.exceptions.DescriptorException.MULTIPLE_WRITE_MAPPINGS_FOR_FIELD;
+import static org.eclipse.persistence.exceptions.DescriptorException.NO_TARGET_FOREIGN_KEYS_SPECIFIED;
+import org.eclipse.persistence.exceptions.IntegrityException;
 import org.eclipse.persistence.exceptions.ValidationException;
+import static org.eclipse.persistence.exceptions.ValidationException.INCOMPLETE_JOIN_COLUMNS_SPECIFIED;
+import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
@@ -36,6 +48,7 @@ import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IReferenceColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
@@ -53,6 +66,7 @@ import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
+import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -75,16 +89,24 @@ import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
+import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.DiagramElement;
 import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Shape;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -96,6 +118,7 @@ import org.netbeans.modeler.core.exception.ModelerException;
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
+import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
@@ -110,7 +133,6 @@ import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.db.explorer.ConnectionList;
 import org.netbeans.modules.db.explorer.action.ConnectAction;
-import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
@@ -123,9 +145,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public static ImageIcon VIEW_SQL;
 
     static {// required to load before init
-            ClassLoader cl = DBModelerUtil.class.getClassLoader();
-            VIEW_SQL = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/VIEW_SQL.png"));
+        ClassLoader cl = DBModelerUtil.class.getClassLoader();
+        VIEW_SQL = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/VIEW_SQL.png"));
     }
+
     @Override
     public void init() {
         if (COLUMN == null) {
@@ -142,20 +165,118 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     @Override
     public void loadModelerFile(ModelerFile file) throws org.netbeans.modeler.core.exception.ProcessInterruptedException {
         try {
+            loadModelerFileInternal(file);
+        } catch (DBConnectionNotFound ex) {
+            try {
+                loadModelerFileInternal(file);
+            } catch (DBConnectionNotFound ex1) {
+                file.handleException(ex1);
+            }
+        } catch (IntegrityException ie) {
+            boolean throwError = true;
+            if (ie.getIntegrityChecker().getCaughtExceptions().get(0) instanceof DescriptorException) {
+                DescriptorException de = (DescriptorException) ie.getIntegrityChecker().getCaughtExceptions().get(0);
+                if (MULTIPLE_WRITE_MAPPINGS_FOR_FIELD == de.getErrorCode()) {
+                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
+                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                            String attributeName = de.getMapping().getAttributeName();
+                            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Multiple Same column name exist in entity " + entity.getClazz() + " for attribute " + attributeName
+                                    + '\n' +" Would like to override the column name automatically using @JoinColumn ?",
+                                    "Error : Same column name exist in table", YES_NO_OPTION) == YES_NO_OPTION) {
+                                List<JoinColumn> joinColumns = new ArrayList<>();
+                                
+                                
+                                for (DatabaseField databaseField : de.getMapping().getFields()) {
+                                    if (databaseField.isPrimaryKey()) {
+                                        JoinColumn joinColumn = new JoinColumn();
+                                        joinColumn.setName(attributeName.toUpperCase() + "_" + databaseField.getName());
+                                        joinColumn.setReferencedColumnName(databaseField.getName());
+                                        joinColumns.add(joinColumn);
+                                    }
+                                }
+                                JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName, joinColumns);
+                                loadModelerFile(file);
+                                throwError = false;
+                            }
+                        }
+                    }
+                } else if (NO_TARGET_FOREIGN_KEYS_SPECIFIED == de.getErrorCode()) {
+                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
+                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                            String attributeName = de.getMapping().getAttributeName();
+                            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "No target foreign keys have been specified for this mapping. in entity " + entity.getClazz() + " for attribute " + attributeName
+                                    + '\n' +" Would like to override the column name automatically using @JoinColumn ?",
+                                    "Error : Same column name exist in table", YES_NO_OPTION) == YES_NO_OPTION) {
+                                JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName, null);
+                                loadModelerFile(file);
+                                throwError = false;
+                            }
+                        }
+                    }
+                }
+            }
+            if (throwError) {
+                throw ie;
+//                file.getModelerPanelTopComponent().close();
+//                return;
+            }
+        } catch (DBValidationException ex) {
+            boolean throwError = true;
+                if (INCOMPLETE_JOIN_COLUMNS_SPECIFIED == ex.getErrorCode()) {
+                    Attribute attribute = ex.getAttribute();
+                    JavaClass javaClass = attribute.getJavaClass();
+//                       Entity entity;// = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == javaClass).findAny();
+                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                            String attributeName = attribute.getName();
+                            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "entity " + javaClass.getClazz() + " for attribute " + attributeName
+                                    + '\n' +" Would like to reconstruct the column name automatically using @JoinColumn ?",
+                                    "Error : ----", YES_NO_OPTION) == YES_NO_OPTION) {
+                                if(attribute instanceof JoinColumnHandler){
+                                    JoinColumnHandler columnHandler = (JoinColumnHandler) attribute;
+                                    columnHandler.getJoinColumn().clear();
+                                    loadModelerFile(file);
+                                throwError = false;
+                                }
+                                
+//                                JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName);
+                                
+                            }
+                        }
+                }
+            if (throwError) {
+//                throw ie;
+                file.getModelerPanelTopComponent().close();
+                return;
+            }
+           
+        } catch (ValidationException ex) {
+            file.getModelerPanelTopComponent().close();
+            String message = ex.getLocalizedMessage();
+            int end = message.lastIndexOf("Runtime Exceptions:");
+            end = end < 1 ? message.length() : end;
+            int start = message.lastIndexOf("Exception Description:");
+            start = start < 1 ? 0 : start;
+            ExceptionUtils.printStackTrace(message.substring(start, end), ex, file);
+        }
+    }
+
+    public void loadModelerFileInternal(ModelerFile file) throws DBConnectionNotFound, org.netbeans.modeler.core.exception.ProcessInterruptedException {
+        try {
 
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
             DBMapping dbMapping = null;
             try {
-            dbMapping = createDBMapping(file, entityMapping);
-            } catch(DBConnectionNotFound ex){
+                dbMapping = createDBMapping(file, entityMapping);
+            } catch (DBConnectionNotFound ex) {
                 entityMapping.getCache().setDatabaseConnection(null);
-                try {
-                    dbMapping = createDBMapping(file, entityMapping);
-                } catch (DBConnectionNotFound ex1) {
-                   file.handleException(ex1);
-                }
+                throw ex;
             }
             scene.setBaseElementSpec(dbMapping);
 
@@ -166,14 +287,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             loadFlowEdge(scene);
             scene.autoLayout();
 
-        } catch (ValidationException ex) {
-            file.getModelerPanelTopComponent().close();
-            String message = ex.getLocalizedMessage();
-            int end = message.lastIndexOf("Runtime Exceptions:");
-            end = end < 1 ? message.length() : end;
-            int start = message.lastIndexOf("Exception Description:");
-            start = start < 1 ? 0 : start;
-            ExceptionUtils.printStackTrace(message.substring(start, end), ex, file);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);
         }
@@ -186,6 +299,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         DatabaseLogin databaseLogin = new DatabaseLogin();
 
         ClassLoader dynamicClassLoader;
+        DatabaseSessionImpl session = null;
         try {
 
             if (connection == null) {
@@ -196,32 +310,32 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
             } else {
 //                if (connection.getDriverClass() == null) {
-                    for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
-                        if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
-                            new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
-                            try {
-                                connection.setDriverClass(con.getDatabaseConnection().getJDBCDriver().getDriver().getClass());
-                                connection.setDatabaseConnection(con.getDatabaseConnection());
-                            } catch (DatabaseException ex) {
-                                file.handleException(ex);
-                            }
-                            break;
+                for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
+                    if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
+                        new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
+                        try {
+                            connection.setDriverClass(con.getDatabaseConnection().getJDBCDriver().getDriver().getClass());
+                            connection.setDatabaseConnection(con.getDatabaseConnection());
+                        } catch (DatabaseException ex) {
+                            file.handleException(ex);
                         }
+                        break;
                     }
+                }
 //                }
-                  try {  
-                dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
-                
-                  } catch(NullPointerException ex){
-                      throw new DBConnectionNotFound();
-                  }
-                  Thread.currentThread().setContextClassLoader(dynamicClassLoader);
+                try {
+                    dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
+
+                } catch (NullPointerException ex) {
+                    throw new DBConnectionNotFound();
+                }
+                Thread.currentThread().setContextClassLoader(dynamicClassLoader);
                 databaseLogin.setDatabaseURL(connection.getUrl());
                 databaseLogin.setUserName(connection.getUserName());
                 databaseLogin.setPassword(connection.getPassword());
                 databaseLogin.setDriverClass(connection.getDriverClass());
             }
-            DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
+            session = new DatabaseSessionImpl(databaseLogin);
             JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
             XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
             JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
@@ -237,8 +351,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             JPAMSchemaManager mgr = new JPAMSchemaManager(dbMapping, session);
             mgr.createDefaultTables(true);
 
-            session.logout();
         } finally {
+            if (session != null) {
+                session.logout();
+            }
             if (connection != null) {
                 Thread.currentThread().setContextClassLoader(contextClassLoader);
             }
@@ -274,7 +390,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {
-                        if (column instanceof DBDiscriminatorColumn) {
+                         if (column instanceof DBDiscriminatorColumn) {
                             tableWidget.addDiscriminatorColumn(column.getName(), column);
                         } else if (column instanceof DBJoinColumn) {
                             tableWidget.addNewJoinKey(column.getName(), column);
@@ -308,9 +424,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                     tableWidget.addParentAssociationJoinColumn(column.getName(), column);
                                 }
                             }
-                        } else if (column.isPrimaryKey()) {
+                        }else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
-                        } else {
+                        }  else {
                             tableWidget.addNewBasicColumn(column.getName(), column);
                         }
                     });
@@ -339,9 +455,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 //       ReferenceColumn => Target
         DBColumn sourceColumn = (DBColumn) foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
-        ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+        if(sourceColumn.getReferenceColumn()==null){// TODO remove this block
+            return;
+        }
+        ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) { // TODO remove this block
-            targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
+             return;
         }
 
         EdgeWidgetInfo edgeInfo = new EdgeWidgetInfo();
@@ -578,7 +697,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) edgeWidget;
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
             DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getBaseElementSpec();
-            IPrimaryKeyWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+            IReferenceColumnWidget targetColumnWidget = targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
             referenceFlowWidget.setReferenceColumnWidget(targetColumnWidget);
             referenceFlowWidget.setForeignKeyWidget((ForeignKeyWidget) sourceColumnWidget);
             return sourceColumnWidget.getPinWidgetInfo();
@@ -594,8 +713,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     }
 
     public PinWidgetInfo getEdgeTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget, ColumnWidget targetColumnWidget) {
-        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget &&
-                edgeWidget instanceof ReferenceFlowWidget && targetColumnWidget instanceof ColumnWidget) {
+        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget
+                && edgeWidget instanceof ReferenceFlowWidget && targetColumnWidget instanceof ColumnWidget) {
             return targetColumnWidget.getPinWidgetInfo();
         } else {
             throw new UnsupportedOperationException("Not supported yet.");

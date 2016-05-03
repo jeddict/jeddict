@@ -18,7 +18,7 @@ package org.netbeans.jpa.modeler.source.generator.task;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
-import org.netbeans.jcode.stack.app.generator.JEEApplicationGenerator;
+import org.netbeans.jcode.generator.JEEApplicationGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType;

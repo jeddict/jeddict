@@ -17,5 +17,5 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 public enum CompositePrimaryKeyType {
 
-    IDCLASS, EMBEDDEDID, NONE;
+    IDCLASS, EMBEDDEDID;
 }

@@ -17,6 +17,7 @@ package org.eclipse.persistence.internal.jpa.metadata.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ConverterAccessor;
@@ -27,6 +28,7 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttrib
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.MappingAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataClass;
 import org.eclipse.persistence.internal.jpa.metadata.converters.MixedConverterMetadata;
+import org.netbeans.jpa.modeler.db.accessor.DefaultClassSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.MappedSuperclassSpecAccessor;
@@ -45,7 +47,11 @@ public class DBEntityMappings extends XMLEntityMappings {
         setPackage(mappings.getPackage());
         setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
         setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
-        setEmbeddables(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
+        List<EmbeddableAccessor> embeddableAccessors = new ArrayList<>();
+        embeddableAccessors.addAll(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
+        embeddableAccessors.addAll(mappings.getDefaultClass().stream().map(DefaultClassSpecAccessor::getInstance).collect(toList()));
+        
+        setEmbeddables(embeddableAccessors);
 
         setMixedConverters(new ArrayList<>());
 

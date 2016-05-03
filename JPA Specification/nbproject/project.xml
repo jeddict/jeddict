@@ -33,6 +33,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.jcode.javaee.generator</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.jcode.mvc</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -166,6 +174,7 @@
                 <friend>org.netbeans.orm.converter</friend>
                 <package>org.eclipse.persistence.descriptors</package>
                 <package>org.eclipse.persistence.internal.jpa.metadata</package>
+                <package>org.netbeans.db.modeler.exception</package>
                 <package>org.netbeans.db.modeler.manager</package>
                 <package>org.netbeans.jpa.modeler._import.javaclass</package>
                 <package>org.netbeans.jpa.modeler.db.accessor</package>

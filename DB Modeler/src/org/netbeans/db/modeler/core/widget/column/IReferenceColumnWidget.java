@@ -15,13 +15,28 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
+import java.util.List;
+import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 
 /**
  *
- * @author Shiwani Gupta
+ * @author Gaurav Gupta
  */
-public interface IPrimaryKeyWidget<E extends BaseElement> extends IReferenceColumnWidget<E> {
+public interface IReferenceColumnWidget<E extends BaseElement> {
 
+    boolean addReferenceFlowWidget(ReferenceFlowWidget flowWidget);
 
+    boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget);
+
+    String getName();
+
+    TableWidget getTableWidget();
+
+    List<ReferenceFlowWidget> getReferenceFlowWidget();
+
+    E getBaseElementSpec();
+
+    void setAnchorGap(int anchorGap);
 }

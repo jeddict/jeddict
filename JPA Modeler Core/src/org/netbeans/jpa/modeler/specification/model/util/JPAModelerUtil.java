@@ -71,6 +71,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTORelationAttrib
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.SingleRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.MultiValueEmbeddableFlowWidget;
@@ -102,6 +103,7 @@ import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
@@ -113,6 +115,7 @@ import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.DiagramElement;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
@@ -122,6 +125,7 @@ import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
@@ -665,12 +669,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
         }
 
-        executionCompositePrimaryKeyEvaluation(scene.getBaseElements(), entityMappings);
+        executeCompositePrimaryKeyEvaluation(scene.getBaseElements(), entityMappings);
+//        addDefaultJoinColumnForCompositePK(scene.getBaseElements(), entityMappings);
 
         saveFile(entityMappings, file.getFile());
     }
 
-    private void executionCompositePrimaryKeyEvaluation(List<IBaseElementWidget> baseElements, EntityMappings entityMappings) {
+    private void executeCompositePrimaryKeyEvaluation(List<IBaseElementWidget> baseElements, EntityMappings entityMappings) {
         List<IBaseElementWidget> baseElementWidgetPending = new ArrayList<>();
         for (IBaseElementWidget baseElementWidget : baseElements) {
             if (baseElementWidget instanceof PersistenceClassWidget) {
@@ -681,12 +686,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             }
         }
         if (!baseElementWidgetPending.isEmpty()) {
-            executionCompositePrimaryKeyEvaluation(baseElementWidgetPending, entityMappings);
+            executeCompositePrimaryKeyEvaluation(baseElementWidgetPending, entityMappings);
         }
     }
 
     private boolean manageCompositePrimaryKey(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, EntityMappings entityMappings) {
-        //Start : IDCLASS,EMBEDDEDID
+        //Start : IDCLASS,EMBEDDEDID //((Entity) persistenceClassWidget.getBaseElementSpec()).getClazz()
         if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) persistenceClassWidget.getBaseElementSpec();
             CompositePKProperty compositePKProperty = persistenceClassWidget.isCompositePKPropertyAllow();
@@ -747,10 +752,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         pkContainerSpec.setCompositePrimaryKeyClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
                     } else { //not CompositePKProperty.NONE
                         List<IdAttributeWidget> idAttributeWidgets = null;
+                        if(pkContainerSpec.getCompositePrimaryKeyClass()==null){
+                            pkContainerSpec.setCompositePrimaryKeyClass(persistenceClassWidget.getName()+"PK");
+                        }
                         DefaultClass _class = entityMappings.addDefaultClass(pkContainerSpec.getCompositePrimaryKeyClass());
                         if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                             idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
                             _class.setEmbeddable(true);
+                            persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
                         } else {
                             if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
                                 idAttributeWidgets = persistenceClassWidget.getAllIdAttributeWidgets();
@@ -764,8 +773,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             attribute.setName(idSpec.getName());
                             _class.addAttribute(attribute);
                         }
-                        for (RelationAttributeWidget relationAttributeWidget : persistenceClassWidget.getDerivedRelationAttributeWidgets()) {
-                            RelationAttribute relationAttributeSpec = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
+                        for (SingleRelationAttributeWidget<SingleRelationAttribute> relationAttributeWidget : persistenceClassWidget.getDerivedRelationAttributeWidgets()) {
+                            SingleRelationAttribute relationAttributeSpec = relationAttributeWidget.getBaseElementSpec();
                             Entity targetEntitySpec;
                             IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
                             EntityWidget targetEntityWidget = null;
@@ -778,16 +787,21 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                                 }
                             }
                             targetEntitySpec = targetEntityWidget.getBaseElementSpec();
-                            List<IdAttributeWidget> targetIdAttributeWidgets = targetEntityWidget.getAllIdAttributeWidgets();
+                            List<AttributeWidget> targetIdAttributeWidgets = targetEntityWidget.getPrimaryKeyAttributeWidgets();
                             DefaultAttribute attribute = new DefaultAttribute();
                             if (targetIdAttributeWidgets.size() == 1) {
-                                Id idSpec = targetIdAttributeWidgets.get(0).getBaseElementSpec();
+                                if(targetIdAttributeWidgets.get(0) instanceof IdAttributeWidget){ //if only @Id exist
+                                Id idSpec = ((IdAttributeWidget)targetIdAttributeWidgets.get(0)).getBaseElementSpec();
                                 attribute.setAttributeType(idSpec.getAttributeType());
                                 attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute
-                            } else {
+                                } else {// if only @Id @Relation exist
+                                    //never execute , handled by above AUTO_CLASS condition
+                                    throw new IllegalStateException("Handled by Auto Class case");
+                                }
+                            } else {// if @Id and @Id @Relation exist
                                 attribute.setAttributeType(targetEntitySpec.getCompositePrimaryKeyClass());
-                                attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute
-
+                                attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute//PK
+                                attribute.setDerived(true);
                                 if (null != targetEntitySpec.getCompositePrimaryKeyType()) {
                                     switch (targetEntitySpec.getCompositePrimaryKeyType()) {
                                         case IDCLASS:
@@ -831,6 +845,72 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //End : IDCLASS,EMBEDDEDID
     }
 
+    public static void addDefaultJoinColumnForCompositePK(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, String attributeName, List<JoinColumn> joinColumns) {
+                //Get all @Id @Relation owner attribute 
+                for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
+                    SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
+                    if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
+                        continue;
+                    }
+                    if(!attributeWidget.getName().equals(attributeName)){
+                         continue;
+                    }
+                    
+                    //check is it composite key
+                    EntityWidget targetEntityWidget = attributeWidget.getRelationFlowWidget().getTargetEntityWidget();
+                    Entity entity = targetEntityWidget.getBaseElementSpec();
+                    if(entity.getCompositePrimaryKeyType() != null){
+//                        boolean proceed = false;
+//                        DefaultClass defaultClass = entityMappings.findDefaultClass(entity.getCompositePrimaryKeyClass());
+                        
+//                        if(defaultClass.getAttributes().size() != relationAttribute.getJoinColumn().size()){
+//                            proceed = true;
+//                        }
+                        
+//                        if(!proceed){
+//                            // TODO compare column nane
+//                        }
+                      relationAttribute.getJoinColumn().clear();
+                        if(joinColumns == null){
+                            for(AttributeWidget attributeWidget_Tmp : targetEntityWidget.getPrimaryKeyAttributeWidgets()){
+                                Attribute attribute = (Attribute)attributeWidget_Tmp.getBaseElementSpec();
+                                JoinColumn joinColumn = new JoinColumn();
+                                joinColumn.setName(entity.getClazz() + '_' + attribute.getName());
+                                if(attribute instanceof RelationAttribute){
+                                     Entity connectedEntity = ((RelationAttribute)attribute).getConnectedEntity();
+                                     if(connectedEntity.getCompositePrimaryKeyType()!=null){
+                                         //TODO
+                                     } else {
+                                         Id id = connectedEntity.getAttributes().getId().get(0);
+                                         String refColumnName = null;
+//                                         if(entity.getCompositePrimaryKeyType()==CompositePrimaryKeyType.EMBEDDEDID){
+                                         refColumnName = attribute.getName()+ "_"+ id.getDefaultColumnName();
+//                                         } else {
+//                                             refColumnName = attribute.getName();
+//                                         }
+                                         joinColumn.setReferencedColumnName(refColumnName);
+                                     }
+                                } else {
+                                    joinColumn.setReferencedColumnName(attribute.getName());
+                                }
+                                relationAttribute.getJoinColumn().add(joinColumn);
+                            }
+                        } else {
+                            relationAttribute.getJoinColumn().addAll(joinColumns);
+                        }
+//                            for (DefaultAttribute attribute : defaultClass.getAttributes()) {
+//                                JoinColumn joinColumn = new JoinColumn();
+//                                joinColumn.setName(entity.getClazz() + '_' + attribute.getName());
+//                                joinColumn.setReferencedColumnName(attribute.getName());
+//                                relationAttribute.getJoinColumn().add(joinColumn);
+//                            }
+//                        }
+                        
+                    }
+                }
+    }
+    
+    
     public static void saveFile(EntityMappings entityMappings, File file) {
         try {
             if (MODELER_MARSHALLER == null) {
@@ -1415,30 +1495,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         });
     }
 
-    public static void initReferencedColumnModel(javax.swing.JComboBox columnComboBox, Entity entity, Id selectedColumn) {
-        columnComboBox.setEditable(true);
-        columnComboBox.removeAllItems();
-        columnComboBox.addItem(new ComboBoxValue(null, ""));
-        if (entity != null) {
-//            entity.getAttributes().getBasic().stream().forEach((basic) -> {
-//                if (basic.getColumn() != null && org.apache.commons.lang.StringUtils.isNotBlank(basic.getColumn().getName())) {
-//                    columnComboBox.addItem(new ComboBoxValue(basic, basic.getColumn().getName()));
-//                } else {
-//                    columnComboBox.addItem(new ComboBoxValue(basic, basic.getName()));
-//                }
-//            });
-            int i = 0;
-            int selectedItemIndex = -1;
-            for (Id id : entity.getAttributes().getId()) {
-                String columnName = id.getReferenceColumnName();
-                columnComboBox.addItem(new ComboBoxValue(id, columnName));
-                if (id == selectedColumn) {
-                    selectedItemIndex = ++i;
-                }
-            }
-            columnComboBox.setSelectedIndex(selectedItemIndex);
-        }
-    }
+
 
     /**
      * Micro DB filter
@@ -1473,9 +1530,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     private static Set<Entity> getRelationClass(BaseAttributes attributes) {
         Set<Entity> relationAttributeconnected = attributes.getRelationAttributes().stream().map(RelationAttribute::getConnectedEntity).collect(toSet());
         relationAttributeconnected.addAll(attributes.getEmbedded().stream().map(e -> e.getConnectedClass()).flatMap(c -> getRelationClass(c.getAttributes()).stream()).collect(toSet()));
-        if (attributes instanceof Attributes && ((Attributes) attributes).getEmbeddedId() != null) {
-            relationAttributeconnected.addAll(getRelationClass(((Attributes) attributes).getEmbeddedId().getConnectedClass().getAttributes()));
-        }
+//      //Not Applicable for EmbeddedId
+//        if (attributes instanceof Attributes && ((Attributes) attributes).getEmbeddedId() != null) {
+//            relationAttributeconnected.addAll(getRelationClass(((Attributes) attributes).getEmbeddedId().getConnectedClass().getAttributes()));
+//        }
         return relationAttributeconnected;
     }
 

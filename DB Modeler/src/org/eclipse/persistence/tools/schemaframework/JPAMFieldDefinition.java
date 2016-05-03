@@ -27,6 +27,7 @@ import org.netbeans.db.modeler.spec.DBEmbeddedAssociationInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
+import org.netbeans.db.modeler.spec.DBEmbeddedIdAttributeColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
@@ -37,6 +38,7 @@ import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -119,7 +121,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
     public void buildDBColumn(final DBTable table, final AbstractSession session,
             final JPAMTableDefinition tableDef) throws ValidationException {
 
-        DBColumn column;
+        DBColumn column = null;
         if (discriminatorColumn != null) {
             column = new DBDiscriminatorColumn(name, discriminatorColumn);
         } else if (inherited) {
@@ -134,8 +136,8 @@ public class JPAMFieldDefinition extends FieldDefinition {
             } else {
                 column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
             }
-        } else  if (foriegnKey && inverse && (intrinsicAttribute == null || intrinsicAttribute.isEmpty())) {//intrinsicAttribute will be null in case of JoinTableStrategy primary key mapping to children
-                column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
+        } else if (foriegnKey && inverse && (intrinsicAttribute == null || intrinsicAttribute.isEmpty())) {//intrinsicAttribute will be null in case of JoinTableStrategy primary key mapping to children
+            column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
         } else if (intrinsicAttribute.size() == 1) {
             if (intrinsicAttribute.peek() instanceof RelationAttribute) {
                 if (inverse) {
@@ -149,32 +151,43 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 } else {
                     column = new DBColumn(name, managedAttribute);
                 }
-            } else
-                if (foriegnKey && inverse && intrinsicAttribute.peek() instanceof Id) {//PrimaryKeyJoinColumn
+            } else if (foriegnKey && inverse && intrinsicAttribute.peek() instanceof Id) {//PrimaryKeyJoinColumn
                 column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
             } else {
                 column = new DBColumn(name, managedAttribute);
             }
         } else if (intrinsicAttribute.size() > 1) {
-            List<Embedded> embeddedList = new ArrayList<>();
-            for (int i = 0; i < intrinsicAttribute.size() - 1; i++) {
-                embeddedList.add((Embedded) intrinsicAttribute.get(i));
-            }
-
-            if (managedAttribute instanceof RelationAttribute) {
+            if (intrinsicAttribute.get(0) instanceof RelationAttribute) { // nested derived Identity / shared relationship IdClass
                 if (inverse) {
-                    column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                    column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable);
                 } else {
-                    column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                    column = new DBJoinColumn(name, managedAttribute, relationTable);
                 }
-            } else if (foriegnKey) {
-                column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
-            } else {
-                column = new DBEmbeddedAttributeColumn(name, embeddedList, managedAttribute);
-            }
-        } else {
-                column = new DBColumn(name, managedAttribute);
+            } else if (intrinsicAttribute.get(0) instanceof Embedded) {
+                List<Embedded> embeddedList = new ArrayList<>();
+                for (int i = 0; i < intrinsicAttribute.size() - 1; i++) {
+                    embeddedList.add((Embedded) intrinsicAttribute.get(i));
+                }
 
+                if (managedAttribute instanceof RelationAttribute) {
+                    if (inverse) {
+                        column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                    } else {
+                        column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                    }
+                } else if (foriegnKey) {
+                    column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
+                } else {
+                    column = new DBEmbeddedAttributeColumn(name, embeddedList, managedAttribute);
+                }
+            }
+        } else if (intrinsicAttribute.size() == 2 && intrinsicAttribute.get(0) instanceof EmbeddedId) {
+            EmbeddedId embeddedId = (EmbeddedId) intrinsicAttribute.get(0);
+            column = new DBEmbeddedIdAttributeColumn(name, embeddedId, managedAttribute);
+        }
+        
+        if(column == null) {
+            column = new DBColumn(name, managedAttribute);
         }
 
         column.setId(NBModelerUtil.getAutoGeneratedStringId());

@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
+import org.netbeans.jpa.modeler.spec.IdClass;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -38,7 +40,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public abstract class SingleRelationAttribute extends RelationAttribute implements JoinColumnHandler {
 
     @XmlElement(name = "join-column")
-    protected List<JoinColumn> joinColumn;
+    private List<JoinColumn> joinColumn;
     @XmlElement(name = "foreign-key")
     protected ForeignKey foreignKey;//REVENG PENDING
 
@@ -46,6 +48,9 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     protected Boolean optional;
     @XmlAttribute
     private Boolean primaryKey;//id=>primaryKey changed to prevent BaseElement.id field hiding//REVENG PENDING
+    @XmlAttribute
+    private String mapsId;//used in case of EmbeddedId
+    
 
     @Override
     public void load(AnnotationMirror relationAnnotationMirror, Element element, VariableElement variableElement) {
@@ -176,6 +181,17 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
      */
     public void setPrimaryKey(Boolean primaryKey) {
         this.primaryKey = primaryKey;
+    }
+    
+    public IdClass getIdClass(){
+        if (isPrimaryKey()) {
+            JavaClass javaClass = this.getJavaClass();
+            if (javaClass instanceof IdentifiableClass) {
+                IdentifiableClass identifiableClass = (IdentifiableClass) javaClass;
+                return identifiableClass.getIdClass();
+            }
+        }
+        return null;
     }
 
 }

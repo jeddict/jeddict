@@ -230,7 +230,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
     public void scanCompositeKeyError() {
-        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == CompositePrimaryKeyType.NONE) {
+        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == null) {
             getErrorHandler().throwError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
         } else {
             getErrorHandler().clearError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);

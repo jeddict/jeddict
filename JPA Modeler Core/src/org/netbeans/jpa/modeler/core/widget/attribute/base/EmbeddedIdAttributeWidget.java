@@ -19,6 +19,8 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
@@ -47,6 +49,16 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
         List<JMenuItem> menuList = super.getPopupMenuItemList();// Override(from AttributeWidget) to remove Delete Menu from Popup
         menuList.remove(0);//remove Delete PopupMenu
         return menuList;
+    }
+    
+      public boolean remove(boolean notification) {
+        // Issue Fix #5855 Start
+        if (super.remove(notification)) {
+            ((IdentifiableClass)getClassWidget().getBaseElementSpec()).setCompositePrimaryKeyType(CompositePrimaryKeyType.IDCLASS);
+            return true;
+        }
+        // Issue Fix #5855 End
+        return false;
     }
 
 }

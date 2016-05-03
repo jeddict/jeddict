@@ -156,6 +156,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
      */
     @Override
     public IdClass getIdClass() {
+        manageCompositePrimaryKey();
         return idClass;
     }
 
@@ -496,7 +497,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @Override
     public void setCompositePrimaryKeyType(CompositePrimaryKeyType compositePrimaryKeyType) {
         this.compositePrimaryKeyType = compositePrimaryKeyType;
-        manageCompositePrimaryKeyClass();
+//        manageCompositePrimaryKeyClass();
     }
 
     /**
@@ -513,7 +514,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     @Override
     public void setCompositePrimaryKeyClass(String compositePrimaryKeyClass) {
         this.compositePrimaryKeyClass = compositePrimaryKeyClass;
-        manageCompositePrimaryKeyType();
+//        manageCompositePrimaryKeyType();
     }
 
     private void manageCompositePrimaryKeyClass() {
@@ -523,23 +524,21 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     }
 
     private void manageCompositePrimaryKeyType() {
-        if (null != this.getCompositePrimaryKeyType()) {
-
-            switch (this.getCompositePrimaryKeyType()) {
+        if (null != compositePrimaryKeyType) {
+            switch (compositePrimaryKeyType) {
                 case EMBEDDEDID:
-                    //this.getAttributes().getEmbeddedId().setAttributeType(compositePrimaryKeyClass); //todo urgent
                     this.idClass = null;
                     break;
                 case IDCLASS:
-                    this.idClass = new IdClass(compositePrimaryKeyClass);
+                    if(this.idClass!=null){
+                        this.idClass.setClazz(compositePrimaryKeyClass);
+                    } else {
+                        this.idClass = new IdClass(compositePrimaryKeyClass);
+                    }
                     break;
                 default:
                     this.idClass = null;
                     compositePrimaryKeyClass = null;
-                    if (getCompositePrimaryKeyType() == null) {
-                        setCompositePrimaryKeyType(CompositePrimaryKeyType.NONE);
-                    }
-                    break;
             }
         }
     }

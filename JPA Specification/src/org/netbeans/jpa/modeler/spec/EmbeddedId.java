@@ -58,7 +58,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlType(name = "embedded-id", propOrder = {
     "attributeOverride"
 })
-public class EmbeddedId extends CompositionAttribute implements AttributeOverrideHandler {
+public class EmbeddedId extends CompositionAttribute<DefaultClass> implements AttributeOverrideHandler {
 
     @XmlElement(name = "attribute-override")
     protected Set<AttributeOverride> attributeOverride;
@@ -88,7 +88,7 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
             embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
             entityMappings.addEmbeddable(embeddableClassSpec);
         }
-        embeddedId.setConnectedClass(embeddableClassSpec);
+//        embeddedId.setConnectedClass(embeddableClassSpec);//TODO Priority
 
         embeddedId.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
         return embeddedId;
@@ -175,13 +175,5 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         attributeOverride_TMP.setName(attributePath);
         attributeOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
-    }
-
-    public EmbeddedIdAccessor getAccessor() {
-        EmbeddedIdAccessor attr = new EmbeddedIdAccessor();
-        attr.setName(name);
-//        attr.setAttributeType(a);
-        return attr;
-
     }
 }

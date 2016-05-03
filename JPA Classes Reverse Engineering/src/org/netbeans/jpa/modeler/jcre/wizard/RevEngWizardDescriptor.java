@@ -281,7 +281,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
     private static void manageEntityMappingspec(EntityMappings entityMappingsSpec) {
         entityMappingsSpec.manageSiblingAttribute();
         entityMappingsSpec.repairDefinition(JPAModelerUtil.IO, true);
-        entityMappingsSpec.manageJoinColumnRefName();
+//        entityMappingsSpec.manageJoinColumnRefName();
     }
 
     @Override

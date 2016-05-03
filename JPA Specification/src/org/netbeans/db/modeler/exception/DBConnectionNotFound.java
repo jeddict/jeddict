@@ -13,15 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget.column;
+package org.netbeans.db.modeler.exception;
 
-import org.netbeans.jpa.modeler.spec.extend.BaseElement;
+public class DBConnectionNotFound extends Exception {
 
-/**
- *
- * @author Shiwani Gupta
- */
-public interface IPrimaryKeyWidget<E extends BaseElement> extends IReferenceColumnWidget<E> {
+    /**
+     * Creates a new instance of <code>DBConnectionNotFound</code> without
+     * detail message.
+     */
+    public DBConnectionNotFound() {
+    }
 
-
+    /**
+     * Constructs an instance of <code>DBConnectionNotFound</code> with the
+     * specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public DBConnectionNotFound(String msg) {
+        super(msg);
+    }
 }

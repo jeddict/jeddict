@@ -13,24 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.specification.model.util;
+package org.netbeans.db.modeler.spec;
 
-public class DBConnectionNotFound extends Exception {
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-    /**
-     * Creates a new instance of <code>DBConnectionNotFound</code> without
-     * detail message.
-     */
-    public DBConnectionNotFound() {
+public class DBEmbeddedIdAttributeColumn extends DBColumn<Attribute> {
+
+//    private AttributeOverride attributeOverride;
+
+    public DBEmbeddedIdAttributeColumn(String name, EmbeddedId embeddedId, Attribute managedAttribute) {
+        super(name, managedAttribute);
     }
 
     /**
-     * Constructs an instance of <code>DBConnectionNotFound</code> with the
-     * specified detail message.
-     *
-     * @param msg the detail message.
+     * @return the attributeOverride
      */
-    public DBConnectionNotFound(String msg) {
-        super(msg);
-    }
+//    public AttributeOverride getAttributeOverride() {
+//        return attributeOverride;
+//    }
+
 }

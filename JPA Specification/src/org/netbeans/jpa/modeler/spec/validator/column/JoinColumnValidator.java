@@ -37,9 +37,9 @@ public class JoinColumnValidator extends MarshalValidator<JoinColumn> {
                 && column.getNullable() && column.getInsertable() && column.getUpdatable() && !column.getUnique()) {
             return true;
         }
-        if (column.getReferencedColumn() != null && !((IdentifiableClass) column.getReferencedColumn().getJavaClass()).getAttributes().getId().contains(column.getReferencedColumn())) {
-            return true;
-        }
+//        if (column.getReferencedColumnName()!= null && !((IdentifiableClass) column.getReferencedColumn().getJavaClass()).getAttributes().getId().contains(column.getReferencedColumn())) {
+//            return true;
+//        }
         return false;
     }
 

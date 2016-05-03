@@ -54,7 +54,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         nullable_CheckBox.setSelected(true);
         insertable_CheckBox.setSelected(true);
         updatable_CheckBox.setSelected(true);
-        JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, null);
+//        JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, null);
 
     }
 
@@ -66,7 +66,8 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
             Object[] row = ((RowValue) entityValue).getRow();
             JoinColumn joinColumn = (JoinColumn) row[0];
             name_TextField.setText(joinColumn.getName());
-            JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, joinColumn.getReferencedColumn());
+//            JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, joinColumn.getReferencedColumn());
+            referencedColumnName_TextField.setText(joinColumn.getReferencedColumnName());
             table_TextField.setText(joinColumn.getTable());
             columnDefinition_TextArea.setText(joinColumn.getColumnDefinition());
             unique_CheckBox.setSelected(joinColumn.getUnique());
@@ -76,6 +77,31 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
 
         }
     }
+//    
+//        public static void initReferencedColumnModel(javax.swing.JComboBox columnComboBox, org.netbeans.jpa.modeler.spec.Entity entity, Id selectedColumn) {
+//        columnComboBox.setEditable(true);
+//        columnComboBox.removeAllItems();
+//        columnComboBox.addItem(new ComboBoxValue(null, ""));
+//        if (entity != null) {
+////            entity.getAttributes().getBasic().stream().forEach((basic) -> {
+////                if (basic.getColumn() != null && org.apache.commons.lang.StringUtils.isNotBlank(basic.getColumn().getName())) {
+////                    columnComboBox.addItem(new ComboBoxValue(basic, basic.getColumn().getName()));
+////                } else {
+////                    columnComboBox.addItem(new ComboBoxValue(basic, basic.getName()));
+////                }
+////            });
+//            int i = 0;
+//            int selectedItemIndex = -1;
+//            for (Id id : entity.getAttributes().getId()) {
+//                String columnName = id.getReferenceColumnName();
+//                columnComboBox.addItem(new ComboBoxValue(id, columnName));
+//                if (id == selectedColumn) {
+//                    selectedItemIndex = ++i;
+//                }
+//            }
+//            columnComboBox.setSelectedIndex(selectedItemIndex);
+//        }
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -95,7 +121,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         table_TextField = new javax.swing.JTextField();
         referencedColumnName_LayeredPane = new javax.swing.JLayeredPane();
         referencedColumnName_Label = new javax.swing.JLabel();
-        referencedColumnName_ComboBox = new javax.swing.JComboBox<>();
+        referencedColumnName_TextField = new javax.swing.JTextField();
         columnDefinition_LayeredPane = new javax.swing.JLayeredPane();
         columnDefinition_Label = new javax.swing.JLabel();
         columnDefinition_ScrollPane = new javax.swing.JScrollPane();
@@ -112,119 +138,43 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         name_LayeredPane.setToolTipText(org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.name_LayeredPane.toolTipText")); // NOI18N
+        name_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.name_Label.text")); // NOI18N
+        name_LayeredPane.add(name_Label, java.awt.BorderLayout.WEST);
 
         name_TextField.setText(org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.name_TextField.text")); // NOI18N
         name_TextField.setToolTipText(org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.name_TextField.toolTipText")); // NOI18N
+        name_LayeredPane.add(name_TextField, java.awt.BorderLayout.CENTER);
 
-        name_LayeredPane.setLayer(name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        name_LayeredPane.setLayer(name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        javax.swing.GroupLayout name_LayeredPaneLayout = new javax.swing.GroupLayout(name_LayeredPane);
-        name_LayeredPane.setLayout(name_LayeredPaneLayout);
-        name_LayeredPaneLayout.setHorizontalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        name_LayeredPaneLayout.setVerticalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name_Label)
-                    .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        table_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(table_Label, org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.table_Label.text")); // NOI18N
+        table_LayeredPane.add(table_Label, java.awt.BorderLayout.WEST);
 
         table_TextField.setText(org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.table_TextField.text")); // NOI18N
+        table_LayeredPane.add(table_TextField, java.awt.BorderLayout.CENTER);
 
-        table_LayeredPane.setLayer(table_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        table_LayeredPane.setLayer(table_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        javax.swing.GroupLayout table_LayeredPaneLayout = new javax.swing.GroupLayout(table_LayeredPane);
-        table_LayeredPane.setLayout(table_LayeredPaneLayout);
-        table_LayeredPaneLayout.setHorizontalGroup(
-            table_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(table_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(table_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(table_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        table_LayeredPaneLayout.setVerticalGroup(
-            table_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(table_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(table_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(table_Label)
-                    .addComponent(table_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        referencedColumnName_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(referencedColumnName_Label, org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.referencedColumnName_Label.text")); // NOI18N
+        referencedColumnName_LayeredPane.add(referencedColumnName_Label, java.awt.BorderLayout.WEST);
 
-        referencedColumnName_ComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        referencedColumnName_TextField.setText(org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.referencedColumnName_TextField.text")); // NOI18N
+        referencedColumnName_LayeredPane.add(referencedColumnName_TextField, java.awt.BorderLayout.CENTER);
 
-        referencedColumnName_LayeredPane.setLayer(referencedColumnName_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        referencedColumnName_LayeredPane.setLayer(referencedColumnName_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        javax.swing.GroupLayout referencedColumnName_LayeredPaneLayout = new javax.swing.GroupLayout(referencedColumnName_LayeredPane);
-        referencedColumnName_LayeredPane.setLayout(referencedColumnName_LayeredPaneLayout);
-        referencedColumnName_LayeredPaneLayout.setHorizontalGroup(
-            referencedColumnName_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(referencedColumnName_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(referencedColumnName_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(referencedColumnName_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        referencedColumnName_LayeredPaneLayout.setVerticalGroup(
-            referencedColumnName_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(referencedColumnName_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(referencedColumnName_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(referencedColumnName_Label)
-                    .addComponent(referencedColumnName_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        columnDefinition_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(columnDefinition_Label, org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.columnDefinition_Label.text")); // NOI18N
+        columnDefinition_LayeredPane.add(columnDefinition_Label, java.awt.BorderLayout.WEST);
 
         columnDefinition_TextArea.setColumns(20);
         columnDefinition_TextArea.setRows(5);
         columnDefinition_ScrollPane.setViewportView(columnDefinition_TextArea);
 
-        columnDefinition_LayeredPane.setLayer(columnDefinition_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        columnDefinition_LayeredPane.setLayer(columnDefinition_ScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        columnDefinition_LayeredPane.add(columnDefinition_ScrollPane, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout columnDefinition_LayeredPaneLayout = new javax.swing.GroupLayout(columnDefinition_LayeredPane);
-        columnDefinition_LayeredPane.setLayout(columnDefinition_LayeredPaneLayout);
-        columnDefinition_LayeredPaneLayout.setHorizontalGroup(
-            columnDefinition_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(columnDefinition_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(columnDefinition_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(columnDefinition_ScrollPane)
-                .addContainerGap())
-        );
-        columnDefinition_LayeredPaneLayout.setVerticalGroup(
-            columnDefinition_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(columnDefinition_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(columnDefinition_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(columnDefinition_Label)
-                    .addComponent(columnDefinition_ScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        layeredPane.setLayout(new java.awt.GridLayout(2, 4));
+        layeredPane.setLayout(new java.awt.GridLayout(1, 4));
 
         org.openide.awt.Mnemonics.setLocalizedText(nullable_CheckBox, org.openide.util.NbBundle.getMessage(JoinColumnPanel.class, "JoinColumnPanel.nullable_CheckBox.text")); // NOI18N
         layeredPane.add(nullable_CheckBox);
@@ -259,29 +209,22 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         jLayeredPane8.add(cancel_Button);
         cancel_Button.setBounds(100, 0, 70, 30);
 
-        jLayeredPane1.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(table_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(referencedColumnName_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(columnDefinition_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(layeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(jLayeredPane8, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
         jLayeredPane1Layout.setHorizontalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jLayeredPane1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(table_LayeredPane, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(name_LayeredPane)
-                    .addComponent(table_LayeredPane)
                     .addComponent(referencedColumnName_LayeredPane)
                     .addComponent(columnDefinition_LayeredPane)
-                    .addComponent(layeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLayeredPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane1Layout.createSequentialGroup()
+                        .addGap(0, 137, Short.MAX_VALUE)
+                        .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLayeredPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(layeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         jLayeredPane1Layout.setVerticalGroup(
@@ -301,12 +244,18 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
                 .addComponent(jLayeredPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+        jLayeredPane1.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(table_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(referencedColumnName_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(columnDefinition_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(layeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLayeredPane8, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jLayeredPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -343,14 +292,15 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         }
 
         joinColumn.setName(name_TextField.getText());
-        Object selectedItem = referencedColumnName_ComboBox.getSelectedItem();
-        if (selectedItem != null && selectedItem instanceof ComboBoxValue) {
-            joinColumn.setReferencedColumn((Id) ((ComboBoxValue) selectedItem).getValue());
-//        } else if (selectedItem != null) {
-//            joinColumn.setReferencedColumnName(selectedItem.toString());
-        } else {
-            joinColumn.setReferencedColumn(null);
-        }
+        joinColumn.setReferencedColumnName(referencedColumnName_TextField.getText());
+//        Object selectedItem = referencedColumnName_ComboBox.getSelectedItem();
+//        if (selectedItem != null && selectedItem instanceof ComboBoxValue) {
+//            joinColumn.setReferencedColumn((Id) ((ComboBoxValue) selectedItem).getValue());
+////        } else if (selectedItem != null) {
+////            joinColumn.setReferencedColumnName(selectedItem.toString());
+//        } else {
+//            joinColumn.setReferencedColumn(null);
+//        }
         joinColumn.setTable(table_TextField.getText());
         joinColumn.setColumnDefinition(columnDefinition_TextArea.getText());
         joinColumn.setUnique(unique_CheckBox.isSelected());
@@ -386,9 +336,9 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
     private javax.swing.JLayeredPane name_LayeredPane;
     private javax.swing.JTextField name_TextField;
     private javax.swing.JCheckBox nullable_CheckBox;
-    private javax.swing.JComboBox<String> referencedColumnName_ComboBox;
     private javax.swing.JLabel referencedColumnName_Label;
     private javax.swing.JLayeredPane referencedColumnName_LayeredPane;
+    private javax.swing.JTextField referencedColumnName_TextField;
     private javax.swing.JButton save_Button;
     private javax.swing.JLabel table_Label;
     private javax.swing.JLayeredPane table_LayeredPane;

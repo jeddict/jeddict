@@ -16,8 +16,11 @@
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
 import java.awt.Color;
+import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
@@ -67,6 +70,14 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerSc
      */
     public void setSourceRelationAttributeWidget(RelationAttributeWidget sourceRelationAttributeWidget) {
         this.sourceRelationAttributeWidget = sourceRelationAttributeWidget;
+    }
+    
+    public EntityWidget getTargetEntityWidget() { // will always return Entity
+        if(this instanceof Bidirectional){
+           return (EntityWidget) ((Bidirectional)this).getTargetRelationAttributeWidget().getClassWidget();
+        } else {
+           return (EntityWidget) ((Unidirectional)this).getTargetEntityWidget(); 
+        }
     }
 
 //

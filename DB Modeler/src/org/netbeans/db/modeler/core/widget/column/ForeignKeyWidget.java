@@ -25,11 +25,21 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public abstract class ForeignKeyWidget<E extends DBColumn> extends ColumnWidget<E> {
+public abstract class ForeignKeyWidget<E extends DBColumn> extends ColumnWidget<E> implements IReferenceColumnWidget<E>{
 
     public ForeignKeyWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(DBModelerUtil.FOREIGNKEY);
+        
+    }
+    
+    @Override
+    public void init() {
+        super.init();
+        if (((DBColumn) this.getBaseElementSpec()).isPrimaryKey()) {
+            this.setImage(DBModelerUtil.PRIMARYKEY);
+        } else {
+            this.setImage(DBModelerUtil.FOREIGNKEY);
+        }
     }
 
 }

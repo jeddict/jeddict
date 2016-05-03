@@ -83,11 +83,11 @@ import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Project;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.server.ServerSession;
+import org.netbeans.jpa.modeler.db.accessor.DefaultClassSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
@@ -511,7 +511,7 @@ public class JPAMDefaultTableGenerator {
     protected void postInitTableSchema(ClassDescriptor baseDescriptor, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute) {
 
         DBRelationalDescriptor descriptor = (DBRelationalDescriptor) baseDescriptor;
-        ManagedClass descriptorManagedClass;// = intrinsicEntity.peek();
+        ManagedClass descriptorManagedClass = null;
 
         if (intrinsicEntity == null) {
             if (descriptor.getAccessor() instanceof EntitySpecAccessor) {
@@ -524,6 +524,8 @@ public class JPAMDefaultTableGenerator {
             }
         } else if (descriptor.getAccessor() instanceof EmbeddableSpecAccessor) {
             descriptorManagedClass = ((EmbeddableSpecAccessor) descriptor.getAccessor()).getEmbeddable();
+        }  else if (descriptor.getAccessor() instanceof DefaultClassSpecAccessor) {
+//            descriptorManagedClass = ((DefaultClassSpecAccessor) descriptor.getAccessor()).getDefaultClass();
         } else {
             throw new IllegalStateException(descriptor.getAccessor() + " not supported");
         }

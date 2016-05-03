@@ -30,6 +30,7 @@ import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IReferenceColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
@@ -211,6 +212,19 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
             });
             categories.put("Primary Key", primaryKeyCatWidget);
         }
+        
+        List<Widget> foreignKeyCatWidget = new ArrayList<>();
+        if (!foreignKeyWidgets.isEmpty()) {
+            List<Widget> derivedIdentiyCatWidget = new ArrayList<>();
+            foreignKeyWidgets.values().stream().forEach((foreignKeyWidget) -> {
+                if (((DBColumn) foreignKeyWidget.getBaseElementSpec()).isPrimaryKey()) {
+                    derivedIdentiyCatWidget.add(foreignKeyWidget);
+                } else {
+                    foreignKeyCatWidget.add(foreignKeyWidget);
+                }
+            });
+            categories.put("Derived Identity", derivedIdentiyCatWidget);
+        }
 
         if (!columnWidgets.isEmpty()) {
             List<Widget> columnCatWidget = new ArrayList<>();
@@ -220,11 +234,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
             categories.put("Basic", columnCatWidget);
         }
 
-        if (!foreignKeyWidgets.isEmpty()) {
-            List<Widget> foreignKeyCatWidget = new ArrayList<>();
-            foreignKeyWidgets.values().stream().forEach((foreignKeyWidget) -> {
-                foreignKeyCatWidget.add(foreignKeyWidget);
-            });
+        if (!foreignKeyCatWidget.isEmpty()) {
             categories.put("Foreign Key", foreignKeyCatWidget);
         }
 
@@ -271,6 +281,15 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
      */
     public IPrimaryKeyWidget getPrimaryKeyWidget(String id) {
         return primaryKeyWidgets.get(id);
+    }
+    
+    public IReferenceColumnWidget findColumnWidget(String id) {
+        IReferenceColumnWidget columnWidget =  primaryKeyWidgets.get(id);
+        if(columnWidget == null){
+            columnWidget =  foreignKeyWidgets.get(id);
+        }
+    
+        return columnWidget;
     }
 
     /**

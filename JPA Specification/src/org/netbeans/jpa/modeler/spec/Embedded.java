@@ -67,7 +67,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "associationOverride",
     "convert"
 })
-public class Embedded extends CompositionAttribute implements AttributeOverrideHandler, AssociationOverrideHandler {
+public class Embedded extends CompositionAttribute<Embeddable> implements AttributeOverrideHandler, AssociationOverrideHandler {
 
     @XmlElement(name = "attribute-override")
     protected Set<AttributeOverride> attributeOverride;

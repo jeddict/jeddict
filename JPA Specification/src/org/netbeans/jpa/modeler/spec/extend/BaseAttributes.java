@@ -718,7 +718,7 @@ public abstract class BaseAttributes implements IAttributes {
         attr.getManyToOnes().addAll(getManyToOne().stream().map(ManyToOneSpecAccessor::getInstance).collect(toList()));
         attr.getOneToManys().addAll(getOneToMany().stream().map(OneToManySpecAccessor::getInstance).collect(toList()));
         attr.getOneToOnes().addAll(getOneToOne().stream().map(OneToOneSpecAccessor::getInstance).collect(toList()));
-        return attr;
+        return attr; 
     }
 
     /**
