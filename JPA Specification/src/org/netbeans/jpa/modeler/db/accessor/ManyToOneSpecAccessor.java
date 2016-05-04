@@ -42,8 +42,7 @@ public class ManyToOneSpecAccessor extends ManyToOneAccessor {
         ManyToOneSpecAccessor accessor = new ManyToOneSpecAccessor(manyToOne);
         accessor.setName(manyToOne.getName());
         accessor.setTargetEntityName(manyToOne.getTargetEntity());
-        
-        if (manyToOne.isPrimaryKey()) {  //We are always using EmbeddedId still if it is IdClass
+        if (manyToOne.isPrimaryKey()) { 
             IdClass idClass = manyToOne.getIdClass();
             if (idClass != null) {
                 accessor.setId(Boolean.TRUE);

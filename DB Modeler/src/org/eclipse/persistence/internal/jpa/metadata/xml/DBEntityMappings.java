@@ -46,7 +46,9 @@ public class DBEntityMappings extends XMLEntityMappings {
 
         setPackage(mappings.getPackage());
         setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
-        setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
+//        setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
+        setMappedSuperclasses(new ArrayList<>());
+        
         List<EmbeddableAccessor> embeddableAccessors = new ArrayList<>();
         embeddableAccessors.addAll(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
         embeddableAccessors.addAll(mappings.getDefaultClass().stream().map(DefaultClassSpecAccessor::getInstance).collect(toList()));

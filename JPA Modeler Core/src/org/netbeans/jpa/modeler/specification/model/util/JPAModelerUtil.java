@@ -345,6 +345,16 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
         
+//         String content;
+//        try {
+//            content = FileUtils.readFileToString(file);
+//        } catch (IOException ex) {
+//           throw new RuntimeException(ex);
+//        }
+//        content = content.replaceAll("jpa:", "");
+//        
+//        definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(new StringReader(content)), EntityMappings.class).getValue();
+        
         definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
         return definition_Load;
     }
@@ -844,6 +854,18 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //End : IDCLASS,EMBEDDEDID
     }
 
+    public static void removeDefaultJoinColumn(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, String attributeName) {
+     for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
+                    SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
+                    if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
+                        continue;
+                    }
+                    if(!attributeWidget.getName().equals(attributeName)){
+                         continue;
+                    }
+                    relationAttribute.getJoinColumn().clear();
+     }
+    }
     public static void addDefaultJoinColumnForCompositePK(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, String attributeName, List<JoinColumn> joinColumns) {
                 //Get all @Id @Relation owner attribute 
                 for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
@@ -897,26 +919,27 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         } else {
                             relationAttribute.getJoinColumn().addAll(joinColumns);
                         }
-//                            for (DefaultAttribute attribute : defaultClass.getAttributes()) {
-//                                JoinColumn joinColumn = new JoinColumn();
-//                                joinColumn.setName(entity.getClazz() + '_' + attribute.getName());
-//                                joinColumn.setReferencedColumnName(attribute.getName());
-//                                relationAttribute.getJoinColumn().add(joinColumn);
-//                            }
-//                        }
-                        
                     }
                 }
     }
     
     
     public static void saveFile(EntityMappings entityMappings, File file) {
+       
+        
         try {
             if (MODELER_MARSHALLER == null) {
+//                 NamespacePrefixMapper mapper = new NamespacePrefixMapper() {
+//    public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
+//        return "";
+//    }
+//};
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
                 MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
+//                MODELER_MARSHALLER.setProperty("com.sun.xml.bind.namespacePrefixMapper", mapper);
+
             }
             MODELER_MARSHALLER.marshal(entityMappings, file);
         } catch (JAXBException ex) {

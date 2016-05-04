@@ -7,8 +7,10 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -18,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddedIdSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.IdSpecAccessor;
@@ -88,7 +91,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
-
+        Set<String> mapsId = new HashSet<>();
         VariableElement embeddedIdVariableElement = null;
         for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {
             try {
@@ -132,10 +135,20 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                     OneToOne oneToOneObj = new OneToOne();
                     oneToOneObj.load(element, variableElement);
                     this.addOneToOne(oneToOneObj);
+                    if(StringUtils.isNotBlank(oneToOneObj.getMapsId())){
+                        mapsId.add(oneToOneObj.getMapsId());
+                    } else {
+                        mapsId.add(oneToOneObj.getName());
+                    }
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
                     ManyToOne manyToOneObj = new ManyToOne();
                     manyToOneObj.load(element, variableElement);
                     this.addManyToOne(manyToOneObj);
+                    if(StringUtils.isNotBlank(manyToOneObj.getMapsId())){
+                        mapsId.add(manyToOneObj.getMapsId());
+                    } else {
+                        mapsId.add(manyToOneObj.getName());
+                    }
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
                     OneToMany oneToManyObj = new OneToMany();
                     oneToManyObj.load(element, variableElement);
@@ -164,7 +177,9 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
         if (this.getEmbeddedId() != null) {
             for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
-                this.addId(Id.load(variableElement, variableElement));
+                if (!mapsId.contains(variableElement.getSimpleName().toString())) {
+                    this.addId(Id.load(variableElement, variableElement));
+                }
             }
         }
 

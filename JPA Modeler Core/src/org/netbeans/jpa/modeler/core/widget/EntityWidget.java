@@ -187,7 +187,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public InheritenceStateType getInheritenceState() {
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = this.getOutgoingGeneralizationFlowWidget();
         List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = this.getIncomingGeneralizationFlowWidgets();
-        if (outgoingGeneralizationFlowWidget != null && outgoingGeneralizationFlowWidget.getSuperclassWidget() != null && !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
+        if (outgoingGeneralizationFlowWidget != null && outgoingGeneralizationFlowWidget.getSuperclassWidget() != null &&
+                !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
             outgoingGeneralizationFlowWidget = null;
         }
         InheritenceStateType type;
@@ -230,11 +231,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
     public void scanCompositeKeyError() {
-        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == null) {
-            getErrorHandler().throwError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
-        } else {
-            getErrorHandler().clearError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
-        }
+//        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == null) {
+//            getErrorHandler().throwError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
+//        } else {
+//            getErrorHandler().clearError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
+//        }
     }
 
     @Override

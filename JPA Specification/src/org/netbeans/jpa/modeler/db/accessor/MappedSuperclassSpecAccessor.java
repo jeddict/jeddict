@@ -15,14 +15,14 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
-import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.MappedSuperclassAccessor;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 
 /**
  *
  * @author Shiwani Gupta
  */
-public class MappedSuperclassSpecAccessor extends EntityAccessor {
+public class MappedSuperclassSpecAccessor extends MappedSuperclassAccessor {
 
     private MappedSuperclass mappedSuperclass;
 
@@ -34,11 +34,12 @@ public class MappedSuperclassSpecAccessor extends EntityAccessor {
         MappedSuperclassSpecAccessor accessor = new MappedSuperclassSpecAccessor(mappedSuperclass);
 
         accessor.setClassName(mappedSuperclass.getClazz());
+        accessor.setAccess("VIRTUAL");
+        accessor.setAttributes(mappedSuperclass.getAttributes().getAccessor(true));
         if (mappedSuperclass.getSuperclass() != null) {
             accessor.setParentClassName(mappedSuperclass.getSuperclass().getClazz());
         }
 //        accessor.setAccess("VIRTUAL");
-        accessor.setAttributes(mappedSuperclass.getAttributes().getAccessor(true));
 //        accessor.setName(mappedSuperclass.getName());
 
 //        if (mappedSuperclass.getTable() != null) {

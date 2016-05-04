@@ -223,7 +223,9 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
                     foreignKeyCatWidget.add(foreignKeyWidget);
                 }
             });
-            categories.put("Derived Identity", derivedIdentiyCatWidget);
+            if (!derivedIdentiyCatWidget.isEmpty()) {
+                categories.put("Derived Identity", derivedIdentiyCatWidget);
+            }
         }
 
         if (!columnWidgets.isEmpty()) {

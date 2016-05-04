@@ -713,7 +713,8 @@ public abstract class BaseAttributes implements IAttributes {
         attr.getBasics().addAll(getBasic().stream().map(basic -> BasicSpecAccessor.getInstance(basic, inherit)).collect(toList()));
         attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollectionSpecAccessor::getInstance).collect(toList()));
         attr.getEmbeddeds().addAll(getEmbedded().stream().map(EmbeddedSpecAccessor::getInstance).collect(toList()));
-        attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));
+//      Ignore Transient
+//      attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));
         attr.getManyToManys().addAll(getManyToMany().stream().map(ManyToManySpecAccessor::getInstance).collect(toList()));
         attr.getManyToOnes().addAll(getManyToOne().stream().map(ManyToOneSpecAccessor::getInstance).collect(toList()));
         attr.getOneToManys().addAll(getOneToMany().stream().map(OneToManySpecAccessor::getInstance).collect(toList()));

@@ -75,7 +75,7 @@ public class SequenceGenerator {
     protected Integer allocationSize;
 
     public static SequenceGenerator load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SequenceGenerator");
         SequenceGenerator sequenceGenerator = null;
         if (annotationMirror != null) {
             sequenceGenerator = new SequenceGenerator();

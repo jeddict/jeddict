@@ -75,19 +75,23 @@ public class EmbeddedId extends CompositionAttribute<DefaultClass> implements At
         embeddedId.name = variableElement.getSimpleName().toString();
         embeddedId.access = AccessType.load(element);
 
-        DeclaredType declaredType = (DeclaredType) variableElement.asType();
-
-        org.netbeans.jpa.modeler.spec.Embeddable embeddableClassSpec = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
-        if (embeddableClassSpec == null) {
-            boolean fieldAccess = false;
-            if (element == variableElement) {
-                fieldAccess = true;
-            }
-            embeddableClassSpec = new org.netbeans.jpa.modeler.spec.Embeddable();
-            TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
-            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
-            entityMappings.addEmbeddable(embeddableClassSpec);
-        }
+        //does require to save it
+//        DeclaredType declaredType = (DeclaredType) variableElement.asType();
+//
+//        org.netbeans.jpa.modeler.spec.Embeddable embeddableClassSpec = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
+//        if (embeddableClassSpec == null) {
+//            boolean fieldAccess = false;
+//            if (element == variableElement) {
+//                fieldAccess = true;
+//            }
+//            embeddableClassSpec = new org.netbeans.jpa.modeler.spec.Embeddable();
+//            TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
+//            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
+//            entityMappings.addEmbeddable(embeddableClassSpec);
+//        }
+        
+        
+        
 //        embeddedId.setConnectedClass(embeddableClassSpec);//TODO Priority
 
         embeddedId.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
