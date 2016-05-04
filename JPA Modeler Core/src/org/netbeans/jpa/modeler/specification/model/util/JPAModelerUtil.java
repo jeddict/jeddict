@@ -785,7 +785,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
                         for (IdAttributeWidget idAttributeWidget : idAttributeWidgets) {
                             Id idSpec = idAttributeWidget.getBaseElementSpec();
-                            DefaultAttribute attribute = new DefaultAttribute();
+                            DefaultAttribute attribute = new DefaultAttribute(idSpec);
                             attribute.setAttributeType(idSpec.getAttributeType());
                             attribute.setName(idSpec.getName());
                             _class.addAttribute(attribute);
@@ -805,7 +805,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             }
                             targetEntitySpec = targetEntityWidget.getBaseElementSpec();
                             List<AttributeWidget> targetIdAttributeWidgets = targetEntityWidget.getPrimaryKeyAttributeWidgets();
-                            DefaultAttribute attribute = new DefaultAttribute();
+                            DefaultAttribute attribute = new DefaultAttribute(relationAttributeSpec);
                             if (targetIdAttributeWidgets.size() == 1) {
                                 if(targetIdAttributeWidgets.get(0) instanceof IdAttributeWidget){ //if only @Id exist
                                 Id idSpec = ((IdAttributeWidget)targetIdAttributeWidgets.get(0)).getBaseElementSpec();

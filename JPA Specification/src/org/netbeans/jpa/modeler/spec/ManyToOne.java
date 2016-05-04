@@ -64,33 +64,11 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlType(name = "many-to-one", propOrder = {})
 public class ManyToOne extends SingleRelationAttribute {
 
-    @XmlAttribute(name = "maps-id")
-    protected String mapsId;//REVENG PENDING
 
     public void load(Element element, VariableElement variableElement) {
         AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ManyToOne");
         super.load(relationAnnotationMirror, element, variableElement);
 
-    }
-
-    /**
-     * Gets the value of the mapsId property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getMapsId() {
-        return mapsId;
-    }
-
-    /**
-     * Sets the value of the mapsId property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setMapsId(String value) {
-        this.mapsId = value;
     }
 
     /**

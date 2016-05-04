@@ -35,6 +35,7 @@ import org.netbeans.db.modeler.spec.DBParentAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBParentAttributeColumn;
 import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -180,11 +181,15 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 } else {
                     column = new DBEmbeddedAttributeColumn(name, embeddedList, managedAttribute);
                 }
+            } else if (intrinsicAttribute.get(0) instanceof EmbeddedId) {
+                EmbeddedId embeddedId = (EmbeddedId) intrinsicAttribute.get(0);
+                if (managedAttribute instanceof DefaultAttribute && ((DefaultAttribute) managedAttribute).getConnectedAttribute() instanceof RelationAttribute) {
+                    column = new DBInverseJoinColumn(name, (RelationAttribute) ((DefaultAttribute) managedAttribute).getConnectedAttribute(), relationTable);//2.4.1.3 Example 1:b empPK
+                } else {
+                    column = new DBEmbeddedIdAttributeColumn(name, embeddedId, managedAttribute);
+                }
             }
-        } else if (intrinsicAttribute.size() == 2 && intrinsicAttribute.get(0) instanceof EmbeddedId) {
-            EmbeddedId embeddedId = (EmbeddedId) intrinsicAttribute.get(0);
-            column = new DBEmbeddedIdAttributeColumn(name, embeddedId, managedAttribute);
-        }
+        } 
         
         if(column == null) {
             column = new DBColumn(name, managedAttribute);

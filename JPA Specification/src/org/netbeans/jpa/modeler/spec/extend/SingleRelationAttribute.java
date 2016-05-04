@@ -47,8 +47,8 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     @XmlAttribute(name = "optional")
     protected Boolean optional;
     @XmlAttribute
-    private Boolean primaryKey;//id=>primaryKey changed to prevent BaseElement.id field hiding//REVENG PENDING
-    @XmlAttribute
+    private Boolean primaryKey;//id=>primaryKey changed to prevent BaseElement.id field hiding
+    @XmlAttribute(name = "maps-id")
     private String mapsId;//used in case of EmbeddedId
     
 
@@ -75,6 +75,14 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
         }
 
         this.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "optional");
+        
+        AnnotationMirror mapsIdAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.MapsId");
+        AnnotationMirror idAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Id");
+
+        this.primaryKey = mapsIdAnnotationMirror != null || idAnnotationMirror != null;
+        if (mapsIdAnnotationMirror != null) {
+            this.mapsId = (String) JavaSourceParserUtil.findAnnotationValue(mapsIdAnnotationMirror, "value");
+        }
     }
 
     /**
@@ -192,6 +200,27 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
             }
         }
         return null;
+    }
+    
+    
+    /**
+     * Gets the value of the mapsId property.
+     *
+     * @return possible object is {@link String }
+     *
+     */
+    public String getMapsId() {
+        return mapsId;
+    }
+
+    /**
+     * Sets the value of the mapsId property.
+     *
+     * @param value allowed object is {@link String }
+     *
+     */
+    public void setMapsId(String value) {
+        this.mapsId = value;
     }
 
 }

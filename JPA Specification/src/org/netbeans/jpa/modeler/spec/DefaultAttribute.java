@@ -14,6 +14,8 @@ public class DefaultAttribute extends Attribute {
     @XmlAttribute(name = "attribute-type")
     private String attributeType;
     
+    @XmlTransient
+    private Attribute connectedAttribute;
     
     @XmlAttribute(name = "derived")
     private boolean derived;
@@ -21,6 +23,10 @@ public class DefaultAttribute extends Attribute {
     @XmlTransient
     private DefaultClass _class;
 
+    public DefaultAttribute(Attribute connectedAttribute) {
+        this.connectedAttribute = connectedAttribute;
+    }
+    
     public DefaultClass getJavaClass() {
         return _class;
     }
@@ -59,6 +65,13 @@ public class DefaultAttribute extends Attribute {
      */
     public void setDerived(boolean derived) {
         this.derived = derived;
+    }
+
+    /**
+     * @return the connectedAttribute
+     */
+    public Attribute getConnectedAttribute() {
+        return connectedAttribute;
     }
     
 }
