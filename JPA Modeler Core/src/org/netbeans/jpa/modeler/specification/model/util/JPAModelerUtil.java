@@ -126,7 +126,6 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
-import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -152,6 +151,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
+import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.modeler.validation.jaxb.ValidateJAXB;
 import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.edge.IEdgeWidget;
@@ -172,9 +172,9 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
-import org.openide.windows.WindowManager;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
+import org.openide.windows.WindowManager;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 

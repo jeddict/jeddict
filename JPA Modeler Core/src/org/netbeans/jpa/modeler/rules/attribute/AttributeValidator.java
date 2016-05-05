@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.rules.attribute;
 
 import java.util.List;
-import static org.eclipse.persistence.exceptions.DescriptorException.TABLE_NOT_PRESENT;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
