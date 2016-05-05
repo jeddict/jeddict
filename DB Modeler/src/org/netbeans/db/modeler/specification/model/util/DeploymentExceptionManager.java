@@ -147,13 +147,13 @@ public class DeploymentExceptionManager {
                 } else if (TABLE_NOT_PRESENT == de.getErrorCode()) {
                     if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
                         Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                            Matcher matcher = Pattern.compile("\\[(.+?)\\]").matcher(de.getMessage());
-                            String tableName= matcher.find()? matcher.group(1):"";
-                            JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(),
-                                     " @Column(table=\""+tableName+"\") annotation defined on attributes but"+ '\n' 
-                                             + " the @Table or @SecondaryTable is not found on Entity "+entity.getClazz()+"?",
-                                    "Error : @Table or @SecondaryTable missing", ERROR_MESSAGE);
-                                handleError = false;
+                        Matcher matcher = Pattern.compile("\\[(.+?)\\]").matcher(de.getMessage());
+                        String tableName = matcher.find() ? matcher.group(1) : "";
+                        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(),
+                                " @Column(table=\"" + tableName + "\") annotation defined on attributes but" + '\n'
+                                + " the @Table or @SecondaryTable is not found on Entity " + entity.getClazz() + "?",
+                                "Error : @Table or @SecondaryTable missing", ERROR_MESSAGE);
+                        handleError = false;
                     }
                 }
             }
@@ -205,12 +205,17 @@ public class DeploymentExceptionManager {
 
     private static void showException(Exception exception, ModelerFile file) {
         String message = exception.getLocalizedMessage();
+        exception.printStackTrace();
         file.getModelerPanelTopComponent().close();
-        int end = message.lastIndexOf("Runtime Exceptions:");
-        end = end < 1 ? message.length() : end;
-        int start = message.lastIndexOf("Exception Description:");
-        start = start < 1 ? 0 : start;
-        ExceptionUtils.printStackTrace(message.substring(start, end), exception, file);
+        if (message == null) {
+            ExceptionUtils.printStackTrace(exception.getClass().getName(), exception, file);
+        } else {
+            int end = message.lastIndexOf("Runtime Exceptions:");
+            end = end < 1 ? message.length() : end;
+            int start = message.lastIndexOf("Exception Description:");
+            start = start < 1 ? 0 : start;
+            ExceptionUtils.printStackTrace(message.substring(start, end), exception, file);
+        }
     }
 
 }
