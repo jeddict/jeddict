@@ -18,7 +18,10 @@ package org.netbeans.db.modeler.specification.model.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
 import org.eclipse.persistence.exceptions.DescriptorException;
@@ -26,6 +29,7 @@ import static org.eclipse.persistence.exceptions.DescriptorException.MULTIPLE_WR
 import static org.eclipse.persistence.exceptions.DescriptorException.NO_FOREIGN_KEYS_ARE_SPECIFIED;
 import static org.eclipse.persistence.exceptions.DescriptorException.NO_MAPPING_FOR_PRIMARY_KEY;
 import static org.eclipse.persistence.exceptions.DescriptorException.NO_TARGET_FOREIGN_KEYS_SPECIFIED;
+import static org.eclipse.persistence.exceptions.DescriptorException.TABLE_NOT_PRESENT;
 import org.eclipse.persistence.exceptions.IntegrityException;
 import static org.eclipse.persistence.exceptions.ValidationException.INCOMPLETE_JOIN_COLUMNS_SPECIFIED;
 import org.eclipse.persistence.internal.helper.DatabaseField;
@@ -36,6 +40,7 @@ import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -54,7 +59,7 @@ public class DeploymentExceptionManager {
 
 //    private static Map<Integer,CheckedBiFunction<ModelerFile, Exception>> errorHandler = new HashMap<>(); //CheckedBiFunction not available in Java8
     public static void handleException(ModelerFile file, Exception exception) throws ProcessInterruptedException {
-        boolean throwError = true;
+        Boolean handleError = null;
 
         if (exception instanceof IntegrityException) {
             IntegrityException ie = (IntegrityException) exception;
@@ -81,7 +86,9 @@ public class DeploymentExceptionManager {
                                 }
                                 JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName, joinColumns);
                                 file.getModelerUtil().loadModelerFile(file);
-                                throwError = false;
+                                handleError = true;
+                            } else {
+                                handleError = false;
                             }
                         }
                     }
@@ -96,7 +103,9 @@ public class DeploymentExceptionManager {
                                     "Error : No target foreign keys have been specified", YES_NO_OPTION) == YES_NO_OPTION) {
                                 JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
                                 file.getModelerUtil().loadModelerFile(file);
-                                throwError = false;
+                                handleError = true;
+                            } else {
+                                handleError = false;
                             }
                         }
                     }
@@ -111,9 +120,10 @@ public class DeploymentExceptionManager {
                                     "Error : No foreign keys are specified", YES_NO_OPTION) == YES_NO_OPTION) {
                                 JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
                                 file.getModelerUtil().loadModelerFile(file);
-                                throwError = false;
+                                handleError = true;
+                            } else {
+                                handleError = false;
                             }
-                            System.out.println("");
                         }
                     }
                 } else if (NO_MAPPING_FOR_PRIMARY_KEY == de.getErrorCode()) {
@@ -128,9 +138,22 @@ public class DeploymentExceptionManager {
                                 entityWidget.getAllIdAttributeWidgets().stream().filter(idAttrWidget -> !idAttrWidget.getBaseElementSpec().getColumn().getInsertable())
                                         .forEach(idAttrWidget -> idAttrWidget.getBaseElementSpec().getColumn().setInsertable(true));
                                 file.getModelerUtil().loadModelerFile(file);
-                                throwError = false;
+                                handleError = true;
+                            } else {
+                                handleError = false;
                             }
                         }
+                    }
+                } else if (TABLE_NOT_PRESENT == de.getErrorCode()) {
+                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                            Matcher matcher = Pattern.compile("\\[(.+?)\\]").matcher(de.getMessage());
+                            String tableName= matcher.find()? matcher.group(1):"";
+                            JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(),
+                                     " @Column(table=\""+tableName+"\") annotation defined on attributes but"+ '\n' 
+                                             + " the @Table or @SecondaryTable is not found on Entity "+entity.getClazz()+"?",
+                                    "Error : @Table or @SecondaryTable missing", ERROR_MESSAGE);
+                                handleError = false;
                     }
                 }
             }
@@ -150,7 +173,9 @@ public class DeploymentExceptionManager {
                             JoinColumnHandler columnHandler = (JoinColumnHandler) attribute;
                             columnHandler.getJoinColumn().clear();
                             file.getModelerUtil().loadModelerFile(file);
-                            throwError = false;
+                            handleError = true;
+                        } else {
+                            handleError = false;
                         }
 
 //                                JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName);
@@ -158,32 +183,34 @@ public class DeploymentExceptionManager {
                 }
             }
 
-        } else if (exception instanceof DBConnectionNotFound) {
-            try {
-                ((DBModelerUtil) file.getModelerUtil()).loadModelerFileInternal(file);
-            } catch (DBConnectionNotFound ex1) {
-                file.handleException(ex1);
+        } else if (exception instanceof DBConnectionNotFound || exception instanceof org.eclipse.persistence.exceptions.DatabaseException) {
+            EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
+            if (entityMapping.getCache().getDatabaseConnectionCache() != null) {
+                entityMapping.getCache().setDatabaseConnection(null);
+                ((DBModelerUtil) file.getModelerUtil()).loadModelerFile(file);
+                handleError = true;
             }
-        } else if (exception instanceof DBValidationException) {
+        }
+//        else if (exception instanceof ValidationException) {
+//            showException(exception, file);
+//        } 
+
+        if (handleError == null) {
+            showException(exception, file);
+        } else if (!handleError) {
             file.getModelerPanelTopComponent().close();
-            String message = exception.getLocalizedMessage();
-            int end = message.lastIndexOf("Runtime Exceptions:");
-            end = end < 1 ? message.length() : end;
-            int start = message.lastIndexOf("Exception Description:");
-            start = start < 1 ? 0 : start;
-            ExceptionUtils.printStackTrace(message.substring(start, end), exception, file);
-
-        } else {
-            file.handleException(exception);
         }
 
-        if (throwError) {
-//            throw new RuntimeException(exception);
-              file.getModelerPanelTopComponent().close();
+    }
 
-        } else {
-        }
-
+    private static void showException(Exception exception, ModelerFile file) {
+        String message = exception.getLocalizedMessage();
+        file.getModelerPanelTopComponent().close();
+        int end = message.lastIndexOf("Runtime Exceptions:");
+        end = end < 1 ? message.length() : end;
+        int start = message.lastIndexOf("Exception Description:");
+        start = start < 1 ? 0 : start;
+        ExceptionUtils.printStackTrace(message.substring(start, end), exception, file);
     }
 
 }

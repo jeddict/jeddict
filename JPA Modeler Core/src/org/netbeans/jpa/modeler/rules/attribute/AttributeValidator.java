@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.rules.attribute;
 
 import java.util.List;
+import static org.eclipse.persistence.exceptions.DescriptorException.TABLE_NOT_PRESENT;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
@@ -36,6 +37,7 @@ public class AttributeValidator {
 
     public final static String EMBEDDEDID_AND_ID_FOUND = "MSG_EmbeddedIdAndIdFound";
     public final static String MULTIPLE_EMBEDDEDID_FOUND = "MSG_MultipleEmbeddedIdFound";
+    public final static String TABLE_NOT_PRESENT = "MSG_TableNotPresent";
 
     public static void validateEmbeddedIdAndIdFound(PersistenceClassWidget peristenceClassWidget_In) {
         List<JavaClassWidget> javaClassWidgets = peristenceClassWidget_In.getAllSubclassWidgets();

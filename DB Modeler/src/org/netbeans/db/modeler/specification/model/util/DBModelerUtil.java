@@ -170,8 +170,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         try {
             loadModelerFileInternal(file);
         } catch (Exception ie) {
-            DeploymentExceptionManager.handleException(file, ie) ;
-        } 
+            DeploymentExceptionManager.handleException(file, ie);
+        }
     }
 
     public void loadModelerFileInternal(ModelerFile file) throws DBConnectionNotFound, org.netbeans.modeler.core.exception.ProcessInterruptedException {
@@ -181,12 +181,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
             DBMapping dbMapping = null;
-            try {
-                dbMapping = createDBMapping(file, entityMapping);
-            } catch (DBConnectionNotFound ex) {
-                entityMapping.getCache().setDatabaseConnection(null);
-                throw ex;
-            }
+            dbMapping = createDBMapping(file, entityMapping);
+
             scene.setBaseElementSpec(dbMapping);
 
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
@@ -299,7 +295,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {
-                         if (column instanceof DBDiscriminatorColumn) {
+                        if (column instanceof DBDiscriminatorColumn) {
                             tableWidget.addDiscriminatorColumn(column.getName(), column);
                         } else if (column instanceof DBJoinColumn) {
                             tableWidget.addNewJoinKey(column.getName(), column);
@@ -333,9 +329,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                     tableWidget.addParentAssociationJoinColumn(column.getName(), column);
                                 }
                             }
-                        }else if (column.isPrimaryKey()) {
+                        } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
-                        }  else {
+                        } else {
                             tableWidget.addNewBasicColumn(column.getName(), column);
                         }
                     });
@@ -364,12 +360,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 //       ReferenceColumn => Target
         DBColumn sourceColumn = (DBColumn) foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
-        if(sourceColumn.getReferenceColumn()==null){// TODO remove this block
+        if (sourceColumn.getReferenceColumn() == null) {// TODO remove this block
             return;
         }
         ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) { // TODO remove this block
-             return;
+            return;
         }
 
         EdgeWidgetInfo edgeInfo = new EdgeWidgetInfo();
