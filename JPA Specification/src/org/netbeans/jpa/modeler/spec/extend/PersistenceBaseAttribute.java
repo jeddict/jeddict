@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Column;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
 import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 
 /**
@@ -62,7 +63,7 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
 //            return true;
 //        }
 
-        if ("java.math.BigDecimal".equals(attributeType)) {
+        if (BIGDECIMAL.equals(attributeType)) {
             return true;
         }
         return false;
@@ -76,7 +77,7 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
 //        } else if (attributeType.equals("java.math.BigDecimal")) {
 //            return true;
 //        }
-        if ("java.math.BigDecimal".equals(attributeType)) {
+        if (BIGDECIMAL.equals(attributeType)) {
             return true;
         }
         return false;

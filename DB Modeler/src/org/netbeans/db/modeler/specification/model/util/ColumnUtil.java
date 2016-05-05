@@ -55,8 +55,8 @@ public class ColumnUtil {
                     } else {
                         joinColumn = ((DBForeignKey) foreignKeyWidget.getBaseElementSpec()).getJoinColumn();
                     }
-                    if (joinColumn.getReferencedColumn() == null) {
-                        joinColumn.setReferencedColumn(primaryKeyWidget.getBaseElementSpec().getAttribute());
+                    if (StringUtils.isEmpty(joinColumn.getReferencedColumnName())) {
+                        joinColumn.setReferencedColumnName(primaryKeyWidget.getName());
                     }
                     if (StringUtils.isEmpty(joinColumn.getName())) {
                         joinColumn.setName(foreignKeyWidget.getName());

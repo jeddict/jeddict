@@ -19,18 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlIDREF;
-import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public abstract class CompositionAttribute extends BaseAttribute implements AccessTypeHandler {
+public abstract class CompositionAttribute<T extends JavaClass> extends BaseAttribute implements AccessTypeHandler {
 
     @XmlAttribute(name = "connected-class-id", required = true)
     @XmlIDREF
-    private Embeddable connectedClass;
+    private T connectedClass;
 
     @Override
     public String getAttributeType() {
@@ -44,14 +43,14 @@ public abstract class CompositionAttribute extends BaseAttribute implements Acce
     /**
      * @return the connectedClass
      */
-    public Embeddable getConnectedClass() {
+    public T getConnectedClass() {
         return connectedClass;
     }
 
     /**
      * @param connectedClass the connectedClass to set
      */
-    public void setConnectedClass(Embeddable connectedClass) {
+    public void setConnectedClass(T connectedClass) {
         this.connectedClass = connectedClass;
     }
 

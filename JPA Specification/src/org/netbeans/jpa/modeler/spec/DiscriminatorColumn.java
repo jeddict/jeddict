@@ -158,7 +158,9 @@ public class DiscriminatorColumn {
         accessor.setColumnDefinition(columnDefinition);
         accessor.setLength(length);
         accessor.setName(name);
-        accessor.setDiscriminatorType(discriminatorType.value());
+        if (discriminatorType != null) {
+            accessor.setDiscriminatorType(discriminatorType.value());
+        }
         return accessor;
     }
 }

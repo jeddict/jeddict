@@ -79,7 +79,7 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
     @Override
     public void init() {
-        super.init();
+        validateName(this.getName());
     }
 
     @Override
@@ -180,9 +180,9 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
         DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
         if (tableSpec.findColumns(name).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+            errorHandler.throwError(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+            errorHandler.clearError(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         }
     }
 
@@ -197,5 +197,59 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
             errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
     }
+
+//    @Override
+//    protected List<JMenuItem> getPopupMenuItemList() {
+//        List<JMenuItem> menuItemList = new LinkedList<>();
+//
+//        JMenuItem drive = new JMenuItem("Drive to Entity");
+//        drive.addActionListener((ActionEvent e) -> {
+//            DBColumn column = ColumnWidget.this.getBaseElementSpec();
+//            Entity entity = table.getEntity();
+//            ModelerFile modelerFile = ColumnWidget.this.getModelerScene().getModelerFile();
+//            modelerFile = modelerFile.getParentFile();
+//
+//            Widget widget = (Widget) ((JPAModelerScene) modelerFile.getModelerScene()).getBaseElements().stream().filter(w -> w.getBaseElementSpec() == entity).findAny().get();
+//            modelerFile.getModelerScene().setFocusedWidget(widget);
+//
+//            Rectangle visibleRect = modelerFile.getModelerScene().getView().getVisibleRect();
+//            Rectangle widetRec = new Rectangle(widget.getLocation());
+//            Rectangle sceneRec = widget.getScene().getBounds();
+//
+//            int x = 0, y = 0;
+//            if (widetRec.y + visibleRect.height / 2 > sceneRec.height && widetRec.y + visibleRect.height / 2 < sceneRec.height) {
+//                System.out.println("Center Vertcal");
+//                y = widetRec.y - visibleRect.height / 2;
+//            } else if (widetRec.y + visibleRect.height / 2 > sceneRec.height) {
+//                System.out.println("Bottom");
+//                y = sceneRec.height;
+//            } else if (widetRec.y + visibleRect.height / 2 < sceneRec.height) {
+//                System.out.println("Top");
+//                y = 0;
+//            }
+//
+//            if (widetRec.x + visibleRect.width / 2 > sceneRec.width && widetRec.x + visibleRect.width / 2 < sceneRec.width) {
+//                System.out.println("Center Horizontal");
+//                x = widetRec.x - visibleRect.width / 2;
+//            } else if (widetRec.x + visibleRect.width / 2 > sceneRec.width) {
+//                System.out.println("Right");
+//                x = sceneRec.width;
+//            } else if (widetRec.x + visibleRect.width / 2 < sceneRec.width) {
+//                System.out.println("Left");
+//                x = 0;
+//            }
+//
+//            NODE_WIDGET_SELECT_PROVIDER.select(widget, null, false);
+//            modelerFile.getModelerScene().getView().scrollRectToVisible(new Rectangle(x, y, widget.getBounds().width, widget.getBounds().height));
+//            JPAFileActionListener.open(modelerFile);
+//
+//        });
+//
+//        menuItemList.add(0, drive);
+//
+//        menuItemList.add(getPropertyMenu());
+//
+//        return menuItemList;
+//    }
 
 }

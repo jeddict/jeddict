@@ -17,11 +17,12 @@ package org.netbeans.jpa.modeler.core.widget.attribute;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
@@ -29,7 +30,6 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -126,7 +126,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         } else {
             try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
                 set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
-                        "compositePrimaryKeyClass", "Field Type", "", null));
+                       "compositePrimaryKeyClass", "compositePrimaryKeyClass", "Field Type", "", null));
             } catch (NoSuchMethodException | NoSuchFieldException ex) {
                 this.getModelerScene().getModelerFile().handleException(ex);;
             }
@@ -174,6 +174,10 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             @Override
             public void setData(Attribute baseAttribute) {
                 AttributeWidget.this.setBaseElementSpec((E) baseAttribute);
+                if (AttributeWidget.this instanceof BaseAttributeWidget) {
+                    ((BaseAttributeWidget)AttributeWidget.this).createBeanValidationPropertySet(AttributeWidget.this.getPropertyManager().getElementPropertySet());
+                    AttributeWidget.this.refreshProperties();
+                }
             }
 
             @Override
@@ -253,28 +257,42 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return false;
     }
 
+    
+    @Override
+    public void init() {
+        setAttributeTooltip();
+        this.getClassWidget().scanDuplicateAttributes(null, this.name);
+        validateName(null, this.getName());
+    }
+
+    @Override
+    public void destroy() {
+        this.getClassWidget().scanDuplicateAttributes(this.name, null);
+    }
+    private void validateName(String previousName,String name){
+        if (JavaPersistenceQLKeywords.isKeyword(name)) {
+            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        } else {
+            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+        }
+        if(SourceVersion.isName(name)){
+            errorHandler.clearError(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+        } else {
+            errorHandler.throwError(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+        }
+        this.getClassWidget().scanDuplicateAttributes(previousName, name);
+
+    }
     @Override
     public void setName(String name) {
-
+        String previousName = this.name;
         if (name != null && !name.trim().isEmpty()) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setName(this.name);
             }
         }
-        if (JavaPersistenceQLKeywords.isKeyword(this.getName())) {
-            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
-        } else {
-            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
-        }
-
-        ManagedClass javaClass = (ManagedClass) this.getClassWidget().getBaseElementSpec();
-        if (javaClass.getAttributes().findAllAttribute(this.getName()).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-        }
-
+       validateName(previousName,this.getName());
     }
 
     @Override
@@ -291,17 +309,13 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
     protected abstract void setAttributeTooltip();
 
-    @Override
-    public void init() {
-        super.init();
-        setAttributeTooltip();
-    }
+
 
     /**
      * @return the classWidget
      */
-    public JavaClassWidget getClassWidget() {
-        return (JavaClassWidget) this.getPNodeWidget();
+    public PersistenceClassWidget getClassWidget() {
+        return (PersistenceClassWidget) this.getPNodeWidget();
     }
 
 }

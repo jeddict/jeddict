@@ -19,10 +19,12 @@ public class EntityValidator {
 
     public final static String NO_PRIMARYKEY_EXIST = "MSG_NoIdDefinedInHierarchy";
     public final static String EMPTY_CLASS_NAME = "MSG_EmptyClassName";
+    public final static String INVALID_CLASS_NAME = "MSG_InvalidClassName";
     public final static String CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_ClassNamedWithReservedSQLKeyword";
     public final static String CLASS_NAME_WITH_JPQL_KEYWORD = "MSG_ClassNamedWithJavaPersistenceQLKeyword";
     public final static String NON_UNIQUE_ENTITY_NAME = "MSG_NonUniqueEntityName";
+    public final static String NON_UNIQUE_JAVA_CLASS = "MSG_NonUniqueJavaClass";
     public final static String NON_UNIQUE_TABLE_NAME = "MSG_NonUniqueTableName";
-    public final static String NO_COMPOSITE_OPTION_DEFINED = "MSG_NoCompositeOptionDefined";
+//    public final static String NO_COMPOSITE_OPTION_DEFINED = "MSG_NoCompositeOptionDefined";
 
 }

@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToOneAccessor;
+import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -39,7 +40,14 @@ public class OneToOneSpecAccessor extends OneToOneAccessor {
         OneToOneSpecAccessor accessor = new OneToOneSpecAccessor(oneToOne);
         accessor.setName(oneToOne.getName());
         accessor.setTargetEntityName(oneToOne.getTargetEntity());
-        accessor.setId(oneToOne.isPrimaryKey());
+        if (oneToOne.isPrimaryKey()) { 
+            IdClass idClass = oneToOne.getIdClass();
+            if (idClass != null) {
+                accessor.setId(Boolean.TRUE);
+            } else {
+                accessor.setMapsId(oneToOne.getName());
+            }
+        }
         accessor.setMappedBy(oneToOne.getMappedBy());
         if (!JoinTableValidator.isEmpty(oneToOne.getJoinTable())) {
             accessor.setJoinTable(oneToOne.getJoinTable().getAccessor());

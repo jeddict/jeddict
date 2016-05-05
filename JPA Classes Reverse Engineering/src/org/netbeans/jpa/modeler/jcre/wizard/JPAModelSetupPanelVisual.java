@@ -26,9 +26,11 @@ import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
+import org.netbeans.jcode.core.util.SourceGroups;
+import static org.netbeans.jcode.core.util.SourceGroups.getFolderSourceGroup;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
-import org.netbeans.jpa.modeler.source.JavaIdentifiers;
-import org.netbeans.jpa.modeler.source.SourceGroups;
+import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.SourceGroupUISupport;
 import org.netbeans.spi.java.project.support.ui.PackageView;
@@ -254,43 +256,40 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     }
 
     void read(WizardDescriptor settings) {
-//        jsfFolder.setText((String) settings.getProperty(WizardProperties.JSF_FOLDER));
-
-//        project = Templates.getProject(settings);
         FileObject targetFolder = Templates.getTargetFolder(settings);
-
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
-
         SourceGroup[] sourceGroups = SourceGroups.getJavaSourceGroups(project);
         SourceGroupUISupport.connect(locationComboBox, sourceGroups);
-
         packageComboBox.setRenderer(PackageView.listRenderer());
-
         updateSourceGroupPackages();
 
         // set default source group and package cf. targetFolder
-//        if (targetFolder != null) {
-//            SourceGroup targetSourceGroup = SourceGroupSupport.getFolderSourceGroup(sourceGroups, targetFolder);
-//            if (targetSourceGroup != null) {
-//                locationComboBox.setSelectedItem(targetSourceGroup);
-//                String targetPackage = SourceGroupSupport.getPackageForFolder(targetSourceGroup, targetFolder);
-//                if (targetPackage != null) {
-//                    packageComboBoxEditor.setText(targetPackage);
-//                }
-//            }
-//            if (FileUtil.isParentOf(WebModule.getWebModule(
-//                    targetFolder).getDocumentBase(), targetFolder)) {
-//                Sources s = (Sources) Templates.getProject(wizard).getLookup().lookup(Sources.class);
-//                SourceGroup[] groups = s.getSourceGroups(WebProjectConstants.TYPE_DOC_ROOT);
-//                jsfFolder.setText("/"+JSFConfigUtilities.getResourcePath(groups,targetFolder,'/',true));
-//            }
-//        }
+        if (targetFolder != null) {
+            SourceGroup targetSourceGroup = getFolderSourceGroup(sourceGroups, targetFolder);
+            if (targetSourceGroup != null) {
+                locationComboBox.setSelectedItem(targetSourceGroup);
+                String targetPackage = SourceGroupSupport.getPackageForFolder(targetSourceGroup, targetFolder);
+                if (targetPackage != null) {
+                    packageComboBoxEditor.setText(targetPackage);
+                }
+            }
+        }
     }
 
     void store(WizardDescriptor settings) {
         String pkg = getPackage();
         try {
-            FileObject fo = getLocationValue().getRootFolder();
+            FileObject fo = null;
+            if (getLocationValue() != null) {
+                fo = getLocationValue().getRootFolder();
+            }
+            if(fo==null){
+                FileObject targetFolder = Templates.getTargetFolder(settings);
+                if (targetFolder != null) {
+                    SourceGroup targetSourceGroup = getFolderSourceGroup(targetFolder);
+                    fo = targetSourceGroup.getRootFolder();
+                }
+            }
             String pkgSlashes = pkg.replace('.', '/');
             FileObject targetFolder = fo.getFileObject(pkgSlashes);
             if (targetFolder == null) {

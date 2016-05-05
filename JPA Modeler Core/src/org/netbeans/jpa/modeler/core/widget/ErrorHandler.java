@@ -32,6 +32,7 @@ import org.openide.util.NbBundle;
 public class ErrorHandler {
 
     private final IFlowElementWidget widget;
+    private ResourceBundleManager bundleManager = new ResourceBundleManager();
 
     public ErrorHandler(IFlowElementWidget widget) {
         this.widget = widget;
@@ -47,7 +48,7 @@ public class ErrorHandler {
 //            errorList.put(key, ResourceBundleManager.get(key));
 //            printError();
 //        }
-        errorList.put(key, ResourceBundleManager.get(key, widget.getName()));
+        errorList.put(key, bundleManager.get(key, widget.getName()));
         printError();
     }
 
@@ -63,7 +64,7 @@ public class ErrorHandler {
     public void printError() {
         StringBuilder errorMessage = new StringBuilder();
         errorList.keySet().stream().forEach((errorKey) -> {
-            errorMessage.append(errorList.get(errorKey));
+            errorMessage.append(errorList.get(errorKey)).append(". ").append('\n');
         });
         if (errorMessage.length() != 0) {
             widget.setToolTipText(errorMessage.toString());
@@ -78,12 +79,12 @@ public class ErrorHandler {
         }
     }
 
-    private static class ResourceBundleManager {
+    private class ResourceBundleManager {
 
-        private static final Map<String, String> ERRORS = new HashMap<>();
-        private static final Class[] VALIDATORS = {EntityValidator.class, AttributeValidator.class};
+        private final Map<String, String> ERRORS = new HashMap<>();
+        private final Class[] VALIDATORS = {EntityValidator.class, AttributeValidator.class};
 
-        private static String get(String key, Object... param) {
+        private String get(String key, Object... param) {
             String value = ERRORS.get(key);
             if (value != null) {
                 return value;

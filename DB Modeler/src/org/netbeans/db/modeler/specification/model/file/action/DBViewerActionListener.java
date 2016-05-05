@@ -38,9 +38,10 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         document = "org/netbeans/db/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/db/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA_DB", version = 2.0F, name = "JPA DB Viewer", displayName = "JPA 2.0 Specification - DB Viewer")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "DB Viewer", name = "DB Viewer", version = 1.4f,
+@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "DB Viewer", name = "DB Viewer", 
         modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class, exportManager = ExportManagerImpl.class,
-        relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class)
+        relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
+        version = "1.5.4", architectureVersion = "1.4")
 //        modelerPanel=DBPanel.class)
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {

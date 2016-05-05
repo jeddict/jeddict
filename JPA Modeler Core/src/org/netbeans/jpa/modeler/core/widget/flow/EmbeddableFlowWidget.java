@@ -36,11 +36,18 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
 
     public EmbeddableFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
-//        setAnchorGap(0);
-
     }
 
+    
     private Color color;
+    
+    
+    @Override
+    public void init(){
+         sourceEmbeddedAttributeWidget.setAnchorGap(5);
+    }
+    
+    
 
     public Sheet.Set getVisualPropertiesSet(Sheet.Set set) throws NoSuchMethodException, NoSuchFieldException {
         set.put(new ElementPropertySupport(this, Color.class, "color", "Color", "The Line Color of the SequenceFlow Element."));
@@ -103,10 +110,6 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
 
     @Override
     public void createPropertySet(ElementPropertySet elementPropertySet) {
-    }
-
-    @Override
-    public void init() {
     }
 
     @Override

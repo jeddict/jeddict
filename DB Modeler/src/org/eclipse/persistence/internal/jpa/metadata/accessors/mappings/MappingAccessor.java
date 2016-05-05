@@ -280,7 +280,7 @@ public abstract class MappingAccessor extends MetadataAccessor {
             updatePrimaryKeyField(aggregatesAccessor, overrideField);
         }
 
-        if (overrideName.indexOf(".") > -1) {
+        if (overrideName.contains(".")) {
             // Set the nested field name translation on the mapping. Nested
             // (dot notation) overrides are initialized slightly different then
             // core field name translations which are based on column names. In

@@ -36,7 +36,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     private static final VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
 
-    private List<String> annotation = new ArrayList<String>();
+    private List<AnnotationSnippet> annotation = new ArrayList<>();
 
     static {
         AUTO_GENERATE.setName("id");
@@ -439,6 +439,10 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         if (excludeSuperClassListener) {
             importSnippets.add("javax.persistence.ExcludeSuperclassListeners");
         }
+        
+        for (AnnotationSnippet snippet : this.getAnnotation()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
 
         importSnippets = ORMConverterUtil.eliminateSamePkgImports(
                 classHelper.getPackageName(), importSnippets);
@@ -477,14 +481,14 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the annotation
      */
-    public List<String> getAnnotation() {
+    public List<AnnotationSnippet> getAnnotation() {
         return annotation;
     }
 
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<String> annotation) {
+    public void setAnnotation(List<AnnotationSnippet> annotation) {
         this.annotation = annotation;
     }
 

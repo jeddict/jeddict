@@ -18,15 +18,18 @@ package org.netbeans.jpa.modeler.core.widget;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
@@ -69,28 +72,45 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
     public abstract void sortAttributes();
 
-    @Override
-    public void setName(String name) {
-
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name.replaceAll("\\s+", "");
-            if (this.getModelerScene().getModelerFile().isLoaded()) {
-                getBaseElementSpec().setClazz(this.name);
-            }
-            if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
-                getErrorHandler().throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
-            } else {
-                getErrorHandler().clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
-            }
-            EntityMappings entityMapping = JavaClassWidget.this.getModelerScene().getBaseElementSpec();
-            if (entityMapping.findAllEntity(JavaClassWidget.this.getName()).size() > 1) {
-                getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
-            } else {
-                getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
-            }
+    protected void validateName(String previousName, String name) {
+        if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
+            getErrorHandler().throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+        } else {
+            getErrorHandler().clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
         }
-
+        if(SourceVersion.isName(name)){
+            getErrorHandler().clearError(EntityValidator.INVALID_CLASS_NAME);
+        } else {
+            getErrorHandler().throwError(EntityValidator.INVALID_CLASS_NAME);
+        }
+        scanDuplicateClass(previousName, name);
     }
+    
+    public void scanDuplicateClass(String previousName, String newName){
+      int previousNameCount=0, newNameCount=0;
+      List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();
+      for(JavaClassWidget<JavaClass> javaClassWidget : javaClassList){
+          JavaClass javaClass = javaClassWidget.getBaseElementSpec();
+          
+          if(javaClass.getClazz().equals(previousName)){
+              if(++previousNameCount>1){
+                  javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+              } else if(!javaClassWidget.getErrorHandler().getErrorList().isEmpty()){
+                  javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+              }
+          }
+          
+          if(javaClass.getClazz().equals(newName)){
+              if(++newNameCount>1){
+                  javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+              }else if(!javaClassWidget.getErrorHandler().getErrorList().isEmpty()){
+                  javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+              }
+          }
+      }
+    }
+    
+
 
     @Override
     public void setLabel(String label) {

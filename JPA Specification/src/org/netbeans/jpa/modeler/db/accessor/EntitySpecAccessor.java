@@ -48,6 +48,11 @@ public class EntitySpecAccessor extends EntityAccessor {
         if (entity.getInheritance() != null) {
             accessor.setInheritance(entity.getInheritance().getAccessor());
         }
+        
+        if (entity.getIdClass() != null) {
+            accessor.setIdClassName(entity.getIdClass().getClazz());
+        }
+        
         if (entity.getDiscriminatorColumn() != null) {
             accessor.setDiscriminatorColumn(entity.getDiscriminatorColumn().getAccessor());
         }

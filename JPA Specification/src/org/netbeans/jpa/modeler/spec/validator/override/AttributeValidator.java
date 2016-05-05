@@ -18,9 +18,12 @@ package org.netbeans.jpa.modeler.spec.validator.override;
 import java.util.Arrays;
 import java.util.Optional;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
+import org.netbeans.jpa.modeler.spec.DefaultAttribute;
+import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -86,6 +89,13 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
                 || AttributeValidator.isEmpty(attributeOverride)
         );
     }
+    
+        public static void filter(EmbeddedId embedded) {
+        embedded.getAttributeOverride().removeIf(attributeOverride
+                -> !isExist(attributeOverride.getName().split("\\."), embedded.getConnectedClass())
+                || AttributeValidator.isEmpty(attributeOverride)
+        );
+    }
 
     /**
      * Used to remove all stale AttributeOverride (ex : if Embeddable attribute
@@ -113,6 +123,26 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
             }
         } else {
             Optional<Attribute> attrOptional = embeddable.getAttributes().getNonRelationAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
+            return attrOptional.isPresent();
+        }
+    }
+    
+    /**
+     * For EmbeddedId
+     * @param keys
+     * @param defaultClass
+     * @return 
+     */
+        private static boolean isExist(String[] keys, DefaultClass defaultClass) {
+        if (keys.length > 1) {
+            Optional<DefaultAttribute> embeddedOptional = defaultClass.getAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
+            if (embeddedOptional.isPresent()) {
+                return true;// TODO defaultattribute connected class => nested => isExist(Arrays.copyOfRange(keys, 1, keys.length), embeddedOptional.get().getConnectedClass());
+            } else {
+                return false;
+            }
+        } else {
+            Optional<DefaultAttribute> attrOptional = defaultClass.getAttributes().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
             return attrOptional.isPresent();
         }
     }

@@ -58,7 +58,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlType(name = "embedded-id", propOrder = {
     "attributeOverride"
 })
-public class EmbeddedId extends CompositionAttribute implements AttributeOverrideHandler {
+public class EmbeddedId extends CompositionAttribute<DefaultClass> implements AttributeOverrideHandler {
 
     @XmlElement(name = "attribute-override")
     protected Set<AttributeOverride> attributeOverride;
@@ -75,22 +75,26 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         embeddedId.name = variableElement.getSimpleName().toString();
         embeddedId.access = AccessType.load(element);
 
-        DeclaredType declaredType = (DeclaredType) variableElement.asType();
+        //does require to save it
+//        DeclaredType declaredType = (DeclaredType) variableElement.asType();
+//
+//        org.netbeans.jpa.modeler.spec.Embeddable embeddableClassSpec = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
+//        if (embeddableClassSpec == null) {
+//            boolean fieldAccess = false;
+//            if (element == variableElement) {
+//                fieldAccess = true;
+//            }
+//            embeddableClassSpec = new org.netbeans.jpa.modeler.spec.Embeddable();
+//            TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
+//            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
+//            entityMappings.addEmbeddable(embeddableClassSpec);
+//        }
+        
+        
+        
+//        embeddedId.setConnectedClass(embeddableClassSpec);//TODO Priority
 
-        org.netbeans.jpa.modeler.spec.Embeddable embeddableClassSpec = entityMappings.findEmbeddable(declaredType.asElement().getSimpleName().toString());
-        if (embeddableClassSpec == null) {
-            boolean fieldAccess = false;
-            if (element == variableElement) {
-                fieldAccess = true;
-            }
-            embeddableClassSpec = new org.netbeans.jpa.modeler.spec.Embeddable();
-            TypeElement embeddableTypeElement = JavaSourceParserUtil.getAttributeTypeElement(variableElement);
-            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
-            entityMappings.addEmbeddable(embeddableClassSpec);
-        }
-        embeddedId.setConnectedClass(embeddableClassSpec);
-
-        JavaSourceParserUtil.addNonEEAnnotation(embeddedId, element);
+        embeddedId.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
         return embeddedId;
     }
 
@@ -175,13 +179,5 @@ public class EmbeddedId extends CompositionAttribute implements AttributeOverrid
         attributeOverride_TMP.setName(attributePath);
         attributeOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
-    }
-
-    public EmbeddedIdAccessor getAccessor() {
-        EmbeddedIdAccessor attr = new EmbeddedIdAccessor();
-        attr.setName(name);
-//        attr.setAttributeType(a);
-        return attr;
-
     }
 }

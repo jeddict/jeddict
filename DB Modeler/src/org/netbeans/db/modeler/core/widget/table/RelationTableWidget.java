@@ -77,9 +77,9 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
 
         DBMapping mapping = RelationTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(RelationTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

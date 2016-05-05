@@ -7,7 +7,39 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>org.apache.commons.lang</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>2.4</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.jcode.core</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.jpa.modeler.collaborate</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.jpa.modeler.lib</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.jpa.ri</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -81,12 +113,20 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.java.source</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>0.138.3.32.2.25.8</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.project.libraries</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.46.1</specification-version>
+                        <specification-version>1.38.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -181,26 +221,6 @@
                 <package>org.netbeans.orm.converter.spec</package>
                 <package>org.netbeans.orm.converter.util</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-collections-3.2.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-collections-3.2.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/velocity-1.6.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/velocity-1.6.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-logging-1.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-logging-1.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-lang-2.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-lang-2.4.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/ant.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/ant.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>

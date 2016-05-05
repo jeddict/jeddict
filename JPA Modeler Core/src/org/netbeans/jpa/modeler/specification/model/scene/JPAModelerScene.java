@@ -73,6 +73,7 @@ import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidg
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
+import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
@@ -90,6 +91,16 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
         }
         return entityWidgets;
+    }
+    
+     public List<JavaClassWidget> getJavaClassWidges() {
+        List<JavaClassWidget> classWidgets = new ArrayList<>();
+        for (IBaseElementWidget baseElement : getBaseElements()) {
+            if (baseElement instanceof JavaClassWidget) {
+                classWidgets.add((JavaClassWidget) baseElement);
+            }
+        }
+        return classWidgets;
     }
 
     public boolean compile() {
@@ -133,7 +144,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     public void deleteBaseElement(IBaseElementWidget baseElementWidget) {
         EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getModelerScene().getBaseElementSpec();
         if (baseElementWidget instanceof IFlowElementWidget) {
-            if (baseElementWidget instanceof FlowNodeWidget) { //reverse ref
+            if (baseElementWidget instanceof FlowNodeWidget) { //reverse refactorRelationSynchronously
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
                 if (baseElementWidget instanceof JavaClassWidget) {
@@ -235,11 +246,11 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
             this.addBaseElement((IFlowElementWidget) baseElementWidget);
-            if (baseElementWidget instanceof IFlowNodeWidget) { //reverse ref
+            if (baseElementWidget instanceof IFlowNodeWidget) { //reverse refactorRelationSynchronously
                 ((FlowNodeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((FlowNodeWidget) baseElementWidget).getId();
                 isExist = ((FlowNodeWidget) baseElementWidget).getNodeWidgetInfo().isExist();
-            } else if (baseElementWidget instanceof IFlowEdgeWidget) { //reverse ref
+            } else if (baseElementWidget instanceof IFlowEdgeWidget) { //reverse refactorRelationSynchronously
                 ((IFlowEdgeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((IFlowEdgeWidget) baseElementWidget).getId();
                 isExist = ((PEdgeWidget) baseElementWidget).getEdgeWidgetInfo().isExist();
@@ -301,7 +312,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
-//        JPAModelerInstaller.lookupUpdates();
         SwingUtilities.invokeLater(() -> {
             OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
             if (!window.isOpened()) {
@@ -309,8 +319,13 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             }
             window.requestActive();
         });
-
-
+        
+        //After installation of new version, auto save file 
+        ModelerFile file = this.getModelerFile();
+        EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
+        if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getCurrentVersion()) < 0) {
+            file.getModelerUtil().saveModelerFile(file);
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ import java.awt.Color;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IReferenceColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -42,7 +43,7 @@ import org.openide.nodes.Sheet;
 public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
 
     private ForeignKeyWidget<DBColumn> foreignKeyWidget;
-    private IPrimaryKeyWidget referenceColumnWidget;
+    private IReferenceColumnWidget referenceColumnWidget;
     private static AnchorShape ZERO_MORE;// = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/MORE_ZERO.png"), true, 18, 7);
     private static AnchorShape ZERO_ONE;// = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/ZERO_ONE.png"), true, 18, 7);
     private static AnchorShape ONE_MORE;// = new IconAnchorShape(ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/MORE_ONE.png"), true, 18, 7);
@@ -131,11 +132,11 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
         }
     }
 
-    public IPrimaryKeyWidget getReferenceColumnWidget() {
+    public IReferenceColumnWidget getReferenceColumnWidget() {
         return referenceColumnWidget;
     }
 
-    public void setReferenceColumnWidget(IPrimaryKeyWidget referenceColumnWidget) {
+    public void setReferenceColumnWidget(IReferenceColumnWidget referenceColumnWidget) {
         this.referenceColumnWidget = referenceColumnWidget;
         if (referenceColumnWidget != null) {
             referenceColumnWidget.addReferenceFlowWidget(this);

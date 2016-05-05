@@ -547,7 +547,13 @@ public abstract class BaseAttributes implements IAttributes {
 
     @Override
     public boolean isAttributeExist(String name) {
-
+        //check from parent entities
+        if(this.getJavaClass().getSuperclass()!=null){
+            if(((ManagedClass)this.getJavaClass().getSuperclass()).getAttributes().isAttributeExist(name)){
+                return true;
+            }
+        }
+        
         if (basic != null) {
             for (Basic basic_TMP : basic) {
                 if (basic_TMP.getName() != null && basic_TMP.getName().equals(name)) {
@@ -611,7 +617,16 @@ public abstract class BaseAttributes implements IAttributes {
 
     @Override
     public List<Attribute> findAllAttribute(String name) {
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        return findAllAttribute(name,false);
+    }
+    
+    @Override
+    public List<Attribute> findAllAttribute(String name,boolean includeParentClassAttibute) {
+        List<Attribute> attributes = new ArrayList<>();
+        
+        if(includeParentClassAttibute && this.getJavaClass().getSuperclass()!=null){
+            attributes.addAll(((ManagedClass)this.getJavaClass().getSuperclass()).getAttributes().findAllAttribute(name,true));
+        }
 
         if (basic != null) {
             for (Basic basic_TMP : basic) {
@@ -698,12 +713,13 @@ public abstract class BaseAttributes implements IAttributes {
         attr.getBasics().addAll(getBasic().stream().map(basic -> BasicSpecAccessor.getInstance(basic, inherit)).collect(toList()));
         attr.getElementCollections().addAll(getElementCollection().stream().map(ElementCollectionSpecAccessor::getInstance).collect(toList()));
         attr.getEmbeddeds().addAll(getEmbedded().stream().map(EmbeddedSpecAccessor::getInstance).collect(toList()));
-        attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));
+//      Ignore Transient
+//      attr.getTransients().addAll(getTransient().stream().map(TransientSpecAccessor::getInstance).collect(toList()));
         attr.getManyToManys().addAll(getManyToMany().stream().map(ManyToManySpecAccessor::getInstance).collect(toList()));
         attr.getManyToOnes().addAll(getManyToOne().stream().map(ManyToOneSpecAccessor::getInstance).collect(toList()));
         attr.getOneToManys().addAll(getOneToMany().stream().map(OneToManySpecAccessor::getInstance).collect(toList()));
         attr.getOneToOnes().addAll(getOneToOne().stream().map(OneToOneSpecAccessor::getInstance).collect(toList()));
-        return attr;
+        return attr; 
     }
 
     /**

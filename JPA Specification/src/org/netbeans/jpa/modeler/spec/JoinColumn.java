@@ -64,10 +64,10 @@ public class JoinColumn {
 
     @XmlAttribute(name = "name")
     protected String name;
-    @XmlAttribute(name = "referenced-column")
-    @XmlIDREF
-    private Id referencedColumn;
-    @XmlTransient
+//    @XmlAttribute(name = "referenced-column")
+//    @XmlIDREF
+//    private Id referencedColumn;
+    @XmlAttribute(name="rc")
     protected String referencedColumnName;
     @XmlAttribute
     protected Boolean unique = false;
@@ -119,6 +119,9 @@ public class JoinColumn {
      *
      */
     public void setName(String value) {
+        if(value!=null){
+            value = value.toUpperCase();
+        }
         this.name = value;
     }
 
@@ -129,9 +132,9 @@ public class JoinColumn {
      *
      */
     public String getReferencedColumnName() {
-        if (referencedColumn != null) {
-            return referencedColumn.getReferenceColumnName();
-        }
+//        if (referencedColumn != null) {
+//            return referencedColumn.getReferenceColumnName();
+//        }
         return referencedColumnName;
     }
 
@@ -142,6 +145,9 @@ public class JoinColumn {
      *
      */
     public void setReferencedColumnName(String value) {
+        if(value!=null){
+            value = value.toUpperCase();
+        }
         this.referencedColumnName = value;
     }
 
@@ -278,18 +284,18 @@ public class JoinColumn {
         return accessor;
     }
 
-    /**
-     * @return the referencedColumn
-     */
-    public Id getReferencedColumn() {
-        return referencedColumn;
-    }
-
-    /**
-     * @param referencedColumn the referencedColumn to set
-     */
-    public void setReferencedColumn(Id referencedColumn) {
-        this.referencedColumn = referencedColumn;
-    }
+//    /**
+//     * @return the referencedColumn
+//     */
+//    public Id getReferencedColumn() {
+//        return referencedColumn;
+//    }
+//
+//    /**
+//     * @param referencedColumn the referencedColumn to set
+//     */
+//    public void setReferencedColumn(Id referencedColumn) {
+//        this.referencedColumn = referencedColumn;
+//    }
 
 }

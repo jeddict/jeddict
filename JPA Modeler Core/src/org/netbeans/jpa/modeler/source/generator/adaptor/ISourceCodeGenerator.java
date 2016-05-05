@@ -18,7 +18,7 @@ package org.netbeans.jpa.modeler.source.generator.adaptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
-import org.netbeans.modeler.task.ITaskSupervisor;
+import org.netbeans.jcode.task.ITaskSupervisor;
 
 /**
  *

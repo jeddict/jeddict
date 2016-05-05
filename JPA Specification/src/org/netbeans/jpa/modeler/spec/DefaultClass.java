@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
+import org.netbeans.jpa.modeler.db.accessor.DefaultAttributeSpecAccessor;
+import org.netbeans.jpa.modeler.db.accessor.DefaultEmbeddedAttributeSpecAccessor;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 //created by gaurav gupta
@@ -103,5 +105,37 @@ public class DefaultClass extends JavaClass {
     @Override
     public void setName(String name) {
         this.clazz = clazz;
+    }
+    
+        public XMLAttributes getAccessor() {
+        XMLAttributes attr = new XMLAttributes();
+        attr.setBasicCollections(new ArrayList<>());
+        attr.setBasicMaps(new ArrayList<>());
+        attr.setTransformations(new ArrayList<>());
+        attr.setVariableOneToOnes(new ArrayList<>());
+        attr.setStructures(new ArrayList<>());
+        attr.setArrays(new ArrayList<>());
+        attr.setBasics(new ArrayList<>());
+        attr.setElementCollections(new ArrayList<>());
+        attr.setEmbeddeds(new ArrayList<>());
+        attr.setTransients(new ArrayList<>());
+        attr.setManyToManys(new ArrayList<>());
+        attr.setManyToOnes(new ArrayList<>());
+        attr.setOneToManys(new ArrayList<>());
+        attr.setOneToOnes(new ArrayList<>());
+        attr.setIds(new ArrayList<>());
+        attr.setVersions(new ArrayList<>());
+        return updateAccessor(attr);
+    }
+
+    public XMLAttributes updateAccessor(XMLAttributes attr) {
+        for(DefaultAttribute attribute : getAttributes()){
+            if(attribute.isDerived()){
+                attr.getEmbeddeds().add(DefaultEmbeddedAttributeSpecAccessor.getInstance(attribute, false));
+            } else {
+                attr.getBasics().add(DefaultAttributeSpecAccessor.getInstance(attribute, false));
+            }
+        }
+        return attr;
     }
 }

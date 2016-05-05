@@ -82,7 +82,7 @@ public class NodeContextModel {
                     } else if ("BASIC_ATTRIBUTE".equals(addAttributeModel.getId())) {
                         persistenceClassWidget.addNewBasicAttribute(persistenceClassWidget.getNextAttributeName());
                     } else if ("BASIC_COLLECTION_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewBasicCollectionAttribute(persistenceClassWidget.getNextAttributeName());
+                        persistenceClassWidget.addNewBasicCollectionAttribute(persistenceClassWidget.getNextAttributeName(null,true));
                     } else if ("TRANSIENT_ATTRIBUTE".equals(addAttributeModel.getId())) {
                         persistenceClassWidget.addNewTransientAttribute(persistenceClassWidget.getNextAttributeName());
                     } else if ("VERSION_ATTRIBUTE".equals(addAttributeModel.getId())) {

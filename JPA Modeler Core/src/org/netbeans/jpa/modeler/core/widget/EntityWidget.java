@@ -83,6 +83,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         setLabel(entity.getClazz());
         changeAbstractionIcon(entity.getAbstract());
         scanKeyError();
+        validateName(null, this.getName());
     }
 
     private void changeAbstractionIcon(Boolean _abstract) {
@@ -186,7 +187,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public InheritenceStateType getInheritenceState() {
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = this.getOutgoingGeneralizationFlowWidget();
         List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = this.getIncomingGeneralizationFlowWidgets();
-        if (outgoingGeneralizationFlowWidget != null && outgoingGeneralizationFlowWidget.getSuperclassWidget() != null && !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
+        if (outgoingGeneralizationFlowWidget != null && outgoingGeneralizationFlowWidget.getSuperclassWidget() != null &&
+                !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
             outgoingGeneralizationFlowWidget = null;
         }
         InheritenceStateType type;
@@ -229,11 +231,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
     public void scanCompositeKeyError() {
-        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == CompositePrimaryKeyType.NONE) {
-            getErrorHandler().throwError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
-        } else {
-            getErrorHandler().clearError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
-        }
+//        if (this.getIdAttributeWidgets().size() > 1 && this.getBaseElementSpec().getCompositePrimaryKeyType() == null) {
+//            getErrorHandler().throwError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
+//        } else {
+//            getErrorHandler().clearError(EntityValidator.NO_COMPOSITE_OPTION_DEFINED);
+//        }
     }
 
     @Override
@@ -264,14 +266,28 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
     public boolean addUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
-        return unidirectionalRelationFlowWidget.add(e);
+        return getUnidirectionalRelationFlowWidget().add(e);
     }
 
     public boolean removeUnidirectionalRelationFlowWidget(Object o) {
-        return unidirectionalRelationFlowWidget.remove(o);
+        return getUnidirectionalRelationFlowWidget().remove(o);
     }
 
     public void clearUnidirectionalRelationFlowWidget() {
-        unidirectionalRelationFlowWidget.clear();
+        getUnidirectionalRelationFlowWidget().clear();
+    }
+
+    /**
+     * @return the unidirectionalRelationFlowWidget
+     */
+    public Set<RelationFlowWidget> getUnidirectionalRelationFlowWidget() {
+        return unidirectionalRelationFlowWidget;
+    }
+
+    /**
+     * @param unidirectionalRelationFlowWidget the unidirectionalRelationFlowWidget to set
+     */
+    public void setUnidirectionalRelationFlowWidget(Set<RelationFlowWidget> unidirectionalRelationFlowWidget) {
+        this.unidirectionalRelationFlowWidget = unidirectionalRelationFlowWidget;
     }
 }

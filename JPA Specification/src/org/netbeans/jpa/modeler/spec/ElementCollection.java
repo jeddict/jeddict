@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
+import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
@@ -135,7 +136,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  * For Basic ElementCollection -> TargetClass<String>
  * For Embeddable ElementCollection -> ConnectedClass<Embeddable>
  */
-public class ElementCollection extends CompositionAttribute implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler { //CompositionAttribute/BaseAttributes
+public class ElementCollection extends CompositionAttribute<Embeddable> implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler { //CompositionAttribute/BaseAttributes
 
     @XmlElement(name = "order-by")
     protected String orderBy;
@@ -231,7 +232,7 @@ public class ElementCollection extends CompositionAttribute implements FetchType
         } else {
             elementCollection.setTargetClass("java.lang.String");//elementCollection.targetClass
         }
-        JavaSourceParserUtil.addNonEEAnnotation(elementCollection, element);
+        elementCollection.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
 
         return elementCollection;
     }
@@ -840,14 +841,14 @@ public class ElementCollection extends CompositionAttribute implements FetchType
     }
 
     public boolean isPrecisionAttributeType() {
-        if ("java.math.BigDecimal".equals(getAttributeType())) {
+        if (BIGDECIMAL.equals(getAttributeType())) {
             return true;
         }
         return false;
     }
 
     public boolean isScaleAttributeType() {
-        if ("java.math.BigDecimal".equals(getAttributeType())) {
+        if (BIGDECIMAL.equals(getAttributeType())) {
             return true;
         }
         return false;

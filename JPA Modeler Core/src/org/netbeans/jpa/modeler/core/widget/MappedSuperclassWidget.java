@@ -41,6 +41,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
         }
         setName(mappedSuperclass.getClazz());
         setLabel(mappedSuperclass.getClazz());
+        validateName(null, this.getName());
 
     }
 

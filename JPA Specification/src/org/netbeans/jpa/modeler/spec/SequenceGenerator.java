@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -55,6 +57,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlType(name = "sequence-generator", propOrder = {
     "description"
 })
+@XmlJavaTypeAdapter(value = SequenceGeneratorValidator.class)
 public class SequenceGenerator {
 
     protected String description;
@@ -72,7 +75,7 @@ public class SequenceGenerator {
     protected Integer allocationSize;
 
     public static SequenceGenerator load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SequenceGenerator");
         SequenceGenerator sequenceGenerator = null;
         if (annotationMirror != null) {
             sequenceGenerator = new SequenceGenerator();

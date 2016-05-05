@@ -67,7 +67,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "associationOverride",
     "convert"
 })
-public class Embedded extends CompositionAttribute implements AttributeOverrideHandler, AssociationOverrideHandler {
+public class Embedded extends CompositionAttribute<Embeddable> implements AttributeOverrideHandler, AssociationOverrideHandler {
 
     @XmlElement(name = "attribute-override")
     protected Set<AttributeOverride> attributeOverride;
@@ -103,7 +103,8 @@ public class Embedded extends CompositionAttribute implements AttributeOverrideH
         }
         embedded.setConnectedClass(embeddableClassSpec);
 
-        JavaSourceParserUtil.addNonEEAnnotation(embedded, element);
+        embedded.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
+
         return embedded;
     }
 

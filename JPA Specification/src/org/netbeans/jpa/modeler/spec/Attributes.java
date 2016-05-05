@@ -7,8 +7,10 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -18,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
+import org.netbeans.jpa.modeler.db.accessor.EmbeddedIdSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.IdSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.VersionSpecAccessor;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -87,9 +91,10 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
-
+        Set<String> mapsId = new HashSet<>();
         VariableElement embeddedIdVariableElement = null;
         for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {
+            try {
             String methodName = method.getSimpleName().toString();
             if (methodName.startsWith("get")) {
                 Element element;
@@ -128,20 +133,30 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                     this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
                     OneToOne oneToOneObj = new OneToOne();
-                    this.addOneToOne(oneToOneObj);
                     oneToOneObj.load(element, variableElement);
+                    this.addOneToOne(oneToOneObj);
+                    if(StringUtils.isNotBlank(oneToOneObj.getMapsId())){
+                        mapsId.add(oneToOneObj.getMapsId());
+                    } else {
+                        mapsId.add(oneToOneObj.getName());
+                    }
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
                     ManyToOne manyToOneObj = new ManyToOne();
-                    this.addManyToOne(manyToOneObj);
                     manyToOneObj.load(element, variableElement);
+                    this.addManyToOne(manyToOneObj);
+                    if(StringUtils.isNotBlank(manyToOneObj.getMapsId())){
+                        mapsId.add(manyToOneObj.getMapsId());
+                    } else {
+                        mapsId.add(manyToOneObj.getName());
+                    }
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
                     OneToMany oneToManyObj = new OneToMany();
-                    this.addOneToMany(oneToManyObj);
                     oneToManyObj.load(element, variableElement);
+                    this.addOneToMany(oneToManyObj);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
                     ManyToMany manyToManyObj = new ManyToMany();
-                    this.addManyToMany(manyToManyObj);
                     manyToManyObj.load(element, variableElement);
+                    this.addManyToMany(manyToManyObj);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
                     this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
                     embeddedIdVariableElement = variableElement;
@@ -151,14 +166,20 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                     this.addBasic(Basic.load(element, variableElement)); //Default Annotation
                 }
 
-            }
+            } 
 //            else if (!methodName.startsWith("set")) {
 //            }
+            }catch(TypeNotPresentException ex){
+                //Ignore Erroneous variable Type : ClassA have relation with List<ClassB>. And ClassB does not exist on classpath 
+                //LOG TODO access to IO
+            }
         }
 
         if (this.getEmbeddedId() != null) {
             for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
-                this.addId(Id.load(variableElement, variableElement));
+                if (!mapsId.contains(variableElement.getSimpleName().toString())) {
+                    this.addId(Id.load(variableElement, variableElement));
+                }
             }
         }
 
@@ -166,7 +187,12 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
 
     @Override
     public List<Attribute> findAllAttribute(String name) {
-        List<Attribute> attributes = super.findAllAttribute(name);
+        return findAllAttribute(name,false);
+    }
+    
+    @Override
+    public List<Attribute> findAllAttribute(String name,boolean includeParentClassAttibute) {
+       List<Attribute> attributes = super.findAllAttribute(name,includeParentClassAttibute);
         if (id != null) {
             for (Id id_TMP : id) {
                 if (id_TMP.getName() != null && id_TMP.getName().equals(name)) {
@@ -396,11 +422,13 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     }
 
     private XMLAttributes processAccessor(XMLAttributes attr, boolean inherit) {
-        attr.getIds().addAll(getId().stream().map(id -> IdSpecAccessor.getInstance(id, inherit)).collect(toList()));
-        attr.getVersions().addAll(getVersion().stream().map(VersionSpecAccessor::getInstance).collect(toList()));
         if (getEmbeddedId() != null) {
-            attr.setEmbeddedId(getEmbeddedId().getAccessor());
+            attr.setEmbeddedId(EmbeddedIdSpecAccessor.getInstance(getEmbeddedId()));
+        } else {
+            attr.getIds().addAll(getId().stream().map(id -> IdSpecAccessor.getInstance(id, inherit)).collect(toList()));
         }
+        attr.getVersions().addAll(getVersion().stream().map(VersionSpecAccessor::getInstance).collect(toList()));
+
         return attr;
     }
 

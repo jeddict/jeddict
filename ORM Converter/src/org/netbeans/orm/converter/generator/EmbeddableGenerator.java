@@ -70,7 +70,7 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         classDef.setClassName(classHelper.getFQClassName());
         classDef.setPackageName(classHelper.getPackageName());
         classDef.setEmbeddable(true);
-        classDef.setAnnotation(embeddable.getAnnotation());
+        classDef.setAnnotation(getAnnotationSnippet(embeddable.getAnnotation()));
         return classDef;
     }
 }

@@ -37,14 +37,13 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
         Embeddable embeddable = this.getBaseElementSpec();
         if (embeddable.getAttributes() == null) {
             embeddable.setAttributes(new EmbeddableAttributes());
-//            addNewIdAttribute("id");
-//            sortAttributes();
         }
         if (embeddable.getClazz() == null || embeddable.getClazz().isEmpty()) {
             embeddable.setClazz(this.getModelerScene().getNextClassName("Embeddable_"));
         }
         setName(embeddable.getClazz());
         setLabel(embeddable.getClazz());
+        validateName(null, this.getName());
 
     }
 

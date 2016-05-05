@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.rules.attribute;
 
 import java.util.List;
+import static org.eclipse.persistence.exceptions.DescriptorException.TABLE_NOT_PRESENT;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
@@ -27,6 +28,8 @@ public class AttributeValidator {
 
     public final static String EMPTY_ATTRIBUTE_NAME = "MSG_EmptyAttributeName";
     public final static String NON_UNIQUE_ATTRIBUTE_NAME = "MSG_NonUniqueAttributeName";
+    public final static String NON_UNIQUE_COLUMN_NAME = "MSG_NonUniqueColumnName";
+    public final static String INVALID_ATTRIBUTE_NAME = "MSG_InvalidAttrName";
     public final static String ATTRIBUTE_NAME_WITH_JPQL_KEYWORD = "MSG_AttrNamedWithJavaPersistenceQLKeyword";
     public final static String ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_AttrTableNamedWithReservedSQLKeyword";
     public final static String ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_AttrColumnNamedWithReservedSQLKeyword";
@@ -34,6 +37,7 @@ public class AttributeValidator {
 
     public final static String EMBEDDEDID_AND_ID_FOUND = "MSG_EmbeddedIdAndIdFound";
     public final static String MULTIPLE_EMBEDDEDID_FOUND = "MSG_MultipleEmbeddedIdFound";
+    public final static String TABLE_NOT_PRESENT = "MSG_TableNotPresent";
 
     public static void validateEmbeddedIdAndIdFound(PersistenceClassWidget peristenceClassWidget_In) {
         List<JavaClassWidget> javaClassWidgets = peristenceClassWidget_In.getAllSubclassWidgets();

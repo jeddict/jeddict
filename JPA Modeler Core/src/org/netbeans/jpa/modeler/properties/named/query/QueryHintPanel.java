@@ -76,57 +76,21 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        name_LayeredPane.setLayout(new java.awt.BorderLayout());
+
         org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.name_Label.text")); // NOI18N
+        name_LayeredPane.add(name_Label, java.awt.BorderLayout.WEST);
 
         name_TextField.setText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.name_TextField.text")); // NOI18N
+        name_LayeredPane.add(name_TextField, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout name_LayeredPaneLayout = new javax.swing.GroupLayout(name_LayeredPane);
-        name_LayeredPane.setLayout(name_LayeredPaneLayout);
-        name_LayeredPaneLayout.setHorizontalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        name_LayeredPaneLayout.setVerticalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name_Label)
-                    .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        name_LayeredPane.setLayer(name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        name_LayeredPane.setLayer(name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        query_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(value_Label, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.value_Label.text")); // NOI18N
+        query_LayeredPane.add(value_Label, java.awt.BorderLayout.WEST);
 
         value_TextField.setText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.value_TextField.text")); // NOI18N
-
-        javax.swing.GroupLayout query_LayeredPaneLayout = new javax.swing.GroupLayout(query_LayeredPane);
-        query_LayeredPane.setLayout(query_LayeredPaneLayout);
-        query_LayeredPaneLayout.setHorizontalGroup(
-            query_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(query_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(value_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(value_TextField)
-                .addContainerGap())
-        );
-        query_LayeredPaneLayout.setVerticalGroup(
-            query_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(query_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(query_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(value_Label)
-                    .addComponent(value_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        query_LayeredPane.setLayer(value_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        query_LayeredPane.setLayer(value_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        query_LayeredPane.add(value_TextField, java.awt.BorderLayout.CENTER);
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.save_Button.text")); // NOI18N
         save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.save_Button.toolTipText")); // NOI18N
@@ -136,7 +100,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 23);
+        save_Button.setBounds(20, 0, 70, 29);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.cancel_Button.toolTipText")); // NOI18N
@@ -147,7 +111,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
             }
         });
         action_jLayeredPane.add(cancel_Button);
-        cancel_Button.setBounds(80, 0, 70, 23);
+        cancel_Button.setBounds(100, 0, 70, 30);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -155,18 +119,18 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(name_LayeredPane)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
+                        .addGap(0, 359, Short.MAX_VALUE)
+                        .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(query_LayeredPane))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         root_jLayeredPaneLayout.setVerticalGroup(
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(query_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -181,9 +145,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(root_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10))
+            .addComponent(root_jLayeredPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

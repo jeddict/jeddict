@@ -17,8 +17,8 @@ package org.netbeans.orm.converter.spec;
 
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.task.ITaskSupervisor;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.modeler.task.ITaskSupervisor;
 
 public interface ModuleGenerator {
 

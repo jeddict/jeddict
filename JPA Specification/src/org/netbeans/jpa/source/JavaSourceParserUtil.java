@@ -24,9 +24,12 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -46,10 +49,22 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.WorkingCopy;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
-import static org.netbeans.jpa.source.Package.JEE_PACKAGE;
+import org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse;
+import org.netbeans.jpa.modeler.spec.validation.constraints.AssertTrue;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
+import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMax;
+import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Digits;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Future;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Max;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Min;
+import org.netbeans.jpa.modeler.spec.validation.constraints.NotNull;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Null;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Past;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Size;
+import static org.netbeans.jpa.source.Package.JPA_PACKAGE;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Utilities;
@@ -131,33 +146,68 @@ public class JavaSourceParserUtil {
     }
 
     //"javax.persistence|javax.xml.bind.annotation"
-    private static final Pattern JEE_PACKAGE_PATTERN = Pattern.compile(JEE_PACKAGE);
+    private static final Pattern JPA_PACKAGE_PATTERN = Pattern.compile(JPA_PACKAGE);
+    private static final Class[] BEAN_VALIDATION_REVENG_CLASS_LIST = new Class[]{
+        AssertFalse.class, AssertTrue.class, Null.class, NotNull.class, Size.class, DecimalMax.class, DecimalMin.class,
+        Max.class, Min.class, Digits.class, Future.class, Past.class, Pattern.class};
+    private static final Map<String, Class<? extends Constraint>> SUPPORTED_BV_REVENG_CLASS_SET = new HashMap<>();
 
-    public static void addNonEEAnnotation(JavaClass _class, Element element) {
-        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
-            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
-            if (!matcher.find()) {
-                _class.addAnnotation(annotationMirror.toString());
-            }
+    static {
+        for (Class<? extends Constraint> bvClass : BEAN_VALIDATION_REVENG_CLASS_LIST) {
+            SUPPORTED_BV_REVENG_CLASS_SET.put(org.netbeans.jcode.beanvalidation.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE + "." + bvClass.getSimpleName(), bvClass);
         }
     }
 
-    public static void addNonEEAnnotation(Attribute attribute, Element element) {
+    public static void getBeanValidation(BaseAttribute attribute, Element element) {
+        Set<Constraint> constraints = new HashSet<>();
         for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
             String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
-            Matcher matcher = JEE_PACKAGE_PATTERN.matcher(annotationQualifiedName);
-            if (!matcher.find()) {
-//                attribute.addAnnotation(annotationMirror.toString());
-
-//                annotationMirror.getAnnotationType().getTypeArguments()
-                Annotation annotation = new Annotation();
-                annotation.setName(annotationMirror.getAnnotationType().toString());
-                attribute.addAnnotation(annotation);
-
-//                attribute.addAnnotationMirror(annotationMirror);
+            Class<? extends Constraint> bvClass = SUPPORTED_BV_REVENG_CLASS_SET.get(annotationQualifiedName);
+            if (bvClass != null) {
+                Constraint constraint = null;
+                try {
+                    constraint = bvClass.newInstance();
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    ex.printStackTrace();
+                    // Ignore
+                }
+                if (constraint != null) {
+                    constraint.load(annotationMirror);
+                    constraints.add(constraint);
+                }
             }
         }
+        attribute.setConstraints(constraints);
+    }
+
+    public static List<Annotation> getNonEEAnnotation(Element element) {
+        List<Annotation> annotations = new ArrayList<>();
+        for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
+            String annotationQualifiedName = getAnnotationQualifiedName(annotationMirror);
+            Matcher matcher = JPA_PACKAGE_PATTERN.matcher(annotationQualifiedName);
+            if (!matcher.find()) {
+                if (SUPPORTED_BV_REVENG_CLASS_SET.containsKey(annotationQualifiedName)) {
+                    continue;//skip this annotation , already reveng in getBeanValidation()
+                }
+                Annotation annotation = new Annotation();
+                //TODO parse annotation
+//        Iterator itr = annotationMirror.getElementValues().entrySet().iterator();
+//        while(itr.hasNext()){
+//            Entry entry = (Entry)itr.next();
+//            ExecutableElement executableElement = (ExecutableElement)entry.getKey();
+//            AnnotationValue annotationValue = (AnnotationValue)entry.getValue();
+//            AnnotationElement annotationElement = new AnnotationElement();
+//            annotationElement.setName(executableElement.getSimpleName().toString());
+//            annotationElement.setValue(annotationValue.getValue());
+//            annotation.addAnnotationElement(annotationElement);
+//        }
+//        annotation.setName(annotationMirror.getAnnotationType().toString());
+//        
+                annotation.setName(annotationMirror.toString());
+                annotations.add(annotation);
+            }
+        }
+        return annotations;
     }
 
     public static AnnotationMirror findAnnotation(Element element, String annotationFqn) {

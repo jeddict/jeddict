@@ -15,6 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +36,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     private static final List<String> temporalTypes = getTemporalTypes();
 
-    private List<String> annotation = new ArrayList<String>();
+    private List<AnnotationSnippet> annotation = new ArrayList<>();
+    private List<ConstraintSnippet> constraints = new ArrayList<>();
 
     private JaxbVariableType jaxbVariableType;
     private JaxbXmlAttribute jaxbXmlAttribute;
@@ -449,6 +451,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(this.getAssociationOverrides().getImportSnippets());
         }
 
+        for (AnnotationSnippet snippet : this.getAnnotation()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+        
+        for (ConstraintSnippet snippet : this.getConstraints()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+
 //        if (importSnippets.contains("java.util.Date")) {  //BUG : remove date
 //            importSnippets.remove("java.util.Date");
 //        }
@@ -563,22 +573,29 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @return the annotation
      */
-    public List<String> getAnnotation() {
-        return annotation;
-    }
-
-    /**
-     * @return the annotation
-     */
-    public List<String> getAnnotationSimpleName() {
+    public List<AnnotationSnippet> getAnnotation() {
         return annotation;
     }
 
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<String> annotation) {
+    public void setAnnotation(List<AnnotationSnippet> annotation) {
         this.annotation = annotation;
+    }
+
+    /**
+     * @return the constraints
+     */
+    public List<ConstraintSnippet> getConstraints() {
+        return constraints;
+    }
+
+    /**
+     * @param constraints the constraints to set
+     */
+    public void setConstraints(List<ConstraintSnippet> constraints) {
+        this.constraints = constraints;
     }
 
     /**

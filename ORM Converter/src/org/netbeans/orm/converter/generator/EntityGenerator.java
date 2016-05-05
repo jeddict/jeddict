@@ -103,10 +103,10 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         }
 
         // Classlevel annotations - Special case
-        // processTableGenerator() && processSequenceGenerator()
+        // processTableGeneratorEntity() && processSequenceGeneratorEntity()
         //depends on @GeneratedValue annotation - So process it after @GeneratedValue
-        processTableGenerator(entity.getTableGenerator());
-        processSequenceGenerator(entity.getSequenceGenerator());
+        processTableGeneratorEntity(entity.getTableGenerator());
+        processSequenceGeneratorEntity(entity.getSequenceGenerator());
 
         //Class decorations
         ClassHelper classHelper = new ClassHelper(entity.getClazz());
@@ -127,7 +127,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
             classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()
         }
         classDef.setEntity(true);
-        classDef.setAnnotation(entity.getAnnotation());
+        classDef.setAnnotation(getAnnotationSnippet(entity.getAnnotation()));
 
         classDef.setXmlRootElement(entity.getXmlRootElement());
 

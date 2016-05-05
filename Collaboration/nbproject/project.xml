@@ -7,35 +7,19 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
-                    <code-name-base>net.java.html</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>1.2.3</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>net.java.html.json</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>1.2.3</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>org.apache.commons.lang</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>2.6</specification-version>
+                        <specification-version>2.4</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.api.htmlui</code-name-base>
+                    <code-name-base>org.netbeans.modeler.properties</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>1.5</specification-version>
+                        <specification-version>1.0</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -52,7 +36,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>2.41</specification-version>
+                        <specification-version>2.37</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -60,7 +44,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>7.67</specification-version>
+                        <specification-version>7.62</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -68,7 +52,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>7.42</specification-version>
+                        <specification-version>7.38</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -76,7 +60,15 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>9.7</specification-version>
+                        <specification-version>8.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.windows</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>6.71.1</specification-version>
                     </run-dependency>
                 </dependency>
             </module-dependencies>

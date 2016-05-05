@@ -16,7 +16,10 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
+import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ManyToOneAccessor;
+import org.netbeans.db.modeler.exception.DBValidationException;
+import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -39,7 +42,14 @@ public class ManyToOneSpecAccessor extends ManyToOneAccessor {
         ManyToOneSpecAccessor accessor = new ManyToOneSpecAccessor(manyToOne);
         accessor.setName(manyToOne.getName());
         accessor.setTargetEntityName(manyToOne.getTargetEntity());
-        accessor.setId(manyToOne.isPrimaryKey());
+        if (manyToOne.isPrimaryKey()) { 
+            IdClass idClass = manyToOne.getIdClass();
+            if (idClass != null) {
+                accessor.setId(Boolean.TRUE);
+            } else {
+                accessor.setMapsId(manyToOne.getName());
+            }
+        }
         if (!JoinTableValidator.isEmpty(manyToOne.getJoinTable())) {
             accessor.setJoinTable(manyToOne.getJoinTable().getAccessor());
         }
@@ -50,8 +60,13 @@ public class ManyToOneSpecAccessor extends ManyToOneAccessor {
 
     @Override
     public void process() {
+        try {
         super.process();
         getMapping().setProperty(Attribute.class, manyToOne);
+        } catch (ValidationException ex) {
+            DBValidationException exception = new DBValidationException(ex);
+            exception.setAttribute(manyToOne);
+        }
     }
 
 }

@@ -225,6 +225,7 @@ public interface IAttributes extends JCRELoader {
     List<Transient> getTransient();
 
     List<Attribute> findAllAttribute(String name);
+    List<Attribute> findAllAttribute(String name,boolean includeParentClassAttibute);
 
     //UPDATE ELEMENT
     boolean isAttributeExist(String name);

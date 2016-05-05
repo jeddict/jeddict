@@ -29,7 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
-import org.netbeans.jpa.modeler.source.SourceGroups;
+import org.netbeans.modules.j2ee.core.api.support.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityMember;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.Table;

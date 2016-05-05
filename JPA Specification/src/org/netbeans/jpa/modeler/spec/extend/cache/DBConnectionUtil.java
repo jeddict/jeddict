@@ -20,11 +20,8 @@ import org.netbeans.api.db.explorer.ConnectionManager;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.db.explorer.DatabaseException;
 import org.netbeans.api.db.explorer.support.DatabaseExplorerUIs;
-import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modules.db.explorer.ConnectionList;
-import org.netbeans.modules.db.explorer.action.ConnectAction;
 
 /**
  *

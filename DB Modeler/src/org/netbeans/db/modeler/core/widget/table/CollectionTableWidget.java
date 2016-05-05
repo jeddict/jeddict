@@ -65,9 +65,9 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
 
         DBMapping mapping = CollectionTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(CollectionTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_ENTITY_NAME);
+            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

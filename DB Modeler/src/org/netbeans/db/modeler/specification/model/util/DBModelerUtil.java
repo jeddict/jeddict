@@ -15,11 +15,25 @@
  */
 package org.netbeans.db.modeler.specification.model.util;
 
+import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import java.awt.Image;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
+import org.eclipse.persistence.exceptions.DescriptorException;
+import static org.eclipse.persistence.exceptions.DescriptorException.MULTIPLE_WRITE_MAPPINGS_FOR_FIELD;
+import static org.eclipse.persistence.exceptions.DescriptorException.NO_FOREIGN_KEYS_ARE_SPECIFIED;
+import static org.eclipse.persistence.exceptions.DescriptorException.NO_MAPPING_FOR_PRIMARY_KEY;
+import static org.eclipse.persistence.exceptions.DescriptorException.NO_TARGET_FOREIGN_KEYS_SPECIFIED;
+import org.eclipse.persistence.exceptions.IntegrityException;
 import org.eclipse.persistence.exceptions.ValidationException;
+import static org.eclipse.persistence.exceptions.ValidationException.INCOMPLETE_JOIN_COLUMNS_SPECIFIED;
+import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
@@ -35,7 +49,7 @@ import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
-import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IReferenceColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
@@ -53,6 +67,7 @@ import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
+import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -75,16 +90,25 @@ import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
+import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.DiagramElement;
 import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Shape;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -96,6 +120,7 @@ import org.netbeans.modeler.core.exception.ModelerException;
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
+import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
@@ -110,6 +135,7 @@ import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.db.explorer.ConnectionList;
 import org.netbeans.modules.db.explorer.action.ConnectAction;
+import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
@@ -122,9 +148,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public static ImageIcon VIEW_SQL;
 
     static {// required to load before init
-            ClassLoader cl = DBModelerUtil.class.getClassLoader();
-            VIEW_SQL = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/VIEW_SQL.png"));
+        ClassLoader cl = DBModelerUtil.class.getClassLoader();
+        VIEW_SQL = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/VIEW_SQL.png"));//Eager Loading required
     }
+
     @Override
     public void init() {
         if (COLUMN == null) {
@@ -141,11 +168,21 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     @Override
     public void loadModelerFile(ModelerFile file) throws org.netbeans.modeler.core.exception.ProcessInterruptedException {
         try {
+            loadModelerFileInternal(file);
+        } catch (Exception ie) {
+            DeploymentExceptionManager.handleException(file, ie);
+        }
+    }
+
+    public void loadModelerFileInternal(ModelerFile file) throws DBConnectionNotFound, org.netbeans.modeler.core.exception.ProcessInterruptedException {
+        try {
 
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
-            DBMapping dbMapping = createDBMapping(file, entityMapping);
+            DBMapping dbMapping = null;
+            dbMapping = createDBMapping(file, entityMapping);
+
             scene.setBaseElementSpec(dbMapping);
 
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
@@ -155,26 +192,19 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             loadFlowEdge(scene);
             scene.autoLayout();
 
-        } catch (ValidationException ex) {
-            file.getModelerPanelTopComponent().close();
-            String message = ex.getLocalizedMessage();
-            int end = message.lastIndexOf("Runtime Exceptions:");
-            end = end < 1 ? message.length() : end;
-            int start = message.lastIndexOf("Exception Description:");
-            start = start < 1 ? 0 : start;
-            ExceptionUtils.printStackTrace(message.substring(start, end), ex, file);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException {
+    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException, DBConnectionNotFound {
         DBMapping dbMapping = new DBMapping();
         DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnectionCache();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         DatabaseLogin databaseLogin = new DatabaseLogin();
 
         ClassLoader dynamicClassLoader;
+        DatabaseSessionImpl session = null;
         try {
 
             if (connection == null) {
@@ -184,28 +214,33 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 databaseLogin.setPassword("");
                 databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
             } else {
-                if (connection.getDriverClass() == null) {
-                    for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
-                        if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
-                            new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
-                            try {
-                                connection.setDriverClass(con.getDatabaseConnection().getJDBCDriver().getDriver().getClass());
-                                connection.setDatabaseConnection(con.getDatabaseConnection());
-                            } catch (DatabaseException ex) {
-                                file.handleException(ex);
-                            }
-                            break;
+//                if (connection.getDriverClass() == null) {
+                for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
+                    if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
+                        new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
+                        try {
+                            connection.setDriverClass(con.getDatabaseConnection().getJDBCDriver().getDriver().getClass());
+                            connection.setDatabaseConnection(con.getDatabaseConnection());
+                        } catch (DatabaseException ex) {
+                            file.handleException(ex);
                         }
+                        break;
                     }
                 }
-                dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
+//                }
+                try {
+                    dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
+
+                } catch (NullPointerException ex) {
+                    throw new DBConnectionNotFound();
+                }
                 Thread.currentThread().setContextClassLoader(dynamicClassLoader);
                 databaseLogin.setDatabaseURL(connection.getUrl());
                 databaseLogin.setUserName(connection.getUserName());
                 databaseLogin.setPassword(connection.getPassword());
                 databaseLogin.setDriverClass(connection.getDriverClass());
             }
-            DatabaseSessionImpl session = new DatabaseSessionImpl(databaseLogin);
+            session = new DatabaseSessionImpl(databaseLogin);
             JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
             XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
             JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
@@ -221,8 +256,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             JPAMSchemaManager mgr = new JPAMSchemaManager(dbMapping, session);
             mgr.createDefaultTables(true);
 
-            session.logout();
         } finally {
+            if (session != null) {
+                session.logout();
+            }
             if (connection != null) {
                 Thread.currentThread().setContextClassLoader(contextClassLoader);
             }
@@ -323,9 +360,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 //       ReferenceColumn => Target
         DBColumn sourceColumn = (DBColumn) foreignKeyWidget.getBaseElementSpec();
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
-        ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+        if (sourceColumn.getReferenceColumn() == null) {// TODO remove this block
+            return;
+        }
+        ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) { // TODO remove this block
-            targetColumnWidget = targetTableWidget.getColumnWidget(sourceColumn.getReferenceColumn().getId());
+            return;
         }
 
         EdgeWidgetInfo edgeInfo = new EdgeWidgetInfo();
@@ -562,7 +602,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) edgeWidget;
             TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
             DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getBaseElementSpec();
-            IPrimaryKeyWidget targetColumnWidget = targetTableWidget.getPrimaryKeyWidget(sourceColumn.getReferenceColumn().getId());
+            IReferenceColumnWidget targetColumnWidget = targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
             referenceFlowWidget.setReferenceColumnWidget(targetColumnWidget);
             referenceFlowWidget.setForeignKeyWidget((ForeignKeyWidget) sourceColumnWidget);
             return sourceColumnWidget.getPinWidgetInfo();
@@ -578,7 +618,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     }
 
     public PinWidgetInfo getEdgeTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget, ColumnWidget targetColumnWidget) {
-        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget && edgeWidget instanceof ReferenceFlowWidget && targetColumnWidget instanceof ColumnWidget) {
+        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget
+                && edgeWidget instanceof ReferenceFlowWidget && targetColumnWidget instanceof ColumnWidget) {
             return targetColumnWidget.getPinWidgetInfo();
         } else {
             throw new UnsupportedOperationException("Not supported yet.");

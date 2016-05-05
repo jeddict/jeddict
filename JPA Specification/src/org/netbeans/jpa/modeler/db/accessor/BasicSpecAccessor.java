@@ -16,6 +16,8 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.converters.LobMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.converters.TemporalMetadata;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -36,8 +38,14 @@ public class BasicSpecAccessor extends BasicAccessor {
     public static BasicSpecAccessor getInstance(Basic basic, boolean inherit) {
         BasicSpecAccessor accessor = new BasicSpecAccessor(basic);
         accessor.inherit = inherit;
-        accessor.setName(basic.getName());
+
         accessor.setAttributeType(basic.getAttributeType());
+        
+        AccessorUtil.setEnumerated(accessor, basic.getEnumerated(), false);
+        AccessorUtil.setLob(accessor, basic.getLob(), basic.getAttributeType(), false);
+        AccessorUtil.setTemporal(accessor, basic.getTemporal(), false);
+        
+        accessor.setName(basic.getName());
         if (basic.getColumn() != null) {
             accessor.setColumn(basic.getColumn().getAccessor());
         }

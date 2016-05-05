@@ -20,6 +20,8 @@ import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
+import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
+import org.netbeans.jpa.modeler.spec.validation.constraints.NotNull;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -73,8 +75,16 @@ public class BaseAttributeWidget<E extends BaseAttribute> extends AttributeWidge
         }
 //        BasicCollectionAttributeWidget => ElementCollection [Column allowed]
 //        MultiValueEmbeddedAttributeWidget => ElementCollection [Column not allowed]
-
 //        set.put("BASIC_PROP", getValidationProperty());
+        
+        createBeanValidationPropertySet(set);
+    }
+    
+    public void createBeanValidationPropertySet(ElementPropertySet set){
+        set.deleteGroup("CONSTRAINTS");
+        this.getBaseElementSpec().getNewConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet(this, constraint, getPropertyChangeListeners(), getPropertyVisibilityHandlers());
+        });
     }
 
 //    public PropertySupport getValidationProperty() {

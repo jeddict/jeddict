@@ -95,7 +95,8 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         }
         basic.access = AccessType.load(element);
         basic.setAttributeType(variableElement.asType().toString());
-        JavaSourceParserUtil.addNonEEAnnotation(basic, element);
+        basic.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
+        JavaSourceParserUtil.getBeanValidation(basic,element);
         return basic;
     }
 
