@@ -92,6 +92,7 @@ public class GenerateCodeDialog extends GenericDialog
         getRootPane().setDefaultButton(generateSourceCode);
 
         modelerFilePackage = getPackageForFolder(sourceGroup, modelerFileObject.getParent());
+        
         initLayer();
     }
 
@@ -126,6 +127,7 @@ public class GenerateCodeDialog extends GenericDialog
                 }
             }
         }
+//        businessLayerCombo.getModel().getElementAt(1).hashCode().equals(businessContext.hashCode())
 
         this.pack();
     }
