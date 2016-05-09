@@ -16,7 +16,9 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
+import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToOneAccessor;
+import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToOne;
@@ -61,8 +63,13 @@ public class OneToOneSpecAccessor extends OneToOneAccessor {
 
     @Override
     public void process() {
+        try{
         super.process();
         getMapping().setProperty(Attribute.class, oneToOne);
+        } catch (ValidationException ex) {
+            DBValidationException exception = new DBValidationException(ex);
+            exception.setAttribute(oneToOne);
+        }
     }
 
 }

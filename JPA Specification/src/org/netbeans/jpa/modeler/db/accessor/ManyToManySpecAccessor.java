@@ -15,7 +15,9 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
+import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ManyToManyAccessor;
+import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
@@ -46,8 +48,13 @@ public class ManyToManySpecAccessor extends ManyToManyAccessor {
 
     @Override
     public void process() {
+        try{
         super.process();
         getMapping().setProperty(Attribute.class, manyToMany);
+        } catch (ValidationException ex) {
+            DBValidationException exception = new DBValidationException(ex);
+            exception.setAttribute(manyToMany);
+        }
     }
 
 }

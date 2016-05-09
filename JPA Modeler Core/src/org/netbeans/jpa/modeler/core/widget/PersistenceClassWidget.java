@@ -413,6 +413,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                 attributes.getOneToOne().remove(oneToOneSpec);
 
                 if (oneToOneSpec.isPrimaryKey()) {
+                    AttributeValidator.validateEmbeddedIdAndIdFound(this);
                     if (this instanceof EntityWidget) {
                         ((EntityWidget) this).scanKeyError();
                     }
@@ -439,6 +440,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                 attributes.getManyToOne().remove(manyToOneSpec);
 
                 if (manyToOneSpec.isPrimaryKey()) {
+                    AttributeValidator.validateEmbeddedIdAndIdFound(this);
                     if (this instanceof EntityWidget) {
                         ((EntityWidget) this).scanKeyError();
                     }
@@ -625,6 +627,16 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         oneToOneRelationAttributeWidgets.add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,oneToOne.getName());
+        if (oneToOne.isPrimaryKey()) {
+            AttributeValidator.validateEmbeddedIdAndIdFound(this);
+            if (this instanceof EntityWidget) {
+                ((EntityWidget) this).scanKeyError();
+            }
+            this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
+                ((EntityWidget) classWidget).scanKeyError();
+            });
+            isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+        }
         return attributeWidget;
     }
 
@@ -663,6 +675,16 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         getManyToOneRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,manyToOne.getName());
+        if (manyToOne.isPrimaryKey()) {
+            AttributeValidator.validateEmbeddedIdAndIdFound(this);
+            if (this instanceof EntityWidget) {
+                ((EntityWidget) this).scanKeyError();
+            }
+            this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
+                ((EntityWidget) classWidget).scanKeyError();
+            });
+            isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+        }
         return attributeWidget;
     }
 

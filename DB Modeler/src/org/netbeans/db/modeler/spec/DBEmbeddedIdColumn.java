@@ -18,12 +18,12 @@ package org.netbeans.db.modeler.spec;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBEmbeddedIdAttributeColumn extends DBEmbeddedIdColumn {
+public class DBEmbeddedIdColumn extends DBColumn<Attribute> {
 
 //    private AttributeOverride attributeOverride;
 
-    public DBEmbeddedIdAttributeColumn(String name, EmbeddedId embeddedId, Attribute managedAttribute) {
-        super(name,embeddedId, managedAttribute);
+    public DBEmbeddedIdColumn(String name, EmbeddedId embeddedId, Attribute managedAttribute) {
+        super(name, managedAttribute);
     }
 
     /**

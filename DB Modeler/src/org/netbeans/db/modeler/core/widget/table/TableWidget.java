@@ -41,6 +41,8 @@ import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationIn
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embeddedid.EmbeddedIdAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embeddedid.EmbeddedIdDerivedColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
@@ -88,6 +90,20 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         EmbeddedAttributeColumnWidget widget = (EmbeddedAttributeColumnWidget) createPinWidget(EmbeddedAttributeColumnWidget.create(column.getId(), name, column));
         widget.setDatatypeTooltip();
         columnWidgets.put(column.getId(), widget);
+        return widget;
+    }
+    
+    public ColumnWidget addEmbeddedIdAttributeColumn(String name, DBColumn column) {
+        EmbeddedIdAttributeColumnWidget widget = (EmbeddedIdAttributeColumnWidget) createPinWidget(EmbeddedIdAttributeColumnWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        columnWidgets.put(column.getId(), widget);
+        return widget;
+    }   
+    
+    public ColumnWidget addEmbeddedIdDerivedColumn(String name, DBColumn column) {
+        EmbeddedIdDerivedColumnWidget widget = (EmbeddedIdDerivedColumnWidget) createPinWidget(EmbeddedIdDerivedColumnWidget.create(column.getId(), name, column));
+        widget.setDatatypeTooltip();
+        foreignKeyWidgets.put(column.getId(), widget);
         return widget;
     }
 

@@ -18,22 +18,8 @@ package org.netbeans.db.modeler.specification.model.util;
 import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import java.awt.Image;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.YES_NO_OPTION;
-import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
-import org.eclipse.persistence.exceptions.DescriptorException;
-import static org.eclipse.persistence.exceptions.DescriptorException.MULTIPLE_WRITE_MAPPINGS_FOR_FIELD;
-import static org.eclipse.persistence.exceptions.DescriptorException.NO_FOREIGN_KEYS_ARE_SPECIFIED;
-import static org.eclipse.persistence.exceptions.DescriptorException.NO_MAPPING_FOR_PRIMARY_KEY;
-import static org.eclipse.persistence.exceptions.DescriptorException.NO_TARGET_FOREIGN_KEYS_SPECIFIED;
-import org.eclipse.persistence.exceptions.IntegrityException;
-import org.eclipse.persistence.exceptions.ValidationException;
-import static org.eclipse.persistence.exceptions.ValidationException.INCOMPLETE_JOIN_COLUMNS_SPECIFIED;
-import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
@@ -58,6 +44,8 @@ import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationIn
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embeddedid.EmbeddedIdAttributeColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embeddedid.EmbeddedIdDerivedColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
@@ -67,7 +55,6 @@ import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -78,6 +65,8 @@ import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
+import org.netbeans.db.modeler.spec.*;
+import org.netbeans.db.modeler.spec.DBEmbeddedIdDerivedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
@@ -89,26 +78,16 @@ import org.netbeans.db.modeler.spec.DBParentColumn;
 import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.DiagramElement;
 import org.netbeans.jpa.modeler.spec.design.Edge;
 import org.netbeans.jpa.modeler.spec.design.Shape;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -120,7 +99,6 @@ import org.netbeans.modeler.core.exception.ModelerException;
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
-import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
@@ -135,7 +113,6 @@ import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.db.explorer.ConnectionList;
 import org.netbeans.modules.db.explorer.action.ConnectAction;
-import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
@@ -315,6 +292,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                     tableWidget.addEmbeddedAssociationJoinColumn(column.getName(), column);
                                 }
                             }
+                        } else if (column instanceof DBEmbeddedIdColumn) {
+                            if (column instanceof DBEmbeddedIdAttributeColumn) {
+                                tableWidget.addEmbeddedIdAttributeColumn(column.getName(), column);
+                            } else if (column instanceof DBEmbeddedIdDerivedColumn) {
+                                tableWidget.addEmbeddedIdDerivedColumn(column.getName(), column);
+                            }
                         } else if (column instanceof DBParentColumn) {
                             if (column instanceof DBParentAttributeColumn) {
                                 if (column.isPrimaryKey()) {
@@ -347,7 +330,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
         scene.getBaseElements().stream().filter((baseElementWidget) -> (baseElementWidget instanceof TableWidget)).forEach((baseElementWidget) -> {
             TableWidget tableWidget = (TableWidget) baseElementWidget;
-
+//tableWidget.getPrimaryKeyWidgets().stream().forEach((foreignKeyWidget) -> {
+//                loadEdge(scene, tableWidget, (ForeignKeyWidget) foreignKeyWidget);
+//            });
             tableWidget.getForeignKeyWidgets().stream().forEach((foreignKeyWidget) -> {
                 loadEdge(scene, tableWidget, (ForeignKeyWidget) foreignKeyWidget);
             });
@@ -359,10 +344,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 //       ForeignKey => Source
 //       ReferenceColumn => Target
         DBColumn sourceColumn = (DBColumn) foreignKeyWidget.getBaseElementSpec();
-        TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
-        if (sourceColumn.getReferenceColumn() == null) {// TODO remove this block
+        if (sourceColumn.getReferenceColumn() == null || sourceColumn.getReferenceTable() == null) {// TODO remove this block
             return;
         }
+        TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
+        
         ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) { // TODO remove this block
             return;
@@ -495,6 +481,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new EmbeddedAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName())) {
             widget = new EmbeddedAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedIdAttributeColumnWidget.class.getSimpleName())) {
+            widget = new EmbeddedIdAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedIdDerivedColumnWidget.class.getSimpleName())) {
+            widget = new EmbeddedIdDerivedColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(ParentAttributeColumnWidget.class.getSimpleName())) {
             widget = new ParentAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(ParentAttributePrimaryKeyWidget.class.getSimpleName())) {

@@ -210,9 +210,6 @@ public class DBColorScheme implements IColorScheme {
                 widget.getHeader().setBackground(gp);
                 widget.setBorder(WIDGET_BORDER);
             }
-            System.out.println("state.isHovered() : " + state.isHovered());
-            System.out.println("state.isFocused() : " + state.isFocused());
-            System.out.println("state.isSelected() : " + state.isSelected());
             widget.getMinimizeButton().setImage(this.getMinimizeWidgetImage(state, widget));
         }
 

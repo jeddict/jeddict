@@ -50,8 +50,8 @@ public class AttributeValidator {
                     boolean errorExist = false;
                     for (JavaClassWidget superclassWidget : superclassWidgets) {
                         if (superclassWidget instanceof PersistenceClassWidget) {
-                            PersistenceClassWidget persistenceSuiperClassWidget = (PersistenceClassWidget) superclassWidget;
-                            if (persistenceSuiperClassWidget.getEmbeddedIdAttributeWidget() == null && !persistenceSuiperClassWidget.getIdAttributeWidgets().isEmpty()) {
+                            PersistenceClassWidget persistenceSuperClassWidget = (PersistenceClassWidget) superclassWidget;
+                            if (persistenceSuperClassWidget.getEmbeddedIdAttributeWidget() == null && !persistenceSuperClassWidget.getIdAttributeWidgets().isEmpty()) {
                                 errorExist = true;
                                 break;
                             }

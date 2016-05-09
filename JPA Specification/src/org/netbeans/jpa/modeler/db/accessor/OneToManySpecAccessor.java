@@ -16,7 +16,9 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
+import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToManyAccessor;
+import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -53,8 +55,13 @@ public class OneToManySpecAccessor extends OneToManyAccessor {
 
     @Override
     public void process() {
+        try{
         super.process();
         getMapping().setProperty(Attribute.class, oneToMany);
+        } catch (ValidationException ex) {
+            DBValidationException exception = new DBValidationException(ex);
+            exception.setAttribute(oneToMany);
+        }
     }
 
 }
