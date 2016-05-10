@@ -738,7 +738,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             return false;//send to next execution, its parents are required to evalaute first
                         }
                         if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
-                                && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                                && (targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS || targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID)) {
                             // when Enity E1 class use IdClass IC1 and
                             //another Enity E2 class use EmbeddedId is also IC1
                             //then register IdClass name here to append @Embeddable annotation
@@ -746,7 +746,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             
                             if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID){
                                     _class.setEmbeddable(true);
-//                                    persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().set
                                     persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
                                     persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedAttribute(relationAttribute);// Ex.5.b derived identity
 //                                    _class.setAttributes(null);//attribute will be added in parent Entity DefaultClass creation process
@@ -754,14 +753,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             if (relationAttribute instanceof SingleRelationAttribute) {
                                 ((SingleRelationAttribute) relationAttribute).setMapsId("");
                             } 
-                        } else {
-                            if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS
+                        } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS
                                     && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                                 if (relationAttribute instanceof SingleRelationAttribute) {
                                     ((SingleRelationAttribute) relationAttribute).setMapsId(null);
                                 }
-                            }
                         }
+                        
                         //set derived entity IdClass/EmbeddedId class type same as of parent entity IdClass/EmbeddedId class type
 
                         pkContainerSpec.setCompositePrimaryKeyClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());

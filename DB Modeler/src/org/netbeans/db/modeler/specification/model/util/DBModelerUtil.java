@@ -44,8 +44,6 @@ import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationIn
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embeddedid.EmbeddedIdAttributeColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embeddedid.EmbeddedIdDerivedColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
@@ -65,8 +63,6 @@ import org.netbeans.db.modeler.spec.DBEmbeddedAssociationJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeJoinColumn;
 import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
-import org.netbeans.db.modeler.spec.*;
-import org.netbeans.db.modeler.spec.DBEmbeddedIdDerivedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
@@ -292,12 +288,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                     tableWidget.addEmbeddedAssociationJoinColumn(column.getName(), column);
                                 }
                             }
-                        } else if (column instanceof DBEmbeddedIdColumn) {
-                            if (column instanceof DBEmbeddedIdAttributeColumn) {
-                                tableWidget.addEmbeddedIdAttributeColumn(column.getName(), column);
-                            } else if (column instanceof DBEmbeddedIdDerivedColumn) {
-                                tableWidget.addEmbeddedIdDerivedColumn(column.getName(), column);
-                            }
                         } else if (column instanceof DBParentColumn) {
                             if (column instanceof DBParentAttributeColumn) {
                                 if (column.isPrimaryKey()) {
@@ -481,10 +471,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new EmbeddedAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName())) {
             widget = new EmbeddedAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(EmbeddedIdAttributeColumnWidget.class.getSimpleName())) {
-            widget = new EmbeddedIdAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(EmbeddedIdDerivedColumnWidget.class.getSimpleName())) {
-            widget = new EmbeddedIdDerivedColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(ParentAttributeColumnWidget.class.getSimpleName())) {
             widget = new ParentAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(ParentAttributePrimaryKeyWidget.class.getSimpleName())) {
