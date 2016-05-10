@@ -16,9 +16,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.EmbeddedIdAccessor;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -64,6 +66,8 @@ public class EmbeddedId extends CompositionAttribute<DefaultClass> implements At
     protected Set<AttributeOverride> attributeOverride;
     @XmlAttribute
     protected AccessType access;
+    @XmlTransient
+    private Attribute connectedAttribute;// To connect with relation attribute in case of derived entity Ex.5.b
 //No need to set connectedClassId cause is mapped to virtual(hidden) Embaddable not Visual Embaddable
 
     public static EmbeddedId load(EntityMappings entityMappings, Element element, VariableElement variableElement) {
@@ -179,5 +183,19 @@ public class EmbeddedId extends CompositionAttribute<DefaultClass> implements At
         attributeOverride_TMP.setName(attributePath);
         attributeOverrides.add(attributeOverride_TMP);
         return attributeOverride_TMP;
+    }
+
+    /**
+     * @return the connectedAttribute
+     */
+    public Attribute getConnectedAttribute() {
+        return connectedAttribute;
+    }
+
+    /**
+     * @param connectedAttribute the connectedAttribute to set
+     */
+    public void setConnectedAttribute(Attribute connectedAttribute) {
+        this.connectedAttribute = connectedAttribute;
     }
 }

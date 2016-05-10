@@ -189,6 +189,8 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 } else {
                     if (((DefaultAttribute) managedAttribute).getConnectedAttribute() instanceof RelationAttribute) {
                         column = new DBInverseJoinColumn(name, (RelationAttribute) ((DefaultAttribute) managedAttribute).getConnectedAttribute(), relationTable);//2.4.1.3 Example 1:b empPK
+                    } else if (((EmbeddedId) intrinsicAttribute.get(0)).getConnectedAttribute() instanceof RelationAttribute) {
+                        column = new DBInverseJoinColumn(name, (RelationAttribute) ((EmbeddedId) intrinsicAttribute.get(0)).getConnectedAttribute(), relationTable);//2.4.1.3 Example 5:b id(firstName,lastName)
                     } else {
                         column = new DBColumn(name, managedAttribute);
 //                        column = new DBEmbeddedIdAttributeColumn(name, embeddedId, managedAttribute);
