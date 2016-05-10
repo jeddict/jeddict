@@ -439,4 +439,10 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         attributes.addAll(this.getVersion());
         return attributes;
     }
+    
+    public boolean hasCompositePrimaryKey(){
+        return this.getId().size() + (this.getEmbeddedId()!=null? 1: 0) +
+        this.getOneToOne().stream().filter(attr -> attr.isPrimaryKey()).count() +
+        this.getManyToOne().stream().filter(attr -> attr.isPrimaryKey()).count() > 1;
+    }
 }

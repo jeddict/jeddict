@@ -744,23 +744,16 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             //then register IdClass name here to append @Embeddable annotation
                             DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
                             _class.setEmbeddable(true);
+                            persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
 //                                            _class.setAttributes(null);//attribute will be added in parent Entity DefaultClass creation process
-                            if (relationAttribute instanceof OneToOne) {
-                                ((OneToOne) relationAttribute).setMapsId("");
-                            } else {
-                                if (relationAttribute instanceof ManyToOne) {
-                                    ((ManyToOne) relationAttribute).setMapsId("");
-                                }
-                            }
+                            if (relationAttribute instanceof SingleRelationAttribute) {
+                                ((SingleRelationAttribute) relationAttribute).setMapsId("");
+                            } 
                         } else {
                             if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS
                                     && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
-                                if (relationAttribute instanceof OneToOne) {
-                                    ((OneToOne) relationAttribute).setMapsId(null);
-                                } else {
-                                    if (relationAttribute instanceof ManyToOne) {
-                                        ((ManyToOne) relationAttribute).setMapsId(null);
-                                    }
+                                if (relationAttribute instanceof SingleRelationAttribute) {
+                                    ((SingleRelationAttribute) relationAttribute).setMapsId(null);
                                 }
                             }
                         }
