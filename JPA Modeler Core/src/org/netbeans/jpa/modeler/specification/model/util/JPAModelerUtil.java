@@ -168,6 +168,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import static org.openide.util.NbBundle.getMessage;
@@ -356,7 +357,19 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //        definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(new StringReader(content)), EntityMappings.class).getValue();
         
         definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
+        MODELER_UNMARSHALLER = null;//GC issue
+//        cleanUnMarshaller();
         return definition_Load;
+    }
+    
+    private static void cleanUnMarshaller(){
+        try {
+            String xmlStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><entity-mappings/>";
+            MODELER_UNMARSHALLER.unmarshal( new StreamSource( new StringReader( xmlStr ) ) );
+        } catch (JAXBException ex) {
+//            Exceptions.printStackTrace(ex);
+            System.out.println(ex);
+        }
     }
 
     @Override
@@ -1572,6 +1585,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             }
             StringReader reader = new StringReader(sw.toString());
             definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(reader), EntityMappings.class).getValue();
+            MODELER_UNMARSHALLER = null;//GC issue
         } catch (JAXBException ex) {
             ExceptionUtils.printStackTrace(ex);
         }

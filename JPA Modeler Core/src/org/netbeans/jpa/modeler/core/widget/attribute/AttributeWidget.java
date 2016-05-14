@@ -241,21 +241,21 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return menuList;
     }
 
-    @Override
-    public boolean remove() {
-        return remove(false);
-    }
-
-    @Override
-    public boolean remove(boolean notification) {
-        // Issue Fix #5855 Start
-        if (super.remove(notification)) {
-            getClassWidget().deleteAttribute(AttributeWidget.this);
-            return true;
-        }
-        // Issue Fix #5855 End
-        return false;
-    }
+//    @Override
+//    public boolean remove() {
+//        return remove(false);
+//    }
+//
+//    @Override
+//    public boolean remove(boolean notification) {
+//        // Issue Fix #5855 Start
+//        if (super.remove(notification)) {
+//            getClassWidget().deleteAttribute(AttributeWidget.this);
+//            return true;
+//        }
+//        // Issue Fix #5855 End
+//        return false;
+//    }
 
     
     @Override

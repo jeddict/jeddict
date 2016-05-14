@@ -28,6 +28,7 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.NbBundle;
@@ -66,6 +67,11 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     }
 
     public abstract void deleteAttribute(AttributeWidget attributeWidget);
+    
+    public void deletePinWidget(IPinWidget pinWidget) {
+        super.deletePinWidget(pinWidget);
+        deleteAttribute((AttributeWidget)pinWidget);//  Issue Fix #5855
+    }
 
     public abstract void sortAttributes();
 
@@ -160,25 +166,6 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         return subclassWidgetList;
     }
 
-//    public List<JavaClassWidget> getAllSubclassWidget() {
-//        List<JavaClassWidget> subclassWidgetList = new LinkedList<JavaClassWidget>();
-//        boolean exist = true;
-//        for (GeneralizationFlowWidget generalizationFlowWidget_TMP : this.incomingGeneralizationFlowWidgets) {
-////        ;List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<GeneralizationFlowWidget>()
-////        if (generalizationFlowWidget_TMP != null) {
-////            exist = true;
-////        }
-//            while (exist) {
-//                JavaClassWidget subclassWidget_Nest = generalizationFlowWidget_TMP.getSubclassWidget();
-//                subclassWidgetList.add(subclassWidget_Nest);
-//                generalizationFlowWidget_TMP = subclassWidget_Nest.getOutgoingGeneralizationFlowWidget();
-//                if (generalizationFlowWidget_TMP == null) {
-//                    exist = false;
-//                }
-//            }
-//        }
-//        return subclassWidgetList;
-//    }
     /**
      * @return the outgoingGeneralizationFlowWidget
      */

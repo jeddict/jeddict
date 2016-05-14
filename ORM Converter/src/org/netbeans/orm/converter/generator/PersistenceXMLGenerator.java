@@ -156,7 +156,6 @@ public class PersistenceXMLGenerator {
                 pud.addPersistenceUnit(punit);
 
             }
-
             for (String entityClass : persistenceXMLUnit.getClassNames()) { // run for both exist & non-exist-persistence
                 pud.addClass(punit, entityClass, false);
             }
