@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,6 +91,7 @@ import org.netbeans.orm.converter.compiler.AssociationOverridesSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverrideSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverridesSnippet;
 import org.netbeans.orm.converter.compiler.BasicSnippet;
+import org.netbeans.orm.converter.compiler.CacheableDefSnippet;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.CollectionTableSnippet;
 import org.netbeans.orm.converter.compiler.ColumnDefSnippet;
@@ -358,8 +360,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    protected List<String> getCascadeTypes(
-            CascadeType cascadeType) {
+    protected List<String> getCascadeTypes(CascadeType cascadeType) {
 
         if (cascadeType == null) {
             return Collections.EMPTY_LIST;
@@ -1461,6 +1462,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 getUniqueConstraint(parsedTable.getUniqueConstraint()));
 
         classDef.setTableDef(table);
+    }
+
+     protected void processCacheable(Boolean cacheable) {
+
+        if (cacheable == null || Objects.equals(cacheable, Boolean.FALSE)) {
+            return;
+        }
+         CacheableDefSnippet snippet = new CacheableDefSnippet();
+        classDef.setCacheableDef(snippet);
     }
 
     protected TableGeneratorSnippet processTableGenerator(TableGenerator parsedTableGenerator) {

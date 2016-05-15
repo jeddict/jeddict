@@ -70,6 +70,8 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
                 entity.getExcludeSuperclassListeners());
         //Table
         processTable(entity.getTable());
+        
+        processCacheable(entity.getCacheable());
 
         //Queries
         processNamedQueries(entity.getNamedQuery());

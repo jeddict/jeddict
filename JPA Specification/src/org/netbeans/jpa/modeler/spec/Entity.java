@@ -166,7 +166,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @XmlAttribute
     protected String name;
     @XmlAttribute
-    protected Boolean cacheable;//REVENG PENDING
+    protected Boolean cacheable;
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -211,7 +211,17 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         if (annotationMirror != null) {
             this.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
         }
-
+        
+        AnnotationMirror cacheableAnnotation = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Cacheable");
+        if (cacheableAnnotation != null) {
+            Object value =  JavaSourceParserUtil.findAnnotationValue(cacheableAnnotation, "value");
+            if(value == null){
+                this.cacheable = true;
+            } else {
+                this.cacheable = (Boolean) value;
+            }
+        }
+        
         this.getAttributeOverride().addAll(AttributeOverride.load(element));
         this.getAssociationOverride().addAll(AssociationOverride.load(element));
         this.getNamedEntityGraph().addAll(NamedEntityGraph.load(element));
