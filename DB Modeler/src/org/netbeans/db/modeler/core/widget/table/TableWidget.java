@@ -15,8 +15,10 @@
  */
 package org.netbeans.db.modeler.core.widget.table;
 
+import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JMenuItem;
+import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
@@ -49,6 +52,7 @@ import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryK
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.jpa.modeler.core.widget.*;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
@@ -67,6 +71,21 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     public TableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
+        this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        this.getImageWidget().getActions().addAction(new TableAction());
+
+    }
+
+    private final class TableAction extends WidgetAction.Adapter {
+
+        @Override
+        public WidgetAction.State mousePressed(Widget widget, WidgetAction.WidgetMouseEvent event) {
+            if (event.getButton() == MouseEvent.BUTTON1 || event.getButton() == MouseEvent.BUTTON2) {
+                SQLEditorUtil.openDBTable(TableWidget.this);
+                return WidgetAction.State.CONSUMED;
+            }
+            return WidgetAction.State.REJECTED;
+        }
     }
 
     public ColumnWidget addNewBasicColumn(String name, DBColumn column) {
@@ -90,7 +109,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         columnWidgets.put(column.getId(), widget);
         return widget;
     }
-    
+
     public ColumnWidget addParentPrimaryKeyAttributeColumn(String name, DBColumn column) {
         ParentAttributePrimaryKeyWidget widget = (ParentAttributePrimaryKeyWidget) createPinWidget(ParentAttributePrimaryKeyWidget.create(column.getId(), name, column));
         widget.setDatatypeTooltip();
@@ -212,7 +231,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
             });
             categories.put("Primary Key", primaryKeyCatWidget);
         }
-        
+
         List<Widget> foreignKeyCatWidget = new ArrayList<>();
         if (!foreignKeyWidgets.isEmpty()) {
             List<Widget> derivedIdentiyCatWidget = new ArrayList<>();
@@ -284,13 +303,13 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     public IPrimaryKeyWidget getPrimaryKeyWidget(String id) {
         return primaryKeyWidgets.get(id);
     }
-    
+
     public IReferenceColumnWidget findColumnWidget(String id) {
-        IReferenceColumnWidget columnWidget =  primaryKeyWidgets.get(id);
-        if(columnWidget == null){
-            columnWidget =  foreignKeyWidgets.get(id);
+        IReferenceColumnWidget columnWidget = primaryKeyWidgets.get(id);
+        if (columnWidget == null) {
+            columnWidget = foreignKeyWidgets.get(id);
         }
-    
+
         return columnWidget;
     }
 
@@ -352,24 +371,24 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 
             int x = 0, y = 0;
             if (widetRec.y + visibleRect.height / 2 > sceneRec.height && widetRec.y + visibleRect.height / 2 < sceneRec.height) {
-                System.out.println("Center Vertcal");
+//                System.out.println("Center Vertcal");
                 y = widetRec.y - visibleRect.height / 2;
             } else if (widetRec.y + visibleRect.height / 2 > sceneRec.height) {
-                System.out.println("Bottom");
+//                System.out.println("Bottom");
                 y = sceneRec.height;
             } else if (widetRec.y + visibleRect.height / 2 < sceneRec.height) {
-                System.out.println("Top");
+//                System.out.println("Top");
                 y = 0;
             }
 
             if (widetRec.x + visibleRect.width / 2 > sceneRec.width && widetRec.x + visibleRect.width / 2 < sceneRec.width) {
-                System.out.println("Center Horizontal");
+//                System.out.println("Center Horizontal");
                 x = widetRec.x - visibleRect.width / 2;
             } else if (widetRec.x + visibleRect.width / 2 > sceneRec.width) {
-                System.out.println("Right");
+//                System.out.println("Right");
                 x = sceneRec.width;
             } else if (widetRec.x + visibleRect.width / 2 < sceneRec.width) {
-                System.out.println("Left");
+//                System.out.println("Left");
                 x = 0;
             }
 
@@ -380,7 +399,6 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         });
 
 //        menuItemList.add(drive);
-
         menuItemList.add(getPropertyMenu());
 
         return menuItemList;
