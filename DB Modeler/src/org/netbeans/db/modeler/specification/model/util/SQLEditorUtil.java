@@ -44,12 +44,11 @@ public class SQLEditorUtil {
     
     public static void openDBTable(TableWidget tableWidget) {
         ModelerFile modelerFile = tableWidget.getModelerScene().getModelerFile();
-        DBTable table = (DBTable)tableWidget.getBaseElementSpec();
-        String tableName = table.getEntity().getTableName();
+        String tableName = tableWidget.getName();
         final DatabaseConnection connection = DBConnectionUtil.getConnection(modelerFile);
         RP.post(() -> {
             try {
-                SQLEditorSupport.openSQLEditor(connection, SQL_PREFIX + tableName, false); //NOI18N
+                SQLEditorSupport.openSQLEditor(connection, SQL_PREFIX + tableName, true); //NOI18N
             } catch (Exception exc) {
                 modelerFile.handleException(exc);
             }
