@@ -13,6 +13,10 @@ import java.util.Objects;
 $importStatement
 #end
 
+/**
+ *
+ * @author $author
+ */
 #if($classDef.getEntityString())
 $classDef.getEntityString()
 #end

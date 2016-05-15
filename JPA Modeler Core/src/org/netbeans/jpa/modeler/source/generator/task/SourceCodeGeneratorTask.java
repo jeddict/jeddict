@@ -34,17 +34,20 @@ import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
+import org.openide.util.RequestProcessor;
 
 public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     private final ModelerFile modelerFile;
     private final ApplicationConfigData appicationConfigData;
+    private final Runnable afterExecution;
 
     private final static int SUBTASK_TOT = 1;
 
-    public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appicationConfigData) {
+    public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appicationConfigData, Runnable afterExecution) {
         this.modelerFile = modelerFile;
         this.appicationConfigData = appicationConfigData;
+        this.afterExecution=afterExecution;
     }
 
     @Override
@@ -82,6 +85,9 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     @Override
     protected void finish() {
+        if (afterExecution != null) {
+            RequestProcessor.getDefault().post(afterExecution);
+        }
     }
 
     /**

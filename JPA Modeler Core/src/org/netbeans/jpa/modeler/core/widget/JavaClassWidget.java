@@ -44,6 +44,8 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
@@ -88,14 +90,14 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         @Override
         public WidgetAction.State mousePressed(Widget widget, WidgetAction.WidgetMouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON1 || event.getButton() == MouseEvent.BUTTON2) {
-                openSourceCode();
+                openSourceCode(true);
                 return WidgetAction.State.CONSUMED;
             }
             return WidgetAction.State.REJECTED;
         }
     }
 
-    private void openSourceCode() {
+    private void openSourceCode(boolean retryIfFileNotFound) {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
         FileObject fileObject;
         if (javaClass.getFileObject() != null) {
@@ -109,11 +111,17 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
             fileObject = SourceGroups.getJavaFileObject(group, StringUtils.isBlank(mappings.getPackage()) ? "" : (mappings.getPackage() + ".") + javaClass.getClazz());
             javaClass.setFileObject(fileObject);
         }
-        if (fileObject == null) {
-            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
-                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
-                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.title"), JOptionPane.YES_NO_OPTION) == YES_OPTION) {
-                JPAModelerUtil.generateSourceCode(this.getModelerScene().getModelerFile());
+        if (fileObject == null || !fileObject.isValid()) {
+              NotifyDescriptor.Confirmation msg = null;
+              if(retryIfFileNotFound){
+              msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
+                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.title"), NotifyDescriptor.OK_CANCEL_OPTION,  NotifyDescriptor.QUESTION_MESSAGE);
+              } else {
+               msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
+                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND_IN_CURRENT_PROECT.title"), NotifyDescriptor.OK_CANCEL_OPTION,  NotifyDescriptor.QUESTION_MESSAGE);
+              }
+            if (NotifyDescriptor.YES_OPTION.equals(DialogDisplayer.getDefault().notify(msg))) {
+                JPAModelerUtil.generateSourceCode(this.getModelerScene().getModelerFile(), () -> {openSourceCode(false);});
             }
         } else {
             org.netbeans.modules.openfile.OpenFile.open(fileObject, -1);

@@ -163,12 +163,12 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import static org.openide.util.NbBundle.getMessage;
@@ -237,6 +237,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
     public static Image ABSTRACT_ENTITY;
     public static Image ENTITY;
+    
 
     public static Icon GENERATE_SRC;
     public static Icon ENTITY_VISIBILITY;
@@ -244,6 +245,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Icon VIEW_DB;
     public static Icon MICRO_DB;
     public static Icon NANO_DB;
+    public static Icon PERSISTENCE_UNIT;
 
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
@@ -265,13 +267,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         MICRO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/micro-db.png"));
         NANO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/nano-db.png"));
         SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/share.png"));
-
+        PERSISTENCE_UNIT  = new ImageIcon(PUDataObject.class.getClassLoader().getResource(PUDataObject.ICON));
         IO = IOProvider.getDefault().getIO("JPA Modeler", false);
     }
 
     @Override
     public void init() {
-        long st = new Date().getTime();
         if (ENTITY_ICON_PATH == null) {
             ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/element/java/ENTITY.png";
             ABSTRACT_ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/element/java/ABSTRACT_ENTITY.png";
@@ -1591,16 +1592,20 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
         return definition_Load;
     }
-
     public static void generateSourceCode(ModelerFile modelerFile) {
+        generateSourceCode(modelerFile, null);
+    }
+
+    public static void generateSourceCode(ModelerFile modelerFile, Runnable afterExecution) {
         GenerateCodeDialog dialog = new GenerateCodeDialog(modelerFile);
         dialog.setVisible(true);
         if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
             RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
-            SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(modelerFile,dialog.getConfigData());
+            SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(modelerFile, dialog.getConfigData(), afterExecution);
             processor.post(task);
         }
     }
+    
 
     private static void makeSiblingOrphan(Entity entity, RelationAttribute relationAttribute, Entity siblingEntity, RelationAttribute siblingRelationAttribute) {
         Attributes attr = entity.getAttributes();

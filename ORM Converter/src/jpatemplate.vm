@@ -11,6 +11,11 @@ import java.io.Serializable;
 #foreach ( $importStatement in $classDef.getImportSnippets() )
 $importStatement
 #end
+
+/**
+ *
+ * @author $author
+ */
 #####################jaxb annotations ###############################
 #if($classDef.isJaxbSupport())
 import javax.xml.bind.annotation.*;

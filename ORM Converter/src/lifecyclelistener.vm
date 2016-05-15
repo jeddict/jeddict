@@ -11,6 +11,10 @@ package $lifeCycleListener.getPackageName();
 $importStatement
 #end
 
+/**
+ *
+ * @author $author
+ */
 public class $lifeCycleListener.getClassName() {
 
 #####################Constructor #################################
