@@ -42,7 +42,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     @XmlElement(name = "join-column")
     private List<JoinColumn> joinColumn;
     @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;//REVENG PENDING
+    protected ForeignKey foreignKey;//REVENG PENDING //joinColumns foreignKey
 
     @XmlAttribute(name = "optional")
     protected Boolean optional;

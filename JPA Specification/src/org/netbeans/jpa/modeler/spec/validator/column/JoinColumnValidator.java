@@ -17,7 +17,6 @@ package org.netbeans.jpa.modeler.spec.validator.column;
 
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 

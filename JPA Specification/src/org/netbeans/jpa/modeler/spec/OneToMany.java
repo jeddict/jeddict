@@ -98,7 +98,7 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
     @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
     @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;
+    protected ForeignKey foreignKey;//REVENG PENDING //joinColumns foreignKey
     @XmlAttribute(name = "orphan-removal")
     protected Boolean orphanRemoval;
 

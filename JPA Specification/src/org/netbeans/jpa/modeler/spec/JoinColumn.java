@@ -11,6 +11,7 @@ import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -81,6 +82,8 @@ public class JoinColumn {
     protected String columnDefinition;
     @XmlAttribute(name = "table")
     protected String table;
+    @XmlElement(name = "foreign-key")
+    private ForeignKey foreignKey;//REVENG PENDING
 
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
@@ -297,5 +300,22 @@ public class JoinColumn {
 //    public void setReferencedColumn(Id referencedColumn) {
 //        this.referencedColumn = referencedColumn;
 //    }
+
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKey foreignKey) {
+        this.foreignKey = foreignKey;
+    }
 
 }

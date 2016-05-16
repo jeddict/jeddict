@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 
 /**
  *
@@ -53,6 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "foreign-key", propOrder = {
     "description"
 })
+@XmlJavaTypeAdapter(value = ForeignKeyValidator.class)
 public class ForeignKey {
 
     protected String description;
