@@ -15,7 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
@@ -31,6 +31,8 @@ public class JoinColumnSnippet implements Snippet {
     private String name = null;
     private String referencedColumnName = null;
     private String table = null;
+    
+    private ForeignKeySnippet foreignKey;
 
     public boolean isInsertable() {
         return insertable;
@@ -183,11 +185,39 @@ public class JoinColumnSnippet implements Snippet {
             builder.append(updatable);
             builder.append(ORMConverterUtil.COMMA);
         }
+        
+        if (foreignKey != null) {
+            builder.append("foreignKey=");
+            builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
         return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.JoinColumn");
+        List<String> importSnippets = new ArrayList<>();
+
+        importSnippets.add("javax.persistence.JoinColumn");
+        if (foreignKey != null) {
+            importSnippets.addAll(foreignKey.getImportSnippets());
+        }
+
+        return importSnippets;
+    }
+
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
     }
 }

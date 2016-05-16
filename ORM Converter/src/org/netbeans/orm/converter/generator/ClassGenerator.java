@@ -44,6 +44,7 @@ import org.netbeans.jpa.modeler.spec.EntityResult;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.FieldResult;
+import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.IdClass;
@@ -81,6 +82,7 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
@@ -105,6 +107,7 @@ import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
 import org.netbeans.orm.converter.compiler.EntityResultSnippet;
 import org.netbeans.orm.converter.compiler.EnumeratedSnippet;
 import org.netbeans.orm.converter.compiler.FieldResultSnippet;
+import org.netbeans.orm.converter.compiler.ForeignKeySnippet;
 import org.netbeans.orm.converter.compiler.GeneratedValueSnippet;
 import org.netbeans.orm.converter.compiler.IdClassSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnSnippet;
@@ -515,10 +518,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
 
             joinColumn.setName(parsedJoinColumn.getName());
-            joinColumn.setReferencedColumnName(
-                    parsedJoinColumn.getReferencedColumnName());
+            joinColumn.setReferencedColumnName(parsedJoinColumn.getReferencedColumnName());
             joinColumn.setTable(parsedJoinColumn.getTable());
-
+            joinColumn.setForeignKey(getForeignKey(parsedJoinColumn.getForeignKey()));
+            
             joinColumns.add(joinColumn);
         });
 
@@ -577,6 +580,23 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         joinTable.setUniqueConstraints(uniqueConstraints);
 
         return joinTable;
+    }
+
+    protected ForeignKeySnippet getForeignKey(ForeignKey parsedForeignKey) {
+        if (parsedForeignKey == null || ForeignKeyValidator.isEmpty(parsedForeignKey)) {
+            return null;
+        }
+
+        ForeignKeySnippet foreignKey = new ForeignKeySnippet();
+
+        foreignKey.setName(parsedForeignKey.getName());
+        foreignKey.setDescription(parsedForeignKey.getDescription());
+        foreignKey.setForeignKeyDefinition(parsedForeignKey.getForeignKeyDefinition());
+        if (parsedForeignKey.getConstraintMode() != null) {
+            foreignKey.setConstraintMode(parsedForeignKey.getConstraintMode().name());
+        }
+
+        return foreignKey;
     }
 
     protected List<PrimaryKeyJoinColumnSnippet> getPrimaryKeyJoinColumns(

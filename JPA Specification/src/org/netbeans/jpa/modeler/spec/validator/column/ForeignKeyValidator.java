@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.spec.validator.column;
 
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.spec.ConstraintMode;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 
@@ -31,7 +32,9 @@ public class ForeignKeyValidator extends MarshalValidator<ForeignKey> {
     }
 
     public static boolean isEmpty(ForeignKey foreignKey) {
-        if (StringUtils.isBlank(foreignKey.getName()) && StringUtils.isBlank(foreignKey.getForeignKeyDefinition())) {
+        if (StringUtils.isBlank(foreignKey.getName()) 
+                && StringUtils.isBlank(foreignKey.getForeignKeyDefinition())
+                && (foreignKey.getConstraintMode()==null || foreignKey.getConstraintMode()==ConstraintMode.PROVIDER_DEFAULT)){
             return true;
         }
         return false;
