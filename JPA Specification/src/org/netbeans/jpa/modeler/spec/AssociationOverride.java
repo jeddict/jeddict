@@ -174,6 +174,9 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 

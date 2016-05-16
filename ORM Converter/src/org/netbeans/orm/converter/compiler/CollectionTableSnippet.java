@@ -16,6 +16,7 @@ public class CollectionTableSnippet implements Snippet {
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
 
     private UniqueConstraintSnippet uniqueConstraint = null;
+    private ForeignKeySnippet foreignKey;
 
     public String getCatalog() {
         return catalog;
@@ -74,7 +75,7 @@ public class CollectionTableSnippet implements Snippet {
                 && (name == null || name.trim().isEmpty())
                 && (schema == null || schema.trim().isEmpty())
                 && joinColumns.isEmpty()
-                && uniqueConstraint == null) {
+                && uniqueConstraint == null && foreignKey == null) {
             return null;//"@CollectionTable";
         }
 
@@ -124,6 +125,12 @@ public class CollectionTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
+        
+        if (foreignKey != null) {
+            builder.append("foreignKey=");
+            builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
 
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
@@ -133,33 +140,44 @@ public class CollectionTableSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (isEmpty()) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
-        if (joinColumns.isEmpty()
-                && uniqueConstraint == null) {
-
+        if (joinColumns.isEmpty() && uniqueConstraint == null && foreignKey == null) {
             return Collections.singletonList("javax.persistence.CollectionTable");
         }
 
-        Collection<String> importSnippets = new ArrayList<String>();
+        Collection<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.CollectionTable");
 
         if (!joinColumns.isEmpty()) {
-            Collection<String> joinColumnSnippets
-                    = joinColumns.get(0).getImportSnippets();
-
+            Collection<String> joinColumnSnippets  = joinColumns.get(0).getImportSnippets();
             importSnippets.addAll(joinColumnSnippets);
+        }
+        
+        if (foreignKey != null) {
+            importSnippets.addAll(foreignKey.getImportSnippets());
         }
 
         if (uniqueConstraint != null) {
-            Collection<String> uniqueConstraintSnippets
-                    = uniqueConstraint.getImportSnippets();
-
-            importSnippets.addAll(uniqueConstraintSnippets);
+            importSnippets.addAll(uniqueConstraint.getImportSnippets());
         }
 
         return importSnippets;
+    }
+
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
     }
 }

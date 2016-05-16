@@ -549,6 +549,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         collectionTable.setSchema(parsedCollectionTable.getSchema());
         collectionTable.setJoinColumns(joinColumns);
         collectionTable.setUniqueConstraints(uniqueConstraints);
+        
+        collectionTable.setForeignKey(getForeignKey(parsedCollectionTable.getForeignKey()));
 
         return collectionTable;
     }
@@ -578,6 +580,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         joinTable.setJoinColumns(joinColumns);
         joinTable.setInverseJoinColumns(inverseJoinColumns);
         joinTable.setUniqueConstraints(uniqueConstraints);
+        
+        joinTable.setForeignKey(getForeignKey(parsedJoinTable.getForeignKey()));
+        joinTable.setInverseForeignKey(getForeignKey(parsedJoinTable.getInverseForeignKey()));
 
         return joinTable;
     }
@@ -1034,6 +1039,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             associationOverride.setName(parsedAssociationOverride.getName());
             associationOverride.setJoinColumns(joinColumnsList);
             associationOverride.setJoinTable(joinTable);
+            
+            associationOverride.setForeignKey(getForeignKey(parsedAssociationOverride.getForeignKey()));
 
             assoHandler.getAssociationOverrides().addAssociationOverride(
                     associationOverride);
@@ -1182,6 +1189,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (!joinColumnsList.isEmpty()) {
                 joinColumns = new JoinColumnsSnippet();
                 joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(parsedManyToOne.getForeignKey()));
             }
 
             ManyToOneSnippet manyToOne = new ManyToOneSnippet();
@@ -1195,7 +1203,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedManyToOne.getFetch() != null) {
                 manyToOne.setFetchType(parsedManyToOne.getFetch().value());
-            }
+            }            
             manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
             manyToOne.setMapsId(parsedManyToOne.getMapsId());
 
@@ -1229,6 +1237,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (!joinColumnsList.isEmpty()) {
                 joinColumns = new JoinColumnsSnippet();
                 joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(parsedOneToMany.getForeignKey()));
             }
 
             OneToManySnippet oneToMany = new OneToManySnippet();
@@ -1241,7 +1250,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }
-
+            
             VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
 
             variableDef.setRelationDef(oneToMany);
@@ -1279,6 +1288,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (!joinColumnsList.isEmpty()) {
                 joinColumns = new JoinColumnsSnippet();
                 joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(parsedOneToOne.getForeignKey()));
+
             }
 
             OneToOneSnippet oneToOne = new OneToOneSnippet();
@@ -1292,7 +1303,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());
-            }
+            }            
             oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
             oneToOne.setMapsId(parsedOneToOne.getMapsId());
 
@@ -1373,6 +1384,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             secondaryTable.setSchema(parsedSecondaryTable.getSchema());
             secondaryTable.setUniqueConstraints(uniqueConstraints);
             secondaryTable.setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
+            
+            secondaryTable.setForeignKey(getForeignKey(parsedSecondaryTable.getForeignKey()));
 
             classDef.getSecondaryTables().addSecondaryTable(secondaryTable);
         }

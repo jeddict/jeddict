@@ -152,6 +152,9 @@ public class CollectionTable {
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 

@@ -23,7 +23,8 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class JoinColumnsSnippet implements Snippet {
 
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
-
+    private ForeignKeySnippet foreignKey;
+    
     public List<JoinColumnSnippet> getJoinColumns() {
         return joinColumns;
     }
@@ -57,6 +58,12 @@ public class JoinColumnsSnippet implements Snippet {
 
         builder.append(ORMConverterUtil.CLOSE_BRACES);
         builder.append(ORMConverterUtil.COMMA);
+        
+        if (foreignKey != null) {
+            builder.append("foreignKey=");
+            builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
 
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
@@ -64,20 +71,34 @@ public class JoinColumnsSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-
-        if (joinColumns.isEmpty()) {
-            return Collections.singletonList("javax.persistence.JoinColumns");
-        }
-
-        if (joinColumns.size() == 1) {
-            return Collections.singletonList("javax.persistence.JoinColumn");
-        }
-
         List<String> importSnippets = new ArrayList<String>();
+        if (joinColumns.isEmpty()) {
+            importSnippets.add("javax.persistence.JoinColumns");
+        } else if (joinColumns.size() == 1) {
+            importSnippets.add("javax.persistence.JoinColumn");
+        } else {
+            importSnippets.add("javax.persistence.JoinColumn");
+            importSnippets.add("javax.persistence.JoinColumns");
+        }
 
-        importSnippets.add("javax.persistence.JoinColumn");
-        importSnippets.add("javax.persistence.JoinColumns");
+        if (foreignKey != null) {
+            importSnippets.addAll(foreignKey.getImportSnippets());
+        }
 
         return importSnippets;
+    }
+
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
     }
 }

@@ -75,6 +75,8 @@ public class SecondaryTable {
     protected String catalog;
     @XmlAttribute(name = "schema")
     protected String schema;
+    protected ForeignKey foreignKey;//REVENG PENDING
+    
 
     /**
      * Gets the value of the primaryKeyJoinColumn property.
@@ -240,6 +242,30 @@ public class SecondaryTable {
      */
     public void setSchema(String value) {
         this.schema = value;
+    }
+    
+    
+    /**
+     * Gets the value of the foreignKey property.
+     *
+     * @return possible object is {@link ForeignKey }
+     *
+     */
+    public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
+        return foreignKey;
+    }
+
+    /**
+     * Sets the value of the foreignKey property.
+     *
+     * @param value allowed object is {@link ForeignKey }
+     *
+     */
+    public void setForeignKey(ForeignKey value) {
+        this.foreignKey = value;
     }
 
 }
