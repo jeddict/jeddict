@@ -37,11 +37,6 @@ public class SingleValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<
         this.setImage(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(SingleValueEmbeddedAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
 
     /**
      * @return the embeddableFlowWidget

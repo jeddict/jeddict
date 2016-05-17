@@ -34,10 +34,5 @@ public class TransientAttributeWidget extends BaseAttributeWidget<Transient> {
         this.setImage(JPAModelerUtil.TRANSIENT_ATTRIBUTE);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(TransientAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
 
 }

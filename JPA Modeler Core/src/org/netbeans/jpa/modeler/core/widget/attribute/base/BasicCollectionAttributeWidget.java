@@ -113,10 +113,5 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
 //
 //
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(BasicCollectionAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
 
 }

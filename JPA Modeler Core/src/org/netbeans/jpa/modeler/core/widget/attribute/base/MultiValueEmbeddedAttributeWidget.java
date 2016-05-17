@@ -50,13 +50,6 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
 
     }
-
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(MultiValueEmbeddedAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     /**
      * @return the embeddableFlowWidget
      */

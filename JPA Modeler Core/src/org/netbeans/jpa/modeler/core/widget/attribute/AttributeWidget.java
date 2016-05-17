@@ -218,11 +218,12 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         });
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
-
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
+    
+    public static <T> T getInstance(IPNodeWidget nodeWidget, String name, IBaseElement baseElement, Class documentId) {
+        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(baseElement.getId(), baseElement);
         pinWidgetInfo.setName(name);
-        return pinWidgetInfo;
+        pinWidgetInfo.setDocumentId(documentId.getSimpleName());
+        return (T)nodeWidget.createPinWidget(pinWidgetInfo);
     }
 
     @Override

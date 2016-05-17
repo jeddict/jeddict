@@ -487,7 +487,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             ((IPersistenceAttributes) javaClass.getAttributes()).setEmbeddedId(embeddedId);
         }
 
-        EmbeddedIdAttributeWidget attributeWidget = (EmbeddedIdAttributeWidget) PersistenceClassWidget.this.createPinWidget(EmbeddedIdAttributeWidget.create(embeddedId.getId(), name, embeddedId));
+        EmbeddedIdAttributeWidget attributeWidget = AttributeWidget.<EmbeddedIdAttributeWidget>getInstance(this, name, embeddedId, EmbeddedIdAttributeWidget.class);
         setEmbeddedIdAttributeWidget(attributeWidget);
         sortAttributes();
         AttributeValidator.validateMultipleEmbeddedIdFound(this);
@@ -511,7 +511,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             ((IPersistenceAttributes) javaClass.getAttributes()).addId(id);
         }
 
-        IdAttributeWidget attributeWidget = (IdAttributeWidget) PersistenceClassWidget.this.createPinWidget(IdAttributeWidget.create(id.getId(), name, id));
+        IdAttributeWidget attributeWidget = AttributeWidget.<IdAttributeWidget>getInstance(this, name, id, IdAttributeWidget.class);
         getIdAttributeWidgets().add(attributeWidget);
         sortAttributes();
         AttributeValidator.validateEmbeddedIdAndIdFound(this);
@@ -539,8 +539,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             version.setName(name);
             ((IPersistenceAttributes) javaClass.getAttributes()).addVersion(version);
         }
-
-        VersionAttributeWidget attributeWidget = (VersionAttributeWidget) PersistenceClassWidget.this.createPinWidget(VersionAttributeWidget.create(version.getId(), name, version));
+VersionAttributeWidget attributeWidget = AttributeWidget.<VersionAttributeWidget>getInstance(this, name, version, VersionAttributeWidget.class);
         getVersionAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,version.getName());
@@ -561,7 +560,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             basic.setName(name);
             javaClass.getAttributes().addBasic(basic);
         }
-        BasicAttributeWidget attributeWidget = (BasicAttributeWidget) createPinWidget(BasicAttributeWidget.create(basic.getId(), name, basic));
+        BasicAttributeWidget attributeWidget = AttributeWidget.<BasicAttributeWidget>getInstance(this, name, basic, BasicAttributeWidget.class);
         getBasicAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,basic.getName());
@@ -582,7 +581,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             elementCollection.setName(name);
             javaClass.getAttributes().addElementCollection(elementCollection);
         }
-        BasicCollectionAttributeWidget attributeWidget = (BasicCollectionAttributeWidget) PersistenceClassWidget.this.createPinWidget(BasicCollectionAttributeWidget.create(elementCollection.getId(), name, elementCollection));
+BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectionAttributeWidget>getInstance(this, name, elementCollection, BasicCollectionAttributeWidget.class);
         getBasicCollectionAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,elementCollection.getName());
@@ -602,7 +601,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             _transient.setName(name);
             javaClass.getAttributes().addTransient(_transient);
         }
-        TransientAttributeWidget attributeWidget = (TransientAttributeWidget) PersistenceClassWidget.this.createPinWidget(TransientAttributeWidget.create(_transient.getId(), name, _transient));
+        TransientAttributeWidget attributeWidget = AttributeWidget.<TransientAttributeWidget>getInstance(this, name, _transient, TransientAttributeWidget.class);
         getTransientAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,_transient.getName());
@@ -622,8 +621,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
             javaClass.getAttributes().addRelationAttribute(oneToOne);
         }
-
-        OTORelationAttributeWidget attributeWidget = (OTORelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(OTORelationAttributeWidget.create(oneToOne.getId(), name, oneToOne));
+        OTORelationAttributeWidget attributeWidget = AttributeWidget.<OTORelationAttributeWidget>getInstance(this, name, oneToOne, OTORelationAttributeWidget.class);
         oneToOneRelationAttributeWidgets.add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,oneToOne.getName());
@@ -652,7 +650,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             oneToMany.setName(name);
             javaClass.getAttributes().addRelationAttribute(oneToMany);
         }
-        OTMRelationAttributeWidget attributeWidget = (OTMRelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(OTMRelationAttributeWidget.create(oneToMany.getId(), name, oneToMany));
+        OTMRelationAttributeWidget attributeWidget = AttributeWidget.<OTMRelationAttributeWidget>getInstance(this, name, oneToMany, OTMRelationAttributeWidget.class);
         getOneToManyRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,oneToMany.getName());
@@ -671,7 +669,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             manyToOne.setName(name);
             javaClass.getAttributes().addRelationAttribute(manyToOne);
         }
-        MTORelationAttributeWidget attributeWidget = (MTORelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(MTORelationAttributeWidget.create(manyToOne.getId(), name, manyToOne));
+        MTORelationAttributeWidget attributeWidget = AttributeWidget.<MTORelationAttributeWidget>getInstance(this, name, manyToOne, MTORelationAttributeWidget.class);
         getManyToOneRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,manyToOne.getName());
@@ -700,7 +698,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             manyToMany.setName(name);
             javaClass.getAttributes().addRelationAttribute(manyToMany);
         }
-        MTMRelationAttributeWidget attributeWidget = (MTMRelationAttributeWidget) PersistenceClassWidget.this.createPinWidget(MTMRelationAttributeWidget.create(manyToMany.getId(), name, manyToMany));
+                MTMRelationAttributeWidget attributeWidget = AttributeWidget.<MTMRelationAttributeWidget>getInstance(this, name, manyToMany, MTMRelationAttributeWidget.class);
         getManyToManyRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,manyToMany.getName());
@@ -722,7 +720,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             embedded.setName(name);
             javaClass.getAttributes().addEmbedded(embedded);
         }
-        SingleValueEmbeddedAttributeWidget attributeWidget = (SingleValueEmbeddedAttributeWidget) PersistenceClassWidget.this.createPinWidget(SingleValueEmbeddedAttributeWidget.create(embedded.getId(), name, embedded));
+                        SingleValueEmbeddedAttributeWidget attributeWidget = AttributeWidget.<SingleValueEmbeddedAttributeWidget>getInstance(this, name, embedded, SingleValueEmbeddedAttributeWidget.class);
         singleValueEmbeddedAttributeWidgets.add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,embedded.getName());
@@ -742,7 +740,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             elementCollection.setName(name);
             javaClass.getAttributes().addElementCollection(elementCollection);
         }
-        MultiValueEmbeddedAttributeWidget attributeWidget = (MultiValueEmbeddedAttributeWidget) PersistenceClassWidget.this.createPinWidget(MultiValueEmbeddedAttributeWidget.create(elementCollection.getId(), name, elementCollection));
+        MultiValueEmbeddedAttributeWidget attributeWidget = AttributeWidget.<MultiValueEmbeddedAttributeWidget>getInstance(this, name, elementCollection, MultiValueEmbeddedAttributeWidget.class);
         multiValueEmbeddedAttributeWidgets.add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null,elementCollection.getName());

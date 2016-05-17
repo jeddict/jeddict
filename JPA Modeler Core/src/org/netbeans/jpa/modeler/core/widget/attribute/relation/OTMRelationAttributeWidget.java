@@ -48,12 +48,6 @@ public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget<One
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), otmSpec));
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(OTMRelationAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     /**
      * @return the hierarchicalRelationFlowWidget
      */

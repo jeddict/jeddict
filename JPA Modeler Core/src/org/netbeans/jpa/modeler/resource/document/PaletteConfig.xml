@@ -14,6 +14,12 @@
             <palette-document icon="/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE_ICON.png" />
         </subcategory-node>
     </category-node>
+        <category-node id="JPA_CLASS_ATTR" name="JPA Attributes">
+        <subcategory-node  id="Id" name="Id"  >
+            <palette-document icon="/org/netbeans/jpa/modeler/resource/image/id-attribute.png" />
+        </subcategory-node>
+    </category-node>
+    
 </palette-config>
 
 

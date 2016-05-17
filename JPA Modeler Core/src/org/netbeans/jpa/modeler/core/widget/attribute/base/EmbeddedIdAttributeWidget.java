@@ -38,12 +38,6 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
         this.setImage(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(EmbeddedIdAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();// Override(from AttributeWidget) to remove Delete Menu from Popup

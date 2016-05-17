@@ -27,5 +27,9 @@
         <document id="Embeddable" widget="org.netbeans.jpa.modeler.core.widget.EmbeddableWidget" specification="org.netbeans.jpa.modeler.spec.Embeddable"  documentModel="ENTITY">
             <container-document>/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE.png</container-document>
         </document>
+        
+        <document id="Id" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Id"  documentModel="ENTITY">
+            <container-document>/org/netbeans/jpa/modeler/resource/image/id-attribute.png</container-document>
+        </document>
     </documents>
 </document-config>
