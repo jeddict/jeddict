@@ -70,7 +70,7 @@ public enum ConstraintMode implements Enumy {
 
     @Override
     public Enumy getDefault() {
-        return PROVIDER_DEFAULT;
+        return null;
     }
 
 }
