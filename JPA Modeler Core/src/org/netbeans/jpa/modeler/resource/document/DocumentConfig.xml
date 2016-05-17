@@ -28,14 +28,19 @@
             <container-document>/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE.png</container-document>
         </document>
         <document id="Id" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Id"  >
+            <container-document>/org/netbeans/jpa/modeler/resource/image/id-attribute.png</container-document>
         </document>
         <document id="Basic" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Basic"  >
+            <container-document>/org/netbeans/jpa/modeler/resource/image/basic-attribute.png</container-document>
         </document>
         <document id="Basic_Collection" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget" specification="org.netbeans.jpa.modeler.spec.ElementCollection"  >
+            <container-document>/org/netbeans/jpa/modeler/resource/image/basic-collection-attribute.png</container-document>
         </document>
         <document id="Transient" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Transient">
+            <container-document>/org/netbeans/jpa/modeler/resource/image/transient-attribute.png</container-document>
         </document>
         <document id="Version" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Version"  >
+            <container-document>/org/netbeans/jpa/modeler/resource/image/version-attribute.png</container-document>
         </document>
     </documents>
 </document-config>

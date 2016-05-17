@@ -67,6 +67,7 @@ import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.component.ModelerPanelTopComponent;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -1074,18 +1075,24 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
     }
 
      public void createPinWidget(String docId) {
-        if ("ID_ATTRIBUTE".equals(docId)) {
-            this.addNewIdAttribute(getNextAttributeName("id"));
-        } else if ("BASIC_ATTRIBUTE".equals(docId)) {
-            this.addNewBasicAttribute(getNextAttributeName());
-        } else if ("BASIC_COLLECTION_ATTRIBUTE".equals(docId)) {
-            this.addNewBasicCollectionAttribute(getNextAttributeName(null, true));
-        } else if ("TRANSIENT_ATTRIBUTE".equals(docId)) {
-            this.addNewTransientAttribute(getNextAttributeName());
-        } else if ("VERSION_ATTRIBUTE".equals(docId)) {
-            this.addNewVersionAttribute(getNextAttributeName());
-        } else {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+        if (null != docId) switch (docId) {
+            case "ID_ATTRIBUTE":
+                this.addNewIdAttribute(getNextAttributeName("id")).edit();
+                break;
+            case "BASIC_ATTRIBUTE":
+                this.addNewBasicAttribute(getNextAttributeName()).edit();
+                break;
+            case "BASIC_COLLECTION_ATTRIBUTE":
+                this.addNewBasicCollectionAttribute(getNextAttributeName(null, true)).edit();
+                break;
+            case "TRANSIENT_ATTRIBUTE":
+                this.addNewTransientAttribute(getNextAttributeName()).edit();
+                break;
+            case "VERSION_ATTRIBUTE":
+                this.addNewVersionAttribute(getNextAttributeName()).edit();
+                break;
+            default:
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
         }
     }
 }
