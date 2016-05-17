@@ -77,6 +77,7 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
         ElementCollection attribute = this.getBaseElementSpec().getAttribute();
         CollectionTable collectionTable = attribute.getCollectionTable();
         set.createPropertySet(this, collectionTable, getPropertyChangeListeners());
+        set.createPropertySet("FOREIGN_KEY", this, collectionTable.getForeignKey() , null);
     }
 
     private String getDefaultCollectionTableName() {

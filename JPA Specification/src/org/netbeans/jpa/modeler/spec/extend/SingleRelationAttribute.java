@@ -138,6 +138,9 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 

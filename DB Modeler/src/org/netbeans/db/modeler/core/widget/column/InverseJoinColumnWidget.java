@@ -80,6 +80,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
     public void createPropertySet(ElementPropertySet set) {
         JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
         set.createPropertySet("INVERSE_JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+        set.createPropertySet("FOREIGN_KEY", this, joinColumn.getForeignKey() , null);
     }
 
     @Override

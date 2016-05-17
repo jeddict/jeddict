@@ -160,6 +160,9 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 

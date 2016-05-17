@@ -174,6 +174,9 @@ public class JoinTable {
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 

@@ -9,9 +9,9 @@
         <group id="COLUMN" name="@Column"/>
         <group id="PARENT_JOINCOLUMN" name="Superclass @JoinColumn"/>
         <group id="JOIN_COLUMN" name="@JoinColumn"/>
-        <group id="FOREIGN_KEY" name="@ForeignKey"/>
         <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn"/>
-        
+        <group id="FOREIGN_KEY" name="@ForeignKey"/>
+        <group id="INVERSE_FOREIGN_KEY" name="Inverse @ForeignKey"/>
     </groups>
     <elements>
         <element id="Table" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Table">

@@ -52,5 +52,6 @@ public abstract class EmbeddedAssociationColumnWidget<E extends DBEmbeddedAssoci
     public void createPropertySet(ElementPropertySet set) {
         set.createPropertySet("EMBEDDABLE_JOINCOLUMN", this, this.getBaseElementSpec().getJoinColumn(), getPropertyChangeListeners());
         set.createPropertySet("ASSOCIATION_OVERRIDE", this, this.getBaseElementSpec().getJoinColumnOverride(), getPropertyChangeListeners());
+        set.createPropertySet("FOREIGN_KEY", this, this.getBaseElementSpec().getAssociationOverride().getForeignKey(), getPropertyChangeListeners());
     }
 }
