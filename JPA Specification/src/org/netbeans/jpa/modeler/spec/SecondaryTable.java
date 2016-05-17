@@ -58,7 +58,8 @@ import javax.xml.bind.annotation.XmlType;
     "primaryKeyJoinColumn",
     "primaryKeyForeignKey",
     "uniqueConstraint",
-    "index"
+    "index",
+    "foreignKey"
 })
 public class SecondaryTable {
 
@@ -75,6 +76,7 @@ public class SecondaryTable {
     protected String catalog;
     @XmlAttribute(name = "schema")
     protected String schema;
+    @XmlElement(name = "fk")
     protected ForeignKey foreignKey;//REVENG PENDING
     
 

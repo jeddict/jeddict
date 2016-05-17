@@ -81,12 +81,12 @@ public class JoinTable {
 
     @XmlElement(name = "join-column")
     private List<JoinColumn> joinColumn;
-    @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;//REVENG PENDING
+    @XmlElement(name = "fk")
+    protected ForeignKey foreignKey;
     @XmlElement(name = "inverse-join-column")
     private List<JoinColumn> inverseJoinColumn;
-    @XmlElement(name = "inverse-foreign-key")
-    protected ForeignKey inverseForeignKey;//REVENG PENDING
+    @XmlElement(name = "ifk")
+    protected ForeignKey inverseForeignKey;
     @XmlElement(name = "unique-constraint")
     protected List<UniqueConstraint> uniqueConstraint;
     protected List<Index> index;//REVENG PENDING
@@ -133,6 +133,17 @@ public class JoinTable {
             joinTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             joinTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
             joinTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
+
+            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+            if (foreignKeyValue != null) {
+                joinTable.foreignKey = ForeignKey.load(element, foreignKeyValue);
+            }
+
+            AnnotationMirror inverseForeignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "inverseForeignKey");
+            if (inverseForeignKeyValue != null) {
+                joinTable.inverseForeignKey = ForeignKey.load(element, inverseForeignKeyValue);
+            }
+
         }
         return joinTable;
 
@@ -174,7 +185,7 @@ public class JoinTable {
      *
      */
     public ForeignKey getForeignKey() {
-        if(foreignKey==null){
+        if (foreignKey == null) {
             foreignKey = new ForeignKey();
         }
         return foreignKey;
@@ -226,6 +237,9 @@ public class JoinTable {
      *
      */
     public ForeignKey getInverseForeignKey() {
+        if(inverseForeignKey==null){
+            inverseForeignKey = new ForeignKey();
+        }
         return inverseForeignKey;
     }
 

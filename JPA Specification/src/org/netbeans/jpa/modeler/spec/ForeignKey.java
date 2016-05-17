@@ -6,12 +6,17 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
+import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -66,6 +71,23 @@ public class ForeignKey {
     @XmlAttribute(name = "foreign-key-definition")
     protected String foreignKeyDefinition;
 
+  public static ForeignKey load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ForeignKey");
+        }
+        ForeignKey foreignKey = null;
+        if (annotationMirror != null) {
+            foreignKey = new ForeignKey();
+            foreignKey.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            foreignKey.description = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "description");
+            foreignKey.foreignKeyDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKeyDefinition");
+            foreignKey.constraintMode = ConstraintMode.load(element, annotationMirror);
+        }
+        return foreignKey;
+
+    }
+
+   
     /**
      * Gets the value of the description property.
      *

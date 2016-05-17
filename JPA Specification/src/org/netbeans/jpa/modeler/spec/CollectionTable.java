@@ -75,8 +75,8 @@ public class CollectionTable {
 
     @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
-    @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;//REVENG PENDING
+    @XmlElement(name = "fk")
+    protected ForeignKey foreignKey;
     @XmlElement(name = "unique-constraint")
     protected List<UniqueConstraint> uniqueConstraint;
     protected List<Index> index;//REVENG PENDING
@@ -111,6 +111,12 @@ public class CollectionTable {
             collectionTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             collectionTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
             collectionTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
+        
+            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+            if (foreignKeyValue != null) {
+                collectionTable.foreignKey = ForeignKey.load(element, foreignKeyValue);
+            }
+        
         }
         return collectionTable;
 

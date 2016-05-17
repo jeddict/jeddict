@@ -6,8 +6,11 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.properties.type.Enumy;
 
 /**
@@ -39,6 +42,17 @@ public enum ConstraintMode implements Enumy {
 
     private ConstraintMode(String display) {
         this.display = display;
+    }
+
+    public static ConstraintMode load(Element element, AnnotationMirror annotationMirror) {
+        ConstraintMode constraintMode = null;
+        if (annotationMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+            if (value != null) {
+                constraintMode = ConstraintMode.valueOf(value.toString());
+            }
+        }
+        return constraintMode;
     }
 
     public String value() {

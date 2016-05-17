@@ -12,8 +12,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
@@ -68,7 +66,7 @@ public class JoinColumn {
 //    @XmlAttribute(name = "referenced-column")
 //    @XmlIDREF
 //    private Id referencedColumn;
-    @XmlAttribute(name="rc")
+    @XmlAttribute(name = "rc")
     protected String referencedColumnName;
     @XmlAttribute
     protected Boolean unique = false;
@@ -82,8 +80,8 @@ public class JoinColumn {
     protected String columnDefinition;
     @XmlAttribute(name = "table")
     protected String table;
-    @XmlElement(name = "foreign-key")
-    private ForeignKey foreignKey;//REVENG PENDING
+    @XmlElement(name = "fk")
+    private ForeignKey foreignKey;
 
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
@@ -100,6 +98,11 @@ public class JoinColumn {
             joinColumn.updatable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "updatable");
             joinColumn.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
             joinColumn.table = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "table");
+
+            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+            if (foreignKeyValue != null) {
+                joinColumn.foreignKey = ForeignKey.load(element, foreignKeyValue);
+            }
         }
         return joinColumn;
 
@@ -122,7 +125,7 @@ public class JoinColumn {
      *
      */
     public void setName(String value) {
-        if(value!=null){
+        if (value != null) {
             value = value.toUpperCase();
         }
         this.name = value;
@@ -148,7 +151,7 @@ public class JoinColumn {
      *
      */
     public void setReferencedColumnName(String value) {
-        if(value!=null){
+        if (value != null) {
             value = value.toUpperCase();
         }
         this.referencedColumnName = value;
@@ -300,12 +303,11 @@ public class JoinColumn {
 //    public void setReferencedColumn(Id referencedColumn) {
 //        this.referencedColumn = referencedColumn;
 //    }
-
     /**
      * @return the foreignKey
      */
     public ForeignKey getForeignKey() {
-        if(foreignKey==null){
+        if (foreignKey == null) {
             foreignKey = new ForeignKey();
         }
         return foreignKey;

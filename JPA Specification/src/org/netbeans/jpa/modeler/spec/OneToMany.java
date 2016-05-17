@@ -97,14 +97,14 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
 
     @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
-    @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;//REVENG PENDING //joinColumns foreignKey
+    @XmlElement(name = "fk")
+    protected ForeignKey foreignKey;//joinColumns foreignKey
     @XmlAttribute(name = "orphan-removal")
     protected Boolean orphanRemoval;
 
     public void load(Element element, VariableElement variableElement) {
-        AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToMany");
-        super.load(relationAnnotationMirror, element, variableElement);
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToMany");
+        super.load(annotationMirror, element, variableElement);
 
         AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumns");
         if (joinColumnsAnnotationMirror != null) {
@@ -120,7 +120,12 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
                 this.getJoinColumn().add(JoinColumn.load(element, joinColumnAnnotationMirror));
             }
         }
-        this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "orphanRemoval");
+        this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "orphanRemoval");
+
+        AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+        if (foreignKeyValue != null) {
+            this.foreignKey = ForeignKey.load(element, foreignKeyValue);
+        }
     }
 
     /**
@@ -160,7 +165,7 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
      *
      */
     public ForeignKey getForeignKey() {
-        if(foreignKey==null){
+        if (foreignKey == null) {
             foreignKey = new ForeignKey();
         }
         return foreignKey;
