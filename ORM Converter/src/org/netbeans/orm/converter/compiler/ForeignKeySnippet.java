@@ -29,16 +29,25 @@ public class ForeignKeySnippet implements Snippet {
     private String constraintMode;
     private String foreignKeyDefinition;
 
-
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
 
         builder.append("@ForeignKey(");
- if (StringUtils.isNotBlank(name)) {
+        if (StringUtils.isNotBlank(name)) {
             builder.append("name=\"");
             builder.append(name);
             builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        if (StringUtils.isNotBlank(constraintMode)) {
+            builder.append("value=ConstraintMode.");
+            builder.append(constraintMode);
+            builder.append(ORMConverterUtil.COMMA);
+        } else if (GeneratorUtil.isGenerateDefaultValue()) {
+            builder.append("value=ConstraintMode.");
+            builder.append("PROVIDER_DEFAULT");
             builder.append(ORMConverterUtil.COMMA);
         }
         if (StringUtils.isNotBlank(foreignKeyDefinition)) {
@@ -47,19 +56,7 @@ public class ForeignKeySnippet implements Snippet {
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         }
-        
-        
-        if (StringUtils.isNotBlank(constraintMode)) {
-            builder.append("constraintMode=ConstraintMode.");
-            builder.append(constraintMode);
-            builder.append(ORMConverterUtil.COMMA);
-        } else if (GeneratorUtil.isGenerateDefaultValue()) {
-            builder.append("constraintMode=ConstraintMode.");
-            builder.append("PROVIDER_DEFAULT");
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-       return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override

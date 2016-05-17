@@ -108,7 +108,8 @@ public class JoinColumnSnippet implements Snippet {
                     && columnDefinition == null
                     && name == null
                     && referencedColumnName == null
-                    && table == null) {
+                    && table == null 
+                    && foreignKey==null) {
 
                 return "@JoinColumn";
             }
