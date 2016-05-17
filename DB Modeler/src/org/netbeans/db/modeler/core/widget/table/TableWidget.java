@@ -57,6 +57,7 @@ import org.netbeans.jpa.modeler.core.widget.*;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import static org.netbeans.modeler.core.engine.ModelerDiagramEngine.NODE_WIDGET_SELECT_PROVIDER;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
@@ -402,6 +403,11 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         menuItemList.add(getPropertyMenu());
 
         return menuItemList;
+    }
+    
+        @Override
+    public void createPinWidget(SubCategoryNodeConfig subCategoryInfo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

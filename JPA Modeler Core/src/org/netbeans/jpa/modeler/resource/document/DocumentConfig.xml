@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <document-config>
     <documents>
-        <document id="Entity" widget="org.netbeans.jpa.modeler.core.widget.EntityWidget" specification="org.netbeans.jpa.modeler.spec.Entity"  documentModel="ENTITY">
+        <document id="Entity" widget="org.netbeans.jpa.modeler.core.widget.EntityWidget" specification="org.netbeans.jpa.modeler.spec.Entity"  >
             <container-document>/org/netbeans/jpa/modeler/resource/element/java/ENTITY.png</container-document>
-<!--            <bounds>
+            <!--            <bounds>
                 <width value="80.0" min="60.0" max="298.0"/>
                 <height value="64.0" min="48.0" max="242.0"/>
             </bounds>
@@ -18,18 +18,24 @@
                 </inner-shape>
             </shape-design>-->
         </document>
-        <document id="AbstractEntity" widget="org.netbeans.jpa.modeler.core.widget.EntityWidget" specification="org.netbeans.jpa.modeler.spec.Entity"  documentModel="ENTITY">
+        <document id="AbstractEntity" widget="org.netbeans.jpa.modeler.core.widget.EntityWidget" specification="org.netbeans.jpa.modeler.spec.Entity"  >
             <container-document>/org/netbeans/jpa/modeler/resource/element/java/ABSTRACT_ENTITY.png</container-document>
         </document>
-        <document id="MappedSuperclass" widget="org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget" specification="org.netbeans.jpa.modeler.spec.MappedSuperclass"  documentModel="ENTITY">
+        <document id="MappedSuperclass" widget="org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget" specification="org.netbeans.jpa.modeler.spec.MappedSuperclass"  >
             <container-document>/org/netbeans/jpa/modeler/resource/element/java/MAPPED_SUPER_CLASS.png</container-document>
         </document>
-        <document id="Embeddable" widget="org.netbeans.jpa.modeler.core.widget.EmbeddableWidget" specification="org.netbeans.jpa.modeler.spec.Embeddable"  documentModel="ENTITY">
+        <document id="Embeddable" widget="org.netbeans.jpa.modeler.core.widget.EmbeddableWidget" specification="org.netbeans.jpa.modeler.spec.Embeddable"  >
             <container-document>/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE.png</container-document>
         </document>
-        
-        <document id="Id" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Id"  documentModel="ENTITY">
-            <container-document>/org/netbeans/jpa/modeler/resource/image/id-attribute.png</container-document>
+        <document id="Id" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Id"  >
+        </document>
+        <document id="Basic" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Basic"  >
+        </document>
+        <document id="Basic_Collection" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget" specification="org.netbeans.jpa.modeler.spec.ElementCollection"  >
+        </document>
+        <document id="Transient" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Transient">
+        </document>
+        <document id="Version" widget="org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget" specification="org.netbeans.jpa.modeler.spec.Version"  >
         </document>
     </documents>
 </document-config>

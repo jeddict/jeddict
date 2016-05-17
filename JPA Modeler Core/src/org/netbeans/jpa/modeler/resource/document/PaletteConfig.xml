@@ -14,9 +14,21 @@
             <palette-document icon="/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE_ICON.png" />
         </subcategory-node>
     </category-node>
-        <category-node id="JPA_CLASS_ATTR" name="JPA Attributes">
+        <category-node id="JPA_ATTR" name="Attributes">
         <subcategory-node  id="Id" name="Id"  >
             <palette-document icon="/org/netbeans/jpa/modeler/resource/image/id-attribute.png" />
+        </subcategory-node>
+        <subcategory-node  id="Basic" name="Basic"  >
+            <palette-document icon="/org/netbeans/jpa/modeler/resource/image/basic-attribute.png" />
+        </subcategory-node>
+        <subcategory-node  id="Transient" name="Transient"  >
+            <palette-document icon="/org/netbeans/jpa/modeler/resource/image/transient-attribute.png" />
+        </subcategory-node>
+        <subcategory-node  id="Version" name="Version"  >
+            <palette-document icon="/org/netbeans/jpa/modeler/resource/image/version-attribute.png" />
+        </subcategory-node>
+        <subcategory-node  id="Basic_Collection" name="Element Collection"  >
+            <palette-document icon="/org/netbeans/jpa/modeler/resource/image/basic-collection-attribute.png" />
         </subcategory-node>
     </category-node>
     

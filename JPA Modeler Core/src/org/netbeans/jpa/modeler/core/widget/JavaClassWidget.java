@@ -38,6 +38,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;

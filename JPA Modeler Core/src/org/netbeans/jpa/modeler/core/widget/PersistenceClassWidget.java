@@ -67,6 +67,7 @@ import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
@@ -1065,5 +1066,26 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
             validateName(previousName, this.getName());
         }
 
+    }
+    
+    
+     public void createPinWidget(SubCategoryNodeConfig subCategoryInfo){
+        createPinWidget(subCategoryInfo.getModelerDocument().getId().toUpperCase() + "_ATTRIBUTE");
+    }
+
+     public void createPinWidget(String docId) {
+        if ("ID_ATTRIBUTE".equals(docId)) {
+            this.addNewIdAttribute(getNextAttributeName("id"));
+        } else if ("BASIC_ATTRIBUTE".equals(docId)) {
+            this.addNewBasicAttribute(getNextAttributeName());
+        } else if ("BASIC_COLLECTION_ATTRIBUTE".equals(docId)) {
+            this.addNewBasicCollectionAttribute(getNextAttributeName(null, true));
+        } else if ("TRANSIENT_ATTRIBUTE".equals(docId)) {
+            this.addNewTransientAttribute(getNextAttributeName());
+        } else if ("VERSION_ATTRIBUTE".equals(docId)) {
+            this.addNewVersionAttribute(getNextAttributeName());
+        } else {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+        }
     }
 }
