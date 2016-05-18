@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.actions.EventListener;
+import org.netbeans.modeler.core.IZoomManager;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -46,6 +47,11 @@ public class JPAEventListener extends EventListener {
                 JPAModelerUtil.openDBViewer(modelerFile);
             }
         });
+        
+                        
+
+        
+
     }
 
 }

@@ -323,13 +323,13 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
-        SwingUtilities.invokeLater(() -> {
-            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
-            if (!window.isOpened()) {
-                window.open();
-            }
-            window.requestActive();
-        });
+//        SwingUtilities.invokeLater(() -> { //Activiation of OverrideView window (Don't delete)
+//            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
+//            if (!window.isOpened()) {
+//                window.open();
+//            }
+//            window.requestActive();
+//        });
         
         //After installation of new version, auto save file 
         ModelerFile file = this.getModelerFile();
@@ -341,12 +341,12 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
     @Override
     public void destroy() {
-        SwingUtilities.invokeLater(() -> {
-            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
-            if (ModelerCore.getModelerFiles().size() == 1) {
-                window.close();
-            }
-        });
+//        SwingUtilities.invokeLater(() -> {
+//            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
+//            if (ModelerCore.getModelerFiles().size() == 1) {
+//                window.close();
+//            }
+//        });
     }
 
     @Override
