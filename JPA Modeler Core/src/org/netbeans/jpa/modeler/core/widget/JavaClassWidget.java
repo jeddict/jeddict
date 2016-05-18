@@ -132,6 +132,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
     public abstract void deleteAttribute(AttributeWidget attributeWidget);
 
+    @Override
     public void deletePinWidget(IPinWidget pinWidget) {
         super.deletePinWidget(pinWidget);
         deleteAttribute((AttributeWidget) pinWidget);//  Issue Fix #5855

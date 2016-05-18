@@ -48,7 +48,7 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
       public boolean remove(boolean notification) {
         // Issue Fix #5855 Start
         if (super.remove(notification)) {
-            ((IdentifiableClass)getClassWidget().getBaseElementSpec()).setCompositePrimaryKeyType(CompositePrimaryKeyType.IDCLASS);
+            ((IdentifiableClass)getClassWidget().getBaseElementSpec()).setCompositePrimaryKeyType(null);
             return true;
         }
         // Issue Fix #5855 End

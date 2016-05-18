@@ -186,6 +186,16 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
       }
     }
 
+    private void checkPrimaryKeyStatus(){
+        if(isCompositePKPropertyAllow() == CompositePKProperty.NONE){
+            if(this.getEmbeddedIdAttributeWidget()!=null){
+                this.getEmbeddedIdAttributeWidget().remove(false);
+            }
+            PrimaryKeyContainer primaryKeyContainer = (PrimaryKeyContainer)this.getBaseElementSpec();
+            primaryKeyContainer.setCompositePrimaryKeyClass(null);
+            primaryKeyContainer.setCompositePrimaryKeyType(null);
+        }
+    }
     public CompositePKProperty isCompositePKPropertyAllow() {
         if (this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) this.getBaseElementSpec();
@@ -206,20 +216,15 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 //                Case (a): The dependent entity uses IdClass:
 //                CompositePKProperty.FIXED_CLASS
                 if (derivedRelationAttributes.size() == 1) {//check for parent entity pk count
-                if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && (inheritenceState == ROOT || inheritenceState == SINGLETON))) {
-                    RelationAttributeWidget relationAttributeWidget = getDerivedRelationAttributeWidgets().get(0);
-                    Entity targetEntitySpec = ((RelationAttribute) relationAttributeWidget.getBaseElementSpec()).getConnectedEntity();
-                    EntityWidget targetEntityWidget = (EntityWidget) getModelerScene().getBaseElement(targetEntitySpec.getId());
-                    if (targetEntityWidget.isCompositePKPropertyAllow() == CompositePKProperty.NONE) {
-                        visible = false;
-                    } else {
-                        visible = true;
+                    if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && (inheritenceState == ROOT || inheritenceState == SINGLETON))) {
+                        RelationAttributeWidget relationAttributeWidget = getDerivedRelationAttributeWidgets().get(0);
+                        Entity targetEntitySpec = ((RelationAttribute) relationAttributeWidget.getBaseElementSpec()).getConnectedEntity();
+                        EntityWidget targetEntityWidget = (EntityWidget) getModelerScene().getBaseElement(targetEntitySpec.getId());
+                        if (targetEntityWidget.isCompositePKPropertyAllow() != CompositePKProperty.NONE) {
+                            property = CompositePKProperty.AUTO_CLASS;
+                        }
                     }
-                    if (visible) {
-                        property = CompositePKProperty.AUTO_CLASS;
-                    }
-                    }
-                }
+                } 
             } else {
 //                if ((primaryKeyContainerSpec.getCompositePrimaryKeyClass() == null || primaryKeyContainerSpec.getCompositePrimaryKeyClass().trim().isEmpty())
 //                        && (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID || primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
@@ -385,7 +390,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
                 ((EntityWidget) classWidget).scanKeyError();
             });
-            isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+            checkPrimaryKeyStatus();
         } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
             embeddedIdAttributeWidget = null;
             ((IPersistenceAttributes) attributes).setEmbeddedId(null);
@@ -422,7 +427,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
                         ((EntityWidget) classWidget).scanKeyError();
                     });
-                    isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+                    checkPrimaryKeyStatus();
                 }
 
             } else if (attributeWidget instanceof OTMRelationAttributeWidget) {
@@ -449,7 +454,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     this.getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
                         ((EntityWidget) classWidget).scanKeyError();
                     });
-                    isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+                    checkPrimaryKeyStatus();
                 }
             } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
                 MTMRelationAttributeWidget mtmRelationAttributeWidget = (MTMRelationAttributeWidget) attributeWidget;
