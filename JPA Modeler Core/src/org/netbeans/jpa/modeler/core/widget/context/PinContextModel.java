@@ -19,6 +19,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -85,6 +86,9 @@ public class PinContextModel {
         upModel.setTooltip("Move Up");
         upModel.setPaletteModel(contextPaletteModel);
         upModel.setMouseListener(getMoveUpWidgetAction(pinWidget, -1));
+        upModel.checkVisibility(() -> {
+            return checkMoveWidgetVisibility(pinWidget, -1);
+        });
         contextPaletteModel.getChildren().add(upModel);
 
         ContextPaletteButtonModel downModel = new DefaultPaletteButtonModel();
@@ -92,6 +96,9 @@ public class PinContextModel {
         downModel.setTooltip("Move Down");
         downModel.setPaletteModel(contextPaletteModel);
         downModel.setMouseListener(getMoveUpWidgetAction(pinWidget, 1));
+        downModel.checkVisibility(() -> {
+            return checkMoveWidgetVisibility(pinWidget, 1);
+        });
         contextPaletteModel.getChildren().add(downModel);
     }
 
@@ -105,7 +112,7 @@ public class PinContextModel {
                     IAttributes attributes = classWidget.getBaseElementSpec().getAttributes();
                     List list = null;
                     List specList = null;
-                    AttributeWidget attributeWidget = (AttributeWidget)widget;
+                    AttributeWidget attributeWidget = (AttributeWidget) widget;
 
                     if (attributeWidget instanceof IdAttributeWidget) {
                         list = classWidget.getIdAttributeWidgets();
@@ -149,8 +156,12 @@ public class PinContextModel {
                     if ((index == 0 && distance < 0) || (list.size() == index + 1 && distance > 0)) {
                         return;
                     }
-                    Collections.swap(list, index, index + distance);
                     
+                    if ((index == 1 && distance < 0) || (list.size() == index + 2 && distance > 0)) {  //if just before the last/first then hide context palette
+                        NBModelerUtil.hideContextPalette(widget.getModelerScene());
+                    }
+                    Collections.swap(list, index, index + distance);
+
                     int specIndex = specList.indexOf(attributeWidget.getBaseElementSpec());
                     Collections.swap(specList, specIndex, specIndex + distance);
 
@@ -163,6 +174,53 @@ public class PinContextModel {
                 widget.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
             }
         };
+    }
+
+    private static boolean checkMoveWidgetVisibility(final IPinWidget widget, final int distance) {
+        if (widget instanceof AttributeWidget) {
+            PersistenceClassWidget<ManagedClass> classWidget = ((AttributeWidget) widget).getClassWidget();
+            List list = null;
+            AttributeWidget attributeWidget = (AttributeWidget) widget;
+
+            if (attributeWidget instanceof IdAttributeWidget) {
+                list = classWidget.getIdAttributeWidgets();
+            } else if (attributeWidget instanceof EmbeddedAttributeWidget) {
+                if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
+                    list = classWidget.getSingleValueEmbeddedAttributeWidgets();
+                } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
+                    list = classWidget.getMultiValueEmbeddedAttributeWidgets();
+                }
+            } else if (attributeWidget instanceof BasicAttributeWidget) {
+                list = classWidget.getBasicAttributeWidgets();
+            } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
+                list = classWidget.getBasicCollectionAttributeWidgets();
+            } else if (attributeWidget instanceof RelationAttributeWidget) {
+                if (attributeWidget instanceof OTORelationAttributeWidget) {
+                    list = classWidget.getOneToOneRelationAttributeWidgets();
+                } else if (attributeWidget instanceof OTMRelationAttributeWidget) {
+                    list = classWidget.getOneToManyRelationAttributeWidgets();
+                } else if (attributeWidget instanceof MTORelationAttributeWidget) {
+                    list = classWidget.getManyToOneRelationAttributeWidgets();
+                } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
+                    list = classWidget.getManyToManyRelationAttributeWidgets();
+                }
+            } else if (attributeWidget instanceof VersionAttributeWidget) {
+                list = classWidget.getVersionAttributeWidgets();
+            } else if (attributeWidget instanceof TransientAttributeWidget) {
+                list = classWidget.getTransientAttributeWidgets();
+            }
+
+            if (list == null) {
+                return false;
+            }
+            int index = list.indexOf(attributeWidget);
+            if ((index == 0 && distance < 0) || (list.size() == index + 1 && distance > 0)) {
+                return false;
+            }
+        }
+
+        return true;
+
     }
 
     private static MouseListener getRemoveWidgetAction(final IPinWidget widget) {
