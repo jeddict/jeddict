@@ -1051,7 +1051,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
-        if (parsedEmbeddedId == null) {
+        if (parsedEmbeddedId == null || 
+                identifiableClass.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
             return;
         }
 

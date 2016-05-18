@@ -26,6 +26,7 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.JOINED;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.TABLE_PER_CLASS;
+import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.orm.converter.compiler.DiscriminatorColumnSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorValueSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet;
@@ -88,7 +89,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
         if (parsedAttributes != null) {
             processEmbeddedId(entity, parsedAttributes.getEmbeddedId());
-            if (parsedAttributes.getEmbeddedId() == null) {
+            if (entity.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
                 processId(parsedAttributes.getId());
             }
             processBasic(parsedAttributes.getBasic());
