@@ -92,6 +92,7 @@ public class JoinColumnFinder {
 
         if (!created) {
             joinColumn = new JoinColumn();
+            joinColumn.setImplicitName(name);
             joinColumns.add(joinColumn);
         }
         return joinColumn;

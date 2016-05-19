@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
@@ -64,9 +65,8 @@ public class JoinColumn {
 
     @XmlAttribute(name = "name")
     protected String name;
-//    @XmlAttribute(name = "referenced-column")
-//    @XmlIDREF
-//    private Id referencedColumn;
+    @XmlTransient
+    private String implicitName;//automatically assigned by persistence provider
     @XmlAttribute(name = "rc")
     protected String referencedColumnName;
     @XmlAttribute
@@ -322,6 +322,20 @@ public class JoinColumn {
      */
     public void setForeignKey(ForeignKey foreignKey) {
         this.foreignKey = foreignKey;
+    }
+
+    /**
+     * @return the implicitName
+     */
+    public String getImplicitName() {
+        return implicitName;
+    }
+
+    /**
+     * @param implicitName the implicitName to set
+     */
+    public void setImplicitName(String implicitName) {
+        this.implicitName = implicitName;
     }
 
 }

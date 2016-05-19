@@ -31,14 +31,22 @@ public class JoinColumnValidator extends MarshalValidator<JoinColumn> {
     }
 
     public static boolean isEmpty(JoinColumn column) {
+        boolean empty = false;
         if (StringUtils.isBlank(column.getName()) && StringUtils.isBlank(column.getReferencedColumnName())
                 && StringUtils.isBlank(column.getColumnDefinition()) && StringUtils.isBlank(column.getTable())
                 && Boolean.TRUE.equals(column.getNullable()) && Boolean.TRUE.equals(column.getInsertable())
                 && Boolean.TRUE.equals(column.getUpdatable()) && Boolean.FALSE.equals(column.getUnique())
                 && ForeignKeyValidator.isEmpty(column.getForeignKey())) {
-            return true;
+            empty = true;
         }
-        return false;
+        if(!empty && StringUtils.isBlank(column.getName()) &&  StringUtils.isNotBlank(column.getImplicitName())){
+            column.setName(column.getImplicitName());
+            column.setImplicitName(null);
+        }
+        if(!empty && StringUtils.isBlank(column.getName())){
+            empty = true;
+        }
+        return empty;
     }
 
     public static boolean isNotEmpty(JoinColumn column) {

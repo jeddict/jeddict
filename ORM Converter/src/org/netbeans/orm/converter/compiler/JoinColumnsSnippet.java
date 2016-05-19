@@ -75,9 +75,11 @@ public class JoinColumnsSnippet implements Snippet {
         if (joinColumns.isEmpty()) {
             importSnippets.add("javax.persistence.JoinColumns");
         } else if (joinColumns.size() == 1) {
-            importSnippets.add("javax.persistence.JoinColumn");
+            importSnippets.addAll(joinColumns.get(0).getImportSnippets());
         } else {
-            importSnippets.add("javax.persistence.JoinColumn");
+            for (JoinColumnSnippet jc : joinColumns) {
+                importSnippets.addAll(jc.getImportSnippets());
+            }
             importSnippets.add("javax.persistence.JoinColumns");
         }
 
