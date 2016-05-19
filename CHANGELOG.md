@@ -1,5 +1,13 @@
 # JPA Modeler Releases #
 
+### Version 1.6 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.6) ###
+
+*  [Derived Identities](http://jpamodeler.github.io/tutorial/page.html?l=DerivedIdentities)
+*  [@ForeignKey](http://docs.oracle.com/javaee/7/api/javax/persistence/ForeignKey.html),  [@Cacheable](http://docs.oracle.com/javaee/7/api/javax/persistence/Cacheable.html)
+*  [@author javadoc](https://en.wikipedia.org/wiki/Javadoc)
+*  Misc : Shift attribute up/down, open java class file by double click on entity icon, open db by double click on table icon
+*  Issue fix : memory leaks
+
 ### Version 1.5 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.5) ###
 
 *  MVC 1.0 Generator
