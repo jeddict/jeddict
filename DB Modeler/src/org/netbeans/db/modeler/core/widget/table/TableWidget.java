@@ -81,7 +81,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 
         @Override
         public WidgetAction.State mousePressed(Widget widget, WidgetAction.WidgetMouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON1 || event.getButton() == MouseEvent.BUTTON2) {
+            if (event.getButton() == MouseEvent.BUTTON1  && event.getClickCount()==2) {
                 SQLEditorUtil.openDBTable(TableWidget.this);
                 return WidgetAction.State.CONSUMED;
             }

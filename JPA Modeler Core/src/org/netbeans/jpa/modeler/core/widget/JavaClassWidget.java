@@ -90,7 +90,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
         @Override
         public WidgetAction.State mousePressed(Widget widget, WidgetAction.WidgetMouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON1 || event.getButton() == MouseEvent.BUTTON2) {
+            if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount()==2) {
                 openSourceCode(true);
                 return WidgetAction.State.CONSUMED;
             }
