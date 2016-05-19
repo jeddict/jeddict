@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -287,6 +288,9 @@ public class JoinColumn {
         accessor.setTable(table);
         accessor.setUnique(unique);
         accessor.setUpdatable(updatable);
+        if (ForeignKeyValidator.isNotEmpty(foreignKey)) {
+            accessor.setForeignKey(foreignKey.getAccessor());
+        }
         return accessor;
     }
 

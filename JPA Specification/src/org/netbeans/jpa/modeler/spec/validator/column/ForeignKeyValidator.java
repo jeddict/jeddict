@@ -32,6 +32,9 @@ public class ForeignKeyValidator extends MarshalValidator<ForeignKey> {
     }
 
     public static boolean isEmpty(ForeignKey foreignKey) {
+        if(foreignKey==null){
+            return true;
+        }
         if (StringUtils.isBlank(foreignKey.getName()) 
                 && StringUtils.isBlank(foreignKey.getForeignKeyDefinition())
                 && (foreignKey.getConstraintMode()==null || foreignKey.getConstraintMode()==ConstraintMode.PROVIDER_DEFAULT)){

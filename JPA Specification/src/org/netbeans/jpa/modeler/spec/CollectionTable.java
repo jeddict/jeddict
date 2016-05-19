@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -297,6 +298,9 @@ public class CollectionTable {
         accessor.setCatalog(catalog);
         accessor.setSchema(schema);
         accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
+        if (ForeignKeyValidator.isNotEmpty(foreignKey)) {
+            accessor.setForeignKey(foreignKey.getAccessor());
+        }
         return accessor;
     }
 

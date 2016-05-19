@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.JoinTableMetadata;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -377,6 +378,12 @@ public class JoinTable {
         accessor.setCatalog(catalog);
         accessor.setInverseJoinColumns(getInverseJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
         accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
+        if (ForeignKeyValidator.isNotEmpty(foreignKey)) {
+            accessor.setForeignKey(foreignKey.getAccessor());
+        }
+        if (ForeignKeyValidator.isNotEmpty(inverseForeignKey)) {
+            accessor.setInverseForeignKey(inverseForeignKey.getAccessor());
+        }
         return accessor;
     }
 
