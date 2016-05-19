@@ -6,8 +6,12 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
+import org.netbeans.modeler.properties.type.Enumy;
 
 /**
  * <p>
@@ -28,11 +32,28 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "constraint-mode")
 @XmlEnum
-public enum ConstraintMode {
+public enum ConstraintMode implements Enumy {
 
-    CONSTRAINT,
-    NO_CONSTRAINT,
-    PROVIDER_DEFAULT;
+    CONSTRAINT("Constraint"),
+    NO_CONSTRAINT("No Constraint"),
+    PROVIDER_DEFAULT("Provider Default");
+
+    private final String display;
+
+    private ConstraintMode(String display) {
+        this.display = display;
+    }
+
+    public static ConstraintMode load(Element element, AnnotationMirror annotationMirror) {
+        ConstraintMode constraintMode = null;
+        if (annotationMirror != null) {
+            Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+            if (value != null) {
+                constraintMode = ConstraintMode.valueOf(value.toString());
+            }
+        }
+        return constraintMode;
+    }
 
     public String value() {
         return name();
@@ -40,6 +61,16 @@ public enum ConstraintMode {
 
     public static ConstraintMode fromValue(String v) {
         return valueOf(v);
+    }
+
+    @Override
+    public String getDisplay() {
+        return display;
+    }
+
+    @Override
+    public Enumy getDefault() {
+        return null;
     }
 
 }

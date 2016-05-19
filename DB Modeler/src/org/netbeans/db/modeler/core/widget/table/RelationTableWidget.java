@@ -89,6 +89,8 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         JoinTable joinTable = attribute.getJoinTable();
         set.createPropertySet(this, joinTable, getPropertyChangeListeners());
+        set.createPropertySet("FOREIGN_KEY", this, joinTable.getForeignKey() , null);
+        set.createPropertySet("INVERSE_FOREIGN_KEY", this, joinTable.getInverseForeignKey(), null);
     }
 
     private String getDefaultJoinTableName() {

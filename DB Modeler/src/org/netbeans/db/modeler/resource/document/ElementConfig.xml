@@ -10,7 +10,8 @@
         <group id="PARENT_JOINCOLUMN" name="Superclass @JoinColumn"/>
         <group id="JOIN_COLUMN" name="@JoinColumn"/>
         <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn"/>
-        
+        <group id="FOREIGN_KEY" name="@ForeignKey"/>
+        <group id="INVERSE_FOREIGN_KEY" name="Inverse @ForeignKey"/>
     </groups>
     <elements>
         <element id="Table" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Table">
@@ -23,6 +24,19 @@
                 </attribute>
                 <attribute id="schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">
                     <display-name>Schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="ForeignKey" class="org.netbeans.jpa.modeler.spec.ForeignKey">
+            <attributes>
+                <attribute id="ForeignKey_name" groupId="FOREIGN_KEY" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+                <attribute id="constraintMode" groupId="FOREIGN_KEY" class="org.netbeans.jpa.modeler.spec.ConstraintMode" name="constraintMode">
+                    <display-name>Constraint Mode</display-name>
+                </attribute>
+                <attribute id="foreignKeyDefinition" groupId="FOREIGN_KEY" class="java.lang.String" name="foreignKeyDefinition">
+                    <display-name>Definition</display-name>
                 </attribute>
             </attributes>
         </element>

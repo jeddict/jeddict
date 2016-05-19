@@ -86,7 +86,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     protected String description;
     protected List<Id> id;
     @XmlElement(name = "embedded-id")
-    protected EmbeddedId embeddedId; //REVENG PENDING //findAllAttribute PENDING //isAttributeExist PENDING
+    protected EmbeddedId embeddedId; 
     protected List<Version> version;
 
     @Override
@@ -207,6 +207,11 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 }
             }
         }
+        if (embeddedId != null) {
+            if (embeddedId.getName() != null && embeddedId.getName().equals(name)) {
+                attributes.add(embeddedId);
+            }
+        }
 
         return attributes;
     }
@@ -228,6 +233,11 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 if (version_TMP.getName() != null && version_TMP.getName().equals(name)) {
                     return true;
                 }
+            }
+        }
+        if (embeddedId != null) {
+            if (embeddedId.getName() != null && embeddedId.getName().equals(name)) {
+                return true;
             }
         }
 
@@ -438,5 +448,11 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
         attributes.addAll(this.getElementCollection().stream().filter(ec -> ec.getConnectedClass() == null).collect(toList()));
         attributes.addAll(this.getVersion());
         return attributes;
+    }
+    
+    public boolean hasCompositePrimaryKey(){
+        return this.getId().size() + (this.getEmbeddedId()!=null? 1: 0) +
+        this.getOneToOne().stream().filter(attr -> attr.isPrimaryKey()).count() +
+        this.getManyToOne().stream().filter(attr -> attr.isPrimaryKey()).count() > 1;
     }
 }

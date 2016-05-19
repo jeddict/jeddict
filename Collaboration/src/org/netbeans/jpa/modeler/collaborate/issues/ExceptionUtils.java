@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.collaborate.issues;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.IExceptionHandler;
@@ -49,7 +50,9 @@ public final class ExceptionUtils implements IExceptionHandler {
         printStackTrace(null, t, file);
     }
 
-    public static void printStackTrace(String errorMessage, Throwable t, ModelerFile file) {
+    public static void printStackTrace(String errorMessage, final Throwable t, final ModelerFile file) {
+        System.out.println("EventDispatch Thread : " + SwingUtilities.isEventDispatchThread());
+        
         if (StringUtils.isBlank(errorMessage)) {
             errorMessage = t.getMessage();
 
@@ -61,9 +64,13 @@ public final class ExceptionUtils implements IExceptionHandler {
                 }
             }
         }
+        final String message = errorMessage;
         LOG.log(Level.ALL, errorMessage, t);
-        ExceptionReporterPanel exceptionReporterPanel = new ExceptionReporterPanel(errorMessage, t, file);
-        exceptionReporterPanel.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            ExceptionReporterPanel exceptionReporterPanel = new ExceptionReporterPanel(message, t, file);
+            exceptionReporterPanel.setVisible(true);
+        });
+      
         t.printStackTrace();
     }
 

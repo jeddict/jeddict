@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,7 @@ import org.netbeans.jpa.modeler.spec.EntityResult;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.FieldResult;
+import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.IdClass;
@@ -80,6 +82,7 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
@@ -90,6 +93,7 @@ import org.netbeans.orm.converter.compiler.AssociationOverridesSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverrideSnippet;
 import org.netbeans.orm.converter.compiler.AttributeOverridesSnippet;
 import org.netbeans.orm.converter.compiler.BasicSnippet;
+import org.netbeans.orm.converter.compiler.CacheableDefSnippet;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.CollectionTableSnippet;
 import org.netbeans.orm.converter.compiler.ColumnDefSnippet;
@@ -103,6 +107,7 @@ import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
 import org.netbeans.orm.converter.compiler.EntityResultSnippet;
 import org.netbeans.orm.converter.compiler.EnumeratedSnippet;
 import org.netbeans.orm.converter.compiler.FieldResultSnippet;
+import org.netbeans.orm.converter.compiler.ForeignKeySnippet;
 import org.netbeans.orm.converter.compiler.GeneratedValueSnippet;
 import org.netbeans.orm.converter.compiler.IdClassSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnSnippet;
@@ -358,8 +363,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    protected List<String> getCascadeTypes(
-            CascadeType cascadeType) {
+    protected List<String> getCascadeTypes(CascadeType cascadeType) {
 
         if (cascadeType == null) {
             return Collections.EMPTY_LIST;
@@ -514,10 +518,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
 
             joinColumn.setName(parsedJoinColumn.getName());
-            joinColumn.setReferencedColumnName(
-                    parsedJoinColumn.getReferencedColumnName());
+            joinColumn.setReferencedColumnName(parsedJoinColumn.getReferencedColumnName());
             joinColumn.setTable(parsedJoinColumn.getTable());
-
+            joinColumn.setForeignKey(getForeignKey(parsedJoinColumn.getForeignKey()));
+            
             joinColumns.add(joinColumn);
         });
 
@@ -545,6 +549,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         collectionTable.setSchema(parsedCollectionTable.getSchema());
         collectionTable.setJoinColumns(joinColumns);
         collectionTable.setUniqueConstraints(uniqueConstraints);
+        
+        collectionTable.setForeignKey(getForeignKey(parsedCollectionTable.getForeignKey()));
 
         return collectionTable;
     }
@@ -574,8 +580,28 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         joinTable.setJoinColumns(joinColumns);
         joinTable.setInverseJoinColumns(inverseJoinColumns);
         joinTable.setUniqueConstraints(uniqueConstraints);
+        
+        joinTable.setForeignKey(getForeignKey(parsedJoinTable.getForeignKey()));
+        joinTable.setInverseForeignKey(getForeignKey(parsedJoinTable.getInverseForeignKey()));
 
         return joinTable;
+    }
+
+    protected ForeignKeySnippet getForeignKey(ForeignKey parsedForeignKey) {
+        if (parsedForeignKey == null || ForeignKeyValidator.isEmpty(parsedForeignKey)) {
+            return null;
+        }
+
+        ForeignKeySnippet foreignKey = new ForeignKeySnippet();
+
+        foreignKey.setName(parsedForeignKey.getName());
+        foreignKey.setDescription(parsedForeignKey.getDescription());
+        foreignKey.setForeignKeyDefinition(parsedForeignKey.getForeignKeyDefinition());
+        if (parsedForeignKey.getConstraintMode() != null) {
+            foreignKey.setConstraintMode(parsedForeignKey.getConstraintMode().name());
+        }
+
+        return foreignKey;
     }
 
     protected List<PrimaryKeyJoinColumnSnippet> getPrimaryKeyJoinColumns(
@@ -1013,6 +1039,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             associationOverride.setName(parsedAssociationOverride.getName());
             associationOverride.setJoinColumns(joinColumnsList);
             associationOverride.setJoinTable(joinTable);
+            
+            associationOverride.setForeignKey(getForeignKey(parsedAssociationOverride.getForeignKey()));
 
             assoHandler.getAssociationOverrides().addAssociationOverride(
                     associationOverride);
@@ -1023,7 +1051,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
-        if (parsedEmbeddedId == null) {
+        if (parsedEmbeddedId == null || 
+                identifiableClass.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
             return;
         }
 
@@ -1161,6 +1190,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (!joinColumnsList.isEmpty()) {
                 joinColumns = new JoinColumnsSnippet();
                 joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(parsedManyToOne.getForeignKey()));
             }
 
             ManyToOneSnippet manyToOne = new ManyToOneSnippet();
@@ -1174,7 +1204,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedManyToOne.getFetch() != null) {
                 manyToOne.setFetchType(parsedManyToOne.getFetch().value());
-            }
+            }            
             manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
             manyToOne.setMapsId(parsedManyToOne.getMapsId());
 
@@ -1208,6 +1238,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (!joinColumnsList.isEmpty()) {
                 joinColumns = new JoinColumnsSnippet();
                 joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(parsedOneToMany.getForeignKey()));
             }
 
             OneToManySnippet oneToMany = new OneToManySnippet();
@@ -1220,7 +1251,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }
-
+            
             VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
 
             variableDef.setRelationDef(oneToMany);
@@ -1258,6 +1289,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (!joinColumnsList.isEmpty()) {
                 joinColumns = new JoinColumnsSnippet();
                 joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(parsedOneToOne.getForeignKey()));
+
             }
 
             OneToOneSnippet oneToOne = new OneToOneSnippet();
@@ -1271,7 +1304,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());
-            }
+            }            
             oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
             oneToOne.setMapsId(parsedOneToOne.getMapsId());
 
@@ -1352,6 +1385,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             secondaryTable.setSchema(parsedSecondaryTable.getSchema());
             secondaryTable.setUniqueConstraints(uniqueConstraints);
             secondaryTable.setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
+            
+            secondaryTable.setForeignKey(getForeignKey(parsedSecondaryTable.getForeignKey()));
 
             classDef.getSecondaryTables().addSecondaryTable(secondaryTable);
         }
@@ -1461,6 +1496,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 getUniqueConstraint(parsedTable.getUniqueConstraint()));
 
         classDef.setTableDef(table);
+    }
+
+     protected void processCacheable(Boolean cacheable) {
+
+        if (cacheable == null || Objects.equals(cacheable, Boolean.FALSE)) {
+            return;
+        }
+         CacheableDefSnippet snippet = new CacheableDefSnippet();
+        classDef.setCacheableDef(snippet);
     }
 
     protected TableGeneratorSnippet processTableGenerator(TableGenerator parsedTableGenerator) {

@@ -26,6 +26,7 @@ public class SecondaryTableSnippet implements Snippet {
     private String name = null;
     private String catalog = null;
     private String schema = null;
+    private ForeignKeySnippet foreignKey;
 
     private List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns
             = Collections.EMPTY_LIST;
@@ -79,7 +80,7 @@ public class SecondaryTableSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
 
         if (name == null) {
-            throw new InvalidDataException("Missing required feild name");
+            throw new InvalidDataException("Missing required field name");
         }
 
         StringBuilder builder = new StringBuilder();
@@ -128,6 +129,12 @@ public class SecondaryTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
+        
+        if (foreignKey != null) {
+            builder.append("foreignKey=");
+            builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
 
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
@@ -145,21 +152,32 @@ public class SecondaryTableSnippet implements Snippet {
         importSnippets.add("javax.persistence.SecondaryTable");
 
         if (primaryKeyJoinColumns != null && !primaryKeyJoinColumns.isEmpty()) {
-
-            Collection<String> columnsImportSnippets
-                    = primaryKeyJoinColumns.get(0).getImportSnippets();
-
+            Collection<String> columnsImportSnippets = primaryKeyJoinColumns.get(0).getImportSnippets();
             importSnippets.addAll(columnsImportSnippets);
         }
 
         if (uniqueConstraints != null && !uniqueConstraints.isEmpty()) {
-
-            Collection<String> ucImportSnippets
-                    = uniqueConstraints.get(0).getImportSnippets();
-
-            importSnippets.addAll(ucImportSnippets);
+            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
+        }
+        
+                if (foreignKey != null) {
+            importSnippets.addAll(foreignKey.getImportSnippets());
         }
 
         return importSnippets;
+    }
+
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
     }
 }

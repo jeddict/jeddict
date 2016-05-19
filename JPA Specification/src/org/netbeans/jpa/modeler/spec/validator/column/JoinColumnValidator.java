@@ -17,7 +17,6 @@ package org.netbeans.jpa.modeler.spec.validator.column;
 
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 
@@ -32,15 +31,22 @@ public class JoinColumnValidator extends MarshalValidator<JoinColumn> {
     }
 
     public static boolean isEmpty(JoinColumn column) {
+        boolean empty = false;
         if (StringUtils.isBlank(column.getName()) && StringUtils.isBlank(column.getReferencedColumnName())
                 && StringUtils.isBlank(column.getColumnDefinition()) && StringUtils.isBlank(column.getTable())
-                && column.getNullable() && column.getInsertable() && column.getUpdatable() && !column.getUnique()) {
-            return true;
+                && Boolean.TRUE.equals(column.getNullable()) && Boolean.TRUE.equals(column.getInsertable())
+                && Boolean.TRUE.equals(column.getUpdatable()) && Boolean.FALSE.equals(column.getUnique())
+                && ForeignKeyValidator.isEmpty(column.getForeignKey())) {
+            empty = true;
         }
-//        if (column.getReferencedColumnName()!= null && !((IdentifiableClass) column.getReferencedColumn().getJavaClass()).getAttributes().getId().contains(column.getReferencedColumn())) {
-//            return true;
-//        }
-        return false;
+        if(!empty && StringUtils.isBlank(column.getName()) &&  StringUtils.isNotBlank(column.getImplicitName())){
+            column.setName(column.getImplicitName());
+            column.setImplicitName(null);
+        }
+        if(!empty && StringUtils.isBlank(column.getName())){
+            empty = true;
+        }
+        return empty;
     }
 
     public static boolean isNotEmpty(JoinColumn column) {

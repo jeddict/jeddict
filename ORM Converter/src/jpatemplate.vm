@@ -11,6 +11,11 @@ import java.io.Serializable;
 #foreach ( $importStatement in $classDef.getImportSnippets() )
 $importStatement
 #end
+
+/**
+ *
+ * @author $author
+ */
 #####################jaxb annotations ###############################
 #if($classDef.isJaxbSupport())
 import javax.xml.bind.annotation.*;
@@ -63,6 +68,9 @@ $classDef.getDiscriminatorValue().getSnippet()
 #end
 #if ($classDef.getDiscriminatorColumn())
 $classDef.getDiscriminatorColumn().getSnippet()
+#end
+#if ($classDef.getCacheableDef())
+$classDef.getCacheableDef().getSnippet()
 #end
 ##################### named queries ###############################
 #if ($classDef.getNamedQueries() )

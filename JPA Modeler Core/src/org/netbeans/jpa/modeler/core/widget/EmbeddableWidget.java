@@ -18,10 +18,13 @@ package org.netbeans.jpa.modeler.core.widget;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
 public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
@@ -149,6 +152,15 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
         attributeWidgets.addAll(this.getSingleValueEmbeddedAttributeWidgets());
         attributeWidgets.addAll(this.getMultiValueEmbeddedAttributeWidgets());
         return attributeWidgets;
+    }
+    
+    @Override
+     public boolean isValidPinWidget(SubCategoryNodeConfig subCategoryInfo){
+         if(subCategoryInfo.getModelerDocument().getWidget() == IdAttributeWidget.class ||
+               subCategoryInfo.getModelerDocument().getWidget() == VersionAttributeWidget.class){
+             return false;
+         }
+        return true;
     }
 
 }

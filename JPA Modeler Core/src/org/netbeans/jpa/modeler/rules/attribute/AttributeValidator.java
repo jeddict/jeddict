@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.rules.attribute;
 
 import java.util.List;
-import static org.eclipse.persistence.exceptions.DescriptorException.TABLE_NOT_PRESENT;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
@@ -51,8 +50,8 @@ public class AttributeValidator {
                     boolean errorExist = false;
                     for (JavaClassWidget superclassWidget : superclassWidgets) {
                         if (superclassWidget instanceof PersistenceClassWidget) {
-                            PersistenceClassWidget persistenceSuiperClassWidget = (PersistenceClassWidget) superclassWidget;
-                            if (persistenceSuiperClassWidget.getEmbeddedIdAttributeWidget() == null && !persistenceSuiperClassWidget.getIdAttributeWidgets().isEmpty()) {
+                            PersistenceClassWidget persistenceSuperClassWidget = (PersistenceClassWidget) superclassWidget;
+                            if (persistenceSuperClassWidget.getEmbeddedIdAttributeWidget() == null && !persistenceSuperClassWidget.getIdAttributeWidgets().isEmpty()) {
                                 errorExist = true;
                                 break;
                             }

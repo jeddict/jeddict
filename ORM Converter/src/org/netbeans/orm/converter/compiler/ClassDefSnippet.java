@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.TreeSet;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
@@ -57,24 +58,25 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     private final ClassHelper classHelper = new ClassHelper();
     private final ClassHelper superClassHelper = new ClassHelper();
-    private String entityName = null;
+    private String entityName;
 
-    private TableDefSnippet tableDef = null;
-    private PrimaryKeyJoinColumnsSnippet primaryKeyJoinColumns = null;
-    private SecondaryTablesSnippet secondaryTables = null;
-    private IdClassSnippet idClass = null;
-    private AssociationOverridesSnippet associationOverrides = null;
-    private AttributeOverridesSnippet attributeOverrides = null;
-    private DiscriminatorColumnSnippet discriminatorColumn = null;
-    private DiscriminatorValueSnippet discriminatorValue = null;
+    private TableDefSnippet tableDef;
+    private CacheableDefSnippet cacheableDef;
+    private PrimaryKeyJoinColumnsSnippet primaryKeyJoinColumns;
+    private SecondaryTablesSnippet secondaryTables;
+    private IdClassSnippet idClass;
+    private AssociationOverridesSnippet associationOverrides;
+    private AttributeOverridesSnippet attributeOverrides;
+    private DiscriminatorColumnSnippet discriminatorColumn;
+    private DiscriminatorValueSnippet discriminatorValue;
 
-    private EntityListenersSnippet entityListeners = null;
-    private InheritanceSnippet inheritance = null;
-    private NamedQueriesSnippet namedQueries = null;
-    private NamedNativeQueriesSnippet namedNativeQueries = null;
-    private SQLResultSetMappingsSnippet sqlResultSetMappings = null;
-    private NamedEntityGraphsSnippet namedEntityGraphs = null;
-    private NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries = null;
+    private EntityListenersSnippet entityListeners;
+    private InheritanceSnippet inheritance;
+    private NamedQueriesSnippet namedQueries;
+    private NamedNativeQueriesSnippet namedNativeQueries;
+    private SQLResultSetMappingsSnippet sqlResultSetMappings;
+    private NamedEntityGraphsSnippet namedEntityGraphs;
+    private NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries;
 
     private List<VariableDefSnippet> variableDefs = new ArrayList<VariableDefSnippet>();
 
@@ -321,6 +323,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("classDef", this);
+            velocityContext.put("author", JavaSourceHelper.getAuthor());
 
             ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
 
@@ -362,6 +365,10 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
         if (tableDef != null) {
             importSnippets.addAll(tableDef.getImportSnippets());
+        }
+        
+        if (cacheableDef != null) {
+            importSnippets.addAll(cacheableDef.getImportSnippets());
         }
 
         if (primaryKeyJoinColumns != null) {
@@ -546,6 +553,20 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setNamedStoredProcedureQueries(NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries) {
         this.namedStoredProcedureQueries = namedStoredProcedureQueries;
+    }
+
+    /**
+     * @return the cacheableDef
+     */
+    public CacheableDefSnippet getCacheableDef() {
+        return cacheableDef;
+    }
+
+    /**
+     * @param cacheableDef the cacheableDef to set
+     */
+    public void setCacheableDef(CacheableDefSnippet cacheableDef) {
+        this.cacheableDef = cacheableDef;
     }
 
 }

@@ -26,6 +26,7 @@ public class AssociationOverrideSnippet implements Snippet {
     private String name = null;
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
     private JoinTableSnippet joinTable;
+    private ForeignKeySnippet foreignKey;
 
     public String getName() {
         return name;
@@ -85,6 +86,12 @@ public class AssociationOverrideSnippet implements Snippet {
             builder.append("joinTable=");
             builder.append(joinTable.getSnippet());
         }
+        
+        if (foreignKey != null) {
+            builder.append("foreignKey=");
+            builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
 
         builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
 
@@ -93,7 +100,7 @@ public class AssociationOverrideSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.AssociationOverride");
         if (joinColumns != null && !joinColumns.isEmpty()) {
@@ -101,6 +108,10 @@ public class AssociationOverrideSnippet implements Snippet {
         }
         if (joinTable != null) {
             importSnippets.addAll(joinTable.getImportSnippets());
+        }
+        
+        if (foreignKey != null) {
+            importSnippets.addAll(foreignKey.getImportSnippets());
         }
 
         return importSnippets;
@@ -118,5 +129,19 @@ public class AssociationOverrideSnippet implements Snippet {
      */
     public void setJoinTable(JoinTableSnippet joinTable) {
         this.joinTable = joinTable;
+    }
+
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
     }
 }

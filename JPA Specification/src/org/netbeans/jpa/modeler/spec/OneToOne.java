@@ -91,8 +91,6 @@ public class OneToOne extends SingleRelationAttribute {
     protected String mappedBy;
     @XmlAttribute(name = "orphan-removal")
     protected Boolean orphanRemoval;
-    @XmlAttribute(name = "maps-id")
-    protected String mapsId;//REVENG PENDING
 
     public void load(Element element, VariableElement variableElement) {
         AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToOne");
@@ -199,26 +197,6 @@ public class OneToOne extends SingleRelationAttribute {
      */
     public void setOrphanRemoval(Boolean value) {
         this.orphanRemoval = value;
-    }
-
-    /**
-     * Gets the value of the mapsId property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getMapsId() {
-        return mapsId;
-    }
-
-    /**
-     * Sets the value of the mapsId property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setMapsId(String value) {
-        this.mapsId = value;
     }
 
     @Override

@@ -48,11 +48,6 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), mtmSpec));
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(MTMRelationAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
 
     /**
      * @return the manyToManyRelationFlowWidget

@@ -19,32 +19,35 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.jcode.generator.JEEApplicationGenerator;
+import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
+import org.netbeans.jcode.task.AbstractNBTask;
+import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
+import org.netbeans.jcode.task.progress.ProgressHandler;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm.ORMInputDefiniton;
-import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.jcode.task.AbstractNBTask;
-import org.openide.util.Lookup;
-import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
-import org.netbeans.jcode.task.progress.ProgressHandler;
-import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.core.ModelerFile;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
+import org.openide.util.RequestProcessor;
 
 public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     private final ModelerFile modelerFile;
     private final ApplicationConfigData appicationConfigData;
+    private final Runnable afterExecution;
 
     private final static int SUBTASK_TOT = 1;
 
-    public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appicationConfigData) {
+    public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appicationConfigData, Runnable afterExecution) {
         this.modelerFile = modelerFile;
         this.appicationConfigData = appicationConfigData;
+        this.afterExecution=afterExecution;
     }
 
     @Override
@@ -82,6 +85,9 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     @Override
     protected void finish() {
+        if (afterExecution != null) {
+            RequestProcessor.getDefault().post(afterExecution);
+        }
     }
 
     /**

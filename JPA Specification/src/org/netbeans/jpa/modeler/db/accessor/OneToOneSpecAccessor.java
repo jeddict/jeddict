@@ -16,11 +16,16 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
+import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToOneAccessor;
+import org.netbeans.db.modeler.exception.DBValidationException;
+import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
 
@@ -40,12 +45,17 @@ public class OneToOneSpecAccessor extends OneToOneAccessor {
         OneToOneSpecAccessor accessor = new OneToOneSpecAccessor(oneToOne);
         accessor.setName(oneToOne.getName());
         accessor.setTargetEntityName(oneToOne.getTargetEntity());
-        if (oneToOne.isPrimaryKey()) { 
+        if (oneToOne.isPrimaryKey()) {
             IdClass idClass = oneToOne.getIdClass();
             if (idClass != null) {
                 accessor.setId(Boolean.TRUE);
             } else {
-                accessor.setMapsId(oneToOne.getName());
+                IAttributes attributes = ((ManagedClass) oneToOne.getJavaClass()).getAttributes();
+                if (attributes instanceof Attributes && !((Attributes) attributes).hasCompositePrimaryKey()) { //Ex 4.a Derived Identity
+                    accessor.setId(Boolean.TRUE);
+                } else {
+                    accessor.setMapsId("");//oneToOne.getName());
+                }
             }
         }
         accessor.setMappedBy(oneToOne.getMappedBy());
@@ -61,8 +71,13 @@ public class OneToOneSpecAccessor extends OneToOneAccessor {
 
     @Override
     public void process() {
+        try{
         super.process();
         getMapping().setProperty(Attribute.class, oneToOne);
+        } catch (ValidationException ex) {
+            DBValidationException exception = new DBValidationException(ex);
+            exception.setAttribute(oneToOne);
+        }
     }
 
 }

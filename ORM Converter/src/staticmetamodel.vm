@@ -12,6 +12,10 @@ import javax.persistence.metamodel.StaticMetamodel;
 $importStatement
 #end
 
+/**
+ *
+ * @author $author
+ */
 #set( $class = ".class" )
 @StaticMetamodel($classDef.getValue()$class)
 public class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end  {

@@ -6,10 +6,18 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.eclipse.persistence.internal.jpa.metadata.columns.ForeignKeyMetadata;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
+import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -53,6 +61,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "foreign-key", propOrder = {
     "description"
 })
+@XmlJavaTypeAdapter(value = ForeignKeyValidator.class)
 public class ForeignKey {
 
     protected String description;
@@ -62,6 +71,22 @@ public class ForeignKey {
     protected ConstraintMode constraintMode;
     @XmlAttribute(name = "foreign-key-definition")
     protected String foreignKeyDefinition;
+
+    public static ForeignKey load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ForeignKey");
+        }
+        ForeignKey foreignKey = null;
+        if (annotationMirror != null) {
+            foreignKey = new ForeignKey();
+            foreignKey.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            foreignKey.description = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "description");
+            foreignKey.foreignKeyDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKeyDefinition");
+            foreignKey.constraintMode = ConstraintMode.load(element, annotationMirror);
+        }
+        return foreignKey;
+
+    }
 
     /**
      * Gets the value of the description property.
@@ -141,6 +166,16 @@ public class ForeignKey {
      */
     public void setForeignKeyDefinition(String value) {
         this.foreignKeyDefinition = value;
+    }
+
+    public ForeignKeyMetadata getAccessor() {
+        ForeignKeyMetadata accessor = new ForeignKeyMetadata();
+        accessor.setName(name);
+        accessor.setForeignKeyDefinition(foreignKeyDefinition);
+        if (constraintMode != null) {
+            accessor.setConstraintMode(constraintMode.name());
+        }
+        return accessor;
     }
 
 }

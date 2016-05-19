@@ -11,6 +11,10 @@ package $serializer.getPackageName();
 $importStatement
 #end
 
+/**
+ *
+ * @author $author
+ */
 public class $serializer.getClassName() {
 
     private EntityManager entityManager = SerializerUtil.getEntityManager();

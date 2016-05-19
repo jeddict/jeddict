@@ -68,8 +68,8 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
     protected String description;
     @XmlElement(name = "join-column")
     private List<JoinColumn> joinColumn;
-    @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;//REVENG PENDING
+    @XmlElement(name = "fk")
+    protected ForeignKey foreignKey;
     @XmlElement(name = "join-table")
     protected JoinTable joinTable;
     @XmlAttribute(name = "name", required = true)
@@ -91,6 +91,11 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
             AnnotationMirror joinTableAnnot = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinTable");
             if (joinTableAnnot != null) {
                 associationOverride.joinTable = JoinTable.load(element, joinTableAnnot);
+            }
+            
+            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+            if (foreignKeyValue != null) {
+                associationOverride.foreignKey = ForeignKey.load(element, foreignKeyValue);
             }
 
         }
@@ -174,6 +179,9 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 

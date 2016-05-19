@@ -38,12 +38,6 @@ public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends Bas
 //        this.setImage(JPAModelerUtil.EMBEDDED_ATTRIBUTE);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(EmbeddedAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     /**
      * @return the embeddableFlowWidget
      */

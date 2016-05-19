@@ -16,6 +16,8 @@
 package org.netbeans.db.modeler.specification.model.util;
 
 import org.netbeans.api.db.explorer.DatabaseConnection;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modules.db.explorer.sql.editor.SQLEditorSupport;
@@ -28,12 +30,25 @@ import org.openide.util.RequestProcessor;
 public class SQLEditorUtil {
 
     private static final RequestProcessor RP = new RequestProcessor("Generated SQL");
-
+    private static final String SQL_PREFIX = "select * from ";
     public static void openEditor(ModelerFile modelerFile, String sql) {
         final DatabaseConnection connection = DBConnectionUtil.getConnection(modelerFile);
         RP.post(() -> {
             try {
                 SQLEditorSupport.openSQLEditor(connection, sql, false); //NOI18N
+            } catch (Exception exc) {
+                modelerFile.handleException(exc);
+            }
+        });
+    }
+    
+    public static void openDBTable(TableWidget tableWidget) {
+        ModelerFile modelerFile = tableWidget.getModelerScene().getModelerFile();
+        String tableName = tableWidget.getName();
+        final DatabaseConnection connection = DBConnectionUtil.getConnection(modelerFile);
+        RP.post(() -> {
+            try {
+                SQLEditorSupport.openSQLEditor(connection, SQL_PREFIX + tableName, true); //NOI18N
             } catch (Exception exc) {
                 modelerFile.handleException(exc);
             }

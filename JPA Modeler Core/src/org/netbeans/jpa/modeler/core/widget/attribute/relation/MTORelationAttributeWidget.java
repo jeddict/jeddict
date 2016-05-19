@@ -39,11 +39,6 @@ public class MTORelationAttributeWidget extends SingleRelationAttributeWidget<Ma
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(MTORelationAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
 
     /**
      * @return the manyToOneRelationFlowWidget

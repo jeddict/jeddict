@@ -149,6 +149,9 @@
                  <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
+                <attribute id="cacheable" groupId="BASIC_PROP" class="java.lang.Boolean" name="cacheable">
+                    <display-name>Is Cacheable</display-name>
+                </attribute>
             </attributes>
         </element>
            <element id="Embeddable" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Embeddable">

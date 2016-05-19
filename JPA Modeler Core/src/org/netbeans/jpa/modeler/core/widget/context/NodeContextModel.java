@@ -77,21 +77,8 @@ public class NodeContextModel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (widget instanceof PersistenceClassWidget) {
                     PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) widget;
-                    if ("ID_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewIdAttribute(persistenceClassWidget.getNextAttributeName("id"));
-                    } else if ("BASIC_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewBasicAttribute(persistenceClassWidget.getNextAttributeName());
-                    } else if ("BASIC_COLLECTION_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewBasicCollectionAttribute(persistenceClassWidget.getNextAttributeName(null,true));
-                    } else if ("TRANSIENT_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewTransientAttribute(persistenceClassWidget.getNextAttributeName());
-                    } else if ("VERSION_ATTRIBUTE".equals(addAttributeModel.getId())) {
-                        persistenceClassWidget.addNewVersionAttribute(persistenceClassWidget.getNextAttributeName());
-                    } else {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
-                    }
+                    persistenceClassWidget.createPinWidget(addAttributeModel.getId());
                     widget.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-
                 }
             }
         };

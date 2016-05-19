@@ -15,25 +15,41 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Cursor;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.YES_OPTION;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.SourceGroup;
+import org.netbeans.api.visual.action.WidgetAction;
+import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
+import org.netbeans.jcode.core.util.SourceGroups;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
-import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
+import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
-import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
+import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
@@ -66,9 +82,61 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         });
 
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
+        this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        this.getImageWidget().getActions().addAction(new JavaClassAction());
+    }
+
+    private final class JavaClassAction extends WidgetAction.Adapter {
+
+        @Override
+        public WidgetAction.State mousePressed(Widget widget, WidgetAction.WidgetMouseEvent event) {
+            if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount()==2) {
+                openSourceCode(true);
+                return WidgetAction.State.CONSUMED;
+            }
+            return WidgetAction.State.REJECTED;
+        }
+    }
+
+    private void openSourceCode(boolean retryIfFileNotFound) {
+        JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
+        FileObject fileObject;
+        if (javaClass.getFileObject() != null) {
+            fileObject = javaClass.getFileObject();
+        } else {
+            EntityMappings mappings = this.getModelerScene().getBaseElementSpec();
+            IModelerFileDataObject dataObject = this.getModelerScene().getModelerFile().getModelerFileDataObject();
+            Project project = this.getModelerScene().getModelerFile().getProject();
+
+            SourceGroup group = SourceGroupSupport.findSourceGroupForFile(project, dataObject.getPrimaryFile());
+            fileObject = SourceGroups.getJavaFileObject(group, StringUtils.isBlank(mappings.getPackage()) ? "" : (mappings.getPackage() + ".") + javaClass.getClazz());
+            javaClass.setFileObject(fileObject);
+        }
+        if (fileObject == null || !fileObject.isValid()) {
+              NotifyDescriptor.Confirmation msg = null;
+              if(retryIfFileNotFound){
+              msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
+                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.title"), NotifyDescriptor.OK_CANCEL_OPTION,  NotifyDescriptor.QUESTION_MESSAGE);
+              } else {
+               msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
+                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND_IN_CURRENT_PROECT.title"), NotifyDescriptor.OK_CANCEL_OPTION,  NotifyDescriptor.QUESTION_MESSAGE);
+              }
+            if (NotifyDescriptor.YES_OPTION.equals(DialogDisplayer.getDefault().notify(msg))) {
+                JPAModelerUtil.generateSourceCode(this.getModelerScene().getModelerFile(), () -> {openSourceCode(false);});
+            }
+        } else {
+            org.netbeans.modules.openfile.OpenFile.open(fileObject, -1);
+        }
+
     }
 
     public abstract void deleteAttribute(AttributeWidget attributeWidget);
+
+    @Override
+    public void deletePinWidget(IPinWidget pinWidget) {
+        super.deletePinWidget(pinWidget);
+        deleteAttribute((AttributeWidget) pinWidget);//  Issue Fix #5855
+    }
 
     public abstract void sortAttributes();
 
@@ -78,39 +146,37 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         } else {
             getErrorHandler().clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
         }
-        if(SourceVersion.isName(name)){
+        if (SourceVersion.isName(name)) {
             getErrorHandler().clearError(EntityValidator.INVALID_CLASS_NAME);
         } else {
             getErrorHandler().throwError(EntityValidator.INVALID_CLASS_NAME);
         }
         scanDuplicateClass(previousName, name);
     }
-    
-    public void scanDuplicateClass(String previousName, String newName){
-      int previousNameCount=0, newNameCount=0;
-      List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();
-      for(JavaClassWidget<JavaClass> javaClassWidget : javaClassList){
-          JavaClass javaClass = javaClassWidget.getBaseElementSpec();
-          
-          if(javaClass.getClazz().equals(previousName)){
-              if(++previousNameCount>1){
-                  javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
-              } else if(!javaClassWidget.getErrorHandler().getErrorList().isEmpty()){
-                  javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
-              }
-          }
-          
-          if(javaClass.getClazz().equals(newName)){
-              if(++newNameCount>1){
-                  javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
-              }else if(!javaClassWidget.getErrorHandler().getErrorList().isEmpty()){
-                  javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
-              }
-          }
-      }
-    }
-    
 
+    public void scanDuplicateClass(String previousName, String newName) {
+        int previousNameCount = 0, newNameCount = 0;
+        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();
+        for (JavaClassWidget<JavaClass> javaClassWidget : javaClassList) {
+            JavaClass javaClass = javaClassWidget.getBaseElementSpec();
+
+            if (javaClass.getClazz().equals(previousName)) {
+                if (++previousNameCount > 1) {
+                    javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                } else if (!javaClassWidget.getErrorHandler().getErrorList().isEmpty()) {
+                    javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                }
+            }
+
+            if (javaClass.getClazz().equals(newName)) {
+                if (++newNameCount > 1) {
+                    javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                } else if (!javaClassWidget.getErrorHandler().getErrorList().isEmpty()) {
+                    javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                }
+            }
+        }
+    }
 
     @Override
     public void setLabel(String label) {
@@ -163,25 +229,6 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         return subclassWidgetList;
     }
 
-//    public List<JavaClassWidget> getAllSubclassWidget() {
-//        List<JavaClassWidget> subclassWidgetList = new LinkedList<JavaClassWidget>();
-//        boolean exist = true;
-//        for (GeneralizationFlowWidget generalizationFlowWidget_TMP : this.incomingGeneralizationFlowWidgets) {
-////        ;List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = new ArrayList<GeneralizationFlowWidget>()
-////        if (generalizationFlowWidget_TMP != null) {
-////            exist = true;
-////        }
-//            while (exist) {
-//                JavaClassWidget subclassWidget_Nest = generalizationFlowWidget_TMP.getSubclassWidget();
-//                subclassWidgetList.add(subclassWidget_Nest);
-//                generalizationFlowWidget_TMP = subclassWidget_Nest.getOutgoingGeneralizationFlowWidget();
-//                if (generalizationFlowWidget_TMP == null) {
-//                    exist = false;
-//                }
-//            }
-//        }
-//        return subclassWidgetList;
-//    }
     /**
      * @return the outgoingGeneralizationFlowWidget
      */

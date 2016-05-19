@@ -39,12 +39,6 @@ public class OTORelationAttributeWidget extends SingleRelationAttributeWidget<On
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = AttributeWidget.create(id, name, baseElement);
-        pinWidgetInfo.setDocumentId(OTORelationAttributeWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     /**
      * @return the oneToOneRelationFlowWidget
      */

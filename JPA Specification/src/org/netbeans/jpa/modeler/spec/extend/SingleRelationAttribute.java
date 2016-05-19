@@ -41,8 +41,8 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
 
     @XmlElement(name = "join-column")
     private List<JoinColumn> joinColumn;
-    @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;//REVENG PENDING
+    @XmlElement(name = "fk")
+    protected ForeignKey foreignKey;//joinColumns foreignKey
 
     @XmlAttribute(name = "optional")
     protected Boolean optional;
@@ -53,8 +53,8 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     
 
     @Override
-    public void load(AnnotationMirror relationAnnotationMirror, Element element, VariableElement variableElement) {
-        super.load(relationAnnotationMirror, element, variableElement);
+    public void load(AnnotationMirror annotationMirror, Element element, VariableElement variableElement) {
+        super.load(annotationMirror, element, variableElement);
         if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")) {
             this.setPrimaryKey(Boolean.TRUE);
         }
@@ -74,7 +74,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
             }
         }
 
-        this.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "optional");
+        this.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "optional");
         
         AnnotationMirror mapsIdAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.MapsId");
         AnnotationMirror idAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Id");
@@ -82,6 +82,11 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
         this.primaryKey = mapsIdAnnotationMirror != null || idAnnotationMirror != null;
         if (mapsIdAnnotationMirror != null) {
             this.mapsId = (String) JavaSourceParserUtil.findAnnotationValue(mapsIdAnnotationMirror, "value");
+        }
+        
+        AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+        if (foreignKeyValue != null) {
+            this.foreignKey = ForeignKey.load(element, foreignKeyValue);
         }
     }
 
@@ -138,6 +143,9 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 

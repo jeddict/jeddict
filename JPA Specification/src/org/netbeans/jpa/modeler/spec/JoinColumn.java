@@ -11,11 +11,12 @@ import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -64,10 +65,9 @@ public class JoinColumn {
 
     @XmlAttribute(name = "name")
     protected String name;
-//    @XmlAttribute(name = "referenced-column")
-//    @XmlIDREF
-//    private Id referencedColumn;
-    @XmlAttribute(name="rc")
+    @XmlTransient
+    private String implicitName;//automatically assigned by persistence provider
+    @XmlAttribute(name = "rc")
     protected String referencedColumnName;
     @XmlAttribute
     protected Boolean unique = false;
@@ -81,6 +81,8 @@ public class JoinColumn {
     protected String columnDefinition;
     @XmlAttribute(name = "table")
     protected String table;
+    @XmlElement(name = "fk")
+    private ForeignKey foreignKey;
 
     public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
@@ -97,6 +99,11 @@ public class JoinColumn {
             joinColumn.updatable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "updatable");
             joinColumn.columnDefinition = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnDefinition");
             joinColumn.table = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "table");
+
+            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+            if (foreignKeyValue != null) {
+                joinColumn.foreignKey = ForeignKey.load(element, foreignKeyValue);
+            }
         }
         return joinColumn;
 
@@ -119,7 +126,7 @@ public class JoinColumn {
      *
      */
     public void setName(String value) {
-        if(value!=null){
+        if (value != null) {
             value = value.toUpperCase();
         }
         this.name = value;
@@ -145,7 +152,7 @@ public class JoinColumn {
      *
      */
     public void setReferencedColumnName(String value) {
-        if(value!=null){
+        if (value != null) {
             value = value.toUpperCase();
         }
         this.referencedColumnName = value;
@@ -281,6 +288,9 @@ public class JoinColumn {
         accessor.setTable(table);
         accessor.setUnique(unique);
         accessor.setUpdatable(updatable);
+        if (ForeignKeyValidator.isNotEmpty(foreignKey)) {
+            accessor.setForeignKey(foreignKey.getAccessor());
+        }
         return accessor;
     }
 
@@ -297,5 +307,35 @@ public class JoinColumn {
 //    public void setReferencedColumn(Id referencedColumn) {
 //        this.referencedColumn = referencedColumn;
 //    }
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKey getForeignKey() {
+        if (foreignKey == null) {
+            foreignKey = new ForeignKey();
+        }
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKey foreignKey) {
+        this.foreignKey = foreignKey;
+    }
+
+    /**
+     * @return the implicitName
+     */
+    public String getImplicitName() {
+        return implicitName;
+    }
+
+    /**
+     * @param implicitName the implicitName to set
+     */
+    public void setImplicitName(String implicitName) {
+        this.implicitName = implicitName;
+    }
 
 }

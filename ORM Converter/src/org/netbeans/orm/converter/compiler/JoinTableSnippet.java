@@ -29,6 +29,10 @@ public class JoinTableSnippet implements Snippet {
 
     private List<JoinColumnSnippet> inverseJoinColumns = Collections.EMPTY_LIST;
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
+    
+    private ForeignKeySnippet foreignKey;
+    private ForeignKeySnippet inverseForeignKey;
+    
 
     private UniqueConstraintSnippet uniqueConstraint = null;
 
@@ -165,6 +169,19 @@ public class JoinTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
+        
+                
+        if (foreignKey != null) {
+            builder.append("foreignKey=");
+            builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
+        if (inverseForeignKey != null) {
+            builder.append("inverseForeignKey=");
+            builder.append(inverseForeignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
 
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
@@ -174,34 +191,63 @@ public class JoinTableSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (isEmpty()) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
-        if (inverseJoinColumns.isEmpty()
-                && joinColumns.isEmpty()
-                && uniqueConstraint == null) {
-
+        if (inverseJoinColumns.isEmpty() && joinColumns.isEmpty() && uniqueConstraint == null
+                && foreignKey == null && inverseForeignKey == null ) {
             return Collections.singletonList("javax.persistence.JoinTable");
         }
 
-        Collection<String> importSnippets = new ArrayList<String>();
+        Collection<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.JoinTable");
 
         if (!joinColumns.isEmpty()) {
-            Collection<String> joinColumnSnippets
-                    = joinColumns.get(0).getImportSnippets();
-
+            Collection<String> joinColumnSnippets  = joinColumns.get(0).getImportSnippets();
             importSnippets.addAll(joinColumnSnippets);
         }
 
         if (uniqueConstraint != null) {
-            Collection<String> uniqueConstraintSnippets
-                    = uniqueConstraint.getImportSnippets();
-
-            importSnippets.addAll(uniqueConstraintSnippets);
+            importSnippets.addAll(uniqueConstraint.getImportSnippets());
+        }
+        
+        if (foreignKey != null) {
+            importSnippets.addAll(foreignKey.getImportSnippets());
+        }
+        
+        if (inverseForeignKey != null) {
+            importSnippets.addAll(inverseForeignKey.getImportSnippets());
         }
 
         return importSnippets;
+    }
+
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
+    }
+
+    /**
+     * @return the inverseForeignKey
+     */
+    public ForeignKeySnippet getInverseForeignKey() {
+        return inverseForeignKey;
+    }
+
+    /**
+     * @param inverseForeignKey the inverseForeignKey to set
+     */
+    public void setInverseForeignKey(ForeignKeySnippet inverseForeignKey) {
+        this.inverseForeignKey = inverseForeignKey;
     }
 }

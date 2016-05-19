@@ -15,8 +15,8 @@
  */
 package org.netbeans.jpa.modeler.properties;
 
-import org.netbeans.jpa.modeler.properties.named.resultsetmapping.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,6 +29,7 @@ import org.netbeans.jpa.modeler.navigator.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
+import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;

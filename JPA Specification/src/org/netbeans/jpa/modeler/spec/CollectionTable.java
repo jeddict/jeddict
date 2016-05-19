@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
+import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -75,8 +76,8 @@ public class CollectionTable {
 
     @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
-    @XmlElement(name = "foreign-key")
-    protected ForeignKey foreignKey;//REVENG PENDING
+    @XmlElement(name = "fk")
+    protected ForeignKey foreignKey;
     @XmlElement(name = "unique-constraint")
     protected List<UniqueConstraint> uniqueConstraint;
     protected List<Index> index;//REVENG PENDING
@@ -111,6 +112,12 @@ public class CollectionTable {
             collectionTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             collectionTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
             collectionTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
+        
+            AnnotationMirror foreignKeyValue = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "foreignKey");
+            if (foreignKeyValue != null) {
+                collectionTable.foreignKey = ForeignKey.load(element, foreignKeyValue);
+            }
+        
         }
         return collectionTable;
 
@@ -152,6 +159,9 @@ public class CollectionTable {
      *
      */
     public ForeignKey getForeignKey() {
+        if(foreignKey==null){
+            foreignKey = new ForeignKey();
+        }
         return foreignKey;
     }
 
@@ -288,6 +298,9 @@ public class CollectionTable {
         accessor.setCatalog(catalog);
         accessor.setSchema(schema);
         accessor.setJoinColumns(getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
+        if (ForeignKeyValidator.isNotEmpty(foreignKey)) {
+            accessor.setForeignKey(foreignKey.getAccessor());
+        }
         return accessor;
     }
 
