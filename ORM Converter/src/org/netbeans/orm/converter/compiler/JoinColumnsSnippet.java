@@ -70,7 +70,7 @@ public class JoinColumnsSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public List<String> getImportSnippets() throws InvalidDataException { 
         List<String> importSnippets = new ArrayList<String>();
         if (joinColumns.isEmpty()) {
             importSnippets.add("javax.persistence.JoinColumns");
