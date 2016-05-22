@@ -60,7 +60,7 @@ import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.modules.editor.NbEditorDocument;
 import org.netbeans.modules.j2ee.persistence.api.PersistenceEnvironment;
@@ -87,7 +87,7 @@ import org.openide.util.RequestProcessor;
 /**
  * JPQL editor top component.
  */
-public final class JPQLEditorPanel extends GenericDialog {
+public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel {
 
     /**
      * path to the icon used by the component and its open action
@@ -698,6 +698,8 @@ public final class JPQLEditorPanel extends GenericDialog {
         jScrollPane2 = new javax.swing.JScrollPane();
         sqlEditorPane = new javax.swing.JTextPane();
 
+        setTitle(org.openide.util.NbBundle.getMessage(JPQLEditorPanel.class, "JPQLEditorPanel.title")); // NOI18N
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/resource/image/misc/jpqlEditor.png")).getImage());
         setSize(new java.awt.Dimension(900, 700));
 
         toolBar.setFloatable(false);
@@ -1065,5 +1067,10 @@ NbBundle.getMessage(JPQLEditorPanel.class, "progressTaskname"));//GEN-LAST:event
     
     public void setJPQL(String query){
         jpqlEditor.setText(query);
+    }
+    
+        @Override
+    public ModelerFile getModelerFile() {
+        return controller.getModelerFile();
     }
 }

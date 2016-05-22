@@ -34,6 +34,7 @@ import org.netbeans.modules.j2ee.persistence.api.PersistenceEnvironment;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.editor.JPAEditorUtil;
 import org.netbeans.modules.j2ee.persistence.jpqleditor.JPQLExecutor;
+import org.netbeans.modules.j2ee.persistence.jpqleditor.JPQLResult;
 //import org.netbeans.modules.j2ee.persistence.jpqleditor.JPQLResult;
 import org.netbeans.modules.j2ee.persistence.jpqleditor.Utils;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
@@ -110,7 +111,7 @@ public class JPQLPanelEditorController {
                 @Override
                 public void run() {
                     ClassLoader customClassLoader = Thread.currentThread().getContextClassLoader();
-                    CustomJPQLResult jpqlResult = new CustomJPQLResult();
+                    JPQLResult jpqlResult = new CustomJPQLResult();
                     if (initialProblems.isEmpty()) {
                         JPQLExecutor queryExecutor = new JPQLExecutor();
                         try {
@@ -119,7 +120,7 @@ public class JPQLPanelEditorController {
 
                             ph.progress(50);
                             ph.setDisplayName(NbBundle.getMessage(JPQLExternalEditorTopComponent.class, "queryExecutionPassControlToProvider"));
-                            jpqlResult = (CustomJPQLResult)queryExecutor.execute(jpql, pu, pe, props, provider, maxRowCount, ph, true);
+                            jpqlResult = (JPQLResult)queryExecutor.execute(jpql, pu, pe, props, provider, maxRowCount, ph, true);
                             ph.progress(80);
                             ph.setDisplayName(NbBundle.getMessage(JPQLExternalEditorTopComponent.class, "queryExecutionProcessResults"));
 
@@ -132,10 +133,10 @@ public class JPQLPanelEditorController {
                         for (String txt : initialProblems) {
                             sb.append(txt).append("\n");
                         }
-                        jpqlResult.setQueryProblems(sb.toString());
+//                        jpqlResult.setQueryProblems(sb.toString());
                         jpqlResult.getExceptions().add(new Exception(sb.toString()));
                     }
-                    final CustomJPQLResult jpqlResult0 = jpqlResult;
+                    final JPQLResult jpqlResult0 = jpqlResult;
                     final ClassLoader customClassLoader0 = customClassLoader;
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override

@@ -64,12 +64,14 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jpa.modeler.internal.jpqleditor.JPQLEditorPanel;
+import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModel;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModelAction;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModelException;
 import org.netbeans.modules.j2ee.persistence.api.EntityClassScope;
 import org.netbeans.modules.j2ee.persistence.api.metadata.orm.EntityMappings;
 import org.netbeans.modules.j2ee.persistence.api.metadata.orm.EntityMappingsMetadata;
+import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.spi.EntityClassScopeProvider;
 import org.netbeans.modules.j2ee.persistence.spi.jpql.ManagedTypeProvider;
 import org.netbeans.modules.j2ee.persistence.spi.jpql.Query;
@@ -135,10 +137,11 @@ public class JPQLInternalEditorCodeCompletionProvider implements CompletionProvi
                         PUDataObject puObject;
                         JavaSource js;
                         if (source != null) {
-                            JPQLEditorPanel tc = (JPQLEditorPanel) SwingUtilities.getAncestorOfClass(JPQLEditorPanel.class, component);
-                            puObject = tc.getDataObject();
+                            ModelerPanel tc = (ModelerPanel) SwingUtilities.getAncestorOfClass(ModelerPanel.class, component);
+//                            puObject = tc.getDataObject();
+                             final Project project = tc.getModelerFile().getProject();//FileOwnerQuery.getOwner(pXml);
+                             puObject = ProviderUtil.getPUDataObject(project);
                             final FileObject pXml = puObject.getPrimaryFile();
-                            final Project project = FileOwnerQuery.getOwner(pXml);
                             if (project == null) {
                                 return;
                             }
