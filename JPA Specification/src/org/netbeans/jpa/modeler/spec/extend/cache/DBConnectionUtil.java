@@ -98,6 +98,11 @@ public class DBConnectionUtil {
         if (cache == null || cache.getDatabaseConnectionCache() == null) {
             return null;//ConnectionManager.getDefault().getConnections()[0];
         }
+        if (cache.getDatabaseConnectionCache().getDatabaseConnection() == null) {
+            for (DatabaseConnection connection : ConnectionManager.getDefault().getConnections()) {
+                connection.getDatabaseURL();
+            }
+        }
         return cache.getDatabaseConnectionCache().getDatabaseConnection();
     }
 

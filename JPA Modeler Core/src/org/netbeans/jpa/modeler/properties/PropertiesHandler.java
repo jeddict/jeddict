@@ -308,7 +308,7 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 sqlResultSetMappingSpec.clear();
                 data.stream().map((row) -> (SqlResultSetMapping) row[0]).map((resultSetMapping) -> {
-                    resultSetMapping.setEntity(entity);
+                    resultSetMapping.setIdentifiableClass(entity);
                     return resultSetMapping;
                 }).forEach((resultSetMapping) -> {
                     sqlResultSetMappingSpec.add(resultSetMapping);
@@ -390,9 +390,9 @@ public class PropertiesHandler {
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
-        columns.add(new Column("Lock Mode Type", false, String.class));
+        columns.add(new Column("Lock Mode Type", false, true, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedQueryPanel());
+        attributeEntity.setCustomDialog(new NamedQueryPanel(modelerScene.getModelerFile()));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
@@ -504,18 +504,18 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getNamedNativeQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<NamedNativeQuery> namedNativeQueriesSpec) {
+    public static PropertySupport getNamedNativeQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Entity entity) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No Named Native Queries exist", "One Named Native Query exist", "Named Native Queries exist"});
-
+        List<NamedNativeQuery> namedNativeQueriesSpec = entity.getNamedNativeQuery();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
-        columns.add(new Column("Result Class", false, String.class));
-        columns.add(new Column("ResultSet Mapping", false, String.class));
+        columns.add(new Column("Result Class", false, true, String.class));
+        columns.add(new Column("ResultSet Mapping", false, true, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedNativeQueryPanel());
+        attributeEntity.setCustomDialog(new NamedNativeQueryPanel(modelerScene.getModelerFile(),entity));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;

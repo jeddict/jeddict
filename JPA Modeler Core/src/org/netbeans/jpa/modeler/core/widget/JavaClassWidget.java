@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.YES_OPTION;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
@@ -38,7 +37,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
@@ -98,20 +97,22 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         }
     }
 
-    private void openSourceCode(boolean retryIfFileNotFound) {
+    public FileObject getFileObject(){
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
         FileObject fileObject;
         if (javaClass.getFileObject() != null) {
             fileObject = javaClass.getFileObject();
         } else {
             EntityMappings mappings = this.getModelerScene().getBaseElementSpec();
-            IModelerFileDataObject dataObject = this.getModelerScene().getModelerFile().getModelerFileDataObject();
-            Project project = this.getModelerScene().getModelerFile().getProject();
-
-            SourceGroup group = SourceGroupSupport.findSourceGroupForFile(project, dataObject.getPrimaryFile());
-            fileObject = SourceGroups.getJavaFileObject(group, StringUtils.isBlank(mappings.getPackage()) ? "" : (mappings.getPackage() + ".") + javaClass.getClazz());
+            ModelerFile modelerFile = this.getModelerScene().getModelerFile();
+            fileObject = SourceGroups.getJavaFileObject(modelerFile.getSourceGroup(), StringUtils.isBlank(mappings.getPackage()) ? "" : (mappings.getPackage() + ".") + javaClass.getClazz());
             javaClass.setFileObject(fileObject);
         }
+        return fileObject;
+    }
+    
+    private void openSourceCode(boolean retryIfFileNotFound) {
+        FileObject fileObject = getFileObject();
         if (fileObject == null || !fileObject.isValid()) {
               NotifyDescriptor.Confirmation msg = null;
               if(retryIfFileNotFound){

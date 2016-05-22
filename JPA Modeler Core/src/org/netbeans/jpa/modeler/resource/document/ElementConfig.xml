@@ -137,20 +137,20 @@
                 <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
                 </attribute>
-               <attribute id="abstract" groupId="BASIC_PROP" class="java.lang.Boolean" name="abstract">
-                    <display-name>Is Abstract</display-name>
-                </attribute>
-                      <attribute id="entity_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
-                    <display-name>Name</display-name>
+                <attribute id="entity_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Entity Name</display-name>
                 </attribute>
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
                 </attribute>
-                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
-                    <display-name>Composite PrimaryKey Class</display-name>
+               <attribute id="abstract" groupId="BASIC_PROP" class="java.lang.Boolean" name="abstract">
+                    <display-name>Is Abstract</display-name>
                 </attribute>
                 <attribute id="cacheable" groupId="BASIC_PROP" class="java.lang.Boolean" name="cacheable">
                     <display-name>Is Cacheable</display-name>
+                </attribute>
+                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                    <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
             </attributes>
         </element>

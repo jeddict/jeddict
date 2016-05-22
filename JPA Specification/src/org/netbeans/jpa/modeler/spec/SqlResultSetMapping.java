@@ -63,7 +63,7 @@ public class SqlResultSetMapping {
 
     @XmlAttribute
     @XmlIDREF
-    private Entity entity;
+    private IdentifiableClass entity;
     protected String description;
     @XmlElement(name = "er")//(name = "entity-result")
     protected List<EntityResult> entityResult;
@@ -254,15 +254,15 @@ public class SqlResultSetMapping {
     /**
      * @return the entity
      */
-    public Entity getEntity() {
+    public IdentifiableClass getIdentifiableClass() {
         return entity;
     }
 
     /**
-     * @param entity the entity to set
+     * @param clazz the entity to set
      */
-    public void setEntity(Entity entity) {
-        this.entity = entity;
+    public void setIdentifiableClass(IdentifiableClass clazz) {
+        this.entity = clazz;
     }
 
 }

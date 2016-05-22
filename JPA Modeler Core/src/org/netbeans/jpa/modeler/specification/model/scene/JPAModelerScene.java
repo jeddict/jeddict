@@ -26,10 +26,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectInformation;
-import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.collaborate.enhancement.EnhancementRequestHandler;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -46,7 +43,8 @@ import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
-import org.netbeans.jpa.modeler.navigator.overrideview.OverrideViewNavigatorComponent;
+import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
+import static org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorTopComponent.JPQL_ICON_PATH;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
 import org.netbeans.jpa.modeler.spec.Embeddable;
@@ -66,7 +64,6 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.V
 import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
 import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
-import org.netbeans.modeler.core.ModelerCore;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
@@ -84,12 +81,9 @@ import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
-import org.netbeans.spi.project.ui.RecommendedTemplates;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-import org.openide.util.Exceptions;
+import org.openide.util.ImageUtilities;
 import org.openide.windows.WindowManager;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
@@ -323,6 +317,11 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
+        //To check env
+//        PersistenceEnvironment pe = project!=null ? project.getLookup().lookup(PersistenceEnvironment.class) : null;
+//                    if( pe != null ) {
+//                        return true;//!Util.isSupportedJavaEEVersion(project);//so far support only non-container managed projects
+//                    }
 //        SwingUtilities.invokeLater(() -> { //Activiation of OverrideView window (Don't delete)
 //            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
 //            if (!window.isOpened()) {
@@ -355,16 +354,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         JMenuItem generateCode = new JMenuItem("Generate Source Code", GENERATE_SRC);
         generateCode.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('G'), InputEvent.CTRL_DOWN_MASK));
         generateCode.addActionListener((ActionEvent e) -> {
-//            System.out.println("");
-//                        Project project = JPAModelerScene.this.getModelerFile().getProject();
-
-//             RecommendedTemplates info = project.getLookup().lookup(RecommendedTemplates.class);
-//                org.netbeans.modules.java.api.common.queries.QuerySupport info = project.getLookup().lookup(ProjectInformation.class);
-       
-//             FileObject licensesFO = FileUtil.getConfigFile("Templates/Properties").getChildren()[0];
-             
-//            String author = JavaSourceHelper.getAuthor();
-
             JPAModelerUtil.generateSourceCode(JPAModelerScene.this.getModelerFile());
         });
 
@@ -387,9 +376,14 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 PUDataObject pud = ProviderUtil.getPUDataObject(project);
                 org.netbeans.modules.openfile.OpenFile.open(pud.getPrimaryFile(), -1);
             } catch (InvalidPersistenceXmlException ex) {
-                Exceptions.printStackTrace(ex);
+                JPAModelerScene.this.getModelerFile().handleException(ex);
             }
            
+        });
+        
+       JMenuItem openJPQLPanel = new JMenuItem("Run JPQL Query");//,ImageUtilities.loadImage(JPQL_ICON_PATH, true));
+        openJPQLPanel.addActionListener((ActionEvent e) -> {
+               new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile());
         });
 
         JMenu shareModeler = new JMenu("Share");
@@ -400,11 +394,12 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         menuList.add(0, generateCode);
         menuList.add(1, visDB);
         menuList.add(2, openPUXML);
-        menuList.add(3, null);
-        menuList.add(4, manageVisibility);
+        menuList.add(3, openJPQLPanel);
+        menuList.add(4, null);
+        menuList.add(5, manageVisibility);
         menuList.add(5, null);
-        menuList.add(5, shareModeler);
-        menuList.add(6, EnhancementRequestHandler.getInstance().getComponent());
+        menuList.add(6, shareModeler);
+        menuList.add(7, EnhancementRequestHandler.getInstance().getComponent());
 
         return menuList;
     }

@@ -97,21 +97,22 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         finalGraph_LayeredPane = new javax.swing.JLayeredPane();
         finalGraph_Label = new javax.swing.JLabel();
         finalGraph_Button = new javax.swing.JButton();
-        nameLayeredPane = new javax.swing.JLayeredPane();
-        name_Label = new javax.swing.JLabel();
-        name_TextField = new javax.swing.JTextField();
         actionLayeredPane = new javax.swing.JLayeredPane();
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
+        nameLayeredPane = new javax.swing.JLayeredPane();
+        name_Label = new javax.swing.JLabel();
+        name_TextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        graphLayeredPane.setLayout(new java.awt.GridLayout());
 
         //outlineView.setDefaultActionAllowed(false);
         //outlineView.setDoubleBuffered(true);
         //outlineView.setDragSource(false);
         //outlineView.setDropTarget(false)
         graphLayeredPane.add(outlineView);
-        outlineView.setBounds(0, 0, 540, 466);
 
         finalGraph_Label.setFont(new java.awt.Font("Arial", 1, 11)); // NOI18N
         finalGraph_Label.setForeground(new java.awt.Color(82, 82, 82));
@@ -121,6 +122,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         finalGraph_Button.setForeground(new java.awt.Color(50, 50, 50));
         org.openide.awt.Mnemonics.setLocalizedText(finalGraph_Button, org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.finalGraph_Button.text")); // NOI18N
         finalGraph_Button.setMargin(new java.awt.Insets(1, 5, 1, 5));
+        finalGraph_Button.setPreferredSize(new java.awt.Dimension(50, 25));
         finalGraph_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 finalGraph_ButtonActionPerformed(evt);
@@ -135,102 +137,89 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
                 .addContainerGap()
                 .addComponent(finalGraph_Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(finalGraph_Button)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(finalGraph_Button, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         finalGraph_LayeredPaneLayout.setVerticalGroup(
             finalGraph_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(finalGraph_Label)
-            .addComponent(finalGraph_Button)
+            .addGroup(finalGraph_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(finalGraph_Label)
+                .addComponent(finalGraph_Button, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         finalGraph_LayeredPane.setLayer(finalGraph_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
         finalGraph_LayeredPane.setLayer(finalGraph_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.name_Label.text")); // NOI18N
-
-        name_TextField.setText(org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.name_TextField.text")); // NOI18N
-
-        javax.swing.GroupLayout nameLayeredPaneLayout = new javax.swing.GroupLayout(nameLayeredPane);
-        nameLayeredPane.setLayout(nameLayeredPaneLayout);
-        nameLayeredPaneLayout.setHorizontalGroup(
-            nameLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(nameLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name_TextField, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE))
-        );
-        nameLayeredPaneLayout.setVerticalGroup(
-            nameLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(nameLayeredPaneLayout.createSequentialGroup()
-                .addGroup(nameLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name_Label)
-                    .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        nameLayeredPane.setLayer(name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        nameLayeredPane.setLayer(name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        actionLayeredPane.setLayout(new java.awt.FlowLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.save_Button.text")); // NOI18N
         save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.save_Button.toolTipText")); // NOI18N
+        save_Button.setPreferredSize(new java.awt.Dimension(60, 30));
         save_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 save_ButtonActionPerformed(evt);
             }
         });
         actionLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 23);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.cancel_Button.toolTipText")); // NOI18N
-        cancel_Button.setPreferredSize(new java.awt.Dimension(60, 23));
+        cancel_Button.setPreferredSize(new java.awt.Dimension(60, 30));
         cancel_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancel_ButtonActionPerformed(evt);
             }
         });
         actionLayeredPane.add(cancel_Button);
-        cancel_Button.setBounds(80, 0, 70, 23);
+
+        nameLayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.name_Label.text")); // NOI18N
+        nameLayeredPane.add(name_Label, java.awt.BorderLayout.WEST);
+
+        name_TextField.setText(org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.name_TextField.text")); // NOI18N
+        name_TextField.setPreferredSize(new java.awt.Dimension(10, 15));
+        nameLayeredPane.add(name_TextField, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout rootLayeredPaneLayout = new javax.swing.GroupLayout(rootLayeredPane);
         rootLayeredPane.setLayout(rootLayeredPaneLayout);
         rootLayeredPaneLayout.setHorizontalGroup(
             rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(graphLayeredPane)
+            .addComponent(nameLayeredPane)
             .addGroup(rootLayeredPaneLayout.createSequentialGroup()
-                .addComponent(nameLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rootLayeredPaneLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(finalGraph_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(finalGraph_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         rootLayeredPaneLayout.setVerticalGroup(
             rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rootLayeredPaneLayout.createSequentialGroup()
-                .addComponent(graphLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(finalGraph_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(graphLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(nameLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nameLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(rootLayeredPaneLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(rootLayeredPaneLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(finalGraph_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         rootLayeredPane.setLayer(graphLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         rootLayeredPane.setLayer(finalGraph_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(nameLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         rootLayeredPane.setLayer(actionLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(nameLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(rootLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(rootLayeredPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(rootLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(rootLayeredPane)
         );
 
         pack();
