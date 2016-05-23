@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
@@ -125,6 +126,9 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
         classDef.setPackageName(classHelper.getPackageName());
+        if (StringUtils.isNotBlank(entity.getDescription())) {
+            classDef.setDescription(entity.getDescription());
+        }
 
         if (entity.getTable() != null) {
             classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()

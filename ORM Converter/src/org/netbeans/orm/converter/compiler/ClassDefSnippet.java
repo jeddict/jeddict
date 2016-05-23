@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
@@ -58,6 +59,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     private final ClassHelper classHelper = new ClassHelper();
     private final ClassHelper superClassHelper = new ClassHelper();
+    private String description;
     private String entityName;
 
     private TableDefSnippet tableDef;
@@ -323,7 +325,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("classDef", this);
-            velocityContext.put("author", JavaSourceHelper.getAuthor());
 
             ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
 
@@ -567,6 +568,40 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setCacheableDef(CacheableDefSnippet cacheableDef) {
         this.cacheableDef = cacheableDef;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+        
+    public String getJavaDoc() {
+        StringBuilder doc = new StringBuilder();
+        doc.append("    /**").append('\n');
+        if (StringUtils.isNotBlank(description)) {
+            for (String line : description.split("\\r\\n|\\n|\\r")) {
+                doc.append("     * ").append(line).append('\n');
+            }
+        }
+        if (StringUtils.isNotBlank(JavaSourceHelper.getAuthor())) {
+            doc.append("     * @author  ").append(JavaSourceHelper.getAuthor());
+        }
+        doc.append("     */");
+        return doc.toString();
+    }
+    
+    public boolean isJavaDocExist(){
+        return StringUtils.isNotBlank(description) || StringUtils.isNotBlank(JavaSourceHelper.getAuthor()) ;
     }
 
 }

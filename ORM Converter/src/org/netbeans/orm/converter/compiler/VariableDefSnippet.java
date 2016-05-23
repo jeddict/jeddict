@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
@@ -53,8 +54,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private boolean tranzient = false;
     private boolean version = false;
 
-    private String name = null;
-    private ClassHelper classHelper = new ClassHelper();
+    private String name;
+    private String description;
+    private final ClassHelper classHelper = new ClassHelper();
     //TODO: See if these 2 can be as a class
     private String mapKey = null;
     private String temporalType = null;
@@ -736,6 +738,36 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             snippet.setLength(snippetLength - 5);
         }
         return snippet.toString();
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public String getJavaDoc() {
+        StringBuilder doc = new StringBuilder();
+        doc.append("    /**").append('\n');
+//        if (StringUtils.isNotBlank(description)) {
+            for (String line : description.split("\\r\\n|\\n|\\r")) {
+                doc.append("     * ").append(line).append('\n');
+            }
+//        }
+        doc.append("     */");
+        return doc.toString();
+    }
+    
+    public boolean isJavaDocExist(){
+        return StringUtils.isNotBlank(description);
     }
 
 }

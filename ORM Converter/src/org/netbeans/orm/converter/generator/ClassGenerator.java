@@ -226,6 +226,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (variableDef == null) {
             variableDef = new VariableDefSnippet();
             variableDef.setName(attr.getName());
+            variableDef.setDescription(attr.getDescription());
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
             if(attr instanceof BaseAttribute){
                 variableDef.setConstraints(getConstraintSnippet(((BaseAttribute)attr).getConstraints()));

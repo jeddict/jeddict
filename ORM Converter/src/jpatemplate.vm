@@ -12,10 +12,9 @@ import java.io.Serializable;
 $importStatement
 #end
 
-/**
- *
- * @author $author
- */
+#if ($classDef.isJavaDocExist())
+$classDef.getJavaDoc()
+#end
 #####################jaxb annotations ###############################
 #if($classDef.isJaxbSupport())
 import javax.xml.bind.annotation.*;
@@ -95,6 +94,9 @@ public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstrac
 
 #####################member variables ###############################
 #foreach( $varDef in $classDef.getVariableDefs() )
+#if ($varDef.isJavaDocExist())
+$varDef.getJavaDoc()
+#end
 #####################jaxb annotations ###############################
 #if($classDef.isJaxbSupport())
 #set($jaxbAnnotationSnippet = $varDef.getJaxbAnnotationSnippet())
