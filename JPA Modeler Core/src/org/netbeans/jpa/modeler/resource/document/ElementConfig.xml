@@ -46,14 +46,16 @@
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
                 </attribute>  
-<!--                <attribute id="buildOn" groupId="BASIC_PROP" class="java.lang.Float" name="buildOn" value="2.0">
-                    <display-name>JPA Modeler Version</display-name>
-                </attribute>-->
-                
-                
             </attributes>
         </element>
-        <element id="Table" groupId="TABLE_PROP" class="org.netbeans.jpa.modeler.spec.Table">
+        <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
+            <attributes>
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>  
+            </attributes>
+        </element>
+        <element id="Table" class="org.netbeans.jpa.modeler.spec.Table">
             <attributes>
                 <attribute id="table_name" groupId="TABLE_PROP" class="java.lang.String" name="name">
                     <display-name>name</display-name>
@@ -107,21 +109,21 @@
             <attributes>
                 <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
-                </attribute>                
-                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
-                    <display-name>Description</display-name>
                 </attribute>
                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
             </attributes>
         </element>
-          <element id="ManagedClass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ManagedClass">
+          <element id="ManagedClass" class="org.netbeans.jpa.modeler.spec.ManagedClass">
             <attributes>
                 <attribute id="generateStaticMetamodel" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="generateStaticMetamodel">
                     <display-name>StaticMetamodel</display-name>
                 </attribute>
-                 </attributes>
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>
+            </attributes>
         </element>
         <element id="IdentifiableClass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.IdentifiableClass">
             <attributes>
@@ -140,9 +142,6 @@
                 <attribute id="entity_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Entity Name</display-name>
                 </attribute>
-                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
-                    <display-name>Description</display-name>
-                </attribute>
                <attribute id="abstract" groupId="BASIC_PROP" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
                 </attribute>
@@ -158,9 +157,6 @@
             <attributes>
                 <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
-                </attribute>
-                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
-                    <display-name>Description</display-name>
                 </attribute>
             </attributes>
         </element>
@@ -319,13 +315,13 @@
                 </attribute>
             </attributes>
         </element>
-        <element id="BaseAttribute" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.BaseAttribute">
+<!--        <element id="BaseAttribute" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.BaseAttribute">
             <attributes>
-                <!--                <attribute id="attributeType" groupId="BASIC_PROP" class="java.lang.String" name="attributeType">
+                                <attribute id="attributeType" groupId="BASIC_PROP" class="java.lang.String" name="attributeType">
                     <display-name>Data Type</display-name>
-                </attribute>-->
+                </attribute>
             </attributes>
-        </element>
+        </element>-->
         <element id="NotNull" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.NotNull">
             <attributes>
                 <attribute id="notnull.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">

@@ -41,6 +41,8 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     private List<Annotation> annotation;
     @XmlAttribute
     private boolean visibile = true;
+    @XmlElement(name = "des")
+    private String description;
 
     @XmlAttribute(name = "xvt", required = true)//(name = "jaxb-variable-type", required = true)
     private JaxbVariableType jaxbVariableType;
@@ -220,6 +222,20 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     void afterUnmarshal(Unmarshaller u, Object parent) {
         setAttributes((BaseAttributes) parent);
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 

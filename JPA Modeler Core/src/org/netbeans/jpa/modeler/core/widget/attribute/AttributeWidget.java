@@ -71,6 +71,9 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 setLabel(value);
             }
         });
+//        this.addPropertyChangeListener("description", (PropertyChangeListener<String>) (String value) -> {
+//                setToolTipText(value);
+//        });
 
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
