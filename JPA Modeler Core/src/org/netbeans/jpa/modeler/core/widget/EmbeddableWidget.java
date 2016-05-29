@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -24,6 +25,7 @@ import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
@@ -50,45 +52,6 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
 
     }
 
-//    @Override
-//    protected List<JMenuItem> getPopupMenuItemList() {
-//        List<JMenuItem> menuList = super.getPopupMenuItemList();
-////
-////        JMenuItem addBasicAttr = new JMenuItem("Add Basic Attribute");
-////        addBasicAttr.addActionListener(new ActionListener() {
-////            @Override
-////            public void actionPerformed(ActionEvent e) {
-////                addNewBasicAttribute(getNextAttributeName());
-////                EmbeddableWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-////
-////            }
-////        });
-////        JMenuItem addBasicCollectionAttr = new JMenuItem("Add Basic Collection Attribute");
-////        addBasicCollectionAttr.addActionListener(new ActionListener() {
-////            @Override
-////            public void actionPerformed(ActionEvent e) {
-////                addNewBasicCollectionAttribute(getNextAttributeName());
-////                EmbeddableWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-////
-////            }
-////        });
-////        JMenuItem addTransientAttr = new JMenuItem("Add Transient Attribute");
-////        addTransientAttr.addActionListener(new ActionListener() {
-////            @Override
-////            public void actionPerformed(ActionEvent e) {
-////                addNewTransientAttribute(getNextAttributeName());
-////                EmbeddableWidget.this.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-////            }
-////        });
-////        ;
-////        menuList.add(0, addBasicAttr);
-////
-////        menuList.add(1, addBasicCollectionAttr);
-////        menuList.add(2, addTransientAttr);
-////        menuList.add(3, null);
-//
-//        return menuList;
-//    }
     /**
      * @return the incomingEmbeddableFlowWidgets
      */
@@ -161,6 +124,16 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
              return false;
          }
         return true;
+    }
+     
+     @Override
+    public String getIconPath() {
+        return JPAModelerUtil.EMBEDDABLE_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return JPAModelerUtil.EMBEDDABLE;
     }
 
 }

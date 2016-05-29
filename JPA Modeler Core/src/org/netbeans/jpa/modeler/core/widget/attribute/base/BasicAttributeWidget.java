@@ -15,13 +15,14 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import java.awt.Image;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -34,7 +35,7 @@ public class BasicAttributeWidget extends BaseAttributeWidget<Basic> {
 
     public BasicAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(JPAModelerUtil.BASIC_ATTRIBUTE);
+        this.setImage(getIcon());
 //        this.addPropertyVisibilityHandler("length", new PropertyVisibilityHandler<String>() {
 //            @Override
 //            public boolean isVisible() {
@@ -64,6 +65,16 @@ public class BasicAttributeWidget extends BaseAttributeWidget<Basic> {
         super.createPropertySet(set);
         set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
 
+    }
+
+    @Override
+    public String getIconPath() {
+      return BASIC_ATTRIBUTE_ICON_PATH;
+    }
+    
+    @Override
+    public Image getIcon(){
+        return BASIC_ATTRIBUTE;
     }
 
 }

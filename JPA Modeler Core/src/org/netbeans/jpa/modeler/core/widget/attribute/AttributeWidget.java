@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.lang.model.SourceVersion;
@@ -321,5 +322,6 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public PersistenceClassWidget getClassWidget() {
         return (PersistenceClassWidget) this.getPNodeWidget();
     }
+
 
 }

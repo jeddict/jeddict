@@ -16,12 +16,10 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -29,7 +27,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public class EmbeddedAttributeWidget<E extends CompositionAttribute> extends BaseAttributeWidget<E> {
+public abstract class EmbeddedAttributeWidget<E extends CompositionAttribute> extends BaseAttributeWidget<E> {
 
     private EmbeddableFlowWidget embeddableFlowWidget;
 

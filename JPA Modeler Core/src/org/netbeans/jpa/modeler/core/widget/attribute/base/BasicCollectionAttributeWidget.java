@@ -15,13 +15,13 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import java.awt.Image;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -34,7 +34,7 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
 
     public BasicCollectionAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE);
+        this.setImage(getIcon());
 
     }
 
@@ -113,5 +113,14 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
 //
 //
 
+    @Override
+    public String getIconPath() {
+      return BASIC_COLLECTION_ATTRIBUTE_ICON_PATH;
+    }
+    
+    @Override
+    public Image getIcon(){
+        return BASIC_COLLECTION_ATTRIBUTE;
+    }
 
 }

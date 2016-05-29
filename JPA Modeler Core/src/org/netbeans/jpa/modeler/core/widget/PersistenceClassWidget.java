@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.toList;
-import javax.swing.JOptionPane;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
@@ -45,8 +44,8 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.SingleRelationAtt
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashCodeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -64,12 +63,12 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.component.ModelerPanelTopComponent;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -79,11 +78,8 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.list
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
-import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
-import org.openide.windows.WindowManager;
 
 /**
  *
@@ -297,6 +293,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             set.put("BASIC_PROP", getCompositePrimaryKeyProperty());
         }
 
+        set.put("BASIC_PROP", getHashCodeProperty(this));
     }
 
     private ComboBoxPropertySupport getCompositePrimaryKeyProperty() {

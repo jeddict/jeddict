@@ -160,10 +160,6 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
 
     public abstract RelationFlowWidget getRelationFlowWidget();
 
-    public abstract String getIconPath();
-
-    public abstract Image getIcon();
-
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();

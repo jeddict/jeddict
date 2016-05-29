@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
 import java.awt.Image;
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.MTMRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
@@ -24,7 +23,6 @@ import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;

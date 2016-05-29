@@ -15,17 +15,17 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
+import java.awt.Image;
 import org.apache.velocity.util.StringUtils;
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ID_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ID_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -38,7 +38,7 @@ public class IdAttributeWidget extends BaseAttributeWidget<Id> {
 
     public IdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(JPAModelerUtil.ID_ATTRIBUTE);
+        this.setImage(getIcon());
     }
 
     @Override
@@ -48,6 +48,16 @@ public class IdAttributeWidget extends BaseAttributeWidget<Id> {
 
     }
 
+    @Override
+    public String getIconPath() {
+        return ID_ATTRIBUTE_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return ID_ATTRIBUTE;
+    }
+
     private EmbeddedPropertySupport getGeneratorProperty() {
 
         GenericEmbedded entity = new GenericEmbedded("generator", "Id Generator", "");
@@ -55,9 +65,6 @@ public class IdAttributeWidget extends BaseAttributeWidget<Id> {
 
         entity.setDataListener(new EmbeddedDataListener<Id>() {
             private Id idAttribute;
-            private String displayName = null;
-            private IdAttributeWidget idAttributeWidget = null;
-
             @Override
             public void init() {
                 idAttribute = IdAttributeWidget.this.getBaseElementSpec();
@@ -91,21 +98,4 @@ public class IdAttributeWidget extends BaseAttributeWidget<Id> {
         return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
     }
 
-    @Override
-    public void destroy() {
-        super.destroy();
-//        clearDependencies();
-    }
-
-//    private void clearDependencies() {
-//        PrimaryKeyContainerWidget<IdentifiableClass> classWidget = (PrimaryKeyContainerWidget) this.getClassWidget();
-//        for (RelationAttributeWidget relationAttributeWidget : classWidget.getRelationAttributeWidgets()) {
-////            relationAttributeWidget.getRelationFlowWidget().get
-//            if (relationAttributeWidget instanceof Bidirectional) {
-//                RelationAttributeWidget<RelationAttribute> targetRelationAttributeWidget = ((Bidirectional) relationAttributeWidget).getTargetRelationAttributeWidget();
-//                RelationAttribute targetRelationAttribute = targetRelationAttributeWidget.getBaseElementSpec();
-////                targetRelationAttribute.getJoinTable() //JoinColumnHandler
-//            }
-//        }
-//    }
 }
