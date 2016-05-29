@@ -85,13 +85,7 @@ public class OverrideAssociationChildFactory extends OverrideChildFactory {
         }
         node.setDisplayName(attribute.getName());
         node.setShortDescription(attribute.getName());
-        if (attributeWidget instanceof RelationAttributeWidget) {
-            node.setIconBaseWithExtension(((RelationAttributeWidget) attributeWidget).getIconPath());
-        } else if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        }
+        node.setIconBaseWithExtension(attributeWidget.getIconPath());
         return node;
     }
 

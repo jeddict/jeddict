@@ -22,9 +22,9 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWi
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
-import org.netbeans.jpa.modeler.navigator.entitygraph.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeParentNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
@@ -38,12 +38,12 @@ import org.openide.util.lookup.Lookups;
  *
  * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
  */
-public class EGLeafNode extends PropertyNode implements EGChildNode {
+public class EGLeafNode extends PropertyNode implements TreeChildNode<NamedEntityGraph> {
 
     private CheckableAttributeNode checkableNode;
     private final AttributeWidget leafAttributeWidget;
-    private NamedEntityGraph namedEntityGraph;
-    private EGParentNode parent;
+    private final NamedEntityGraph namedEntityGraph;
+    private TreeParentNode parent;
 
     public EGLeafNode(AttributeWidget leafAttributeWidget, NamedEntityGraph namedEntityGraph, Children children, CheckableAttributeNode checkableNode) {
         super(leafAttributeWidget.getModelerScene(), children, Lookups.singleton(checkableNode));
@@ -61,21 +61,8 @@ public class EGLeafNode extends PropertyNode implements EGChildNode {
         init();
     }
 
-    private void init() {
-        if (leafAttributeWidget instanceof IdAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.ID_ATTRIBUTE_ICON_PATH);
-        } else if (leafAttributeWidget instanceof EmbeddedIdAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE_ICON_PATH);
-        } else if (leafAttributeWidget instanceof BasicAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.BASIC_ATTRIBUTE_ICON_PATH);
-        } else if (leafAttributeWidget instanceof BasicCollectionAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH);
-        } else if (leafAttributeWidget instanceof VersionAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.VERSION_ATTRIBUTE_ICON_PATH);
-        } else if (leafAttributeWidget instanceof TransientAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.TRANSIENT_ATTRIBUTE_ICON_PATH);
-        }
-
+    private void init(){        
+        this.setIconBaseWithExtension(leafAttributeWidget.getIconPath());
         BaseAttribute attribute = (BaseAttribute) leafAttributeWidget.getBaseElementSpec();
         this.setDisplayName(attribute.getName());
         this.setShortDescription(attribute.getName() + " <" + attribute.getAttributeType() + ">");
@@ -116,7 +103,7 @@ public class EGLeafNode extends PropertyNode implements EGChildNode {
      * @return the parent
      */
     @Override
-    public EGParentNode getParent() {
+    public TreeParentNode<NamedEntityGraph> getParent() {
         return parent;
     }
 
@@ -124,7 +111,7 @@ public class EGLeafNode extends PropertyNode implements EGChildNode {
      * @param parent the parent to set
      */
     @Override
-    public void setParent(EGParentNode parent) {
+    public void setParent(TreeParentNode<NamedEntityGraph> parent) {
         this.parent = parent;
     }
 
@@ -139,7 +126,7 @@ public class EGLeafNode extends PropertyNode implements EGChildNode {
      * @return the namedEntityGraph
      */
     @Override
-    public NamedEntityGraph getNamedEntityGraph() {
+    public NamedEntityGraph getBaseElementSpec() {
         return namedEntityGraph;
     }
 

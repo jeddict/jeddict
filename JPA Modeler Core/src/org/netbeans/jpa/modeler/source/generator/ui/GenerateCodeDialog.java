@@ -156,11 +156,14 @@ public class GenerateCodeDialog extends GenericDialog
                 getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
                 getConfigData().setBussinesLayerGenerator(technologyLayer.getGenerator());
                 addLayerTab(getBusinessLayer().toString(), businessPanel);
+                getConfigData().setControllerLayerConfig(null);
+                getConfigData().setViewerLayerConfig(null);
             } else if (index == CONTROLLER_PANEL_INDEX) {
                 getConfigData().setControllerLayerConfig(techPanel.getConfigData());
                 getConfigData().setControllerLayerGenerator(technologyLayer.getGenerator());
                 addLayerTab(getBusinessLayer().toString(), businessPanel);
                 addLayerTab(getControllerLayer().toString(), controllerPanel);
+                getConfigData().setViewerLayerConfig(null);
             } else if (index == VIEWER_PANEL_INDEX) {
                 getConfigData().setViewerLayerConfig(techPanel.getConfigData());
                 getConfigData().setViewerLayerGenerator(technologyLayer.getGenerator());

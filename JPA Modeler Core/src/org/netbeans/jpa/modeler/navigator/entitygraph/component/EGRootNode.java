@@ -18,10 +18,10 @@ package org.netbeans.jpa.modeler.navigator.entitygraph.component;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.navigator.entitygraph.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.EGChildFactory;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildFactory;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeParentNode;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -41,16 +41,16 @@ import org.openide.util.lookup.Lookups;
 //      /      |     \
 //     /       |      \
 //  Widget   Graph    CheckableAttributeNode
-public class EGRootNode extends AbstractNode implements EGParentNode {
+public class EGRootNode extends AbstractNode implements TreeParentNode<NamedEntityGraph> {
 
     private CheckableAttributeNode checkableNode;
 
     private final EntityWidget widget;
     private final NamedEntityGraph namedEntityGraph;
 
-    private final List<EGChildNode> childList = new ArrayList<>();
+    private final List<TreeChildNode<NamedEntityGraph>> childList = new ArrayList<>();
 
-    public EGRootNode(EntityWidget entityWidget, NamedEntityGraph namedEntityGraph, EGChildFactory childFactory, CheckableAttributeNode checkableNode) {
+    public EGRootNode(EntityWidget entityWidget, NamedEntityGraph namedEntityGraph, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
         super(Children.create(childFactory, true), Lookups.singleton(checkableNode));
         this.widget = entityWidget;
         this.checkableNode = checkableNode;
@@ -63,10 +63,10 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
         Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
-        setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);
+        setIconBaseWithExtension(entityWidget.getIconPath());
     }
 
-    public EGRootNode(EntityWidget entityWidget, NamedEntityGraph namedEntityGraph, EGChildFactory childFactory) {
+    public EGRootNode(EntityWidget entityWidget, NamedEntityGraph namedEntityGraph, TreeChildFactory childFactory) {
         super(Children.create(childFactory, true));
         this.widget = entityWidget;
         this.namedEntityGraph = namedEntityGraph;
@@ -75,7 +75,7 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
         Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
-        setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);
+        setIconBaseWithExtension(entityWidget.getIconPath());
     }
 
     public EntityWidget getRootWidget() {
@@ -83,12 +83,12 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
     }
 
     @Override
-    public void addChild(EGChildNode child) {
+    public void addChild(TreeChildNode child) {
         childList.add(child);
     }
 
     @Override
-    public void removeChild(EGChildNode child) {
+    public void removeChild(TreeChildNode child) {
         childList.remove(child);
     }
 
@@ -101,7 +101,7 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
      * @return the childList
      */
     @Override
-    public List<EGChildNode> getChildList() {
+    public List<TreeChildNode<NamedEntityGraph>> getChildList() {
         return childList;
     }
 
@@ -109,7 +109,7 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
      * @return the namedEntityGraph
      */
     @Override
-    public NamedEntityGraph getNamedEntityGraph() {
+    public NamedEntityGraph getBaseElementSpec() {
         return namedEntityGraph;
     }
 
@@ -117,4 +117,5 @@ public class EGRootNode extends AbstractNode implements EGParentNode {
     public void refreshView() {
         fireIconChange();
     }
+
 }

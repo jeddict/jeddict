@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.navigator.entitygraph;
 
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildFactory;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -29,12 +30,13 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttribute
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGInternalNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGLeafNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGRootNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
+import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -44,7 +46,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidg
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class ExecutionEGChildFactory extends EGChildFactory {
+public class ExecutionEGChildFactory extends TreeChildFactory<NamedEntityGraph> {
 
     private final boolean loadGraph;
 
@@ -74,7 +76,7 @@ public class ExecutionEGChildFactory extends EGChildFactory {
 
                     NamedAttributeNode namedAttributeNode = null;
                     if (parentNode instanceof EGRootNode) {
-                        namedAttributeNode = parentNode.getNamedEntityGraph().findNamedAttributeNode(attribute.getName());
+                        namedAttributeNode = parentNode.getBaseElementSpec().findNamedAttributeNode(attribute.getName());
                     } else if (parentNode instanceof EGInternalNode && ((EGInternalNode) parentNode).getSubgraph() != null) {//if sub graph not exist for relation node
                         namedAttributeNode = ((EGInternalNode) parentNode).getSubgraph().findNamedAttributeNode(attribute.getName());
                     }
@@ -101,20 +103,20 @@ public class ExecutionEGChildFactory extends EGChildFactory {
 
     @Override
     protected Node createNodeForKey(final AttributeWidget attributeWidget) {
-        EGChildNode childNode;
+        TreeChildNode childNode;
         NamedSubgraph subgraph = null;
 
         Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
         NamedAttributeNode namedAttributeNode = null;
         if (parentNode instanceof EGRootNode) {
-            namedAttributeNode = parentNode.getNamedEntityGraph().findNamedAttributeNode(attribute.getName());
+            namedAttributeNode = parentNode.getBaseElementSpec().findNamedAttributeNode(attribute.getName());
         } else if (parentNode instanceof EGInternalNode && ((EGInternalNode) parentNode).getSubgraph() != null) {
             namedAttributeNode = ((EGInternalNode) parentNode).getSubgraph().findNamedAttributeNode(attribute.getName());
         }
 
         if (namedAttributeNode != null) {
             if (namedAttributeNode.getSubgraph() != null && !namedAttributeNode.getSubgraph().isEmpty()) {
-                subgraph = parentNode.getNamedEntityGraph().findSubgraph(namedAttributeNode.getSubgraph());
+                subgraph = parentNode.getBaseElementSpec().findSubgraph(namedAttributeNode.getSubgraph());
             }
         }
 
@@ -122,7 +124,7 @@ public class ExecutionEGChildFactory extends EGChildFactory {
             EmbeddedAttributeWidget embeddedAttributeWidget = (EmbeddedAttributeWidget) attributeWidget;
             EmbeddableWidget embeddableWidget = embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget();
             ExecutionEGChildFactory childFactory = new ExecutionEGChildFactory(loadGraph);//parentWidget, embeddedAttributeWidget, embeddableWidget );
-            childNode = new EGInternalNode(embeddableWidget, embeddedAttributeWidget, parentNode.getNamedEntityGraph(), subgraph, childFactory);
+            childNode = new EGInternalNode(embeddableWidget, embeddedAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory);
         } else if (attributeWidget instanceof RelationAttributeWidget) {
             RelationAttributeWidget relationAttributeWidget = (RelationAttributeWidget) attributeWidget;
             IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
@@ -135,9 +137,9 @@ public class ExecutionEGChildFactory extends EGChildFactory {
             }
 
             ExecutionEGChildFactory childFactory = new ExecutionEGChildFactory(loadGraph);//parentWidget, relationAttributeWidget, targetEntityWidget);
-            childNode = new EGInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getNamedEntityGraph(), subgraph, childFactory);
+            childNode = new EGInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory);
         } else {
-            childNode = new EGLeafNode(attributeWidget, parentNode.getNamedEntityGraph(), Children.LEAF);
+            childNode = new EGLeafNode(attributeWidget, parentNode.getBaseElementSpec(), Children.LEAF);
         }
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);

@@ -39,8 +39,8 @@ import org.netbeans.modeler.widget.properties.customattr.Property;
  */
 public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> {
 
-    private ModelerFile modelerFile;
-    private EntityWidget entityWidget;
+    private final ModelerFile modelerFile;
+    private final EntityWidget entityWidget;
     private InheritenceStateType type;
     private InheritenceHandler classSpec;
 

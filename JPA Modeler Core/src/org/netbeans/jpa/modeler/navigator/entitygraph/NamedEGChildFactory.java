@@ -15,6 +15,8 @@
  */
 package org.netbeans.jpa.modeler.navigator.entitygraph;
 
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildFactory;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -29,9 +31,10 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttribute
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGInternalNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGLeafNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGRootNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
+import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -39,7 +42,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidg
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class NamedEGChildFactory extends EGChildFactory {
+public class NamedEGChildFactory extends TreeChildFactory<NamedEntityGraph> {
 
     @Override
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
@@ -64,17 +67,17 @@ public class NamedEGChildFactory extends EGChildFactory {
 
     @Override
     protected Node createNodeForKey(final AttributeWidget attributeWidget) {
-        EGChildNode childNode;
+        TreeChildNode childNode;
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
         NamedSubgraph subgraph = null;
 
         boolean isPK = attributeWidget instanceof IdAttributeWidget || attributeWidget instanceof EmbeddedIdAttributeWidget || attributeWidget instanceof VersionAttributeWidget;
 
-        if (parentNode.getNamedEntityGraph() != null && !isPK) {
+        if (parentNode.getBaseElementSpec() != null && !isPK) {
             Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
             NamedAttributeNode namedAttributeNode = null;
             if (parentNode instanceof EGRootNode) {
-                namedAttributeNode = parentNode.getNamedEntityGraph().findNamedAttributeNode(attribute.getName());
+                namedAttributeNode = parentNode.getBaseElementSpec().findNamedAttributeNode(attribute.getName());
             } else if (parentNode instanceof EGInternalNode && ((EGInternalNode) parentNode).getSubgraph() != null) {
                 namedAttributeNode = ((EGInternalNode) parentNode).getSubgraph().findNamedAttributeNode(attribute.getName());
             }
@@ -82,7 +85,7 @@ public class NamedEGChildFactory extends EGChildFactory {
             if (namedAttributeNode != null) {
                 checkableNode.setSelected(Boolean.TRUE);
                 if (namedAttributeNode.getSubgraph() != null && !namedAttributeNode.getSubgraph().isEmpty()) {
-                    subgraph = parentNode.getNamedEntityGraph().findSubgraph(namedAttributeNode.getSubgraph());
+                    subgraph = parentNode.getBaseElementSpec().findSubgraph(namedAttributeNode.getSubgraph());
                 }
             }
         }
@@ -92,7 +95,7 @@ public class NamedEGChildFactory extends EGChildFactory {
             EmbeddableWidget embeddableWidget = embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget();
 
             NamedEGChildFactory childFactory = new NamedEGChildFactory();//parentWidget, embeddedAttributeWidget, embeddableWidget );
-            childNode = new EGInternalNode(embeddableWidget, embeddedAttributeWidget, parentNode.getNamedEntityGraph(), subgraph, childFactory, checkableNode);
+            childNode = new EGInternalNode(embeddableWidget, embeddedAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory, checkableNode);
         } else if (attributeWidget instanceof RelationAttributeWidget) {
             RelationAttributeWidget relationAttributeWidget = (RelationAttributeWidget) attributeWidget;
             IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
@@ -105,9 +108,9 @@ public class NamedEGChildFactory extends EGChildFactory {
             }
 
             NamedEGChildFactory childFactory = new NamedEGChildFactory();//parentWidget, relationAttributeWidget, targetEntityWidget);
-            childNode = new EGInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getNamedEntityGraph(), subgraph, childFactory, checkableNode);
+            childNode = new EGInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory, checkableNode);
         } else {
-            childNode = new EGLeafNode(attributeWidget, parentNode.getNamedEntityGraph(), Children.LEAF, checkableNode);
+            childNode = new EGLeafNode(attributeWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode);
         }
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);

@@ -45,7 +45,6 @@ public class ExecutionGraphPanel extends GenericDialog implements ExplorerManage
         SwingUtilities.invokeLater(() -> {
             node = new EGRootNode(entityWidget, namedEntityGraph, new ExecutionEGChildFactory(loadGraph));
             manager.setRootContext(node);
-//                    ((OutlineView)navigatorPane).getOutline().setRootVisible(false);
         });
     }
 

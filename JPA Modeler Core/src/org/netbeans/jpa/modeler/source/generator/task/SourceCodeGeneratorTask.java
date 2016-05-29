@@ -69,7 +69,6 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         // Issue Fix #5847 Start
         if (!modelerFile.getModelerPanelTopComponent().isPersistenceState()) {
             this.log("Saving " + modelerFile.getName() + " File..\n");
-//            modelerFile.save();//asynchronous : causes to generate code before saving
             modelerFile.getModelerUtil().saveModelerFile(modelerFile);//synchronous
             modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);//remove * from header
         } else {

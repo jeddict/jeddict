@@ -22,10 +22,10 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
-import org.netbeans.jpa.modeler.navigator.entitygraph.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.EGChildFactory;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGChildNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGParentNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildFactory;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeParentNode;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
@@ -35,19 +35,19 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.lookup.Lookups;
 
-public class EGInternalNode extends AbstractNode implements EGParentNode, EGChildNode {
+public class EGInternalNode extends AbstractNode implements TreeParentNode<NamedEntityGraph>, TreeChildNode<NamedEntityGraph> {
 
     private CheckableAttributeNode checkableNode;
     private final PersistenceClassWidget parentWidget;//EmbeddableWidget
     private final AttributeWidget parentAttributeWidget; //EmbeddedAttributeWidget
 
-    private NamedEntityGraph namedEntityGraph;
+    private final NamedEntityGraph namedEntityGraph;
     private NamedSubgraph subgraph;
 
-    private EGParentNode parent;
-    private final List<EGChildNode> childList = new ArrayList<>();
+    private TreeParentNode<NamedEntityGraph> parent;
+    private final List<TreeChildNode<NamedEntityGraph>> childList = new ArrayList<>();
 
-    public EGInternalNode(PersistenceClassWidget parentWidget, AttributeWidget parentAttributeWidget, NamedEntityGraph namedEntityGraph, NamedSubgraph subgraph, EGChildFactory childFactory, CheckableAttributeNode checkableNode) {
+    public EGInternalNode(PersistenceClassWidget parentWidget, AttributeWidget parentAttributeWidget, NamedEntityGraph namedEntityGraph, NamedSubgraph subgraph, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
         super(Children.create(childFactory, true), Lookups.singleton(checkableNode));
         this.parentWidget = parentWidget;
         this.parentAttributeWidget = parentAttributeWidget;
@@ -59,7 +59,7 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
         init();
     }
 
-    public EGInternalNode(PersistenceClassWidget parentWidget, AttributeWidget parentAttributeWidget, NamedEntityGraph namedEntityGraph, NamedSubgraph subgraph, EGChildFactory childFactory) {
+    public EGInternalNode(PersistenceClassWidget parentWidget, AttributeWidget parentAttributeWidget, NamedEntityGraph namedEntityGraph, NamedSubgraph subgraph, TreeChildFactory childFactory) {
         super(Children.create(childFactory, true));
         this.parentWidget = parentWidget;
         this.parentAttributeWidget = parentAttributeWidget;
@@ -70,13 +70,7 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
     }
 
     private void init() {
-        if (parentAttributeWidget instanceof RelationAttributeWidget) {
-            this.setIconBaseWithExtension(((RelationAttributeWidget) parentAttributeWidget).getIconPath());
-        } else if (parentAttributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (parentAttributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
-            this.setIconBaseWithExtension(JPAModelerUtil.MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        }
+        this.setIconBaseWithExtension(parentAttributeWidget.getIconPath());
 
         Attribute attribute = (Attribute) parentAttributeWidget.getBaseElementSpec();
         ManagedClass managedClass = (ManagedClass) parentWidget.getBaseElementSpec();
@@ -112,7 +106,7 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
      * @return the parent
      */
     @Override
-    public EGParentNode getParent() {
+    public TreeParentNode<NamedEntityGraph> getParent() {
         return parent;
     }
 
@@ -120,17 +114,17 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
      * @param parent the parent to set
      */
     @Override
-    public void setParent(EGParentNode parent) {
+    public void setParent(TreeParentNode<NamedEntityGraph> parent) {
         this.parent = parent;
     }
 
     @Override
-    public void addChild(EGChildNode child) {
+    public void addChild(TreeChildNode<NamedEntityGraph> child) {
         getChildList().add(child);
     }
 
     @Override
-    public void removeChild(EGChildNode child) {
+    public void removeChild(TreeChildNode<NamedEntityGraph> child) {
         getChildList().remove(child);
     }
 
@@ -138,7 +132,7 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
      * @return the childList
      */
     @Override
-    public List<EGChildNode> getChildList() {
+    public List<TreeChildNode<NamedEntityGraph>> getChildList() {
         return childList;
     }
 
@@ -153,7 +147,7 @@ public class EGInternalNode extends AbstractNode implements EGParentNode, EGChil
      * @return the namedEntityGraph
      */
     @Override
-    public NamedEntityGraph getNamedEntityGraph() {
+    public NamedEntityGraph getBaseElementSpec() {
         return namedEntityGraph;
     }
 

@@ -24,8 +24,13 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.navigator.classmember.panel.ClassMemberPanel;
 import org.netbeans.jpa.modeler.navigator.entitygraph.NamedEntityGraphPanel;
+import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
@@ -37,15 +42,20 @@ import static org.netbeans.jpa.modeler.spec.AccessType.PROPERTY;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.FetchType;
+import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_TRANSIENT;
@@ -55,6 +65,9 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
+import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
+import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
+import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ActionHandler;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ComboBoxListener;
@@ -66,6 +79,7 @@ import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.nodes.PropertySupport;
 import org.openide.windows.WindowManager;
+
 public class PropertiesHandler {
 
     public static ComboBoxPropertySupport getAccessTypeProperty(JPAModelerScene modelerScene, final AccessTypeHandler accessTypeHandlerSpec) {
@@ -515,7 +529,7 @@ public class PropertiesHandler {
         columns.add(new Column("Result Class", false, true, String.class));
         columns.add(new Column("ResultSet Mapping", false, true, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedNativeQueryPanel(modelerScene.getModelerFile(),entity));
+        attributeEntity.setCustomDialog(new NamedNativeQueryPanel(modelerScene.getModelerFile(), entity));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
@@ -640,6 +654,107 @@ public class PropertiesHandler {
         }
         set.put("JAXB_PROP", new ComboBoxPropertySupport(attributeWidget.getModelerScene().getModelerFile(), "jaxbVariableType", "Variable Type", "", comboBoxListener, "root.jaxbSupport==true", varHandlerSpec));
 
+    }
+
+    public static EmbeddedPropertySupport getInheritenceProperty(EntityWidget entityWidget) {
+
+        GenericEmbedded entity = new GenericEmbedded("inheritence", "Inheritence", "");
+        try {
+            entity.setEntityEditor(new InheritencePanel(entityWidget.getModelerScene().getModelerFile(), entityWidget));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        entity.setDataListener(new EmbeddedDataListener<InheritenceHandler>() {
+            private InheritenceHandler classSpec;
+
+            @Override
+            public void init() {
+                classSpec = (InheritenceHandler) entityWidget.getBaseElementSpec();
+            }
+
+            @Override
+            public InheritenceHandler getData() {
+                return classSpec;
+            }
+
+            @Override
+            public void setData(InheritenceHandler classSpec) {
+                entityWidget.setBaseElementSpec((Entity) classSpec);
+            }
+
+            @Override
+            public String getDisplay() {
+
+                GeneralizationFlowWidget outgoingGeneralizationFlowWidget = entityWidget.getOutgoingGeneralizationFlowWidget();
+                List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = entityWidget.getIncomingGeneralizationFlowWidgets();
+
+                if (outgoingGeneralizationFlowWidget != null && !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
+                    outgoingGeneralizationFlowWidget = null;
+                }
+                if (outgoingGeneralizationFlowWidget != null && incomingGeneralizationFlowWidgets.isEmpty()) {
+                    EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
+                    InheritenceHandler superClassSpec = (InheritenceHandler) superEntityWidget.getBaseElementSpec();
+                    if (superClassSpec.getInheritance() != null && superClassSpec.getInheritance().getStrategy() != null) {
+                        return superClassSpec.getInheritance().getStrategy().toString();
+                    } else {
+                        return InheritanceType.SINGLE_TABLE.toString();
+                    }
+                } else if (outgoingGeneralizationFlowWidget == null && !incomingGeneralizationFlowWidgets.isEmpty()) {
+//                    type = "ROOT";
+                    if (classSpec.getInheritance() != null && classSpec.getInheritance().getStrategy() != null) {
+                        return classSpec.getInheritance().getStrategy().toString();
+                    } else {
+                        return InheritanceType.SINGLE_TABLE.toString();
+                    }
+                } else if (outgoingGeneralizationFlowWidget != null && !incomingGeneralizationFlowWidgets.isEmpty()) {
+//                    type = "BRANCH";
+                    if (classSpec.getInheritance() != null && classSpec.getInheritance().getStrategy() != null) {
+                        return classSpec.getInheritance().getStrategy().toString();
+                    } else {
+                        return InheritanceType.SINGLE_TABLE.toString();
+                    }
+                } else {
+                    return "";
+                }
+            }
+
+        });
+        return new EmbeddedPropertySupport(entityWidget.getModelerScene().getModelerFile(), entity);
+    }
+
+    public static EmbeddedPropertySupport getHashCodeProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+
+        GenericEmbedded entity = new GenericEmbedded("hashcode", "Hashcode", "");
+        try {
+            entity.setEntityEditor(new ClassMemberPanel(persistenceClassWidget));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
+            private ClassMembers classMembers;
+
+            @Override
+            public void init() {
+                classMembers = (ClassMembers) persistenceClassWidget.getBaseElementSpec().getHashCodeMethod();
+            }
+
+            @Override
+            public ClassMembers getData() {
+                return classMembers;
+            }
+
+            @Override
+            public void setData(ClassMembers classSpec) {
+                persistenceClassWidget.getBaseElementSpec().setHashCodeMethod(classSpec);
+            }
+
+            @Override
+            public String getDisplay() {
+                return classMembers.getAttributes().size() + " Attr";
+            }
+
+        });
+        return new EmbeddedPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), entity);
     }
 
 }

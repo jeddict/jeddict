@@ -15,13 +15,14 @@
  */
 package org.netbeans.jpa.modeler.navigator.entitygraph;
 
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGInternalNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGLeafNode;
 import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGRootNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.spec.EGNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeNode;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
@@ -56,7 +57,6 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         SwingUtilities.invokeLater(() -> {
             node = new EGRootNode(entityWidget, namedEntityGraph, new NamedEGChildFactory(), new CheckableAttributeNode(namedEntityGraph != null));
             manager.setRootContext(node);
-//                    ((OutlineView)navigatorPane).getOutline().setRootVisible(false);
         });
     }
 
@@ -237,20 +237,20 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         return true;
     }
 
-    void loadEntityGraph(NamedEntityGraph namedEntityGraph, EGNode parentNode) {
+    void loadEntityGraph(NamedEntityGraph namedEntityGraph, TreeNode parentNode) {
         if (parentNode instanceof EGRootNode) {
-            for (EGNode childNode : ((EGRootNode) parentNode).getChildList()) {
+            for (TreeNode childNode : ((EGRootNode) parentNode).getChildList()) {
                 loadSubGraph(namedEntityGraph, childNode);
             }
         } else if (parentNode instanceof EGInternalNode) {
-            for (EGNode childNode : ((EGInternalNode) parentNode).getChildList()) {
+            for (TreeNode childNode : ((EGInternalNode) parentNode).getChildList()) {
                 loadSubGraph(namedEntityGraph, childNode);
             }
         }
 
     }
 
-    void loadSubGraph(NamedEntityGraph namedEntityGraph, EGNode childNode) {
+    void loadSubGraph(NamedEntityGraph namedEntityGraph, TreeNode childNode) {
         if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
             return;
         }
@@ -260,7 +260,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
             NamedAttributeNode attributeNode = new NamedAttributeNode(name);
             namedEntityGraph.addNamedAttributeNode(attributeNode);
             NamedSubgraph subGraph = new NamedSubgraph(name + ".Graph");
-            for (EGNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
+            for (TreeNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
                 loadSubGraph(namedEntityGraph, subGraph, subChildNode);
             }
             if (!subGraph.getNamedAttributeNode().isEmpty()) {
@@ -276,7 +276,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         }
     }
 
-    void loadSubGraph(NamedEntityGraph namedEntityGraph, NamedSubgraph subGraph, EGNode childNode) {
+    void loadSubGraph(NamedEntityGraph namedEntityGraph, NamedSubgraph subGraph, TreeNode childNode) {
         if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
             return;
         }
@@ -285,7 +285,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
             NamedAttributeNode attributeNode = new NamedAttributeNode(name);
             subGraph.addNamedAttributeNode(attributeNode);
             NamedSubgraph childSubGraph = new NamedSubgraph(name + ".Graph");
-            for (EGNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
+            for (TreeNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
                 loadSubGraph(namedEntityGraph, childSubGraph, subChildNode);
             }
             if (!childSubGraph.getNamedAttributeNode().isEmpty()) {
