@@ -181,6 +181,8 @@ import org.openide.windows.WindowManager;
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     public static String ENTITY_ICON_PATH;
+    public static String MAPPED_SUPER_CLASS_ICON_PATH;
+    public static String EMBEDDABLE_ICON_PATH;
     public static String ABSTRACT_ENTITY_ICON_PATH;
     public static String ID_ATTRIBUTE_ICON_PATH;
     public static String BASIC_ATTRIBUTE_ICON_PATH;
@@ -191,7 +193,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static String SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH;
     public static String TRANSIENT_ATTRIBUTE_ICON_PATH;
     public static String VERSION_ATTRIBUTE_ICON_PATH;
-    public static String MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH;
     public static String UMTM_ATTRIBUTE_ICON_PATH;
     public static String BMTM_ATTRIBUTE_ICON_PATH;
     public static String UMTO_ATTRIBUTE_ICON_PATH;
@@ -238,7 +239,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
     public static Image ABSTRACT_ENTITY;
     public static Image ENTITY;
-    
+    public static Image MAPPED_SUPER_CLASS;
+    public static Image EMBEDDABLE;
+   
 
     public static Icon GENERATE_SRC;
     public static Icon ENTITY_VISIBILITY;
@@ -276,6 +279,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public void init() {
         if (ENTITY_ICON_PATH == null) {
             ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/element/java/ENTITY.png";
+            MAPPED_SUPER_CLASS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/element/java/MAPPED_SUPER_CLASS.png";
+            EMBEDDABLE_ICON_PATH = "/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE.png";
             ABSTRACT_ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/element/java/ABSTRACT_ENTITY.png";
             ID_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/id-attribute.png";
             BASIC_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/basic-attribute.png";
@@ -286,7 +291,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/single-value-embedded.gif";
             TRANSIENT_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/transient-attribute.png";
             VERSION_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/version-attribute.png";
-            MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/multi-value-embedded.gif";
             UMTM_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/umtm-attribute.png";
             BMTM_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/bmtm-attribute.png";
             UMTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/umto-attribute.png";
@@ -327,6 +331,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
             ABSTRACT_ENTITY = new ImageIcon(cl.getResource(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH)).getImage();
             ENTITY = new ImageIcon(cl.getResource(JPAModelerUtil.ENTITY_ICON_PATH)).getImage();
+            MAPPED_SUPER_CLASS = new ImageIcon(cl.getResource(JPAModelerUtil.MAPPED_SUPER_CLASS_ICON_PATH)).getImage();
+            EMBEDDABLE = new ImageIcon(cl.getResource(JPAModelerUtil.EMBEDDABLE_ICON_PATH)).getImage();
             ID_ATTRIBUTE = new ImageIcon(cl.getResource(ID_ATTRIBUTE_ICON_PATH)).getImage();
             BASIC_ATTRIBUTE = new ImageIcon(cl.getResource(BASIC_ATTRIBUTE_ICON_PATH)).getImage();
             BASIC_COLLECTION_ATTRIBUTE = new ImageIcon(cl.getResource(BASIC_COLLECTION_ATTRIBUTE_ICON_PATH)).getImage();
@@ -336,7 +342,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             SINGLE_VALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
             TRANSIENT_ATTRIBUTE = new ImageIcon(cl.getResource(TRANSIENT_ATTRIBUTE_ICON_PATH)).getImage();
             VERSION_ATTRIBUTE = new ImageIcon(cl.getResource(VERSION_ATTRIBUTE_ICON_PATH)).getImage();
-            MULTIVALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
+            MULTIVALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
 
         }
     }
