@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -294,5 +295,9 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
     }
+
+    //move to FlowNodeWidget to provide support to DB table
+    public abstract String getIconPath();
+    public abstract Image getIcon();
 
 }

@@ -17,17 +17,13 @@ package org.netbeans.jpa.modeler.navigator.classmember.component;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildFactory;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeParentNode;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.lookup.Lookups;

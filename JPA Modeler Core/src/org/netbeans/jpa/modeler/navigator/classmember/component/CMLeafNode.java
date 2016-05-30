@@ -16,12 +16,6 @@
 package org.netbeans.jpa.modeler.navigator.classmember.component;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeParentNode;
@@ -29,8 +23,6 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.nodes.Children;
@@ -49,18 +41,10 @@ public class CMLeafNode extends PropertyNode implements TreeChildNode<ClassMembe
         this.classMembers = classMembers;
         this.checkableNode = checkableNode;
         checkableNode.setNode(this);
-        init();
     }
 
-    public CMLeafNode(AttributeWidget leafAttributeWidget, ClassMembers classMembers, Children children) {
-        super(leafAttributeWidget.getModelerScene(), children);
-        this.leafAttributeWidget = leafAttributeWidget;
-        this.classMembers = classMembers;
-        init();
-    }
-
-    private void init() {
-        
+    public void init() {
+        checkableNode.setEnableWithParent(true);
         this.setIconBaseWithExtension(leafAttributeWidget.getIconPath());
 
         Attribute attribute = (Attribute) leafAttributeWidget.getBaseElementSpec();

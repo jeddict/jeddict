@@ -722,11 +722,28 @@ public class PropertiesHandler {
         return new EmbeddedPropertySupport(entityWidget.getModelerScene().getModelerFile(), entity);
     }
 
+    
+    
+    
     public static EmbeddedPropertySupport getHashCodeProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+        GenericEmbedded entity = new GenericEmbedded("hashcode", "hashCode()", "Define hash code implementation for the Entity");
+        return getClassMemberProperty(persistenceClassWidget, entity, persistenceClassWidget.getBaseElementSpec().getHashCodeMethod());
+    }
 
-        GenericEmbedded entity = new GenericEmbedded("hashcode", "Hashcode", "");
+    public static EmbeddedPropertySupport getEqualsProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+        GenericEmbedded entity = new GenericEmbedded("equals", "equals()", "Define equals implementation for the Entity");
+        return getClassMemberProperty(persistenceClassWidget, entity, persistenceClassWidget.getBaseElementSpec().getEqualsMethod());
+    }
+
+    public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+        GenericEmbedded entity = new GenericEmbedded("toString", "toString()", "Define a string representation of the Entity");
+        return getClassMemberProperty(persistenceClassWidget, entity, persistenceClassWidget.getBaseElementSpec().getToStringMethod());
+    }
+
+     private static EmbeddedPropertySupport getClassMemberProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
+             GenericEmbedded entity, final ClassMembers classMembersObj) {
         try {
-            entity.setEntityEditor(new ClassMemberPanel(persistenceClassWidget));
+            entity.setEntityEditor(new ClassMemberPanel(persistenceClassWidget)); new Object();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -735,7 +752,7 @@ public class PropertiesHandler {
 
             @Override
             public void init() {
-                classMembers = (ClassMembers) persistenceClassWidget.getBaseElementSpec().getHashCodeMethod();
+                classMembers = classMembersObj;
             }
 
             @Override
@@ -744,8 +761,9 @@ public class PropertiesHandler {
             }
 
             @Override
-            public void setData(ClassMembers classSpec) {
-                persistenceClassWidget.getBaseElementSpec().setHashCodeMethod(classSpec);
+            public void setData(ClassMembers classMembers) {
+                //IGNORE internal properties are modified
+                //persistenceClassWidget.getBaseElementSpec().setHashCodeMethod(classSpec);
             }
 
             @Override

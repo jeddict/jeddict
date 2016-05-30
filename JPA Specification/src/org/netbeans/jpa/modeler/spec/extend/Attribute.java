@@ -206,7 +206,6 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
         return Arrays.asList(JaxbVariableType.values());
     }
 
-//    public abstract JavaClass getJavaClass();
     @XmlTransient
     private BaseAttributes attributes;
 
@@ -219,7 +218,9 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     }
 
     void afterUnmarshal(Unmarshaller u, Object parent) {
-        setAttributes((BaseAttributes) parent);
+        if (parent instanceof BaseAttributes) {
+            setAttributes((BaseAttributes) parent);
+        }
     }
 
     /**

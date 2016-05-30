@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,13 +17,20 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 
 /**
  *
  * @author Gaurav Gupta
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ClassMembers {
 
+    @XmlIDREF
+    @XmlElement(name="a")
    private List<Attribute> attributes;
 
     public boolean addAttribute(Attribute attribute) {

@@ -168,8 +168,5 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
         return errorHandler;
     }
     
-        
-    public abstract String getIconPath();
-    public abstract Image getIcon();
 
 }

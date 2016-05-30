@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.navigator.tree.component.spec;
 
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeParentNode;
 import org.openide.nodes.ChildFactory;
 
 public abstract class TreeChildFactory<E> extends ChildFactory<AttributeWidget> {

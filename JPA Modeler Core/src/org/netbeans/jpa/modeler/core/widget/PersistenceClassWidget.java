@@ -44,7 +44,9 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.SingleRelationAtt
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEqualsProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashCodeProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -63,7 +65,6 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -293,7 +294,9 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             set.put("BASIC_PROP", getCompositePrimaryKeyProperty());
         }
 
-        set.put("BASIC_PROP", getHashCodeProperty(this));
+        set.put("CLASS_STRUCTURE", getHashCodeProperty(this));
+        set.put("CLASS_STRUCTURE", getEqualsProperty(this));
+        set.put("CLASS_STRUCTURE", getToStringProperty(this));
     }
 
     private ComboBoxPropertySupport getCompositePrimaryKeyProperty() {

@@ -18,15 +18,8 @@ package org.netbeans.jpa.modeler.navigator.classmember.panel;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildFactory;
 import java.util.List;
-import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.navigator.classmember.component.CMInternalNode;
 import org.netbeans.jpa.modeler.navigator.classmember.component.CMLeafNode;
 import org.netbeans.jpa.modeler.navigator.classmember.component.CMRootNode;
@@ -34,7 +27,6 @@ import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
@@ -56,13 +48,12 @@ public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers> {
 
     @Override
     protected Node createNodeForKey(final AttributeWidget attributeWidget) {
-        TreeChildNode childNode;
+        CMLeafNode childNode;
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
 //        Attribute attribute = null;
-            Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
+        Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
 
 //        boolean isPK = attributeWidget instanceof IdAttributeWidget || attributeWidget instanceof EmbeddedIdAttributeWidget || attributeWidget instanceof VersionAttributeWidget;
-
         if (parentNode.getBaseElementSpec() != null) {
             boolean exist = false;
             if (parentNode instanceof CMRootNode) {
@@ -79,10 +70,11 @@ public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers> {
             }
         }
 
-                    childNode = new CMLeafNode(attributeWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode);
+        childNode = new CMLeafNode(attributeWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode);
 
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
+        childNode.init();
 
         return (Node) childNode;
     }

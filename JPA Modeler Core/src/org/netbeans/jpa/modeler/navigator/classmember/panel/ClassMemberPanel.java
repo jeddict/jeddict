@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,17 +17,13 @@ package org.netbeans.jpa.modeler.navigator.classmember.panel;
 
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
 import javax.swing.SwingUtilities;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.navigator.classmember.component.CMLeafNode;
 import org.netbeans.jpa.modeler.navigator.classmember.component.CMRootNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGInternalNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGLeafNode;
-import org.netbeans.jpa.modeler.navigator.entitygraph.component.EGRootNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeNode;
+import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeParentNode;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
-import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
-import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
@@ -50,41 +46,25 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     @Override
     public void init() {
         initComponents();
-        SwingUtilities.invokeLater(() -> {
-            node = new CMRootNode(persistenceClassWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode(classMembers != null));
-            manager.setRootContext(node);
-        });
     }
 
     
        @Override
     public void setValue(ClassMembers classMembers) {
         this.classMembers=classMembers;
+        SwingUtilities.invokeLater(() -> {
+            node = new CMRootNode(persistenceClassWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode(classMembers != null));
+            manager.setRootContext(node);
+        });
     }
     
         @Override
     public ClassMembers getValue() {
+        classMembers.getAttributes().clear();
+        loadEntityGraph(classMembers, node);
         return classMembers;
     }
-//    @Override
-//    public void createEntity(Class<? extends Entity> entityWrapperType) {
-//        this.setTitle("Create new Named Entity Graph");
-//        if (entityWrapperType == RowValue.class) {
-//            this.setEntity(new RowValue(new Object[2]));
-//        }
-//        classMembers = null;
-//    }
 
-//    @Override
-//    public void updateEntity(Entity<NamedEntityGraph> entityValue) {
-//        this.setTitle("Update Named Entity Graph");
-//        if (entityValue.getClass() == RowValue.class) {
-//            this.setEntity(entityValue);
-//            Object[] row = ((RowValue) entityValue).getRow();
-//            classMembers = (NamedEntityGraph) row[0];
-//        }
-//
-//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -131,72 +111,32 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
         );
     }// </editor-fold>//GEN-END:initComponents
 
-//    private boolean validateField() {
-//        return true;
-//    }
 
-    void loadEntityGraph(NamedEntityGraph namedEntityGraph, TreeNode parentNode) {
-        if (parentNode instanceof EGRootNode) {
-            for (TreeNode childNode : ((EGRootNode) parentNode).getChildList()) {
-                loadSubGraph(namedEntityGraph, childNode);
+    private void loadEntityGraph(ClassMembers classMembers, TreeNode parentNode) {
+        if (parentNode instanceof TreeParentNode) {
+            for (TreeNode childNode : ((TreeParentNode<ClassMembers>) parentNode).getChildList()) {
+                loadAttributeNode(classMembers, childNode);
             }
-        } else if (parentNode instanceof EGInternalNode) {
-            for (TreeNode childNode : ((EGInternalNode) parentNode).getChildList()) {
-                loadSubGraph(namedEntityGraph, childNode);
-            }
+//        } else if (parentNode instanceof CMInternalNode) {
+//            for (TreeNode childNode : ((CMInternalNode) parentNode).getChildList()) {
+//                loadSubGraph(classMembers, childNode);
+//            }
         }
 
     }
 
-    void loadSubGraph(NamedEntityGraph namedEntityGraph, TreeNode childNode) {
+   private void loadAttributeNode(ClassMembers classMembers, TreeNode childNode) {
         if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
             return;
         }
-
-        if (childNode instanceof EGInternalNode) {
-            String name = ((Attribute) (((EGInternalNode) childNode).getParentAttributeWidget().getBaseElementSpec())).getName();
-            NamedAttributeNode attributeNode = new NamedAttributeNode(name);
-            namedEntityGraph.addNamedAttributeNode(attributeNode);
-            NamedSubgraph subGraph = new NamedSubgraph(name + ".Graph");
-            for (TreeNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
-                loadSubGraph(namedEntityGraph, subGraph, subChildNode);
-            }
-            if (!subGraph.getNamedAttributeNode().isEmpty()) {
-                namedEntityGraph.addSubgraph(subGraph);
-                attributeNode.setSubgraph(subGraph.getName());
-            }
-
-        } else if (childNode instanceof EGLeafNode) {
-            String name = ((Attribute) (((EGLeafNode) childNode).getLeafAttributeWidget().getBaseElementSpec())).getName();
+        if (childNode instanceof TreeChildNode) {
+            Attribute attribute = ((Attribute) (((CMLeafNode) childNode).getLeafAttributeWidget().getBaseElementSpec()));
             if (childNode.getCheckableNode().isCheckEnabled()) {
-                namedEntityGraph.addNamedAttributeNode(new NamedAttributeNode(name));
+                classMembers.addAttribute(attribute);
             }
         }
     }
 
-    void loadSubGraph(NamedEntityGraph namedEntityGraph, NamedSubgraph subGraph, TreeNode childNode) {
-        if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
-            return;
-        }
-        if (childNode instanceof EGInternalNode) {
-            String name = ((Attribute) (((EGInternalNode) childNode).getParentAttributeWidget().getBaseElementSpec())).getName();
-            NamedAttributeNode attributeNode = new NamedAttributeNode(name);
-            subGraph.addNamedAttributeNode(attributeNode);
-            NamedSubgraph childSubGraph = new NamedSubgraph(name + ".Graph");
-            for (TreeNode subChildNode : ((EGInternalNode) childNode).getChildList()) {
-                loadSubGraph(namedEntityGraph, childSubGraph, subChildNode);
-            }
-            if (!childSubGraph.getNamedAttributeNode().isEmpty()) {
-                namedEntityGraph.addSubgraph(childSubGraph);
-                attributeNode.setSubgraph(childSubGraph.getName());
-            }
-        } else if (childNode instanceof EGLeafNode) {
-            String name = ((Attribute) (((EGLeafNode) childNode).getLeafAttributeWidget().getBaseElementSpec())).getName();
-            if (childNode.getCheckableNode().isCheckEnabled()) {
-                subGraph.addNamedAttributeNode(new NamedAttributeNode(name));
-            }
-        }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane graphLayeredPane;

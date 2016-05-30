@@ -13,6 +13,7 @@
         <group id="JAXB_ATTR_PROP" name="JAXB Attribute Properties"/>
         <group id="JAXB_ELE_PROP" name="JAXB Element Properties"/>
         <group id="CONSTRAINTS" name="Bean Validation Properties"/>
+        <group id="CLASS_STRUCTURE" name="Class Properties"/>
         
         
         
@@ -105,9 +106,9 @@
                 </attribute>
             </attributes>
         </element>
-        <element id="MappedSuperclass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.MappedSuperclass">
+        <element id="MappedSuperclass" class="org.netbeans.jpa.modeler.spec.MappedSuperclass">
             <attributes>
-                <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
+                <attribute id="class" groupId="CLASS_STRUCTURE" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
                 </attribute>
                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
@@ -134,15 +135,15 @@
                  </attributes>
         </element>
                
-        <element id="Entity" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Entity">
+        <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
             <attributes>
-                <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
+                <attribute id="class" groupId="CLASS_STRUCTURE" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
                 </attribute>
                 <attribute id="entity_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Entity Name</display-name>
                 </attribute>
-               <attribute id="abstract" groupId="BASIC_PROP" class="java.lang.Boolean" name="abstract">
+               <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
                 </attribute>
                 <attribute id="cacheable" groupId="BASIC_PROP" class="java.lang.Boolean" name="cacheable">
@@ -153,9 +154,9 @@
                 </attribute>
             </attributes>
         </element>
-           <element id="Embeddable" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Embeddable">
+           <element id="Embeddable" class="org.netbeans.jpa.modeler.spec.Embeddable">
             <attributes>
-                <attribute id="class" groupId="BASIC_PROP" class="java.lang.String" name="clazz">
+                <attribute id="class" groupId="CLASS_STRUCTURE" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
                 </attribute>
             </attributes>
