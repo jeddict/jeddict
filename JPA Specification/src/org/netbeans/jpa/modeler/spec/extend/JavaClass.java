@@ -349,6 +349,9 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
      * @return the constructors
      */
     public List<ClassMembers> getConstructors() {
+        if(constructors==null){
+            constructors = new ArrayList<>();
+        }
         return constructors;
     }
 

@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.navigator.classmember.panel;
 
+import org.netbeans.jpa.modeler.navigator.classmember.component.ClassMemberChildFactory;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
 import javax.swing.SwingUtilities;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -33,16 +34,19 @@ import org.openide.explorer.view.OutlineView;
 public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implements ExplorerManager.Provider {
 
     private ExplorerManager manager;
+    private final String title;
 
     private ClassMembers classMembers;
     private PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
     private CMRootNode node;
 
-    public ClassMemberPanel(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+    public ClassMemberPanel(String title, PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         this.persistenceClassWidget = persistenceClassWidget;
+        this.title=title;
     }
 
-    public ClassMemberPanel() {
+    public ClassMemberPanel(String title) {
+        this.title=title;
     }
 
     @Override
@@ -63,7 +67,7 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     @Override
     public ClassMembers getValue() {
         classMembers.getAttributes().clear();
-        loadEntityGraph(classMembers, node);
+        loadClassMember(classMembers, node);
         return classMembers;
     }
 
@@ -77,42 +81,26 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     private void initComponents() {
 
         rootLayeredPane = new javax.swing.JLayeredPane();
-        graphLayeredPane = new javax.swing.JLayeredPane();
-        outlineView = new OutlineView("Entity Graph");
+        outlineView = new OutlineView(getTitle());
 
-        graphLayeredPane.setLayout(new java.awt.GridLayout(1, 0));
+        rootLayeredPane.setLayout(new java.awt.GridLayout(1, 0));
 
-        //outlineView.setDefaultActionAllowed(false);
-        //outlineView.setDoubleBuffered(true);
-        //outlineView.setDragSource(false);
-        //outlineView.setDropTarget(false)
-        graphLayeredPane.add(outlineView);
-
-        javax.swing.GroupLayout rootLayeredPaneLayout = new javax.swing.GroupLayout(rootLayeredPane);
-        rootLayeredPane.setLayout(rootLayeredPaneLayout);
-        rootLayeredPaneLayout.setHorizontalGroup(
-            rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(graphLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE)
-        );
-        rootLayeredPaneLayout.setVerticalGroup(
-            rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(graphLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 547, Short.MAX_VALUE)
-        );
-        rootLayeredPane.setLayer(graphLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        outlineView.setToolTipText(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "ClassMemberPanel.outlineView.toolTipText")); // NOI18N
+        rootLayeredPane.add(outlineView);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(rootLayeredPane)
+            .addComponent(rootLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(rootLayeredPane)
+            .addComponent(rootLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void loadEntityGraph(ClassMembers classMembers, TreeNode parentNode) {
+    private void loadClassMember(ClassMembers classMembers, TreeNode parentNode) {
         if (parentNode instanceof TreeParentNode) {
             for (TreeNode childNode : ((TreeParentNode<ClassMembers>) parentNode).getChildList()) {
                 loadAttributeNode(classMembers, childNode);
@@ -139,7 +127,6 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLayeredPane graphLayeredPane;
     private javax.swing.JScrollPane outlineView;
     private javax.swing.JLayeredPane rootLayeredPane;
     // End of variables declaration//GEN-END:variables
@@ -154,6 +141,13 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
      */
     public void setPersistenceClassWidget(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         this.persistenceClassWidget = persistenceClassWidget;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
     }
 
 }

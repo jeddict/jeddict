@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.navigator.classmember.panel;
+package org.netbeans.jpa.modeler.navigator.classmember.component;
 
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.tree.component.spec.TreeChildFactory;

@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,15 +35,15 @@ public class ClassMembers {
    private List<Attribute> attributes;
 
     public boolean addAttribute(Attribute attribute) {
-        return attributes.add(attribute);
+        return getAttributes().add(attribute);
     }
     
     public boolean isExist(Attribute attribute) {
-        return attributes.stream().filter(a -> a == attribute).findAny().isPresent();
+        return getAttributes().stream().filter(a -> a == attribute).findAny().isPresent();
     }
 
     public boolean removeAttribute(Attribute attribute) {
-        return attributes.remove(attribute);
+        return getAttributes().remove(attribute);
     }
 
     /**
@@ -61,5 +62,12 @@ public class ClassMembers {
     public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
     }
+
+    @Override
+    public String toString() {
+        return getAttributes().stream().map((Attribute a) -> a.getName()).collect(Collectors.joining(", "));
+    }
+    
+    
 
 }

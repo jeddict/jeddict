@@ -67,48 +67,49 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
         jSplitPane2 = new javax.swing.JSplitPane();
         jSplitPane = new javax.swing.JSplitPane();
-        equalsMethodPanel = new ClassMemberPanel();
-        hashcodeMethodPanel = new ClassMemberPanel();
+        hashcodeMethodPanel = new ClassMemberPanel("hashcode()");
+        equalsMethodPanel = new ClassMemberPanel("equals()");
 
         jSplitPane2.setToolTipText(org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.jSplitPane2.toolTipText")); // NOI18N
 
+        jSplitPane.setDividerSize(10);
         jSplitPane.setResizeWeight(0.5d);
-
-        javax.swing.GroupLayout equalsMethodPanelLayout = new javax.swing.GroupLayout(equalsMethodPanel);
-        equalsMethodPanel.setLayout(equalsMethodPanelLayout);
-        equalsMethodPanelLayout.setHorizontalGroup(
-            equalsMethodPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        equalsMethodPanelLayout.setVerticalGroup(
-            equalsMethodPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 361, Short.MAX_VALUE)
-        );
-
-        jSplitPane.setLeftComponent(equalsMethodPanel);
 
         javax.swing.GroupLayout hashcodeMethodPanelLayout = new javax.swing.GroupLayout(hashcodeMethodPanel);
         hashcodeMethodPanel.setLayout(hashcodeMethodPanelLayout);
         hashcodeMethodPanelLayout.setHorizontalGroup(
             hashcodeMethodPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 214, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         hashcodeMethodPanelLayout.setVerticalGroup(
             hashcodeMethodPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 361, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jSplitPane.setRightComponent(hashcodeMethodPanel);
+        jSplitPane.setLeftComponent(hashcodeMethodPanel);
+
+        javax.swing.GroupLayout equalsMethodPanelLayout = new javax.swing.GroupLayout(equalsMethodPanel);
+        equalsMethodPanel.setLayout(equalsMethodPanelLayout);
+        equalsMethodPanelLayout.setHorizontalGroup(
+            equalsMethodPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        equalsMethodPanelLayout.setVerticalGroup(
+            equalsMethodPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 492, Short.MAX_VALUE)
+        );
+
+        jSplitPane.setRightComponent(equalsMethodPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+            .addComponent(jSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
+            .addComponent(jSplitPane)
         );
     }// </editor-fold>//GEN-END:initComponents
 

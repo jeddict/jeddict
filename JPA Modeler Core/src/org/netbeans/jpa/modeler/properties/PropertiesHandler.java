@@ -27,6 +27,8 @@ import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.navigator.classmember.panel.ClassMemberPanel;
+import org.netbeans.jpa.modeler.navigator.classmember.panel.ConstructorPanel;
 import org.netbeans.jpa.modeler.navigator.classmember.panel.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.navigator.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
@@ -721,50 +723,6 @@ public class PropertiesHandler {
         return new EmbeddedPropertySupport(entityWidget.getModelerScene().getModelerFile(), entity);
     }
 
-    
-    
-    
-    public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("toString", "toString()", "Define a string representation of the Entity");
-        return getClassMemberProperty(persistenceClassWidget, entity, persistenceClassWidget.getBaseElementSpec().getToStringMethod());
-    }
-
-    private static EmbeddedPropertySupport getClassMemberProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
-            GenericEmbedded entity, final ClassMembers classMembersObj) {
-        try {
-            entity.setEntityEditor(new HashcodeEqualsPanel(persistenceClassWidget));
-            new Object();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
-            private ClassMembers classMembers;
-
-            @Override
-            public void init() {
-                classMembers = classMembersObj;
-            }
-
-            @Override
-            public ClassMembers getData() {
-                return classMembers;
-            }
-
-            @Override
-            public void setData(ClassMembers classMembers) {
-                //IGNORE internal properties are modified
-                //persistenceClassWidget.getBaseElementSpec().setHashCodeMethod(classSpec);
-            }
-
-            @Override
-            public String getDisplay() {
-                return classMembers.getAttributes().size() + " Attr";
-            }
-
-        });
-        return new EmbeddedPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), entity);
-    }
-
     public static EmbeddedPropertySupport getHashcodeEqualsProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "hashcode() & equals()", "Define hashcode & equals implementation for the Entity");
 
@@ -795,6 +753,96 @@ public class PropertiesHandler {
 
         });
         return new EmbeddedPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), entity);
+    }
+
+    public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+        GenericEmbedded entity = new GenericEmbedded("toString", "toString()", "Define a string representation of the Entity");
+        final ClassMembers classMembersObj = persistenceClassWidget.getBaseElementSpec().getToStringMethod();
+        entity.setEntityEditor(new ClassMemberPanel("toString()", persistenceClassWidget));
+        entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
+            private ClassMembers classMembers;
+
+            @Override
+            public void init() {
+                classMembers = classMembersObj;
+            }
+
+            @Override
+            public ClassMembers getData() {
+                return classMembers;
+            }
+
+            @Override
+            public void setData(ClassMembers classMembers) {
+                //IGNORE internal properties are modified
+                //persistenceClassWidget.getBaseElementSpec().setHashCodeMethod(classSpec);
+            }
+
+            @Override
+            public String getDisplay() {
+                return classMembers.getAttributes().size() + " Attr";
+            }
+
+        });
+        return new EmbeddedPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), entity);
+    }
+
+    public static PropertySupport getConstructorProperties(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("constructor", "Constructor", "Constructor");
+        attributeEntity.setCountDisplay(new String[]{"No Constructors exist", "One Constructor exist", "Constructors exist"});
+        List<ClassMembers> classMembersListObj = persistenceClassWidget.getBaseElementSpec().getConstructors();
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Constructor List", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new ConstructorPanel(persistenceClassWidget));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = classMembersListObj.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<ClassMembers> classMembersList = classMembersListObj;
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<ClassMembers> itr = classMembersList.iterator();
+                while (itr.hasNext()) {
+                    ClassMembers classMembers = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = classMembers;
+                    row[1] = classMembers.toString();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                classMembersListObj.clear();
+                data.stream().forEach((row) -> {
+                    classMembersListObj.add((ClassMembers) row[0]);
+                });
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), attributeEntity);
     }
 
 }

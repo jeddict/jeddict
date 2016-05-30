@@ -414,24 +414,27 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
     }
 
     
-        private static final class SQLExecutionImpl implements SQLExecution {
+    private static final class SQLExecutionImpl implements SQLExecution {
 
-        private PropertyChangeSupport propChangeSupport = new PropertyChangeSupport(this);
+        private final PropertyChangeSupport propChangeSupport = new PropertyChangeSupport(this);
         private boolean executing = false;
-        private ModelerFile file;
+        private final ModelerFile file;
 
         public SQLExecutionImpl(ModelerFile file) {
             this.file = file;
         }
         
+        @Override
         public void removePropertyChangeListener(PropertyChangeListener listener) {
             propChangeSupport.removePropertyChangeListener(listener);
         }
 
+        @Override
         public void addPropertyChangeListener(PropertyChangeListener listener) {
             propChangeSupport.addPropertyChangeListener(listener);
         }
 
+        @Override
         public boolean isExecuting() {
             return executing;
         }
@@ -441,39 +444,45 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
             propChangeSupport.firePropertyChange(SQLExecution.PROP_EXECUTING, null, null);
         }
         
+        @Override
         public boolean isSelection() {
             return false;
         }
 
+        @Override
         public void execute() {
         }
 
+        @Override
         public void executeSelection() {
         }
 
+        @Override
         public void setDatabaseConnection(DatabaseConnection dbconn) {
         }
 
+        @Override
         public DatabaseConnection getDatabaseConnection() {
            DatabaseConnection connection = DBConnectionUtil.getConnection(file);
             return connection;
         }
 
+        @Override
         public void showHistory() {
             // not tested
         }
     }
 
     private NAttributeEntity getQueryHint() {
-        final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
-        attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
+        final NAttributeEntity attributeEntityObj = new NAttributeEntity("QueryHint", "Query Hint", "");
+        attributeEntityObj.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Value", false, String.class));
-        attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new QueryHintPanel());
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntityObj.setColumns(columns);
+        attributeEntityObj.setCustomDialog(new QueryHintPanel());
+        attributeEntityObj.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 
@@ -523,7 +532,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
                 initData();
             }
         });
-        return attributeEntity;
+        return attributeEntityObj;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
