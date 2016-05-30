@@ -39,6 +39,7 @@ public class ConstructorPanel extends EntityComponent<ClassMembers> {
     @Override
     public void init() {
         ((ClassMemberPanel) classMemberPanel).init();
+        pack();
     }
 
     @Override
@@ -62,6 +63,7 @@ public class ConstructorPanel extends EntityComponent<ClassMembers> {
             ((ClassMemberPanel)classMemberPanel).setPersistenceClassWidget(persistenceClassWidget);
             ((ClassMemberPanel) classMemberPanel).setValue(classMembers);
         }
+        
     }
 
     /**
