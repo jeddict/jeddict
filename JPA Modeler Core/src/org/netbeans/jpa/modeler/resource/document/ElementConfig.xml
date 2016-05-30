@@ -135,7 +135,7 @@
                  </attributes>
         </element>
                
-        <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
+        <element id="Entity" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Entity">
             <attributes>
                 <attribute id="class" groupId="CLASS_STRUCTURE" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>

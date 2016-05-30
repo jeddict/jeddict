@@ -163,7 +163,10 @@ public class CheckableAttributeNode<E> implements CheckableNode {
             if (parentCheckableNode != null && parentCheckableNode.isSelected()) {
                 this.setSelected(true);
             } else {
-                this.setSelected(false);
+//                if(node.getCheckableNode().isSelected()) {
+//                    
+//                }
+//                this.setSelected(false);
             }
         }
     }

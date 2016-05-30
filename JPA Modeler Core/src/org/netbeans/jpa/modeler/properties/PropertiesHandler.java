@@ -24,11 +24,10 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
-import org.netbeans.jpa.modeler.navigator.classmember.panel.ClassMemberPanel;
+import org.netbeans.jpa.modeler.navigator.classmember.panel.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.navigator.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
@@ -725,25 +724,16 @@ public class PropertiesHandler {
     
     
     
-    public static EmbeddedPropertySupport getHashCodeProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("hashcode", "hashCode()", "Define hash code implementation for the Entity");
-        return getClassMemberProperty(persistenceClassWidget, entity, persistenceClassWidget.getBaseElementSpec().getHashCodeMethod());
-    }
-
-    public static EmbeddedPropertySupport getEqualsProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("equals", "equals()", "Define equals implementation for the Entity");
-        return getClassMemberProperty(persistenceClassWidget, entity, persistenceClassWidget.getBaseElementSpec().getEqualsMethod());
-    }
-
     public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         GenericEmbedded entity = new GenericEmbedded("toString", "toString()", "Define a string representation of the Entity");
         return getClassMemberProperty(persistenceClassWidget, entity, persistenceClassWidget.getBaseElementSpec().getToStringMethod());
     }
 
-     private static EmbeddedPropertySupport getClassMemberProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
-             GenericEmbedded entity, final ClassMembers classMembersObj) {
+    private static EmbeddedPropertySupport getClassMemberProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
+            GenericEmbedded entity, final ClassMembers classMembersObj) {
         try {
-            entity.setEntityEditor(new ClassMemberPanel(persistenceClassWidget)); new Object();
+            entity.setEntityEditor(new HashcodeEqualsPanel(persistenceClassWidget));
+            new Object();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -769,6 +759,38 @@ public class PropertiesHandler {
             @Override
             public String getDisplay() {
                 return classMembers.getAttributes().size() + " Attr";
+            }
+
+        });
+        return new EmbeddedPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), entity);
+    }
+
+    public static EmbeddedPropertySupport getHashcodeEqualsProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+        GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "hashcode() & equals()", "Define hashcode & equals implementation for the Entity");
+
+        final JavaClass javaClassObj = persistenceClassWidget.getBaseElementSpec();
+        entity.setEntityEditor(new HashcodeEqualsPanel(persistenceClassWidget));
+        entity.setDataListener(new EmbeddedDataListener<JavaClass>() {
+            private JavaClass javaClass;
+
+            @Override
+            public void init() {
+                javaClass = javaClassObj;
+            }
+
+            @Override
+            public JavaClass getData() {
+                return javaClass;
+            }
+
+            @Override
+            public void setData(JavaClass classMembers) {
+                //IGNORE internal properties are modified
+            }
+
+            @Override
+            public String getDisplay() {
+                return javaClass.getHashCodeMethod().getAttributes().size() + " -- " + javaClass.getEqualsMethod().getAttributes().size();
             }
 
         });

@@ -32,39 +32,40 @@ import org.openide.explorer.view.OutlineView;
 
 public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implements ExplorerManager.Provider {
 
-    private final ExplorerManager manager;
+    private ExplorerManager manager;
 
     private ClassMembers classMembers;
-    private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
+    private PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
     private CMRootNode node;
 
     public ClassMemberPanel(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         this.persistenceClassWidget = persistenceClassWidget;
-        manager = new ExplorerManager();
+    }
+
+    public ClassMemberPanel() {
     }
 
     @Override
     public void init() {
+        manager = new ExplorerManager();
         initComponents();
     }
 
-    
-       @Override
+    @Override
     public void setValue(ClassMembers classMembers) {
-        this.classMembers=classMembers;
+        this.classMembers = classMembers;
         SwingUtilities.invokeLater(() -> {
-            node = new CMRootNode(persistenceClassWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode(classMembers != null));
+            node = new CMRootNode(persistenceClassWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode());
             manager.setRootContext(node);
         });
     }
-    
-        @Override
+
+    @Override
     public ClassMembers getValue() {
         classMembers.getAttributes().clear();
         loadEntityGraph(classMembers, node);
         return classMembers;
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -111,7 +112,6 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
         );
     }// </editor-fold>//GEN-END:initComponents
 
-
     private void loadEntityGraph(ClassMembers classMembers, TreeNode parentNode) {
         if (parentNode instanceof TreeParentNode) {
             for (TreeNode childNode : ((TreeParentNode<ClassMembers>) parentNode).getChildList()) {
@@ -125,7 +125,7 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
 
     }
 
-   private void loadAttributeNode(ClassMembers classMembers, TreeNode childNode) {
+    private void loadAttributeNode(ClassMembers classMembers, TreeNode childNode) {
         if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
             return;
         }
@@ -149,6 +149,11 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
         return manager;
     }
 
-
+    /**
+     * @param persistenceClassWidget the persistenceClassWidget to set
+     */
+    public void setPersistenceClassWidget(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+        this.persistenceClassWidget = persistenceClassWidget;
+    }
 
 }

@@ -57,7 +57,7 @@ public class CMRootNode extends AbstractNode implements TreeParentNode<ClassMemb
         checkableNode.setNode(this);
         childFactory.setParentNode(this);
 
-        checkableNode.setSelected(true);
+//        checkableNode.setSelected(false);
 
         ManagedClass managedClass = persistenceClassWidget.getBaseElementSpec();
         setDisplayName(managedClass.getClazz());

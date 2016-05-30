@@ -44,8 +44,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.SingleRelationAtt
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEqualsProperty;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashCodeProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashcodeEqualsProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.Basic;
@@ -294,8 +293,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             set.put("BASIC_PROP", getCompositePrimaryKeyProperty());
         }
 
-        set.put("CLASS_STRUCTURE", getHashCodeProperty(this));
-        set.put("CLASS_STRUCTURE", getEqualsProperty(this));
+        set.put("CLASS_STRUCTURE", getHashcodeEqualsProperty(this));
         set.put("CLASS_STRUCTURE", getToStringProperty(this));
     }
 
