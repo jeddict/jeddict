@@ -57,6 +57,7 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
@@ -1000,7 +1001,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
 
-    public void refactorRelationSynchronously(String previousName, String newName) {
+    public void refactorReference(String previousName, String newName) {
         if (previousName == null) {
             return;
         }
@@ -1039,11 +1040,18 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                                 relationAttributeWidget.setName(pluralNewName);
                                 relationAttributeWidget.setLabel(pluralNewName);
                             }
-                        } else if (relationAttributeWidget.getName().equals(singularPreName)) {
-                            relationAttributeWidget.setName(singularNewName);
-                            relationAttributeWidget.setLabel(singularNewName);
+                        } else {
+                            if (relationAttributeWidget.getName().equals(singularPreName)) {
+                                relationAttributeWidget.setName(singularNewName);
+                                relationAttributeWidget.setLabel(singularNewName);
+                            }
                         }
                     }
+                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph eg) -> {
+                        if (eg.getName().contains(singularPreName)) {
+                            eg.setName(eg.getName().replaceAll(singularPreName, singularNewName));
+                        }
+                    });
                 }
 
                 if (this instanceof EmbeddableWidget) {
@@ -1074,7 +1082,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setClazz(this.name);
-                refactorRelationSynchronously(previousName, this.name);
+                refactorReference(previousName, this.name);
             }
             validateName(previousName, this.getName());
         }

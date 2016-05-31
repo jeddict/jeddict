@@ -23,14 +23,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
+import org.apache.velocity.util.StringUtils;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.navigator.classmember.panel.ClassMemberPanel;
 import org.netbeans.jpa.modeler.navigator.classmember.panel.ConstructorPanel;
 import org.netbeans.jpa.modeler.navigator.classmember.panel.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.navigator.entitygraph.NamedEntityGraphPanel;
+import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
+import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
+import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
@@ -40,23 +47,33 @@ import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStore
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
 import static org.netbeans.jpa.modeler.spec.AccessType.PROPERTY;
+import org.netbeans.jpa.modeler.spec.CascadeType;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.FetchType;
+import org.netbeans.jpa.modeler.spec.GeneratedValue;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_TRANSIENT;
@@ -78,6 +95,7 @@ import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import org.netbeans.orm.converter.util.ClassHelper;
 import org.openide.nodes.PropertySupport;
 import org.openide.windows.WindowManager;
 
@@ -748,7 +766,7 @@ public class PropertiesHandler {
 
             @Override
             public String getDisplay() {
-                return javaClass.getHashCodeMethod().getAttributes().size() + " -- " + javaClass.getEqualsMethod().getAttributes().size();
+                return String.format("hashcode{%s} equals{%s}",javaClass.getHashCodeMethod().getAttributes().size(), javaClass.getEqualsMethod().getAttributes().size());
             }
 
         });
@@ -775,7 +793,6 @@ public class PropertiesHandler {
             @Override
             public void setData(ClassMembers classMembers) {
                 //IGNORE internal properties are modified
-                //persistenceClassWidget.getBaseElementSpec().setHashCodeMethod(classSpec);
             }
 
             @Override
@@ -843,6 +860,190 @@ public class PropertiesHandler {
         });
 
         return new NEntityPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), attributeEntity);
+    }
+
+    public static EmbeddedPropertySupport getGeneratorProperty(IdAttributeWidget attributeWidget) {
+
+        GenericEmbedded entity = new GenericEmbedded("generator", "Id Generator", "");
+        entity.setEntityEditor(new IdGeneratorPanel(attributeWidget.getModelerScene().getModelerFile()));
+
+        entity.setDataListener(new EmbeddedDataListener<Id>() {
+            private Id idAttribute;
+            @Override
+            public void init() {
+                idAttribute = attributeWidget.getBaseElementSpec();
+            }
+
+            @Override
+            public Id getData() {
+                if (idAttribute.getGeneratedValue() == null) {
+                    idAttribute.setGeneratedValue(new GeneratedValue());
+                }
+                return idAttribute;
+            }
+
+            @Override
+            public void setData(Id classSpec) {
+                attributeWidget.setBaseElementSpec(classSpec);
+            }
+
+            @Override
+            public String getDisplay() {
+                if (idAttribute.getGeneratedValue() != null && idAttribute.getGeneratedValue().getStrategy() != null) {
+                    return StringUtils.firstLetterCaps(idAttribute.getGeneratedValue().getStrategy().toString());
+                } else if (idAttribute.getGeneratedValue() == null || idAttribute.getGeneratedValue().getStrategy() == null) {
+                    return "None";
+                } else {
+                    return "";
+                }
+            }
+
+        });
+        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
+    }
+
+    public static EmbeddedPropertySupport getFieldTypeProperty(AttributeWidget attributeWidget) {
+
+        GenericEmbedded entity = new GenericEmbedded("fieldType", "Field Type", "");
+        if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
+            if (attributeWidget.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
+                entity.setEntityEditor(null);
+            } else if (attributeWidget.getBaseElementSpec() instanceof Embedded) {//to Disable it
+                entity.setEntityEditor(null);
+            } else {
+                entity.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile()));
+            }
+
+        } else if (attributeWidget.getBaseElementSpec() instanceof RelationAttribute) {
+            entity.setEntityEditor(null);
+        }
+        entity.setDataListener(new EmbeddedDataListener<Attribute>() {
+            private Attribute attribute;
+            private String displayName = null;
+            private PersistenceClassWidget persistenceClassWidget = null;
+
+            @Override
+            public void init() {
+                attribute = (Attribute) attributeWidget.getBaseElementSpec();
+                if (attribute instanceof RelationAttribute) {
+                    persistenceClassWidget = (PersistenceClassWidget)attributeWidget.getModelerScene().getBaseElement(((RelationAttribute) attribute).getConnectedEntity().getId());
+                } else if (attribute instanceof ElementCollection && ((ElementCollection) attribute).getConnectedClass() != null) { //Embedded Collection
+                    persistenceClassWidget = (PersistenceClassWidget) attributeWidget.getModelerScene().getBaseElement(((ElementCollection) attribute).getConnectedClass().getId());
+                } else if (attribute instanceof Embedded) {
+                    persistenceClassWidget = (PersistenceClassWidget) attributeWidget.getModelerScene().getBaseElement(((Embedded) attribute).getConnectedClass().getId());
+                }
+            }
+
+            @Override
+            public Attribute getData() {
+                return attribute;
+            }
+
+            @Override
+            public void setData(Attribute baseAttribute) {
+                attributeWidget.setBaseElementSpec(baseAttribute);
+                if (attributeWidget instanceof BaseAttributeWidget) {
+                    ((BaseAttributeWidget)attributeWidget).createBeanValidationPropertySet(attributeWidget.getPropertyManager().getElementPropertySet());
+                    attributeWidget.refreshProperties();
+                }
+            }
+
+            @Override
+            public String getDisplay() {
+                if (attribute instanceof BaseAttribute) {
+                    if (attribute instanceof ElementCollection) {
+                        String collectionType = ((ElementCollection) attribute).getCollectionType();
+                        if (((ElementCollection) attribute).getConnectedClass() == null) { //Basic
+                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + ((ElementCollection) attribute).getTargetClass() + ">";
+                        } else { //Embedded
+                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
+                        }
+                    } else if (attribute instanceof Embedded) {
+                        displayName = persistenceClassWidget.getName();
+                    } else {
+                        displayName = ((BaseAttribute) attribute).getAttributeType();
+                    }
+                } else if (attribute instanceof RelationAttribute) {
+                    // Issue Fix #5851 Start
+                    if (attribute instanceof OneToMany || attribute instanceof ManyToMany) {
+                        String collectionType = null;
+                        if (attribute instanceof OneToMany) {
+                            collectionType = ((OneToMany) attribute).getCollectionType();
+                        } else if (attribute instanceof ManyToMany) {
+                            collectionType = ((ManyToMany) attribute).getCollectionType();
+                        }
+                        displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
+                    } else {
+                        displayName = persistenceClassWidget.getName();
+                    }
+                    // Issue Fix #5851 End
+
+                }
+                return displayName;
+
+            }
+
+        });
+        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
+    }
+ 
+    public static EmbeddedPropertySupport getCascadeProperty(RelationAttributeWidget attributeWidget) {
+
+        GenericEmbedded entity = new GenericEmbedded("cascadeType", "Cascade Type", "");
+        entity.setEntityEditor(new CascadeTypePanel(attributeWidget.getModelerScene().getModelerFile()));
+
+        entity.setDataListener(new EmbeddedDataListener<CascadeType>() {
+            private RelationAttribute relationAttribute;
+
+            @Override
+            public void init() {
+                relationAttribute = (RelationAttribute)attributeWidget.getBaseElementSpec();
+            }
+
+            @Override
+            public CascadeType getData() {
+                return relationAttribute.getCascade();
+            }
+
+            @Override
+            public void setData(CascadeType cascadeType) {
+                relationAttribute.setCascade(cascadeType);
+            }
+
+            @Override
+            public String getDisplay() {
+                StringBuilder display = new StringBuilder();
+                CascadeType cascadeType = relationAttribute.getCascade();
+                if (cascadeType == null) {
+                    display.append("None");
+                } else if (cascadeType.getCascadeAll() != null) {
+                    display.append("All");
+                } else {
+                    if (cascadeType.getCascadeDetach() != null) {
+                        display.append("Detach,");
+                    }
+                    if (cascadeType.getCascadeMerge() != null) {
+                        display.append("Merge,");
+                    }
+                    if (cascadeType.getCascadePersist() != null) {
+                        display.append("Persist,");
+                    }
+                    if (cascadeType.getCascadeRefresh() != null) {
+                        display.append("Refresh,");
+                    }
+                    if (cascadeType.getCascadeRemove() != null) {
+                        display.append("Remove,");
+                    }
+                    if (display.length() != 0) {
+                        display.setLength(display.length() - 1);
+                    }
+                }
+
+                return display.toString();
+            }
+
+        });
+        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
     }
 
 }

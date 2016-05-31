@@ -145,9 +145,9 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     public void setName(String name) {
         this.name = name;
         if (name != null && !name.trim().isEmpty()) {
-            FlowNodeWidget.this.getBaseElementSpec().setName(name);
+            getBaseElementSpec().setName(name);
         } else {
-            FlowNodeWidget.this.getBaseElementSpec().setName(null);
+            getBaseElementSpec().setName(null);
         }
     }
 
