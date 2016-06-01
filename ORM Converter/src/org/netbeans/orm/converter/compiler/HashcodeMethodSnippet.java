@@ -22,8 +22,6 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import static org.netbeans.orm.converter.compiler.JavaHashcodeEqualsUtil.getHashcodeExpression;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.SINGLE_QUOTE;
 
 public class HashcodeMethodSnippet implements Snippet {
 

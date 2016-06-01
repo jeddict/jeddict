@@ -17,15 +17,15 @@ package org.netbeans.jpa.modeler.navigator.classmember.panel;
 
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
 
-public class ConstructorPanel extends EntityComponent<ClassMembers> {
+public class ConstructorPanel extends EntityComponent<Constructor> {
 
-    private ClassMembers classMembers;
-    private PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
+    private Constructor constructor;
+    private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
 
     public ConstructorPanel(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         this.persistenceClassWidget = persistenceClassWidget;
@@ -48,20 +48,20 @@ public class ConstructorPanel extends EntityComponent<ClassMembers> {
         if (entityWrapperType == RowValue.class) {
             this.setEntity(new RowValue(new Object[2]));
         }
-        classMembers = new ClassMembers();
+        constructor = new Constructor();
         ((ClassMemberPanel)classMemberPanel).setPersistenceClassWidget(persistenceClassWidget);
-        ((ClassMemberPanel) classMemberPanel).setValue(classMembers);
+        ((ClassMemberPanel) classMemberPanel).setValue(constructor);
     }
 
     @Override
-    public void updateEntity(Entity<ClassMembers> entityValue) {
+    public void updateEntity(Entity<Constructor> entityValue) {
         this.setTitle("Update Constructor");
         if (entityValue.getClass() == RowValue.class) {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
-            classMembers = (ClassMembers) row[0];
+            constructor = (Constructor) row[0];
             ((ClassMemberPanel)classMemberPanel).setPersistenceClassWidget(persistenceClassWidget);
-            ((ClassMemberPanel) classMemberPanel).setValue(classMembers);
+            ((ClassMemberPanel) classMemberPanel).setValue(constructor);
         }
         
     }
@@ -149,12 +149,12 @@ public class ConstructorPanel extends EntityComponent<ClassMembers> {
     }// </editor-fold>//GEN-END:initComponents
 
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
-        classMembers = ((ClassMemberPanel) classMemberPanel).getValue();
+        constructor = (Constructor) ((ClassMemberPanel) classMemberPanel).getValue();
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
-            row[0] = classMembers;
-            row[1] = classMembers.toString();
+            row[0] = constructor;
+            row[1] = constructor.toString();
         }
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
@@ -170,12 +170,5 @@ public class ConstructorPanel extends EntityComponent<ClassMembers> {
     private javax.swing.JLayeredPane rootLayeredPane;
     private javax.swing.JButton save_Button;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * @param persistenceClassWidget the persistenceClassWidget to set
-     */
-    public void setPersistenceClassWidget(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        this.persistenceClassWidget = persistenceClassWidget;
-    }
 
 }

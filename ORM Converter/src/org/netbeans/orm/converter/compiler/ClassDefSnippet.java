@@ -37,6 +37,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
     private static final VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
+    private List<ConstructorSnippet> constructorSnippets;
     private HashcodeMethodSnippet hashcodeMethodSnippet;
     private EqualsMethodSnippet equalsMethodSnippet;
     private ToStringMethodSnippet toStringMethodSnippet;
@@ -647,26 +648,29 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         this.equalsMethodSnippet = equalsMethodSnippet;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + (this.excludeSuperClassListener ? 1 : 0);
-        return hash;
+    /**
+     * @return the constructorSnippets
+     */
+    public List<ConstructorSnippet> getConstructors() {
+        if(constructorSnippets==null){
+            constructorSnippets = new ArrayList<>();
+        }
+        return constructorSnippets;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ClassDefSnippet other = (ClassDefSnippet) obj;
-        if (this.generateId != other.generateId) {
-            return false;
-        }
-        return true;
+    /**
+     * @param constructorSnippets the constructorSnippets to set
+     */
+    public void setConstructors(List<ConstructorSnippet> constructorSnippets) {
+        this.constructorSnippets = constructorSnippets;
+    }
+
+    public boolean addConstructor(ConstructorSnippet constructorSnippet) {
+        return getConstructors().add(constructorSnippet);
+    }
+
+    public boolean removeConstructor(ConstructorSnippet constructorSnippet) {
+        return getConstructors().remove(constructorSnippet);
     }
     
     

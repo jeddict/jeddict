@@ -52,7 +52,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     private ClassMembers equalsMethod;
 
     @XmlElement(name = "con")
-    private List<ClassMembers> constructors;
+    private List<Constructor> constructors;
 
     @XmlAttribute(name = "abs")
     protected Boolean _abstract = false;
@@ -348,7 +348,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     /**
      * @return the constructors
      */
-    public List<ClassMembers> getConstructors() {
+    public List<Constructor> getConstructors() {
         if(constructors==null){
             constructors = new ArrayList<>();
         }
@@ -358,7 +358,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     /**
      * @param constructors the constructors to set
      */
-    public void setConstructors(List<ClassMembers> constructors) {
+    public void setConstructors(List<Constructor> constructors) {
         this.constructors = constructors;
     }
 

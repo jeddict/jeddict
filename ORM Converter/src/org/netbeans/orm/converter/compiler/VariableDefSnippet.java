@@ -190,16 +190,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     }
 
-//    public String getGetterName() {
-//        char ch = Character.toUpperCase(name.charAt(0));
-//
-//        String type = "get";
-//        if ("boolean".equals(this.getType())) {
-//            type = "is";
-//        }
-//
-//        return type + Character.toString(ch) + name.substring(1);
-//    }
     public RelationDefSnippet getRelationDef() {
         return relationDef;
     }

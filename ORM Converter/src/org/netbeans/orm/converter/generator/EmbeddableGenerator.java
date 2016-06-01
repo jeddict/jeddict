@@ -66,7 +66,6 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         if (StringUtils.isNotBlank(embeddable.getDescription())) {
             classDef.setDescription(embeddable.getDescription());
         }
-        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         classDef.setEmbeddable(true);
         return classDef;
     }

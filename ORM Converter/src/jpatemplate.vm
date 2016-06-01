@@ -183,10 +183,12 @@ $varDef.getAttributeOverrides().getSnippet()
     private $varDef.type $varDef.name;
 
 #end
-#####################Constructor #################################
-    public $classDef.getClassName()() {
 
-    }
+#####################Constructor #################################
+#foreach($constructor in $classDef.getConstructors())
+    $constructor.getSnippet()
+#end
+
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
 #set($method = $varDef.getMethodName())

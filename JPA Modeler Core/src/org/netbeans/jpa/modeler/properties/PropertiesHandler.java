@@ -70,6 +70,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -807,7 +808,7 @@ public class PropertiesHandler {
     public static PropertySupport getConstructorProperties(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("constructor", "Constructor", "Constructor");
         attributeEntity.setCountDisplay(new String[]{"No Constructors exist", "One Constructor exist", "Constructors exist"});
-        List<ClassMembers> classMembersListObj = persistenceClassWidget.getBaseElementSpec().getConstructors();
+        List<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Constructor List", false, String.class));
@@ -820,7 +821,7 @@ public class PropertiesHandler {
 
             @Override
             public void initCount() {
-                count = classMembersListObj.size();
+                count = constructors.size();
             }
 
             @Override
@@ -830,14 +831,13 @@ public class PropertiesHandler {
 
             @Override
             public void initData() {
-                List<ClassMembers> classMembersList = classMembersListObj;
                 List<Object[]> data_local = new LinkedList<>();
-                Iterator<ClassMembers> itr = classMembersList.iterator();
+                Iterator<Constructor> itr = constructors.iterator();
                 while (itr.hasNext()) {
-                    ClassMembers classMembers = itr.next();
+                    Constructor constructor = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = classMembers;
-                    row[1] = classMembers.toString();
+                    row[0] = constructor;
+                    row[1] = constructor.toString();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -850,9 +850,9 @@ public class PropertiesHandler {
 
             @Override
             public void setData(List<Object[]> data) {
-                classMembersListObj.clear();
+                constructors.clear();
                 data.stream().forEach((row) -> {
-                    classMembersListObj.add((ClassMembers) row[0]);
+                    constructors.add((Constructor) row[0]);
                 });
                 this.data = data;
             }

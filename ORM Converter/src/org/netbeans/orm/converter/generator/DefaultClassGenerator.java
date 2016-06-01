@@ -40,9 +40,7 @@ public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(defaultAttribute);
             variableDef.setType(defaultAttribute.getAttributeType());
         });
-        //Class decorations
         classDef = initClassDef(packageName,defaultClass);
-        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         classDef.setDefaultClass(true);
 
         return classDef;

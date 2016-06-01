@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import static java.util.stream.Collectors.toList;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Basic;
@@ -79,6 +79,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
+import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
@@ -104,6 +105,7 @@ import org.netbeans.orm.converter.compiler.ColumnResultSnippet;
 import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippet;
 import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippetFactory;
 import org.netbeans.orm.converter.compiler.ConstructorResultSnippet;
+import org.netbeans.orm.converter.compiler.ConstructorSnippet;
 import org.netbeans.orm.converter.compiler.ElementCollectionSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
@@ -158,19 +160,17 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
 
-    protected String packageName = null;
+    protected String packageName;
     protected T classDef;
-    protected Map<String, VariableDefSnippet> variables  = new LinkedHashMap<>();
-    
+    protected Map<String, VariableDefSnippet> variables = new LinkedHashMap<>();
 
     public ClassGenerator(T classDef) {
         this.classDef = classDef;
     }
 
-
     public abstract T getClassDef();
-    
-    protected T initClassDef(String packageName, JavaClass javaClass) { 
+
+    protected T initClassDef(String packageName, JavaClass javaClass) {
         ClassHelper classHelper = new ClassHelper(javaClass.getClazz());
         classHelper.setPackageName(packageName);
         classDef.setClassName(classHelper.getFQClassName());
@@ -178,6 +178,12 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setAbstractClass(javaClass.getAbstract());
         classDef.setInterfaces(javaClass.getInterfaces());
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
+        classDef.setVariableDefs(new ArrayList<>(variables.values()));
+
+        for (Constructor constructor : javaClass.getConstructors()) {
+            classDef.addConstructor(getConstructorSnippet(javaClass.getClazz(), constructor));
+        }
+
         classDef.setHashcodeMethod(getHashcodeMethodSnippet(javaClass.getClazz(), javaClass.getHashCodeMethod()));
         classDef.setEqualsMethod(getEqualsMethodSnippet(javaClass.getClazz(), javaClass.getEqualsMethod()));
         classDef.setToStringMethod(getToStringMethodSnippet(javaClass.getClazz(), javaClass.getToStringMethod()));
@@ -232,25 +238,31 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
         return snippets;
     }
-    
+
     protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
-        return new HashcodeMethodSnippet(className,classMembers);
+        return new HashcodeMethodSnippet(className, classMembers);
     }
-    
+
     protected EqualsMethodSnippet getEqualsMethodSnippet(String className, ClassMembers classMembers) {
-        return new EqualsMethodSnippet(className,classMembers);
+        return new EqualsMethodSnippet(className, classMembers);
     }
-    
+
     protected ToStringMethodSnippet getToStringMethodSnippet(String className, ClassMembers classMembers) {
         ToStringMethodSnippet snippet = new ToStringMethodSnippet(className);
         snippet.setAttributes(classMembers.getAttributeNames());
         return snippet;
     }
-    
+
+    protected ConstructorSnippet getConstructorSnippet(String className, Constructor constructor) {
+        List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream().map(attr -> variables.get(attr.getName())).collect(toList());
+        ConstructorSnippet snippet = new ConstructorSnippet(className, constructor.getAccessModifier(), variableSnippets);
+        return snippet;
+    }
+
     protected List<ConstraintSnippet> getConstraintSnippet(Set<Constraint> constraints) {
         List<ConstraintSnippet> snippets = new ArrayList<>();
         for (Constraint constraint : constraints) {
-            if(!constraint.getSelected()){
+            if (!constraint.getSelected()) {
                 continue;
             }
             ConstraintSnippet snippet = ConstraintSnippetFactory.getInstance(constraint);
@@ -268,8 +280,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setName(attr.getName());
             variableDef.setDescription(attr.getDescription());
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
-            if(attr instanceof BaseAttribute){
-                variableDef.setConstraints(getConstraintSnippet(((BaseAttribute)attr).getConstraints()));
+            if (attr instanceof BaseAttribute) {
+                variableDef.setConstraints(getConstraintSnippet(((BaseAttribute) attr).getConstraints()));
             }
 
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
@@ -562,7 +574,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             joinColumn.setReferencedColumnName(parsedJoinColumn.getReferencedColumnName());
             joinColumn.setTable(parsedJoinColumn.getTable());
             joinColumn.setForeignKey(getForeignKey(parsedJoinColumn.getForeignKey()));
-            
+
             joinColumns.add(joinColumn);
         });
 
@@ -590,7 +602,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         collectionTable.setSchema(parsedCollectionTable.getSchema());
         collectionTable.setJoinColumns(joinColumns);
         collectionTable.setUniqueConstraints(uniqueConstraints);
-        
+
         collectionTable.setForeignKey(getForeignKey(parsedCollectionTable.getForeignKey()));
 
         return collectionTable;
@@ -621,7 +633,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         joinTable.setJoinColumns(joinColumns);
         joinTable.setInverseJoinColumns(inverseJoinColumns);
         joinTable.setUniqueConstraints(uniqueConstraints);
-        
+
         joinTable.setForeignKey(getForeignKey(parsedJoinTable.getForeignKey()));
         joinTable.setInverseForeignKey(getForeignKey(parsedJoinTable.getInverseForeignKey()));
 
@@ -769,8 +781,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected void processAssociationOverrides(
             Set<AssociationOverride> parsedAssociationOverrides) {
 
-        if (parsedAssociationOverrides == null ||
-                 parsedAssociationOverrides.isEmpty()) {
+        if (parsedAssociationOverrides == null
+                || parsedAssociationOverrides.isEmpty()) {
             return;
         }
 
@@ -880,8 +892,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected void processNamedEntityGraphs(List<NamedEntityGraph> parsedNamedEntityGraphs) {
 
-        if (parsedNamedEntityGraphs == null ||
-                 parsedNamedEntityGraphs.isEmpty()) {
+        if (parsedNamedEntityGraphs == null
+                || parsedNamedEntityGraphs.isEmpty()) {
             return;
         }
 
@@ -967,8 +979,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected void processNamedNativeQueries(
             List<NamedNativeQuery> parsedNamedNativeQueries) {
 
-        if (parsedNamedNativeQueries == null ||
-                 parsedNamedNativeQueries.isEmpty()) {
+        if (parsedNamedNativeQueries == null
+                || parsedNamedNativeQueries.isEmpty()) {
             return;
         }
 
@@ -1042,8 +1054,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     private void processInternalAttributeOverride(AttributeOverridesHandler attrHandler, Set<AttributeOverride> attributeOverrrides) {
-        if (attributeOverrrides != null && !attributeOverrrides.isEmpty() &&
-                 attrHandler.getAttributeOverrides() == null) {
+        if (attributeOverrrides != null && !attributeOverrrides.isEmpty()
+                && attrHandler.getAttributeOverrides() == null) {
             attrHandler.setAttributeOverrides(new AttributeOverridesSnippet());
         }
         for (AttributeOverride parsedAttributeOverride : attributeOverrrides) {
@@ -1063,8 +1075,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private void processInternalAssociationOverride(AssociationOverridesHandler assoHandler, Set<AssociationOverride> associationOverrrides) {
 
-        if (associationOverrrides != null && !associationOverrrides.isEmpty() &&
-                 assoHandler.getAssociationOverrides() == null) {
+        if (associationOverrrides != null && !associationOverrrides.isEmpty()
+                && assoHandler.getAssociationOverrides() == null) {
             assoHandler.setAssociationOverrides(new AssociationOverridesSnippet());
         }
 
@@ -1080,7 +1092,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             associationOverride.setName(parsedAssociationOverride.getName());
             associationOverride.setJoinColumns(joinColumnsList);
             associationOverride.setJoinTable(joinTable);
-            
+
             associationOverride.setForeignKey(getForeignKey(parsedAssociationOverride.getForeignKey()));
 
             assoHandler.getAssociationOverrides().addAssociationOverride(
@@ -1092,8 +1104,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
-        if (parsedEmbeddedId == null || 
-                identifiableClass.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
+        if (parsedEmbeddedId == null
+                || identifiableClass.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
             return;
         }
 
@@ -1245,7 +1257,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedManyToOne.getFetch() != null) {
                 manyToOne.setFetchType(parsedManyToOne.getFetch().value());
-            }            
+            }
             manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
             manyToOne.setMapsId(parsedManyToOne.getMapsId());
 
@@ -1292,7 +1304,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }
-            
+
             VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
 
             variableDef.setRelationDef(oneToMany);
@@ -1345,7 +1357,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());
-            }            
+            }
             oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
             oneToOne.setMapsId(parsedOneToOne.getMapsId());
 
@@ -1373,8 +1385,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedVersion.getTemporal() != null) {
                 variableDef.setTemporal(true);
-                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX +
-                         parsedVersion.getTemporal().value());
+                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX
+                        + parsedVersion.getTemporal().value());
             }
         }
     }
@@ -1382,8 +1394,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected void processPrimaryKeyJoinColumns(
             List<PrimaryKeyJoinColumn> parsedPrimaryKeyJoinColumns) {
 
-        if (parsedPrimaryKeyJoinColumns == null ||
-                 parsedPrimaryKeyJoinColumns.isEmpty()) {
+        if (parsedPrimaryKeyJoinColumns == null
+                || parsedPrimaryKeyJoinColumns.isEmpty()) {
             return;
         }
 
@@ -1426,7 +1438,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             secondaryTable.setSchema(parsedSecondaryTable.getSchema());
             secondaryTable.setUniqueConstraints(uniqueConstraints);
             secondaryTable.setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
-            
+
             secondaryTable.setForeignKey(getForeignKey(parsedSecondaryTable.getForeignKey()));
 
             classDef.getSecondaryTables().addSecondaryTable(secondaryTable);
@@ -1474,8 +1486,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Map.Entry<String, VariableDefSnippet> entry : variables.entrySet()) {
             variableDef = entry.getValue();
 
-            if (variableDef.getGeneratedValue() != null &&
-                     variableDef.getGeneratedValue().getGenerator().equals(
+            if (variableDef.getGeneratedValue() != null
+                    && variableDef.getGeneratedValue().getGenerator().equals(
                             sequenceGenerator.getName())) {
 
                 found = true;
@@ -1485,16 +1497,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (found) {
             variableDef.setSequenceGenerator(sequenceGenerator);
         } else {
-            logger.log(Level.WARNING, "Ignoring : Cannot find variable for " +
-                     "Sequence generator :" + sequenceGenerator.getName());
+            logger.log(Level.WARNING, "Ignoring : Cannot find variable for "
+                    + "Sequence generator :" + sequenceGenerator.getName());
         }
     }
 
     protected void processSqlResultSetMapping(
             Set<SqlResultSetMapping> parsedSqlResultSetMappings) {
 
-        if (parsedSqlResultSetMappings == null ||
-                 parsedSqlResultSetMappings.isEmpty()) {
+        if (parsedSqlResultSetMappings == null
+                || parsedSqlResultSetMappings.isEmpty()) {
             return;
         }
 
@@ -1539,12 +1551,12 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setTableDef(table);
     }
 
-     protected void processCacheable(Boolean cacheable) {
+    protected void processCacheable(Boolean cacheable) {
 
         if (cacheable == null || Objects.equals(cacheable, Boolean.FALSE)) {
             return;
         }
-         CacheableDefSnippet snippet = new CacheableDefSnippet();
+        CacheableDefSnippet snippet = new CacheableDefSnippet();
         classDef.setCacheableDef(snippet);
     }
 
@@ -1597,8 +1609,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Map.Entry<String, VariableDefSnippet> entry : variables.entrySet()) {
             variableDef = entry.getValue();
 
-            if (variableDef.getGeneratedValue() != null &&
-                     variableDef.getGeneratedValue().getGenerator().equals(
+            if (variableDef.getGeneratedValue() != null
+                    && variableDef.getGeneratedValue().getGenerator().equals(
                             parsedTableGenerator.getName())) {
                 found = true;
                 break;
@@ -1608,8 +1620,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (found) {
             variableDef.setTableGenerator(tableGenerator);
         } else {
-            logger.log(Level.WARNING, "Ignoring : Cannot find variable for " +
-                     "Table generator :" + tableGenerator.getName());
+            logger.log(Level.WARNING, "Ignoring : Cannot find variable for "
+                    + "Table generator :" + tableGenerator.getName());
         }
     }
 }

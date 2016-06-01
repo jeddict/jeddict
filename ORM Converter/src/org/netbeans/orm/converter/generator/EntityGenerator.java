@@ -114,7 +114,6 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
         //Class decorations
         classDef = initClassDef(packageName,entity);
-        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         if (StringUtils.isNotBlank(entity.getDescription())) {
             classDef.setDescription(entity.getDescription());
         }

@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -37,9 +36,6 @@ import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
-import org.netbeans.api.java.source.CompilationController;
-import org.netbeans.api.java.source.JavaSource;
-import org.netbeans.api.java.source.JavaSource.Phase;
 import org.netbeans.editor.GuardedDocument;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.lib.editor.util.swing.PositionRegion;
@@ -52,8 +48,6 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.text.NbDocument;
 import org.openide.util.UserQuestionException;
-import org.netbeans.api.java.source.Task;
-import org.openide.util.Exceptions;
 
 public class ORMConverterUtil {
 

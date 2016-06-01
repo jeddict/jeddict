@@ -17,12 +17,10 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.SINGLE_QUOTE;
 
 public class EqualsMethodSnippet implements Snippet {
 
@@ -36,13 +34,9 @@ public class EqualsMethodSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        String init = "        if (obj == null) {\n"
-                + "            return false;\n"
-                + "        }\n"
-                + "        if (getClass() != obj.getClass()) {\n"
-                + "            return false;\n"
-                + "        }";
-        StringBuilder builder = new StringBuilder(init);
+        StringBuilder builder = new StringBuilder();
+        builder.append("if (obj == null) {return false;}");
+        builder.append("if (getClass() != obj.getClass()) {return false;}");
         builder.append(String.format("final %s other = (%s) obj;", className, className));
 
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
@@ -65,53 +59,5 @@ public class EqualsMethodSnippet implements Snippet {
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         return Collections.EMPTY_LIST;
-    }
-
-    /**
-     * @return the className
-     */
-    public String getClassName() {
-        return className;
-    }
-
-    private static boolean isPrimeNumber(int n) {
-        int squareRoot = (int) Math.sqrt(n) + 1;
-        if (n % 2 == 0) {
-            return false;
-        }
-        for (int cntr = 3; cntr < squareRoot; cntr++) {
-            if (n % cntr == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static int randomNumber = -1;
-
-    private static int generatePrimeNumber(int lowerLimit, int higherLimit) {
-        if (randomNumber > 0) {
-            return randomNumber;
-        }
-
-        Random r = new Random(System.currentTimeMillis());
-        int proposed = r.nextInt(higherLimit - lowerLimit) + lowerLimit;
-        while (!isPrimeNumber(proposed)) {
-            proposed++;
-        }
-        if (proposed > higherLimit) {
-            proposed--;
-            while (!isPrimeNumber(proposed)) {
-                proposed--;
-            }
-        }
-        return proposed;
-    }
-
-    /**
-     * @return the classMembers
-     */
-    public ClassMembers getClassMembers() {
-        return classMembers;
     }
 }
