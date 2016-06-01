@@ -113,29 +113,15 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         processSequenceGeneratorEntity(entity.getSequenceGenerator());
 
         //Class decorations
-        ClassHelper classHelper = new ClassHelper(entity.getClazz());
-        classHelper.setPackageName(packageName);
-        classDef.setAbstractClass(entity.getAbstract());
-        classDef.setInterfaces(entity.getInterfaces());
-        if (entity.getSuperclass() != null) {
-            ClassHelper superClassHelper = new ClassHelper(entity.getSuperclass().getClazz());
-            superClassHelper.setPackageName(packageName);
-            classDef.setSuperClassName(superClassHelper.getFQClassName());
-        }
-
-        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
-        classDef.setClassName(classHelper.getFQClassName());
-        classDef.setPackageName(classHelper.getPackageName());
+        classDef = initClassDef(packageName,entity);
+        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         if (StringUtils.isNotBlank(entity.getDescription())) {
             classDef.setDescription(entity.getDescription());
         }
-
         if (entity.getTable() != null) {
             classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()
         }
         classDef.setEntity(true);
-        classDef.setAnnotation(getAnnotationSnippet(entity.getAnnotation()));
-
         classDef.setXmlRootElement(entity.getXmlRootElement());
 
         return classDef;

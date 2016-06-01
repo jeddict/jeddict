@@ -37,6 +37,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
     private static final VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
+    private HashcodeMethodSnippet hashcodeMethodSnippet;
+    private EqualsMethodSnippet equalsMethodSnippet;
+    private ToStringMethodSnippet toStringMethodSnippet;
 
     private List<AnnotationSnippet> annotation = new ArrayList<>();
 
@@ -328,21 +331,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
             ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
 
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(generatedClass));
-
-            if (template != null) {
-                template.merge(velocityContext, writer);
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass))) {
+                if (template != null) {
+                    template.merge(velocityContext, writer);
+                }
+                
+                writer.flush();
             }
-
-            writer.flush();
-            writer.close();
 
             return generatedClass.toString();
 
         } catch (Exception e) {
-            throw new InvalidDataException(
-                    "Class name : " + classHelper.getFQClassName(), e);
+            throw new InvalidDataException("Class name : " + classHelper.getFQClassName(), e);
         }
     }
 
@@ -350,7 +350,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         //Sort and eliminate duplicates
-        Collection<String> importSnippets = new TreeSet<String>();
+        Collection<String> importSnippets = new TreeSet<>();
 
         if (mappedSuperClass) {
             importSnippets.add("javax.persistence.MappedSuperclass");
@@ -603,5 +603,72 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public boolean isJavaDocExist(){
         return StringUtils.isNotBlank(description) || StringUtils.isNotBlank(JavaSourceHelper.getAuthor()) ;
     }
+    
+    
+    /**
+     * @return the toStringMethodSnippet
+     */
+    public ToStringMethodSnippet getToStringMethod() {
+        return toStringMethodSnippet;
+    }
+
+    /**
+     * @param toStringMethodSnippet the toStringMethodSnippet to set
+     */
+    public void setToStringMethod(ToStringMethodSnippet toStringMethodSnippet) {
+        this.toStringMethodSnippet = toStringMethodSnippet;
+    }
+
+    /**
+     * @return the hashcodeMethodSnippet
+     */
+    public HashcodeMethodSnippet getHashcodeMethod() {
+        return hashcodeMethodSnippet;
+    }
+
+    /**
+     * @param hashcodeMethodSnippet the hashcodeMethodSnippet to set
+     */
+    public void setHashcodeMethod(HashcodeMethodSnippet hashcodeMethodSnippet) {
+        this.hashcodeMethodSnippet = hashcodeMethodSnippet;
+    }
+
+    /**
+     * @return the equalsMethodSnippet
+     */
+    public EqualsMethodSnippet getEqualsMethod() {
+        return equalsMethodSnippet;
+    }
+
+    /**
+     * @param equalsMethodSnippet the equalsMethodSnippet to set
+     */
+    public void setEqualsMethod(EqualsMethodSnippet equalsMethodSnippet) {
+        this.equalsMethodSnippet = equalsMethodSnippet;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + (this.excludeSuperClassListener ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClassDefSnippet other = (ClassDefSnippet) obj;
+        if (this.generateId != other.generateId) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 
 }

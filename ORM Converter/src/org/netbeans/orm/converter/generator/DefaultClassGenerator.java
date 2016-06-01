@@ -17,11 +17,9 @@ package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
-import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
@@ -38,17 +36,13 @@ public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
 
     @Override
     public ClassDefSnippet getClassDef() {
-        for (DefaultAttribute defaultAttribute : defaultClass.getAttributes()) {
+        defaultClass.getAttributes().stream().forEach((defaultAttribute) -> {
             VariableDefSnippet variableDef = getVariableDef(defaultAttribute);
             variableDef.setType(defaultAttribute.getAttributeType());
-        }
+        });
         //Class decorations
-        ClassHelper classHelper = new ClassHelper(defaultClass.getClazz());
-        classHelper.setPackageName(packageName);
-
-        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
-        classDef.setClassName(classHelper.getFQClassName());
-        classDef.setPackageName(classHelper.getPackageName());
+        classDef = initClassDef(packageName,defaultClass);
+        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         classDef.setDefaultClass(true);
 
         return classDef;

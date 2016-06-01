@@ -797,7 +797,7 @@ public class PropertiesHandler {
 
             @Override
             public String getDisplay() {
-                return classMembers.getAttributes().size() + " Attr";
+                return String.format("toString{%s}", classMembers.getAttributes().size());
             }
 
         });

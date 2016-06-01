@@ -62,19 +62,12 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         }
 
         //Class decorations
-        ClassHelper classHelper = new ClassHelper(embeddable.getClazz());
-        classHelper.setPackageName(packageName);
+        classDef = initClassDef(packageName,embeddable);
         if (StringUtils.isNotBlank(embeddable.getDescription())) {
             classDef.setDescription(embeddable.getDescription());
         }
-        classDef.setAbstractClass(embeddable.getAbstract());
-        classDef.setInterfaces(embeddable.getInterfaces());
-
-        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
-        classDef.setClassName(classHelper.getFQClassName());
-        classDef.setPackageName(classHelper.getPackageName());
+        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         classDef.setEmbeddable(true);
-        classDef.setAnnotation(getAnnotationSnippet(embeddable.getAnnotation()));
         return classDef;
     }
 }

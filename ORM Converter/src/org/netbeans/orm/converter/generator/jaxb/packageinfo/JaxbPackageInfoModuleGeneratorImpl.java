@@ -44,7 +44,7 @@ public class JaxbPackageInfoModuleGeneratorImpl implements ModuleGenerator {
 
     @Override
     public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
-        this.staticMetamodelClass = new HashSet<StaticMetamodelGenerator>();
+        this.staticMetamodelClass = new HashSet<>();
         this.task = task;
         destDir = FileUtil.toFile(sourceGroup.getRootFolder());
         this.packageName = parsedEntityMappings.getPackage();
@@ -57,9 +57,7 @@ public class JaxbPackageInfoModuleGeneratorImpl implements ModuleGenerator {
             classesRepository.addWritableSnippet(ClassType.JAXB_PACKAGE_INFO, packageInfoDef);
             task.log("Generating JAXB package-info.java", true);
             ORMConverterUtil.writeSnippet(packageInfoDef, destDir);
-        } catch (InvalidDataException ex) {
-            ExceptionUtils.printStackTrace(ex);
-        } catch (IOException ex) {
+        } catch (InvalidDataException | IOException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
     }

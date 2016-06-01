@@ -206,4 +206,27 @@ $varDef.getAttributeOverrides().getSnippet()
         this.$varDef.name = $varDef.name;
     }
 #end
+
+##################### hashcode, equals and toString method #################################
+#if ($classDef.getEqualsMethod())
+    @Override
+    public boolean equals(Object obj) {
+        $classDef.getEqualsMethod().getSnippet()
+    }
+#end
+
+#if ($classDef.getHashcodeMethod())
+    @Override
+    public int hashCode() {
+        $classDef.getHashcodeMethod().getSnippet()
+    }
+#end
+
+#if ($classDef.getToStringMethod())
+    @Override
+    public String toString() {
+        return $classDef.getToStringMethod().getSnippet();
+    }
+#end
+
 }

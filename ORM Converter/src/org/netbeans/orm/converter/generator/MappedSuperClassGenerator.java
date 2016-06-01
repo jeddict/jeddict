@@ -80,26 +80,12 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         }
 
         //Class decorations
-        ClassHelper classHelper = new ClassHelper(mappedSuperclass.getClazz());
-        classHelper.setPackageName(packageName);
+        classDef = initClassDef(packageName,mappedSuperclass);
         if (StringUtils.isNotBlank(mappedSuperclass.getDescription())) {
             classDef.setDescription(mappedSuperclass.getDescription());
         }
-        classDef.setAbstractClass(mappedSuperclass.getAbstract());
-        classDef.setInterfaces(mappedSuperclass.getInterfaces());
-        if (mappedSuperclass.getSuperclass() != null) {
-            ClassHelper superClassHelper = new ClassHelper(mappedSuperclass.getSuperclass().getClazz());
-            classDef.setSuperClassName(superClassHelper.getFQClassName());
-        }
-
-        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
-        classDef.setClassName(classHelper.getFQClassName());
-
-        classDef.setPackageName(classHelper.getPackageName());
-
+        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         classDef.setMappedSuperClass(true);
-        classDef.setAnnotation(getAnnotationSnippet(mappedSuperclass.getAnnotation()));
-
         classDef.setXmlRootElement(mappedSuperclass.getXmlRootElement());
         return classDef;
     }

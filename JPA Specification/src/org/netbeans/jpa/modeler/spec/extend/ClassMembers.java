@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -55,7 +56,10 @@ public class ClassMembers {
         }
         return attributes;
     }
-
+    public List<String> getAttributeNames() {
+        return getAttributes().stream().map((Attribute a) -> a.getName()).collect(toList());
+    }
+    
     /**
      * @param attributes the attributes to set
      */

@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Basic;
@@ -76,7 +77,9 @@ import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
@@ -106,9 +109,11 @@ import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
 import org.netbeans.orm.converter.compiler.EntityResultSnippet;
 import org.netbeans.orm.converter.compiler.EnumeratedSnippet;
+import org.netbeans.orm.converter.compiler.EqualsMethodSnippet;
 import org.netbeans.orm.converter.compiler.FieldResultSnippet;
 import org.netbeans.orm.converter.compiler.ForeignKeySnippet;
 import org.netbeans.orm.converter.compiler.GeneratedValueSnippet;
+import org.netbeans.orm.converter.compiler.HashcodeMethodSnippet;
 import org.netbeans.orm.converter.compiler.IdClassSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnsSnippet;
@@ -139,29 +144,50 @@ import org.netbeans.orm.converter.compiler.SequenceGeneratorSnippet;
 import org.netbeans.orm.converter.compiler.StoredProcedureParameterSnippet;
 import org.netbeans.orm.converter.compiler.TableDefSnippet;
 import org.netbeans.orm.converter.compiler.TableGeneratorSnippet;
+import org.netbeans.orm.converter.compiler.ToStringMethodSnippet;
 import org.netbeans.orm.converter.compiler.UniqueConstraintSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
+import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private static final String TEMPORAL_TYPE_PREFIX = "TemporalType.";
 
-    private static Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
+    private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
 
     protected String packageName = null;
-
     protected T classDef;
+    protected Map<String, VariableDefSnippet> variables  = new LinkedHashMap<>();
+    
 
     public ClassGenerator(T classDef) {
         this.classDef = classDef;
     }
 
-    protected Map<String, VariableDefSnippet> variables  = new LinkedHashMap<>();
 
     public abstract T getClassDef();
+    
+    protected T initClassDef(String packageName, JavaClass javaClass) { 
+        ClassHelper classHelper = new ClassHelper(javaClass.getClazz());
+        classHelper.setPackageName(packageName);
+        classDef.setClassName(classHelper.getFQClassName());
+        classDef.setPackageName(classHelper.getPackageName());
+        classDef.setAbstractClass(javaClass.getAbstract());
+        classDef.setInterfaces(javaClass.getInterfaces());
+        classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
+        classDef.setHashcodeMethod(getHashcodeMethodSnippet(javaClass.getClazz(), javaClass.getHashCodeMethod()));
+        classDef.setEqualsMethod(getEqualsMethodSnippet(javaClass.getClazz(), javaClass.getEqualsMethod()));
+        classDef.setToStringMethod(getToStringMethodSnippet(javaClass.getClazz(), javaClass.getToStringMethod()));
+        if (javaClass.getSuperclass() != null) {
+            ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
+            superClassHelper.setPackageName(packageName);
+            classDef.setSuperClassName(superClassHelper.getFQClassName());
+        }
+        return classDef;
+    }
 
     protected ColumnDefSnippet getColumnDef(Column column) {
 
@@ -205,6 +231,20 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             snippets.add(snippet);
         }
         return snippets;
+    }
+    
+    protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
+        return new HashcodeMethodSnippet(className,classMembers);
+    }
+    
+    protected EqualsMethodSnippet getEqualsMethodSnippet(String className, ClassMembers classMembers) {
+        return new EqualsMethodSnippet(className,classMembers);
+    }
+    
+    protected ToStringMethodSnippet getToStringMethodSnippet(String className, ClassMembers classMembers) {
+        ToStringMethodSnippet snippet = new ToStringMethodSnippet(className);
+        snippet.setAttributes(classMembers.getAttributeNames());
+        return snippet;
     }
     
     protected List<ConstraintSnippet> getConstraintSnippet(Set<Constraint> constraints) {

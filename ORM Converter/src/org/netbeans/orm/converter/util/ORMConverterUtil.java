@@ -69,13 +69,16 @@ public class ORMConverterUtil {
     public static final String LESS_THAN = "<";
     public static final String NEW_LINE = "\n";
     public static final String TAB = "    ";
+    public static final String OPEN_BRACES = "{";
     public static final String OPEN_PARANTHESES = "(";
     public static final String QUESTION = "?";
+    public static final String SINGLE_QUOTE = "'";
     public static final String QUOTE = "\"";
     public static final String SEMICOLON = ";";
     public static final String SOURCE_SUFFIX = ".java";
     public static final String SPACE = " ";
     public static final String UNDERSCORE = "_";
+    public static final String EQUAL = "=";
 
     public static File createFile(String parentDir, String childDir,
             String fileName) throws IOException {
