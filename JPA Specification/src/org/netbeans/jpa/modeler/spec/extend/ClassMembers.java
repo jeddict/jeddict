@@ -32,13 +32,13 @@ import javax.xml.bind.annotation.XmlIDREF;
 public class ClassMembers {
 
     @XmlIDREF
-    @XmlElement(name="a")
-   private List<Attribute> attributes;
+    @XmlElement(name = "a")
+    protected List<Attribute> attributes;
 
     public boolean addAttribute(Attribute attribute) {
         return getAttributes().add(attribute);
     }
-    
+
     public boolean isExist(Attribute attribute) {
         return getAttributes().stream().filter(a -> a == attribute).findAny().isPresent();
     }
@@ -51,15 +51,16 @@ public class ClassMembers {
      * @return the attributes
      */
     public List<Attribute> getAttributes() {
-        if(attributes == null){
+        if (attributes == null) {
             attributes = new ArrayList<>();
         }
         return attributes;
     }
+
     public List<String> getAttributeNames() {
         return getAttributes().stream().map((Attribute a) -> a.getName()).collect(toList());
     }
-    
+
     /**
      * @param attributes the attributes to set
      */
@@ -69,9 +70,7 @@ public class ClassMembers {
 
     @Override
     public String toString() {
-        return getAttributes().stream().map((Attribute a) -> a.getName()).collect(Collectors.joining(", "));
+        return getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel() + " " + a.getName()).collect(Collectors.joining(", "));
     }
-    
-    
 
 }

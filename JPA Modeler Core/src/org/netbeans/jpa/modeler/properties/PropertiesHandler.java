@@ -808,7 +808,7 @@ public class PropertiesHandler {
     public static PropertySupport getConstructorProperties(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("constructor", "Constructor", "Constructor");
         attributeEntity.setCountDisplay(new String[]{"No Constructors exist", "One Constructor exist", "Constructors exist"});
-        List<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
+        Set<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Constructor List", false, String.class));

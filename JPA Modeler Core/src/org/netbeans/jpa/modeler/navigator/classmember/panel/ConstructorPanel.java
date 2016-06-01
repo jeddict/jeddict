@@ -15,6 +15,8 @@
  */
 package org.netbeans.jpa.modeler.navigator.classmember.panel;
 
+import java.util.Set;
+import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
@@ -27,10 +29,12 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 public class ConstructorPanel extends EntityComponent<Constructor> {
 
     private Constructor constructor;
+    private Set<Constructor> constructors;
     private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
 
     public ConstructorPanel(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         this.persistenceClassWidget = persistenceClassWidget;
+        constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
     }
 
     @Override
@@ -201,8 +205,19 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+      private boolean validateField() {
+        if (constructors.contains(constructor)){
+            JOptionPane.showMessageDialog(this, "Constructor with same signature already exist : " + constructor.getSignature(), "Duplicate Constructor", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+      
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
         constructor = (Constructor) ((ClassMemberPanel) classMemberPanel).getValue();
+        if (!validateField()) {
+            return;
+        }
         constructor.setAccessModifier(((ComboBoxValue<AccessModifierType>) accessModifierComboBox.getSelectedItem()).getValue());
 
         if (this.getEntity().getClass() == RowValue.class) {

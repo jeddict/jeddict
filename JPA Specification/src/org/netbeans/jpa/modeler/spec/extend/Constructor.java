@@ -15,6 +15,8 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -42,6 +44,35 @@ public class Constructor extends ClassMembers {
      */
     public void setAccessModifier(AccessModifierType accessModifier) {
         this.accessModifier = accessModifier;
+    }
+
+    @Override
+    public int hashCode() {
+        return getAttributes().size();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Constructor other = (Constructor) obj;
+        if (this.getAttributes().size() != other.getAttributes().size()) {
+            return false;
+        }
+        for(int i=0; i< this.getAttributes().size();i++){
+            if(!Objects.equals(this.getAttributes().get(i).getDataTypeLabel(), other.getAttributes().get(i).getDataTypeLabel())){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public String getSignature() {
+        return getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel()).collect(Collectors.joining(", "));
     }
 
 }

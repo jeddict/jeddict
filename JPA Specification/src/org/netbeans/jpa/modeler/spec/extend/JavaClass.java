@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
@@ -52,7 +53,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     private ClassMembers equalsMethod;
 
     @XmlElement(name = "con")
-    private List<Constructor> constructors;
+    private Set<Constructor> constructors;
 
     @XmlAttribute(name = "abs")
     protected Boolean _abstract = false;
@@ -348,9 +349,9 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     /**
      * @return the constructors
      */
-    public List<Constructor> getConstructors() {
+    public Set<Constructor> getConstructors() {
         if(constructors==null){
-            constructors = new ArrayList<>();
+            constructors = new LinkedHashSet<>();
         }
         return constructors;
     }
@@ -358,7 +359,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     /**
      * @param constructors the constructors to set
      */
-    public void setConstructors(List<Constructor> constructors) {
+    public void setConstructors(Set<Constructor> constructors) {
         this.constructors = constructors;
     }
 
