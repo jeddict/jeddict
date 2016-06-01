@@ -17,14 +17,25 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 public enum AccessModifierType {
 
-    PUBLIC("public"), PROTECTED("protected"), PRIVATE("private"), DEFAULT("");
+    PUBLIC("public"), PROTECTED("protected"), PRIVATE("private"), DEFAULT("", "default-package");
     
     private final String value;
+    private final String title;
 
+    private AccessModifierType(String value, String title) {
+        this.value = value;
+        this.title = title;
+    }  
+    
     private AccessModifierType(String value) {
         this.value = value;
+        this.title = value;
     }
 
+    public String getTitle() {
+        return title;
+    }
+    
     public String getValue() {
         return value;
     }
