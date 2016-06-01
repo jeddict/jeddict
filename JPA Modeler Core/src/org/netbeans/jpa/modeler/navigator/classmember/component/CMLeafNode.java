@@ -48,7 +48,6 @@ public class CMLeafNode extends PropertyNode implements TreeChildNode<ClassMembe
         this.setIconBaseWithExtension(leafAttributeWidget.getIconPath());
 
         Attribute attribute = (Attribute) leafAttributeWidget.getBaseElementSpec();
-        this.setDisplayName(attribute.getName());
         if(attribute instanceof BaseAttribute){
         this.setShortDescription(attribute.getName() + " <" + ((BaseAttribute)attribute).getAttributeType() + ">");
         } else {
@@ -57,26 +56,24 @@ public class CMLeafNode extends PropertyNode implements TreeChildNode<ClassMembe
 
     }
 
+    private String htmlDisplayName;
     @Override
     public String getHtmlDisplayName() {
-        Attribute attribute = (Attribute) leafAttributeWidget.getBaseElementSpec();
-        String htmlDisplayName = attribute.getName(); //NOI18N
-        if (checkableNode != null && !checkableNode.isSelected()) {
-            htmlDisplayName = String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
-        } else {
-            htmlDisplayName = String.format("<font color=\"#0000E6\">%s</font>", htmlDisplayName); //NOI18N
+        if (htmlDisplayName == null) {
+            Attribute attribute = (Attribute) leafAttributeWidget.getBaseElementSpec();
+            htmlDisplayName = attribute.getName() + " : " + attribute.getDataTypeLabel();
+            htmlDisplayName = htmlDisplayName.replace("<", "&lt;").replace(">", "&gt;");
         }
-        return htmlDisplayName;
+        System.out.println("htmlDisplayName : " + htmlDisplayName);
+        if (checkableNode != null && !checkableNode.isSelected()) {
+            return String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
+        } else {
+            return String.format("<font color=\"#0000E6\">%s</font>", htmlDisplayName); //NOI18N
+        }
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-//        if (entityWidget.getBaseElementSpec() instanceof AttributeOverrideHandler) {
-//            Attribute attributeSpec = (Attribute) leafAttributeWidget.getBaseElementSpec();
-//            AttributeOverrideHandler attributeOverrideHandler = (AttributeOverrideHandler) entityWidget.getBaseElementSpec();
-//            AttributeOverride attributeOverride = attributeOverrideHandler.getAttributeOverride(attributeSpec.getName());
-//            set.createPropertySet(leafAttributeWidget, attributeOverride.getColumn(), leafAttributeWidget.getPropertyChangeListeners(), leafAttributeWidget.getPropertyVisibilityHandlers());
-//        }
     }
 
     /**

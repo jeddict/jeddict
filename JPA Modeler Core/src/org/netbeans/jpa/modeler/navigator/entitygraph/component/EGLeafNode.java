@@ -72,7 +72,7 @@ public class EGLeafNode extends PropertyNode implements TreeChildNode<NamedEntit
     @Override
     public String getHtmlDisplayName() {
         Attribute attribute = (Attribute) leafAttributeWidget.getBaseElementSpec();
-        String htmlDisplayName = attribute.getName(); //NOI18N
+        String htmlDisplayName = attribute.getName() + " : " + attribute.getDataTypeLabel();
         if (checkableNode != null && !checkableNode.isSelected()) {
             htmlDisplayName = String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
         } else {

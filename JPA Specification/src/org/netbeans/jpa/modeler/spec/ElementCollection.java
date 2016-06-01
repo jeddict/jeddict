@@ -865,5 +865,10 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             return getDefaultColumnName();
         }
     }
+    
+    @Override
+    public String getDataTypeLabel() {
+        return String.format("%s<%s>", getCollectionType(), getAttributeType());
+    }
 
 }

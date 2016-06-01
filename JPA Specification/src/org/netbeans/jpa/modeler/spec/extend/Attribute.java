@@ -238,5 +238,9 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     }
 
 
-
+    /**
+     * Used to get data type title to display in ui component e.g Set<String>, Integer, List<Entity> etc.
+     * 
+     */
+    public abstract String getDataTypeLabel();
 }

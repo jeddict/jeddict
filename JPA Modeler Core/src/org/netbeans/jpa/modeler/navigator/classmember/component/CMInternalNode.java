@@ -70,23 +70,26 @@ public class CMInternalNode extends AbstractNode implements TreeParentNode<Class
 
     private void init() {
         setIconBaseWithExtension(parentAttributeWidget.getIconPath());
-        
         Attribute attribute = (Attribute) parentAttributeWidget.getBaseElementSpec();
         ManagedClass managedClass = (ManagedClass) parentWidget.getBaseElementSpec();
-        this.setDisplayName(attribute.getName());
         this.setShortDescription(attribute.getName() + " <" + managedClass.getName() + ">");
     }
 
+    
+    private String htmlDisplayName;
     @Override
     public String getHtmlDisplayName() {
-        Attribute attribute = (Attribute) parentAttributeWidget.getBaseElementSpec();
-        String htmlDisplayName = attribute.getName(); //NOI18N
-        if (checkableNode != null && !checkableNode.isSelected()) {
-            htmlDisplayName = String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
-        } else {
-            htmlDisplayName = String.format("<font color=\"#0000E6\">%s</font>", htmlDisplayName); //NOI18N
+        if (htmlDisplayName == null) {
+            Attribute attribute = (Attribute) parentAttributeWidget.getBaseElementSpec();
+            htmlDisplayName = attribute.getName() + " : " + attribute.getDataTypeLabel();
+            htmlDisplayName = htmlDisplayName.replace("<", "&lt;").replace(">", "&gt;");
         }
-        return htmlDisplayName;
+        System.out.println("htmlDisplayName : " + htmlDisplayName);
+        if (checkableNode != null && !checkableNode.isSelected()) {
+            return String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
+        } else {
+            return String.format("<font color=\"#0000E6\">%s</font>", htmlDisplayName); //NOI18N
+        }
     }
 
     public PersistenceClassWidget getParentWidget() {

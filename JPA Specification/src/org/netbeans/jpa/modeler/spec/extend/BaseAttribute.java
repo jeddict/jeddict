@@ -200,5 +200,10 @@ public abstract class BaseAttribute extends Attribute {
     public boolean remove(Constraint constraints) {
         return getConstraints().remove(constraints);
     }
+    
+    @Override
+    public String getDataTypeLabel() {
+        return getAttributeType();
+    }
 
 }

@@ -358,7 +358,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
             if (mappedBy != null) {
                 return mappedBy;
             }
-            if(getConnectedAttribute()==null){
+            if (getConnectedAttribute() == null) {
                 return null;
             }
             return getConnectedAttribute().getName();
@@ -375,7 +375,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      */
     public void setMappedBy(String value) {
         this.mappedBy = value;
-        this.owner =  StringUtils.isBlank(mappedBy);
+        this.owner = StringUtils.isBlank(mappedBy);
     }
 
     /**
@@ -419,9 +419,14 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      */
     public void setOwner(boolean owner) {
         this.owner = owner;
-        if(owner){
+        if (owner) {
             mappedBy = null;
-        } 
-        
+        }
+
+    }
+
+    @Override
+    public String getDataTypeLabel() {
+        return String.format("%s<%s>", getCollectionType(), getTargetEntity());
     }
 }
