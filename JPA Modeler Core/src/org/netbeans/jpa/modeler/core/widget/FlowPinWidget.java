@@ -140,4 +140,7 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
     }
     
 
+    public abstract String getIconPath();
+    public abstract Image getIcon();
+
 }

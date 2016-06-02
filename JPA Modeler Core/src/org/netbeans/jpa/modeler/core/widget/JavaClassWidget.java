@@ -296,8 +296,5 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         colorScheme.updateUI(this, this.getState(), this.getState());
     }
 
-    //move to FlowNodeWidget to provide support to DB table
-    public abstract String getIconPath();
-    public abstract Image getIcon();
 
 }

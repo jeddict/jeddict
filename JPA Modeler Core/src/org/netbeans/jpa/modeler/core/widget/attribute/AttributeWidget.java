@@ -210,8 +210,5 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return (PersistenceClassWidget) this.getPNodeWidget();
     }
 
-    //move to FlowPinWidget to provide support to DB column
-    public abstract String getIconPath();
-    public abstract Image getIcon();
 
 }
