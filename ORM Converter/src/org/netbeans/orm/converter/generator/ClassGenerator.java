@@ -591,7 +591,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         Set<UniqueConstraint> parsedUniqueConstraints = parsedCollectionTable.getUniqueConstraint();
 
-        UniqueConstraintSnippet uniqueConstraints = getUniqueConstraint(parsedUniqueConstraints);
+        List<UniqueConstraintSnippet> uniqueConstraints = getUniqueConstraints(parsedUniqueConstraints);
 
         CollectionTableSnippet collectionTable = new CollectionTableSnippet();
 
@@ -620,8 +620,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         Set<UniqueConstraint> parsedUniqueConstraints
                 = parsedJoinTable.getUniqueConstraint();
 
-        UniqueConstraintSnippet uniqueConstraints = getUniqueConstraint(
-                parsedUniqueConstraints);
+        List<UniqueConstraintSnippet> uniqueConstraints = getUniqueConstraints(parsedUniqueConstraints);
 
         JoinTableSnippet joinTable = new JoinTableSnippet();
 
@@ -738,42 +737,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return queryHints;
     }
 
-    protected UniqueConstraintSnippet getUniqueConstraint(
-            Set<UniqueConstraint> parsedUniqueConstraints) {
-
+    protected List<UniqueConstraintSnippet> getUniqueConstraints(Set<UniqueConstraint> parsedUniqueConstraints) {
         if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
             return null;
         }
-
-        UniqueConstraintSnippet uniqueConstraints = new UniqueConstraintSnippet();
-
-        for (UniqueConstraint parsedUniqueConstraint : parsedUniqueConstraints) {
-            uniqueConstraints.getUniqueConstraints().addAll(
-                    parsedUniqueConstraint.getColumnName());
-        }
-
-        return uniqueConstraints;
-    }
-
-    protected List<UniqueConstraintSnippet> getUniqueConstraints(
-            Set<UniqueConstraint> parsedUniqueConstraints) {
-
-        if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
-            return null;
-        }
-
-        List<UniqueConstraintSnippet> uniqueConstraints
-                = new ArrayList<UniqueConstraintSnippet>();
-
-        for (UniqueConstraint parsedUniqueConstraint : parsedUniqueConstraints) {
-            UniqueConstraintSnippet uniqueConstraint = new UniqueConstraintSnippet();
-
-            uniqueConstraint.setUniqueConstraints(
-                    parsedUniqueConstraint.getColumnName());
-            uniqueConstraints.add(uniqueConstraint);
-        }
-
-        return uniqueConstraints;
+        return parsedUniqueConstraints.stream().map(c -> new UniqueConstraintSnippet(c)).collect(toList());
     }
 
     protected void processAssociationOverrides(
@@ -1543,8 +1511,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         table.setCatalog(parsedTable.getCatalog());
         table.setName(parsedTable.getName());
         table.setSchema(parsedTable.getSchema());
-        table.setUniqueConstraint(
-                getUniqueConstraint(parsedTable.getUniqueConstraint()));
+        table.setUniqueConstraints(getUniqueConstraints(parsedTable.getUniqueConstraint()));
 
         classDef.setTableDef(table);
     }
@@ -1618,8 +1585,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (found) {
             variableDef.setTableGenerator(tableGenerator);
         } else {
-            logger.log(Level.WARNING, "Ignoring : Cannot find variable for "
-                    + "Table generator :" + tableGenerator.getName());
+            logger.log(Level.WARNING, "Ignoring : Cannot find variable for Table generator :{0}", tableGenerator.getName());
         }
     }
 }

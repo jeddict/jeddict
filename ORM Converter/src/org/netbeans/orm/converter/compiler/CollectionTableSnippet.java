@@ -15,7 +15,7 @@ public class CollectionTableSnippet implements Snippet {
 
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
 
-    private UniqueConstraintSnippet uniqueConstraint = null;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
     private ForeignKeySnippet foreignKey;
 
     public String getCatalog() {
@@ -52,12 +52,12 @@ public class CollectionTableSnippet implements Snippet {
         }
     }
 
-    public UniqueConstraintSnippet getUniqueConstraint() {
-        return uniqueConstraint;
+    public List<UniqueConstraintSnippet> getUniqueConstraints() {
+        return uniqueConstraints;
     }
 
-    public void setUniqueConstraints(UniqueConstraintSnippet uniqueConstraint) {
-        this.uniqueConstraint = uniqueConstraint;
+    public void setUniqueConstraints(List<UniqueConstraintSnippet> uniqueConstraints) {
+        this.uniqueConstraints = uniqueConstraints;
     }
 
     public boolean isEmpty() {
@@ -65,7 +65,7 @@ public class CollectionTableSnippet implements Snippet {
                 && (name == null || name.trim().isEmpty())
                 && (schema == null || schema.trim().isEmpty())
                 && joinColumns.isEmpty()
-                && uniqueConstraint == null;
+                && uniqueConstraints == null;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class CollectionTableSnippet implements Snippet {
                 && (name == null || name.trim().isEmpty())
                 && (schema == null || schema.trim().isEmpty())
                 && joinColumns.isEmpty()
-                && uniqueConstraint == null && foreignKey == null) {
+                && uniqueConstraints == null && foreignKey == null) {
             return null;//"@CollectionTable";
         }
 
@@ -104,14 +104,19 @@ public class CollectionTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (uniqueConstraint != null) {
-            builder.append("uniqueConstraints=");
+        if (!uniqueConstraints.isEmpty()) {
+            builder.append("uniqueConstraints={");
 
-            builder.append(uniqueConstraint.getSnippet());
+            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
+                builder.append(uniqueConstraint.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
 
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
-
+        
         if (!joinColumns.isEmpty()) {
             builder.append("joinColumns={");
 
@@ -143,7 +148,7 @@ public class CollectionTableSnippet implements Snippet {
             return new ArrayList<>();
         }
 
-        if (joinColumns.isEmpty() && uniqueConstraint == null && foreignKey == null) {
+        if (joinColumns.isEmpty() && uniqueConstraints == null && foreignKey == null) {
             return Collections.singletonList("javax.persistence.CollectionTable");
         }
 
@@ -161,8 +166,8 @@ public class CollectionTableSnippet implements Snippet {
             importSnippets.addAll(foreignKey.getImportSnippets());
         }
 
-        if (uniqueConstraint != null) {
-            importSnippets.addAll(uniqueConstraint.getImportSnippets());
+        if (!uniqueConstraints.isEmpty()) {
+            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
 
         return importSnippets;

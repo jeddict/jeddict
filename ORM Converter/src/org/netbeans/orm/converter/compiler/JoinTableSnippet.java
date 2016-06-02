@@ -34,7 +34,7 @@ public class JoinTableSnippet implements Snippet {
     private ForeignKeySnippet inverseForeignKey;
     
 
-    private UniqueConstraintSnippet uniqueConstraint = null;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
 
     public String getCatalog() {
         return catalog;
@@ -80,12 +80,12 @@ public class JoinTableSnippet implements Snippet {
         }
     }
 
-    public UniqueConstraintSnippet getUniqueConstraint() {
-        return uniqueConstraint;
+    public List<UniqueConstraintSnippet> getUniqueConstraints() {
+        return uniqueConstraints;
     }
 
-    public void setUniqueConstraints(UniqueConstraintSnippet uniqueConstraint) {
-        this.uniqueConstraint = uniqueConstraint;
+    public void setUniqueConstraints(List<UniqueConstraintSnippet> uniqueConstraints) {
+        this.uniqueConstraints = uniqueConstraints;
     }
 
     public boolean isEmpty() {
@@ -94,7 +94,7 @@ public class JoinTableSnippet implements Snippet {
                 && (schema == null || schema.trim().isEmpty())
                 && joinColumns.isEmpty()
                 && inverseJoinColumns.isEmpty()
-                && uniqueConstraint == null;
+                && uniqueConstraints == null;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class JoinTableSnippet implements Snippet {
                 && (schema == null || schema.trim().isEmpty())
                 && inverseJoinColumns.isEmpty()
                 && joinColumns.isEmpty()
-                && uniqueConstraint == null) {
+                && uniqueConstraints == null) {
             return null;
         }
 
@@ -134,11 +134,16 @@ public class JoinTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (uniqueConstraint != null) {
-            builder.append("uniqueConstraints=");
+        if (!uniqueConstraints.isEmpty()) {
+            builder.append("uniqueConstraints={");
 
-            builder.append(uniqueConstraint.getSnippet());
+            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
+                builder.append(uniqueConstraint.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
 
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
 
@@ -194,7 +199,7 @@ public class JoinTableSnippet implements Snippet {
             return new ArrayList<>();
         }
 
-        if (inverseJoinColumns.isEmpty() && joinColumns.isEmpty() && uniqueConstraint == null
+        if (inverseJoinColumns.isEmpty() && joinColumns.isEmpty() && uniqueConstraints == null
                 && foreignKey == null && inverseForeignKey == null ) {
             return Collections.singletonList("javax.persistence.JoinTable");
         }
@@ -208,8 +213,8 @@ public class JoinTableSnippet implements Snippet {
             importSnippets.addAll(joinColumnSnippets);
         }
 
-        if (uniqueConstraint != null) {
-            importSnippets.addAll(uniqueConstraint.getImportSnippets());
+         if (!uniqueConstraints.isEmpty()) {
+            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
         
         if (foreignKey != null) {

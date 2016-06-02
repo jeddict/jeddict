@@ -18,6 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TableDefSnippet implements Snippet {
@@ -26,7 +27,7 @@ public class TableDefSnippet implements Snippet {
     private String name = null;
     private String schema = null;
 
-    private UniqueConstraintSnippet uniqueConstraint = null;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
 
     public String getCatalog() {
         return catalog;
@@ -52,12 +53,12 @@ public class TableDefSnippet implements Snippet {
         this.schema = schema;
     }
 
-    public UniqueConstraintSnippet getUniqueConstraints() {
-        return uniqueConstraint;
+    public List<UniqueConstraintSnippet> getUniqueConstraints() {
+        return uniqueConstraints;
     }
 
-    public void setUniqueConstraint(UniqueConstraintSnippet uniqueConstraint) {
-        this.uniqueConstraint = uniqueConstraint;
+    public void setUniqueConstraints(List<UniqueConstraintSnippet> uniqueConstraints) {
+        this.uniqueConstraints = uniqueConstraints;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class TableDefSnippet implements Snippet {
         if (name == null
                 && catalog == null
                 && schema == null
-                && uniqueConstraint == null) {
+                && uniqueConstraints == null) {
             return "@Table";
         }
 
@@ -95,11 +96,16 @@ public class TableDefSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (uniqueConstraint != null) {
-            builder.append("uniqueConstraints=");
+        if (!uniqueConstraints.isEmpty()) {
+            builder.append("uniqueConstraints={");
 
-            builder.append(uniqueConstraint.getSnippet());
+            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
+                builder.append(uniqueConstraint.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
 
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
 
@@ -111,15 +117,16 @@ public class TableDefSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        if (uniqueConstraint == null) {
+        if (uniqueConstraints == null) {
             return Collections.singletonList("javax.persistence.Table");
         }
 
-        Collection<String> importSnippets = new ArrayList<String>();
+        Collection<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.Table");
-        importSnippets.addAll(uniqueConstraint.getImportSnippets());
-
+         if (!uniqueConstraints.isEmpty()) {
+            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
+        }
         return importSnippets;
     }
 }
