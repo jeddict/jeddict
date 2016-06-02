@@ -15,10 +15,13 @@
  */
 package org.netbeans.db.modeler.core.widget.table;
 
+import java.awt.Image;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE_ICON_PATH;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -73,8 +76,18 @@ public class BaseTableWidget extends TableWidget<DBTable> {
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
         Entity entity = this.getBaseElementSpec().getEntity();
         set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
     }
 
+    @Override
+    public String getIconPath() {
+        return BASE_TABLE_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return BASE_TABLE;
+    }
 }

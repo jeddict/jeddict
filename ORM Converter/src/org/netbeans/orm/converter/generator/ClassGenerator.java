@@ -206,10 +206,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         columnDef.setColumnDefinition(column.getColumnDefinition());
         columnDef.setName(column.getName());
         columnDef.setTable(column.getTable());
-        columnDef.setInsertable(column.getInsertable()); // line added by gaurav gupta
-        columnDef.setNullable(column.getNullable());// line added by gaurav gupta
-        columnDef.setUnique(column.getUnique());// line added by gaurav gupta
-        columnDef.setUpdatable(column.getUpdatable());// line added by gaurav gupta
+        columnDef.setInsertable(column.getInsertable());
+        columnDef.setNullable(column.getNullable());
+        columnDef.setUnique(column.getUnique());
+        columnDef.setUpdatable(column.getUpdatable());
 
         if (column.getLength() != null) {
             columnDef.setLength(column.getLength());
@@ -589,11 +589,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
                 parsedCollectionTable.getJoinColumn());
 
-        List<UniqueConstraint> parsedUniqueConstraints
-                = parsedCollectionTable.getUniqueConstraint();
+        Set<UniqueConstraint> parsedUniqueConstraints = parsedCollectionTable.getUniqueConstraint();
 
-        UniqueConstraintSnippet uniqueConstraints = getUniqueConstraint(
-                parsedUniqueConstraints);
+        UniqueConstraintSnippet uniqueConstraints = getUniqueConstraint(parsedUniqueConstraints);
 
         CollectionTableSnippet collectionTable = new CollectionTableSnippet();
 
@@ -619,7 +617,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
                 parsedJoinTable.getJoinColumn());
 
-        List<UniqueConstraint> parsedUniqueConstraints
+        Set<UniqueConstraint> parsedUniqueConstraints
                 = parsedJoinTable.getUniqueConstraint();
 
         UniqueConstraintSnippet uniqueConstraints = getUniqueConstraint(
@@ -741,7 +739,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected UniqueConstraintSnippet getUniqueConstraint(
-            List<UniqueConstraint> parsedUniqueConstraints) {
+            Set<UniqueConstraint> parsedUniqueConstraints) {
 
         if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
             return null;
@@ -758,7 +756,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected List<UniqueConstraintSnippet> getUniqueConstraints(
-            List<UniqueConstraint> parsedUniqueConstraints) {
+            Set<UniqueConstraint> parsedUniqueConstraints) {
 
         if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
             return null;

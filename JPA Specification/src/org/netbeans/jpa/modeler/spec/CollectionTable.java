@@ -7,7 +7,9 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -79,7 +81,7 @@ public class CollectionTable {
     @XmlElement(name = "fk")
     protected ForeignKey foreignKey;
     @XmlElement(name = "unique-constraint")
-    protected List<UniqueConstraint> uniqueConstraint;
+    protected Set<UniqueConstraint> uniqueConstraint;
     protected List<Index> index;//REVENG PENDING
     @XmlAttribute(name = "name")
     protected String name;
@@ -197,9 +199,9 @@ public class CollectionTable {
      *
      *
      */
-    public List<UniqueConstraint> getUniqueConstraint() {
+    public Set<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new LinkedHashSet<>();
         }
         return this.uniqueConstraint;
     }

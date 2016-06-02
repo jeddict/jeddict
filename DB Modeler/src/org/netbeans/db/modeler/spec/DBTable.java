@@ -20,7 +20,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 
 /**
@@ -57,33 +59,6 @@ public abstract class DBTable extends FlowNode {
         this.name = name;
     }
 
-//    /**
-//     * @return the primaryKeys
-//     */
-//    public List<PrimaryKey> getPrimaryKeys() {
-//        return primaryKeys;
-//    }
-//
-//    /**
-//     * @param primaryKeys the primaryKeys to set
-//     */
-//    public void setPrimaryKeys(List<PrimaryKey> primaryKeys) {
-//        this.primaryKeys = primaryKeys;
-//    }
-//
-//    /**
-//     * @return the foreignKeys
-//     */
-//    public List<ForeignKey> getForeignKeys() {
-//        return foreignKeys;
-//    }
-//
-//    /**
-//     * @param foreignKeys the foreignKeys to set
-//     */
-//    public void setForeignKeys(List<ForeignKey> foreignKeys) {
-//        this.foreignKeys = foreignKeys;
-//    }
     /**
      * @return the columns
      */
@@ -123,4 +98,5 @@ public abstract class DBTable extends FlowNode {
         return entity;
     }
 
+    public abstract Set<UniqueConstraint> getUniqueConstraints();
 }

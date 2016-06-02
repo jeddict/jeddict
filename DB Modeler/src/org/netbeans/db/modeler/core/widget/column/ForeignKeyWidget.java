@@ -15,9 +15,12 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
+import java.awt.Image;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.FOREIGNKEY;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.FOREIGNKEY_ICON_PATH;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -40,6 +43,17 @@ public abstract class ForeignKeyWidget<E extends DBColumn> extends ColumnWidget<
         } else {
             this.setImage(DBModelerUtil.FOREIGNKEY);
         }
+    }
+    
+        
+    @Override
+    public String getIconPath() {
+        return FOREIGNKEY_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return FOREIGNKEY;
     }
 
 }

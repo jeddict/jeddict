@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +25,8 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLUMN;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLUMN_ICON_PATH;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
@@ -251,5 +254,15 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 //
 //        return menuItemList;
 //    }
+    
+    @Override
+    public String getIconPath() {
+        return COLUMN_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return COLUMN;
+    }
 
 }

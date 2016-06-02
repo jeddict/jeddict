@@ -54,7 +54,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class UniqueConstraint {
 
     @XmlElement(name = "column-name", required = true)
-    protected List<String> columnName;
+    private List<String> columnName;
     @XmlAttribute
     protected String name;
 
@@ -99,7 +99,7 @@ public class UniqueConstraint {
      */
     public List<String> getColumnName() {
         if (columnName == null) {
-            columnName = new ArrayList<>();
+            setColumnName(new ArrayList<>());
         }
         return this.columnName;
     }
@@ -122,6 +122,13 @@ public class UniqueConstraint {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * @param columnName the columnName to set
+     */
+    public void setColumnName(List<String> columnName) {
+        this.columnName = columnName;
     }
 
 }

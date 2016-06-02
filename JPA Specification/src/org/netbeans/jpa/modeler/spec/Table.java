@@ -7,7 +7,9 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -65,7 +67,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class Table {
 
     @XmlElement(name = "unique-constraint")
-    protected List<UniqueConstraint> uniqueConstraint;
+    protected Set<UniqueConstraint> uniqueConstraint;
     protected List<Index> index;//REVENG PENDING
     @XmlAttribute(name = "name")
     protected String name;
@@ -115,9 +117,9 @@ public class Table {
      *
      *
      */
-    public List<UniqueConstraint> getUniqueConstraint() {
+    public Set<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new LinkedHashSet<>();
         }
         return this.uniqueConstraint;
     }

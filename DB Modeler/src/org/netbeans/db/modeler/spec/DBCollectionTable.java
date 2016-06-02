@@ -15,8 +15,10 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.Set;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 
 public class DBCollectionTable extends DBTable {
 
@@ -32,5 +34,10 @@ public class DBCollectionTable extends DBTable {
      */
     public ElementCollection getAttribute() {
         return attribute;
+    }
+
+    @Override
+    public Set<UniqueConstraint> getUniqueConstraints() {
+        return attribute.getCollectionTable().getUniqueConstraint();
     }
 }

@@ -15,12 +15,19 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.Set;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 
 public class DBBaseTable extends DBTable {
 
     public DBBaseTable(String name, Entity entity) {
         super(name, entity);
+    }
+
+    @Override
+    public Set<UniqueConstraint> getUniqueConstraints() {
+        return getEntity().getTable().getUniqueConstraint();
     }
 
 }
