@@ -67,7 +67,7 @@ public class AttributeOverrideSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.AttributeOverride");
         importSnippets.add("javax.persistence.Column");

@@ -211,13 +211,9 @@ public class TableGeneratorSnippet implements Snippet {
             return Collections.singletonList("javax.persistence.TableGenerator");
         }
 
-        List<String> importSnippets = new ArrayList<String>();
-
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.TableGenerator");
-
-        List<String> ucImportSnippets
-                = uniqueConstraints.get(0).getImportSnippets();
-
+        List<String> ucImportSnippets = uniqueConstraints.get(0).getImportSnippets();
         importSnippets.addAll(ucImportSnippets);
 
         return importSnippets;

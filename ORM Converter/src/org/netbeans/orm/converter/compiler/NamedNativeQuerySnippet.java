@@ -103,7 +103,7 @@ public class NamedNativeQuerySnippet extends NamedQueryDefSnippet implements Sni
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.NamedNativeQuery");
         importSnippets.add(classHelper.getFQClassName());

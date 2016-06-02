@@ -152,8 +152,9 @@ public class CollectionTableSnippet implements Snippet {
         importSnippets.add("javax.persistence.CollectionTable");
 
         if (!joinColumns.isEmpty()) {
-            Collection<String> joinColumnSnippets  = joinColumns.get(0).getImportSnippets();
-            importSnippets.addAll(joinColumnSnippets);
+            for (JoinColumnSnippet joinColumn : joinColumns) {
+                importSnippets.addAll(joinColumn.getImportSnippets());
+            }
         }
         
         if (foreignKey != null) {

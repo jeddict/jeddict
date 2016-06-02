@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static java.util.stream.Collectors.toSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class NamedQueriesSnippet implements Snippet {
@@ -80,11 +81,12 @@ public class NamedQueriesSnippet implements Snippet {
             return namedQueries.get(0).getImportSnippets();
         }
 
-        ArrayList<String> importSnippets = new ArrayList<String>();
+        ArrayList<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.NamedQueries");
-        importSnippets.addAll(namedQueries.get(0).getImportSnippets());
-
+        for(NamedQueryDefSnippet namedQuery : namedQueries){
+            importSnippets.addAll(namedQuery.getImportSnippets());
+        }
         return importSnippets;
     }
 }

@@ -82,7 +82,7 @@ public class AttributeOverridesSnippet implements Snippet {
             return attributeOverrides.get(0).getImportSnippets();
         }
 
-        Collection<String> importSnippets = new ArrayList<String>();
+        Collection<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.AttributeOverrides");
 

@@ -321,13 +321,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        Collection<String> importSnippets = new ArrayList<String>();
+        Collection<String> importSnippets = new ArrayList<>();
 
         if (classHelper.getClassName() == null) {
             typeIdentifier = new TypeIdentifierSnippet(this);
-
             classHelper.setClassName(typeIdentifier.getVariableType());
-
             importSnippets.addAll(typeIdentifier.getImportSnippets());
         } else if (classHelper.getPackageName() != null) {
             importSnippets.add(classHelper.getFQClassName());
@@ -451,18 +449,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
-//        if (importSnippets.contains("java.util.Date")) {  //BUG : remove date
-//            importSnippets.remove("java.util.Date");
-//        }
-//        if (importSnippets.contains("java.lang.String")) {  //BUG : remove String
-//            importSnippets.remove("java.lang.String");
-//        }
-//        if (importSnippets.contains("java.lang.Boolean")) {  //BUG : remove String
-//            importSnippets.remove("java.lang.Boolean");
-//        }
-//        if (importSnippets.contains("java.lang.Byte")) {  //BUG : remove String
-//            importSnippets.remove("java.lang.Byte");
-//        }
 //        if (importSnippets.contains("java.lang.Integer")) {  //BUG : remove String
 //            importSnippets.remove("java.lang.Integer");
 //        }

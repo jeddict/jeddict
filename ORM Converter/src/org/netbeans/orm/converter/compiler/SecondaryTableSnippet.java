@@ -160,7 +160,7 @@ public class SecondaryTableSnippet implements Snippet {
             importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
         
-                if (foreignKey != null) {
+        if (foreignKey != null) {
             importSnippets.addAll(foreignKey.getImportSnippets());
         }
 

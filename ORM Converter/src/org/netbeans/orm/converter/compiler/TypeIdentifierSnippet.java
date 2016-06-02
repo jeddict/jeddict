@@ -81,7 +81,7 @@ public class TypeIdentifierSnippet implements Snippet {
             if (relationDef instanceof OneToManySnippet
                     || relationDef instanceof ManyToManySnippet) {
 
-                importSnippets = new ArrayList<String>();
+                importSnippets = new ArrayList<>();
 
                 ClassHelper collectionTypeClassHelper = null;
                 if (relationDef instanceof OneToManySnippet) {
@@ -105,7 +105,7 @@ public class TypeIdentifierSnippet implements Snippet {
         if (variableDef.getElementCollection() != null) {
 
             ElementCollectionSnippet elementCollection = variableDef.getElementCollection();
-            importSnippets = new ArrayList<String>();
+            importSnippets = new ArrayList<>();
 
             ClassHelper collectionTypeClassHelper = getClassHelper(elementCollection.getCollectionType());
             ClassHelper classHelper = getClassHelper(elementCollection.getTargetClass());

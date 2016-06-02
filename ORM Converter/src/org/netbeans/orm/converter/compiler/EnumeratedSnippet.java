@@ -74,20 +74,16 @@ public class EnumeratedSnippet implements Snippet {
             return Collections.singleton("javax.persistence.Enumerated");
         }
 
-        List<String> importSnippets = new ArrayList<String>();
-
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.Enumerated");
         importSnippets.add("javax.persistence.EnumType");
-
         return importSnippets;
     }
 
     private static List<String> getEnumTypes() {
-        List<String> enumTypes = new ArrayList<String>();
-
+        List<String> enumTypes = new ArrayList<>();
         enumTypes.add(TYPE_STRING);
         enumTypes.add(TYPE_ORDINAL);
-
         return enumTypes;
     }
 }

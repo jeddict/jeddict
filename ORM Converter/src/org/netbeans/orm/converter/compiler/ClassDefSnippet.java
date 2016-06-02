@@ -405,8 +405,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             importSnippets.addAll(namedEntityGraphs.getImportSnippets());
         }
 
-        if (getNamedStoredProcedureQueries() != null) {
-            importSnippets.addAll(getNamedStoredProcedureQueries().getImportSnippets());
+        if (namedStoredProcedureQueries != null) {
+            importSnippets.addAll(namedStoredProcedureQueries.getImportSnippets());
         }
 
         if (sqlResultSetMappings != null) {

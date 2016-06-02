@@ -122,7 +122,7 @@ public class NamedQueryDefSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.NamedQuery");
         if (lockMode != null) {
             importSnippets.add("javax.persistence.LockModeType");

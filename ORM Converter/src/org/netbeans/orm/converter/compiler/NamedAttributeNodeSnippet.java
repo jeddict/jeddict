@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -110,9 +111,7 @@ public class NamedAttributeNodeSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.NamedAttributeNode");
-        return importSnippets;
+        return Collections.singletonList("javax.persistence.NamedAttributeNode");
     }
 
 }

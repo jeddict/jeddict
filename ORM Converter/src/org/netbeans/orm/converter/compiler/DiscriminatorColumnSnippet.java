@@ -110,11 +110,10 @@ public class DiscriminatorColumnSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (discriminatorType == null) {
-            return Collections.singletonList(
-                    "javax.persistence.DiscriminatorColumn");
+            return Collections.singletonList("javax.persistence.DiscriminatorColumn");
         }
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.DiscriminatorColumn");
         importSnippets.add("javax.persistence.DiscriminatorType");

@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 
 public class CacheableDefSnippet implements Snippet {
@@ -33,8 +34,6 @@ public class CacheableDefSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        Collection<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.Cacheable");
-        return importSnippets;
+        return Collections.singleton("javax.persistence.Cacheable");
     }
 }

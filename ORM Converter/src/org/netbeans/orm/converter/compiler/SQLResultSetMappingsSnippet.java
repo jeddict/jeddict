@@ -80,10 +80,9 @@ public class SQLResultSetMappingsSnippet implements Snippet {
         }
 
         //Sort and eliminate duplicates
-        Collection<String> importSnippets = new TreeSet<String>();
+        Collection<String> importSnippets = new TreeSet<>();
 
         importSnippets.add("javax.persistence.SqlResultSetMappings");
-
         for (SQLResultSetMappingSnippet sqlResultSetMapping : sqlResultSetMappings) {
             importSnippets.addAll(sqlResultSetMapping.getImportSnippets());
         }

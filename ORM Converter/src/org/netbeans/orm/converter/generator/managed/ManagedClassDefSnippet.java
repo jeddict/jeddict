@@ -56,18 +56,4 @@ public class ManagedClassDefSnippet extends ClassDefSnippet {
         this.xmlRootElement = xmlRootElement;
     }
 
-//    @Override
-//    public Collection<String> getImportSnippets() throws InvalidDataException { //added to velocity template
-//        Collection<String> importSnippets = new TreeSet<String>();
-//        if (jaxbSupport) {
-//            if (xmlRootElement) {
-//                importSnippets.add("javax.xml.bind.annotation.XmlRootElement");
-//            }
-//        }
-//        importSnippets = ORMConverterUtil.eliminateSamePkgImports(getClassHelper().getPackageName(), importSnippets);
-//
-//        importSnippets = ORMConverterUtil.processedImportStatements(importSnippets);
-//        importSnippets.addAll(super.getImportSnippets());
-//        return importSnippets;
-//    }
 }

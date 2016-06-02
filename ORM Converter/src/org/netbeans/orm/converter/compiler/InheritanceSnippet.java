@@ -44,7 +44,7 @@ public class InheritanceSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.Inheritance");
         importSnippets.add("javax.persistence.InheritanceType");
