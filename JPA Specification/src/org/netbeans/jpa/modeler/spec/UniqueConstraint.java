@@ -8,6 +8,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -58,6 +59,15 @@ public class UniqueConstraint {
     @XmlAttribute
     protected String name;
 
+    public UniqueConstraint() {
+    }
+
+    public UniqueConstraint(String name) {
+        this.name = name;
+    }
+
+    
+    
     public static UniqueConstraint load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.UniqueConstraint");
@@ -130,5 +140,29 @@ public class UniqueConstraint {
     public void setColumnName(List<String> columnName) {
         this.columnName = columnName;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UniqueConstraint other = (UniqueConstraint) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 
 }

@@ -16,6 +16,7 @@
 package org.netbeans.db.modeler.properties.uniqueconstraint;
 
 import java.util.Set;
+import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -28,7 +29,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
 
     private UniqueConstraint uniqueConstraint;
-    private Set<UniqueConstraint> uniqueConstraints;
+    private final Set<UniqueConstraint> uniqueConstraints;
     private final TableWidget<? extends DBTable> tableWidget;
 
     public UniqueConstraintPanel(TableWidget<? extends DBTable> tableWidget) {
@@ -170,19 +171,18 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
     }// </editor-fold>//GEN-END:initComponents
 
       private boolean validateField() {
-//        if (uniqueConstraints.contains(uniqueConstraint)){
-//            JOptionPane.showMessageDialog(this, "UniqueConstraint with same signature already exist : " + uniqueConstraint.getSignature(), "Duplicate UniqueConstraint", javax.swing.JOptionPane.WARNING_MESSAGE);
-//            return false;
-//        }
+        if (uniqueConstraints.contains(new UniqueConstraint(nameTextField.getText()))){
+            JOptionPane.showMessageDialog(this, "UniqueConstraint with same name already exist : " + uniqueConstraint.getName(), "Duplicate UniqueConstraint", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         return true;
     }
       
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
-        uniqueConstraint.setColumnName(((TableMemberPanel) classMemberPanel).getValue().getColumns());
         if (!validateField()) {
             return;
         }
-        
+        uniqueConstraint.setColumnName(((TableMemberPanel) classMemberPanel).getValue().getColumns());
         uniqueConstraint.setName(nameTextField.getText());
 
         if (this.getEntity().getClass() == RowValue.class) {
