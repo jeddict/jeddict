@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 
@@ -99,4 +100,5 @@ public abstract class DBTable extends FlowNode {
     }
 
     public abstract Set<UniqueConstraint> getUniqueConstraints();
+    public abstract List<Index> getIndexes();
 }

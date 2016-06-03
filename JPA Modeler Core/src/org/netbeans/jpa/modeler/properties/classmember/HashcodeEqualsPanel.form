@@ -49,7 +49,7 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="hashcodeMethodPanel">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ClassMemberPanel(&quot;hashcode()&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, &quot;LBL_hashcode_select&quot;))"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -72,7 +72,7 @@
         </Container>
         <Container class="javax.swing.JPanel" name="equalsMethodPanel">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ClassMemberPanel(&quot;equals()&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, &quot;LBL_equals_select&quot;))"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">

@@ -25,6 +25,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.enti
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import static org.openide.util.NbBundle.getMessage;
 
 public class ConstructorPanel extends EntityComponent<Constructor> {
 
@@ -104,7 +105,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
     private void initComponents() {
 
         rootLayeredPane = new javax.swing.JLayeredPane();
-        classMemberPanel = new ClassMemberPanel("Entity Constructor");
+        classMemberPanel = new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "LBL_constructor_select"));
         action_jLayeredPane = new javax.swing.JLayeredPane();
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
@@ -206,20 +207,26 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
     }// </editor-fold>//GEN-END:initComponents
 
       private boolean validateField() {
-        if (constructors.contains(constructor)){
-            JOptionPane.showMessageDialog(this, "Constructor with same signature already exist : " + constructor.getSignature(), "Duplicate Constructor", javax.swing.JOptionPane.WARNING_MESSAGE);
+//        if (constructors.contains(constructor)){// bug : will only work for existing entry
+//            JOptionPane.showMessageDialog(this, "Constructor with same signature already exist : " + constructor.getSignature(), "Duplicate Constructor", javax.swing.JOptionPane.WARNING_MESSAGE);
+//            return false;
+//        }
+          if(constructor.getAttributes().isEmpty() && (constructor.getAccessModifier()==AccessModifierType.DEFAULT || constructor.getAccessModifier()==AccessModifierType.PRIVATE)){
+              JOptionPane.showMessageDialog(this, getMessage(ConstructorPanel.class, "NO_ARG_ACCESS_MODIFIER.text"),
+                      getMessage(ConstructorPanel.class, "NO_ARG_ACCESS_MODIFIER.title"), javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
-        }
+          }
+          
         return true;
     }
       
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
         constructor = (Constructor) ((ClassMemberPanel) classMemberPanel).getValue();
+        constructor.setAccessModifier(((ComboBoxValue<AccessModifierType>) accessModifierComboBox.getSelectedItem()).getValue());
         if (!validateField()) {
             return;
         }
-        constructor.setAccessModifier(((ComboBoxValue<AccessModifierType>) accessModifierComboBox.getSelectedItem()).getValue());
-
+        
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = constructor;

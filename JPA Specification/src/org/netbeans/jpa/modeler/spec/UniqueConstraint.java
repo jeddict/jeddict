@@ -9,6 +9,7 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -163,6 +164,9 @@ public class UniqueConstraint {
         return true;
     }
     
-    
+        @Override
+    public String toString() {
+        return getColumnName().stream().collect(Collectors.joining(", "));
+    }
 
 }

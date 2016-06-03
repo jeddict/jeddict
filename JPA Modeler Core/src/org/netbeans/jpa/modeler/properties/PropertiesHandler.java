@@ -98,6 +98,7 @@ import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.openide.nodes.PropertySupport;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
 
 public class PropertiesHandler {
@@ -775,9 +776,9 @@ public class PropertiesHandler {
     }
 
     public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("toString", "toString()", "Define a string representation of the Entity");
+        GenericEmbedded entity = new GenericEmbedded("toString", "toString()",getMessage(ClassMemberPanel.class, "LBL_tostring_select"));
         final ClassMembers classMembersObj = persistenceClassWidget.getBaseElementSpec().getToStringMethod();
-        entity.setEntityEditor(new ClassMemberPanel("toString()", persistenceClassWidget));
+        entity.setEntityEditor(new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget));
         entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
             private ClassMembers classMembers;
 
@@ -851,9 +852,14 @@ public class PropertiesHandler {
             @Override
             public void setData(List<Object[]> data) {
                 constructors.clear();
+                
                 data.stream().forEach((row) -> {
                     constructors.add((Constructor) row[0]);
                 });
+                if(!constructors.isEmpty()){
+                    constructors.add(Constructor.getNoArgsInstance());
+                }
+                
                 this.data = data;
             }
 

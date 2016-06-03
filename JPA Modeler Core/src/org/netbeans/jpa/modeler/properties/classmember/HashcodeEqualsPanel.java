@@ -67,8 +67,8 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
         jSplitPane2 = new javax.swing.JSplitPane();
         jSplitPane = new javax.swing.JSplitPane();
-        hashcodeMethodPanel = new ClassMemberPanel("hashcode()");
-        equalsMethodPanel = new ClassMemberPanel("equals()");
+        hashcodeMethodPanel = new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "LBL_hashcode_select"));
+        equalsMethodPanel = new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "LBL_equals_select"));
 
         jSplitPane2.setToolTipText(org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.jSplitPane2.toolTipText")); // NOI18N
 

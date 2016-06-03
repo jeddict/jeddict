@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -28,7 +29,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class Constructor extends ClassMembers {
 
     private AccessModifierType accessModifier;
+    
+    public static final Constructor getNoArgsInstance(){
+        return new Constructor();
+    }
 
+    
     /**
      * @return the accessModifier
      */
@@ -71,8 +77,30 @@ public class Constructor extends ClassMembers {
         return true;
     }
     
+    private static final String NO_ARG = "no-arg constructor";
     public String getSignature() {
-        return getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel()).collect(Collectors.joining(", "));
+        String sign = getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel()).collect(Collectors.joining(", "));
+        if(StringUtils.isBlank(sign)){
+            sign = NO_ARG;
+        }
+        return sign;
     }
+    
+    @Override
+    public String toString() {
+        String sign = getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel() + " " + a.getName()).collect(Collectors.joining(", "));
+        if(StringUtils.isBlank(sign)){
+            sign = NO_ARG;
+        }
+        return sign;
+    }
+//    
+//    @Override
+//    public Object clone() {
+//        Constructor constructor = new Constructor();
+//        constructor.setAccessModifier(accessModifier);
+//        constructor.getAttributes().addAll(attributes);
+//        return constructor;
+//    }
 
 }

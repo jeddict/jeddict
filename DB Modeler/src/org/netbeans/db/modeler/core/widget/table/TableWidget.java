@@ -81,6 +81,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     
        @Override
     public void createPropertySet(ElementPropertySet set) {
+           set.put("BASIC_PROP", PropertiesHandler.getIndexProperties(this));
            set.put("BASIC_PROP", PropertiesHandler.getUniqueConstraintProperties(this));
     }
        

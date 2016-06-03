@@ -67,7 +67,7 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="classMemberPanel">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ClassMemberPanel(&quot;Entity Constructor&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, &quot;LBL_constructor_select&quot;))"/>
           </AuxValues>
 
           <Layout>

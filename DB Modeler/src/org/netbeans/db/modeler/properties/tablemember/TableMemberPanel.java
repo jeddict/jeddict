@@ -66,9 +66,9 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
     }
     
     public void setValue(List<String> columns) {
-        TableMembers tableMembers = new TableMembers();
-        tableMembers.setColumns(columns);
-        setValue(tableMembers);
+        TableMembers tableMembers_tmp = new TableMembers();
+        tableMembers_tmp.setColumns(columns);
+        setValue(tableMembers_tmp);
     }
 
     @Override

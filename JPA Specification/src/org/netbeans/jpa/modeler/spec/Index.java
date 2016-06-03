@@ -6,9 +6,11 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -45,17 +47,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "index", propOrder = {
-    "description"
+    "description",
+    "columnList"
 })
 public class Index {
 
     protected String description;
-    @XmlAttribute(name = "name")
+    @XmlAttribute(name = "n")
     protected String name;
-    @XmlAttribute(name = "column-list", required = true)
-    protected String columnList;
-    @XmlAttribute(name = "unique")
+//    @XmlAttribute(name = "column-list", required = true)
+    @XmlElement(name="c")
+    protected List<String> columnList;
+    @XmlAttribute(name = "u")
     protected Boolean unique;
+
+    public Index() {
+    }
+
+    public Index(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the value of the description property.
@@ -103,7 +114,7 @@ public class Index {
      * @return possible object is {@link String }
      *
      */
-    public String getColumnList() {
+    public List<String> getColumnList() {
         return columnList;
     }
 
@@ -113,7 +124,7 @@ public class Index {
      * @param value allowed object is {@link String }
      *
      */
-    public void setColumnList(String value) {
+    public void setColumnList(List<String> value) {
         this.columnList = value;
     }
 
