@@ -50,6 +50,7 @@ import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.Lob;
@@ -117,6 +118,7 @@ import org.netbeans.orm.converter.compiler.ForeignKeySnippet;
 import org.netbeans.orm.converter.compiler.GeneratedValueSnippet;
 import org.netbeans.orm.converter.compiler.HashcodeMethodSnippet;
 import org.netbeans.orm.converter.compiler.IdClassSnippet;
+import org.netbeans.orm.converter.compiler.IndexSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnsSnippet;
 import org.netbeans.orm.converter.compiler.JoinTableSnippet;
@@ -592,6 +594,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         Set<UniqueConstraint> parsedUniqueConstraints = parsedCollectionTable.getUniqueConstraint();
 
         List<UniqueConstraintSnippet> uniqueConstraints = getUniqueConstraints(parsedUniqueConstraints);
+        
 
         CollectionTableSnippet collectionTable = new CollectionTableSnippet();
 
@@ -600,7 +603,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         collectionTable.setSchema(parsedCollectionTable.getSchema());
         collectionTable.setJoinColumns(joinColumns);
         collectionTable.setUniqueConstraints(uniqueConstraints);
-
+        collectionTable.setIndices(getIndexes(parsedCollectionTable.getIndex()));
+        
         collectionTable.setForeignKey(getForeignKey(parsedCollectionTable.getForeignKey()));
 
         return collectionTable;
@@ -630,6 +634,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         joinTable.setJoinColumns(joinColumns);
         joinTable.setInverseJoinColumns(inverseJoinColumns);
         joinTable.setUniqueConstraints(uniqueConstraints);
+        joinTable.setIndices(getIndexes(parsedJoinTable.getIndex()));
+        
 
         joinTable.setForeignKey(getForeignKey(parsedJoinTable.getForeignKey()));
         joinTable.setInverseForeignKey(getForeignKey(parsedJoinTable.getInverseForeignKey()));
@@ -742,6 +748,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return null;
         }
         return parsedUniqueConstraints.stream().map(c -> new UniqueConstraintSnippet(c)).collect(toList());
+    }
+    
+    protected List<IndexSnippet> getIndexes(List<Index> parsedIndexes) {
+        if (parsedIndexes == null || parsedIndexes.isEmpty()) {
+            return null;
+        }
+        return parsedIndexes.stream().filter(index -> !index.getColumnList().isEmpty())
+                .map(index -> new IndexSnippet(index)).collect(toList());
     }
 
     protected void processAssociationOverrides(
@@ -1403,8 +1417,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             secondaryTable.setName(parsedSecondaryTable.getName());
             secondaryTable.setSchema(parsedSecondaryTable.getSchema());
             secondaryTable.setUniqueConstraints(uniqueConstraints);
+            secondaryTable.setIndices(getIndexes(parsedSecondaryTable.getIndex()));
             secondaryTable.setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
-
             secondaryTable.setForeignKey(getForeignKey(parsedSecondaryTable.getForeignKey()));
 
             classDef.getSecondaryTables().addSecondaryTable(secondaryTable);
@@ -1512,6 +1526,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         table.setName(parsedTable.getName());
         table.setSchema(parsedTable.getSchema());
         table.setUniqueConstraints(getUniqueConstraints(parsedTable.getUniqueConstraint()));
+        table.setIndices(getIndexes(parsedTable.getIndex()));
 
         classDef.setTableDef(table);
     }
@@ -1554,6 +1569,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 parsedTableGenerator.getValueColumnName());
         tableGenerator.setUniqueConstraints(getUniqueConstraints(
                 parsedTableGenerator.getUniqueConstraint()));
+        tableGenerator.setIndices(getIndexes(parsedTableGenerator.getIndex()));
 
         return tableGenerator;
     }

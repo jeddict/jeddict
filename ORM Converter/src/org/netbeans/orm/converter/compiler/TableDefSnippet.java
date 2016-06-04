@@ -28,6 +28,7 @@ public class TableDefSnippet implements Snippet {
     private String schema = null;
 
     private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
+    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
 
     public String getCatalog() {
         return catalog;
@@ -67,7 +68,7 @@ public class TableDefSnippet implements Snippet {
         if (name == null
                 && catalog == null
                 && schema == null
-                && uniqueConstraints == null) {
+                && uniqueConstraints.isEmpty() && indices.isEmpty()) {
             return "@Table";
         }
 
@@ -108,6 +109,19 @@ public class TableDefSnippet implements Snippet {
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
+        
+                if (!indices.isEmpty()) {
+            builder.append("indexes={");
+
+            for (IndexSnippet snippet : indices) {
+                builder.append(snippet.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
+
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
+            builder.append(ORMConverterUtil.COMMA);
+        }
 
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
@@ -127,6 +141,24 @@ public class TableDefSnippet implements Snippet {
          if (!uniqueConstraints.isEmpty()) {
             importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
+         
+         if (!indices.isEmpty()) {
+            importSnippets.addAll(indices.get(0).getImportSnippets());
+        }
         return importSnippets;
+    }
+    
+        /**
+     * @return the indices
+     */
+    public List<IndexSnippet> getIndices() {
+        return indices;
+    }
+
+    /**
+     * @param indices the indices to set
+     */
+    public void setIndices(List<IndexSnippet> indices) {
+        this.indices = indices;
     }
 }

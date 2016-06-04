@@ -18,46 +18,55 @@ package org.netbeans.orm.converter.compiler;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.UniqueConstraint;
+import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class UniqueConstraintSnippet implements Snippet {
+public class IndexSnippet implements Snippet {
 
-    private final UniqueConstraint constraint;
+    private final Index index;
 
-    public UniqueConstraintSnippet(UniqueConstraint constraint) {
-        this.constraint = constraint;
+    public IndexSnippet(Index index) {
+        this.index = index;
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
-
+        
+        if (index.getColumnList().isEmpty()) {
+               throw new InvalidDataException("Missing Index columnList");
+        }
         
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@UniqueConstraint(");
+        builder.append("@Index(");
 
-        if (StringUtils.isNotBlank(constraint.getName())) {
+        if (StringUtils.isNotBlank(index.getName())) {
             builder.append("name=\"");
-            builder.append(constraint.getName());
+            builder.append(index.getName());
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         }
                 
-        builder.append("columnNames={");
-        if (!constraint.getColumnName().isEmpty()) {
-            for (String columnName : constraint.getColumnName()) {
-                builder.append(ORMConverterUtil.QUOTE);
-                builder.append(columnName);
-                builder.append(ORMConverterUtil.QUOTE);
-                builder.append(ORMConverterUtil.COMMA);
-            }
-            builder.deleteCharAt(builder.length() - 1);
-        }
-        builder.append(ORMConverterUtil.CLOSE_BRACES);
-
         
+        builder.append("columnList=\"");
+        for (String columnName : index.getColumnList()) {
+            builder.append(columnName);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        builder.setLength(builder.length() - 1);
+        builder.append(ORMConverterUtil.QUOTE);
+        builder.append(ORMConverterUtil.COMMA);
+
+
+
+        if (index.isUnique()!=null && index.isUnique()) {
+            builder.append("unique=true");
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
+        builder.setLength(builder.length() - 1);
+
         
         builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
         return builder.toString();
@@ -65,7 +74,7 @@ public class UniqueConstraintSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.UniqueConstraint");
+        return Collections.singletonList("javax.persistence.Index");
 
     }
 }
