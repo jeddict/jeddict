@@ -92,7 +92,7 @@ public class JoinTable {
     protected ForeignKey inverseForeignKey;
     @XmlElement(name = "unique-constraint")
     protected Set<UniqueConstraint> uniqueConstraint;
-    protected List<Index> index;//REVENG PENDING
+    protected List<Index> index;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "catalog")
@@ -130,6 +130,13 @@ public class JoinTable {
             if (uniqueConstraintsAnnot != null) {
                 for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
                     joinTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
+                }
+            }
+            
+            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
+            if (indexesAnnot != null) {
+                for (Object indexObj : indexesAnnot) {
+                    joinTable.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
                 }
             }
 

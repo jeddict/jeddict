@@ -68,7 +68,7 @@ public class Table {
 
     @XmlElement(name = "unique-constraint")
     protected Set<UniqueConstraint> uniqueConstraint;
-    protected List<Index> index;//REVENG PENDING
+    protected List<Index> index;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "catalog")
@@ -87,6 +87,14 @@ public class Table {
                     table.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
                 }
             }
+            
+            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
+            if (indexesAnnot != null) {
+                for (Object indexObj : indexesAnnot) {
+                    table.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
+                }
+            }
+
             table.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             table.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
             table.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");

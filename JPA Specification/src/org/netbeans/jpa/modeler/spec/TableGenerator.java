@@ -77,7 +77,7 @@ public class TableGenerator {
     protected String description;
     @XmlElement(name = "unique-constraint")
     protected Set<UniqueConstraint> uniqueConstraint;
-    protected List<Index> index;//REVENG PENDING
+    protected List<Index> index;
     @XmlAttribute(name = "name", required = true)
     protected String name;
     @XmlAttribute(name = "table")
@@ -107,6 +107,13 @@ public class TableGenerator {
             if (uniqueConstraintsAnnot != null) {
                 for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
                     tableGenerator.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
+                }
+            }
+            
+            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
+            if (indexesAnnot != null) {
+                for (Object indexObj : indexesAnnot) {
+                    tableGenerator.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
                 }
             }
             tableGenerator.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");

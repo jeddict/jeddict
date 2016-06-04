@@ -7,11 +7,16 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -56,7 +61,7 @@ public class Index {
     @XmlAttribute(name = "n")
     protected String name;
 //    @XmlAttribute(name = "column-list", required = true)
-    @XmlElement(name="c")
+    @XmlElement(name = "c")
     protected List<String> columnList;
     @XmlAttribute(name = "u")
     protected Boolean unique;
@@ -66,6 +71,25 @@ public class Index {
 
     public Index(String name) {
         this.name = name;
+    }
+    
+    public static Index load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Index");
+        }
+        Index index = null;
+        if (annotationMirror != null) {
+            index = new Index();
+            String columnList = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnList");
+            if (StringUtils.isNotBlank(columnList)) {
+                for (String coulmnExp : columnList.split(",")) {
+                    index.getColumnList().add(coulmnExp);
+                }
+            }
+            index.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            index.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
+        }
+        return index;
     }
 
     /**
@@ -146,6 +170,11 @@ public class Index {
      */
     public void setUnique(Boolean value) {
         this.unique = value;
+    }
+
+    @Override
+    public String toString() {
+        return getColumnList().stream().collect(Collectors.joining(", "));
     }
 
 }
