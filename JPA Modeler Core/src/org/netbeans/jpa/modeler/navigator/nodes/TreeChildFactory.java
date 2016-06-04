@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.navigator.nodes;
 
+import java.util.List;
 import org.openide.nodes.ChildFactory;
 
 public abstract class TreeChildFactory<E,K extends Object> extends ChildFactory<K> {

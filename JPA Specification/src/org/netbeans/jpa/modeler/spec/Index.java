@@ -7,17 +7,19 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.spec.extend.adapter.OrderColumnAdapter;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -64,6 +66,9 @@ public class Index {
     protected String name;
 //    @XmlAttribute(name = "column-list", required = true)
     @XmlElement(name = "c")
+//    @XmlJavaTypeAdapter(OrderColumnAdapter.class)
+//    @XmlJavaTypeAdapter(MapAdapter.class)
+//@XmlAnyElement;
     protected Map<String, OrderType> columnList;
     @XmlAttribute(name = "u")
     protected Boolean unique;

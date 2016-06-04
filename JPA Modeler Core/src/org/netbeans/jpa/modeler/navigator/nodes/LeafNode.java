@@ -15,10 +15,15 @@
  */
 package org.netbeans.jpa.modeler.navigator.nodes;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.Action;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.nodes.Children;
+import org.openide.util.Exceptions;
 import org.openide.util.lookup.Lookups;
 
 public abstract class LeafNode<T extends Object> extends PropertyNode implements TreeChildNode<T> {
@@ -26,14 +31,20 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
     private final CheckableAttributeNode checkableNode;
     private final T baseElementSpec;
     private TreeParentNode parent;
+    private List<Class<? extends LeafNodeAction>> actions;
 
-    public LeafNode(IModelerScene modelerScene, T baseElementSpec, Children children, CheckableAttributeNode checkableNode) {
+    public LeafNode(IModelerScene modelerScene, T baseElementSpec, Children children, CheckableAttributeNode checkableNode,List<Class<? extends LeafNodeAction>> actions) {
         super(modelerScene, children, Lookups.singleton(checkableNode));
         this.baseElementSpec = baseElementSpec;
         this.checkableNode = checkableNode;
         if (checkableNode != null) {
             checkableNode.setNode(this);
         }
+        this.actions=actions;
+    }
+    
+    public LeafNode(IModelerScene modelerScene, T baseElementSpec, Children children, CheckableAttributeNode checkableNode) {
+        this(modelerScene,baseElementSpec,children,checkableNode, Collections.EMPTY_LIST);
     }
 
 
@@ -76,5 +87,27 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
     @Override
     public void refreshView() {
         fireIconChange();
+    }
+    
+    @Override
+    public Action[] getActions(boolean context) {
+        if(!context){
+            List<LeafNodeAction> actionExe= new ArrayList<>();
+            if(actions!=null){
+            actions.stream().forEach((actionClass) -> {
+                try {
+                    LeafNodeAction action = actionClass.newInstance();
+                    action.setNode(this);
+                    actionExe.add(action);
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            });
+            }
+             return actionExe.toArray(new Action[0]);
+
+        } else {
+                      return new Action[0];
+        }
     }
 }

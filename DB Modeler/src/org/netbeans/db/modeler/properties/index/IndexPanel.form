@@ -35,7 +35,7 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="classMemberPanel">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.netbeans.db.modeler.properties.tablemember.TableMemberPanel(&quot;Unique Constraint Columns&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.netbeans.db.modeler.properties.tablemember.TableMemberPanel(&quot;Indexes&quot;)"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

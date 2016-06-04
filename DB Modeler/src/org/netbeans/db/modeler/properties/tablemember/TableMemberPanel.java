@@ -15,24 +15,28 @@
  */
 package org.netbeans.db.modeler.properties.tablemember;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TableMemberChildFactory;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.SwingUtilities;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
+import org.netbeans.db.modeler.properties.order.OrderColumn;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TMLeafNode;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TMRootNode;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeParentNode;
-import org.netbeans.jpa.modeler.spec.extend.TableMembers;
+import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
 
 public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implements ExplorerManager.Provider {
 
+    private TableMemberChildFactory childFactory;
     private ExplorerManager manager;
     private final String title;
 
@@ -42,11 +46,11 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
 
     public TableMemberPanel(String title, TableWidget<? extends DBTable> tableWidget) {
         this.tableWidget = tableWidget;
-        this.title=title;
+        this.title = title;
     }
 
     public TableMemberPanel(String title) {
-        this.title=title;
+        this.title = title;
     }
 
     @Override
@@ -59,15 +63,26 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
     public void setValue(TableMembers tableMembers) {
         this.tableMembers = tableMembers;
         SwingUtilities.invokeLater(() -> {
-            node = new TMRootNode(getTableWidget(), tableMembers, new TableMemberChildFactory(), new CheckableAttributeNode());
+            if(childFactory==null){
+                childFactory = new TableMemberChildFactory();
+            }
+            node = new TMRootNode(getTableWidget(), tableMembers, childFactory , new CheckableAttributeNode());
             manager.setRootContext(node);
             node.init();
         });
     }
-    
-    public void setValue(List<String> columns) {
+
+    public void setValue(Map<String, OrderType> columns) {
         TableMembers tableMembers_tmp = new TableMembers();
         tableMembers_tmp.setColumns(columns);
+        setValue(tableMembers_tmp);
+    }
+
+    public void setValue(List<String> columns) {
+        TableMembers tableMembers_tmp = new TableMembers();
+        Map<String, OrderType> columnData = new LinkedHashMap<>();
+        columns.stream().forEach(c -> columnData.put(c, OrderType.ASC));
+        tableMembers_tmp.setColumns(columnData);
         setValue(tableMembers_tmp);
     }
 
@@ -112,10 +127,6 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
             for (TreeNode childNode : ((TreeParentNode<TableMembers>) parentNode).getChildList()) {
                 loadColumnNode(tableMembers, childNode);
             }
-//        } else if (parentNode instanceof CMInternalNode) {
-//            for (TreeNode childNode : ((CMInternalNode) parentNode).getChildList()) {
-//                loadSubGraph(tableMembers, childNode);
-//            }
         }
 
     }
@@ -127,7 +138,11 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
         if (childNode instanceof TreeChildNode) {
             String column = (String) (((TMLeafNode) childNode).getLeafColumnWidget().getBaseElementSpec()).getName();
             if (childNode.getCheckableNode().isCheckEnabled()) {
-                tableMembers.addColumn(column);
+                if (childNode instanceof OrderColumn) {
+                    tableMembers.addColumn(column, ((OrderColumn) childNode).getOrder());
+                } else {
+                    tableMembers.addColumn(column);
+                }
             }
         }
     }
@@ -164,4 +179,17 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
         this.tableWidget = tableWidget;
     }
 
+    /**
+     * @return the childFactory
+     */
+    public TableMemberChildFactory getChildFactory() {
+        return childFactory;
+    }
+
+    /**
+     * @param childFactory the childFactory to set
+     */
+    public void setChildFactory(TableMemberChildFactory childFactory) {
+        this.childFactory = childFactory;
+    }
 }

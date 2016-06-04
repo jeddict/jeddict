@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.spec;
 
 import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -25,11 +26,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum OrderType {
 
+    @XmlEnumValue("A")
     ASC,
+    @XmlEnumValue("D")
     DESC;
-
-    public String value() {
-        return String.valueOf(ordinal());
-    }
-
 }

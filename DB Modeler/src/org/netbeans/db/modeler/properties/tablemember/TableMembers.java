@@ -13,46 +13,49 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.spec.extend;
+package org.netbeans.db.modeler.properties.tablemember;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
+import org.netbeans.jpa.modeler.spec.OrderType;
 
 /**
  *
  * @author Gaurav Gupta
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 public class TableMembers {
 
-    @XmlIDREF
-    @XmlElement(name = "c")
-    protected List<String> columns;
+    protected Map<String, OrderType> columns;
     
-    public boolean addColumn(String column) {
-        return getColumns().add(column);
+    public void addColumn(String column) {
+         getColumns().put(column, OrderType.ASC);
+    }
+    
+    public void addColumn(String column, OrderType orderType) {
+         getColumns().put(column, orderType);
     }
 
     public boolean isExist(String column) {
-        return getColumns().stream().filter(c -> c.equals(column)).findAny().isPresent();
+        return getColumns().containsKey(column);
     }
 
-    public boolean removeColumn(String column) {
-        return getColumns().remove(column);
+    public void removeColumn(String column) {
+         getColumns().remove(column);
     }
 
     /**
      * @return the columns
      */
-    public List<String> getColumns() {
+    public Map<String, OrderType> getColumns() {
         if (columns == null) {
-            columns = new ArrayList<>();
+            columns = new LinkedHashMap<>();
         }
         return columns;
     }
@@ -60,13 +63,13 @@ public class TableMembers {
     /**
      * @param columns the columns to set
      */
-    public void setColumns(List<String> columns) {
+    public void setColumns(Map<String, OrderType> columns) {
         this.columns = columns;
     }
 
     @Override
     public String toString() {
-        return getColumns().stream().collect(Collectors.joining(", "));
+        return getColumns().keySet().stream().collect(Collectors.joining(", "));
     }
 
 }

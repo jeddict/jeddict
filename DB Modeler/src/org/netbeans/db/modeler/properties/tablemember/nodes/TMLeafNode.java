@@ -15,22 +15,21 @@
  */
 package org.netbeans.db.modeler.properties.tablemember.nodes;
 
+import java.util.List;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
-import org.netbeans.jpa.modeler.spec.extend.TableMembers;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.navigator.nodes.LeafNodeAction;
+import org.netbeans.db.modeler.properties.tablemember.TableMembers;
 import org.openide.nodes.Children;
 
 public class TMLeafNode extends LeafNode<TableMembers> {
 
     private final ColumnWidget leafColumnWidget;
 
-    public TMLeafNode(ColumnWidget leafAttributeWidget, TableMembers tableMembers, Children children, CheckableAttributeNode checkableNode) {
-        super(leafAttributeWidget.getModelerScene(), tableMembers, children, checkableNode);
+    public TMLeafNode(ColumnWidget leafAttributeWidget, TableMembers tableMembers, Children children, CheckableAttributeNode checkableNode, List<Class<? extends LeafNodeAction>> actions) {
+        super(leafAttributeWidget.getModelerScene(), tableMembers, children, checkableNode, actions);
         this.leafColumnWidget = leafAttributeWidget;
     }
 
@@ -63,5 +62,5 @@ public class TMLeafNode extends LeafNode<TableMembers> {
     public ColumnWidget getLeafColumnWidget() {
         return leafColumnWidget;
     }
-
+    
 }

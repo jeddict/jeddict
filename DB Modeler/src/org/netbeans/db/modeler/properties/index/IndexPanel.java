@@ -15,6 +15,8 @@
  */
 package org.netbeans.db.modeler.properties.index;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -27,12 +29,10 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.En
 public class IndexPanel extends EntityComponent<Index> {
 
     private Index index;
-//    private final Set<Index> indexList;
     private final TableWidget<? extends DBTable> tableWidget;
 
     public IndexPanel(TableWidget<? extends DBTable> tableWidget) {
         this.tableWidget = tableWidget;
-//        indexList = tableWidget.getBaseElementSpec().getI();
     }
 
     @Override
@@ -43,6 +43,7 @@ public class IndexPanel extends EntityComponent<Index> {
     @Override
     public void init() {
         ((TableMemberPanel) classMemberPanel).init();
+        ((TableMemberPanel) classMemberPanel).setChildFactory(new IndexChildFactory());
         pack();
     }
     
@@ -89,7 +90,7 @@ public class IndexPanel extends EntityComponent<Index> {
     private void initComponents() {
 
         rootLayeredPane = new javax.swing.JLayeredPane();
-        classMemberPanel = new org.netbeans.db.modeler.properties.tablemember.TableMemberPanel("Unique Constraint Columns");
+        classMemberPanel = new org.netbeans.db.modeler.properties.tablemember.TableMemberPanel("Indexes");
         configPane = new javax.swing.JLayeredPane();
         action_jLayeredPane = new javax.swing.JLayeredPane();
         save_Button = new javax.swing.JButton();

@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.navigator.nodes;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Action;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.lookup.Lookups;
@@ -83,6 +84,11 @@ public abstract class RootNode<T extends Object> extends AbstractNode implements
     @Override
     public void refreshView() {
         fireIconChange();
+    }
+    
+    @Override
+    public Action[] getActions(boolean context) {
+          return new Action[0];
     }
 
 }

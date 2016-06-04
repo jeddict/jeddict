@@ -13,35 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.properties.tablemember.nodes;
+package org.netbeans.db.modeler.properties.index;
 
+import org.netbeans.db.modeler.properties.order.OrderAction;
+import java.util.Collections;
+import org.netbeans.db.modeler.properties.tablemember.nodes.*;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
-import java.util.List;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
-import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.spec.DBTable;
-import org.netbeans.db.modeler.properties.tablemember.TableMembers;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class TableMemberChildFactory extends TreeChildFactory<TableMembers, ColumnWidget> {
+public class IndexChildFactory extends TableMemberChildFactory {
 
-    @Override
-    protected boolean createKeys(List<ColumnWidget> attributeWidgets) {
-        TableWidget<? extends DBTable> tableWidget = null;
-        if (parentNode instanceof TMRootNode) {
-            tableWidget = ((TMRootNode) parentNode).getRootWidget();
-        } 
-        if (tableWidget != null) {
-            attributeWidgets.addAll(tableWidget.getColumnWidgets());
-        }
-        return true;
-    }
 
     @Override
     protected Node createNodeForKey(final ColumnWidget columnWidget) {
-        TMLeafNode childNode;
+        IndexNode childNode;
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
         if (parentNode.getBaseElementSpec() != null) {
             if (parentNode instanceof TMRootNode) {
@@ -49,8 +36,10 @@ public class TableMemberChildFactory extends TreeChildFactory<TableMembers, Colu
             }
         }
 
-        childNode = new TMLeafNode(columnWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode, null);
-
+        childNode = new IndexNode(columnWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode ,Collections.singletonList(OrderAction.class));
+        if(checkableNode.isSelected()){
+            childNode.setOrder(parentNode.getBaseElementSpec().getColumns().get(columnWidget.getName()));
+        }
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
         childNode.init();

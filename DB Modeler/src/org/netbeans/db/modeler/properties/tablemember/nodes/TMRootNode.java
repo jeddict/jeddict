@@ -20,7 +20,7 @@ import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
-import org.netbeans.jpa.modeler.spec.extend.TableMembers;
+import org.netbeans.db.modeler.properties.tablemember.TableMembers;
 
 public class TMRootNode extends RootNode<TableMembers> {
 

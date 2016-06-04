@@ -15,6 +15,7 @@
  */
 package org.netbeans.db.modeler.properties.uniqueconstraint;
 
+import java.util.ArrayList;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -90,7 +91,7 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
         nameTextField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
 
         javax.swing.GroupLayout classMemberPanelLayout = new javax.swing.GroupLayout(classMemberPanel);
         classMemberPanel.setLayout(classMemberPanelLayout);
@@ -125,9 +126,9 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
         cancel_Button.setBounds(80, 0, 70, 30);
 
         nameTextField.setText(org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.nameTextField.text")); // NOI18N
-        nameTextField.setToolTipText(org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.nameTextField.toolTipText")); // NOI18N
+        nameTextField.setToolTipText("");
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.jLabel1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(nameLabel, org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.nameLabel.text")); // NOI18N
 
         javax.swing.GroupLayout rootLayeredPaneLayout = new javax.swing.GroupLayout(rootLayeredPane);
         rootLayeredPane.setLayout(rootLayeredPaneLayout);
@@ -135,9 +136,9 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
             rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rootLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(nameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(classMemberPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -151,12 +152,12 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
                     .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1))))
+                        .addComponent(nameLabel))))
         );
         rootLayeredPane.setLayer(classMemberPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         rootLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         rootLayeredPane.setLayer(nameTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(nameLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -182,7 +183,7 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
         if (!validateField()) {
             return;
         }
-        uniqueConstraint.setColumnName(((TableMemberPanel) classMemberPanel).getValue().getColumns());
+        uniqueConstraint.setColumnName(new ArrayList<>(((TableMemberPanel) classMemberPanel).getValue().getColumns().keySet()));
         uniqueConstraint.setName(nameTextField.getText());
 
         if (this.getEntity().getClass() == RowValue.class) {
@@ -202,7 +203,7 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JButton cancel_Button;
     private javax.swing.JPanel classMemberPanel;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JLayeredPane rootLayeredPane;
     private javax.swing.JButton save_Button;

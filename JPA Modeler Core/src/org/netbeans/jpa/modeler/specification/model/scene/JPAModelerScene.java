@@ -44,7 +44,6 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
-import static org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorTopComponent.JPQL_ICON_PATH;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
 import org.netbeans.jpa.modeler.spec.Embeddable;
@@ -83,7 +82,7 @@ import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import org.openide.util.ImageUtilities;
+import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
@@ -348,28 +347,35 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 //        });
     }
 
+    @NbBundle.Messages({
+        "GENERATE_SRC=Generate Source Code",
+        "ENTITY_VISIBILTY=Manage Entity Visibility",
+        "VIS_DB=Visualize DB",
+        "PERSISTENCE_UNIT=Persistence.xml",
+        "RYN_JPQL=Run JPQL Query",
+        "SHARE=Share"
+    })
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem generateCode = new JMenuItem("Generate Source Code", GENERATE_SRC);
+        JMenuItem generateCode = new JMenuItem(Bundle.GENERATE_SRC(), GENERATE_SRC);
         generateCode.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('G'), InputEvent.CTRL_DOWN_MASK));
         generateCode.addActionListener((ActionEvent e) -> {
             JPAModelerUtil.generateSourceCode(JPAModelerScene.this.getModelerFile());
         });
 
-        JMenuItem manageVisibility = new JMenuItem("Manage Entity Visibility");
+        JMenuItem manageVisibility = new JMenuItem(Bundle.ENTITY_VISIBILTY());
         manageVisibility.addActionListener((ActionEvent e) -> {
             fireEntityVisibilityAction(getModelerFile());
         });
 
-        JMenuItem visDB = new JMenuItem("Visualize DB", VIEW_DB);
+        JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);
         visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
         visDB.addActionListener((ActionEvent e) -> {
             JPAModelerUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
         });
         
-//             
-        JMenuItem openPUXML = new JMenuItem("Persistence.xml", PERSISTENCE_UNIT);
+        JMenuItem openPUXML = new JMenuItem(Bundle.PERSISTENCE_UNIT(), PERSISTENCE_UNIT);
         openPUXML.addActionListener((ActionEvent e) -> {
              Project project = JPAModelerScene.this.getModelerFile().getProject();
             try {
@@ -381,12 +387,12 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
            
         });
         
-       JMenuItem openJPQLPanel = new JMenuItem("Run JPQL Query");//,ImageUtilities.loadImage(JPQL_ICON_PATH, true));
+       JMenuItem openJPQLPanel = new JMenuItem(Bundle.RYN_JPQL());//,ImageUtilities.loadImage(JPQL_ICON_PATH, true));
         openJPQLPanel.addActionListener((ActionEvent e) -> {
                new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile());
         });
 
-        JMenu shareModeler = new JMenu("Share");
+        JMenu shareModeler = new JMenu(Bundle.SHARE());
         shareModeler.setIcon(SOCIAL_NETWORK_SHARING);
         shareModeler.add(TwitterSocialNetwork.getInstance().getComponent());
         shareModeler.add(LinkedInSocialNetwork.getInstance().getComponent());
@@ -466,7 +472,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         colorSchemes.put("Classic", PFactory.getNetBeans60Scheme());
         colorSchemes.put("Metro", PFactory.getMetroScheme());
         colorSchemes.put("Mac", PFactory.getMacScheme());
-//        colorSchemes.put("Wood", PFactory.getWoodScheme());
+//      colorSchemes.put("Wood", PFactory.getWoodScheme());
         return colorSchemes;
     }
 
