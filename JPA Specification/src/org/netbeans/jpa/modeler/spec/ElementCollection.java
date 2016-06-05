@@ -233,7 +233,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             elementCollection.setTargetClass("java.lang.String");//elementCollection.targetClass
         }
         elementCollection.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
-
+        JavaSourceParserUtil.getBeanValidation(elementCollection,element);
         return elementCollection;
     }
 

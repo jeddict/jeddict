@@ -99,6 +99,7 @@ public class EmbeddedId extends CompositionAttribute<DefaultClass> implements At
 //        embeddedId.setConnectedClass(embeddableClassSpec);//TODO Priority
 
         embeddedId.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
+        JavaSourceParserUtil.getBeanValidation(embeddedId,element);
         return embeddedId;
     }
 
