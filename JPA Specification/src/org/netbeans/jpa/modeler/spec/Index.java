@@ -6,7 +6,9 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -62,7 +64,7 @@ public class Index {
     protected String name;
 //    @XmlAttribute(name = "column-list", required = true)
     @XmlElement(name = "c")
-    protected List<String> columnList;
+    protected Map<String, OrderType> columnList;
     @XmlAttribute(name = "u")
     protected Boolean unique;
 
@@ -72,7 +74,7 @@ public class Index {
     public Index(String name) {
         this.name = name;
     }
-    
+
     public static Index load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Index");
@@ -83,7 +85,8 @@ public class Index {
             String columnList = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnList");
             if (StringUtils.isNotBlank(columnList)) {
                 for (String coulmnExp : columnList.split(",")) {
-                    index.getColumnList().add(coulmnExp);
+                    String[] coulmnExpParam = coulmnExp.split(" ");
+                    index.getColumnList().put(coulmnExpParam[0],OrderType.valueOf(coulmnExpParam[1]));
                 }
             }
             index.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
@@ -138,7 +141,10 @@ public class Index {
      * @return possible object is {@link String }
      *
      */
-    public List<String> getColumnList() {
+    public Map<String, OrderType> getColumnList() {
+        if(columnList==null){
+            columnList = new LinkedHashMap<>();
+        }
         return columnList;
     }
 
@@ -148,7 +154,7 @@ public class Index {
      * @param value allowed object is {@link String }
      *
      */
-    public void setColumnList(List<String> value) {
+    public void setColumnList(Map<String, OrderType> value) {
         this.columnList = value;
     }
 
@@ -174,7 +180,7 @@ public class Index {
 
     @Override
     public String toString() {
-        return getColumnList().stream().collect(Collectors.joining(", "));
+        return getColumnList().keySet().stream().collect(Collectors.joining(", "));
     }
 
 }
