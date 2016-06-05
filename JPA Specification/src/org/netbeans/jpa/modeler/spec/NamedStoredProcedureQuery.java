@@ -93,7 +93,11 @@ public class NamedStoredProcedureQuery {
             List resultClassesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultClasses");
             if (resultClassesAnnot != null) {
                 for (Object resultClassObj : resultClassesAnnot) {
-                    namedStoredProcedureQuery.getResultClass().add(resultClassObj.toString());
+                    String _class = resultClassObj.toString();
+                    if(_class.contains("class")){
+                        _class = _class.substring(0,_class.length()-6);//remove .class
+                    }
+                    namedStoredProcedureQuery.getResultClass().add(_class);
                 }
             }
             List resultSetMappingsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "resultSetMappings");
@@ -207,6 +211,10 @@ public class NamedStoredProcedureQuery {
             resultClass = new ArrayList<String>();
         }
         return this.resultClass;
+    }
+    
+    public void addResultClass(Entity entity){
+        getResultClass().add("{" + entity.getId() + "}");
     }
 
     /**
