@@ -39,7 +39,7 @@ public class HashcodeMethodSnippet implements Snippet {
         int startNumber = generatePrimeNumber(2, 10);
         int multiplyNumber = generatePrimeNumber(10, 100);
 
-        builder.append(String.format("int hash = %s;",startNumber));
+        builder.append(String.format("int hash = %s;\n",startNumber));
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
             String expression;
@@ -48,7 +48,7 @@ public class HashcodeMethodSnippet implements Snippet {
             } else {
                 expression = getHashcodeExpression(attribute.getName());
             }
-            builder.append(String.format("hash = %s * hash + %s;", multiplyNumber, expression));
+            builder.append(String.format("hash = %s * hash + %s;\n", multiplyNumber, expression));
         }
         builder.append("return hash;");
         return builder.toString();

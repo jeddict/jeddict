@@ -21,6 +21,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 
 public class EqualsMethodSnippet implements Snippet {
 
@@ -35,9 +36,9 @@ public class EqualsMethodSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        builder.append("if (obj == null) {return false;}");
-        builder.append("if (getClass() != obj.getClass()) {return false;}");
-        builder.append(String.format("final %s other = (%s) obj;", className, className));
+        builder.append("if (obj == null) {return false;}\n");
+        builder.append("if (getClass() != obj.getClass()) {return false;}\n");
+        builder.append(String.format("final %s other = (%s) obj;\n", className, className));
 
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
@@ -49,7 +50,7 @@ public class EqualsMethodSnippet implements Snippet {
             }
             builder.append(String.format("if (%s) {", expression));
             builder.append("return false;");
-            builder.append(CLOSE_BRACES);
+            builder.append(CLOSE_BRACES).append(NEW_LINE);
 
         }
         builder.append("return true;");

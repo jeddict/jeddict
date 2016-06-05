@@ -47,11 +47,13 @@ public class ConstructorSnippet implements Snippet {
                 }
                 builder.append(className).append(OPEN_PARANTHESES);
                 StringBuilder varAssign = new StringBuilder();
+                if(!variableSnippets.isEmpty()){
                 for(VariableDefSnippet variableSnippet : variableSnippets){
                     builder.append(variableSnippet.getType()).append(SPACE).append(variableSnippet.getName()).append(COMMA);
                     varAssign.append(String.format("this.%s=%s;", variableSnippet.getName(),variableSnippet.getName())).append(NEW_LINE);
                 }
                 builder.setLength(builder.length()-1);
+                }
                 builder.append(CLOSE_PARANTHESES);
                 
                 builder.append(OPEN_BRACES).append(NEW_LINE);
