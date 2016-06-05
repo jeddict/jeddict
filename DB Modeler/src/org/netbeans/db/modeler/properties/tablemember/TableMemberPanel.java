@@ -63,10 +63,11 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
     public void setValue(TableMembers tableMembers) {
         this.tableMembers = tableMembers;
         SwingUtilities.invokeLater(() -> {
-            if(childFactory==null){
-                childFactory = new TableMemberChildFactory();
+            if (childFactory == null) {
+                node = new TMRootNode(getTableWidget(), tableMembers, new TableMemberChildFactory(), new CheckableAttributeNode());
+            } else {
+                node = new TMRootNode(getTableWidget(), tableMembers, childFactory, new CheckableAttributeNode());
             }
-            node = new TMRootNode(getTableWidget(), tableMembers, childFactory , new CheckableAttributeNode());
             manager.setRootContext(node);
             node.init();
         });
