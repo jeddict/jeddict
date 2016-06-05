@@ -15,16 +15,12 @@
  */
 package org.netbeans.db.modeler.properties.tablemember;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
 import org.netbeans.jpa.modeler.spec.OrderType;
+import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
 
 /**
  *
@@ -32,44 +28,48 @@ import org.netbeans.jpa.modeler.spec.OrderType;
  */
 public class TableMembers {
 
-    protected Map<String, OrderType> columns;
+    protected Set<OrderbyItem> columns;
     
     public void addColumn(String column) {
-         getColumns().put(column, OrderType.ASC);
+         getColumns().add(new OrderbyItem(column, OrderType.ASC));
     }
     
     public void addColumn(String column, OrderType orderType) {
-         getColumns().put(column, orderType);
+         getColumns().add(new OrderbyItem(column, orderType));
     }
 
     public boolean isExist(String column) {
-        return getColumns().containsKey(column);
+        return getColumns().contains(new OrderbyItem(column, OrderType.ASC));
     }
 
     public void removeColumn(String column) {
-         getColumns().remove(column);
+         getColumns().remove(new OrderbyItem(column, OrderType.ASC));
     }
 
     /**
      * @return the columns
      */
-    public Map<String, OrderType> getColumns() {
+    public Set<OrderbyItem> getColumns() {
         if (columns == null) {
-            columns = new LinkedHashMap<>();
+            columns = new LinkedHashSet<>();
         }
         return columns;
+    }
+    
+    public Optional<OrderbyItem> findColumn(String name){
+        return getColumns().stream().filter(c -> c.getColumn().equals(name)).findAny();
     }
 
     /**
      * @param columns the columns to set
      */
-    public void setColumns(Map<String, OrderType> columns) {
+    public void setColumns(Set<OrderbyItem> columns) {
         this.columns = columns;
     }
 
     @Override
     public String toString() {
-        return getColumns().keySet().stream().collect(Collectors.joining(", "));
+        return getColumns().stream().map(c -> c.getColumn()).collect(Collectors.joining(", "));
     }
 
 }

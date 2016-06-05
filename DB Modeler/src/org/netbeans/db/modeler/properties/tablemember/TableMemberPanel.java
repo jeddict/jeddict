@@ -15,9 +15,9 @@
  */
 package org.netbeans.db.modeler.properties.tablemember;
 
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TableMemberChildFactory;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.SwingUtilities;
@@ -30,6 +30,7 @@ import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeParentNode;
 import org.netbeans.jpa.modeler.spec.OrderType;
+import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
@@ -73,7 +74,7 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
         });
     }
 
-    public void setValue(Map<String, OrderType> columns) {
+    public void setValue(Set<OrderbyItem> columns) {
         TableMembers tableMembers_tmp = new TableMembers();
         tableMembers_tmp.setColumns(columns);
         setValue(tableMembers_tmp);
@@ -81,8 +82,8 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
 
     public void setValue(List<String> columns) {
         TableMembers tableMembers_tmp = new TableMembers();
-        Map<String, OrderType> columnData = new LinkedHashMap<>();
-        columns.stream().forEach(c -> columnData.put(c, OrderType.ASC));
+        Set<OrderbyItem> columnData = new LinkedHashSet<>();
+        columns.stream().forEach(c -> columnData.add(new OrderbyItem(c, OrderType.ASC)));
         tableMembers_tmp.setColumns(columnData);
         setValue(tableMembers_tmp);
     }

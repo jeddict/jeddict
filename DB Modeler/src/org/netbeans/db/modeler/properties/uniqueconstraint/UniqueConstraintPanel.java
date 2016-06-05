@@ -17,6 +17,7 @@ package org.netbeans.db.modeler.properties.uniqueconstraint;
 
 import java.util.ArrayList;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
@@ -172,10 +173,10 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
     }// </editor-fold>//GEN-END:initComponents
 
       private boolean validateField() {
-        if (uniqueConstraints.contains(new UniqueConstraint(nameTextField.getText()))){
-            JOptionPane.showMessageDialog(this, "UniqueConstraint with same name already exist : " + uniqueConstraint.getName(), "Duplicate UniqueConstraint", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
+//        if (uniqueConstraints.contains(new UniqueConstraint(nameTextField.getText()))){
+//            JOptionPane.showMessageDialog(this, "UniqueConstraint with same name already exist : " + uniqueConstraint.getName(), "Duplicate UniqueConstraint", javax.swing.JOptionPane.WARNING_MESSAGE);
+//            return false;
+//        }
         return true;
     }
       
@@ -183,7 +184,7 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
         if (!validateField()) {
             return;
         }
-        uniqueConstraint.setColumnName(new ArrayList<>(((TableMemberPanel) classMemberPanel).getValue().getColumns().keySet()));
+        uniqueConstraint.setColumnName(new ArrayList<>(((TableMemberPanel) classMemberPanel).getValue().getColumns().stream().map(c -> c.getColumn()).collect(toList())));
         uniqueConstraint.setName(nameTextField.getText());
 
         if (this.getEntity().getClass() == RowValue.class) {

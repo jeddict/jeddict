@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.OrderType;
+import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class IndexSnippet implements Snippet {
@@ -52,9 +53,9 @@ public class IndexSnippet implements Snippet {
                 
         
         builder.append("columnList=\"");
-        for (Entry<String,OrderType> entrySet : index.getColumnList().entrySet()) {
-            String columnName = entrySet.getKey();
-            OrderType orderType = entrySet.getValue();
+        for (OrderbyItem orderbyItem : index.getColumnList()) {
+            String columnName = orderbyItem.getColumn();
+            OrderType orderType = orderbyItem.getOrderType();
             builder.append(columnName);
             if(orderType!=null){
                 builder.append(" ").append(orderType.name());

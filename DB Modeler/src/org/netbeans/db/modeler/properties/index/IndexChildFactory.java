@@ -38,7 +38,7 @@ public class IndexChildFactory extends TableMemberChildFactory {
 
         childNode = new IndexNode(columnWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode ,Collections.singletonList(OrderAction.class));
         if(checkableNode.isSelected()){
-            childNode.setOrder(parentNode.getBaseElementSpec().getColumns().get(columnWidget.getName()));
+            childNode.setOrder(parentNode.getBaseElementSpec().findColumn(columnWidget.getName()).get().getOrderType());
         }
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
