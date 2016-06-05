@@ -227,8 +227,10 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
                     entityMappings.addEmbeddable(embeddableClassSpec);
                 }
                 elementCollection.setConnectedClass(embeddableClassSpec);
+                /* Embeddable End*/
+            } else {
+                elementCollection.setTargetClass(declaredType.toString());
             }
-            /* Embeddable End*/
         } else {
             elementCollection.setTargetClass("java.lang.String");//elementCollection.targetClass
         }
