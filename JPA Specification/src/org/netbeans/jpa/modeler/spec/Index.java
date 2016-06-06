@@ -90,7 +90,11 @@ public class Index {
             if (StringUtils.isNotBlank(columnList)) {
                 for (String coulmnExp : columnList.split(",")) {
                     String[] coulmnExpParam = coulmnExp.split(" ");
-                    index.getColumnList().add(new OrderbyItem(coulmnExpParam[0],OrderType.valueOf(coulmnExpParam[1])));
+                    if (coulmnExpParam.length > 1) {
+                        index.getColumnList().add(new OrderbyItem(coulmnExpParam[0], OrderType.valueOf(coulmnExpParam[1])));
+                    } else {
+                        index.getColumnList().add(new OrderbyItem(coulmnExpParam[0], null));
+                    }
                 }
             }
             index.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
@@ -146,7 +150,7 @@ public class Index {
      *
      */
     public Set<OrderbyItem> getColumnList() {
-        if(columnList==null){
+        if (columnList == null) {
             columnList = new LinkedHashSet<>();
         }
         return columnList;
@@ -184,7 +188,7 @@ public class Index {
 
     @Override
     public String toString() {
-        return getColumnList().stream().map(c-> c.getColumn()).collect(Collectors.joining(", "));
+        return getColumnList().stream().map(c -> c.getColumn()).collect(Collectors.joining(", "));
     }
 
 }

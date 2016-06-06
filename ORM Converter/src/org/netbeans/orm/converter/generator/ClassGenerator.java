@@ -745,14 +745,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected List<UniqueConstraintSnippet> getUniqueConstraints(Set<UniqueConstraint> parsedUniqueConstraints) {
         if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
-            return null;
+            return Collections.EMPTY_LIST;
         }
         return parsedUniqueConstraints.stream().map(c -> new UniqueConstraintSnippet(c)).collect(toList());
     }
     
     protected List<IndexSnippet> getIndexes(List<Index> parsedIndexes) {
         if (parsedIndexes == null || parsedIndexes.isEmpty()) {
-            return null;
+            return Collections.EMPTY_LIST;
         }
         return parsedIndexes.stream().filter(index -> !index.getColumnList().isEmpty())
                 .map(index -> new IndexSnippet(index)).collect(toList());

@@ -87,7 +87,7 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.MERGE")) {
                     cascadeType.setCascadeMerge(new EmptyType());
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.REMOVE")) {
-                    cascadeType.setCascadeMerge(new EmptyType());
+                    cascadeType.setCascadeRemove(new EmptyType());
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.REFRESH")) {
                     cascadeType.setCascadeRefresh(new EmptyType());
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.DETACH")) {
@@ -120,6 +120,7 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         this.fetch = FetchType.load(element, relationAnnotationMirror);
         this.access = AccessType.load(element);
         this.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
+        
     }
 
     /**

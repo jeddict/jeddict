@@ -20,8 +20,8 @@ import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
-import org.netbeans.jpa.modeler.navigator.nodes.LeafNodeAction;
 import org.netbeans.db.modeler.properties.tablemember.TableMembers;
+import org.netbeans.jpa.modeler.navigator.nodes.LeafNodeAction;
 import org.openide.nodes.Children;
 
 public class TMLeafNode extends LeafNode<TableMembers> {

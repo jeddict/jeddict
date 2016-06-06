@@ -32,6 +32,7 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
     private final T baseElementSpec;
     private TreeParentNode parent;
     private List<Class<? extends LeafNodeAction>> actions;
+    private List<LeafNodeAction> actionInstances;
 
     public LeafNode(IModelerScene modelerScene, T baseElementSpec, Children children, CheckableAttributeNode checkableNode,List<Class<? extends LeafNodeAction>> actions) {
         super(modelerScene, children, Lookups.singleton(checkableNode));
@@ -91,23 +92,25 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
     
     @Override
     public Action[] getActions(boolean context) {
-        if(!context){
-            List<LeafNodeAction> actionExe= new ArrayList<>();
-            if(actions!=null){
-            actions.stream().forEach((actionClass) -> {
-                try {
-                    LeafNodeAction action = actionClass.newInstance();
-                    action.setNode(this);
-                    actionExe.add(action);
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            });
+        synchronized(this){
+        if (!context) {
+            if (actions != null && actionInstances == null) {
+                actionInstances = new ArrayList<>();
+                actions.stream().forEach((actionClass) -> {
+                    try {
+                        LeafNodeAction action = actionClass.newInstance();
+                        action.setNode(this);
+                        actionInstances.add(action);
+                    } catch (InstantiationException | IllegalAccessException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                });
             }
-             return actionExe.toArray(new Action[0]);
-
-        } else {
-                      return new Action[0];
+            if (actionInstances != null) {
+                return actionInstances.toArray(new Action[0]);
+            }
         }
+        }
+        return new Action[0];
     }
 }

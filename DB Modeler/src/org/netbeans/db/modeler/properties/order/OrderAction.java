@@ -62,20 +62,28 @@ public class OrderAction extends NodeAction implements Presenter.Popup, LeafNode
     public JMenuItem getPopupPresenter() {
         JMenu submenu = new JMenu(this);
         JRadioButtonMenuItem ASC_item = new JRadioButtonMenuItem(Bundle.Order_ASC());
-        ASC_item.setSelected(true);
         ASC_item.addActionListener((ActionEvent e) -> {
             if (getNode() instanceof OrderColumn) {
                 ((OrderColumn) getNode()).setOrder(OrderType.ASC);
+                ASC_item.setSelected(true);
             }
         });
         JRadioButtonMenuItem DESC_item = new JRadioButtonMenuItem(Bundle.Order_DESC());
         DESC_item.addActionListener((ActionEvent e) -> {
             if (getNode() instanceof OrderColumn) {
                 ((OrderColumn) getNode()).setOrder(OrderType.DESC);
+                DESC_item.setSelected(true);
             }
         });
         submenu.add(ASC_item);
         submenu.add(DESC_item);
+        if (getNode() instanceof OrderColumn) {
+            if(((OrderColumn) getNode()).getOrder() == OrderType.DESC){
+                DESC_item.setSelected(true);
+            } else {
+                ASC_item.setSelected(true);
+            }
+        }
         return submenu;
     }
 
