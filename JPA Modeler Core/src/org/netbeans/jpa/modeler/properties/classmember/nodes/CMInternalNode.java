@@ -58,7 +58,6 @@ public class CMInternalNode extends InternalNode<ClassMembers> {
             htmlDisplayName = attribute.getName() + " : " + attribute.getDataTypeLabel();
             htmlDisplayName = htmlDisplayName.replace("<", "&lt;").replace(">", "&gt;");
         }
-        System.out.println("htmlDisplayName : " + htmlDisplayName);
         if (getCheckableNode() != null && !getCheckableNode().isSelected()) {
             return String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
         } else {

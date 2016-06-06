@@ -48,7 +48,6 @@ public class TMLeafNode extends LeafNode<TableMembers> {
             DBColumn column =  (DBColumn)leafColumnWidget.getBaseElementSpec();
             htmlDisplayName = column.getName() + " : " + column.getDataType();
         }
-        System.out.println("htmlDisplayName : " + htmlDisplayName);
         if (getCheckableNode() != null && !getCheckableNode().isSelected()) {
             return String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
         } else {
