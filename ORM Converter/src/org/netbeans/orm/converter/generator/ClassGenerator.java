@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -242,14 +242,23 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
+        if(classMembers.getAttributes().isEmpty()){
+          return null;  
+        } 
         return new HashcodeMethodSnippet(className, classMembers);
     }
 
     protected EqualsMethodSnippet getEqualsMethodSnippet(String className, ClassMembers classMembers) {
-        return new EqualsMethodSnippet(className, classMembers);
+       if(classMembers.getAttributes().isEmpty()){
+          return null;  
+        } 
+       return new EqualsMethodSnippet(className, classMembers);
     }
 
     protected ToStringMethodSnippet getToStringMethodSnippet(String className, ClassMembers classMembers) {
+        if(classMembers.getAttributes().isEmpty()){
+          return null;  
+        } 
         ToStringMethodSnippet snippet = new ToStringMethodSnippet(className);
         snippet.setAttributes(classMembers.getAttributeNames());
         return snippet;
@@ -1605,3 +1614,4 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 }
+
