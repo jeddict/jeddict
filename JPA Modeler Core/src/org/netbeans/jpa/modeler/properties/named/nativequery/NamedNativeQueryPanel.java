@@ -100,7 +100,9 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
             name_TextField.setText(namedNativeQuery.getName());
             query_EditorPane.setText(namedNativeQuery.getQuery());
             
+            if(namedNativeQuery.getResultClass()!=null){
             addResultClass(namedNativeQuery.getResultClass());
+            }
             resultSetMapping_jComboBox.setSelectedItem(namedNativeQuery.getResultSetMapping());
         }
 

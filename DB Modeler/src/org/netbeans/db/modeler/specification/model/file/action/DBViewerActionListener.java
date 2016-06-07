@@ -41,7 +41,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "DB Viewer", name = "DB Viewer", 
         modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class, exportManager = ExportManagerImpl.class,
         relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
-        version = "1.6", architectureVersion = "1.4")
+        version = "1.7", architectureVersion = "1.4")
 //        modelerPanel=DBPanel.class)
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
