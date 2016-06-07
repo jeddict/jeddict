@@ -15,7 +15,6 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.netbeans.jpa.modeler.spec.extend.AttributeType;
@@ -56,8 +55,8 @@ public class JavaHashcodeEqualsUtil {
         EQUALS_PATTERNS.put(KindOfType.CHAR, NOT_EQUAL_COMP);
         EQUALS_PATTERNS.put(KindOfType.FLOAT, "java.lang.Float.floatToIntBits(this.{VAR}) != java.lang.Float.floatToIntBits(other.{VAR})");
         EQUALS_PATTERNS.put(KindOfType.DOUBLE, "java.lang.Double.doubleToLongBits(this.{VAR}) != java.lang.Double.doubleToLongBits(other.{VAR})");
-        EQUALS_PATTERNS.put(KindOfType.PRIMITIVE_ARRAY, "! java.util.Arrays.equals(this.{VAR}, other.{VAR}");
-        EQUALS_PATTERNS.put(KindOfType.ARRAY, "! java.util.Arrays.deepEquals(this.{VAR}, other.{VAR}");
+        EQUALS_PATTERNS.put(KindOfType.PRIMITIVE_ARRAY, "! java.util.Arrays.equals(this.{VAR}, other.{VAR})");
+        EQUALS_PATTERNS.put(KindOfType.ARRAY, "! java.util.Arrays.deepEquals(this.{VAR}, other.{VAR})");
         EQUALS_PATTERNS.put(KindOfType.ENUM, "this.{VAR} != other.{VAR}");
         EQUALS_PATTERNS.put(KindOfType.STRING, EQUALS_METHOD);
         EQUALS_PATTERNS.put(KindOfType.OTHER, EQUALS_METHOD);
@@ -103,9 +102,9 @@ public class JavaHashcodeEqualsUtil {
         if (type == AttributeType.Type.STRING) {
             kindOfType = KindOfType.STRING;
         } else if (type == AttributeType.Type.PREMITIVE) {
-            kindOfType = KindOfType.valueOf(dataType);
+            kindOfType = KindOfType.valueOf(dataType.toUpperCase());
         } else if (type == AttributeType.Type.WRAPPER) {
-            kindOfType = KindOfType.valueOf(AttributeType.getPrimitiveType(dataType));
+            kindOfType = KindOfType.OTHER;//valueOf(AttributeType.getPrimitiveType(dataType).toUpperCase());
         } else if (type == AttributeType.Type.ARRAY) {
             kindOfType = KindOfType.ARRAY;
         } else if (type == AttributeType.Type.PRIMITIVE_ARRAY) {
