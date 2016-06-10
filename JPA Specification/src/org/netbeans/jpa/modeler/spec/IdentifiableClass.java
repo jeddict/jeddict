@@ -130,9 +130,24 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
                 this.getNamedNativeQuery().add(NamedNativeQuery.load(element, namedNativeQueriesMirror));
             }
         }
-        AnnotationMirror sqlResultSetMappingMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SqlResultSetMapping");
-        if (sqlResultSetMappingMirror != null) {
-            this.getSqlResultSetMapping().add(SqlResultSetMapping.load(element, sqlResultSetMappingMirror));
+        
+        AnnotationMirror resultSetMappingsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SqlResultSetMappings");
+        if (resultSetMappingsMirror != null) {
+            List resultSetMappingsMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(resultSetMappingsMirror, "value");
+            if (resultSetMappingsMirrorList != null) {
+                for (Object resultSetMappingObj : resultSetMappingsMirrorList) {
+                    SqlResultSetMapping mapping  = SqlResultSetMapping.load(element, (AnnotationMirror) resultSetMappingObj);
+                    mapping.setIdentifiableClass(this);
+                    this.getSqlResultSetMapping().add(mapping);
+                }
+            }
+        } else {
+            resultSetMappingsMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SqlResultSetMapping");
+            if (resultSetMappingsMirror != null) {
+                SqlResultSetMapping mapping  = SqlResultSetMapping.load(element, resultSetMappingsMirror);
+                mapping.setIdentifiableClass(this);
+                this.getSqlResultSetMapping().add(mapping);
+            }
         }
     }
 

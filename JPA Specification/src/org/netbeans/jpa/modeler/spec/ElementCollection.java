@@ -21,15 +21,18 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
@@ -136,7 +139,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  * For Basic ElementCollection -> TargetClass<String>
  * For Embeddable ElementCollection -> ConnectedClass<Embeddable>
  */
-public class ElementCollection extends CompositionAttribute<Embeddable> implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler { //CompositionAttribute/BaseAttributes
+public class ElementCollection extends CompositionAttribute<Embeddable> implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler, MapKeyHandler { //CompositionAttribute/BaseAttributes
 
     @XmlElement(name = "order-by")
     protected String orderBy;
@@ -180,7 +183,11 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     protected AccessType access;
 
     @XmlAttribute(name = "collection-type")
-    private String collectionType;//custom added
+    private String collectionType;
+    
+    @XmlAttribute(name = "mka", required = true)
+    @XmlIDREF
+    private Attribute mapKeyAttribute;
 
     public static ElementCollection load(EntityMappings entityMappings, Element element, VariableElement variableElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.ElementCollection");
@@ -227,13 +234,15 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
                     entityMappings.addEmbeddable(embeddableClassSpec);
                 }
                 elementCollection.setConnectedClass(embeddableClassSpec);
+                /* Embeddable End*/
+            } else {
+                elementCollection.setTargetClass(declaredType.toString());
             }
-            /* Embeddable End*/
         } else {
             elementCollection.setTargetClass("java.lang.String");//elementCollection.targetClass
         }
         elementCollection.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
-
+        JavaSourceParserUtil.getBeanValidation(elementCollection,element);
         return elementCollection;
     }
 
@@ -864,6 +873,25 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         } else {
             return getDefaultColumnName();
         }
+    }
+    
+    @Override
+    public String getDataTypeLabel() {
+        return String.format("%s<%s>", getCollectionType(), getAttributeType());
+    }
+    
+        /**
+     * @return the mapKeyAttribute
+     */
+    public Attribute getMapKeyAttribute() {
+        return mapKeyAttribute;
+    }
+
+    /**
+     * @param mapKeyAttribute the mapKeyAttribute to set
+     */
+    public void setMapKeyAttribute(Attribute mapKeyAttribute) {
+        this.mapKeyAttribute = mapKeyAttribute;
     }
 
 }

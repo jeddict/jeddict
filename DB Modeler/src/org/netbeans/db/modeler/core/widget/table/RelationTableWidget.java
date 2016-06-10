@@ -16,6 +16,7 @@
 package org.netbeans.db.modeler.core.widget.table;
 
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
@@ -24,6 +25,8 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBRelationTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELATION_TABLE;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELATION_TABLE_ICON_PATH;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -86,6 +89,7 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
         RelationAttribute attribute = this.getBaseElementSpec().getAttribute();
         JoinTable joinTable = attribute.getJoinTable();
         set.createPropertySet(this, joinTable, getPropertyChangeListeners());
@@ -130,6 +134,16 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
             ((JoinColumnHandler) relationTable.getAttribute()).addJoinColumn(joinColumn);
         }
 
+    }
+
+    @Override
+    public String getIconPath() {
+        return RELATION_TABLE_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return RELATION_TABLE;
     }
 
 }

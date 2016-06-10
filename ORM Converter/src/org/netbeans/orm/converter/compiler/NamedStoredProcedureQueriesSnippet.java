@@ -84,10 +84,9 @@ public class NamedStoredProcedureQueriesSnippet implements Snippet {
             return namedStoredProcedureQueries.get(0).getImportSnippets();
         }
 
-        ArrayList<String> importSnippets = new ArrayList<String>();
+        ArrayList<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.NamedStoredProcedureQueries");
-
         for (NamedStoredProcedureQuerySnippet namedStoredProcedureQuery : namedStoredProcedureQueries) {
             importSnippets.addAll(namedStoredProcedureQuery.getImportSnippets());
         }

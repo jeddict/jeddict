@@ -9,9 +9,8 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
+import java.util.concurrent.CopyOnWriteArrayList;
 import static java.util.stream.Collectors.toList;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,11 +21,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.jpa.modeler.spec.extend.cache.Cache;
@@ -991,15 +990,22 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 //        }
 //    }
 
-    public void manageSiblingAttribute() {
+    public void manageRefId() {
         EntityMappings entityMappingsSpec = this;
 
+        getNamedStoredProcedureQuery().forEach(q -> manageStoredProcedureQuery(q));
+        
         List<ManagedClass> classes = new ArrayList<>(entityMappingsSpec.getEntity());
         // manageSiblingAttribute for MappedSuperClass and Embeddable is not required for (DBRE) DB REV ENG CASE
         classes.addAll(entityMappingsSpec.getMappedSuperclass());
         classes.addAll(entityMappingsSpec.getEmbeddable());
 
         for (ManagedClass managedClass : classes) {
+            
+            if(managedClass instanceof Entity){
+                ((Entity)managedClass).getNamedStoredProcedureQuery().forEach(q -> manageStoredProcedureQuery(q));
+            }
+            
             for (ManyToMany manyToMany : new ArrayList<>(managedClass.getAttributes().getManyToMany())) {
                 if (manyToMany.getMappedBy() == null) {
                     manageSiblingAttribute(managedClass, manyToMany);
@@ -1031,6 +1037,18 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     }
 
+    private void manageStoredProcedureQuery(NamedStoredProcedureQuery storedProcedureQuery) {
+        for(String _class : new CopyOnWriteArrayList<>(storedProcedureQuery.getResultClass())){
+           String uqClass = JavaSourceHelper.getSimpleClassName(_class);
+           Entity targetEntity = this.findEntity(uqClass);
+           if (targetEntity != null) {
+               storedProcedureQuery.getResultClass().remove(_class);
+               storedProcedureQuery.addResultClass(targetEntity);
+           }
+        }
+        
+    }
+    
     // Issue Fix #5949 Start
     private void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
         org.netbeans.jpa.modeler.spec.Entity targetEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());

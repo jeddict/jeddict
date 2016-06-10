@@ -15,15 +15,14 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
+import java.awt.Image;
 import java.util.List;
 import javax.swing.JMenuItem;
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -35,7 +34,7 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
 
     public EmbeddedIdAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE);
+        this.setImage(getIcon());
     }
 
     @Override
@@ -44,15 +43,25 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
         menuList.remove(0);//remove Delete PopupMenu
         return menuList;
     }
-    
-      public boolean remove(boolean notification) {
+
+    public boolean remove(boolean notification) {
         // Issue Fix #5855 Start
         if (super.remove(notification)) {
-            ((IdentifiableClass)getClassWidget().getBaseElementSpec()).setCompositePrimaryKeyType(null);
+            ((IdentifiableClass) getClassWidget().getBaseElementSpec()).setCompositePrimaryKeyType(null);
             return true;
         }
         // Issue Fix #5855 End
         return false;
+    }
+
+    @Override
+    public String getIconPath() {
+        return EMBEDDED_ID_ATTRIBUTE_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return EMBEDDED_ID_ATTRIBUTE;
     }
 
 }

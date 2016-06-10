@@ -102,7 +102,7 @@ public class ConstructorResultSnippet implements Snippet {
             return Collections.singletonList("javax.persistence.ConstructorResult");
         }
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.ConstructorResult");
         for (ColumnResultSnippet columnResult : columnResults) {

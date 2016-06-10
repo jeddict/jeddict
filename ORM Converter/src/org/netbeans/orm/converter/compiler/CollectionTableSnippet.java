@@ -15,7 +15,8 @@ public class CollectionTableSnippet implements Snippet {
 
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
 
-    private UniqueConstraintSnippet uniqueConstraint = null;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
+    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
     private ForeignKeySnippet foreignKey;
 
     public String getCatalog() {
@@ -52,12 +53,12 @@ public class CollectionTableSnippet implements Snippet {
         }
     }
 
-    public UniqueConstraintSnippet getUniqueConstraint() {
-        return uniqueConstraint;
+    public List<UniqueConstraintSnippet> getUniqueConstraints() {
+        return uniqueConstraints;
     }
 
-    public void setUniqueConstraints(UniqueConstraintSnippet uniqueConstraint) {
-        this.uniqueConstraint = uniqueConstraint;
+    public void setUniqueConstraints(List<UniqueConstraintSnippet> uniqueConstraints) {
+        this.uniqueConstraints = uniqueConstraints;
     }
 
     public boolean isEmpty() {
@@ -65,17 +66,13 @@ public class CollectionTableSnippet implements Snippet {
                 && (name == null || name.trim().isEmpty())
                 && (schema == null || schema.trim().isEmpty())
                 && joinColumns.isEmpty()
-                && uniqueConstraint == null;
+                && uniqueConstraints.isEmpty() && indices.isEmpty() && foreignKey == null;
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if ((catalog == null || catalog.trim().isEmpty())
-                && (name == null || name.trim().isEmpty())
-                && (schema == null || schema.trim().isEmpty())
-                && joinColumns.isEmpty()
-                && uniqueConstraint == null && foreignKey == null) {
+        if (isEmpty()) {
             return null;//"@CollectionTable";
         }
 
@@ -104,14 +101,32 @@ public class CollectionTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (uniqueConstraint != null) {
-            builder.append("uniqueConstraints=");
+        if (!uniqueConstraints.isEmpty()) {
+            builder.append("uniqueConstraints={");
 
-            builder.append(uniqueConstraint.getSnippet());
+            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
+                builder.append(uniqueConstraint.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
 
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
+        
+        if (!indices.isEmpty()) {
+            builder.append("indexes={");
 
+            for (IndexSnippet snippet : indices) {
+                builder.append(snippet.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
+
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
         if (!joinColumns.isEmpty()) {
             builder.append("joinColumns={");
 
@@ -143,7 +158,7 @@ public class CollectionTableSnippet implements Snippet {
             return new ArrayList<>();
         }
 
-        if (joinColumns.isEmpty() && uniqueConstraint == null && foreignKey == null) {
+        if (joinColumns.isEmpty() && uniqueConstraints == null && foreignKey == null) {
             return Collections.singletonList("javax.persistence.CollectionTable");
         }
 
@@ -152,17 +167,24 @@ public class CollectionTableSnippet implements Snippet {
         importSnippets.add("javax.persistence.CollectionTable");
 
         if (!joinColumns.isEmpty()) {
-            Collection<String> joinColumnSnippets  = joinColumns.get(0).getImportSnippets();
-            importSnippets.addAll(joinColumnSnippets);
+            for (JoinColumnSnippet joinColumn : joinColumns) {
+                importSnippets.addAll(joinColumn.getImportSnippets());
+            }
         }
         
         if (foreignKey != null) {
             importSnippets.addAll(foreignKey.getImportSnippets());
         }
 
-        if (uniqueConstraint != null) {
-            importSnippets.addAll(uniqueConstraint.getImportSnippets());
+        if (!uniqueConstraints.isEmpty()) {
+            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
+        
+        if (!indices.isEmpty()) {
+            importSnippets.addAll(indices.get(0).getImportSnippets());
+        }
+        
+        
 
         return importSnippets;
     }
@@ -179,5 +201,19 @@ public class CollectionTableSnippet implements Snippet {
      */
     public void setForeignKey(ForeignKeySnippet foreignKey) {
         this.foreignKey = foreignKey;
+    }
+
+    /**
+     * @return the indices
+     */
+    public List<IndexSnippet> getIndices() {
+        return indices;
+    }
+
+    /**
+     * @param indices the indices to set
+     */
+    public void setIndices(List<IndexSnippet> indices) {
+        this.indices = indices;
     }
 }

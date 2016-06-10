@@ -80,11 +80,12 @@ public class NamedNativeQueriesSnippet implements Snippet {
             return namedNativeQueries.get(0).getImportSnippets();
         }
 
-        ArrayList<String> importSnippets = new ArrayList<String>();
+        ArrayList<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.NamedNativeQueries");
-        importSnippets.addAll(namedNativeQueries.get(0).getImportSnippets());
-
+        for(NamedNativeQuerySnippet namedNativeQuery : namedNativeQueries){
+            importSnippets.addAll(namedNativeQuery.getImportSnippets());
+        }
         return importSnippets;
     }
 }

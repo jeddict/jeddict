@@ -63,6 +63,10 @@ public class AccessorUtil {
     }
 
     public static void setLob(DirectAccessor accessor, Lob lob, String attributeType, boolean isCollectionType) {
+        if (lob == null || attributeType==null) {
+            return;
+        }
+        
         if (attributeType.equals("byte[]") || attributeType.equals("Byte[]")) { //https://github.com/jGauravGupta/jpamodeler/issues/5 , https://github.com/jGauravGupta/jpamodeler/issues/6
             if (isCollectionType) {
                 ((ElementCollectionAccessor) accessor).setTargetClassName(Blob.class.getName());
@@ -77,9 +81,7 @@ public class AccessorUtil {
             }
         }
         
-        if (lob == null) {
-            return;
-        }
+        
         
         accessor.setLob(new LobMetadata());
 

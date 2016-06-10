@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
@@ -23,8 +22,7 @@ import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
-import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
-import org.netbeans.jpa.modeler.spec.CascadeType;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCascadeProperty;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
@@ -34,9 +32,6 @@ import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.NANO_DB;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
-import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
-import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -68,7 +63,7 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", getCascadeProperty());
+        set.put("BASIC_PROP", getCascadeProperty(this));
         // Issue Fix #6153 Start
         set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         // Issue Fix #6153 End
@@ -87,64 +82,6 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
 
     }
 
-    private EmbeddedPropertySupport getCascadeProperty() {
-
-        GenericEmbedded entity = new GenericEmbedded("cascadeType", "Cascade Type", "");
-        entity.setEntityEditor(new CascadeTypePanel(this.getModelerScene().getModelerFile()));
-
-        entity.setDataListener(new EmbeddedDataListener<CascadeType>() {
-            private RelationAttribute relationAttribute;
-
-            @Override
-            public void init() {
-                relationAttribute = (RelationAttribute) RelationAttributeWidget.this.getBaseElementSpec();
-            }
-
-            @Override
-            public CascadeType getData() {
-                return relationAttribute.getCascade();
-            }
-
-            @Override
-            public void setData(CascadeType cascadeType) {
-                relationAttribute.setCascade(cascadeType);
-            }
-
-            @Override
-            public String getDisplay() {
-                StringBuilder display = new StringBuilder();
-                CascadeType cascadeType = relationAttribute.getCascade();
-                if (cascadeType == null) {
-                    display.append("None");
-                } else if (cascadeType.getCascadeAll() != null) {
-                    display.append("All");
-                } else {
-                    if (cascadeType.getCascadeDetach() != null) {
-                        display.append("Detach,");
-                    }
-                    if (cascadeType.getCascadeMerge() != null) {
-                        display.append("Merge,");
-                    }
-                    if (cascadeType.getCascadePersist() != null) {
-                        display.append("Persist,");
-                    }
-                    if (cascadeType.getCascadeRefresh() != null) {
-                        display.append("Refresh,");
-                    }
-                    if (cascadeType.getCascadeRemove() != null) {
-                        display.append("Remove,");
-                    }
-                    if (display.length() != 0) {
-                        display.setLength(display.length() - 1);
-                    }
-                }
-
-                return display.toString();
-            }
-
-        });
-        return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
-    }
 
     public void setConnectedSibling(EntityWidget classWidget) {
         RelationAttribute relationAttribute = this.getBaseElementSpec();
@@ -159,10 +96,6 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
     }
 
     public abstract RelationFlowWidget getRelationFlowWidget();
-
-    public abstract String getIconPath();
-
-    public abstract Image getIcon();
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {

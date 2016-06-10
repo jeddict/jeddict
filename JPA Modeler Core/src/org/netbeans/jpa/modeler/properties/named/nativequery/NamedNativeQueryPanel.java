@@ -15,17 +15,26 @@
  */
 package org.netbeans.jpa.modeler.properties.named.nativequery;
 
+import java.awt.event.ItemEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.api.db.explorer.DatabaseConnection;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jpa.modeler.properties.named.query.QueryHintPanel;
-import org.netbeans.jpa.modeler.spec.LockModeType;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
-import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.QueryHint;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
+import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
+import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
+import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
@@ -33,41 +42,48 @@ import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
+import org.netbeans.modules.db.api.sql.execute.SQLExecution;
+import org.openide.text.CloneableEditorSupport;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.ProxyLookup;
 
-public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
+public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> implements Lookup.Provider {
 
     private NamedNativeQuery namedNativeQuery;
     private NAttributeEntity attributeEntity;
+    private final ModelerFile modelerFile;
+    private final EntityMappings entityMappings;
+    private final org.netbeans.jpa.modeler.spec.Entity entity;
+
+    public NamedNativeQueryPanel(ModelerFile modelerFile, org.netbeans.jpa.modeler.spec.Entity entity) {
+        this.modelerFile = modelerFile;
+        this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
+        this.entity=entity;
+    }
 
     @Override
     public void postConstruct() {
         initComponents();
+        DBConnectionUtil.loadConnection(modelerFile, dbCon_jComboBox);
     }
 
     @Override
     public void init() {
-        lockModeType_jComboBox.removeAllItems();
-        lockModeType_jComboBox.addItem(new ComboBoxValue(null, ""));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.NONE, "None"));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.OPTIMISTIC, "Optimistic"));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.OPTIMISTIC_FORCE_INCREMENT, "Optimistic Force Increment"));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.PESSIMISTIC_FORCE_INCREMENT, "Pessimistic Force Increment"));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.PESSIMISTIC_READ, "Pessimistic Read"));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.PESSIMISTIC_WRITE, "Pessimistic Write"));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.READ, "Read"));
-        lockModeType_jComboBox.addItem(new ComboBoxValue(LockModeType.WRITE, "Write"));
+        initResultClassesModel();
+        initResultSetMappingModel();
     }
 
     @Override
     public void createEntity(Class<? extends Entity> entityWrapperType) {
-        this.setTitle("Create new Named Query");
+        this.setTitle("Create new Named Native Query");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[4]));
+            this.setEntity(new RowValue(new Object[5]));
         }
         namedNativeQuery = null;
-        name_TextField.setText("");
-        query_TextArea.setText("");
-        lockModeType_jComboBox.setSelectedIndex(0);
+        name_TextField.setText(StringUtils.EMPTY);
+        query_EditorPane.setText(StringUtils.EMPTY);
 
         initCustomNAttributeEditor();
         attributeEntity = getQueryHint();
@@ -75,15 +91,19 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
     }
 
     @Override
-    public void updateEntity(Entity<NamedQuery> entityValue) {
+    public void updateEntity(Entity<NamedNativeQuery> entityValue) {
         this.setTitle("Update Named Query");
         if (entityValue.getClass() == RowValue.class) {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             namedNativeQuery = (NamedNativeQuery) row[0];
             name_TextField.setText(namedNativeQuery.getName());
-            query_TextArea.setText(namedNativeQuery.getQuery());
-//            setLockModeType(namedNativeQuery.getLockMode());
+            query_EditorPane.setText(namedNativeQuery.getQuery());
+            
+            if(namedNativeQuery.getResultClass()!=null){
+            addResultClass(namedNativeQuery.getResultClass());
+            }
+            resultSetMapping_jComboBox.setSelectedItem(namedNativeQuery.getResultSetMapping());
         }
 
         initCustomNAttributeEditor();
@@ -94,7 +114,28 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
     void initCustomNAttributeEditor() {
         customNAttributeClientEditor = NEntityEditor.createInstance(queryHint_LayeredPane, 602, 249);
     }
+    
 
+    private void initResultClassesModel() {
+        resultClass_jComboBox.removeAllItems();
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+         model.addElement(null);
+        for (org.netbeans.jpa.modeler.spec.Entity entity : entityMappings.getEntity()) {
+            model.addElement(entity.getClazz());
+        }
+        resultClass_jComboBox.setModel(model);
+    }
+    
+        private void initResultSetMappingModel() {
+        resultSetMapping_jComboBox.removeAllItems();
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        model.addElement(null);
+        for (SqlResultSetMapping mapping : entity.getSqlResultSetMapping()) {
+            model.addElement(mapping.getName());
+        }
+        resultSetMapping_jComboBox.setModel(model);
+    }
+  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -105,101 +146,76 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
     private void initComponents() {
 
         root_jLayeredPane = new javax.swing.JLayeredPane();
+        dbCon_LayeredPane = new javax.swing.JLayeredPane();
+        dbCon_Label = new javax.swing.JLabel();
+        dbCon_jComboBox = new javax.swing.JComboBox();
         name_LayeredPane = new javax.swing.JLayeredPane();
         name_Label = new javax.swing.JLabel();
         name_TextField = new javax.swing.JTextField();
         query_LayeredPane = new javax.swing.JLayeredPane();
         query_Label = new javax.swing.JLabel();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
         query_ScrollPane = new javax.swing.JScrollPane();
-        query_TextArea = new javax.swing.JTextArea();
-        lockModeType_LayeredPane = new javax.swing.JLayeredPane();
-        lockModeType_Label = new javax.swing.JLabel();
-        lockModeType_jComboBox = new javax.swing.JComboBox();
+        query_EditorPane = new javax.swing.JEditorPane();
         action_jLayeredPane = new javax.swing.JLayeredPane();
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
         queryHint_LayeredPane = new javax.swing.JLayeredPane();
         customNAttributeClientEditor = new org.netbeans.modeler.properties.nentity.NEntityEditor();
+        resultClass_LayeredPane = new javax.swing.JLayeredPane();
+        resultClass_Label = new javax.swing.JLabel();
+        resultClass_jComboBox = new javax.swing.JComboBox();
+        dataType_Action = new javax.swing.JButton();
+        resultSetMapping_LayeredPane = new javax.swing.JLayeredPane();
+        resultSetMapping_Label = new javax.swing.JLabel();
+        resultSetMapping_jComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridLayout(1, 0));
+
+        dbCon_LayeredPane.setEnabled(false);
+        dbCon_LayeredPane.setPreferredSize(new java.awt.Dimension(170, 27));
+        dbCon_LayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(dbCon_Label, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.dbCon_Label.text")); // NOI18N
+        dbCon_LayeredPane.add(dbCon_Label, java.awt.BorderLayout.WEST);
+
+        dbCon_jComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                dbCon_jComboBoxItemStateChanged(evt);
+            }
+        });
+        dbCon_LayeredPane.add(dbCon_jComboBox, java.awt.BorderLayout.CENTER);
+
+        name_LayeredPane.setPreferredSize(new java.awt.Dimension(170, 27));
+        name_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.name_Label.text")); // NOI18N
+        name_LayeredPane.add(name_Label, java.awt.BorderLayout.WEST);
 
         name_TextField.setText(org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.name_TextField.text")); // NOI18N
+        name_TextField.setPreferredSize(new java.awt.Dimension(40, 27));
+        name_LayeredPane.add(name_TextField, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout name_LayeredPaneLayout = new javax.swing.GroupLayout(name_LayeredPane);
-        name_LayeredPane.setLayout(name_LayeredPaneLayout);
-        name_LayeredPaneLayout.setHorizontalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(name_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        name_LayeredPaneLayout.setVerticalGroup(
-            name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name_Label)
-                    .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        name_LayeredPane.setLayer(name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        name_LayeredPane.setLayer(name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        query_LayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(query_Label, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.query_Label.text")); // NOI18N
+        query_LayeredPane.add(query_Label, java.awt.BorderLayout.WEST);
 
-        query_TextArea.setColumns(20);
-        query_TextArea.setRows(5);
-        query_ScrollPane.setViewportView(query_TextArea);
+        jLayeredPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLayeredPane1.setLayout(new javax.swing.BoxLayout(jLayeredPane1, javax.swing.BoxLayout.LINE_AXIS));
 
-        javax.swing.GroupLayout query_LayeredPaneLayout = new javax.swing.GroupLayout(query_LayeredPane);
-        query_LayeredPane.setLayout(query_LayeredPaneLayout);
-        query_LayeredPaneLayout.setHorizontalGroup(
-            query_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(query_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(query_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(query_ScrollPane)
-                .addContainerGap())
-        );
-        query_LayeredPaneLayout.setVerticalGroup(
-            query_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(query_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(query_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(query_Label)
-                    .addComponent(query_ScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        query_LayeredPane.setLayer(query_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        query_LayeredPane.setLayer(query_ScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        query_ScrollPane.setPreferredSize(new java.awt.Dimension(400, 100));
 
-        org.openide.awt.Mnemonics.setLocalizedText(lockModeType_Label, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.lockModeType_Label.text")); // NOI18N
+        query_EditorPane.setPreferredSize(new java.awt.Dimension(206, 23));
+        query_ScrollPane.setViewportView(query_EditorPane);
+        //jEditorPane1.getDocument().removeDocumentListener(NamedStoredProcedureQueryPanel.this);
+        query_EditorPane.setEditorKit(CloneableEditorSupport.getEditorKit("text/x-sql"));
+        //jEditorPane1.getDocument().addDocumentListener(NamedStoredProcedureQueryPanel.this);
 
-        javax.swing.GroupLayout lockModeType_LayeredPaneLayout = new javax.swing.GroupLayout(lockModeType_LayeredPane);
-        lockModeType_LayeredPane.setLayout(lockModeType_LayeredPaneLayout);
-        lockModeType_LayeredPaneLayout.setHorizontalGroup(
-            lockModeType_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(lockModeType_LayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lockModeType_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lockModeType_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        lockModeType_LayeredPaneLayout.setVerticalGroup(
-            lockModeType_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(lockModeType_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(lockModeType_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lockModeType_Label)
-                    .addComponent(lockModeType_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
-        );
-        lockModeType_LayeredPane.setLayer(lockModeType_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        lockModeType_LayeredPane.setLayer(lockModeType_jComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.add(query_ScrollPane);
+
+        query_LayeredPane.add(jLayeredPane1, java.awt.BorderLayout.CENTER);
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.save_Button.text")); // NOI18N
         save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.save_Button.toolTipText")); // NOI18N
@@ -209,7 +225,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 23);
+        save_Button.setBounds(0, 0, 70, 29);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.cancel_Button.toolTipText")); // NOI18N
@@ -220,7 +236,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
             }
         });
         action_jLayeredPane.add(cancel_Button);
-        cancel_Button.setBounds(80, 0, 70, 23);
+        cancel_Button.setBounds(80, 0, 70, 30);
 
         queryHint_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.queryHint_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         queryHint_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
@@ -229,74 +245,91 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
         queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
         queryHint_LayeredPaneLayout.setHorizontalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+            .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
         );
         queryHint_LayeredPaneLayout.setVerticalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
         );
         queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        resultClass_LayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(resultClass_Label, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.resultClass_Label.text")); // NOI18N
+        resultClass_LayeredPane.add(resultClass_Label, java.awt.BorderLayout.WEST);
+
+        resultClass_LayeredPane.add(resultClass_jComboBox, java.awt.BorderLayout.CENTER);
+
+        dataType_Action.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/searchbutton.png"))); // NOI18N
+        dataType_Action.setPreferredSize(new java.awt.Dimension(27, 25));
+        dataType_Action.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataType_ActionActionPerformed(evt);
+            }
+        });
+        resultClass_LayeredPane.add(dataType_Action, java.awt.BorderLayout.EAST);
+
+        resultSetMapping_LayeredPane.setPreferredSize(new java.awt.Dimension(170, 27));
+        resultSetMapping_LayeredPane.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(resultSetMapping_Label, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.resultSetMapping_Label.text")); // NOI18N
+        resultSetMapping_LayeredPane.add(resultSetMapping_Label, java.awt.BorderLayout.WEST);
+
+        resultSetMapping_LayeredPane.add(resultSetMapping_jComboBox, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
         root_jLayeredPaneLayout.setHorizontalGroup(
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lockModeType_LayeredPane)
-                    .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                        .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(name_LayeredPane)
-                            .addComponent(query_LayeredPane))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(9, 9, 9)))
-                .addContainerGap())
-            .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(18, Short.MAX_VALUE)))
+                .addGap(12, 12, 12)
+                .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 789, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 789, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(query_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 789, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(resultClass_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 789, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(resultSetMapping_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 789, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 801, Short.MAX_VALUE))
+            .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+                .addGap(646, 646, 646)
+                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         root_jLayeredPaneLayout.setVerticalGroup(
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
+                .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
                 .addComponent(query_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resultClass_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resultSetMapping_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lockModeType_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(231, 231, 231)
-                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(85, 85, 85))
-            .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                    .addGap(205, 205, 205)
-                    .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(121, Short.MAX_VALUE)))
+                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
+        root_jLayeredPane.setLayer(dbCon_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(query_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(lockModeType_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(queryHint_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(resultClass_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(resultSetMapping_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(root_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(root_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+        getContentPane().add(root_jLayeredPane);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -306,7 +339,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
             JOptionPane.showMessageDialog(this, "Name field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
-        if (this.query_TextArea.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+        if (this.query_EditorPane.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
             JOptionPane.showMessageDialog(this, "Query field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
@@ -327,15 +360,15 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
         }
 
         namedNativeQuery.setName(name_TextField.getText());
-        namedNativeQuery.setQuery(query_TextArea.getText());
-//        namedNativeQuery.setLockMode(((ComboBoxValue<LockModeType>) lockModeType_jComboBox.getSelectedItem()).getValue());
+        namedNativeQuery.setQuery(query_EditorPane.getText());
+        namedNativeQuery.setResultClass((String)resultClass_jComboBox.getSelectedItem());
+        namedNativeQuery.setResultSetMapping((String)resultSetMapping_jComboBox.getSelectedItem());
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedNativeQuery;
             row[1] = namedNativeQuery.getName();
             row[2] = namedNativeQuery.getQuery();
-//            row[3] = namedNativeQuery.getLockMode();
         }
         attributeEntity.getTableDataListener().setData(customNAttributeClientEditor.getSavedModel());
         saveActionPerformed(evt);
@@ -345,16 +378,113 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
+    private void dbCon_jComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_dbCon_jComboBoxItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            DBConnectionUtil.saveConnection(modelerFile, dbCon_jComboBox);
+        }
+    }//GEN-LAST:event_dbCon_jComboBoxItemStateChanged
+
+    private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
+        String resultClass = NBModelerUtil.browseClass(modelerFile);
+        addResultClass(resultClass);
+    }//GEN-LAST:event_dataType_ActionActionPerformed
+    
+    private void addResultClass(String resultClass){
+        DefaultComboBoxModel model = (DefaultComboBoxModel) resultClass_jComboBox.getModel();
+        String unqualifiedClassName = SourceGroupSupport.getClassName(resultClass);
+        if (model.getIndexOf(unqualifiedClassName) != -1) { // check if it is Entity then select
+            resultClass_jComboBox.setSelectedItem(unqualifiedClassName);
+        } else { //if other class
+            if (model.getIndexOf(resultClass) == -1) {
+                model.addElement(resultClass);
+            }
+            resultClass_jComboBox.setSelectedItem(resultClass);
+        }
+    }
+    
+    private Lookup lookup;
+
+    @Override
+    public Lookup getLookup() {
+        if (lookup == null) {
+            InstanceContent lookupContent = new InstanceContent();
+            lookupContent.add(new SQLExecutionImpl(modelerFile));
+            Lookup[] content = {new AbstractLookup(lookupContent)};
+            lookup = new ProxyLookup(content);
+        }
+        return lookup;
+    }
+
+    
+    private static final class SQLExecutionImpl implements SQLExecution {
+
+        private final PropertyChangeSupport propChangeSupport = new PropertyChangeSupport(this);
+        private boolean executing = false;
+        private final ModelerFile file;
+
+        public SQLExecutionImpl(ModelerFile file) {
+            this.file = file;
+        }
+        
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener listener) {
+            propChangeSupport.removePropertyChangeListener(listener);
+        }
+
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener listener) {
+            propChangeSupport.addPropertyChangeListener(listener);
+        }
+
+        @Override
+        public boolean isExecuting() {
+            return executing;
+        }
+        
+        public void setExecuting(boolean executing) {
+            this.executing = executing;
+            propChangeSupport.firePropertyChange(SQLExecution.PROP_EXECUTING, null, null);
+        }
+        
+        @Override
+        public boolean isSelection() {
+            return false;
+        }
+
+        @Override
+        public void execute() {
+        }
+
+        @Override
+        public void executeSelection() {
+        }
+
+        @Override
+        public void setDatabaseConnection(DatabaseConnection dbconn) {
+        }
+
+        @Override
+        public DatabaseConnection getDatabaseConnection() {
+           DatabaseConnection connection = DBConnectionUtil.getConnection(file);
+            return connection;
+        }
+
+        @Override
+        public void showHistory() {
+            // not tested
+        }
+    }
+
     private NAttributeEntity getQueryHint() {
-        final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
-        attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
+        final NAttributeEntity attributeEntityObj = new NAttributeEntity("QueryHint", "Query Hint", "");
+        attributeEntityObj.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Value", false, String.class));
-        attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new QueryHintPanel());
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntityObj.setColumns(columns);
+        attributeEntityObj.setCustomDialog(new QueryHintPanel());
+        attributeEntityObj.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 
@@ -404,24 +534,32 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedQuery> {
                 initData();
             }
         });
-        return attributeEntity;
+        return attributeEntityObj;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JButton cancel_Button;
     private org.netbeans.modeler.properties.nentity.NEntityEditor customNAttributeClientEditor;
-    private javax.swing.JLabel lockModeType_Label;
-    private javax.swing.JLayeredPane lockModeType_LayeredPane;
-    private javax.swing.JComboBox lockModeType_jComboBox;
+    private javax.swing.JButton dataType_Action;
+    private javax.swing.JLabel dbCon_Label;
+    private javax.swing.JLayeredPane dbCon_LayeredPane;
+    private javax.swing.JComboBox dbCon_jComboBox;
+    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLabel name_Label;
     private javax.swing.JLayeredPane name_LayeredPane;
     private javax.swing.JTextField name_TextField;
     private javax.swing.JLayeredPane queryHint_LayeredPane;
+    private javax.swing.JEditorPane query_EditorPane;
     private javax.swing.JLabel query_Label;
     private javax.swing.JLayeredPane query_LayeredPane;
     private javax.swing.JScrollPane query_ScrollPane;
-    private javax.swing.JTextArea query_TextArea;
+    private javax.swing.JLabel resultClass_Label;
+    private javax.swing.JLayeredPane resultClass_LayeredPane;
+    private javax.swing.JComboBox resultClass_jComboBox;
+    private javax.swing.JLabel resultSetMapping_Label;
+    private javax.swing.JLayeredPane resultSetMapping_LayeredPane;
+    private javax.swing.JComboBox resultSetMapping_jComboBox;
     private javax.swing.JLayeredPane root_jLayeredPane;
     private javax.swing.JButton save_Button;
     // End of variables declaration//GEN-END:variables

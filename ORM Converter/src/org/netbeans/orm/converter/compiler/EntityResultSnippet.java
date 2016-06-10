@@ -118,7 +118,7 @@ public class EntityResultSnippet implements Snippet {
             return Collections.singletonList("javax.persistence.EntityResult");
         }
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.EntityResult");
         importSnippets.addAll(fieldResults.get(0).getImportSnippets());

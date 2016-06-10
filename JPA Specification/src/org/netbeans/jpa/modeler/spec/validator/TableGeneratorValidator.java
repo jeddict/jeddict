@@ -32,10 +32,10 @@ public class TableGeneratorValidator  extends MarshalValidator<TableGenerator> {
         return tableGenerator;
     }
     
-    public static boolean isEmpty(TableGenerator tableGenerator) { //TODO Index & UniqueConstraints
+    public static boolean isEmpty(TableGenerator tableGenerator) {
         return StringUtils.isBlank(tableGenerator.getName()) && StringUtils.isBlank(tableGenerator.getCatalog()) && StringUtils.isBlank(tableGenerator.getSchema())
                 && StringUtils.isBlank(tableGenerator.getPkColumnName()) && StringUtils.isBlank(tableGenerator.getPkColumnValue()) 
-                && StringUtils.isBlank(tableGenerator.getTable()) 
+                && StringUtils.isBlank(tableGenerator.getTable())  && tableGenerator.getUniqueConstraint().isEmpty() && tableGenerator.getIndex().isEmpty() 
                 && tableGenerator.getAllocationSize()== 50 && tableGenerator.getInitialValue() == 0;
     }
 

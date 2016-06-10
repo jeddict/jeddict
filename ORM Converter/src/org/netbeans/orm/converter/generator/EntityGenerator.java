@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
@@ -112,26 +113,14 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         processSequenceGeneratorEntity(entity.getSequenceGenerator());
 
         //Class decorations
-        ClassHelper classHelper = new ClassHelper(entity.getClazz());
-        classHelper.setPackageName(packageName);
-        classDef.setAbstractClass(entity.getAbstract());
-        classDef.setInterfaces(entity.getInterfaces());
-        if (entity.getSuperclass() != null) {
-            ClassHelper superClassHelper = new ClassHelper(entity.getSuperclass().getClazz());
-            superClassHelper.setPackageName(packageName);
-            classDef.setSuperClassName(superClassHelper.getFQClassName());
+        classDef = initClassDef(packageName,entity);
+        if (StringUtils.isNotBlank(entity.getDescription())) {
+            classDef.setDescription(entity.getDescription());
         }
-
-        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
-        classDef.setClassName(classHelper.getFQClassName());
-        classDef.setPackageName(classHelper.getPackageName());
-
         if (entity.getTable() != null) {
             classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()
         }
         classDef.setEntity(true);
-        classDef.setAnnotation(getAnnotationSnippet(entity.getAnnotation()));
-
         classDef.setXmlRootElement(entity.getXmlRootElement());
 
         return classDef;

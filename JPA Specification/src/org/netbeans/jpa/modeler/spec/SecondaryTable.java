@@ -7,7 +7,9 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -68,7 +70,7 @@ public class SecondaryTable {
     @XmlElement(name = "primary-key-foreign-key")
     protected ForeignKey primaryKeyForeignKey;//REVENG PENDING
     @XmlElement(name = "unique-constraint")
-    protected List<UniqueConstraint> uniqueConstraint;
+    protected Set<UniqueConstraint> uniqueConstraint;
     protected List<Index> index;//REVENG PENDING
     @XmlAttribute(name = "name", required = true)
     protected String name;
@@ -151,9 +153,9 @@ public class SecondaryTable {
      *
      *
      */
-    public List<UniqueConstraint> getUniqueConstraint() {
+    public Set<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new LinkedHashSet<>();
         }
         return this.uniqueConstraint;
     }

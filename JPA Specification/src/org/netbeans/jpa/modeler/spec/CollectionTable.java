@@ -7,7 +7,9 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -79,8 +81,8 @@ public class CollectionTable {
     @XmlElement(name = "fk")
     protected ForeignKey foreignKey;
     @XmlElement(name = "unique-constraint")
-    protected List<UniqueConstraint> uniqueConstraint;
-    protected List<Index> index;//REVENG PENDING
+    protected Set<UniqueConstraint> uniqueConstraint;
+    protected List<Index> index;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "catalog")
@@ -108,6 +110,14 @@ public class CollectionTable {
                     collectionTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
                 }
             }
+           
+            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
+            if (indexesAnnot != null) {
+                for (Object indexObj : indexesAnnot) {
+                    collectionTable.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
+                }
+            }
+
 
             collectionTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             collectionTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
@@ -197,9 +207,9 @@ public class CollectionTable {
      *
      *
      */
-    public List<UniqueConstraint> getUniqueConstraint() {
+    public Set<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new LinkedHashSet<>();
         }
         return this.uniqueConstraint;
     }

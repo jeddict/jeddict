@@ -170,11 +170,9 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         );
         name_LayeredPaneLayout.setVerticalGroup(
             name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(name_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name_Label)
-                    .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(name_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(name_Label)
+                .addComponent(name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         name_LayeredPane.setLayer(name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
         name_LayeredPane.setLayer(name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -189,7 +187,7 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
                 .addContainerGap()
                 .addComponent(entity_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(entity_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(entity_ComboBox, 0, 424, Short.MAX_VALUE)
                 .addContainerGap())
         );
         entity_LayeredPaneLayout.setVerticalGroup(
@@ -198,7 +196,7 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
                 .addGroup(entity_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(entity_Label)
                     .addComponent(entity_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         entity_LayeredPane.setLayer(entity_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
         entity_LayeredPane.setLayer(entity_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -215,7 +213,7 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         );
         entityResult_LayeredPaneLayout.setVerticalGroup(
             entityResult_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(entityResultEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
+            .addComponent(entityResultEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
         );
         entityResult_LayeredPane.setLayer(entityResultEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -231,7 +229,7 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         );
         constructorResult_LayeredPaneLayout.setVerticalGroup(
             constructorResult_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(constructorResultEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
+            .addComponent(constructorResultEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
         );
         constructorResult_LayeredPane.setLayer(constructorResultEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -247,7 +245,7 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         );
         columnResult_LayeredPaneLayout.setVerticalGroup(
             columnResult_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(columnResultEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
+            .addComponent(columnResultEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
         );
         columnResult_LayeredPane.setLayer(columnResultEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -261,7 +259,7 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 23);
+        save_Button.setBounds(0, 0, 70, 29);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(ResultSetMappingsPanel.class, "ResultSetMappingsPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(ResultSetMappingsPanel.class, "ResultSetMappingsPanel.cancel_Button.toolTipText")); // NOI18N
@@ -272,14 +270,14 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
             }
         });
         action_jLayeredPane.add(cancel_Button);
-        cancel_Button.setBounds(80, 0, 70, 23);
+        cancel_Button.setBounds(80, 0, 70, 30);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
         root_jLayeredPaneLayout.setHorizontalGroup(
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                .addGap(0, 386, Short.MAX_VALUE)
+                .addGap(0, 388, Short.MAX_VALUE)
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(name_LayeredPane)
             .addComponent(entity_LayeredPane)
@@ -292,16 +290,16 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(entity_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
+                .addComponent(entity_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
                 .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 328, Short.MAX_VALUE)
-                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 329, Short.MAX_VALUE)
+                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                    .addGap(86, 86, 86)
-                    .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(38, Short.MAX_VALUE)))
+                    .addGap(104, 104, 104)
+                    .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(64, Short.MAX_VALUE)))
         );
         root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(entity_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);

@@ -50,7 +50,6 @@ public class DiscriminatorValueSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(
-                "javax.persistence.DiscriminatorValue");
+        return Collections.singletonList("javax.persistence.DiscriminatorValue");
     }
 }

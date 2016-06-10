@@ -80,7 +80,7 @@ public class StoredProcedureParameterSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.StoredProcedureParameter");
 
         if (classHelper.getFQClassName() != null) {

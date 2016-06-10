@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,45 +15,51 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class UniqueConstraintSnippet implements Snippet {
 
-    private List<String> uniqueConstraints = new ArrayList<String>();
+    private final UniqueConstraint constraint;
 
-    public List<String> getUniqueConstraints() {
-        return uniqueConstraints;
-    }
-
-    public void setUniqueConstraints(List<String> uniqueConstraints) {
-        this.uniqueConstraints = uniqueConstraints;
+    public UniqueConstraintSnippet(UniqueConstraint constraint) {
+        this.constraint = constraint;
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if (uniqueConstraints.isEmpty()) {
-            return "@UniqueConstraint";
-        }
+        
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@UniqueConstraint(columnNames={");
+        builder.append("@UniqueConstraint(");
 
-        for (String columnName : uniqueConstraints) {
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(columnName);
+        if (StringUtils.isNotBlank(constraint.getName())) {
+            builder.append("name=\"");
+            builder.append(constraint.getName());
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         }
-        builder.deleteCharAt(builder.length() - 1);
-
+                
+        builder.append("columnNames={");
+        if (!constraint.getColumnName().isEmpty()) {
+            for (String columnName : constraint.getColumnName()) {
+                builder.append(ORMConverterUtil.QUOTE);
+                builder.append(columnName);
+                builder.append(ORMConverterUtil.QUOTE);
+                builder.append(ORMConverterUtil.COMMA);
+            }
+            builder.deleteCharAt(builder.length() - 1);
+        }
         builder.append(ORMConverterUtil.CLOSE_BRACES);
-        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
 
+        
+        
+        builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
         return builder.toString();
     }
 

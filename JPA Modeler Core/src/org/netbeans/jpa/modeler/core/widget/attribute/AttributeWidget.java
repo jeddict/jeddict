@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.lang.model.SourceVersion;
@@ -22,25 +23,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
-import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
-import org.netbeans.jpa.modeler.spec.ManyToMany;
-import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
-import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
-import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -49,7 +40,6 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.generic.ElementCustomPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
-import org.netbeans.orm.converter.util.ClassHelper;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
@@ -71,6 +61,9 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 setLabel(value);
             }
         });
+//        this.addPropertyChangeListener("description", (PropertyChangeListener<String>) (String value) -> {
+//                setToolTipText(value);
+//        });
 
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
@@ -122,7 +115,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
-            set.put("BASIC_PROP", getFieldTypeProperty());
+            set.put("BASIC_PROP", getFieldTypeProperty(this));
         } else {
             try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
                 set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
@@ -133,92 +126,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         }
         PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
     }
-
-    private EmbeddedPropertySupport getFieldTypeProperty() {
-
-        GenericEmbedded entity = new GenericEmbedded("fieldType", "Field Type", "");
-        if (this.getBaseElementSpec() instanceof BaseAttribute) {
-            if (this.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) this.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
-                entity.setEntityEditor(null);
-            } else if (this.getBaseElementSpec() instanceof Embedded) {//to Disable it
-                entity.setEntityEditor(null);
-            } else {
-                entity.setEntityEditor(new FieldTypePanel(this.getModelerScene().getModelerFile()));
-            }
-
-        } else if (this.getBaseElementSpec() instanceof RelationAttribute) {
-            entity.setEntityEditor(null);
-        }
-        entity.setDataListener(new EmbeddedDataListener<Attribute>() {
-            private Attribute attribute;
-            private String displayName = null;
-            private PersistenceClassWidget persistenceClassWidget = null;
-
-            @Override
-            public void init() {
-                attribute = (Attribute) AttributeWidget.this.getBaseElementSpec();
-                if (attribute instanceof RelationAttribute) {
-                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().getBaseElement(((RelationAttribute) attribute).getConnectedEntity().getId());
-                } else if (attribute instanceof ElementCollection && ((ElementCollection) attribute).getConnectedClass() != null) { //Embedded Collection
-                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().getBaseElement(((ElementCollection) attribute).getConnectedClass().getId());
-                } else if (attribute instanceof Embedded) {
-                    persistenceClassWidget = (PersistenceClassWidget) AttributeWidget.this.getModelerScene().getBaseElement(((Embedded) attribute).getConnectedClass().getId());
-                }
-            }
-
-            @Override
-            public Attribute getData() {
-                return attribute;
-            }
-
-            @Override
-            public void setData(Attribute baseAttribute) {
-                AttributeWidget.this.setBaseElementSpec((E) baseAttribute);
-                if (AttributeWidget.this instanceof BaseAttributeWidget) {
-                    ((BaseAttributeWidget)AttributeWidget.this).createBeanValidationPropertySet(AttributeWidget.this.getPropertyManager().getElementPropertySet());
-                    AttributeWidget.this.refreshProperties();
-                }
-            }
-
-            @Override
-            public String getDisplay() {
-                if (attribute instanceof BaseAttribute) {
-                    if (attribute instanceof ElementCollection) {
-                        String collectionType = ((ElementCollection) attribute).getCollectionType();
-                        if (((ElementCollection) attribute).getConnectedClass() == null) { //Basic
-                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + ((ElementCollection) attribute).getTargetClass() + ">";
-                        } else { //Embedded
-                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
-                        }
-                    } else if (attribute instanceof Embedded) {
-                        displayName = persistenceClassWidget.getName();
-                    } else {
-                        displayName = ((BaseAttribute) attribute).getAttributeType();
-                    }
-                } else if (attribute instanceof RelationAttribute) {
-                    // Issue Fix #5851 Start
-                    if (attribute instanceof OneToMany || attribute instanceof ManyToMany) {
-                        String collectionType = null;
-                        if (attribute instanceof OneToMany) {
-                            collectionType = ((OneToMany) attribute).getCollectionType();
-                        } else if (attribute instanceof ManyToMany) {
-                            collectionType = ((ManyToMany) attribute).getCollectionType();
-                        }
-                        displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
-                    } else {
-                        displayName = persistenceClassWidget.getName();
-                    }
-                    // Issue Fix #5851 End
-
-                }
-                return displayName;
-
-            }
-
-        });
-        return new EmbeddedPropertySupport(this.getModelerScene().getModelerFile(), entity);
-    }
-    
+   
     public static <T> T getInstance(IPNodeWidget nodeWidget, String name, IBaseElement baseElement, Class documentId) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(baseElement.getId(), baseElement);
         pinWidgetInfo.setName(name);
@@ -242,23 +150,6 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return menuList;
     }
 
-//    @Override
-//    public boolean remove() {
-//        return remove(false);
-//    }
-//
-//    @Override
-//    public boolean remove(boolean notification) {
-//        // Issue Fix #5855 Start
-//        if (super.remove(notification)) {
-//            getClassWidget().deleteAttribute(AttributeWidget.this);
-//            return true;
-//        }
-//        // Issue Fix #5855 End
-//        return false;
-//    }
-
-    
     @Override
     public void init() {
         setAttributeTooltip();
@@ -318,5 +209,6 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public PersistenceClassWidget getClassWidget() {
         return (PersistenceClassWidget) this.getPNodeWidget();
     }
+
 
 }

@@ -49,6 +49,7 @@ import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInvers
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
+import org.netbeans.db.modeler.properties.PropertiesHandler;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -60,6 +61,7 @@ import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import static org.netbeans.modeler.core.engine.ModelerDiagramEngine.NODE_WIDGET_SELECT_PROVIDER;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
@@ -76,6 +78,13 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         this.getImageWidget().getActions().addAction(new TableAction());
 
     }
+    
+       @Override
+    public void createPropertySet(ElementPropertySet set) {
+           set.put("BASIC_PROP", PropertiesHandler.getIndexProperties(this));
+           set.put("BASIC_PROP", PropertiesHandler.getUniqueConstraintProperties(this));
+    }
+       
 
     private final class TableAction extends WidgetAction.Adapter {
 

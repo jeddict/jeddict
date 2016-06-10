@@ -104,7 +104,7 @@ public class Embedded extends CompositionAttribute<Embeddable> implements Attrib
         embedded.setConnectedClass(embeddableClassSpec);
 
         embedded.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
-
+        JavaSourceParserUtil.getBeanValidation(embedded,element);
         return embedded;
     }
 

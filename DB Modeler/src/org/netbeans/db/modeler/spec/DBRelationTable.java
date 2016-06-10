@@ -15,7 +15,11 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.List;
+import java.util.Set;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Index;
+import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
 public class DBRelationTable extends DBTable {
@@ -33,5 +37,16 @@ public class DBRelationTable extends DBTable {
      */
     public RelationAttribute getAttribute() {
         return attribute;
+    }
+
+    @Override
+    public Set<UniqueConstraint> getUniqueConstraints() {
+        return attribute.getJoinTable().getUniqueConstraint();
+    }
+    
+    
+    @Override
+    public List<Index> getIndexes() {
+        return attribute.getJoinTable().getIndex();
     }
 }

@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Image;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.PinContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
@@ -137,4 +138,9 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
     public ErrorHandler getErrorHandler() {
         return errorHandler;
     }
+    
+
+    public abstract String getIconPath();
+    public abstract Image getIcon();
+
 }

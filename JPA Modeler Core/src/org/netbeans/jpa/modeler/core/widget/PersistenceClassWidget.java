@@ -44,6 +44,9 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.SingleRelationAtt
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConstructorProperties;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashcodeEqualsProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -54,6 +57,7 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
@@ -67,7 +71,6 @@ import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.modeler.component.ModelerPanelTopComponent;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -86,13 +89,13 @@ import org.openide.util.RequestProcessor;
  */
 public abstract class PersistenceClassWidget<E extends ManagedClass> extends JavaClassWidget<E> {
 
-    public List<AttributeWidget> getAllAttributeWidgets() {
+    public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
 
         return getAllAttributeWidgets(true);
     }
 
-    public List<AttributeWidget> getAllAttributeWidgets(boolean includeParentClassAttibute) {
-        List<AttributeWidget> attributeWidgets = new ArrayList<>();
+    public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute) {
+        List<AttributeWidget<? extends Attribute>> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (includeParentClassAttibute && classWidget instanceof PersistenceClassWidget) {
             attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllAttributeWidgets(includeParentClassAttibute));
@@ -113,10 +116,11 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         attributeWidgets.addAll(transientAttributeWidgets);
         return attributeWidgets;
     }
-    
-        public List<RelationAttributeWidget> getAllRelationAttributeWidgets() {
-            return getAllRelationAttributeWidgets(false);
-        }
+
+    public List<RelationAttributeWidget> getAllRelationAttributeWidgets() {
+        return getAllRelationAttributeWidgets(false);
+    }
+
     public List<RelationAttributeWidget> getAllRelationAttributeWidgets(boolean includeParentClassAttribute) {
         List<RelationAttributeWidget> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
@@ -154,48 +158,53 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
             return property == CompositePKProperty.ALL || property == CompositePKProperty.CLASS;
         });
+//        this.addPropertyChangeListener("description", (PropertyChangeListener<String>) (String value) -> {
+//                setToolTipText(value);
+//        });
 
     }
-    
-    public void scanDuplicateInheritedAttributes(){
+
+    public void scanDuplicateInheritedAttributes() {
         this.getAllAttributeWidgets().stream().forEach((attributeWidget) -> {
-            scanDuplicateAttributes(null,attributeWidget.getBaseElementSpec().getName());
+            scanDuplicateAttributes(null, attributeWidget.getBaseElementSpec().getName());
         });
     }
-    public void scanDuplicateAttributes(String previousName, String newName){
-      int previousNameCount=0, newNameCount=0;
-      List<AttributeWidget> attributeWidgets = this.getAllAttributeWidgets(true);
-      for(AttributeWidget<Attribute> attributeWidget : attributeWidgets){
-          Attribute attribute = attributeWidget.getBaseElementSpec();
-          
-          if(attribute.getName().equals(previousName)){
-              if(++previousNameCount>1){
-                  attributeWidget.getErrorHandler().throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-              } else if(!attributeWidget.getErrorHandler().getErrorList().isEmpty()){
-                  attributeWidget.getErrorHandler().clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-              }
-          }
-          
-          if(attribute.getName().equals(newName)){
-              if(++newNameCount>1){
-                  attributeWidget.getErrorHandler().throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-              }else if(!attributeWidget.getErrorHandler().getErrorList().isEmpty()){
-                  attributeWidget.getErrorHandler().clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-              }
-          }
-      }
+
+    public void scanDuplicateAttributes(String previousName, String newName) {
+        int previousNameCount = 0, newNameCount = 0;
+        List<AttributeWidget<? extends Attribute>> attributeWidgets = this.getAllAttributeWidgets(true);
+        for (AttributeWidget<? extends Attribute> attributeWidget : attributeWidgets) {
+            Attribute attribute = attributeWidget.getBaseElementSpec();
+
+            if (attribute.getName().equals(previousName)) {
+                if (++previousNameCount > 1) {
+                    attributeWidget.getErrorHandler().throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
+                    attributeWidget.getErrorHandler().clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                }
+            }
+
+            if (attribute.getName().equals(newName)) {
+                if (++newNameCount > 1) {
+                    attributeWidget.getErrorHandler().throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
+                    attributeWidget.getErrorHandler().clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                }
+            }
+        }
     }
 
-    private void checkPrimaryKeyStatus(){
-        if(isCompositePKPropertyAllow() == CompositePKProperty.NONE){
-            if(this.getEmbeddedIdAttributeWidget()!=null){
+    private void checkPrimaryKeyStatus() {
+        if (isCompositePKPropertyAllow() == CompositePKProperty.NONE) {
+            if (this.getEmbeddedIdAttributeWidget() != null) {
                 this.getEmbeddedIdAttributeWidget().remove(false);
             }
-            PrimaryKeyContainer primaryKeyContainer = (PrimaryKeyContainer)this.getBaseElementSpec();
+            PrimaryKeyContainer primaryKeyContainer = (PrimaryKeyContainer) this.getBaseElementSpec();
             primaryKeyContainer.setCompositePrimaryKeyClass(null);
             primaryKeyContainer.setCompositePrimaryKeyType(null);
         }
     }
+
     public CompositePKProperty isCompositePKPropertyAllow() {
         if (this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) this.getBaseElementSpec();
@@ -224,7 +233,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                             property = CompositePKProperty.AUTO_CLASS;
                         }
                     }
-                } 
+                }
             } else {
 //                if ((primaryKeyContainerSpec.getCompositePrimaryKeyClass() == null || primaryKeyContainerSpec.getCompositePrimaryKeyClass().trim().isEmpty())
 //                        && (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID || primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS)) {
@@ -236,13 +245,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                 }
             }
 
-
             return property;
         }
         return CompositePKProperty.NONE;
     }
-
-
 
     public List<IdAttributeWidget> getAllIdAttributeWidgets() {
         List<IdAttributeWidget> idAttributeWidgets_TMP = new ArrayList<>(this.getIdAttributeWidgets());
@@ -252,10 +258,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         });
         return idAttributeWidgets_TMP;
     }
-    
-   public List<AttributeWidget> getPrimaryKeyAttributeWidgets() {
+
+    public List<AttributeWidget> getPrimaryKeyAttributeWidgets() {
         List<AttributeWidget> idAttributeWidgets_TMP = new ArrayList<>(this.getIdAttributeWidgets());
-       idAttributeWidgets_TMP.addAll(getIdRelationAttributeWidgets());
+        idAttributeWidgets_TMP.addAll(getIdRelationAttributeWidgets());
         List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
         classWidgets.stream().filter((classWidget) -> (classWidget instanceof PersistenceClassWidget)).forEach((classWidget) -> {
             idAttributeWidgets_TMP.addAll(((PersistenceClassWidget) classWidget).getIdAttributeWidgets());
@@ -263,9 +269,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         });
         return idAttributeWidgets_TMP;
     }
-    
-    
-    
 
     public List<EmbeddedIdAttributeWidget> getAllEmbeddedIdAttributeWidgets() {
         List<EmbeddedIdAttributeWidget> embeddedIdAttributeWidgets = new ArrayList<>();
@@ -289,6 +292,9 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             set.put("BASIC_PROP", getCompositePrimaryKeyProperty());
         }
 
+        set.put("CLASS_STRUCTURE", getConstructorProperties(this));
+        set.put("CLASS_STRUCTURE", getHashcodeEqualsProperty(this));
+        set.put("CLASS_STRUCTURE", getToStringProperty(this));
     }
 
     private ComboBoxPropertySupport getCompositePrimaryKeyProperty() {
@@ -499,7 +505,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         sortAttributes();
         AttributeValidator.validateMultipleEmbeddedIdFound(this);
         AttributeValidator.validateEmbeddedIdAndIdFound(this);
-        scanDuplicateAttributes(null,embeddedId.getName());
+        scanDuplicateAttributes(null, embeddedId.getName());
         return attributeWidget;
     }
 
@@ -529,7 +535,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             ((EntityWidget) classWidget).scanKeyError();
         });
         isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
-        scanDuplicateAttributes(null,id.getName());
+        scanDuplicateAttributes(null, id.getName());
         return attributeWidget;
     }
 
@@ -546,10 +552,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             version.setName(name);
             ((IPersistenceAttributes) javaClass.getAttributes()).addVersion(version);
         }
-VersionAttributeWidget attributeWidget = AttributeWidget.<VersionAttributeWidget>getInstance(this, name, version, VersionAttributeWidget.class);
+        VersionAttributeWidget attributeWidget = AttributeWidget.<VersionAttributeWidget>getInstance(this, name, version, VersionAttributeWidget.class);
         getVersionAttributeWidgets().add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,version.getName());
+        scanDuplicateAttributes(null, version.getName());
         return attributeWidget;
     }
 
@@ -570,7 +576,7 @@ VersionAttributeWidget attributeWidget = AttributeWidget.<VersionAttributeWidget
         BasicAttributeWidget attributeWidget = AttributeWidget.<BasicAttributeWidget>getInstance(this, name, basic, BasicAttributeWidget.class);
         getBasicAttributeWidgets().add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,basic.getName());
+        scanDuplicateAttributes(null, basic.getName());
         return attributeWidget;
     }
 
@@ -588,10 +594,10 @@ VersionAttributeWidget attributeWidget = AttributeWidget.<VersionAttributeWidget
             elementCollection.setName(name);
             javaClass.getAttributes().addElementCollection(elementCollection);
         }
-BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectionAttributeWidget>getInstance(this, name, elementCollection, BasicCollectionAttributeWidget.class);
+        BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectionAttributeWidget>getInstance(this, name, elementCollection, BasicCollectionAttributeWidget.class);
         getBasicCollectionAttributeWidgets().add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,elementCollection.getName());
+        scanDuplicateAttributes(null, elementCollection.getName());
         return attributeWidget;
     }
 
@@ -611,7 +617,7 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
         TransientAttributeWidget attributeWidget = AttributeWidget.<TransientAttributeWidget>getInstance(this, name, _transient, TransientAttributeWidget.class);
         getTransientAttributeWidgets().add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,_transient.getName());
+        scanDuplicateAttributes(null, _transient.getName());
         return attributeWidget;
     }
 
@@ -631,7 +637,7 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
         OTORelationAttributeWidget attributeWidget = AttributeWidget.<OTORelationAttributeWidget>getInstance(this, name, oneToOne, OTORelationAttributeWidget.class);
         oneToOneRelationAttributeWidgets.add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,oneToOne.getName());
+        scanDuplicateAttributes(null, oneToOne.getName());
         if (oneToOne.isPrimaryKey()) {
             AttributeValidator.validateEmbeddedIdAndIdFound(this);
             if (this instanceof EntityWidget) {
@@ -660,7 +666,7 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
         OTMRelationAttributeWidget attributeWidget = AttributeWidget.<OTMRelationAttributeWidget>getInstance(this, name, oneToMany, OTMRelationAttributeWidget.class);
         getOneToManyRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,oneToMany.getName());
+        scanDuplicateAttributes(null, oneToMany.getName());
         return attributeWidget;
     }
 
@@ -679,7 +685,7 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
         MTORelationAttributeWidget attributeWidget = AttributeWidget.<MTORelationAttributeWidget>getInstance(this, name, manyToOne, MTORelationAttributeWidget.class);
         getManyToOneRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,manyToOne.getName());
+        scanDuplicateAttributes(null, manyToOne.getName());
         if (manyToOne.isPrimaryKey()) {
             AttributeValidator.validateEmbeddedIdAndIdFound(this);
             if (this instanceof EntityWidget) {
@@ -705,10 +711,10 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
             manyToMany.setName(name);
             javaClass.getAttributes().addRelationAttribute(manyToMany);
         }
-                MTMRelationAttributeWidget attributeWidget = AttributeWidget.<MTMRelationAttributeWidget>getInstance(this, name, manyToMany, MTMRelationAttributeWidget.class);
+        MTMRelationAttributeWidget attributeWidget = AttributeWidget.<MTMRelationAttributeWidget>getInstance(this, name, manyToMany, MTMRelationAttributeWidget.class);
         getManyToManyRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,manyToMany.getName());
+        scanDuplicateAttributes(null, manyToMany.getName());
         return attributeWidget;
     }
 
@@ -727,10 +733,10 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
             embedded.setName(name);
             javaClass.getAttributes().addEmbedded(embedded);
         }
-                        SingleValueEmbeddedAttributeWidget attributeWidget = AttributeWidget.<SingleValueEmbeddedAttributeWidget>getInstance(this, name, embedded, SingleValueEmbeddedAttributeWidget.class);
+        SingleValueEmbeddedAttributeWidget attributeWidget = AttributeWidget.<SingleValueEmbeddedAttributeWidget>getInstance(this, name, embedded, SingleValueEmbeddedAttributeWidget.class);
         singleValueEmbeddedAttributeWidgets.add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,embedded.getName());
+        scanDuplicateAttributes(null, embedded.getName());
         return attributeWidget;
     }
 
@@ -750,23 +756,25 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
         MultiValueEmbeddedAttributeWidget attributeWidget = AttributeWidget.<MultiValueEmbeddedAttributeWidget>getInstance(this, name, elementCollection, MultiValueEmbeddedAttributeWidget.class);
         multiValueEmbeddedAttributeWidgets.add(attributeWidget);
         sortAttributes();
-        scanDuplicateAttributes(null,elementCollection.getName());
+        scanDuplicateAttributes(null, elementCollection.getName());
         return attributeWidget;
     }
 
     public String getNextAttributeName() {
         return getNextAttributeName(null);
     }
+
     public String getNextAttributeName(String attrName) {
         return getNextAttributeName(attrName, false);
     }
+
     public String getNextAttributeName(String attrName, boolean multi) {
         int index = 0;
         if (attrName == null || attrName.trim().isEmpty()) {
             attrName = "attribute";
         }
         attrName = Character.toLowerCase(attrName.charAt(0)) + (attrName.length() > 1 ? attrName.substring(1) : "");
-        if(multi){
+        if (multi) {
             attrName = English.plural(attrName);
         }
         String nextAttrName = attrName;
@@ -866,7 +874,7 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
 
         return list;
     }
-    
+
     public List<SingleRelationAttributeWidget> getIdRelationAttributeWidgets() {
         List<SingleRelationAttributeWidget> list = new ArrayList<>(oneToOneRelationAttributeWidgets);
         list.addAll(manyToOneRelationAttributeWidgets);
@@ -993,7 +1001,7 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
 
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
 
-    public void refactorRelationSynchronously(String previousName, String newName) {
+    public void refactorReference(String previousName, String newName) {
         if (previousName == null) {
             return;
         }
@@ -1001,60 +1009,67 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
         RequestProcessor.getDefault().post(() -> {
             try {
 
-            String singularPreName = Character.toLowerCase(previousName.charAt(0)) + (previousName.length() > 1 ? previousName.substring(1) : "");
-            String pluralPreName = English.plural(singularPreName);
-            String singularNewName = Character.toLowerCase(newName.charAt(0)) + (newName.length() > 1 ? newName.substring(1) : "");
-            String pluralNewName = English.plural(singularNewName);
-            for (RelationAttributeWidget attributeWidget : this.getAllRelationAttributeWidgets(true)) {
-                if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
-                    Bidirectional flowWidget = (Bidirectional) attributeWidget.getRelationFlowWidget();
-                    RelationAttributeWidget<RelationAttribute> relationAttributeWidget = flowWidget.getTargetRelationAttributeWidget();
-                    if (relationAttributeWidget == attributeWidget) { // refactoring not from owner side
-                        relationAttributeWidget = flowWidget.getSourceRelationAttributeWidget();
-                    }
-                    if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
-                        if (relationAttributeWidget.getName().equals(pluralPreName)) {
-                            relationAttributeWidget.setName(pluralNewName);
-                            relationAttributeWidget.setLabel(pluralNewName);
+                String singularPreName = Character.toLowerCase(previousName.charAt(0)) + (previousName.length() > 1 ? previousName.substring(1) : "");
+                String pluralPreName = English.plural(singularPreName);
+                String singularNewName = Character.toLowerCase(newName.charAt(0)) + (newName.length() > 1 ? newName.substring(1) : "");
+                String pluralNewName = English.plural(singularNewName);
+                for (RelationAttributeWidget attributeWidget : this.getAllRelationAttributeWidgets(true)) {
+                    if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
+                        Bidirectional flowWidget = (Bidirectional) attributeWidget.getRelationFlowWidget();
+                        RelationAttributeWidget<RelationAttribute> relationAttributeWidget = flowWidget.getTargetRelationAttributeWidget();
+                        if (relationAttributeWidget == attributeWidget) { // refactoring not from owner side
+                            relationAttributeWidget = flowWidget.getSourceRelationAttributeWidget();
                         }
-                    } else if (relationAttributeWidget.getName().equals(singularPreName)) {
-                        relationAttributeWidget.setName(singularNewName);
-                        relationAttributeWidget.setLabel(singularNewName);
+                        if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
+                            if (relationAttributeWidget.getName().equals(pluralPreName)) {
+                                relationAttributeWidget.setName(pluralNewName);
+                                relationAttributeWidget.setLabel(pluralNewName);
+                            }
+                        } else if (relationAttributeWidget.getName().equals(singularPreName)) {
+                            relationAttributeWidget.setName(singularNewName);
+                            relationAttributeWidget.setLabel(singularNewName);
+                        }
                     }
                 }
-            }
 
-            if (this instanceof EntityWidget) {
-                for (RelationFlowWidget relationFlowWidget : ((EntityWidget) this).getUnidirectionalRelationFlowWidget()) {
-                    RelationAttributeWidget<RelationAttribute> relationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
-                    if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
-                        if (relationAttributeWidget.getName().equals(pluralPreName)) {
-                            relationAttributeWidget.setName(pluralNewName);
-                            relationAttributeWidget.setLabel(pluralNewName);
+                if (this instanceof EntityWidget) {
+                    for (RelationFlowWidget relationFlowWidget : ((EntityWidget) this).getUnidirectionalRelationFlowWidget()) {
+                        RelationAttributeWidget<RelationAttribute> relationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
+                        if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
+                            if (relationAttributeWidget.getName().equals(pluralPreName)) {
+                                relationAttributeWidget.setName(pluralNewName);
+                                relationAttributeWidget.setLabel(pluralNewName);
+                            }
+                        } else {
+                            if (relationAttributeWidget.getName().equals(singularPreName)) {
+                                relationAttributeWidget.setName(singularNewName);
+                                relationAttributeWidget.setLabel(singularNewName);
+                            }
                         }
-                    } else if (relationAttributeWidget.getName().equals(singularPreName)) {
-                        relationAttributeWidget.setName(singularNewName);
-                        relationAttributeWidget.setLabel(singularNewName);
                     }
-                }
-            }
-            
-            if (this instanceof EmbeddableWidget) {
-                for (EmbeddableFlowWidget embeddableFlowWidget : ((EmbeddableWidget) this).getIncomingEmbeddableFlowWidgets()) {
-                    EmbeddedAttributeWidget embeddedAttributeWidget = embeddableFlowWidget.getSourceEmbeddedAttributeWidget();
-                    if (embeddedAttributeWidget.getBaseElementSpec() instanceof ElementCollection) {
-                        if (embeddedAttributeWidget.getName().equals(pluralPreName)) {
-                            embeddedAttributeWidget.setName(pluralNewName);
-                            embeddedAttributeWidget.setLabel(pluralNewName);
+                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph eg) -> {
+                        if (eg.getName().contains(singularPreName)) {
+                            eg.setName(eg.getName().replaceAll(singularPreName, singularNewName));
                         }
-                    } else if (embeddedAttributeWidget.getName().equals(singularPreName)) {
-                        embeddedAttributeWidget.setName(singularNewName);
-                        embeddedAttributeWidget.setLabel(singularNewName);
-                    }
+                    });
                 }
-            }
 
-            } catch(Throwable t){
+                if (this instanceof EmbeddableWidget) {
+                    for (EmbeddableFlowWidget embeddableFlowWidget : ((EmbeddableWidget) this).getIncomingEmbeddableFlowWidgets()) {
+                        EmbeddedAttributeWidget embeddedAttributeWidget = embeddableFlowWidget.getSourceEmbeddedAttributeWidget();
+                        if (embeddedAttributeWidget.getBaseElementSpec() instanceof ElementCollection) {
+                            if (embeddedAttributeWidget.getName().equals(pluralPreName)) {
+                                embeddedAttributeWidget.setName(pluralNewName);
+                                embeddedAttributeWidget.setLabel(pluralNewName);
+                            }
+                        } else if (embeddedAttributeWidget.getName().equals(singularPreName)) {
+                            embeddedAttributeWidget.setName(singularNewName);
+                            embeddedAttributeWidget.setLabel(singularNewName);
+                        }
+                    }
+                }
+
+            } catch (Throwable t) {
                 modelerFile.handleException(t);
             }
         });
@@ -1067,37 +1082,38 @@ BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectio
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setClazz(this.name);
-                refactorRelationSynchronously(previousName,this.name);
+                refactorReference(previousName, this.name);
             }
             validateName(previousName, this.getName());
         }
 
     }
-    
-    
-     public void createPinWidget(SubCategoryNodeConfig subCategoryInfo){
+
+    public void createPinWidget(SubCategoryNodeConfig subCategoryInfo) {
         createPinWidget(subCategoryInfo.getModelerDocument().getId().toUpperCase() + "_ATTRIBUTE");
     }
 
-     public void createPinWidget(String docId) {
-        if (null != docId) switch (docId) {
-            case "ID_ATTRIBUTE":
-                this.addNewIdAttribute(getNextAttributeName("id")).edit();
-                break;
-            case "BASIC_ATTRIBUTE":
-                this.addNewBasicAttribute(getNextAttributeName()).edit();
-                break;
-            case "BASIC_COLLECTION_ATTRIBUTE":
-                this.addNewBasicCollectionAttribute(getNextAttributeName(null, true)).edit();
-                break;
-            case "TRANSIENT_ATTRIBUTE":
-                this.addNewTransientAttribute(getNextAttributeName()).edit();
-                break;
-            case "VERSION_ATTRIBUTE":
-                this.addNewVersionAttribute(getNextAttributeName()).edit();
-                break;
-            default:
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+    public void createPinWidget(String docId) {
+        if (null != docId) {
+            switch (docId) {
+                case "ID_ATTRIBUTE":
+                    this.addNewIdAttribute(getNextAttributeName("id")).edit();
+                    break;
+                case "BASIC_ATTRIBUTE":
+                    this.addNewBasicAttribute(getNextAttributeName()).edit();
+                    break;
+                case "BASIC_COLLECTION_ATTRIBUTE":
+                    this.addNewBasicCollectionAttribute(getNextAttributeName(null, true)).edit();
+                    break;
+                case "TRANSIENT_ATTRIBUTE":
+                    this.addNewTransientAttribute(getNextAttributeName()).edit();
+                    break;
+                case "VERSION_ATTRIBUTE":
+                    this.addNewVersionAttribute(getNextAttributeName()).edit();
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+            }
         }
     }
 }

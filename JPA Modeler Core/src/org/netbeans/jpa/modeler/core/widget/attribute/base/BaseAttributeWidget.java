@@ -30,7 +30,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
  *
  * @author Gaurav Gupta
  */
-public class BaseAttributeWidget<E extends BaseAttribute> extends AttributeWidget<E> {
+public abstract class BaseAttributeWidget<E extends BaseAttribute> extends AttributeWidget<E> {
 
     public BaseAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);

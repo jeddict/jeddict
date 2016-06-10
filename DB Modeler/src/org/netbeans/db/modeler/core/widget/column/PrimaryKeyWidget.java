@@ -15,8 +15,11 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
+import java.awt.Image;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.PRIMARYKEY;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.PRIMARYKEY_ICON_PATH;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -37,6 +40,16 @@ public class PrimaryKeyWidget extends BasicColumnWidget implements IPrimaryKeyWi
         pinWidgetInfo.setName(name);
         pinWidgetInfo.setDocumentId(PrimaryKeyWidget.class.getSimpleName());
         return pinWidgetInfo;
+    }
+    
+    @Override
+    public String getIconPath() {
+        return PRIMARYKEY_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return PRIMARYKEY;
     }
 
 }

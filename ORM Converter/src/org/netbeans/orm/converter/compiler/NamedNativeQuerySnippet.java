@@ -103,16 +103,13 @@ public class NamedNativeQuerySnippet extends NamedQueryDefSnippet implements Sni
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-
-        if (queryHints.isEmpty()) {
-            return Collections.singletonList("javax.persistence.NamedNativeQuery");
-        }
-
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.NamedNativeQuery");
         importSnippets.add(classHelper.getFQClassName());
+        if (!queryHints.isEmpty()) {
         importSnippets.addAll(queryHints.get(0).getImportSnippets());
+        }
 
         return importSnippets;
     }

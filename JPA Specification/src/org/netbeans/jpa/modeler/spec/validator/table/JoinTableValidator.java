@@ -34,7 +34,9 @@ public class JoinTableValidator extends MarshalValidator<JoinTable> {
         JoinColumnValidator.filter(table.getJoinColumn());
         JoinColumnValidator.filter(table.getInverseJoinColumn());
 
-        return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) && StringUtils.isBlank(table.getCatalog())
-                && table.getJoinColumn().isEmpty() && table.getInverseJoinColumn().isEmpty();
+        return StringUtils.isBlank(table.getName()) && StringUtils.isBlank(table.getSchema()) &&
+                StringUtils.isBlank(table.getCatalog()) && 
+                table.getJoinColumn().isEmpty() && table.getInverseJoinColumn().isEmpty() &&
+                table.getIndex().isEmpty();
     }
 }

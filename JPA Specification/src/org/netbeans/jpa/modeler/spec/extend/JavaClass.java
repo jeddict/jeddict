@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
@@ -41,6 +42,18 @@ import org.openide.filesystems.FileObject;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class JavaClass extends FlowNode implements JCRELoader {
+
+    @XmlElement(name = "ts")
+    private ClassMembers toStringMethod;
+
+    @XmlElement(name = "hc")
+    private ClassMembers hashCodeMethod;
+
+    @XmlElement(name = "eq")
+    private ClassMembers equalsMethod;
+
+    @XmlElement(name = "con")
+    private Set<Constructor> constructors;
 
     @XmlAttribute(name = "abs")
     protected Boolean _abstract = false;
@@ -280,6 +293,74 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
      */
     public void setFileObject(FileObject fileObject) {
         this.fileObject = fileObject;
+    }
+
+    /**
+     * @return the toStringMethod
+     */
+    public ClassMembers getToStringMethod() {
+        if(toStringMethod==null){
+            toStringMethod = new ClassMembers();
+        }
+        return toStringMethod;
+    }
+
+    /**
+     * @param toStringMethod the toStringMethod to set
+     */
+    public void setToStringMethod(ClassMembers toStringMethod) {
+        this.toStringMethod = toStringMethod;
+    }
+
+    /**
+     * @return the hashCodeMethod
+     */
+    public ClassMembers getHashCodeMethod() {
+        if(hashCodeMethod==null){
+            hashCodeMethod = new ClassMembers();
+        }
+        return hashCodeMethod;
+    }
+
+    /**
+     * @param hashCodeMethod the hashCodeMethod to set
+     */
+    public void setHashCodeMethod(ClassMembers hashCodeMethod) {
+        this.hashCodeMethod = hashCodeMethod;
+    }
+
+    /**
+     * @return the equalsMethod
+     */
+    public ClassMembers getEqualsMethod() {
+        if(equalsMethod==null){
+            equalsMethod = new ClassMembers();
+        }
+        return equalsMethod;
+    }
+
+    /**
+     * @param equalsMethod the equalsMethod to set
+     */
+    public void setEqualsMethod(ClassMembers equalsMethod) {
+        this.equalsMethod = equalsMethod;
+    }
+
+    /**
+     * @return the constructors
+     */
+    public Set<Constructor> getConstructors() {
+        if(constructors==null){
+            constructors = new LinkedHashSet<>();
+        }
+        return constructors;
+    }
+
+    /**
+     * @param constructors the constructors to set
+     */
+    public void setConstructors(Set<Constructor> constructors) {
+        this.constructors = constructors;
     }
 
 }

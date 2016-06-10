@@ -157,15 +157,11 @@ public class SQLResultSetMappingSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (entityResults.isEmpty() && constructorResults.isEmpty() && columnResults.isEmpty()) {
-
-            return Collections.singletonList(""
-                    + "javax.persistence.SqlResultSetMapping");
+            return Collections.singletonList("javax.persistence.SqlResultSetMapping");
         }
 
-        List<String> importSnippets = new ArrayList<String>();
-
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.SqlResultSetMapping");
-
         if (entityResults != null) {
             for (EntityResultSnippet entityResult : entityResults) {
                 importSnippets.addAll(entityResult.getImportSnippets());

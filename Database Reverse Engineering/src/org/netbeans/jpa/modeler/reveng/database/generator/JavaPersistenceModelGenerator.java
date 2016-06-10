@@ -271,7 +271,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                 entityModalGenerator.run();
             }
 
-            entityMappingsSpec.manageSiblingAttribute();
+            entityMappingsSpec.manageRefId();
             entityMappingsSpec.repairDefinition(JPAModelerUtil.IO,true);
             // manageSiblingAttribute for MappedSuperClass and Embeddable is not required because it not generated DBRE CASE
 

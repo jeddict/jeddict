@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.visual.widget.Widget;
@@ -144,9 +145,9 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     public void setName(String name) {
         this.name = name;
         if (name != null && !name.trim().isEmpty()) {
-            FlowNodeWidget.this.getBaseElementSpec().setName(name);
+            getBaseElementSpec().setName(name);
         } else {
-            FlowNodeWidget.this.getBaseElementSpec().setName(null);
+            getBaseElementSpec().setName(null);
         }
     }
 
@@ -166,5 +167,9 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     public ErrorHandler getErrorHandler() {
         return errorHandler;
     }
+    
+    public abstract String getIconPath();
+    public abstract Image getIcon();
+
 
 }

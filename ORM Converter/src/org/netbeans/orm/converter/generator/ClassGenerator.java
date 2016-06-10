@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Basic;
@@ -49,6 +50,7 @@ import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.Lob;
@@ -76,7 +78,10 @@ import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
+import org.netbeans.jpa.modeler.spec.extend.Constructor;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
@@ -101,15 +106,19 @@ import org.netbeans.orm.converter.compiler.ColumnResultSnippet;
 import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippet;
 import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippetFactory;
 import org.netbeans.orm.converter.compiler.ConstructorResultSnippet;
+import org.netbeans.orm.converter.compiler.ConstructorSnippet;
 import org.netbeans.orm.converter.compiler.ElementCollectionSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
 import org.netbeans.orm.converter.compiler.EntityListenersSnippet;
 import org.netbeans.orm.converter.compiler.EntityResultSnippet;
 import org.netbeans.orm.converter.compiler.EnumeratedSnippet;
+import org.netbeans.orm.converter.compiler.EqualsMethodSnippet;
 import org.netbeans.orm.converter.compiler.FieldResultSnippet;
 import org.netbeans.orm.converter.compiler.ForeignKeySnippet;
 import org.netbeans.orm.converter.compiler.GeneratedValueSnippet;
+import org.netbeans.orm.converter.compiler.HashcodeMethodSnippet;
 import org.netbeans.orm.converter.compiler.IdClassSnippet;
+import org.netbeans.orm.converter.compiler.IndexSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnSnippet;
 import org.netbeans.orm.converter.compiler.JoinColumnsSnippet;
 import org.netbeans.orm.converter.compiler.JoinTableSnippet;
@@ -139,29 +148,54 @@ import org.netbeans.orm.converter.compiler.SequenceGeneratorSnippet;
 import org.netbeans.orm.converter.compiler.StoredProcedureParameterSnippet;
 import org.netbeans.orm.converter.compiler.TableDefSnippet;
 import org.netbeans.orm.converter.compiler.TableGeneratorSnippet;
+import org.netbeans.orm.converter.compiler.ToStringMethodSnippet;
 import org.netbeans.orm.converter.compiler.UniqueConstraintSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
+import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private static final String TEMPORAL_TYPE_PREFIX = "TemporalType.";
 
-    private static Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
+    private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
 
-    protected String packageName = null;
-
+    protected String packageName;
     protected T classDef;
+    protected Map<String, VariableDefSnippet> variables = new LinkedHashMap<>();
 
     public ClassGenerator(T classDef) {
         this.classDef = classDef;
     }
 
-    protected Map<String, VariableDefSnippet> variables  = new LinkedHashMap<>();
-
     public abstract T getClassDef();
+
+    protected T initClassDef(String packageName, JavaClass javaClass) {
+        ClassHelper classHelper = new ClassHelper(javaClass.getClazz());
+        classHelper.setPackageName(packageName);
+        classDef.setClassName(classHelper.getFQClassName());
+        classDef.setPackageName(classHelper.getPackageName());
+        classDef.setAbstractClass(javaClass.getAbstract());
+        classDef.setInterfaces(javaClass.getInterfaces());
+        classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
+        classDef.setVariableDefs(new ArrayList<>(variables.values()));
+
+        for (Constructor constructor : javaClass.getConstructors()) {
+            classDef.addConstructor(getConstructorSnippet(javaClass.getClazz(), constructor));
+        }
+
+        classDef.setHashcodeMethod(getHashcodeMethodSnippet(javaClass.getClazz(), javaClass.getHashCodeMethod()));
+        classDef.setEqualsMethod(getEqualsMethodSnippet(javaClass.getClazz(), javaClass.getEqualsMethod()));
+        classDef.setToStringMethod(getToStringMethodSnippet(javaClass.getClazz(), javaClass.getToStringMethod()));
+        if (javaClass.getSuperclass() != null) {
+            ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
+            superClassHelper.setPackageName(packageName);
+            classDef.setSuperClassName(superClassHelper.getFQClassName());
+        }
+        return classDef;
+    }
 
     protected ColumnDefSnippet getColumnDef(Column column) {
 
@@ -174,10 +208,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         columnDef.setColumnDefinition(column.getColumnDefinition());
         columnDef.setName(column.getName());
         columnDef.setTable(column.getTable());
-        columnDef.setInsertable(column.getInsertable()); // line added by gaurav gupta
-        columnDef.setNullable(column.getNullable());// line added by gaurav gupta
-        columnDef.setUnique(column.getUnique());// line added by gaurav gupta
-        columnDef.setUpdatable(column.getUpdatable());// line added by gaurav gupta
+        columnDef.setInsertable(column.getInsertable());
+        columnDef.setNullable(column.getNullable());
+        columnDef.setUnique(column.getUnique());
+        columnDef.setUpdatable(column.getUpdatable());
 
         if (column.getLength() != null) {
             columnDef.setLength(column.getLength());
@@ -206,11 +240,40 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
         return snippets;
     }
-    
+
+    protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
+        if(classMembers.getAttributes().isEmpty()){
+          return null;  
+        } 
+        return new HashcodeMethodSnippet(className, classMembers);
+    }
+
+    protected EqualsMethodSnippet getEqualsMethodSnippet(String className, ClassMembers classMembers) {
+       if(classMembers.getAttributes().isEmpty()){
+          return null;  
+        } 
+       return new EqualsMethodSnippet(className, classMembers);
+    }
+
+    protected ToStringMethodSnippet getToStringMethodSnippet(String className, ClassMembers classMembers) {
+        if(classMembers.getAttributes().isEmpty()){
+          return null;  
+        } 
+        ToStringMethodSnippet snippet = new ToStringMethodSnippet(className);
+        snippet.setAttributes(classMembers.getAttributeNames());
+        return snippet;
+    }
+
+    protected ConstructorSnippet getConstructorSnippet(String className, Constructor constructor) {
+        List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream().map(attr -> variables.get(attr.getName())).collect(toList());
+        ConstructorSnippet snippet = new ConstructorSnippet(className, constructor.getAccessModifier(), variableSnippets);
+        return snippet;
+    }
+
     protected List<ConstraintSnippet> getConstraintSnippet(Set<Constraint> constraints) {
         List<ConstraintSnippet> snippets = new ArrayList<>();
         for (Constraint constraint : constraints) {
-            if(!constraint.getSelected()){
+            if (!constraint.getSelected()) {
                 continue;
             }
             ConstraintSnippet snippet = ConstraintSnippetFactory.getInstance(constraint);
@@ -226,9 +289,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (variableDef == null) {
             variableDef = new VariableDefSnippet();
             variableDef.setName(attr.getName());
+            variableDef.setDescription(attr.getDescription());
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
-            if(attr instanceof BaseAttribute){
-                variableDef.setConstraints(getConstraintSnippet(((BaseAttribute)attr).getConstraints()));
+            if (attr instanceof BaseAttribute) {
+                variableDef.setConstraints(getConstraintSnippet(((BaseAttribute) attr).getConstraints()));
             }
 
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
@@ -521,7 +585,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             joinColumn.setReferencedColumnName(parsedJoinColumn.getReferencedColumnName());
             joinColumn.setTable(parsedJoinColumn.getTable());
             joinColumn.setForeignKey(getForeignKey(parsedJoinColumn.getForeignKey()));
-            
+
             joinColumns.add(joinColumn);
         });
 
@@ -536,11 +600,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
                 parsedCollectionTable.getJoinColumn());
 
-        List<UniqueConstraint> parsedUniqueConstraints
-                = parsedCollectionTable.getUniqueConstraint();
+        Set<UniqueConstraint> parsedUniqueConstraints = parsedCollectionTable.getUniqueConstraint();
 
-        UniqueConstraintSnippet uniqueConstraints = getUniqueConstraint(
-                parsedUniqueConstraints);
+        List<UniqueConstraintSnippet> uniqueConstraints = getUniqueConstraints(parsedUniqueConstraints);
+        
 
         CollectionTableSnippet collectionTable = new CollectionTableSnippet();
 
@@ -549,6 +612,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         collectionTable.setSchema(parsedCollectionTable.getSchema());
         collectionTable.setJoinColumns(joinColumns);
         collectionTable.setUniqueConstraints(uniqueConstraints);
+        collectionTable.setIndices(getIndexes(parsedCollectionTable.getIndex()));
         
         collectionTable.setForeignKey(getForeignKey(parsedCollectionTable.getForeignKey()));
 
@@ -566,11 +630,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
                 parsedJoinTable.getJoinColumn());
 
-        List<UniqueConstraint> parsedUniqueConstraints
+        Set<UniqueConstraint> parsedUniqueConstraints
                 = parsedJoinTable.getUniqueConstraint();
 
-        UniqueConstraintSnippet uniqueConstraints = getUniqueConstraint(
-                parsedUniqueConstraints);
+        List<UniqueConstraintSnippet> uniqueConstraints = getUniqueConstraints(parsedUniqueConstraints);
 
         JoinTableSnippet joinTable = new JoinTableSnippet();
 
@@ -580,7 +643,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         joinTable.setJoinColumns(joinColumns);
         joinTable.setInverseJoinColumns(inverseJoinColumns);
         joinTable.setUniqueConstraints(uniqueConstraints);
+        joinTable.setIndices(getIndexes(parsedJoinTable.getIndex()));
         
+
         joinTable.setForeignKey(getForeignKey(parsedJoinTable.getForeignKey()));
         joinTable.setInverseForeignKey(getForeignKey(parsedJoinTable.getInverseForeignKey()));
 
@@ -687,49 +752,26 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return queryHints;
     }
 
-    protected UniqueConstraintSnippet getUniqueConstraint(
-            List<UniqueConstraint> parsedUniqueConstraints) {
-
+    protected List<UniqueConstraintSnippet> getUniqueConstraints(Set<UniqueConstraint> parsedUniqueConstraints) {
         if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
-            return null;
+            return Collections.EMPTY_LIST;
         }
-
-        UniqueConstraintSnippet uniqueConstraints = new UniqueConstraintSnippet();
-
-        for (UniqueConstraint parsedUniqueConstraint : parsedUniqueConstraints) {
-            uniqueConstraints.getUniqueConstraints().addAll(
-                    parsedUniqueConstraint.getColumnName());
-        }
-
-        return uniqueConstraints;
+        return parsedUniqueConstraints.stream().map(c -> new UniqueConstraintSnippet(c)).collect(toList());
     }
-
-    protected List<UniqueConstraintSnippet> getUniqueConstraints(
-            List<UniqueConstraint> parsedUniqueConstraints) {
-
-        if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
-            return null;
+    
+    protected List<IndexSnippet> getIndexes(List<Index> parsedIndexes) {
+        if (parsedIndexes == null || parsedIndexes.isEmpty()) {
+            return Collections.EMPTY_LIST;
         }
-
-        List<UniqueConstraintSnippet> uniqueConstraints
-                = new ArrayList<UniqueConstraintSnippet>();
-
-        for (UniqueConstraint parsedUniqueConstraint : parsedUniqueConstraints) {
-            UniqueConstraintSnippet uniqueConstraint = new UniqueConstraintSnippet();
-
-            uniqueConstraint.setUniqueConstraints(
-                    parsedUniqueConstraint.getColumnName());
-            uniqueConstraints.add(uniqueConstraint);
-        }
-
-        return uniqueConstraints;
+        return parsedIndexes.stream().filter(index -> !index.getColumnList().isEmpty())
+                .map(index -> new IndexSnippet(index)).collect(toList());
     }
 
     protected void processAssociationOverrides(
             Set<AssociationOverride> parsedAssociationOverrides) {
 
-        if (parsedAssociationOverrides == null ||
-                 parsedAssociationOverrides.isEmpty()) {
+        if (parsedAssociationOverrides == null
+                || parsedAssociationOverrides.isEmpty()) {
             return;
         }
 
@@ -839,8 +881,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected void processNamedEntityGraphs(List<NamedEntityGraph> parsedNamedEntityGraphs) {
 
-        if (parsedNamedEntityGraphs == null ||
-                 parsedNamedEntityGraphs.isEmpty()) {
+        if (parsedNamedEntityGraphs == null
+                || parsedNamedEntityGraphs.isEmpty()) {
             return;
         }
 
@@ -926,8 +968,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected void processNamedNativeQueries(
             List<NamedNativeQuery> parsedNamedNativeQueries) {
 
-        if (parsedNamedNativeQueries == null ||
-                 parsedNamedNativeQueries.isEmpty()) {
+        if (parsedNamedNativeQueries == null
+                || parsedNamedNativeQueries.isEmpty()) {
             return;
         }
 
@@ -1001,8 +1043,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     private void processInternalAttributeOverride(AttributeOverridesHandler attrHandler, Set<AttributeOverride> attributeOverrrides) {
-        if (attributeOverrrides != null && !attributeOverrrides.isEmpty() &&
-                 attrHandler.getAttributeOverrides() == null) {
+        if (attributeOverrrides != null && !attributeOverrrides.isEmpty()
+                && attrHandler.getAttributeOverrides() == null) {
             attrHandler.setAttributeOverrides(new AttributeOverridesSnippet());
         }
         for (AttributeOverride parsedAttributeOverride : attributeOverrrides) {
@@ -1022,8 +1064,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private void processInternalAssociationOverride(AssociationOverridesHandler assoHandler, Set<AssociationOverride> associationOverrrides) {
 
-        if (associationOverrrides != null && !associationOverrrides.isEmpty() &&
-                 assoHandler.getAssociationOverrides() == null) {
+        if (associationOverrrides != null && !associationOverrrides.isEmpty()
+                && assoHandler.getAssociationOverrides() == null) {
             assoHandler.setAssociationOverrides(new AssociationOverridesSnippet());
         }
 
@@ -1039,7 +1081,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             associationOverride.setName(parsedAssociationOverride.getName());
             associationOverride.setJoinColumns(joinColumnsList);
             associationOverride.setJoinTable(joinTable);
-            
+
             associationOverride.setForeignKey(getForeignKey(parsedAssociationOverride.getForeignKey()));
 
             assoHandler.getAssociationOverrides().addAssociationOverride(
@@ -1051,8 +1093,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
-        if (parsedEmbeddedId == null || 
-                identifiableClass.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
+        if (parsedEmbeddedId == null
+                || identifiableClass.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
             return;
         }
 
@@ -1204,7 +1246,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedManyToOne.getFetch() != null) {
                 manyToOne.setFetchType(parsedManyToOne.getFetch().value());
-            }            
+            }
             manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
             manyToOne.setMapsId(parsedManyToOne.getMapsId());
 
@@ -1251,7 +1293,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }
-            
+
             VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
 
             variableDef.setRelationDef(oneToMany);
@@ -1304,7 +1346,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());
-            }            
+            }
             oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
             oneToOne.setMapsId(parsedOneToOne.getMapsId());
 
@@ -1332,8 +1374,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedVersion.getTemporal() != null) {
                 variableDef.setTemporal(true);
-                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX +
-                         parsedVersion.getTemporal().value());
+                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX
+                        + parsedVersion.getTemporal().value());
             }
         }
     }
@@ -1341,8 +1383,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected void processPrimaryKeyJoinColumns(
             List<PrimaryKeyJoinColumn> parsedPrimaryKeyJoinColumns) {
 
-        if (parsedPrimaryKeyJoinColumns == null ||
-                 parsedPrimaryKeyJoinColumns.isEmpty()) {
+        if (parsedPrimaryKeyJoinColumns == null
+                || parsedPrimaryKeyJoinColumns.isEmpty()) {
             return;
         }
 
@@ -1384,8 +1426,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             secondaryTable.setName(parsedSecondaryTable.getName());
             secondaryTable.setSchema(parsedSecondaryTable.getSchema());
             secondaryTable.setUniqueConstraints(uniqueConstraints);
+            secondaryTable.setIndices(getIndexes(parsedSecondaryTable.getIndex()));
             secondaryTable.setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
-            
             secondaryTable.setForeignKey(getForeignKey(parsedSecondaryTable.getForeignKey()));
 
             classDef.getSecondaryTables().addSecondaryTable(secondaryTable);
@@ -1433,8 +1475,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Map.Entry<String, VariableDefSnippet> entry : variables.entrySet()) {
             variableDef = entry.getValue();
 
-            if (variableDef.getGeneratedValue() != null &&
-                     variableDef.getGeneratedValue().getGenerator().equals(
+            if (variableDef.getGeneratedValue() != null
+                    && variableDef.getGeneratedValue().getGenerator().equals(
                             sequenceGenerator.getName())) {
 
                 found = true;
@@ -1444,16 +1486,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (found) {
             variableDef.setSequenceGenerator(sequenceGenerator);
         } else {
-            logger.log(Level.WARNING, "Ignoring : Cannot find variable for " +
-                     "Sequence generator :" + sequenceGenerator.getName());
+            logger.log(Level.WARNING, "Ignoring : Cannot find variable for "
+                    + "Sequence generator :" + sequenceGenerator.getName());
         }
     }
 
     protected void processSqlResultSetMapping(
             Set<SqlResultSetMapping> parsedSqlResultSetMappings) {
 
-        if (parsedSqlResultSetMappings == null ||
-                 parsedSqlResultSetMappings.isEmpty()) {
+        if (parsedSqlResultSetMappings == null
+                || parsedSqlResultSetMappings.isEmpty()) {
             return;
         }
 
@@ -1492,18 +1534,18 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         table.setCatalog(parsedTable.getCatalog());
         table.setName(parsedTable.getName());
         table.setSchema(parsedTable.getSchema());
-        table.setUniqueConstraint(
-                getUniqueConstraint(parsedTable.getUniqueConstraint()));
+        table.setUniqueConstraints(getUniqueConstraints(parsedTable.getUniqueConstraint()));
+        table.setIndices(getIndexes(parsedTable.getIndex()));
 
         classDef.setTableDef(table);
     }
 
-     protected void processCacheable(Boolean cacheable) {
+    protected void processCacheable(Boolean cacheable) {
 
         if (cacheable == null || Objects.equals(cacheable, Boolean.FALSE)) {
             return;
         }
-         CacheableDefSnippet snippet = new CacheableDefSnippet();
+        CacheableDefSnippet snippet = new CacheableDefSnippet();
         classDef.setCacheableDef(snippet);
     }
 
@@ -1536,6 +1578,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 parsedTableGenerator.getValueColumnName());
         tableGenerator.setUniqueConstraints(getUniqueConstraints(
                 parsedTableGenerator.getUniqueConstraint()));
+        tableGenerator.setIndices(getIndexes(parsedTableGenerator.getIndex()));
 
         return tableGenerator;
     }
@@ -1556,8 +1599,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Map.Entry<String, VariableDefSnippet> entry : variables.entrySet()) {
             variableDef = entry.getValue();
 
-            if (variableDef.getGeneratedValue() != null &&
-                     variableDef.getGeneratedValue().getGenerator().equals(
+            if (variableDef.getGeneratedValue() != null
+                    && variableDef.getGeneratedValue().getGenerator().equals(
                             parsedTableGenerator.getName())) {
                 found = true;
                 break;
@@ -1567,8 +1610,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (found) {
             variableDef.setTableGenerator(tableGenerator);
         } else {
-            logger.log(Level.WARNING, "Ignoring : Cannot find variable for " +
-                     "Table generator :" + tableGenerator.getName());
+            logger.log(Level.WARNING, "Ignoring : Cannot find variable for Table generator :{0}", tableGenerator.getName());
         }
     }
 }
+

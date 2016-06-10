@@ -87,7 +87,7 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.MERGE")) {
                     cascadeType.setCascadeMerge(new EmptyType());
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.REMOVE")) {
-                    cascadeType.setCascadeMerge(new EmptyType());
+                    cascadeType.setCascadeRemove(new EmptyType());
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.REFRESH")) {
                     cascadeType.setCascadeRefresh(new EmptyType());
                 } else if (cascadeObj.toString().equals("javax.persistence.CascadeType.DETACH")) {
@@ -103,23 +103,24 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
         if (declaredType == null) { // Issue Fix #5925 Start
 //            declaredType = (DeclaredType) variableElement.asType();
             String variable = variableElement.asType().toString();
-            if(variableElement.asType() instanceof ErrorType){ //variable => "<any>"
+            if (variableElement.asType() instanceof ErrorType) { //variable => "<any>"
                 throw new TypeNotPresentException(this.name + " type not found", null);
             }
             if (variable.charAt(variable.length() - 1) != '>') { //instanceof SingleRelationAttribute
                 this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1); // com.jpa.Entity1
             } else { //or instanceof MultiRelationAttribute  //java.util.Set<com.jpa.Entity1>
                 //Detect map or collection => Collection.class.isAssignableFrom(Class.forName(((DeclaredType) variableElement.asType()).asElement().toString()))) 
-               variable = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0).toString();//TODO 0
-               this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1);
+                variable = ((DeclaredType) variableElement.asType()).getTypeArguments().get(0).toString();//TODO 0
+                this.targetEntity = variable.substring(variable.lastIndexOf('.') + 1);
             }
-            
+
         } else {
             this.targetEntity = declaredType.asElement().getSimpleName().toString();
         }
         this.fetch = FetchType.load(element, relationAnnotationMirror);
         this.access = AccessType.load(element);
         this.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
+        
     }
 
     /**
@@ -281,5 +282,10 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
      * @param owner the owner to set
      */
     public abstract void setOwner(boolean owner);
+
+    @Override
+    public String getDataTypeLabel() {
+        return getTargetEntity();
+    }
 
 }

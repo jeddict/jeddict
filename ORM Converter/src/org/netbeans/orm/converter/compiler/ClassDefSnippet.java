@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
@@ -36,6 +37,10 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
     private static final VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
+    private List<ConstructorSnippet> constructorSnippets;
+    private HashcodeMethodSnippet hashcodeMethodSnippet;
+    private EqualsMethodSnippet equalsMethodSnippet;
+    private ToStringMethodSnippet toStringMethodSnippet;
 
     private List<AnnotationSnippet> annotation = new ArrayList<>();
 
@@ -58,6 +63,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     private final ClassHelper classHelper = new ClassHelper();
     private final ClassHelper superClassHelper = new ClassHelper();
+    private String description;
     private String entityName;
 
     private TableDefSnippet tableDef;
@@ -323,25 +329,21 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("classDef", this);
-            velocityContext.put("author", JavaSourceHelper.getAuthor());
 
             ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
 
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(generatedClass));
-
-            if (template != null) {
-                template.merge(velocityContext, writer);
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass))) {
+                if (template != null) {
+                    template.merge(velocityContext, writer);
+                }
+                
+                writer.flush();
             }
-
-            writer.flush();
-            writer.close();
 
             return generatedClass.toString();
 
         } catch (Exception e) {
-            throw new InvalidDataException(
-                    "Class name : " + classHelper.getFQClassName(), e);
+            throw new InvalidDataException("Class name : " + classHelper.getFQClassName(), e);
         }
     }
 
@@ -349,7 +351,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         //Sort and eliminate duplicates
-        Collection<String> importSnippets = new TreeSet<String>();
+        Collection<String> importSnippets = new TreeSet<>();
 
         if (mappedSuperClass) {
             importSnippets.add("javax.persistence.MappedSuperclass");
@@ -403,8 +405,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             importSnippets.addAll(namedEntityGraphs.getImportSnippets());
         }
 
-        if (getNamedStoredProcedureQueries() != null) {
-            importSnippets.addAll(getNamedStoredProcedureQueries().getImportSnippets());
+        if (namedStoredProcedureQueries != null) {
+            importSnippets.addAll(namedStoredProcedureQueries.getImportSnippets());
         }
 
         if (sqlResultSetMappings != null) {
@@ -568,5 +570,109 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public void setCacheableDef(CacheableDefSnippet cacheableDef) {
         this.cacheableDef = cacheableDef;
     }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+        
+    public String getJavaDoc() {
+        StringBuilder doc = new StringBuilder();
+        doc.append("    /**").append('\n');
+        if (StringUtils.isNotBlank(description)) {
+            for (String line : description.split("\\r\\n|\\n|\\r")) {
+                doc.append("     * ").append(line).append('\n');
+            }
+        }
+        if (StringUtils.isNotBlank(JavaSourceHelper.getAuthor())) {
+            doc.append("     * @author  ").append(JavaSourceHelper.getAuthor());
+        }
+        doc.append("     */");
+        return doc.toString();
+    }
+    
+    public boolean isJavaDocExist(){
+        return StringUtils.isNotBlank(description) || StringUtils.isNotBlank(JavaSourceHelper.getAuthor()) ;
+    }
+    
+    
+    /**
+     * @return the toStringMethodSnippet
+     */
+    public ToStringMethodSnippet getToStringMethod() {
+        return toStringMethodSnippet;
+    }
+
+    /**
+     * @param toStringMethodSnippet the toStringMethodSnippet to set
+     */
+    public void setToStringMethod(ToStringMethodSnippet toStringMethodSnippet) {
+        this.toStringMethodSnippet = toStringMethodSnippet;
+    }
+
+    /**
+     * @return the hashcodeMethodSnippet
+     */
+    public HashcodeMethodSnippet getHashcodeMethod() {
+        return hashcodeMethodSnippet;
+    }
+
+    /**
+     * @param hashcodeMethodSnippet the hashcodeMethodSnippet to set
+     */
+    public void setHashcodeMethod(HashcodeMethodSnippet hashcodeMethodSnippet) {
+        this.hashcodeMethodSnippet = hashcodeMethodSnippet;
+    }
+
+    /**
+     * @return the equalsMethodSnippet
+     */
+    public EqualsMethodSnippet getEqualsMethod() {
+        return equalsMethodSnippet;
+    }
+
+    /**
+     * @param equalsMethodSnippet the equalsMethodSnippet to set
+     */
+    public void setEqualsMethod(EqualsMethodSnippet equalsMethodSnippet) {
+        this.equalsMethodSnippet = equalsMethodSnippet;
+    }
+
+    /**
+     * @return the constructorSnippets
+     */
+    public List<ConstructorSnippet> getConstructors() {
+        if(constructorSnippets==null){
+            constructorSnippets = new ArrayList<>();
+        }
+        return constructorSnippets;
+    }
+
+    /**
+     * @param constructorSnippets the constructorSnippets to set
+     */
+    public void setConstructors(List<ConstructorSnippet> constructorSnippets) {
+        this.constructorSnippets = constructorSnippets;
+    }
+
+    public boolean addConstructor(ConstructorSnippet constructorSnippet) {
+        return getConstructors().add(constructorSnippet);
+    }
+
+    public boolean removeConstructor(ConstructorSnippet constructorSnippet) {
+        return getConstructors().remove(constructorSnippet);
+    }
+    
+    
 
 }

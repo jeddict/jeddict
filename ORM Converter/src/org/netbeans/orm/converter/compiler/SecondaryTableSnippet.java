@@ -32,6 +32,7 @@ public class SecondaryTableSnippet implements Snippet {
             = Collections.EMPTY_LIST;
 
     private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
+    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
 
     public String getName() {
         return name;
@@ -130,6 +131,19 @@ public class SecondaryTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
         
+                if (!indices.isEmpty()) {
+            builder.append("indexes={");
+
+            for (IndexSnippet snippet : indices) {
+                builder.append(snippet.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
+
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
         if (foreignKey != null) {
             builder.append("foreignKey=");
             builder.append(foreignKey.getSnippet());
@@ -160,10 +174,13 @@ public class SecondaryTableSnippet implements Snippet {
             importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }
         
-                if (foreignKey != null) {
+        if (foreignKey != null) {
             importSnippets.addAll(foreignKey.getImportSnippets());
         }
 
+        if (!indices.isEmpty()) {
+            importSnippets.addAll(indices.get(0).getImportSnippets());
+        }
         return importSnippets;
     }
 
@@ -179,5 +196,19 @@ public class SecondaryTableSnippet implements Snippet {
      */
     public void setForeignKey(ForeignKeySnippet foreignKey) {
         this.foreignKey = foreignKey;
+    }
+    
+        /**
+     * @return the indices
+     */
+    public List<IndexSnippet> getIndices() {
+        return indices;
+    }
+
+    /**
+     * @param indices the indices to set
+     */
+    public void setIndices(List<IndexSnippet> indices) {
+        this.indices = indices;
     }
 }

@@ -6,10 +6,20 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -45,17 +55,53 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "index", propOrder = {
-    "description"
+    "description",
+    "columnList"
 })
 public class Index {
 
     protected String description;
-    @XmlAttribute(name = "name")
+    @XmlAttribute(name = "n")
     protected String name;
-    @XmlAttribute(name = "column-list", required = true)
-    protected String columnList;
-    @XmlAttribute(name = "unique")
+//    @XmlAttribute(name = "column-list", required = true)
+    @XmlElement(name = "c")
+//    @XmlJavaTypeAdapter(OrderColumnAdapter.class)
+//    @XmlJavaTypeAdapter(MapAdapter.class)
+//@XmlAnyElement;
+    protected Set<OrderbyItem> columnList;
+    @XmlAttribute(name = "u")
     protected Boolean unique;
+
+    public Index() {
+    }
+
+    public Index(String name) {
+        this.name = name;
+    }
+
+    public static Index load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Index");
+        }
+        Index index = null;
+        if (annotationMirror != null) {
+            index = new Index();
+            String columnList = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnList");
+            if (StringUtils.isNotBlank(columnList)) {
+                for (String coulmnExp : columnList.split(",")) {
+                    String[] coulmnExpParam = coulmnExp.split(" ");
+                    if (coulmnExpParam.length > 1) {
+                        index.getColumnList().add(new OrderbyItem(coulmnExpParam[0], OrderType.valueOf(coulmnExpParam[1])));
+                    } else {
+                        index.getColumnList().add(new OrderbyItem(coulmnExpParam[0], null));
+                    }
+                }
+            }
+            index.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            index.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
+        }
+        return index;
+    }
 
     /**
      * Gets the value of the description property.
@@ -103,7 +149,10 @@ public class Index {
      * @return possible object is {@link String }
      *
      */
-    public String getColumnList() {
+    public Set<OrderbyItem> getColumnList() {
+        if (columnList == null) {
+            columnList = new LinkedHashSet<>();
+        }
         return columnList;
     }
 
@@ -113,7 +162,7 @@ public class Index {
      * @param value allowed object is {@link String }
      *
      */
-    public void setColumnList(String value) {
+    public void setColumnList(Set<OrderbyItem> value) {
         this.columnList = value;
     }
 
@@ -135,6 +184,11 @@ public class Index {
      */
     public void setUnique(Boolean value) {
         this.unique = value;
+    }
+
+    @Override
+    public String toString() {
+        return getColumnList().stream().map(c -> c.getColumn()).collect(Collectors.joining(", "));
     }
 
 }

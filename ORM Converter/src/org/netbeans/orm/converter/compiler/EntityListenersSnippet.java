@@ -51,7 +51,7 @@ public class EntityListenersSnippet implements Snippet {
             return Collections.EMPTY_LIST;
         }
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.EntityListeners");
 

@@ -34,7 +34,8 @@ public class JoinTableSnippet implements Snippet {
     private ForeignKeySnippet inverseForeignKey;
     
 
-    private UniqueConstraintSnippet uniqueConstraint = null;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
+    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
 
     public String getCatalog() {
         return catalog;
@@ -80,32 +81,27 @@ public class JoinTableSnippet implements Snippet {
         }
     }
 
-    public UniqueConstraintSnippet getUniqueConstraint() {
-        return uniqueConstraint;
+    public List<UniqueConstraintSnippet> getUniqueConstraints() {
+        return uniqueConstraints;
     }
 
-    public void setUniqueConstraints(UniqueConstraintSnippet uniqueConstraint) {
-        this.uniqueConstraint = uniqueConstraint;
+    public void setUniqueConstraints(List<UniqueConstraintSnippet> uniqueConstraints) {
+        this.uniqueConstraints = uniqueConstraints;
     }
 
     public boolean isEmpty() {
         return (catalog == null || catalog.trim().isEmpty())
                 && (name == null || name.trim().isEmpty())
                 && (schema == null || schema.trim().isEmpty())
-                && joinColumns.isEmpty()
                 && inverseJoinColumns.isEmpty()
-                && uniqueConstraint == null;
+                && joinColumns.isEmpty()
+                && uniqueConstraints.isEmpty() && indices.isEmpty();
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if ((catalog == null || catalog.trim().isEmpty())
-                && (name == null || name.trim().isEmpty())
-                && (schema == null || schema.trim().isEmpty())
-                && inverseJoinColumns.isEmpty()
-                && joinColumns.isEmpty()
-                && uniqueConstraint == null) {
+        if (isEmpty()) {
             return null;
         }
 
@@ -134,11 +130,29 @@ public class JoinTableSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (uniqueConstraint != null) {
-            builder.append("uniqueConstraints=");
+        if (!uniqueConstraints.isEmpty()) {
+            builder.append("uniqueConstraints={");
 
-            builder.append(uniqueConstraint.getSnippet());
+            for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
+                builder.append(uniqueConstraint.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
 
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
+         if (!indices.isEmpty()) {
+            builder.append("indexes={");
+
+            for (IndexSnippet snippet : indices) {
+                builder.append(snippet.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
+
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
 
@@ -194,7 +208,7 @@ public class JoinTableSnippet implements Snippet {
             return new ArrayList<>();
         }
 
-        if (inverseJoinColumns.isEmpty() && joinColumns.isEmpty() && uniqueConstraint == null
+        if (inverseJoinColumns.isEmpty() && joinColumns.isEmpty() && uniqueConstraints == null
                 && foreignKey == null && inverseForeignKey == null ) {
             return Collections.singletonList("javax.persistence.JoinTable");
         }
@@ -208,8 +222,12 @@ public class JoinTableSnippet implements Snippet {
             importSnippets.addAll(joinColumnSnippets);
         }
 
-        if (uniqueConstraint != null) {
-            importSnippets.addAll(uniqueConstraint.getImportSnippets());
+         if (!uniqueConstraints.isEmpty()) {
+            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
+        }
+         
+         if (!indices.isEmpty()) {
+            importSnippets.addAll(indices.get(0).getImportSnippets());
         }
         
         if (foreignKey != null) {
@@ -249,5 +267,18 @@ public class JoinTableSnippet implements Snippet {
      */
     public void setInverseForeignKey(ForeignKeySnippet inverseForeignKey) {
         this.inverseForeignKey = inverseForeignKey;
+    }
+        /**
+     * @return the indices
+     */
+    public List<IndexSnippet> getIndices() {
+        return indices;
+    }
+
+    /**
+     * @param indices the indices to set
+     */
+    public void setIndices(List<IndexSnippet> indices) {
+        this.indices = indices;
     }
 }

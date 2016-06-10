@@ -73,17 +73,11 @@ public class ColumnResultSnippet implements Snippet {
 
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
-//        return "@ColumnResult(name=\"" + name + ORMConverterUtil.QUOTE
-//                + ORMConverterUtil.CLOSE_PARANTHESES;
-
     }
 
-//    public Collection<String> getImportSnippets() throws InvalidDataException {
-//        return Collections.singletonList("javax.persistence.ColumnResult");
-//    }
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.ColumnResult");
         if (classHelper.getFQClassName() != null) {
             importSnippets.add(classHelper.getFQClassName());

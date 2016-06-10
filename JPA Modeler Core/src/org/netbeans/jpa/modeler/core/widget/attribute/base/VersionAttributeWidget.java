@@ -15,11 +15,12 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import java.awt.Image;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VERSION_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VERSION_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -32,6 +33,16 @@ public class VersionAttributeWidget extends BaseAttributeWidget<Version> {
     public VersionAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(JPAModelerUtil.VERSION_ATTRIBUTE);
+    }
+    
+    @Override
+    public String getIconPath() {
+        return VERSION_ATTRIBUTE_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return VERSION_ATTRIBUTE;
     }
 
 }

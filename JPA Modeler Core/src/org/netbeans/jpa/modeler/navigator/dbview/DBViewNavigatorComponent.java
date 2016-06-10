@@ -50,6 +50,7 @@ import org.openide.windows.TopComponent;
     "CTL_DBViewNavigatorComponentTopComponent=JPA Modeler - Database View",
     "HINT_DBViewNavigatorComponentTopComponent=JPA Modeler - Database View"
 })
+@Deprecated
 public final class DBViewNavigatorComponent extends TopComponent implements ExplorerManager.Provider, PropertyChangeListener {
 
     private transient ExplorerManager explorerManager = new ExplorerManager();

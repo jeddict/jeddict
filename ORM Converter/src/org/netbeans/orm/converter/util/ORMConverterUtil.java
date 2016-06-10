@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -37,9 +36,6 @@ import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
-import org.netbeans.api.java.source.CompilationController;
-import org.netbeans.api.java.source.JavaSource;
-import org.netbeans.api.java.source.JavaSource.Phase;
 import org.netbeans.editor.GuardedDocument;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.lib.editor.util.swing.PositionRegion;
@@ -52,8 +48,6 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.text.NbDocument;
 import org.openide.util.UserQuestionException;
-import org.netbeans.api.java.source.Task;
-import org.openide.util.Exceptions;
 
 public class ORMConverterUtil {
 
@@ -69,13 +63,16 @@ public class ORMConverterUtil {
     public static final String LESS_THAN = "<";
     public static final String NEW_LINE = "\n";
     public static final String TAB = "    ";
+    public static final String OPEN_BRACES = "{";
     public static final String OPEN_PARANTHESES = "(";
     public static final String QUESTION = "?";
+    public static final String SINGLE_QUOTE = "'";
     public static final String QUOTE = "\"";
     public static final String SEMICOLON = ";";
     public static final String SOURCE_SUFFIX = ".java";
     public static final String SPACE = " ";
     public static final String UNDERSCORE = "_";
+    public static final String EQUAL = "=";
 
     public static File createFile(String parentDir, String childDir,
             String fileName) throws IOException {

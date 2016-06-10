@@ -15,10 +15,13 @@
  */
 package org.netbeans.db.modeler.core.widget.table;
 
+import java.awt.Image;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLLECTION_TABLE;
+import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLLECTION_TABLE_ICON_PATH;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
@@ -74,6 +77,7 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
         ElementCollection attribute = this.getBaseElementSpec().getAttribute();
         CollectionTable collectionTable = attribute.getCollectionTable();
         set.createPropertySet(this, collectionTable, getPropertyChangeListeners());
@@ -84,6 +88,17 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
         Entity entity = this.getBaseElementSpec().getEntity();
         ElementCollection attribute = this.getBaseElementSpec().getAttribute();
         return entity.getDefaultTableName().toUpperCase() + "_" + attribute.getName().toUpperCase();
+    }
+
+    
+    @Override
+    public String getIconPath() {
+        return COLLECTION_TABLE_ICON_PATH;
+    }
+
+    @Override
+    public Image getIcon() {
+        return COLLECTION_TABLE;
     }
 
 }

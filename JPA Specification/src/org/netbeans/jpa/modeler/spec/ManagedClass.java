@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
@@ -25,11 +26,12 @@ public abstract class ManagedClass extends JavaClass {
     @XmlAttribute
     protected AccessType access;
 
-    @XmlAttribute(name = "sm")//(name="static-metamodel")
+    @XmlAttribute(name = "sm")
     private Boolean generateStaticMetamodel = false;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;//REVENG PENDING
 
+    @XmlElement(name = "des")
     protected String description;
 
     public abstract IAttributes getAttributes();

@@ -23,26 +23,13 @@ import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTMRelationAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTORelationAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.openide.actions.DeleteAction;
@@ -137,50 +124,10 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
         node.setDisplayName(columnDef.getFlowTitle() + " -> " + columnDef.getColumnName());
         node.setShortDescription(columnDef.getColumnName());
         AttributeWidget attributeWidget = columnDef.getAttributeWidget();
-        if (attributeWidget instanceof IdAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.ID_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof VersionAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.VERSION_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof BasicAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.BASIC_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof OTORelationAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof OTMRelationAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof MTORelationAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof TransientAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.TRANSIENT_ATTRIBUTE_ICON_PATH);
-        }
-//        node.setIconBaseWithExtension("org/netbeans/jpa/modeler/resource/image/basic-attribute.png");
+        node.setIconBaseWithExtension(attributeWidget.getIconPath());
         return node;
     }
 
-//    private static boolean deleteEntity(int customerId) {
-//        EntityManager entityManager = Persistence.createEntityManagerFactory("EntityDBAccessPU").createEntityManager();
-//        entityManager.getTransaction().begin();
-//        try {
-//            Entity toDelete = entityManager.find(Entity.class, customerId);
-//            entityManager.remove(toDelete);
-//            // so far so good
-//            entityManager.getTransaction().commit();
-//        } catch(Exception e) {
-//            Logger.getLogger(EntityChildFactory.class.getName()).log(
-//                    Level.WARNING, "Cannot delete a customer with id {0}, cause: {1}", new Object[]{customerId, e});
-//            entityManager.getTransaction().rollback();
-//        }
-//        return true;
-//    }
 }
 
 class ColumnDef {

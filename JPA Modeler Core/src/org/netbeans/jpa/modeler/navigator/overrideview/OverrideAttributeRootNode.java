@@ -17,7 +17,6 @@ package org.netbeans.jpa.modeler.navigator.overrideview;
 
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.node.ModelerNavigationNode;
 import org.openide.nodes.Children;
 
@@ -28,6 +27,6 @@ public class OverrideAttributeRootNode extends ModelerNavigationNode {
         Entity entity = entityWidget.getBaseElementSpec();
         setDisplayName(entity.getClazz());
         setShortDescription(entity.getClazz());
-        setIconBaseWithExtension(JPAModelerUtil.ENTITY_ICON_PATH);
+        setIconBaseWithExtension(entityWidget.getIconPath());
     }
 }

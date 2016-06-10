@@ -7,7 +7,9 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -89,8 +91,8 @@ public class JoinTable {
     @XmlElement(name = "ifk")
     protected ForeignKey inverseForeignKey;
     @XmlElement(name = "unique-constraint")
-    protected List<UniqueConstraint> uniqueConstraint;
-    protected List<Index> index;//REVENG PENDING
+    protected Set<UniqueConstraint> uniqueConstraint;
+    protected List<Index> index;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "catalog")
@@ -128,6 +130,13 @@ public class JoinTable {
             if (uniqueConstraintsAnnot != null) {
                 for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
                     joinTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
+                }
+            }
+            
+            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
+            if (indexesAnnot != null) {
+                for (Object indexObj : indexesAnnot) {
+                    joinTable.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
                 }
             }
 
@@ -276,9 +285,9 @@ public class JoinTable {
      *
      *
      */
-    public List<UniqueConstraint> getUniqueConstraint() {
+    public Set<UniqueConstraint> getUniqueConstraint() {
         if (uniqueConstraint == null) {
-            uniqueConstraint = new ArrayList<UniqueConstraint>();
+            uniqueConstraint = new LinkedHashSet<>();
         }
         return this.uniqueConstraint;
     }

@@ -36,6 +36,7 @@ public class TableGeneratorSnippet implements Snippet {
     private String valueColumnName = null;
 
     private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
+    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
 
     public int getAllocationSize() {
         return allocationSize;
@@ -198,6 +199,19 @@ public class TableGeneratorSnippet implements Snippet {
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
+        
+                if (!indices.isEmpty()) {
+            builder.append("indexes={");
+
+            for (IndexSnippet snippet : indices) {
+                builder.append(snippet.getSnippet());
+                builder.append(ORMConverterUtil.COMMA);
+            }
+
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
+            builder.append(ORMConverterUtil.COMMA);
+        }
 
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
@@ -207,19 +221,32 @@ public class TableGeneratorSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        if (uniqueConstraints.isEmpty()) {
+        if (uniqueConstraints.isEmpty() && indices.isEmpty()) {
             return Collections.singletonList("javax.persistence.TableGenerator");
         }
 
-        List<String> importSnippets = new ArrayList<String>();
-
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.TableGenerator");
-
-        List<String> ucImportSnippets
-                = uniqueConstraints.get(0).getImportSnippets();
-
-        importSnippets.addAll(ucImportSnippets);
-
+        if (!uniqueConstraints.isEmpty()) {
+            importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
+        }
+        if (!indices.isEmpty()) {
+            importSnippets.addAll(indices.get(0).getImportSnippets());
+        }
         return importSnippets;
+    }
+    
+        /**
+     * @return the indices
+     */
+    public List<IndexSnippet> getIndices() {
+        return indices;
+    }
+
+    /**
+     * @param indices the indices to set
+     */
+    public void setIndices(List<IndexSnippet> indices) {
+        this.indices = indices;
     }
 }

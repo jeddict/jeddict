@@ -91,7 +91,7 @@ public class NamedEntityGraphSnippet implements Snippet {
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.NamedEntityGraph");
 
@@ -99,10 +99,14 @@ public class NamedEntityGraphSnippet implements Snippet {
             importSnippets.addAll(namedAttributeNodes.get(0).getImportSnippets());
         }
         if (subgraphs != null && !subgraphs.isEmpty()) {
-            importSnippets.addAll(subgraphs.get(0).getImportSnippets());
+            for (NamedSubgraphSnippet subgraph : subgraphs) {
+                importSnippets.addAll(subgraph.getImportSnippets());
+            }
         }
         if (subclassSubgraphs != null && !subclassSubgraphs.isEmpty()) {
-            importSnippets.addAll(subclassSubgraphs.get(0).getImportSnippets());
+            for (NamedSubgraphSnippet subclassSubgraph : subclassSubgraphs) {
+                importSnippets.addAll(subclassSubgraph.getImportSnippets());
+            }
         }
 
         return importSnippets;

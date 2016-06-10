@@ -8,6 +8,8 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -54,10 +56,19 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 public class UniqueConstraint {
 
     @XmlElement(name = "column-name", required = true)
-    protected List<String> columnName;
+    private List<String> columnName;
     @XmlAttribute
     protected String name;
 
+    public UniqueConstraint() {
+    }
+
+    public UniqueConstraint(String name) {
+        this.name = name;
+    }
+
+    
+    
     public static UniqueConstraint load(Element element, AnnotationMirror annotationMirror) {
         if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.UniqueConstraint");
@@ -68,7 +79,11 @@ public class UniqueConstraint {
             List columnNameList = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "columnNames");
             if (columnNameList != null) {
                 for (Object object : columnNameList) {
-                    uniqueConstraint.getColumnName().add(object.toString());
+                    String column = object.toString();
+                    if(column.length() > 2){
+                        column = column.substring(1, column.length()-1);
+                        uniqueConstraint.getColumnName().add(column); 
+                    }
                 }
             }
             uniqueConstraint.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
@@ -99,7 +114,7 @@ public class UniqueConstraint {
      */
     public List<String> getColumnName() {
         if (columnName == null) {
-            columnName = new ArrayList<>();
+            setColumnName(new ArrayList<>());
         }
         return this.columnName;
     }
@@ -122,6 +137,40 @@ public class UniqueConstraint {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * @param columnName the columnName to set
+     */
+    public void setColumnName(List<String> columnName) {
+        this.columnName = columnName;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UniqueConstraint other = (UniqueConstraint) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
+    }
+    
+        @Override
+    public String toString() {
+        return getColumnName().stream().collect(Collectors.joining(", "));
     }
 
 }

@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
@@ -61,16 +62,11 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         }
 
         //Class decorations
-        ClassHelper classHelper = new ClassHelper(embeddable.getClazz());
-        classHelper.setPackageName(packageName);
-        classDef.setAbstractClass(embeddable.getAbstract());
-        classDef.setInterfaces(embeddable.getInterfaces());
-
-        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
-        classDef.setClassName(classHelper.getFQClassName());
-        classDef.setPackageName(classHelper.getPackageName());
+        classDef = initClassDef(packageName,embeddable);
+        if (StringUtils.isNotBlank(embeddable.getDescription())) {
+            classDef.setDescription(embeddable.getDescription());
+        }
         classDef.setEmbeddable(true);
-        classDef.setAnnotation(getAnnotationSnippet(embeddable.getAnnotation()));
         return classDef;
     }
 }

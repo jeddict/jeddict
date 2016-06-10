@@ -18,18 +18,17 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
-import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
 
 /**
  *
@@ -41,6 +40,8 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     private List<Annotation> annotation;
     @XmlAttribute
     private boolean visibile = true;
+    @XmlElement(name = "des")
+    private String description;
 
     @XmlAttribute(name = "xvt", required = true)//(name = "jaxb-variable-type", required = true)
     private JaxbVariableType jaxbVariableType;
@@ -206,7 +207,6 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
         return Arrays.asList(JaxbVariableType.values());
     }
 
-//    public abstract JavaClass getJavaClass();
     @XmlTransient
     private BaseAttributes attributes;
 
@@ -219,9 +219,53 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     }
 
     void afterUnmarshal(Unmarshaller u, Object parent) {
-        setAttributes((BaseAttributes) parent);
+        if (parent instanceof BaseAttributes) {
+            setAttributes((BaseAttributes) parent);
+        }
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 
+    /**
+     * Used to get data type title to display in ui component e.g Set<String>, Integer, List<Entity> etc.
+     * 
+     */
+    public abstract String getDataTypeLabel();
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Attribute other = (Attribute) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

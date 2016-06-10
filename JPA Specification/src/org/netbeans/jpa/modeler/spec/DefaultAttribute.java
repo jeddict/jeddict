@@ -73,5 +73,10 @@ public class DefaultAttribute extends Attribute {
     public Attribute getConnectedAttribute() {
         return connectedAttribute;
     }
+
+    @Override
+    public String getDataTypeLabel() {
+        return getAttributeType();
+    }
     
 }

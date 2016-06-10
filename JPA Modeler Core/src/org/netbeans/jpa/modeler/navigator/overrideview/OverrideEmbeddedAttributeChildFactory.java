@@ -96,19 +96,7 @@ public class OverrideEmbeddedAttributeChildFactory extends OverrideChildFactory 
         }
         node.setDisplayName(attribute.getName());
         node.setShortDescription(attribute.getName());
-        if (attributeWidget instanceof IdAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.ID_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof EmbeddedIdAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof BasicAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.BASIC_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
-            node.setIconBaseWithExtension(JPAModelerUtil.MULTIVALUE_EMBEDDED_ATTRIBUTE_ICON_PATH);
-        }
+        node.setIconBaseWithExtension(attributeWidget.getIconPath());
         return node;
     }
 
