@@ -157,7 +157,22 @@ public class PropertiesHandler {
                 String newType = value.getValue();
                 colSpec.setCollectionType(newType);
                 em.getCache().addCollectionClass(newType);//move item to top in cache
-                if(Map.class.getName().equals(prevType) || Map.class.getName().equals(prevType)){
+
+                Class prevClass = null;
+                try {
+                    prevClass = Class.forName(prevType);
+                } catch (ClassNotFoundException ex) {
+                }
+                Class newClass = null;
+                try {
+                    newClass = Class.forName(newType);
+                } catch (ClassNotFoundException ex) {
+                }
+
+                if ((prevClass != null && newClass != null && prevClass != newClass && (Map.class.isAssignableFrom(prevClass) || Map.class.isAssignableFrom(newClass)))
+                        || (prevClass == null && newClass != null && Map.class.isAssignableFrom(newClass))
+                        || (prevClass != null && newClass == null && Map.class.isAssignableFrom(prevClass))) {
+                    System.out.println("ref");
                     attributeWidget.refreshProperties();
                 }
             }
@@ -269,7 +284,7 @@ public class PropertiesHandler {
             }
         };
         
-        attributeWidget.addPropertyVisibilityHandler("mapKey", (PropertyVisibilityHandler<String>) () -> {
+        attributeWidget.addPropertyVisibilityHandler("mapKey", () -> {
             Attribute attribute = attributeWidget.getBaseElementSpec();
             if(attribute instanceof CollectionTypeHandler){
                 String classname = ((CollectionTypeHandler)attribute).getCollectionType();

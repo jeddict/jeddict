@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.specification.model.navigator;
 
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.JPA_FILE_TYPE;
 import org.netbeans.modeler.navigator.ModelerNavigatorPanel;
 import org.netbeans.spi.navigator.NavigatorPanel;
 
@@ -22,7 +23,7 @@ import org.netbeans.spi.navigator.NavigatorPanel;
  *
  * @author Gaurav Gupta
  */
-@NavigatorPanel.Registration(mimeType = "text/jpa+xml", displayName = "JEE JPA Modeler Navigator")
+@NavigatorPanel.Registration(mimeType = JPA_FILE_TYPE, displayName = "JPA Modeler Navigator")
 public class JPANavigatorPanel extends ModelerNavigatorPanel {
 
 }

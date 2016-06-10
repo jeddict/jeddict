@@ -296,7 +296,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 baseElementWidget.setBaseElementSpec(baseElement);
                 baseElement.setId(baseElementId);
                 rootElement.addBaseElement(baseElement);
-                ElementConfigFactory elementConfigFactory = this.getModelerFile().getVendorSpecification().getElementConfigFactory();
+                ElementConfigFactory elementConfigFactory = this.getModelerFile().getModelerDiagramModel().getElementConfigFactory();
                 elementConfigFactory.initializeObjectValue(baseElement);
             }
 

@@ -264,7 +264,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     private void loadTable(DBModelerScene scene, IFlowNode flowElement) {
         IModelerDocument document = null;
-        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getVendorSpecification().getModelerDocumentFactory();
+        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getModelerDiagramModel().getModelerDocumentFactory();
         if (flowElement instanceof FlowNode) {
             FlowNode flowNode = (FlowNode) flowElement;
 
