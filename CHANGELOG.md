@@ -1,8 +1,20 @@
 # JPA Modeler Releases #
 
+### Version 1.8 (upcoming release)###
+
+*  [@MapKey](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKey.html)
+*  [@MapKeyTemporal](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyTemporal.html)
+*  [@MapKeyJoinColumns](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyJoinColumns.html)
+*  [@MapKeyJoinColumn](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyJoinColumn.html)
+*  [@MapKeyEnumerated](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyEnumerated.html)
+*  [@MapKeyColumn](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyColumn.html)
+*  [@MapKeyClass](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyClass.html)
+*  equals() and hashcode() generator
+
 ### Version 1.7 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.7) ###
 
-*  @Index and @UniqueConstraint support
+*  [@Index](http://docs.oracle.com/javaee/7/api/javax/persistence/Index.html)
+*  [@UniqueConstraint](http://docs.oracle.com/javaee/7/api/javax/persistence/UniqueConstraint.html)
 *  Constructor and toString() generator
 *  SQL Editor support
 *  Java EE Security API (JSR 375) embedded authentication generator (Login/Logout)
