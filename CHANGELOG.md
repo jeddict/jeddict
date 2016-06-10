@@ -1,6 +1,14 @@
 # JPA Modeler Releases #
 
-### Version 1.6 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.6) ###
+### Version 1.7 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.7) ###
+
+*  @Index and @UniqueConstraint support
+*  Constructor and toString() generator
+*  SQL Editor support
+*  Java EE Security API (JSR 375) embedded authentication generator (Login/Logout)
+*  REST API generator
+
+### Version 1.6 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.6) ###
 
 *  [Derived Identities](http://jpamodeler.github.io/tutorial/page.html?l=DerivedIdentities)
 *  [@ForeignKey](http://docs.oracle.com/javaee/7/api/javax/persistence/ForeignKey.html),  [@Cacheable](http://docs.oracle.com/javaee/7/api/javax/persistence/Cacheable.html)
@@ -8,7 +16,7 @@
 *  Misc : Shift attribute up/down, open java class file by double click on entity icon, open db by double click on table icon
 *  Issue fix : memory leaks
 
-### Version 1.5 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.5) ###
+### Version 1.5 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.5.6) ###
 
 *  MVC 1.0 Generator
 *  Enumerated, Temporal, Lob support added for DB Modeler
@@ -17,7 +25,7 @@
 *  Synchronous Refactoring of relation name
 
 
-### Version 1.4 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.4) ###
+### Version 1.4 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.4) ###
 
 *  Compiler check added before DB Viewer
 *  Update center support added
@@ -33,7 +41,7 @@
 *  DB Theme
 
 
-### Version 1.2 [#](https://github.com/jGauravGupta/jpamodeler/commits/1.2) ###
+### Version 1.2 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.2) ###
 
 *  NamedEntityGraph, EntityGraph, StoredProcedure 	
 *  PPT Export 
