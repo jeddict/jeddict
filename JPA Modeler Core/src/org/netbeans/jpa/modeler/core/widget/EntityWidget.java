@@ -47,19 +47,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
     public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
-
-        this.addPropertyVisibilityHandler("inheritence", (PropertyVisibilityHandler<String>) () -> {
-            GeneralizationFlowWidget outgoingGeneralizationFlowWidget1 = EntityWidget.this.getOutgoingGeneralizationFlowWidget();
-            List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets1 = EntityWidget.this.getIncomingGeneralizationFlowWidgets();
-            if (outgoingGeneralizationFlowWidget1 != null && !(outgoingGeneralizationFlowWidget1.getSuperclassWidget() instanceof EntityWidget)) {
-                outgoingGeneralizationFlowWidget1 = null;
-            }
-            if (outgoingGeneralizationFlowWidget1 != null || !incomingGeneralizationFlowWidgets1.isEmpty()) {
-                return true;
-            }
-            return false;
-        });
-
         this.addPropertyChangeListener("abstract", (input) -> setImage(getIcon()));
 
     }

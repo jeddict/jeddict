@@ -43,7 +43,7 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         ManyToMany mtmSpec = this.getBaseElementSpec();
-        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), mtmSpec));
+        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, mtmSpec));
     }
 
 

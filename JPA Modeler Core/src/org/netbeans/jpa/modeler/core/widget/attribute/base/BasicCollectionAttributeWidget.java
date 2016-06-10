@@ -45,7 +45,7 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
 
         ElementCollection elementCollectionSpec = this.getBaseElementSpec();
 
-        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this.getModelerScene(), elementCollectionSpec));
+        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
     }

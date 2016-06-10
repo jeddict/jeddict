@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
-import java.util.List;
 import org.netbeans.modeler.specification.model.document.core.IFlowPin;
 
 /**
@@ -24,14 +23,5 @@ import org.netbeans.modeler.specification.model.document.core.IFlowPin;
  */
 public abstract class FlowPin extends BaseElement implements IFlowPin {
 
-    @Override
-    public List<String> getIncoming() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<String> getOutgoing() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 }

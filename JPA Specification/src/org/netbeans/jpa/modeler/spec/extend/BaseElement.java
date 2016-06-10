@@ -44,7 +44,7 @@ public abstract class BaseElement implements IBaseElement {
     @XmlID
     protected String id;
 
-    private ExtensionElements extensionElement;
+    protected ExtensionElements extensionElement;
 
     @XmlTransient
     private IBaseElement orignalObject;
@@ -74,16 +74,10 @@ public abstract class BaseElement implements IBaseElement {
     @Override
     public Map<String, String> getCustomAttributes() {
         return null;
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-//    @Override
-//    public void setCustomAttributes(Map<String, String> customAttributes) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
     @Override
     public void setCustomAttributes(Map customAttributes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -162,4 +156,5 @@ public abstract class BaseElement implements IBaseElement {
         this.orignalObject = orignalObject;
     }
 
+    
 }

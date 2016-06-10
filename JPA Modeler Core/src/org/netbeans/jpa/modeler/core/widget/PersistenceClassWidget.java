@@ -89,13 +89,13 @@ import org.openide.util.RequestProcessor;
  */
 public abstract class PersistenceClassWidget<E extends ManagedClass> extends JavaClassWidget<E> {
 
-    public List<AttributeWidget> getAllAttributeWidgets() {
+    public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
 
         return getAllAttributeWidgets(true);
     }
 
-    public List<AttributeWidget> getAllAttributeWidgets(boolean includeParentClassAttibute) {
-        List<AttributeWidget> attributeWidgets = new ArrayList<>();
+    public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute) {
+        List<AttributeWidget<? extends Attribute>> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
         if (includeParentClassAttibute && classWidget instanceof PersistenceClassWidget) {
             attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllAttributeWidgets(includeParentClassAttibute));
@@ -172,8 +172,8 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     public void scanDuplicateAttributes(String previousName, String newName) {
         int previousNameCount = 0, newNameCount = 0;
-        List<AttributeWidget> attributeWidgets = this.getAllAttributeWidgets(true);
-        for (AttributeWidget<Attribute> attributeWidget : attributeWidgets) {
+        List<AttributeWidget<? extends Attribute>> attributeWidgets = this.getAllAttributeWidgets(true);
+        for (AttributeWidget<? extends Attribute> attributeWidget : attributeWidgets) {
             Attribute attribute = attributeWidget.getBaseElementSpec();
 
             if (attribute.getName().equals(previousName)) {

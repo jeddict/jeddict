@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.extend.cache;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,6 +43,7 @@ public class Cache {
             collectionClass = new LinkedList<>();
             collectionClass.add(List.class.getName());
             collectionClass.add(Set.class.getName());
+            collectionClass.add(Map.class.getName());
             collectionClass.add(Collection.class.getName());
         }
         return collectionClass;

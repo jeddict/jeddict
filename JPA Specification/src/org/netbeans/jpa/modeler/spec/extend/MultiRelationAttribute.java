@@ -23,6 +23,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
@@ -56,7 +57,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "mapKeyJoinColumn",
     "mapKeyForeignKey"
 })
-public abstract class MultiRelationAttribute extends RelationAttribute implements CollectionTypeHandler {
+public abstract class MultiRelationAttribute extends RelationAttribute implements CollectionTypeHandler, MapKeyHandler{
 
     @XmlElement(name = "order-by")
     protected String orderBy;
@@ -86,6 +87,11 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     protected String mappedBy;
     @XmlAttribute(name = "collection-type")
     private String collectionType;//custom added
+    
+    
+    @XmlAttribute(name = "mka", required = true)
+    @XmlIDREF
+    private Attribute mapKeyAttribute;
 
     @Override
     public void load(AnnotationMirror relationAnnotationMirror, Element element, VariableElement variableElement) {
@@ -428,5 +434,19 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     @Override
     public String getDataTypeLabel() {
         return String.format("%s<%s>", getCollectionType(), getTargetEntity());
+    }
+
+    /**
+     * @return the mapKeyAttribute
+     */
+    public Attribute getMapKeyAttribute() {
+        return mapKeyAttribute;
+    }
+
+    /**
+     * @param mapKeyAttribute the mapKeyAttribute to set
+     */
+    public void setMapKeyAttribute(Attribute mapKeyAttribute) {
+        this.mapKeyAttribute = mapKeyAttribute;
     }
 }
