@@ -18,6 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import org.netbeans.orm.converter.util.ClassHelper;
 
 public class TypeIdentifierSnippet implements Snippet {
@@ -78,21 +79,26 @@ public class TypeIdentifierSnippet implements Snippet {
 
             RelationDefSnippet relationDef = variableDef.getRelationDef();
 
-            if (relationDef instanceof OneToManySnippet
-                    || relationDef instanceof ManyToManySnippet) {
+            if (relationDef instanceof MultiRelationAttributeSnippet) {
 
                 importSnippets = new ArrayList<>();
 
-                ClassHelper collectionTypeClassHelper = null;
-                if (relationDef instanceof OneToManySnippet) {
-                    collectionTypeClassHelper = getClassHelper(((OneToManySnippet) relationDef).getCollectionType());
-                } else if (relationDef instanceof ManyToManySnippet) {
-                    collectionTypeClassHelper = getClassHelper(((ManyToManySnippet) relationDef).getCollectionType());
+                ClassHelper collectionTypeClassHelper = getClassHelper(((MultiRelationAttributeSnippet) relationDef).getCollectionType());
+                ClassHelper mapKeyClassHelper = getClassHelper(((MultiRelationAttributeSnippet) relationDef).getMapKeyAttribute().getDataTypeLabel());
+                
+                ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
+                
+                Class _class = collectionTypeClassHelper.getClazz();
+                if (_class != null && Map.class.isAssignableFrom(_class)) {
+                    type = collectionTypeClassHelper.getClassName() + "<" + mapKeyClassHelper.getClassName() + "," + classHelper.getClassName() + ">";
+                } else {
+                    type = collectionTypeClassHelper.getClassName() + "<" + classHelper.getClassName() + ">";
                 }
 
-                ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
-                type = collectionTypeClassHelper.getClassName() + "<" + classHelper.getClassName() + ">";
                 importSnippets.add(collectionTypeClassHelper.getFQClassName());
+                if (_class != null && Map.class.isAssignableFrom(_class)) {
+                    importSnippets.add(mapKeyClassHelper.getFQClassName());
+                }
                 importSnippets.add(classHelper.getFQClassName());
                 return;
             } else {

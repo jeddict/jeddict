@@ -1184,6 +1184,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ManyToManySnippet manyToMany = new ManyToManySnippet();
 
             manyToMany.setCollectionType(parsedManyToMany.getCollectionType());
+            manyToMany.setMapKeyAttribute(parsedManyToMany.getMapKeyAttribute());
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
             manyToMany.setCascadeTypes(cascadeTypes);
@@ -1289,7 +1290,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
-
+            oneToMany.setMapKeyAttribute(parsedOneToMany.getMapKeyAttribute());
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }

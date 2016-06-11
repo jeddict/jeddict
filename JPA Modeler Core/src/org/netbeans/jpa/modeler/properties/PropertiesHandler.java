@@ -294,8 +294,7 @@ public class PropertiesHandler {
                         if(Map.class.isAssignableFrom(_class)){
                              return true;
                         }
-                    } catch (ClassNotFoundException ex) {
-                    }
+                    } catch (ClassNotFoundException ex) { }
             }
             return false;
         });

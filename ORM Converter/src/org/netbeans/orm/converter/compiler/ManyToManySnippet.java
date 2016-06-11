@@ -15,108 +15,11 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
-public class ManyToManySnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet {
-
-    private String collectionType;
-    private String mappedBy = null;
-
-    public String getMappedBy() {
-        return mappedBy;
-    }
-
-    public void setMappedBy(String mappedBy) {
-        this.mappedBy = mappedBy;
-    }
+public class ManyToManySnippet extends MultiRelationAttributeSnippet {
 
     @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (mappedBy == null
-                && getTargetEntity() == null
-                && getFetchType() == null
-                && getCascadeTypes().isEmpty()) {
-
-            return "@ManyToMany";
-        }
-
-        StringBuilder builder = new StringBuilder();
-        builder.append("@ManyToMany(");
-
-        if (!getCascadeTypes().isEmpty()) {
-            builder.append("cascade={");
-
-            String encodedString = ORMConverterUtil.getCommaSeparatedString(
-                    getCascadeTypes());
-
-            builder.append(encodedString);
-            builder.append("},");
-        }
-
-        if (getFetchType() != null) {
-            builder.append("fetch = ");
-            builder.append(getFetchType());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (getTargetEntity() != null) {
-            builder.append("targetEntity = ");
-            builder.append(getTargetEntity());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        if (mappedBy != null) {
-            builder.append("mappedBy = ");
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(mappedBy);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+    public String getType() {
+        return "ManyToMany";
     }
 
-    @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
-
-        if (getFetchType() == null
-                && getCascadeTypes().isEmpty()) {
-
-            return Collections.singletonList("javax.persistence.ManyToMany");
-        }
-
-        List<String> importSnippets = new ArrayList<String>();
-
-        importSnippets.add("javax.persistence.ManyToMany");
-
-        if (getFetchType() != null) {
-            importSnippets.add("javax.persistence.FetchType");
-        }
-
-        if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add("javax.persistence.CascadeType");
-        }
-
-        return importSnippets;
-    }
-
-    /**
-     * @return the collectionType
-     */
-    public String getCollectionType() {
-        return collectionType;
-    }
-
-    /**
-     * @param collectionType the collectionType to set
-     */
-    public void setCollectionType(String collectionType) {
-        this.collectionType = collectionType;
-    }
 }
