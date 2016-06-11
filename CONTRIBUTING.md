@@ -5,7 +5,8 @@ Are you ready to contribute to JPA Modeler? We'd love to have you on board, and 
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
- - [Generator development setup](#setup)
+ - [Development setup](#setup)
+ 
  
  ## <a name="issue"></a> Issues and Bugs
 If you find a bug in the source code or a mistake in the documentation, you can help us by submitting a ticket to our [GitHub  issues](https://github.com/jGauravGupta/JPAModeler/issuess). Even better, you can submit a Pull Request to our [JPA Modeler project](https://github.com/jGauravGupta/JPAModeler), [jCode project](https://github.com/jGauravGupta/jCode) or to our [Documentation project](https://github.com/jpamodeler/jpamodeler.github.io).
