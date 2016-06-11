@@ -56,7 +56,7 @@ public abstract class CompositionAttribute<T extends JavaClass> extends BaseAttr
 
     @Override
     public List<JaxbVariableType> getJaxbVariableList() {
-        List<JaxbVariableType> jaxbVariableTypeList = new ArrayList<JaxbVariableType>();
+        List<JaxbVariableType> jaxbVariableTypeList = new ArrayList<>();
         jaxbVariableTypeList.add(JaxbVariableType.XML_ELEMENT);
         jaxbVariableTypeList.add(JaxbVariableType.XML_TRANSIENT);
         return jaxbVariableTypeList;

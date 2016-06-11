@@ -172,7 +172,9 @@ public class PropertiesHandler {
                 if ((prevClass != null && newClass != null && prevClass != newClass && (Map.class.isAssignableFrom(prevClass) || Map.class.isAssignableFrom(newClass)))
                         || (prevClass == null && newClass != null && Map.class.isAssignableFrom(newClass))
                         || (prevClass != null && newClass == null && Map.class.isAssignableFrom(prevClass))) {
-                    System.out.println("ref");
+                    if(newClass==null || !Map.class.isAssignableFrom(newClass)){
+                       ((MapKeyHandler)attributeWidget.getBaseElementSpec()).setMapKeyAttribute(null);
+                    }
                     attributeWidget.refreshProperties();
                 }
             }
@@ -288,12 +290,8 @@ public class PropertiesHandler {
             Attribute attribute = attributeWidget.getBaseElementSpec();
             if(attribute instanceof CollectionTypeHandler){
                 String classname = ((CollectionTypeHandler)attribute).getCollectionType();
-                Class _class;
                     try {
-                        _class = Class.forName(classname);
-                        if(Map.class.isAssignableFrom(_class)){
-                             return true;
-                        }
+                        return Map.class.isAssignableFrom(Class.forName(classname));
                     } catch (ClassNotFoundException ex) { }
             }
             return false;

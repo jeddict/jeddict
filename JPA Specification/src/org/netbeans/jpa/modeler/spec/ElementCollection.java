@@ -33,6 +33,7 @@ import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
@@ -139,7 +140,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  * For Basic ElementCollection -> TargetClass<String>
  * For Embeddable ElementCollection -> ConnectedClass<Embeddable>
  */
-public class ElementCollection extends CompositionAttribute<Embeddable> implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler, MapKeyHandler { //CompositionAttribute/BaseAttributes
+public class ElementCollection extends CompositionAttribute<Embeddable> implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler, MapKeyHandler, TemporalTypeHandler { //CompositionAttribute/BaseAttributes
 
     @XmlElement(name = "order-by")
     protected String orderBy;

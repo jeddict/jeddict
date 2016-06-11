@@ -81,6 +81,12 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         }
 
         StringBuilder builder = new StringBuilder();
+        
+        if(mapKeyAttribute!=null){
+            
+            mapKeyAttribute.ge
+        }
+        
         builder.append("@").append(getType()).append("(");
 
         if (!getCascadeTypes().isEmpty()) {

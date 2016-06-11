@@ -15,15 +15,15 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
-import org.netbeans.jpa.modeler.spec.FetchType;
+import org.netbeans.jpa.modeler.spec.TemporalType;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public interface FetchTypeHandler {
+public interface TemporalTypeHandler {
 
-    public FetchType getFetch();
+    public TemporalType getTemporal();
 
-    public void setFetch(FetchType value);
+    public void setTemporal(TemporalType value);
 }

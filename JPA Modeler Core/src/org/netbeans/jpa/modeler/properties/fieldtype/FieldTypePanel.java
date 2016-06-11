@@ -56,6 +56,7 @@ import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SQL_TIME;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SQL_TIMESTAMP;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.STRING;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
@@ -259,14 +260,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
                     Ordinal_RadioButton.setSelected(true);
                 }
             } else if (basic.getTemporal() != null) {
-                type_ComboBox.setSelectedItem("Temporal");
-                if (basic.getTemporal() == TemporalType.DATE) {
-                    Date_RadioButton.setSelected(true);
-                } else if (basic.getTemporal() == TemporalType.TIME) {
-                    Time_RadioButton.setSelected(true);
-                } else if (basic.getTemporal() == TemporalType.TIMESTAMP) {
-                    TimeStamp_RadioButton.setSelected(true);
-                }
+                setTemporalTypeSelected(basic);
             } else {
                 type_ComboBox.setSelectedItem("Default");
             }
@@ -283,58 +277,39 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
                     Ordinal_RadioButton.setSelected(true);
                 }
             } else if (elementCollection.getTemporal() != null) {
-                type_ComboBox.setSelectedItem("Temporal");
-                if (elementCollection.getTemporal() == TemporalType.DATE) {
-                    Date_RadioButton.setSelected(true);
-                } else if (elementCollection.getTemporal() == TemporalType.TIME) {
-                    Time_RadioButton.setSelected(true);
-                } else if (elementCollection.getTemporal() == TemporalType.TIMESTAMP) {
-                    TimeStamp_RadioButton.setSelected(true);
-                }
+                setTemporalTypeSelected(elementCollection);
             } else {
                 type_ComboBox.setSelectedItem("Default");
             }
 
         } else if (baseAttribute instanceof Id) {
-            Id id = (Id) baseAttribute;
-            if (id.getTemporal() != null) {
-                type_ComboBox.setSelectedItem("Temporal");
-                if (id.getTemporal() == TemporalType.DATE) {
-                    Date_RadioButton.setSelected(true);
-                } else if (id.getTemporal() == TemporalType.TIME) {
-                    Time_RadioButton.setSelected(true);
-                } else if (id.getTemporal() == TemporalType.TIMESTAMP) {
-                    TimeStamp_RadioButton.setSelected(true);
-                }
-            } else {
-                type_ComboBox.setSelectedItem("Default");
-            }
-
+            setTemporalTypeSelected((Id)baseAttribute);
         } else if (baseAttribute instanceof Version) {
-            Version version = (Version) baseAttribute;
-            if (version.getTemporal() != null) {
-                type_ComboBox.setSelectedItem("Temporal");
-                if (version.getTemporal() == TemporalType.DATE) {
-                    Date_RadioButton.setSelected(true);
-                } else if (version.getTemporal() == TemporalType.TIME) {
-                    Time_RadioButton.setSelected(true);
-                } else if (version.getTemporal() == TemporalType.TIMESTAMP) {
-                    TimeStamp_RadioButton.setSelected(true);
-                }
-            } else {
-                type_ComboBox.setSelectedItem("Default");
-            }
-
+            setTemporalTypeSelected((Version)baseAttribute);
         } else if (baseAttribute instanceof Transient) {
-//            Transient _transient = (Transient) baseAttribute;
 
         } else {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         type_ComboBoxActionPerformed(null);
         initDataTypeComboBox();
         dataType_ComboBox.setSelectedItem(baseAttribute.getAttributeType());
 
+    }
+    
+    private void setTemporalTypeSelected(TemporalTypeHandler handler){
+            if (handler.getTemporal() != null) {
+                type_ComboBox.setSelectedItem("Temporal");
+                if (handler.getTemporal() == TemporalType.DATE) {
+                    Date_RadioButton.setSelected(true);
+                } else if (handler.getTemporal() == TemporalType.TIME) {
+                    Time_RadioButton.setSelected(true);
+                } else if (handler.getTemporal() == TemporalType.TIMESTAMP) {
+                    TimeStamp_RadioButton.setSelected(true);
+                }
+            } else {
+                type_ComboBox.setSelectedItem("Default");
+            }
     }
 
     public FieldTypePanel(ModelerFile modelerFile) {
