@@ -56,6 +56,7 @@ import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SQL_TIME;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.SQL_TIMESTAMP;
 import static org.netbeans.jpa.modeler.spec.extend.AttributeType.STRING;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -253,12 +254,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
             if (basic.getLob() != null) {
                 type_ComboBox.setSelectedItem("Lob");
             } else if (basic.getEnumerated() != null) {
-                type_ComboBox.setSelectedItem("Enumerated");
-                if (basic.getEnumerated() == EnumType.STRING) {
-                    String_RadioButton.setSelected(true);
-                } else {
-                    Ordinal_RadioButton.setSelected(true);
-                }
+                setEnumTypeSelected(basic);
             } else if (basic.getTemporal() != null) {
                 setTemporalTypeSelected(basic);
             } else {
@@ -270,12 +266,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
             if (elementCollection.getLob() != null) {
                 type_ComboBox.setSelectedItem("Lob");
             } else if (elementCollection.getEnumerated() != null) {
-                type_ComboBox.setSelectedItem("Enumerated");
-                if (elementCollection.getEnumerated() == EnumType.STRING) {
-                    String_RadioButton.setSelected(true);
-                } else {
-                    Ordinal_RadioButton.setSelected(true);
-                }
+                setEnumTypeSelected(elementCollection);
             } else if (elementCollection.getTemporal() != null) {
                 setTemporalTypeSelected(elementCollection);
             } else {
@@ -297,6 +288,14 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
 
     }
     
+    private void setEnumTypeSelected(EnumTypeHandler handler){
+    type_ComboBox.setSelectedItem("Enumerated");
+                if (handler.getEnumerated() == EnumType.STRING) {
+                    String_RadioButton.setSelected(true);
+                } else {
+                    Ordinal_RadioButton.setSelected(true);
+                }
+    }
     private void setTemporalTypeSelected(TemporalTypeHandler handler){
             if (handler.getTemporal() != null) {
                 type_ComboBox.setSelectedItem("Temporal");

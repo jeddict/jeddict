@@ -31,6 +31,7 @@ import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
@@ -140,7 +141,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  * For Basic ElementCollection -> TargetClass<String>
  * For Embeddable ElementCollection -> ConnectedClass<Embeddable>
  */
-public class ElementCollection extends CompositionAttribute<Embeddable> implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler, MapKeyHandler, TemporalTypeHandler { //CompositionAttribute/BaseAttributes
+public class ElementCollection extends CompositionAttribute<Embeddable> implements FetchTypeHandler, ColumnHandler, AttributeOverrideHandler, AssociationOverrideHandler, CollectionTypeHandler, MapKeyHandler, TemporalTypeHandler, EnumTypeHandler { //CompositionAttribute/BaseAttributes
 
     @XmlElement(name = "order-by")
     protected String orderBy;

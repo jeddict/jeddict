@@ -14,11 +14,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
-import org.netbeans.modeler.core.NBModelerUtil;
 
 /**
  *
@@ -67,7 +66,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
     "enumerated",
     "convert"
 })
-public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler, FetchTypeHandler {
+public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler, FetchTypeHandler, EnumTypeHandler {
 
     protected Lob lob;
     protected EnumType enumerated;
