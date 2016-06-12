@@ -55,9 +55,7 @@ import org.netbeans.modeler.core.NBModelerUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "id", propOrder = {
-    "column",
     "generatedValue",
-    "temporal",
     "tableGenerator",
     "sequenceGenerator"
 })

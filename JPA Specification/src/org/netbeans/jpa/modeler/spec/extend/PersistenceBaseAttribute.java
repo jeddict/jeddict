@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.TemporalType;
-import static org.netbeans.jpa.modeler.spec.extend.AttributeType.BIGDECIMAL;
+import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 import org.netbeans.modeler.core.NBModelerUtil;

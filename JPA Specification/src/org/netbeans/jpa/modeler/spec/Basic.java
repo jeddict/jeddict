@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import static org.netbeans.jcode.jpa.JPAConstants.BASIC_FQN;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
@@ -60,9 +61,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "basic", propOrder = {
-    "column",
     "lob",
-    "temporal",
     "enumerated",
     "convert"
 })
@@ -77,7 +76,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
     protected Boolean optional;
 
     public static Basic load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.Basic");
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, BASIC_FQN);
         Basic basic = new Basic();
         basic.loadAttribute(element, variableElement);
         basic.lob = Lob.load(element, variableElement);
