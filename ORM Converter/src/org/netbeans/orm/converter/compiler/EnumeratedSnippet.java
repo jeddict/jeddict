@@ -23,6 +23,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.ENUMERATED_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_ORDINAL;
 import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_STRING;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED_FQN;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
@@ -67,7 +68,12 @@ public class EnumeratedSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        builder.append('@').append(ENUMERATED);
+        builder.append('@');
+         if (mapKey) {
+            builder.append(MAP_KEY_ENUMERATED);
+        } else {
+            builder.append(ENUMERATED);
+        }
         if (ENUM_TYPE_STRING.equals(value)) {
             builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_STRING).append(ORMConverterUtil.CLOSE_PARANTHESES);
         } else if (ENUM_TYPE_ORDINAL.equals(value)) {

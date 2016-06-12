@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.apache.velocity.util.StringUtils;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -244,7 +245,7 @@ public class PropertiesHandler {
                     attribute = value.size() < 1 ? null : value.stream().findAny().get();
                 }
                 if (attribute != null) {
-                    return new ComboBoxValue(attribute, attribute.getName() + " : " + attribute.getDataTypeLabel());
+                    return new ComboBoxValue(attribute, attribute.getName() + " : " + JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel()));
                 } else {
                     return new ComboBoxValue(null, EMPTY);
                 }
@@ -256,11 +257,12 @@ public class PropertiesHandler {
                 
                 if(attributeWidget instanceof MultiRelationAttributeWidget){
                     ((MultiRelationAttributeWidget)attributeWidget).getRelationFlowWidget().getTargetEntityWidget().
-                    getAllAttributeWidgets().stream().filter(a -> !(a instanceof MultiValueEmbeddedAttributeWidget) ||
-                            !(a instanceof TransientAttributeWidget) || !(a instanceof MultiRelationAttributeWidget) || !(a instanceof BasicCollectionAttributeWidget))
+                    getAllAttributeWidgets().stream().filter(a -> !(a instanceof MultiValueEmbeddedAttributeWidget) &&
+                            !(a instanceof TransientAttributeWidget) && !(a instanceof MultiRelationAttributeWidget) &&
+                            !(a instanceof BasicCollectionAttributeWidget))
                            .forEach(classAttributeWidget -> {
                                Attribute attribute = ((AttributeWidget<? extends Attribute>)classAttributeWidget).getBaseElementSpec();
-                               comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName() + " " +attribute.getDataTypeLabel()));
+                               comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName() + " : " +JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel())));
                                value.add(attribute);
 
                    });
@@ -1076,37 +1078,7 @@ public class PropertiesHandler {
 
             @Override
             public String getDisplay() {
-                if (attribute instanceof BaseAttribute) {
-                    if (attribute instanceof ElementCollection) {
-                        String collectionType = ((ElementCollection) attribute).getCollectionType();
-                        if (((ElementCollection) attribute).getConnectedClass() == null) { //Basic
-                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + ((ElementCollection) attribute).getTargetClass() + ">";
-                        } else { //Embedded
-                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
-                        }
-                    } else if (attribute instanceof Embedded) {
-                        displayName = persistenceClassWidget.getName();
-                    } else {
-                        displayName = ((BaseAttribute) attribute).getAttributeType();
-                    }
-                } else if (attribute instanceof RelationAttribute) {
-                    // Issue Fix #5851 Start
-                    if (attribute instanceof OneToMany || attribute instanceof ManyToMany) {
-                        String collectionType = null;
-                        if (attribute instanceof OneToMany) {
-                            collectionType = ((OneToMany) attribute).getCollectionType();
-                        } else if (attribute instanceof ManyToMany) {
-                            collectionType = ((ManyToMany) attribute).getCollectionType();
-                        }
-                        displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
-                    } else {
-                        displayName = persistenceClassWidget.getName();
-                    }
-                    // Issue Fix #5851 End
-
-                }
-                return displayName;
-
+                return JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel());
             }
 
         });

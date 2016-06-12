@@ -212,13 +212,4 @@ public class ClassHelper {
         }
     }
 
-    public static String getSimpleClassName(String fullClassName) {
-        //if FQ className split packageName and className
-        int dotIndex = fullClassName.lastIndexOf(ORMConverterUtil.DOT);
-
-        if (dotIndex != -1) {
-            fullClassName = fullClassName.substring(dotIndex + 1);
-        }
-        return fullClassName;
-    }
 }

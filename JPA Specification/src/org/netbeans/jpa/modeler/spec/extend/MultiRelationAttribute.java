@@ -433,7 +433,11 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
 
     @Override
     public String getDataTypeLabel() {
-        return String.format("%s<%s>", getCollectionType(), getTargetEntity());
+        if (mapKeyAttribute == null) {
+            return String.format("%s<%s>", getCollectionType(), getTargetEntity());
+        } else {
+            return String.format("%s<%s, %s>", getCollectionType(), mapKeyAttribute.getDataTypeLabel(), getTargetEntity());
+        }
     }
 
     /**

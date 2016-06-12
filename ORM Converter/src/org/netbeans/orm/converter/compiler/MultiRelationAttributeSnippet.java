@@ -16,11 +16,17 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE;
+import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import org.netbeans.jpa.modeler.spec.EnumType;
+import org.netbeans.jpa.modeler.spec.TemporalType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet
@@ -29,6 +35,8 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     protected String collectionType;
     private Attribute mapKeyAttribute;
     protected String mappedBy = null;
+    protected TemporalSnippet temporalSnippet;
+    protected EnumeratedSnippet enumeratedSnippet;
 
     public String getMappedBy() {
         return mappedBy;
@@ -64,6 +72,17 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
      */
     public void setMapKeyAttribute(Attribute mapKeyAttribute) {
         this.mapKeyAttribute = mapKeyAttribute;
+        if (mapKeyAttribute != null) {
+            if (mapKeyAttribute instanceof TemporalTypeHandler && ((TemporalTypeHandler) mapKeyAttribute).getTemporal() != null) {
+                TemporalType temporalType = ((TemporalTypeHandler) mapKeyAttribute).getTemporal();
+               temporalSnippet = new TemporalSnippet(true);
+               temporalSnippet.setValue(temporalType);
+            } else if (mapKeyAttribute instanceof EnumTypeHandler && ((EnumTypeHandler) mapKeyAttribute).getEnumerated()!= null) {
+                EnumType enumType = ((EnumTypeHandler) mapKeyAttribute).getEnumerated();
+                enumeratedSnippet = new EnumeratedSnippet(true);
+                enumeratedSnippet.setValue(enumType);
+            }
+        }
     }
     
     public abstract String getType();
@@ -75,26 +94,24 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         if (mappedBy == null
                 && getTargetEntity() == null
                 && getFetchType() == null
-                && getCascadeTypes().isEmpty()) {
-
+                && getCascadeTypes().isEmpty() && mapKeyAttribute==null) {
             return "@"+getType();
         }
 
         StringBuilder builder = new StringBuilder();
-        
-        if(mapKeyAttribute!=null){
-            
-            mapKeyAttribute.ge
+        if (mapKeyAttribute != null) {
+            if (temporalSnippet != null) {
+                builder.append(temporalSnippet.getSnippet()).append("\n");
+            } else if (enumeratedSnippet != null) {
+                builder.append(enumeratedSnippet.getSnippet()).append("\n");
+            }
         }
         
         builder.append("@").append(getType()).append("(");
 
         if (!getCascadeTypes().isEmpty()) {
             builder.append("cascade={");
-
-            String encodedString = ORMConverterUtil.getCommaSeparatedString(
-                    getCascadeTypes());
-
+            String encodedString = ORMConverterUtil.getCommaSeparatedString(getCascadeTypes());
             builder.append(encodedString);
             builder.append("},");
         }
@@ -125,25 +142,21 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-
-        if (getFetchType() == null
-                && getCascadeTypes().isEmpty()) {
-
-            return Collections.singletonList("javax.persistence."+getType());
-        }
-
         List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add("javax.persistence." + getType());
-
+        importSnippets.add(PERSISTENCE_PACKAGE + getType());
         if (getFetchType() != null) {
-            importSnippets.add("javax.persistence.FetchType");
+            importSnippets.add(FETCH_TYPE);
         }
-
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add("javax.persistence.CascadeType");
+            importSnippets.add(CASCADE_TYPE);
         }
-
+        if (mapKeyAttribute != null) {
+            if (temporalSnippet != null) {
+                importSnippets.addAll(temporalSnippet.getImportSnippets());
+            } else if (enumeratedSnippet != null) {
+                importSnippets.addAll(enumeratedSnippet.getImportSnippets());
+            }
+        }
         return importSnippets;
     }
 }
