@@ -17,7 +17,7 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.netbeans.jpa.modeler.spec.extend.AttributeType;
+import org.netbeans.jcode.core.util.AttributeType;
 
 public class JavaHashcodeEqualsUtil {
 

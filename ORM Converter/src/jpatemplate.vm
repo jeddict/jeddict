@@ -122,9 +122,6 @@ $varDef.getJavaDoc()
 #if($varDef.getElementCollection())
     $varDef.getElementCollection().getSnippet()
 #end
-#if($varDef.isTemporal())
-    $varDef.getTemporalTypeString()
-#end
 #if($varDef.isVersion())
     @Version
 #end
@@ -166,6 +163,9 @@ $varDef.getJavaDoc()
 #end
 #if($varDef.getEnumerated())
     $varDef.getEnumerated().getSnippet()
+#end
+#if($varDef.getTemporal())
+    $varDef.getTemporal().getSnippet()
 #end
 #if ($varDef.getAssociationOverrides())
 $varDef.getAssociationOverrides().getSnippet()

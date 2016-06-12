@@ -19,6 +19,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
+import static org.netbeans.jcode.core.util.AttributeType.BYTE_ARRAY;
+import static org.netbeans.jcode.core.util.AttributeType.CALENDAR;
+import static org.netbeans.jcode.core.util.AttributeType.DOUBLE;
+import static org.netbeans.jcode.core.util.AttributeType.LONG;
+import static org.netbeans.jcode.core.util.AttributeType.STRING;
 import org.netbeans.orm.converter.util.ClassHelper;
 
 public class TypeIdentifierSnippet implements Snippet {
@@ -122,13 +128,13 @@ public class TypeIdentifierSnippet implements Snippet {
         }
 
         if (variableDef.isLob()) {
-            type = "byte[]";
+            type = BYTE_ARRAY;
             return;
         }
 
-        if (variableDef.isTemporal()) {
-            importSnippets = Collections.singletonList("java.util.Calendar");
-            type = "Calendar";
+        if (variableDef.getTemporal()!=null) {
+            importSnippets = Collections.singletonList(CALENDAR);
+            type = JavaSourceHelper.getSimpleClassName(CALENDAR);
             return;
         }
 
@@ -139,16 +145,16 @@ public class TypeIdentifierSnippet implements Snippet {
             if (columnDef.getPrecision() != 0
                     && columnDef.getScale() != 0) {
 
-                type = "double";
+                type = DOUBLE;
                 return;
             } else if (columnDef.getPrecision() != 0
                     && columnDef.getScale() == 0) {
 
-                type = "long";
+                type = LONG;
                 return;
             }
         }
 
-        type = "String";
+        type = STRING;
     }
 }

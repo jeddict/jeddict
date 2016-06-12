@@ -31,12 +31,6 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
-    public static final String TEMPORAL_DATE = "TemporalType.DATE";
-    public static final String TEMPORAL_TIME = "TemporalType.TIME";
-    public static final String TEMPORAL_TIMESTAMP = "TemporalType.TIMESTAMP";
-
-    private static final List<String> temporalTypes = getTemporalTypes();
-
     private List<AnnotationSnippet> annotation = new ArrayList<>();
     private List<ConstraintSnippet> constraints = new ArrayList<>();
 
@@ -50,7 +44,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private boolean embeddedId = false;
     private boolean lob = false;
     private boolean primaryKey = false;
-    private boolean temporal = false;
     private boolean tranzient = false;
     private boolean version = false;
 
@@ -59,7 +52,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private final ClassHelper classHelper = new ClassHelper();
     //TODO: See if these 2 can be as a class
     private String mapKey = null;
-    private String temporalType = null;
 
     private BasicSnippet basic = null;
     private ElementCollectionSnippet elementCollection = null;
@@ -74,20 +66,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private TableGeneratorSnippet tableGenerator = null;
     private SequenceGeneratorSnippet sequenceGenerator = null;
     private EnumeratedSnippet enumerated = null;
+    private TemporalSnippet temporal = null;
     private AssociationOverridesSnippet associationOverrides = null;
     private AttributeOverridesSnippet attributeOverrides = null;
 
     private TypeIdentifierSnippet typeIdentifier = null;
-
-    private static List<String> getTemporalTypes() {
-        List<String> temporalTypesList = new ArrayList<String>();
-
-        temporalTypesList.add(TEMPORAL_DATE);
-        temporalTypesList.add(TEMPORAL_TIME);
-        temporalTypesList.add(TEMPORAL_TIMESTAMP);
-
-        return temporalTypesList;
-    }
 
     public BasicSnippet getBasic() {
         return basic;
@@ -196,36 +179,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public void setRelationDef(RelationDefSnippet relationType) {
         this.relationDef = relationType;
-    }
-
-    public boolean isTemporal() {
-        return temporal;
-    }
-
-    public void setTemporal(boolean temporal) {
-        this.temporal = temporal;
-    }
-
-    public String getTemporalType() {
-        return temporalType;
-    }
-
-    public void setTemporalType(String temporalType) {
-
-        if (!temporalTypes.contains(temporalType)) {
-            throw new IllegalArgumentException("Given type : " + temporalType
-                    + " Valid temporal types : " + temporalTypes);
-        }
-
-        this.temporalType = temporalType;
-    }
-
-    public String getTemporalTypeString() {
-
-        if (temporalType == null) {
-            return "@Temporal";
-        }
-        return "@Temporal(" + temporalType + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     public boolean isVersion() {
@@ -377,25 +330,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (enumerated != null) {
             importSnippets.addAll(enumerated.getImportSnippets());
         }
-
-        /*try {
-         Field fields[] = getClass().getDeclaredFields();
-
-         for (Field field : fields) {
-         Type[] interfaces = field.getType().getGenericInterfaces();
-         for (Type interfaze : interfaces) {
-         if(interfaze.getName())
-         }
-         }
-         } catch (Exception e) {
-         e.printStackTrace();
-         }*/
-        if (temporal) {
-            importSnippets.add("javax.persistence.Temporal");
-
-            if (temporalType != null) {
-                importSnippets.add("javax.persistence.TemporalType");
-            }
+        
+        if (temporal != null) {
+            importSnippets.addAll(temporal.getImportSnippets());
         }
 
         if (mapKey != null) {
@@ -744,6 +681,20 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     
     public boolean isJavaDocExist(){
         return StringUtils.isNotBlank(description);
+    }
+
+    /**
+     * @return the temporal
+     */
+    public TemporalSnippet getTemporal() {
+        return temporal;
+    }
+
+    /**
+     * @param temporal the temporal to set
+     */
+    public void setTemporal(TemporalSnippet temporal) {
+        this.temporal = temporal;
     }
 
 }

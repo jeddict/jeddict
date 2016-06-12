@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
+import static org.netbeans.jcode.jpa.JPAConstants.TEMPORAL_TYPE;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Basic;
@@ -148,6 +149,7 @@ import org.netbeans.orm.converter.compiler.SequenceGeneratorSnippet;
 import org.netbeans.orm.converter.compiler.StoredProcedureParameterSnippet;
 import org.netbeans.orm.converter.compiler.TableDefSnippet;
 import org.netbeans.orm.converter.compiler.TableGeneratorSnippet;
+import org.netbeans.orm.converter.compiler.TemporalSnippet;
 import org.netbeans.orm.converter.compiler.ToStringMethodSnippet;
 import org.netbeans.orm.converter.compiler.UniqueConstraintSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
@@ -157,8 +159,6 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
-
-    private static final String TEMPORAL_TYPE_PREFIX = "TemporalType.";
 
     private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
 
@@ -318,17 +318,17 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ColumnDefSnippet columnDef = getColumnDef(parsedBasic.getColumn());
 
             EnumType parsedEnumType = parsedBasic.getEnumerated();
-
             EnumeratedSnippet enumerated = null;
-
             if (parsedEnumType != null) {
                 enumerated = new EnumeratedSnippet();
-
-                if (parsedEnumType.equals(EnumType.ORDINAL)) {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_ORDINAL);
-                } else {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_STRING);
-                }
+                enumerated.setValue(parsedEnumType);
+            }
+            
+            TemporalType parsedTemporalType = parsedBasic.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
             }
 
             FetchType parsedFetchType = parsedBasic.getFetch();
@@ -341,7 +341,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 basic.setOptional(parsedBasic.getOptional());
             }
 
-            TemporalType parsedTemporal = parsedBasic.getTemporal();
             Lob parsedLob = parsedBasic.getLob();
 
             VariableDefSnippet variableDef = getVariableDef(parsedBasic);
@@ -349,13 +348,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setBasic(basic);
             variableDef.setColumnDef(columnDef);
             variableDef.setEnumerated(enumerated);
+            variableDef.setTemporal(temporal);
             variableDef.setType(parsedBasic.getAttributeType());
 
-            if (parsedTemporal != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(
-                        TEMPORAL_TYPE_PREFIX + parsedTemporal.value());
-            }
 
             if (parsedLob != null) {
                 variableDef.setLob(true);
@@ -373,17 +368,20 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             CollectionTableSnippet collectionTable = getCollectionTable(parsedElementCollection.getCollectionTable());
 
+            EnumType parsedEnumType = parsedElementCollection.getEnumerated();
             EnumeratedSnippet enumerated = null;
-
-            if (enumType != null) {
+            if (parsedEnumType != null) {
                 enumerated = new EnumeratedSnippet();
-
-                if (enumType.equals(EnumType.ORDINAL)) {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_ORDINAL);
-                } else {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_STRING);
-                }
+                enumerated.setValue(parsedEnumType);
             }
+            
+            TemporalType parsedTemporalType = parsedElementCollection.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
+            }
+            
             FetchType parsedFetchType = parsedElementCollection.getFetch();
             ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
@@ -399,13 +397,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setCollectionTable(collectionTable);
             variableDef.setColumnDef(columnDef);
             variableDef.setEnumerated(enumerated);
+            variableDef.setTemporal(temporal);
+            
             if (parsedElementCollection.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
-            }
-            if (parsedTemporal != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(
-                        TEMPORAL_TYPE_PREFIX + parsedTemporal.value());
             }
 
             if (parsedLob != null) {
@@ -720,13 +715,12 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<NamedSubgraphSnippet> namedSubgraphs = new ArrayList<NamedSubgraphSnippet>();
+        List<NamedSubgraphSnippet> namedSubgraphs = new ArrayList<>();
         for (NamedSubgraph parsedNamedSubgraph : parsedNamedSubgraphs) {
             NamedSubgraphSnippet namedSubgraph = new NamedSubgraphSnippet();
             namedSubgraph.setName(parsedNamedSubgraph.getName());
             namedSubgraph.setNamedAttributeNode(getNamedAttributeNodes(parsedNamedSubgraph.getNamedAttributeNode()));
             namedSubgraph.setType(parsedNamedSubgraph.getClazz());
-//            idClass.setPackageName(packageName);
             namedSubgraphs.add(namedSubgraph);
         }
         return namedSubgraphs;
@@ -739,7 +733,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<QueryHintSnippet> queryHints = new ArrayList<QueryHintSnippet>();
+        List<QueryHintSnippet> queryHints = new ArrayList<>();
 
         for (QueryHint parsedQueryHint : parsedQueryHints) {
             QueryHintSnippet queryHint = new QueryHintSnippet();
@@ -1157,13 +1151,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
                 }
             }
-
-            TemporalType parsedTemporal = parsedId.getTemporal();
-
-            if (parsedTemporal != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX + parsedTemporal.value());
+            
+            TemporalType parsedTemporalType = parsedId.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
             }
+            variableDef.setTemporal(temporal);
         }
     }
 
@@ -1373,11 +1368,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setVersion(true);
             variableDef.setColumnDef(columnDef);
 
-            if (parsedVersion.getTemporal() != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX
-                        + parsedVersion.getTemporal().value());
+            TemporalType parsedTemporalType = parsedVersion.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
             }
+            variableDef.setTemporal(temporal);
         }
     }
 
