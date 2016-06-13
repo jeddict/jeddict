@@ -56,6 +56,13 @@
                 </attribute>  
             </attributes>
         </element>
+        <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">
+            <attributes>
+                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true">
+                    <display-name>MapKey Type</display-name>
+                </attribute>  
+            </attributes>
+        </element>
         <element id="Table" class="org.netbeans.jpa.modeler.spec.Table">
             <attributes>
                 <attribute id="table_name" groupId="TABLE_PROP" class="java.lang.String" name="name">

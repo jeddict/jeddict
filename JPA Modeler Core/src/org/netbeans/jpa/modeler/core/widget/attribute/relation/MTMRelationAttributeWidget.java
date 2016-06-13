@@ -39,14 +39,6 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-    @Override
-    public void createPropertySet(ElementPropertySet set) {
-        super.createPropertySet(set);
-        ManyToMany mtmSpec = this.getBaseElementSpec();
-        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, mtmSpec));
-    }
-
-
     /**
      * @return the manyToManyRelationFlowWidget
      */

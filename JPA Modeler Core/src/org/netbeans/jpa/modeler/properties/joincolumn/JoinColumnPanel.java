@@ -45,6 +45,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
             this.setEntity(new RowValue(new Object[4]));
         }
         name_TextField.setText("");
+        referencedColumnName_TextField.setText("");
         table_TextField.setText("");
         columnDefinition_TextArea.setText("");
         unique_CheckBox.setSelected(false);

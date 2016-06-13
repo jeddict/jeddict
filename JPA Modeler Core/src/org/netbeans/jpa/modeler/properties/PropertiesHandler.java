@@ -65,12 +65,10 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
-import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -82,6 +80,8 @@ import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
@@ -105,7 +105,6 @@ import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
-import org.netbeans.orm.converter.util.ClassHelper;
 import org.openide.nodes.PropertySupport;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
@@ -223,10 +222,10 @@ public class PropertiesHandler {
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionType", "Collection Type", "", comboBoxListener);
     }
-    public static ComboBoxPropertySupport getMapKeyProperty(AttributeWidget<? extends Attribute> attributeWidget, final MapKeyHandler mapKeySpec) {
+    
+    public static ComboBoxPropertySupport getMapKeyProperty(AttributeWidget<? extends Attribute> attributeWidget, final MapKeyHandler mapKeySpec, PropertyVisibilityHandler mapKeyVisibilityHandler) {
         JPAModelerScene modelerScene = attributeWidget.getModelerScene();
         EntityMappings em = modelerScene.getBaseElementSpec();
-        ModelerFile modelerFile = modelerScene.getModelerFile();
         ComboBoxListener<Attribute> comboBoxListener = new ComboBoxListener<Attribute>() {
             private final Set<Attribute> value = new HashSet<>();
 
@@ -264,7 +263,6 @@ public class PropertiesHandler {
                                Attribute attribute = ((AttributeWidget<? extends Attribute>)classAttributeWidget).getBaseElementSpec();
                                comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName() + " : " +JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel())));
                                value.add(attribute);
-
                    });
                 }
                 
@@ -276,27 +274,20 @@ public class PropertiesHandler {
                 return EMPTY;
             }
 
-            @Override
-            public ActionHandler getActionHandler() {
-                return ActionHandler.getInstance(() -> {
-                    String collectionType = NBModelerUtil.browseClass(modelerFile);
-                    return new ComboBoxValue<String>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
-                })
-                        .afterCreation(e -> em.getCache().addCollectionClass(e.getValue()))
-                        .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
-                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
-            }
+//            @Override
+//            public ActionHandler getActionHandler() {
+//                return ActionHandler.getInstance(() -> {
+//                    String collectionType = NBModelerUtil.browseClass(modelerFile);
+//                    return new ComboBoxValue<String>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
+//                })
+//                        .afterCreation(e -> em.getCache().addCollectionClass(e.getValue()))
+//                        .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
+//                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
+//            }
         };
-        
         attributeWidget.addPropertyVisibilityHandler("mapKey", () -> {
             Attribute attribute = attributeWidget.getBaseElementSpec();
-            if(attribute instanceof CollectionTypeHandler){
-                String classname = ((CollectionTypeHandler)attribute).getCollectionType();
-                    try {
-                        return Map.class.isAssignableFrom(Class.forName(classname));
-                    } catch (ClassNotFoundException ex) { }
-            }
-            return false;
+            return mapKeyVisibilityHandler.isVisible() && attribute instanceof MultiRelationAttribute && ((MultiRelationAttribute)attribute).getMapKeyType() == MapKeyType.EXT;
         });
         
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "mapKey", "Map Key", "", comboBoxListener);
@@ -1030,9 +1021,10 @@ public class PropertiesHandler {
         return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
     }
 
-    public static EmbeddedPropertySupport getFieldTypeProperty(AttributeWidget attributeWidget) {
+    public static EmbeddedPropertySupport getFieldTypeProperty(String id, String name, String description,
+            AttributeWidget attributeWidget) {
 
-        GenericEmbedded entity = new GenericEmbedded("fieldType", "Field Type", "");
+        GenericEmbedded entity = new GenericEmbedded(id, name, description);
         if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
             if (attributeWidget.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
                 entity.setEntityEditor(null);
@@ -1047,7 +1039,6 @@ public class PropertiesHandler {
         }
         entity.setDataListener(new EmbeddedDataListener<Attribute>() {
             private Attribute attribute;
-            private String displayName = null;
             private PersistenceClassWidget persistenceClassWidget = null;
 
             @Override

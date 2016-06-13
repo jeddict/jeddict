@@ -41,15 +41,6 @@ public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget<One
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-    @Override
-    public void createPropertySet(ElementPropertySet set) {
-        super.createPropertySet(set);
-        OneToMany otmSpec = this.getBaseElementSpec();
-        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, otmSpec));
-        set.put("BASIC_PROP", PropertiesHandler.getMapKeyProperty(this, otmSpec));
-        
-    }
-
     /**
      * @return the hierarchicalRelationFlowWidget
      */

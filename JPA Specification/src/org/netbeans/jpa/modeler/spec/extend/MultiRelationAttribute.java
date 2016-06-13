@@ -89,9 +89,12 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     private String collectionType;//custom added
     
     
-    @XmlAttribute(name = "mka", required = true)
+    @XmlAttribute(name = "mka")
     @XmlIDREF
     private Attribute mapKeyAttribute;
+    @XmlAttribute(name = "mkt")
+    private MapKeyType mapKeyType;
+    
 
     @Override
     public void load(AnnotationMirror relationAnnotationMirror, Element element, VariableElement variableElement) {
@@ -452,5 +455,19 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      */
     public void setMapKeyAttribute(Attribute mapKeyAttribute) {
         this.mapKeyAttribute = mapKeyAttribute;
+    }
+
+    /**
+     * @return the mapKeyType
+     */
+    public MapKeyType getMapKeyType() {
+        return mapKeyType;
+    }
+
+    /**
+     * @param mapKeyType the mapKeyType to set
+     */
+    public void setMapKeyType(MapKeyType mapKeyType) {
+        this.mapKeyType = mapKeyType;
     }
 }

@@ -115,7 +115,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
-            set.put("BASIC_PROP", getFieldTypeProperty(this));
+            set.put("BASIC_PROP", getFieldTypeProperty("fieldType", "Field Type", "", this));
         } else {
             try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
                 set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,

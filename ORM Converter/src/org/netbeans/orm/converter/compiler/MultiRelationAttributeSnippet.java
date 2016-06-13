@@ -20,13 +20,9 @@ import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE;
 import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
-import org.netbeans.jpa.modeler.spec.EnumType;
-import org.netbeans.jpa.modeler.spec.TemporalType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
-import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet
@@ -35,9 +31,10 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     protected String collectionType;
     private Attribute mapKeyAttribute;
     protected String mappedBy = null;
-    protected TemporalSnippet temporalSnippet;
-    protected EnumeratedSnippet enumeratedSnippet;
-
+    private TemporalSnippet temporalSnippet;
+    private EnumeratedSnippet enumeratedSnippet;
+    private JoinColumnsSnippet joinColumnsSnippet;
+    
     public String getMappedBy() {
         return mappedBy;
     }
@@ -70,19 +67,9 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     /**
      * @param mapKeyAttribute the mapKeyAttribute to set
      */
+    @Override
     public void setMapKeyAttribute(Attribute mapKeyAttribute) {
         this.mapKeyAttribute = mapKeyAttribute;
-        if (mapKeyAttribute != null) {
-            if (mapKeyAttribute instanceof TemporalTypeHandler && ((TemporalTypeHandler) mapKeyAttribute).getTemporal() != null) {
-                TemporalType temporalType = ((TemporalTypeHandler) mapKeyAttribute).getTemporal();
-               temporalSnippet = new TemporalSnippet(true);
-               temporalSnippet.setValue(temporalType);
-            } else if (mapKeyAttribute instanceof EnumTypeHandler && ((EnumTypeHandler) mapKeyAttribute).getEnumerated()!= null) {
-                EnumType enumType = ((EnumTypeHandler) mapKeyAttribute).getEnumerated();
-                enumeratedSnippet = new EnumeratedSnippet(true);
-                enumeratedSnippet.setValue(enumType);
-            }
-        }
     }
     
     public abstract String getType();
@@ -100,10 +87,12 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
 
         StringBuilder builder = new StringBuilder();
         if (mapKeyAttribute != null) {
-            if (temporalSnippet != null) {
-                builder.append(temporalSnippet.getSnippet()).append("\n");
-            } else if (enumeratedSnippet != null) {
-                builder.append(enumeratedSnippet.getSnippet()).append("\n");
+            if (getTemporalSnippet() != null) {
+                builder.append(getTemporalSnippet().getSnippet()).append("\n");
+            } else if (getEnumeratedSnippet() != null) {
+                builder.append(getEnumeratedSnippet().getSnippet()).append("\n");
+            } else if (getJoinColumnsSnippet()!= null) {
+                builder.append(getJoinColumnsSnippet().getSnippet()).append("\n");
             }
         }
         
@@ -151,12 +140,56 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
             importSnippets.add(CASCADE_TYPE);
         }
         if (mapKeyAttribute != null) {
-            if (temporalSnippet != null) {
-                importSnippets.addAll(temporalSnippet.getImportSnippets());
-            } else if (enumeratedSnippet != null) {
-                importSnippets.addAll(enumeratedSnippet.getImportSnippets());
+            if (getTemporalSnippet() != null) {
+                importSnippets.addAll(getTemporalSnippet().getImportSnippets());
+            } else if (getEnumeratedSnippet() != null) {
+                importSnippets.addAll(getEnumeratedSnippet().getImportSnippets());
+            } else if (getJoinColumnsSnippet()!= null) {
+                importSnippets.addAll(getJoinColumnsSnippet().getImportSnippets());
             }
         }
         return importSnippets;
+    }
+
+    /**
+     * @return the temporalSnippet
+     */
+    public TemporalSnippet getTemporalSnippet() {
+        return temporalSnippet;
+    }
+
+    /**
+     * @param temporalSnippet the temporalSnippet to set
+     */
+    public void setTemporalSnippet(TemporalSnippet temporalSnippet) {
+        this.temporalSnippet = temporalSnippet;
+    }
+
+    /**
+     * @return the enumeratedSnippet
+     */
+    public EnumeratedSnippet getEnumeratedSnippet() {
+        return enumeratedSnippet;
+    }
+
+    /**
+     * @param enumeratedSnippet the enumeratedSnippet to set
+     */
+    public void setEnumeratedSnippet(EnumeratedSnippet enumeratedSnippet) {
+        this.enumeratedSnippet = enumeratedSnippet;
+    }
+
+    /**
+     * @return the joinColumnsSnippet
+     */
+    public JoinColumnsSnippet getJoinColumnsSnippet() {
+        return joinColumnsSnippet;
+    }
+
+    /**
+     * @param joinColumnsSnippet the joinColumnsSnippet to set
+     */
+    public void setJoinColumnsSnippet(JoinColumnsSnippet joinColumnsSnippet) {
+        this.joinColumnsSnippet = joinColumnsSnippet;
     }
 }

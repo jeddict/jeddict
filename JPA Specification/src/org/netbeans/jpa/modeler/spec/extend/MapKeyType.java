@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,24 +15,26 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
-import java.util.List;
-import org.netbeans.jpa.modeler.spec.ForeignKey;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.modeler.properties.type.Enumy;
 
-/**
- *
- * @author gaurav
- */
-public interface JoinColumnHandler {
+public enum MapKeyType implements Enumy {
 
-    public List<JoinColumn> getJoinColumn();
+    EXT("Existing Column"), NEW("New Column");
 
-    public void addJoinColumn(JoinColumn joinColumn);
+    private final String display;
 
-    public void removeJoinColumn(JoinColumn joinColumn);
-    
-    public ForeignKey getForeignKey();
+    private MapKeyType(String display) {
+        this.display = display;
+    }
 
-    public void setForeignKey(ForeignKey value);
+    @Override
+    public String getDisplay() {
+        return display;
+    }
+
+    @Override
+    public Enumy getDefault() {
+        return EXT;
+    }
 
 }
