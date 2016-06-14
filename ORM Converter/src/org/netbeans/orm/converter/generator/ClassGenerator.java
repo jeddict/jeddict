@@ -84,6 +84,8 @@ import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
@@ -128,6 +130,7 @@ import org.netbeans.orm.converter.compiler.JoinColumnsSnippet;
 import org.netbeans.orm.converter.compiler.JoinTableSnippet;
 import org.netbeans.orm.converter.compiler.ManyToManySnippet;
 import org.netbeans.orm.converter.compiler.ManyToOneSnippet;
+import org.netbeans.orm.converter.compiler.MapKeySnippet;
 import org.netbeans.orm.converter.compiler.MultiRelationAttributeSnippet;
 import org.netbeans.orm.converter.compiler.NamedAttributeNodeSnippet;
 import org.netbeans.orm.converter.compiler.NamedEntityGraphSnippet;
@@ -389,6 +392,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             FetchType parsedFetchType = parsedElementCollection.getFetch();
             ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
+            elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
             elementCollection.setTargetClass(parsedElementCollection.getTargetClass());
             if (parsedFetchType != null) {
                 elementCollection.setFetchType(parsedFetchType.value());
@@ -553,7 +557,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return fieldResults;
     }
 
-    protected List<JoinColumnSnippet> getJoinColumns(List<JoinColumn> parsedJoinColumns) {
+    protected List<JoinColumnSnippet> getJoinColumns(List<? extends JoinColumn> parsedJoinColumns) {
 
         List<JoinColumnSnippet> joinColumns = new ArrayList<>();
 
@@ -796,14 +800,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    protected void processAttributeOverrides(
+    protected AttributeOverridesSnippet processAttributeOverrides(
             Set<AttributeOverride> parsedAttributeOverrides) {
 
         if (parsedAttributeOverrides == null || parsedAttributeOverrides.isEmpty()) {
-            return;
+            return null;
         }
-
-        classDef.setAttributeOverrides(new AttributeOverridesSnippet());
+        AttributeOverridesSnippet attributeOverridesSnippet = new AttributeOverridesSnippet();
 
         for (AttributeOverride parsedAttributeOverride : parsedAttributeOverrides) {
 
@@ -817,13 +820,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             attributeOverride.setColumnDef(columnDef);
             attributeOverride.setName(parsedAttributeOverride.getName());
 
-            classDef.getAttributeOverrides().addAttributeOverrides(
-                    attributeOverride);
+            attributeOverridesSnippet.addAttributeOverrides(attributeOverride);
         }
-
-        if (classDef.getAttributeOverrides().getAttributeOverrides().isEmpty()) {
-            classDef.setAttributeOverrides(null);
+        
+        if(attributeOverridesSnippet.getAttributeOverrides().isEmpty()){
+            return null;
         }
+        
+        return attributeOverridesSnippet;
     }
 
     protected void processEntityListeners(EntityListeners parsedEntityListeners) {
@@ -1183,11 +1187,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ManyToManySnippet manyToMany = new ManyToManySnippet();
 
             manyToMany.setCollectionType(parsedManyToMany.getCollectionType());
-            manyToMany.setMapKeyAttribute(parsedManyToMany.getMapKeyAttribute());
-            updateMapKeyAttributeSnippet(manyToMany,parsedManyToMany.getMapKeyAttribute());
-            
-            
-            
+            manyToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedManyToMany));
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
             manyToMany.setCascadeTypes(cascadeTypes);
@@ -1213,31 +1213,43 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
         }
     }
-   private void updateMapKeyAttributeSnippet(MultiRelationAttributeSnippet attributeSnippet, Attribute mapKeyAttribute) {
-        if (mapKeyAttribute != null) {
-            if (mapKeyAttribute instanceof TemporalTypeHandler && ((TemporalTypeHandler) mapKeyAttribute).getTemporal() != null) {
-                TemporalType temporalType = ((TemporalTypeHandler) mapKeyAttribute).getTemporal();
-                TemporalSnippet temporalSnippet = new TemporalSnippet(true);
-                temporalSnippet.setValue(temporalType);
-                attributeSnippet.setTemporalSnippet(temporalSnippet);
-            } else if (mapKeyAttribute instanceof EnumTypeHandler && ((EnumTypeHandler) mapKeyAttribute).getEnumerated() != null) {
-                EnumType enumType = ((EnumTypeHandler) mapKeyAttribute).getEnumerated();
-                EnumeratedSnippet enumeratedSnippet = new EnumeratedSnippet(true);
-                enumeratedSnippet.setValue(enumType);
-                attributeSnippet.setEnumeratedSnippet(enumeratedSnippet);
-            } else if (mapKeyAttribute instanceof SingleRelationAttribute){
-                SingleRelationAttribute relationAttribute = (SingleRelationAttribute)mapKeyAttribute;
-                List<JoinColumnSnippet> joinColumnsList = getJoinColumns(relationAttribute.getJoinColumn());
-                JoinColumnsSnippet joinColumns = null;
-                if (!joinColumnsList.isEmpty()) {
-                    joinColumns = new JoinColumnsSnippet();
-                    joinColumns.setJoinColumns(joinColumnsList);
-                    joinColumns.setForeignKey(getForeignKey(relationAttribute.getForeignKey()));
-                }
-                attributeSnippet.setJoinColumnsSnippet(joinColumns);
-            }
-                
-        }
+   private MapKeySnippet updateMapKeyAttributeSnippet(MapKeyHandler mapKeyHandler) {
+       if(mapKeyHandler.getMapKeyType() == null || mapKeyHandler.getValidatedMapKeyType()==null){
+           return null;
+       }
+       MapKeySnippet snippet = new MapKeySnippet();
+       if(mapKeyHandler.getMapKeyType() == MapKeyType.EXT && mapKeyHandler.getValidatedMapKeyType() == MapKeyType.EXT){
+           snippet.setMapKeyAttribute(mapKeyHandler.getMapKeyAttribute());
+           snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttribute().getDataTypeLabel());
+       } else {
+           if (mapKeyHandler.getMapKeyEntity() != null) {
+               List<JoinColumnSnippet> joinColumnsList = getJoinColumns(mapKeyHandler.getMapKeyJoinColumn());
+               JoinColumnsSnippet joinColumns = null;
+               if (!joinColumnsList.isEmpty()) {
+                   joinColumns = new JoinColumnsSnippet();
+                   joinColumns.setJoinColumns(joinColumnsList);
+                   joinColumns.setForeignKey(getForeignKey(mapKeyHandler.getMapKeyForeignKey()));
+               }
+               snippet.setJoinColumnsSnippet(joinColumns);
+               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEntity().getClazz());
+           } else if (mapKeyHandler.getMapKeyEmbeddable() != null) {//TODO attr override
+               snippet.setAttributeOverrideSnippet(processAttributeOverrides(mapKeyHandler.getMapKeyAttributeOverride()));
+               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEmbeddable().getClazz());
+           } else {
+               if (mapKeyHandler.getMapKeyEnumerated() != null) {
+                   EnumeratedSnippet enumeratedSnippet = new EnumeratedSnippet(true);
+                   enumeratedSnippet.setValue(mapKeyHandler.getMapKeyEnumerated());
+                   snippet.setEnumeratedSnippet(enumeratedSnippet);
+               } else if (mapKeyHandler.getMapKeyTemporal() != null) {
+                   TemporalSnippet temporalSnippet = new TemporalSnippet(true);
+                   temporalSnippet.setValue(mapKeyHandler.getMapKeyTemporal());
+                   snippet.setTemporalSnippet(temporalSnippet);
+               }
+               snippet.setColumnSnippet(getColumnDef(mapKeyHandler.getMapKeyColumn()));
+               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttributeType());
+           }
+       }
+       return snippet;
     }
     protected void processManyToOne(List<ManyToOne> parsedManyToOnes) {
 
@@ -1295,8 +1307,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
-            oneToMany.setMapKeyAttribute(parsedOneToMany.getMapKeyAttribute());
-            updateMapKeyAttributeSnippet(oneToMany,parsedOneToMany.getMapKeyAttribute());
+            oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }

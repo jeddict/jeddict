@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
@@ -34,6 +35,7 @@ import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
@@ -147,24 +149,6 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     protected String orderBy;
     @XmlElement(name = "order-column")
     protected OrderColumn orderColumn;//REVENG PENDING
-    @XmlElement(name = "map-key")
-    protected MapKey mapKey;//REVENG PENDING
-    @XmlElement(name = "map-key-class")
-    protected MapKeyClass mapKeyClass;//REVENG PENDING
-    @XmlElement(name = "map-key-temporal")
-    protected TemporalType mapKeyTemporal;//REVENG PENDING
-    @XmlElement(name = "map-key-enumerated")
-    protected EnumType mapKeyEnumerated;//REVENG PENDING
-    @XmlElement(name = "map-key-attribute-override")
-    protected Set<AttributeOverride> mapKeyAttributeOverride;//REVENG PENDING
-    @XmlElement(name = "map-key-convert")
-    protected List<Convert> mapKeyConvert;//REVENG PENDING
-    @XmlElement(name = "map-key-column")
-    protected MapKeyColumn mapKeyColumn;//REVENG PENDING
-    @XmlElement(name = "map-key-join-column")
-    protected List<MapKeyJoinColumn> mapKeyJoinColumn;//REVENG PENDING
-    @XmlElement(name = "map-key-foreign-key")
-    protected ForeignKey mapKeyForeignKey;//REVENG PENDING
     protected Column column;
     protected TemporalType temporal;
     protected EnumType enumerated;
@@ -187,10 +171,48 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     @XmlAttribute(name = "collection-type")
     private String collectionType;
     
-    @XmlAttribute(name = "mka", required = true)
+    @XmlElement(name = "map-key-convert")
+    protected List<Convert> mapKeyConvert;//REVENG PENDING
+
+    @XmlAttribute(name = "mkt")
+    private MapKeyType mapKeyType;
+    
+    //Existing MapKeyType
+    @XmlAttribute(name = "mkat-ref")//attribute-ref
     @XmlIDREF
     private Attribute mapKeyAttribute;
-
+    @XmlElement(name = "map-key")//Not required
+    protected MapKey mapKey;//REVENG PENDING
+    @XmlElement(name = "map-key-class")//Not required
+    protected MapKeyClass mapKeyClass;//REVENG PENDING
+    
+    
+    //New MapKeyType - Basic
+    @XmlAttribute(name="mkat")
+    private String mapKeyAttributeType; //basic,enumerated,temporal
+    @XmlElement(name = "mkc")
+    protected MapKeyColumn mapKeyColumn;//REVENG PENDING
+    @XmlElement(name = "mktemp")
+    protected TemporalType mapKeyTemporal;//REVENG PENDING
+    @XmlElement(name = "mkenum")
+    protected EnumType mapKeyEnumerated;//REVENG PENDING
+    
+    //New MapKeyType - Entity
+    @XmlAttribute(name = "mken-ref")//entity-ref
+    @XmlIDREF
+    private Entity mapKeyEntity;
+    @XmlElement(name = "mkjc")
+    protected List<MapKeyJoinColumn> mapKeyJoinColumn;//REVENG PENDING
+    @XmlElement(name = "mkfk")
+    protected ForeignKey mapKeyForeignKey;//REVENG PENDING
+            
+    //New MapKeyType - Embeddable
+    @XmlAttribute(name = "mkem-ref")
+    @XmlIDREF
+    private Embeddable mapKeyEmbeddable;
+    @XmlElement(name = "mkao")
+    protected Set<AttributeOverride> mapKeyAttributeOverride;//REVENG PENDING
+    
     public static ElementCollection load(EntityMappings entityMappings, Element element, VariableElement variableElement) {
         AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.ElementCollection");
         ElementCollection elementCollection = new ElementCollection();
@@ -894,6 +916,101 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
      */
     public void setMapKeyAttribute(Attribute mapKeyAttribute) {
         this.mapKeyAttribute = mapKeyAttribute;
+    }
+    
+    public MapKeyType getValidatedMapKeyType() {
+        if(mapKeyAttribute != null){
+            return MapKeyType.EXT;
+        } else if(mapKeyAttributeType != null || mapKeyEmbeddable != null || mapKeyEntity != null){
+            return MapKeyType.NEW;
+        }
+        return null;
+    }
+    
+    /**
+     * @return the mapKeyType
+     */
+    public MapKeyType getMapKeyType() {
+        return mapKeyType;
+    }
+
+    @Override
+    public void setMapKeyType(MapKeyType mapKeyType) {
+        this.mapKeyType=mapKeyType;
+    }
+    
+    /**
+     * @return the mapKeyAttributeType
+     */
+    public String getMapKeyAttributeType() {
+        return mapKeyAttributeType;
+    }
+
+    /**
+     * @param mapKeyAttributeType the mapKeyAttributeType to set
+     */
+    public void setMapKeyAttributeType(String mapKeyAttributeType) {
+        this.mapKeyAttributeType = mapKeyAttributeType;
+    }
+
+    /**
+     * @return the mapKeyEntity
+     */
+    public Entity getMapKeyEntity() {
+        return mapKeyEntity;
+    }
+
+    /**
+     * @param mapKeyEntity the mapKeyEntity to set
+     */
+    public void setMapKeyEntity(Entity mapKeyEntity) {
+        this.mapKeyEntity = mapKeyEntity;
+    }
+
+    /**
+     * @return the mapKeyEmbeddable
+     */
+    public Embeddable getMapKeyEmbeddable() {
+        return mapKeyEmbeddable;
+    }
+
+    /**
+     * @param mapKeyEmbeddable the mapKeyEmbeddable to set
+     */
+    public void setMapKeyEmbeddable(Embeddable mapKeyEmbeddable) {
+        this.mapKeyEmbeddable = mapKeyEmbeddable;
+    }
+    
+    @Override
+    public void resetMapAttribute(){
+        this.mapKeyAttribute=null;
+        
+        this.mapKeyEntity=null;
+        this.mapKeyEmbeddable=null;
+        this.mapKeyEnumerated=null;
+        this.mapKeyTemporal=null;
+        this.mapKeyAttributeType=null;
+        
+        this.mapKeyColumn=null;
+        this.mapKeyJoinColumn=null;
+        this.mapKeyForeignKey=null;
+        this.mapKeyAttributeOverride=null;
+    }
+    
+        @Override
+    public String getMapKeyDataTypeLabel(){
+        if(mapKeyType == MapKeyType.EXT){
+            return mapKeyAttribute.getDataTypeLabel();
+        } else {
+            if(mapKeyEntity!=null){
+                return mapKeyEntity.getClazz();
+            } else if(mapKeyEmbeddable!=null){
+                return mapKeyEmbeddable.getClazz();
+            } else if(mapKeyAttributeType!=null){
+                return mapKeyAttributeType;
+            }
+        }
+        return null;
     }
 
 }

@@ -15,9 +15,9 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -30,6 +30,8 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
@@ -39,6 +41,7 @@ import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.generic.ElementCustomPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
+import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
@@ -115,7 +118,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
-            set.put("BASIC_PROP", getFieldTypeProperty("fieldType", "Field Type", "", this));
+            set.put("BASIC_PROP", getFieldTypeProperty("fieldType", "Field Type", "", false, this));
         } else {
             try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
                 set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
@@ -210,5 +213,30 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return (PersistenceClassWidget) this.getPNodeWidget();
     }
 
+    
+    protected void createMapKeyPropertySet(ElementPropertySet set){
+        Attribute attribute = this.getBaseElementSpec();
+        if(!(attribute instanceof MapKeyHandler)){
+            throw new IllegalStateException("BaseElementSpec does not implements MapKeyHandler");
+        }
+        MapKeyHandler mapKeyHandler = (MapKeyHandler)attribute;
+         PropertyVisibilityHandler mapKeyVisibilityHandler = () -> {
+            if(attribute instanceof CollectionTypeHandler){
+                String classname = ((CollectionTypeHandler)attribute).getCollectionType();
+                    try {
+                        return Map.class.isAssignableFrom(Class.forName(classname));
+                    } catch (ClassNotFoundException ex) { }
+            }
+            return false;
+        };      
+        
+        set.put("BASIC_PROP", PropertiesHandler.getMapKeyProperty(this, mapKeyHandler, mapKeyVisibilityHandler));
+        set.put("BASIC_PROP", PropertiesHandler.getFieldTypeProperty("mapKeyFieldType", "Map Key", "", true, this));
+        
+        this.addPropertyChangeListener("mapKeyType",(val) -> mapKeyHandler.resetMapAttribute());
+        this.addPropertyVisibilityHandler("mapKeyType", mapKeyVisibilityHandler);
+        this.addPropertyVisibilityHandler("mapKeyFieldType", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() == MapKeyType.NEW);
+        this.addPropertyVisibilityHandler("mapKey", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() != MapKeyType.NEW);
+    }
 
 }

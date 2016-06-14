@@ -15,18 +15,67 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import java.util.List;
+import java.util.Set;
+import org.netbeans.jpa.modeler.spec.AttributeOverride;
+import org.netbeans.jpa.modeler.spec.Embeddable;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EnumType;
+import org.netbeans.jpa.modeler.spec.ForeignKey;
+import org.netbeans.jpa.modeler.spec.MapKeyColumn;
+import org.netbeans.jpa.modeler.spec.MapKeyJoinColumn;
+import org.netbeans.jpa.modeler.spec.TemporalType;
+
 /**
  *
  * @author Gaurav Gupta
  */
 public interface MapKeyHandler {
-    /**
-     * @return the mapKeyAttribute
-     */
-    public Attribute getMapKeyAttribute();
 
-    /**
-     * @param mapKeyAttribute the mapKeyAttribute to set
-     */
-    public void setMapKeyAttribute(Attribute mapKeyAttribute);
+    Attribute getMapKeyAttribute();
+
+    void setMapKeyAttribute(Attribute mapKeyAttribute);
+
+    String getMapKeyDataTypeLabel();
+    
+    MapKeyType getValidatedMapKeyType();
+
+    MapKeyType getMapKeyType();
+
+    void setMapKeyType(MapKeyType mapKeyType);
+
+    String getMapKeyAttributeType();
+
+    void setMapKeyAttributeType(String mapKeyAttributeType);
+
+    Entity getMapKeyEntity();
+
+    void setMapKeyEntity(Entity mapKeyEntity);
+
+    Embeddable getMapKeyEmbeddable();
+
+    void setMapKeyEmbeddable(Embeddable mapKeyEmbeddable);
+
+    TemporalType getMapKeyTemporal();
+
+    void setMapKeyTemporal(TemporalType value);
+
+    EnumType getMapKeyEnumerated();
+
+    void setMapKeyEnumerated(EnumType value);
+
+    MapKeyColumn getMapKeyColumn();
+
+    void setMapKeyColumn(MapKeyColumn value);
+
+    List<MapKeyJoinColumn> getMapKeyJoinColumn();
+
+    ForeignKey getMapKeyForeignKey();
+
+    void setMapKeyForeignKey(ForeignKey value);
+
+    Set<AttributeOverride> getMapKeyAttributeOverride();
+
+    public void resetMapAttribute();
+
 }

@@ -17,6 +17,8 @@ package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -29,6 +31,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Convert;
+import org.netbeans.jpa.modeler.spec.Embeddable;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.MapKey;
@@ -63,37 +67,54 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     protected String orderBy;
     @XmlElement(name = "order-column")
     protected OrderColumn orderColumn;//REVENG PENDING
-    @XmlElement(name = "map-key")
-    protected MapKey mapKey;//REVENG PENDING
-    @XmlElement(name = "map-key-class")
-    protected MapKeyClass mapKeyClass;//REVENG PENDING
-    @XmlElement(name = "map-key-temporal")
-    protected TemporalType mapKeyTemporal;//REVENG PENDING
-    @XmlElement(name = "map-key-enumerated")
-    protected EnumType mapKeyEnumerated;//REVENG PENDING
-    @XmlElement(name = "map-key-attribute-override")
-    protected List<AttributeOverride> mapKeyAttributeOverride;//REVENG PENDING
-    @XmlElement(name = "map-key-convert")
-    protected List<Convert> mapKeyConvert;//REVENG PENDING
-    @XmlElement(name = "map-key-column")
-    protected MapKeyColumn mapKeyColumn;//REVENG PENDING
-    @XmlElement(name = "map-key-join-column")
-    protected List<MapKeyJoinColumn> mapKeyJoinColumn;//REVENG PENDING
-    @XmlElement(name = "map-key-foreign-key")
-    protected ForeignKey mapKeyForeignKey;//REVENG PENDING
     @XmlAttribute(name = "own")
     private Boolean owner;
     @XmlTransient//(name = "mapped-by")
     protected String mappedBy;
     @XmlAttribute(name = "collection-type")
     private String collectionType;//custom added
-    
-    
-    @XmlAttribute(name = "mka")
-    @XmlIDREF
-    private Attribute mapKeyAttribute;
+
+    @XmlElement(name = "map-key-convert")
+    protected List<Convert> mapKeyConvert;//REVENG PENDING
+
     @XmlAttribute(name = "mkt")
     private MapKeyType mapKeyType;
+    
+    //Existing MapKeyType
+    @XmlAttribute(name = "mkat-ref")//attribute-ref
+    @XmlIDREF
+    private Attribute mapKeyAttribute;
+    @XmlElement(name = "map-key")//Not required
+    protected MapKey mapKey;//REVENG PENDING
+    @XmlElement(name = "map-key-class")//Not required
+    protected MapKeyClass mapKeyClass;//REVENG PENDING
+
+    
+    //New MapKeyType - Basic
+    @XmlAttribute(name="mkat")
+    private String mapKeyAttributeType; //e.g String, int, Enum, Date    applicable for basic,enumerated,temporal
+    @XmlElement(name = "mkc")
+    protected MapKeyColumn mapKeyColumn;//REVENG PENDING
+    @XmlElement(name = "mktemp")
+    protected TemporalType mapKeyTemporal;//REVENG PENDING
+    @XmlElement(name = "mkenum")
+    protected EnumType mapKeyEnumerated;//REVENG PENDING
+    
+    //New MapKeyType - Entity
+    @XmlAttribute(name = "mken-ref")//entity-ref
+    @XmlIDREF
+    private Entity mapKeyEntity;
+    @XmlElement(name = "mkjc")
+    protected List<MapKeyJoinColumn> mapKeyJoinColumn;//REVENG PENDING
+    @XmlElement(name = "mkfk")
+    protected ForeignKey mapKeyForeignKey;//REVENG PENDING
+            
+    //New MapKeyType - Embeddable
+    @XmlAttribute(name = "mkem-ref")
+    @XmlIDREF
+    private Embeddable mapKeyEmbeddable;
+    @XmlElement(name = "mkao")
+    protected Set<AttributeOverride> mapKeyAttributeOverride;//REVENG PENDING
     
 
     @Override
@@ -252,9 +273,9 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      *
      *
      */
-    public List<AttributeOverride> getMapKeyAttributeOverride() {
+    public Set<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
-            mapKeyAttributeOverride = new ArrayList<AttributeOverride>();
+            mapKeyAttributeOverride = new TreeSet<AttributeOverride>();
         }
         return this.mapKeyAttributeOverride;
     }
@@ -457,6 +478,15 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
         this.mapKeyAttribute = mapKeyAttribute;
     }
 
+    public MapKeyType getValidatedMapKeyType() {
+        if(mapKeyAttribute != null){
+            return MapKeyType.EXT;
+        } else if(mapKeyAttributeType != null || mapKeyEmbeddable != null || mapKeyEntity != null){
+            return MapKeyType.NEW;
+        }
+        return null;
+    }
+    
     /**
      * @return the mapKeyType
      */
@@ -464,10 +494,82 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
         return mapKeyType;
     }
 
-    /**
-     * @param mapKeyType the mapKeyType to set
-     */
+    @Override
     public void setMapKeyType(MapKeyType mapKeyType) {
-        this.mapKeyType = mapKeyType;
+        this.mapKeyType=mapKeyType;
+    }
+
+    /**
+     * @return the mapKeyAttributeType
+     */
+    public String getMapKeyAttributeType() {
+        return mapKeyAttributeType;
+    }
+
+    /**
+     * @param mapKeyAttributeType the mapKeyAttributeType to set
+     */
+    public void setMapKeyAttributeType(String mapKeyAttributeType) {
+        this.mapKeyAttributeType = mapKeyAttributeType;
+    }
+
+    /**
+     * @return the mapKeyEntity
+     */
+    public Entity getMapKeyEntity() {
+        return mapKeyEntity;
+    }
+
+    /**
+     * @param mapKeyEntity the mapKeyEntity to set
+     */
+    public void setMapKeyEntity(Entity mapKeyEntity) {
+        this.mapKeyEntity = mapKeyEntity;
+    }
+
+    /**
+     * @return the mapKeyEmbeddable
+     */
+    public Embeddable getMapKeyEmbeddable() {
+        return mapKeyEmbeddable;
+    }
+
+    /**
+     * @param mapKeyEmbeddable the mapKeyEmbeddable to set
+     */
+    public void setMapKeyEmbeddable(Embeddable mapKeyEmbeddable) {
+        this.mapKeyEmbeddable = mapKeyEmbeddable;
+    }
+    
+    @Override
+    public void resetMapAttribute(){
+        this.mapKeyAttribute=null;
+        
+        this.mapKeyEntity=null;
+        this.mapKeyEmbeddable=null;
+        this.mapKeyEnumerated=null;
+        this.mapKeyTemporal=null;
+        this.mapKeyAttributeType=null;
+        
+        this.mapKeyColumn=null;
+        this.mapKeyJoinColumn=null;
+        this.mapKeyForeignKey=null;
+        this.mapKeyAttributeOverride=null;
+    }
+    
+    @Override
+    public String getMapKeyDataTypeLabel(){
+        if(mapKeyType == MapKeyType.EXT){
+            return mapKeyAttribute.getDataTypeLabel();
+        } else {
+            if(mapKeyEntity!=null){
+                return mapKeyEntity.getClazz();
+            } else if(mapKeyEmbeddable!=null){
+                return mapKeyEmbeddable.getClazz();
+            } else if(mapKeyAttributeType!=null){
+                return mapKeyAttributeType;
+            }
+        }
+        return null;
     }
 }

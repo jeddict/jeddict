@@ -15,17 +15,12 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
-import java.util.Map;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 /**
  *
@@ -40,28 +35,9 @@ public abstract class MultiRelationAttributeWidget<E extends MultiRelationAttrib
         @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-         PropertyVisibilityHandler mapKeyVisibilityHandler = () -> {
-            Attribute attribute = this.getBaseElementSpec();
-            if(attribute instanceof CollectionTypeHandler){
-                String classname = ((CollectionTypeHandler)attribute).getCollectionType();
-                    try {
-                        return Map.class.isAssignableFrom(Class.forName(classname));
-                    } catch (ClassNotFoundException ex) { }
-            }
-            return false;
-        };
-         
         MultiRelationAttribute relationAttribute = this.getBaseElementSpec();
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, relationAttribute));
-        set.put("BASIC_PROP", PropertiesHandler.getMapKeyProperty(this, relationAttribute,mapKeyVisibilityHandler));
-        set.put("BASIC_PROP", PropertiesHandler.getFieldTypeProperty("mapKeyFieldType", "MapKey Field Type", "", this));
-        
-        this.addPropertyVisibilityHandler("mapKeyType", mapKeyVisibilityHandler);
-        this.addPropertyVisibilityHandler("mapKeyFieldType", () -> {
-            Attribute attribute = this.getBaseElementSpec();
-            return mapKeyVisibilityHandler.isVisible() && attribute instanceof MultiRelationAttribute && ((MultiRelationAttribute)attribute).getMapKeyType() == MapKeyType.NEW;
-        });
-        
+        createMapKeyPropertySet(set);
     }
 
 }

@@ -39,7 +39,7 @@ public class TemporalSnippet implements Snippet {
     public TemporalSnippet(boolean mapKey) {
         this.mapKey = mapKey;
     }
-
+    
     public TemporalSnippet() {
     }
 

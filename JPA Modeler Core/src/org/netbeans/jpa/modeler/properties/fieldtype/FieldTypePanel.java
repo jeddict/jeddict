@@ -17,8 +17,10 @@ package org.netbeans.jpa.modeler.properties.fieldtype;
 
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.EnumType;
@@ -55,142 +57,136 @@ import static org.netbeans.jcode.core.util.AttributeType.SQL_DATE;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_TIME;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_TIMESTAMP;
 import static org.netbeans.jcode.core.util.AttributeType.STRING;
+import org.netbeans.jpa.modeler.spec.Embeddable;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
-import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
+import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 
 /**
  *
  * @author Gaurav_Gupta
  */
-public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
+public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
 
     private final ModelerFile modelerFile;
-    private BaseAttribute baseAttribute;
+    private final boolean mapKey;
+    private Attribute attribute;
+    private final EntityMappings entityMappings;
 
     @Override
     public void init() {
         initComponents();
     }
-    private void setEnumTypeSelected(EnumTypeHandler handler) {
-        if(handler.getEnumerated()!=null){
-        type_ComboBox.setSelectedItem("Enumerated");
-        if (handler.getEnumerated() == EnumType.STRING) {
-            String_RadioButton.setSelected(true);
-        } else if (handler.getEnumerated() == EnumType.ORDINAL) {
-            Ordinal_RadioButton.setSelected(true);
-        } else {
-            Default_Ordinal_RadioButton.setSelected(true);
-        }
-        }
-    }
     
-    private void setEnumTypeHandler(EnumTypeHandler handler) {
-        if (String_RadioButton.isSelected()) {
-            handler.setEnumerated(EnumType.STRING);
-        } else if (Ordinal_RadioButton.isSelected()) {
-            handler.setEnumerated(EnumType.ORDINAL);
-        } else if (Default_Ordinal_RadioButton.isSelected()) {
-            handler.setEnumerated(EnumType.DEFAULT);
-        }
-    }
-
-    private void setTemporalTypeSelected(TemporalTypeHandler handler) {
-        if (handler.getTemporal() != null) {
-            type_ComboBox.setSelectedItem("Temporal");
-            if (handler.getTemporal() == TemporalType.DATE) {
-                Date_RadioButton.setSelected(true);
-            } else if (handler.getTemporal() == TemporalType.TIME) {
-                Time_RadioButton.setSelected(true);
-            } else if (handler.getTemporal() == TemporalType.TIMESTAMP) {
-                TimeStamp_RadioButton.setSelected(true);
-            }
-        } else {
-            type_ComboBox.setSelectedItem("Default");
-        }
-    }
-    
-    private void setTemporalTypeHandler(TemporalTypeHandler handler) {
-        if (Date_RadioButton.isSelected()) {
-            handler.setTemporal(TemporalType.DATE);
-        } else if (Time_RadioButton.isSelected()) {
-            handler.setTemporal(TemporalType.TIME);
-        } else if (TimeStamp_RadioButton.isSelected()) {
-            handler.setTemporal(TemporalType.TIMESTAMP);
-        }
-    }
     @Override
-    public BaseAttribute getValue() {
-        if (baseAttribute instanceof ElementCollection) {
-            ElementCollection elementCollection = (ElementCollection) baseAttribute;
+    public Attribute getValue() {
+        String type = (String) type_ComboBox.getSelectedItem();
+        if (mapKey) {
+            MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
+            mapKeyHandler.resetMapAttribute();
+            switch (type) {
+                case ENTITY:
+                    mapKeyHandler.setMapKeyEntity(((ComboBoxValue<Entity>)dataType_ComboBox.getSelectedItem()).getValue());
+                    break;
+                case EMBEDDABLE:
+                    mapKeyHandler.setMapKeyEmbeddable(((ComboBoxValue<Embeddable>)dataType_ComboBox.getSelectedItem()).getValue());
+                    break;
+                case ENUMERATED:
+                    mapKeyHandler.setMapKeyEnumerated(getSelectedEnumType());
+                    mapKeyHandler.setMapKeyAttributeType(dataType_ComboBox.getSelectedItem().toString());
+                    break;
+                case TEMPORAL:
+                    mapKeyHandler.setMapKeyTemporal(getSelectedTemporalType());
+                    mapKeyHandler.setMapKeyAttributeType(dataType_ComboBox.getSelectedItem().toString());
+                    break;
+                case DEFAULT:
+                    mapKeyHandler.setMapKeyAttributeType(dataType_ComboBox.getSelectedItem().toString());
+                    break;
+            }
+        } else if (attribute instanceof ElementCollection) {
+            ElementCollection elementCollection = (ElementCollection) attribute;
             elementCollection.setLob(null);
             elementCollection.setEnumerated(null);
             elementCollection.setTemporal(null);
-            if (type_ComboBox.getSelectedItem().equals("Enumerated")) {
-                setEnumTypeHandler(elementCollection);
-            } else if (type_ComboBox.getSelectedItem().equals("Lob")) {
-                elementCollection.setLob(new Lob());
-            } else if (type_ComboBox.getSelectedItem().equals("Temporal")) {
-                setTemporalTypeHandler(elementCollection);
+            switch (type) {
+                case ENUMERATED:
+                    elementCollection.setEnumerated(getSelectedEnumType());
+                    break;
+                case LOB:
+                    elementCollection.setLob(new Lob());
+                    break;
+                case TEMPORAL:
+                    elementCollection.setTemporal(getSelectedTemporalType());
+                    break;
             }
             elementCollection.setTargetClass(dataType_ComboBox.getSelectedItem().toString());
-        } else if (baseAttribute instanceof Transient) {
-            Transient _transient = (Transient) baseAttribute;
+        } else if (attribute instanceof Transient) {
+            Transient _transient = (Transient) attribute;
             _transient.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
-        } else if (baseAttribute instanceof PersistenceBaseAttribute) {// Id, Version, Basic
-            PersistenceBaseAttribute persistenceBaseAttribute = (PersistenceBaseAttribute) baseAttribute;
+        } else if (attribute instanceof PersistenceBaseAttribute) {// Id, Version, Basic
+            PersistenceBaseAttribute persistenceBaseAttribute = (PersistenceBaseAttribute) attribute;
             persistenceBaseAttribute.setTemporal(null);
-            if (type_ComboBox.getSelectedItem().equals("Temporal")) {
-                setTemporalTypeHandler(persistenceBaseAttribute);
+            if (type.equals(TEMPORAL)) {
+                persistenceBaseAttribute.setTemporal(getSelectedTemporalType());
             }
             persistenceBaseAttribute.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
-             if (persistenceBaseAttribute instanceof Basic) {
+            if (persistenceBaseAttribute instanceof Basic) {
                 Basic basic = (Basic) persistenceBaseAttribute;
                 basic.setLob(null);
                 basic.setEnumerated(null);
-                if (type_ComboBox.getSelectedItem().equals("Enumerated")) {
-                    setEnumTypeHandler(basic);
-                } else if (type_ComboBox.getSelectedItem().equals("Lob")) {
-                    basic.setLob(new Lob());
+                switch (type) {
+                    case ENUMERATED:
+                        basic.setEnumerated(getSelectedEnumType());
+                        break;
+                    case LOB:
+                        basic.setLob(new Lob());
+                        break;
                 }
-            } 
+            }
         }
 
-        return baseAttribute;
+        return attribute;
     }
 
     private void initTypeComboBox() {
         TitledBorder titledBorder = (TitledBorder) jLayeredPane1.getBorder();
         List<String> type = new ArrayList<>();
-        type.add("Default");
-        if (baseAttribute instanceof PersistenceBaseAttribute) {
-            type.add("Temporal");
-            titledBorder.setTitle("Basic Attribute");
-            if (baseAttribute instanceof Basic) {
-                type.add("Enumerated");
-                type.add("Lob");
+        type.add(DEFAULT);
+        if (mapKey) {
+            type.add(ENUMERATED);
+            type.add(TEMPORAL);
+            type.add(ENTITY);
+            type.add(EMBEDDABLE);
+            titledBorder.setTitle("MapKey Attribute");
+        } else if (attribute instanceof PersistenceBaseAttribute) {
+            type.add(TEMPORAL);
+            if (attribute instanceof Basic) {
+                type.add(ENUMERATED);
+                type.add(LOB);
                 titledBorder.setTitle("Basic Attribute");
-            } else if (baseAttribute instanceof Id) {
+            } else if (attribute instanceof Id) {
                 titledBorder.setTitle("Id Attribute");
-            } else if (baseAttribute instanceof Version) {
+            } else if (attribute instanceof Version) {
                 titledBorder.setTitle("Version Attribute");
             }
-        } else if (baseAttribute instanceof ElementCollection) {
-            type.add("Enumerated");
-            type.add("Lob");
-            type.add("Temporal");
+        } else if (attribute instanceof ElementCollection) {
+            type.add(ENUMERATED);
+            type.add(LOB);
+            type.add(TEMPORAL);
             titledBorder.setTitle("ElementCollection<Basic> Attribute");
-        } else if (baseAttribute instanceof Transient) {
+        } else if (attribute instanceof Transient) {
             titledBorder.setTitle("Transient Attribute");
         }
 
         type_ComboBox.removeAllItems();
         type_ComboBox.setModel(new DefaultComboBoxModel(type.toArray(new String[0])));
-
         //ElementCollection[Basic Type Value] => Lob,Enumerated,Temporal
         //Id => Temporal
     }
@@ -198,105 +194,158 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
     private void setDataTypeEditable() {
         dataType_ComboBox.setEditable(true);
         dataType_Action.setVisible(true);
-
     }
 
     private void initDataTypeComboBox() {
         String[] dataType = null;
-// Issue Fix #5845 Start
+        List<ComboBoxValue> classList = null;
+
         setDataTypeEditable();
-        if (baseAttribute instanceof Basic) {
-            if ("Enumerated".equals(type_ComboBox.getSelectedItem())) {
-                //skip
-            } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
-                dataType = new String[]{DATE, CALENDAR};
-            } else {
-                dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                    //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
-                    /*DATE, CALENDAR,*/
-                    SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+        String type = (String) type_ComboBox.getSelectedItem();
+        if (mapKey) {
+            switch (type) {
+                case ENTITY:
+                    classList = entityMappings.getEntity().stream().map(e -> new ComboBoxValue<Entity>(e, e.getClazz())).collect(toList());
+                    break;
+                case EMBEDDABLE:
+                    classList = entityMappings.getEmbeddable().stream().map(e -> new ComboBoxValue<Embeddable>(e, e.getClazz())).collect(toList());
+                    break;
+                case ENUMERATED:
+                    break;
+                case TEMPORAL:
+                    dataType = new String[]{DATE, CALENDAR};
+                    break;
+                default:
+                    dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
+                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
+                        //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
+                        /*DATE, CALENDAR,*/
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                    break;
             }
-        } else if (baseAttribute instanceof ElementCollection) {
-            if ("Enumerated".equals(type_ComboBox.getSelectedItem())) {
-                //skip
-            } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
-                dataType = new String[]{DATE, CALENDAR};
-            } else {
-                dataType = new String[]{STRING, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER,
-                    BIGINTEGER, BIGDECIMAL,
-                    //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
-                    /*DATE, CALENDAR,*/
-                    SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+        } else if (attribute instanceof Basic) {
+            switch (type) {
+                case ENUMERATED:
+                    break;
+                case TEMPORAL:
+                    dataType = new String[]{DATE, CALENDAR};
+                    break;
+                default:
+                    dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
+                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                    break;
             }
-        } else if (baseAttribute instanceof Id) {
-            if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
-                dataType = new String[]{DATE};
-            } else {
-                dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER,
-                    BIGINTEGER, BIGDECIMAL, DATE, SQL_DATE};
+        } else if (attribute instanceof ElementCollection) {
+            switch (type) {
+                case ENUMERATED:
+                    break;
+                case TEMPORAL:
+                    dataType = new String[]{DATE, CALENDAR};
+                    break;
+                default:
+                    dataType = new String[]{STRING, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER,
+                        LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                    break;
             }
-        } else if (baseAttribute instanceof Version) {
+        } else if (attribute instanceof Id) {
+            switch (type) {
+                case TEMPORAL:
+                    dataType = new String[]{DATE};
+                    break;
+                default:
+                    dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER,
+                        BIGINTEGER, BIGDECIMAL, DATE, SQL_DATE};
+                    break;
+            }
+        } else if (attribute instanceof Version) {
             dataType = new String[]{INT, INT_WRAPPER, SHORT, SHORT_WRAPPER, LONG, LONG_WRAPPER, SQL_TIMESTAMP};
-        } else if (baseAttribute instanceof Transient) {
+        } else if (attribute instanceof Transient) {
             //skip
         }
         if (dataType == null) {
-            dataType = new String[]{""};
+            dataType = new String[]{EMPTY};
         }
-// Issue Fix #5845 End
         dataType_ComboBox.removeAllItems();
-        dataType_ComboBox.setModel(new DefaultComboBoxModel(dataType));
+        if (mapKey && classList != null) {
+            dataType_ComboBox.setModel(new DefaultComboBoxModel(classList.toArray()));
+        } else {
+            dataType_ComboBox.setModel(new DefaultComboBoxModel(dataType));
+        }
         dataType_ComboBox.setSelectedItem(dataType[0]);
-
     }
 
     @Override
-    public void setValue(BaseAttribute baseAttribute) {
-        this.baseAttribute = baseAttribute;
+    public void setValue(Attribute attribute) {
+        this.attribute = attribute;
         initTypeComboBox();
-        if (baseAttribute instanceof Basic) {
-            Basic basic = (Basic) baseAttribute;
+        if (mapKey) {
+            MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
+            if (mapKeyHandler.getMapKeyEntity()!= null) {
+                type_ComboBox.setSelectedItem(ENTITY);
+            } else if (mapKeyHandler.getMapKeyEmbeddable()!= null) {
+                type_ComboBox.setSelectedItem(EMBEDDABLE);
+            } else if (mapKeyHandler.getMapKeyEnumerated() != null) {
+                selectEnumType(mapKeyHandler.getMapKeyEnumerated());
+            } else if (mapKeyHandler.getMapKeyTemporal() != null) {
+                selectedTemporalType(mapKeyHandler.getMapKeyTemporal());
+            } else {
+                type_ComboBox.setSelectedItem(DEFAULT);
+            }
+        } else if (attribute instanceof Basic) {
+            Basic basic = (Basic) attribute;
             if (basic.getLob() != null) {
-                type_ComboBox.setSelectedItem("Lob");
+                type_ComboBox.setSelectedItem(LOB);
             } else if (basic.getEnumerated() != null) {
-                setEnumTypeSelected(basic);
+                selectEnumType(basic.getEnumerated());
             } else if (basic.getTemporal() != null) {
-                setTemporalTypeSelected(basic);
+                selectedTemporalType(basic.getTemporal());
             } else {
-                type_ComboBox.setSelectedItem("Default");
+                type_ComboBox.setSelectedItem(DEFAULT);
             }
-
-        } else if (baseAttribute instanceof ElementCollection) {
-            ElementCollection elementCollection = (ElementCollection) baseAttribute;
+        } else if (attribute instanceof ElementCollection) {
+            ElementCollection elementCollection = (ElementCollection) attribute;
             if (elementCollection.getLob() != null) {
-                type_ComboBox.setSelectedItem("Lob");
+                type_ComboBox.setSelectedItem(LOB);
             } else if (elementCollection.getEnumerated() != null) {
-                setEnumTypeSelected(elementCollection);
+                selectEnumType(elementCollection.getEnumerated());
             } else if (elementCollection.getTemporal() != null) {
-                setTemporalTypeSelected(elementCollection);
+                selectedTemporalType(elementCollection.getTemporal());
             } else {
-                type_ComboBox.setSelectedItem("Default");
+                type_ComboBox.setSelectedItem(DEFAULT);
             }
 
-        } else if (baseAttribute instanceof Id) {
-            setTemporalTypeSelected((Id) baseAttribute);
-        } else if (baseAttribute instanceof Version) {
-            setTemporalTypeSelected((Version) baseAttribute);
-        } else if (baseAttribute instanceof Transient) {
+        } else if (attribute instanceof Id) {
+            selectedTemporalType(((Id) attribute).getTemporal());
+        } else if (attribute instanceof Version) {
+            selectedTemporalType(((Version) attribute).getTemporal());
+        } else if (attribute instanceof Transient) {
 
         } else {
             throw new UnsupportedOperationException("Not supported yet.");
         }
         type_ComboBoxActionPerformed(null);
         initDataTypeComboBox();
-        dataType_ComboBox.setSelectedItem(baseAttribute.getAttributeType());
+        if (attribute instanceof BaseAttribute) {
+            dataType_ComboBox.setSelectedItem(((BaseAttribute) attribute).getAttributeType());
+        } else if (attribute instanceof MapKeyHandler) {
+            MapKeyHandler relationAttribute = (MapKeyHandler) attribute;
+            if (relationAttribute.getMapKeyEntity() != null) {
+                dataType_ComboBox.setSelectedItem(new ComboBoxValue<>(relationAttribute.getMapKeyEntity(), relationAttribute.getMapKeyEntity().getClazz()));
+            } else if (relationAttribute.getMapKeyEmbeddable() != null) {
+                dataType_ComboBox.setSelectedItem(new ComboBoxValue<>(relationAttribute.getMapKeyEmbeddable(), relationAttribute.getMapKeyEmbeddable().getClazz()));
+            } else if (relationAttribute.getMapKeyAttributeType() != null) {
+                dataType_ComboBox.setSelectedItem(relationAttribute.getMapKeyAttributeType());
+            }
+        }
 
     }
 
-
-
-    public FieldTypePanel(ModelerFile modelerFile) {
+    public FieldTypePanel(ModelerFile modelerFile, boolean mapKey) {
         this.modelerFile = modelerFile;
+        this.mapKey = mapKey;
+        this.entityMappings = (EntityMappings) modelerFile.getModelerScene().getBaseElementSpec();
     }
 
     /**
@@ -494,31 +543,32 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private String previousType = null;
+//    private String previousType = null;
     private void type_ComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type_ComboBoxActionPerformed
-        if ("Enumerated".equals(type_ComboBox.getSelectedItem())) {
-            Temporal_LayeredPane.setVisible(false);
-            Enumerated_LayeredPane1.setVisible(true);
-            if (evt != null) {
-                Default_Ordinal_RadioButton.setSelected(true);
+        String type = (String) type_ComboBox.getSelectedItem();
+        Temporal_LayeredPane.setVisible(false);
+        Enumerated_LayeredPane1.setVisible(false);
+        if (null != type) {
+            switch (type) {
+                case ENUMERATED:
+                    Enumerated_LayeredPane1.setVisible(true);
+                    if (evt != null) {
+                        Default_Ordinal_RadioButton.setSelected(true);
+                    }
+                    break;
+                case TEMPORAL:
+                    Temporal_LayeredPane.setVisible(true);
+                    if (evt != null) {
+                        Date_RadioButton.setSelected(true);
+                    }
+                    break;
+//                    if (ENUMERATED.equals(previousType) || TEMPORAL.equals(previousType)) {
+//                    }
             }
             initDataTypeComboBox();
-        } else if ("Temporal".equals(type_ComboBox.getSelectedItem())) {
-            Temporal_LayeredPane.setVisible(true);
-            Enumerated_LayeredPane1.setVisible(false);
-            if (evt != null) {
-                Date_RadioButton.setSelected(true);
-            }
-            initDataTypeComboBox();
-        } else {
-            if ("Enumerated".equals(previousType) || "Temporal".equals(previousType)) {
-                initDataTypeComboBox();
-            }
-            Temporal_LayeredPane.setVisible(false);
-            Enumerated_LayeredPane1.setVisible(false);
-        }
-        previousType = (String) type_ComboBox.getSelectedItem();
 
+        }
+//        previousType = (String) type;
     }//GEN-LAST:event_type_ComboBoxActionPerformed
 
     private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
@@ -550,5 +600,60 @@ public class FieldTypePanel extends GenericEmbeddedEditor<BaseAttribute> {
     private javax.swing.JLabel type_Label;
     private javax.swing.JLayeredPane type_LayeredPane;
     // End of variables declaration//GEN-END:variables
+
+    private void selectEnumType(EnumType enumType) {
+        if (enumType != null) {
+            type_ComboBox.setSelectedItem(ENUMERATED);
+            if (enumType == EnumType.STRING) {
+                String_RadioButton.setSelected(true);
+            } else if(enumType == EnumType.ORDINAL) {
+                Ordinal_RadioButton.setSelected(true);
+            } else {
+                Default_Ordinal_RadioButton.setSelected(true);
+            }
+        }
+    }
+
+    private EnumType getSelectedEnumType() {
+        if (String_RadioButton.isSelected()) {
+            return EnumType.STRING;
+        } else if (Ordinal_RadioButton.isSelected()) {
+            return EnumType.ORDINAL;
+        }
+        return EnumType.DEFAULT;
+    }
+
+    private void selectedTemporalType(TemporalType temporalType) {
+        if (temporalType != null) {
+            type_ComboBox.setSelectedItem(TEMPORAL);
+            if (temporalType == TemporalType.DATE) {
+                Date_RadioButton.setSelected(true);
+            } else if (temporalType == TemporalType.TIME) {
+                Time_RadioButton.setSelected(true);
+            } else if (temporalType == TemporalType.TIMESTAMP) {
+                TimeStamp_RadioButton.setSelected(true);
+            }
+        } else {
+            type_ComboBox.setSelectedItem(DEFAULT);
+        }
+    }
+
+    private TemporalType getSelectedTemporalType() {
+        if (Date_RadioButton.isSelected()) {
+            return TemporalType.DATE;
+        } else if (Time_RadioButton.isSelected()) {
+            return TemporalType.TIME;
+        } else if (TimeStamp_RadioButton.isSelected()) {
+            return TemporalType.TIMESTAMP;
+        }
+        return null;
+    }
+
+    private final static String ENTITY = "Entity";
+    private final static String TEMPORAL = "Temporal";
+    private final static String DEFAULT = "Default";
+    private final static String ENUMERATED = "Enumerated";
+    private final static String EMBEDDABLE = "Embeddable";
+    private final static String LOB = "Lob";
 
 }

@@ -59,7 +59,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
 
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
-
+        createMapKeyPropertySet(set);
     }
     /**
      * @return the embeddableFlowWidget

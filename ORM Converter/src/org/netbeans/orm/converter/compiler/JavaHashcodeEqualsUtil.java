@@ -101,7 +101,7 @@ public class JavaHashcodeEqualsUtil {
         AttributeType.Type type = AttributeType.getType(dataType);
         if (type == AttributeType.Type.STRING) {
             kindOfType = KindOfType.STRING;
-        } else if (type == AttributeType.Type.PREMITIVE) {
+        } else if (type == AttributeType.Type.PRIMITIVE) {
             kindOfType = KindOfType.valueOf(dataType.toUpperCase());
         } else if (type == AttributeType.Type.WRAPPER) {
             kindOfType = KindOfType.OTHER;//valueOf(AttributeType.getPrimitiveType(dataType).toUpperCase());
