@@ -45,7 +45,7 @@ See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStar
 
 For bugs, questions and discussions please use the [Github Issues](https://github.com/jGauravGupta/jpamodeler/issues).
 
-If you like this project, don't forget to give us a star on GitHub!
+#### If you like:heart: this project, don't forget:blush: to give us a star:star2: on GitHub!
 
 
 [license]:LICENSE
