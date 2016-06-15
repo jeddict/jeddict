@@ -42,5 +42,5 @@ See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStar
 
 For bugs, questions and discussions please use the [Github Issues](https://github.com/jGauravGupta/jpamodeler/issues).
 
-[license]:LICENSE-2.0.txt
+[license]:LICENSE
 [license img]:https://img.shields.io/badge/License-Apache%202-blue.svg
