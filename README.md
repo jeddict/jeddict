@@ -20,14 +20,15 @@ See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStar
 
 ## What does it do?
 
-##### 1) Visualize architecture
-##### 2) JPA 2.1 source generation
-##### 3) Reverse Engineering of Java Source Code
-##### 4) Visual creation of database structures
-##### 5) DB Reverse Engineering
-##### 6) SQL/DDL script generation
-##### 7) Model documentation
-##### 8) Improves your productivity
+##### 1) JavaEE 8 source generation
+##### 2) Visualize architecture
+##### 3) JPA 2.1 source generation
+##### 4) Reverse Engineering of Java Source Code
+##### 5) Visual creation of database structures
+##### 6) DB Reverse Engineering
+##### 7) SQL/DDL script generation
+##### 8) Model documentation
+##### 9) Improves your productivity
 
 ## Communication
 
