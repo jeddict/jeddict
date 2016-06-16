@@ -8,9 +8,9 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import static org.netbeans.jcode.jpa.JPAConstants.ENUMERATED_FQN;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -46,8 +46,10 @@ public enum EnumType {
         return valueOf(v);
     }
 
-    public static EnumType load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Enumerated");
+    public static EnumType load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, ENUMERATED_FQN);
+        }
         EnumType enumType = null;
         if (annotationMirror != null) {
             Object value = JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");

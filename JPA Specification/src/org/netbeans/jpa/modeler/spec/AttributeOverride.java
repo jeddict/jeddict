@@ -70,7 +70,7 @@ public class AttributeOverride implements Comparable<AttributeOverride> {
 
             AnnotationMirror columnsAnnot = (AnnotationMirror) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "column");
             if (columnsAnnot != null) {
-                attributeOverride.column = Column.load(element, columnsAnnot);
+                attributeOverride.column = new Column().load(element, columnsAnnot);
             }
         }
         return attributeOverride;

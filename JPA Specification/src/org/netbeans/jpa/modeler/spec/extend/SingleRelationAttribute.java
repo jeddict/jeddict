@@ -20,9 +20,12 @@ import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.ErrorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.IdClass;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
@@ -53,8 +56,8 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
     
 
     @Override
-    public void load(AnnotationMirror annotationMirror, Element element, VariableElement variableElement) {
-        super.load(annotationMirror, element, variableElement);
+    public void loadAttribute(EntityMappings entityMappings, Element element, VariableElement variableElement, AnnotationMirror annotationMirror) {
+        super.loadAttribute(entityMappings, element, variableElement, annotationMirror);
         if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")) {
             this.setPrimaryKey(Boolean.TRUE);
         }
@@ -64,13 +67,13 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
             List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
             if (joinColumnsAnnot != null) {
                 for (Object joinColumnObj : joinColumnsAnnot) {
-                    this.getJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) joinColumnObj));
+                    this.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
                 }
             }
         } else {
             AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
             if (joinColumnAnnotationMirror != null) {
-                this.getJoinColumn().add(JoinColumn.load(element, joinColumnAnnotationMirror));
+                this.getJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
             }
         }
 
@@ -88,6 +91,17 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
         if (foreignKeyValue != null) {
             this.foreignKey = ForeignKey.load(element, foreignKeyValue);
         }
+        
+        DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "targetEntity");
+        if (declaredType == null) { 
+            if (variableElement.asType() instanceof ErrorType) { //variable => "<any>"
+                throw new TypeNotPresentException(this.name + " type not found", null);
+            }
+           this.targetEntity = variableElement.getSimpleName().toString();
+        } else {
+            this.targetEntity = declaredType.asElement().getSimpleName().toString();
+        }
+        
     }
 
     /**

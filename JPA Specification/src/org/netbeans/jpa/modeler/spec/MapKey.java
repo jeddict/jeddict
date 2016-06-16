@@ -6,10 +6,15 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_FQN;
+import org.netbeans.jpa.source.JAREAnnotationLoader;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -40,10 +45,24 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "map-key")
-public class MapKey {
+public class MapKey implements JAREAnnotationLoader {
 
     @XmlAttribute
     protected String name;
+    
+    
+    @Override
+    public MapKey load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_FQN);
+        }
+        MapKey mapKey = null;
+        if (annotationMirror != null) {
+            mapKey = this;
+            mapKey.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+        }
+        return mapKey;
+    }
 
     /**
      * Gets the value of the name property.

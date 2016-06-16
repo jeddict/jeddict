@@ -393,11 +393,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
             elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
-            elementCollection.setTargetClass(parsedElementCollection.getTargetClass());
+            elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
             if (parsedFetchType != null) {
                 elementCollection.setFetchType(parsedFetchType.value());
             }
-            TemporalType parsedTemporal = parsedElementCollection.getTemporal();
             Lob parsedLob = parsedElementCollection.getLob();
 
             VariableDefSnippet variableDef = getVariableDef(parsedElementCollection);

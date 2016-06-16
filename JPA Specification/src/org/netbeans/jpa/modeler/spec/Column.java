@@ -8,6 +8,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -16,6 +17,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.validator.column.ColumnValidator;
+import org.netbeans.jpa.source.JAREAnnotationLoader;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -61,7 +63,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column")
 @XmlJavaTypeAdapter(value = ColumnValidator.class)
-public class Column extends BaseElement {
+public class Column extends BaseElement implements JAREAnnotationLoader {
 
     @XmlAttribute(name = "name")
     protected String name;
@@ -84,15 +86,14 @@ public class Column extends BaseElement {
     @XmlAttribute(name = "scale")
     protected Integer scale;
 
-    public static Column load(Element element) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
-        return Column.load(element, annotationMirror);
-    }
-
-    public static Column load(Element element, AnnotationMirror annotationMirror) {
+    @Override
+    public Column load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
+        }
         Column column = null;
         if (annotationMirror != null) {
-            column = new Column();
+            column = this;
             column.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             column.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
             column.nullable = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "nullable");
@@ -105,8 +106,13 @@ public class Column extends BaseElement {
             column.scale = (Integer) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "scale");
         }
         return column;
-
     }
+
+    public Column load(Element element) {
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.Column");
+        return load(element, annotationMirror);
+    }
+
 
     /**
      * Gets the value of the name property.
@@ -332,4 +338,5 @@ public class Column extends BaseElement {
 
         return accessr;
     }
+ 
 }

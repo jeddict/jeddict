@@ -6,9 +6,10 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -52,4 +53,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "map-key-join-column")
 public class MapKeyJoinColumn extends JoinColumn {
 
+    @Override
+    public MapKeyJoinColumn load(Element element, AnnotationMirror annotationMirror) {
+        return (MapKeyJoinColumn)super.load(element, annotationMirror);
+    }
 }

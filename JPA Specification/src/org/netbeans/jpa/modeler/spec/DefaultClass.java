@@ -63,7 +63,7 @@ public class DefaultClass extends JavaClass {
 
     public void addAttribute(DefaultAttribute attributes) {
         if (this.attributes == null) {
-            this.attributes = new ArrayList<DefaultAttribute>();
+            this.attributes = new ArrayList<>();
         }
         this.attributes.add(attributes);
         attributes.setJavaClass(this);

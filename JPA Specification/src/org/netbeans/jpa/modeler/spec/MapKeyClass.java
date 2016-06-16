@@ -6,10 +6,16 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.type.DeclaredType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_CLASS_FQN;
+import org.netbeans.jpa.source.JAREAnnotationLoader;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -40,10 +46,35 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "map-key-class")
-public class MapKeyClass {
+public class MapKeyClass implements JAREAnnotationLoader {
 
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
+    
+        
+    @Override
+    public MapKeyClass load(Element element, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_CLASS_FQN);
+        }
+        MapKeyClass mapKeyClass = null;
+        if (annotationMirror != null) {
+            mapKeyClass = this;
+            DeclaredType declaredType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+            if (declaredType != null) {
+                mapKeyClass.clazz = declaredType.asElement().getSimpleName().toString();
+            }
+        }
+        return mapKeyClass;
+    }
+    
+    public static DeclaredType getDeclaredType(Element element) {
+         AnnotationMirror   annotationMirror = JavaSourceParserUtil.findAnnotation(element, MAP_KEY_CLASS_FQN);
+        if (annotationMirror != null) {
+             return (DeclaredType) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "value");
+        }
+        return null;
+    }
 
     /**
      * Gets the value of the clazz property.

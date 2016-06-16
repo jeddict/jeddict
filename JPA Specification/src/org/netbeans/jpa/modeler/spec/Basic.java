@@ -80,7 +80,7 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
         Basic basic = new Basic();
         basic.loadAttribute(element, variableElement);
         basic.lob = Lob.load(element, variableElement);
-        basic.enumerated = EnumType.load(element, variableElement);
+        basic.enumerated = EnumType.load(element, null);
         basic.fetch = FetchType.load(element, annotationMirror);
         if (annotationMirror != null) {
             basic.optional = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "optional");

@@ -24,8 +24,11 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.Plane;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.jpa.modeler.spec.extend.cache.Cache;
@@ -715,7 +718,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     public void addEntity(Entity entity_In) {
         if (entity == null) {
-            entity = new ArrayList<Entity>();
+            entity = new ArrayList<>();
         }
         this.entity.add(entity_In);
         entity_In.setRootElement(this);
@@ -736,6 +739,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public IdentifiableClass findIdentifiableClass(String className) {
+        if(StringUtils.isBlank(className)){
+            return null;
+        }
         Entity entity = findEntity(className);
         if (entity == null) {
             return findMappedSuperclass(className);
@@ -745,6 +751,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Entity getEntity(String id) {
+        if(StringUtils.isBlank(id)){
+            return null;
+        }
         if (entity != null) {
             for (Entity entity_In : entity) {
                 if (id.equals(entity_In.getId())) {
@@ -756,6 +765,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Embeddable getEmbeddable(String id) {
+        if(StringUtils.isBlank(id)){
+            return null;
+        }
         if (embeddable != null) {
             for (Embeddable embeddable_In : embeddable) {
                 if (id.equals(embeddable_In.getId())) {
@@ -767,6 +779,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public List<Entity> findAllEntity(String entityName) {
+        if(StringUtils.isBlank(entityName)){
+            return null;
+        }
         List<Entity> entities = new ArrayList<Entity>();
         if (entity != null) {
             for (Entity entity_In : entity) {
@@ -787,13 +802,16 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     public void addMappedSuperclass(MappedSuperclass mappedSuperclass_In) {
         if (mappedSuperclass == null) {
-            mappedSuperclass = new ArrayList<MappedSuperclass>();
+            mappedSuperclass = new ArrayList<>();
         }
         this.mappedSuperclass.add(mappedSuperclass_In);
         mappedSuperclass_In.setRootElement(this);
     }
 
     public MappedSuperclass findMappedSuperclass(String mappedSuperclassName) {
+        if(StringUtils.isBlank(mappedSuperclassName)){
+            return null;
+        }
         if (mappedSuperclass != null) {
             for (MappedSuperclass mappedSuperclass_In : mappedSuperclass) {
                 if (mappedSuperclassName.equals(mappedSuperclass_In.getClazz())) {
@@ -820,6 +838,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public Embeddable findEmbeddable(String embeddableName) {
+        if(StringUtils.isBlank(embeddableName)){
+            return null;
+        }
         if (embeddable != null) {
             for (Embeddable embeddable_In : embeddable) {
                 if (embeddableName.equals(embeddable_In.getClazz())) {
@@ -830,15 +851,6 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         return null;
     }
 
-//    @Override
-//    public Map<String, String> getCustomAttributes() {
-//        return null;
-//    }
-//
-//    @Override
-//    public void setCustomAttributes(Map<String, String> customAttributes) {
-//          throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
     /**
      * @return the jpaDiagram
      */
@@ -1009,11 +1021,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             for (ManyToMany manyToMany : new ArrayList<>(managedClass.getAttributes().getManyToMany())) {
                 if (manyToMany.getMappedBy() == null) {
                     manageSiblingAttribute(managedClass, manyToMany);
+                    manageMapKeyAttribute(managedClass, manyToMany);
                 }
             }
             for (OneToMany oneToMany : new ArrayList<>(managedClass.getAttributes().getOneToMany())) {
                 if (oneToMany.getMappedBy() == null) {
                     manageSiblingAttribute(managedClass, oneToMany);
+                    manageMapKeyAttribute(managedClass, oneToMany);
                 }
             }
             for (ManyToOne manyToOne : new ArrayList<>(managedClass.getAttributes().getManyToOne())) {
@@ -1022,6 +1036,12 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             for (OneToOne oneToOne : new ArrayList<>(managedClass.getAttributes().getOneToOne())) {
                 if (oneToOne.getMappedBy() == null) {
                     manageSiblingAttribute(managedClass, oneToOne);
+                }
+            }
+            
+            for (ElementCollection elementCollection : new ArrayList<>(managedClass.getAttributes().getElementCollection())) {
+                if (elementCollection.getMapKeyAttributeType()!= null) {
+                    manageMapKeyAttribute(managedClass, elementCollection);
                 }
             }
 
@@ -1049,6 +1069,45 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         
     }
     
+    private void manageMapKeyAttribute(ManagedClass managedClass , MapKeyHandler mapKeyHandler) {
+        if(mapKeyHandler.getMapKeyAttributeType()==null){
+            return;
+        }
+        loadMapKeyAttribute(managedClass, mapKeyHandler);
+        mapKeyHandler.setMapKeyType(mapKeyHandler.getValidatedMapKeyType());
+    }
+    private void loadMapKeyAttribute(ManagedClass managedClass , MapKeyHandler mapKeyHandler) {
+        //Search in Entity
+        org.netbeans.jpa.modeler.spec.Entity entity = this.findEntity(mapKeyHandler.getMapKeyAttributeType());
+        if (entity != null) {
+            mapKeyHandler.setMapKeyEntity(entity);
+            return;
+        }
+        
+        //Search in Embeddable
+        Embeddable embeddable = this.findEmbeddable(mapKeyHandler.getMapKeyAttributeType());
+        if (embeddable != null) { 
+            mapKeyHandler.setMapKeyEmbeddable(embeddable);
+            return;
+        }
+        
+        //find Existing Attribute in current and connected class based on the instance
+        if (mapKeyHandler.getMapKey() != null && StringUtils.isNotBlank(mapKeyHandler.getMapKey().getName())) {
+            ManagedClass attributeContainerClass = null;
+            if (mapKeyHandler instanceof ElementCollection) {
+                attributeContainerClass = managedClass;
+            } else if (mapKeyHandler instanceof MultiRelationAttribute) {
+                MultiRelationAttribute multiRelationAttribute = (MultiRelationAttribute) mapKeyHandler;
+                attributeContainerClass = multiRelationAttribute.getConnectedEntity();
+            }
+            if (attributeContainerClass != null) {
+                List<Attribute> attributes = attributeContainerClass.getAttributes().findAllAttribute(mapKeyHandler.getMapKey().getName());
+                if (attributes != null && !attributes.isEmpty()) {
+                    mapKeyHandler.setMapKeyAttribute(attributes.get(0));
+                }
+            }
+        }
+    }
     // Issue Fix #5949 Start
     private void manageSiblingAttribute(JavaClass sourceJavaClass, RelationAttribute relationAttribute_Owner) {
         org.netbeans.jpa.modeler.spec.Entity targetEntity = this.findEntity(relationAttribute_Owner.getTargetEntity());

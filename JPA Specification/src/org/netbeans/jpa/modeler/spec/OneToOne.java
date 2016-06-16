@@ -92,11 +92,14 @@ public class OneToOne extends SingleRelationAttribute {
     @XmlAttribute(name = "orphan-removal")
     protected Boolean orphanRemoval;
 
-    public void load(Element element, VariableElement variableElement) {
-        AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToOne");
-        super.load(relationAnnotationMirror, element, variableElement);
-        this.mappedBy = (String) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "mappedBy");
-        this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(relationAnnotationMirror, "orphanRemoval");
+    public OneToOne load(EntityMappings entityMappings, Element element, VariableElement variableElement, AnnotationMirror annotationMirror) {
+        if(annotationMirror==null){
+          annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToOne");
+        }
+        super.loadAttribute(entityMappings, element, variableElement, annotationMirror);
+        this.mappedBy = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "mappedBy");
+        this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "orphanRemoval");
+        return this;
     }
 
     /**

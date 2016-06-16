@@ -6,6 +6,8 @@
 //
 package org.netbeans.jpa.modeler.spec;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -55,4 +57,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "mkc")
 public class MapKeyColumn extends Column {
 
+    @Override
+    public MapKeyColumn load(Element element, AnnotationMirror annotationMirror) {
+        return (MapKeyColumn)super.load(element, annotationMirror);
+    }
 }

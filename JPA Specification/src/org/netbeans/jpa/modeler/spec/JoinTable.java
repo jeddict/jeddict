@@ -117,13 +117,13 @@ public class JoinTable {
             List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
             if (joinColumnsAnnot != null) {
                 for (Object joinColumnObj : joinColumnsAnnot) {
-                    joinTable.getJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) joinColumnObj));
+                    joinTable.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
                 }
             }
             List inverseJoinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "inverseJoinColumns");
             if (inverseJoinColumnsAnnot != null) {
                 for (Object inverseJoinColumnsObj : inverseJoinColumnsAnnot) {
-                    joinTable.getInverseJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) inverseJoinColumnsObj));
+                    joinTable.getInverseJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) inverseJoinColumnsObj));
                 }
             }
             List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");

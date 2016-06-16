@@ -22,6 +22,7 @@ import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
+import org.netbeans.jpa.modeler.spec.MapKey;
 import org.netbeans.jpa.modeler.spec.MapKeyColumn;
 import org.netbeans.jpa.modeler.spec.MapKeyJoinColumn;
 import org.netbeans.jpa.modeler.spec.TemporalType;
@@ -78,4 +79,7 @@ public interface MapKeyHandler {
 
     public void resetMapAttribute();
 
+    MapKey getMapKey();
+            
+    void setMapKey(MapKey value);
 }

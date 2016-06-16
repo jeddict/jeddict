@@ -78,6 +78,9 @@ public class TypeIdentifierSnippet implements Snippet {
     }
     
     private String wrap(String dataType) {
+        if(dataType==null){
+            return null;
+        }
         return AttributeType.Type.PRIMITIVE ==  AttributeType.getType(dataType) ?
                 AttributeType.getWrapperType(dataType) : dataType;
     }

@@ -63,11 +63,12 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlType(name = "many-to-one", propOrder = {})
 public class ManyToOne extends SingleRelationAttribute {
 
-
-    public void load(Element element, VariableElement variableElement) {
-        AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ManyToOne");
-        super.load(relationAnnotationMirror, element, variableElement);
-
+    public ManyToOne load(EntityMappings entityMappings, Element element, VariableElement variableElement, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ManyToOne");
+        }
+        super.loadAttribute(entityMappings, element, variableElement, annotationMirror);
+        return this;
     }
 
     /**

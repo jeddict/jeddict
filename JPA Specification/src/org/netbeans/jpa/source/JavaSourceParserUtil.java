@@ -49,6 +49,10 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.WorkingCopy;
+import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
+import org.netbeans.jpa.modeler.spec.Embeddable;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse;
@@ -267,6 +271,15 @@ public class JavaSourceParserUtil {
         }
         return attribute;
     }
+    
+    public static TypeElement getTypeElement(DeclaredType attributeGenericType) {
+        TypeElement attribute = null;
+        Element attributeElement = attributeGenericType.asElement();
+        if (attributeElement.getKind() == ElementKind.CLASS && (attributeElement instanceof TypeElement)) {
+            attribute = (TypeElement) attributeElement;
+        }
+        return attribute;
+    }
 
     public static String findAnnotationValueAsString(AnnotationMirror annotation, String annotationKey) {
         String value = null;
@@ -352,6 +365,18 @@ public class JavaSourceParserUtil {
         }
         return false;
     }
+    
+    public static Embeddable loadEmbeddableClass(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType embeddableClass) {
+        Embeddable embeddableClassSpec = entityMappings.findEmbeddable(getSimpleClassName(embeddableClass.toString()));
+        if (embeddableClassSpec == null) {
+            boolean fieldAccess = element == variableElement;
+            embeddableClassSpec = new Embeddable();
+            TypeElement embeddableTypeElement = getTypeElement(embeddableClass); 
+            embeddableClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
+            entityMappings.addEmbeddable(embeddableClassSpec);
+        }
+        return embeddableClassSpec;
+    }
 
     public static boolean isMappedSuperClass(Element typeElement) {//TypeElement
         if (JavaSourceParserUtil.isAnnotatedWith(typeElement, "javax.persistence.MappedSuperclass")) {
@@ -366,12 +391,21 @@ public class JavaSourceParserUtil {
         }
         return false;
     }
+    
+    public static Entity loadEntityClass(EntityMappings entityMappings, Element element, VariableElement variableElement, DeclaredType entityClass) {
+        Entity entityClassSpec = entityMappings.findEntity(getSimpleClassName(entityClass.toString()));
+        if (entityClassSpec == null) {
+            boolean fieldAccess = element == variableElement;
+            entityClassSpec = new Entity();
+            TypeElement embeddableTypeElement = getTypeElement(entityClass);
+            entityClassSpec.load(entityMappings, embeddableTypeElement, fieldAccess);
+            entityMappings.addEntity(entityClassSpec);
+        }
+        return entityClassSpec;
+    }
 
     public static boolean isNonEntityClass(TypeElement typeElement) {
-        if (!isEntityClass(typeElement) && !isMappedSuperClass(typeElement) && !isEmbeddableClass(typeElement)) {
-            return true;
-        }
-        return false;
+        return !isEntityClass(typeElement) && !isMappedSuperClass(typeElement) && !isEmbeddableClass(typeElement);
     }
 
     public static int isRelationship(ExecutableElement method, boolean isFieldAccess) {

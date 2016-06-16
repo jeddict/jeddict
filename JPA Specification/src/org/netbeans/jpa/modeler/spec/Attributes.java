@@ -22,6 +22,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
+import static org.netbeans.jcode.jpa.JPAConstants.BASIC_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddedIdSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.IdSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.VersionSpecAccessor;
@@ -119,11 +123,11 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                     element = method;
                 }
 
-                if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Id")
+                if (JavaSourceParserUtil.isAnnotatedWith(element, ID_FQN)
                         && !(JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")
                         || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne"))) {
                     this.addId(Id.load(element, variableElement));
-                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Basic")) {
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, BASIC_FQN)) {
                     this.addBasic(Basic.load(element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Transient")) {
                     this.addTransient(Transient.load(element, variableElement));
@@ -132,8 +136,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ElementCollection")) {
                     this.addElementCollection(ElementCollection.load(entityMappings, element, variableElement));
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
-                    OneToOne oneToOneObj = new OneToOne();
-                    oneToOneObj.load(element, variableElement);
+                    OneToOne oneToOneObj = new OneToOne().load(entityMappings, element, variableElement, null);
                     this.addOneToOne(oneToOneObj);
                     if(StringUtils.isNotBlank(oneToOneObj.getMapsId())){
                         mapsId.add(oneToOneObj.getMapsId());
@@ -141,8 +144,7 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                         mapsId.add(oneToOneObj.getName());
                     }
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
-                    ManyToOne manyToOneObj = new ManyToOne();
-                    manyToOneObj.load(element, variableElement);
+                    ManyToOne manyToOneObj = new ManyToOne().load(entityMappings, element, variableElement, null);
                     this.addManyToOne(manyToOneObj);
                     if(StringUtils.isNotBlank(manyToOneObj.getMapsId())){
                         mapsId.add(manyToOneObj.getMapsId());
@@ -150,17 +152,15 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                         mapsId.add(manyToOneObj.getName());
                     }
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
-                    OneToMany oneToManyObj = new OneToMany();
-                    oneToManyObj.load(element, variableElement);
+                    OneToMany oneToManyObj = new OneToMany().load(entityMappings, element, variableElement, null);
                     this.addOneToMany(oneToManyObj);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
-                    ManyToMany manyToManyObj = new ManyToMany();
-                    manyToManyObj.load(element, variableElement);
+                    ManyToMany manyToManyObj = new ManyToMany().load(entityMappings, element, variableElement, null);
                     this.addManyToMany(manyToManyObj);
-                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.EmbeddedId")) {
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, EMBEDDED_ID_FQN)) {
                     this.setEmbeddedId(EmbeddedId.load(entityMappings, element, variableElement));
                     embeddedIdVariableElement = variableElement;
-                } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
+                } else if (JavaSourceParserUtil.isAnnotatedWith(element, EMBEDDED_FQN)) {
                     this.addEmbedded(Embedded.load(entityMappings, element, variableElement));
                 } else {
                     this.addBasic(Basic.load(element, variableElement)); //Default Annotation
