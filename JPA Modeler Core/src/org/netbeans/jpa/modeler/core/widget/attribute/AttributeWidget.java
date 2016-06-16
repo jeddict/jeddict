@@ -236,7 +236,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         this.addPropertyChangeListener("mapKeyType",(val) -> mapKeyHandler.resetMapAttribute());
         this.addPropertyVisibilityHandler("mapKeyType", mapKeyVisibilityHandler);
         this.addPropertyVisibilityHandler("mapKeyFieldType", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() == MapKeyType.NEW);
-        this.addPropertyVisibilityHandler("mapKey", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() != MapKeyType.NEW);
+        this.addPropertyVisibilityHandler("mapKey", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() == MapKeyType.EXT);
     }
 
 }

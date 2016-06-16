@@ -81,7 +81,6 @@ import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
-import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
@@ -244,6 +243,7 @@ public class PropertiesHandler {
                       if(!attributeWidgets.isEmpty()){
                          attribute = attributeWidgets.get(0).getBaseElementSpec();
                          mapKeyHandler.setMapKeyAttribute(attribute);
+                         
                       }
                 }
                 if (attribute != null) {
@@ -281,8 +281,9 @@ public class PropertiesHandler {
             }
 
         };
-        
-        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "mapKey", "Map Key", "", comboBoxListener);
+        org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("mapKey", "Map Key", "");
+        attribute.setAfter("mapKeyType");
+        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
     }
 
     public static ComboBoxPropertySupport getFetchTypeProperty(JPAModelerScene modelerScene, final FetchTypeHandler fetchTypeHandlerSpec) {
@@ -1016,24 +1017,28 @@ public class PropertiesHandler {
     public static EmbeddedPropertySupport getFieldTypeProperty(String id, String name, String description, boolean mapKey,
             AttributeWidget attributeWidget) {
 
-        GenericEmbedded entity = new GenericEmbedded(id, name, description);
+        GenericEmbedded properrty = new GenericEmbedded(id, name, description);
+        
         if (mapKey) {
-            entity.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),true));
+            properrty.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),true));
+            properrty.setAfter("mapKeyType");
         } else {
             if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
                 if (attributeWidget.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
-                    entity.setEntityEditor(null);
+                    properrty.setEntityEditor(null);
                 } else if (attributeWidget.getBaseElementSpec() instanceof Embedded) {//to Disable it
-                    entity.setEntityEditor(null);
+                    properrty.setEntityEditor(null);
                 } else {
-                    entity.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),false));
+                    properrty.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),false));
+                    properrty.setBefore("collectionType");
                 }
 
             } else if (attributeWidget.getBaseElementSpec() instanceof RelationAttribute) {
-                entity.setEntityEditor(null);
+                properrty.setEntityEditor(null);
+                properrty.setBefore("collectionType");
             }
         }
-        entity.setDataListener(new EmbeddedDataListener<Attribute>() {
+        properrty.setDataListener(new EmbeddedDataListener<Attribute>() {
             private Attribute attribute;
 //            private PersistenceClassWidget persistenceClassWidget = null;
 
@@ -1076,7 +1081,7 @@ public class PropertiesHandler {
             }
 
         });
-        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
+        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), properrty);
     }
  
     public static EmbeddedPropertySupport getCascadeProperty(RelationAttributeWidget attributeWidget) {

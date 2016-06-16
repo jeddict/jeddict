@@ -33,7 +33,7 @@ import org.netbeans.jpa.modeler.spec.TemporalType;
  */
 public interface MapKeyHandler {
 
-    Attribute getMapKeyAttribute();
+    Attribute getMapKeyAttribute();//MapKeyType.EXT is default type so always perform null check or getValidatedMapKeyType() == EXT
 
     void setMapKeyAttribute(Attribute mapKeyAttribute);
 

@@ -51,21 +51,21 @@
         </element>
         <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
             <attributes>
-                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description" after="name">
                     <display-name>Description</display-name>
                 </attribute>  
             </attributes>
         </element>
         <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">
             <attributes>
-                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true">
+                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
                     <display-name>MapKey Type</display-name>
                 </attribute>  
             </attributes>
         </element>
         <element id="ElementCollection" class="org.netbeans.jpa.modeler.spec.ElementCollection">
             <attributes>
-                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true">
+                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
                     <display-name>MapKey Type</display-name>
                 </attribute>  
             </attributes>

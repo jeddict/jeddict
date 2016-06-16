@@ -543,6 +543,9 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      * @return the mapKeyType
      */
     public MapKeyType getMapKeyType() {
+        if(mapKeyType==null){
+            return MapKeyType.EXT;
+        }
         return mapKeyType;
     }
 

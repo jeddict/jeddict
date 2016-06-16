@@ -977,6 +977,9 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
      * @return the mapKeyType
      */
     public MapKeyType getMapKeyType() {
+        if(mapKeyType==null){
+            return MapKeyType.EXT;
+        }
         return mapKeyType;
     }
 
