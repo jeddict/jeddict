@@ -41,9 +41,9 @@ public class BasicSpecAccessor extends BasicAccessor {
 
         accessor.setAttributeType(basic.getAttributeType());
         
-        AccessorUtil.setEnumerated(accessor, basic.getEnumerated(), false);
+        AccessorUtil.setEnumerated(accessor, basic.getEnumerated(), ResultType.SINGLETON);
         AccessorUtil.setLob(accessor, basic.getLob(), basic.getAttributeType(), false);
-        AccessorUtil.setTemporal(accessor, basic.getTemporal(), false);
+        AccessorUtil.setTemporal(accessor, basic.getTemporal(), ResultType.SINGLETON);
         
         accessor.setName(basic.getName());
         if (basic.getColumn() != null) {

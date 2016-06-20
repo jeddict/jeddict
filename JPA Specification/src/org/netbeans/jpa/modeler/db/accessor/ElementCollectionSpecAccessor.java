@@ -16,10 +16,12 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
-import org.eclipse.persistence.internal.jpa.metadata.converters.LobMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.mappings.MapKeyMetadata;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 
@@ -29,7 +31,7 @@ import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
  */
 public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
 
-    private ElementCollection elementCollection;
+    private final ElementCollection elementCollection;
 
     private ElementCollectionSpecAccessor(ElementCollection elementCollection) {
         this.elementCollection = elementCollection;
@@ -40,10 +42,25 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
         accessor.setName(elementCollection.getName());
         accessor.setAttributeType(elementCollection.getCollectionType());
         accessor.setTargetClassName(elementCollection.getAttributeType());
+        
+        MapKeyType mapKeyType =elementCollection.getValidatedMapKeyType();
+        if(mapKeyType != null){
+            if(mapKeyType==MapKeyType.NEW){
+                if(StringUtils.isNotBlank(elementCollection.getMapKeyAttributeType())){
+                    AccessorUtil.setEnumerated(accessor,elementCollection.getMapKeyEnumerated(), ResultType.MAP);
+                    AccessorUtil.setTemporal(accessor, elementCollection.getMapKeyTemporal(), ResultType.MAP);
+                }
+                
+            } else {
+                MapKeyMetadata mapKeyMetadata = new MapKeyMetadata();
+                mapKeyMetadata.setName(elementCollection.getMapKeyAttribute().getName());
+                accessor.setMapKey(mapKeyMetadata);
+            }
+        }
 
-        AccessorUtil.setEnumerated(accessor,elementCollection.getEnumerated(), true);
+        AccessorUtil.setEnumerated(accessor,elementCollection.getEnumerated(), ResultType.COLLECTION);
         AccessorUtil.setLob(accessor, elementCollection.getLob(), elementCollection.getAttributeType(), true);
-        AccessorUtil.setTemporal(accessor, elementCollection.getTemporal(), true);
+        AccessorUtil.setTemporal(accessor, elementCollection.getTemporal(), ResultType.COLLECTION);
         
         if (elementCollection.getColumn() != null) {
             accessor.setColumn(elementCollection.getColumn().getAccessor());

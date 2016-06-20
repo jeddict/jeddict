@@ -129,8 +129,6 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlType(name = "element-collection", propOrder = {
     "orderBy",
     "orderColumn",
-//    "mapKey",
-//    "mapKeyClass",
     "mapKeyTemporal",
     "mapKeyEnumerated",
     "mapKeyAttributeOverride",
@@ -191,8 +189,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     private Attribute mapKeyAttribute;
     @XmlTransient//@XmlElement(name = "map-key")//Not required
     protected MapKey mapKey;//only required in rev-eng and stored to mapKeyAttribute
-     //@XmlElement(name = "map-key-class")//Not required
-     //protected MapKeyClass mapKeyClass; //rev-eng done and stored to mapKeyAttributeType
+    
     
     
     //New MapKeyType - Basic
@@ -204,6 +201,8 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     protected TemporalType mapKeyTemporal;
     @XmlElement(name = "mkenum")
     protected EnumType mapKeyEnumerated;
+     //@XmlElement(name = "map-key-class")//Not required
+     //protected MapKeyClass mapKeyClass; //rev-eng done and stored to mapKeyAttributeType
     
     //New MapKeyType - Entity
     @XmlAttribute(name = "mken-ref")//entity-ref
