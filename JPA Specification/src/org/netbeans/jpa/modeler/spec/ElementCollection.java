@@ -945,7 +945,11 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     
     @Override
     public String getDataTypeLabel() {
-        return String.format("%s<%s>", getCollectionType(), getAttributeType());
+        if (getValidatedMapKeyType() == null) {
+            return String.format("%s<%s>", getCollectionType(), getAttributeType());
+        } else {
+            return String.format("%s<%s, %s>", getCollectionType(), getMapKeyDataTypeLabel(), getAttributeType());
+        }
     }
     
         /**
