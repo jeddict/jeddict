@@ -47,8 +47,8 @@ public class BasicColumnWidget extends ColumnWidget<DBColumn<Attribute>> {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof PersistenceBaseAttribute) {
-            PersistenceBaseAttribute baseAttribute = (PersistenceBaseAttribute) attribute;
+        if (attribute instanceof ColumnHandler) {  // cover PersistenceBaseAttribute + ElementCollection
+            ColumnHandler baseAttribute = (ColumnHandler) attribute;
             set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
         }
     }
