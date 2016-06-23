@@ -146,14 +146,12 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateEmbededIdClasses(DefaultClass defaultClass) throws InvalidDataException, IOException {
-        task.log("Generating EmbeddedId Class : " + defaultClass.getClazz(), true);
         ClassDefSnippet classDef = new EmbeddableIdClassGenerator(defaultClass, packageName).getClassDef();
         classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
         ORMConverterUtil.writeSnippet(classDef, destDir);//TODO set file object
     }
 
     private void generateIdClasses(DefaultClass defaultClass) throws InvalidDataException, IOException {
-        task.log("Generating IdClass Class : " + defaultClass.getClazz(), true);
         ClassDefSnippet classDef = new DefaultClassGenerator(defaultClass, packageName).getClassDef();
         classesRepository.addWritableSnippet(ClassType.SERIALIZER_CLASS, classDef);
         ORMConverterUtil.writeSnippet(classDef, destDir);//TODO set file object

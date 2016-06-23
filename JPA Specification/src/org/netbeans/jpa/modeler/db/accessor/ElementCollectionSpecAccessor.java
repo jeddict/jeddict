@@ -15,13 +15,13 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
-import java.util.Collections;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.mappings.MapKeyMetadata;
 import org.netbeans.jpa.modeler.db.accessor.spec.MapKeyAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
@@ -54,12 +54,12 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor imp
                     accessor.setMapKeyClassName(elementCollection.getMapKeyAttributeType());
                 } else if(elementCollection.getMapKeyEntity()!=null){
                     accessor.setMapKeyClassName(elementCollection.getMapKeyEntity().getClazz());
-//                    accessor.setMapKeyJoinColumns(Collections.EMPTY_LIST);
+                    accessor.setMapKeyJoinColumns(elementCollection.getMapKeyJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
                 } else if(elementCollection.getMapKeyEmbeddable()!=null){
                     accessor.setMapKeyClassName(elementCollection.getMapKeyEmbeddable().getClazz());
-//                    accessor.setMapKeyJoinColumns(Collections.EMPTY_LIST);
+                    AttributeValidator.filterMapKey(elementCollection);
+                    accessor.setMapKeyAttributeOverrides(elementCollection.getMapKeyAttributeOverride().stream().map(AttributeOverrideSpecMetadata::getInstance).collect(toList()));
                 }
-                
             } else {
                 MapKeyMetadata mapKeyMetadata = new MapKeyMetadata();
                 mapKeyMetadata.setName(elementCollection.getMapKeyAttribute().getName());

@@ -544,7 +544,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
      */
     public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
-            mapKeyJoinColumn = new ArrayList<MapKeyJoinColumn>();
+            mapKeyJoinColumn = new ArrayList<>();
         }
         return this.mapKeyJoinColumn;
     }

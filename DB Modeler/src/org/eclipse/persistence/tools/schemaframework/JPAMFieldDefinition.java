@@ -43,6 +43,7 @@ import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -159,7 +160,12 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 if (foriegnKey) {
                     column = new DBJoinColumn(name, managedAttribute, relationTable);
                 } else if(mapKey){
+                    MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
+                    if(mapKeyHandler.getMapKeyEntity()!=null){
+                         column = new DBMapKeyJoinColumn(name, managedAttribute);
+                    } else {
                     column = new DBMapKeyColumn(name, managedAttribute);
+                    }
                 } else {
                     column = new DBColumn(name, managedAttribute);
                 }

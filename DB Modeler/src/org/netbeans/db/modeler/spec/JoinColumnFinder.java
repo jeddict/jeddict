@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.MapKeyJoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -32,8 +33,16 @@ import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
  */
 public class JoinColumnFinder {
 
-    public static List<JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse) {
-        List<JoinColumn> joinColumns;
+    public static List<? extends JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse) {
+        return findJoinColumns(attribute, relationTableExist, inverse, false);
+    }
+    
+    public static List<? extends JoinColumn> findMapKeyJoinColumns(Attribute attribute) {
+        return findJoinColumns(attribute, false, false, true);
+    }
+    
+    private static List<? extends JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse, boolean mapKey) {
+        List<? extends JoinColumn> joinColumns;
         if (attribute instanceof RelationAttribute) {
             if (!relationTableExist) {
                 if (attribute instanceof SingleRelationAttribute) {
@@ -49,15 +58,19 @@ public class JoinColumnFinder {
                 joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
             }
         } else if (attribute instanceof ElementCollection) { // not applicable for inverse-join-column
-            joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();
+            if (mapKey) {
+                joinColumns = ((ElementCollection) attribute).getMapKeyJoinColumn();
+            } else {
+                joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();
+            }
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }
         return joinColumns;
     }
 
-    public static List<JoinColumn> findJoinColumns(AssociationOverride associationOverride, Attribute attribute, boolean relationTableExist, boolean inverse) {
-        List<JoinColumn> joinColumns;
+    public static List<? extends JoinColumn> findJoinColumns(AssociationOverride associationOverride, Attribute attribute, boolean relationTableExist, boolean inverse) {
+        List<? extends JoinColumn> joinColumns;
         if (attribute instanceof RelationAttribute) {
             if (!relationTableExist) {
                 if (attribute instanceof SingleRelationAttribute | attribute instanceof OneToMany) {
@@ -76,10 +89,18 @@ public class JoinColumnFinder {
         return joinColumns;
     }
 
-    public static JoinColumn findJoinColumn(String name, List<JoinColumn> joinColumns) {
+    public static JoinColumn findJoinColumn(String name, List<? extends JoinColumn> joinColumns) {
+     return findJoinColumn(name, joinColumns, false);
+    }
+    
+    public static JoinColumn findMapKeyJoinColumn(String name, List<? extends JoinColumn> joinColumns) {
+     return findJoinColumn(name, joinColumns, true);
+    }
+    private static JoinColumn findJoinColumn(String name, List<? extends JoinColumn> joinColumns, boolean mapKey) {
         JoinColumn joinColumn = null;
         boolean created = false;
-        for (Iterator<JoinColumn> it = joinColumns.iterator(); it.hasNext();) {
+        List<JoinColumn> joinColumnList = (List<JoinColumn>)joinColumns; //TODO remove casting
+        for (Iterator<? extends JoinColumn> it = joinColumns.iterator(); it.hasNext();) {
             JoinColumn column = it.next();
             if (name.equals(column.getName())) {
                 joinColumn = column;
@@ -91,9 +112,13 @@ public class JoinColumnFinder {
         }
 
         if (!created) {
-            joinColumn = new JoinColumn();
+            if (mapKey) {
+                joinColumn = new MapKeyJoinColumn();
+            } else {
+                joinColumn = new JoinColumn();
+            }
             joinColumn.setImplicitName(name);
-            joinColumns.add(joinColumn);
+            joinColumnList.add(joinColumn);
         }
         return joinColumn;
     }

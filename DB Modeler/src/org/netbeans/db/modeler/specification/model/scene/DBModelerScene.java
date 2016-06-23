@@ -193,7 +193,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                 this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
                         .filter(c -> c instanceof DBForeignKey).collect(toList())
                         .forEach((DBColumn column) -> {
-                            List<JoinColumn> joinColumns;
+                            List<? extends JoinColumn> joinColumns;
                             JoinColumn joinColumn;
                             joinColumn = ((DBForeignKey) column).getJoinColumn();
                             joinColumns = ((DBForeignKey) column).getJoinColumns();

@@ -127,7 +127,7 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     }
 
     /**
-     * Called when dev delete value
+     * Called when developer delete value
      */
     protected void setDefaultName() {
         if (!prePersistName()) {

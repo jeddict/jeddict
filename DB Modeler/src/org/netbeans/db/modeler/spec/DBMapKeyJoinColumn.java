@@ -19,17 +19,19 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
+/**
+ *
+ * @author Gaurav Gupta
+ */
+public class DBMapKeyJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
 
-    private final boolean relationTableExist;
     private final JoinColumn joinColumn;
     private final List<? extends JoinColumn> joinColumns;
 
-    public DBJoinColumn(String name, Attribute attribute, boolean relationTableExist) {
+    public DBMapKeyJoinColumn(String name, Attribute attribute) {
         super(name, attribute);
-        this.relationTableExist = relationTableExist;
-        joinColumns = JoinColumnFinder.findJoinColumns(attribute, relationTableExist, false);
-        joinColumn = JoinColumnFinder.findJoinColumn(name, joinColumns);
+        joinColumns = JoinColumnFinder.findMapKeyJoinColumns(attribute);
+        joinColumn = JoinColumnFinder.findMapKeyJoinColumn(name, joinColumns);
     }
 
     /**
@@ -43,13 +45,5 @@ public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
         return joinColumns;
     }
 
-    /**
-     * Get the value of relationTableExist
-     *
-     * @return the value of relationTableExist
-     */
-    public boolean isRelationTableExist() {
-        return relationTableExist;
-    }
 
 }

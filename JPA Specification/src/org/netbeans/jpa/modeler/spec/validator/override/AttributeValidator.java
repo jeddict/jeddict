@@ -107,6 +107,17 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
                 || AttributeValidator.isEmpty(attributeOverride)
         );
     }
+    
+    /**
+     * Used for MapKey filter
+     * @param elementCollection 
+     */
+        public static void filterMapKey(ElementCollection elementCollection) {
+        elementCollection.getMapKeyAttributeOverride().removeIf(attributeOverride
+                -> !isExist(attributeOverride.getName().split("\\."), elementCollection.getMapKeyEmbeddable())
+                || AttributeValidator.isEmpty(attributeOverride)
+        );
+    }
 
     /**
      *

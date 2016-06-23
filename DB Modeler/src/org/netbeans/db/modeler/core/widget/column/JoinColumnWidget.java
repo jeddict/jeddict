@@ -36,13 +36,12 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
+public class JoinColumnWidget<E extends DBJoinColumn> extends ForeignKeyWidget<E> {
 
     public JoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
@@ -76,7 +75,7 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
     protected String evaluateName() {
         DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
         Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
-        return JoinColumnWidget.evaluateName(table, id);
+        return evaluateName(table, id);
     }
 
     public static String evaluateName(DBTable table, Id id) {
@@ -129,7 +128,7 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         return menuList;
     }
 
-    void convertToJoinTable(String name) {
+    private void convertToJoinTable(String name) {
         DBJoinColumn joinColumn = this.getBaseElementSpec();
         if (joinColumn.getAttribute() instanceof RelationAttribute) {
             joinColumn.getJoinColumns().clear();

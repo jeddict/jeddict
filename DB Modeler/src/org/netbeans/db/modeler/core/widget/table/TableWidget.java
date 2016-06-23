@@ -40,19 +40,17 @@ import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.map.MapKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
 import org.netbeans.db.modeler.properties.PropertiesHandler;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBMapKeyColumn;
+import org.netbeans.db.modeler.spec.DBMapKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
@@ -124,6 +122,10 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     
      public void addMapKeyColumn(String name, DBMapKeyColumn column) {
         columnWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyColumnWidget.class));
+    }
+     
+     public void addMapKeyJoinColumn(String name, DBMapKeyJoinColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyJoinColumnWidget.class));
     }
 
     public void addDiscriminatorColumn(String name, DBColumn column) {

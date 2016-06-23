@@ -557,13 +557,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return fieldResults;
     }
 
-    protected List<JoinColumnSnippet> getJoinColumns(List<? extends JoinColumn> parsedJoinColumns) {
+    protected List<JoinColumnSnippet> getJoinColumns(List<? extends JoinColumn> parsedJoinColumns, boolean mapKey) {
 
         List<JoinColumnSnippet> joinColumns = new ArrayList<>();
 
         parsedJoinColumns.stream().filter(JoinColumnValidator::isNotEmpty).forEach(parsedJoinColumn -> {
 
-            JoinColumnSnippet joinColumn = new JoinColumnSnippet();
+            JoinColumnSnippet joinColumn = new JoinColumnSnippet(mapKey);
 
             joinColumn.setColumnDefinition(
                     parsedJoinColumn.getColumnDefinition());
@@ -601,7 +601,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
 
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
-                parsedCollectionTable.getJoinColumn());
+                parsedCollectionTable.getJoinColumn(),false);
 
         Set<UniqueConstraint> parsedUniqueConstraints = parsedCollectionTable.getUniqueConstraint();
 
@@ -628,10 +628,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
 
         List<JoinColumnSnippet> inverseJoinColumns = getJoinColumns(
-                parsedJoinTable.getInverseJoinColumn());
+                parsedJoinTable.getInverseJoinColumn(),false);
 
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
-                parsedJoinTable.getJoinColumn());
+                parsedJoinTable.getJoinColumn(),false);
 
         Set<UniqueConstraint> parsedUniqueConstraints
                 = parsedJoinTable.getUniqueConstraint();
@@ -781,7 +781,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         for (AssociationOverride parsedAssociationOverride : parsedAssociationOverrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(),false);
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
             if ((joinTable == null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
@@ -1073,7 +1073,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         for (AssociationOverride parsedAssociationOverride : associationOverrrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(),false);
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
             if (joinTable.isEmpty() && joinColumnsList.isEmpty()) {
@@ -1223,10 +1223,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
            snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttribute().getDataTypeLabel());
        } else {
            if (mapKeyHandler.getMapKeyEntity() != null) {
-               List<JoinColumnSnippet> joinColumnsList = getJoinColumns(mapKeyHandler.getMapKeyJoinColumn());
+               List<JoinColumnSnippet> joinColumnsList = getJoinColumns(mapKeyHandler.getMapKeyJoinColumn(),true);
                JoinColumnsSnippet joinColumns = null;
                if (!joinColumnsList.isEmpty()) {
-                   joinColumns = new JoinColumnsSnippet();
+                   joinColumns = new JoinColumnsSnippet(true);
                    joinColumns.setJoinColumns(joinColumnsList);
                    joinColumns.setForeignKey(getForeignKey(mapKeyHandler.getMapKeyForeignKey()));
                }
@@ -1284,7 +1284,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             variableDef.setRelationDef(manyToOne);
             variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne));
+            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne, false));
         }
     }
 
@@ -1316,7 +1316,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             variableDef.setRelationDef(oneToMany);
             variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToMany));
+            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToMany, false));
             if (parsedOneToMany.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
             }
@@ -1361,15 +1361,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             variableDef.setRelationDef(oneToOne);
             variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne));
+            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
         }
     }
     
-    private JoinColumnsSnippet getJoinColumnsSnippet(JoinColumnHandler joinColumnHandler){
-        List<JoinColumnSnippet> joinColumnsList = getJoinColumns(joinColumnHandler.getJoinColumn());
+    private JoinColumnsSnippet getJoinColumnsSnippet(JoinColumnHandler joinColumnHandler, boolean mapKey){
+        List<JoinColumnSnippet> joinColumnsList = getJoinColumns(joinColumnHandler.getJoinColumn(), mapKey);
             JoinColumnsSnippet joinColumns = null;
             if (!joinColumnsList.isEmpty()) {
-                joinColumns = new JoinColumnsSnippet();
+                joinColumns = new JoinColumnsSnippet(mapKey);
                 joinColumns.setJoinColumns(joinColumnsList);
                 joinColumns.setForeignKey(getForeignKey(joinColumnHandler.getForeignKey()));
             }

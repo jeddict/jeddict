@@ -45,6 +45,7 @@ import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJo
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.map.MapKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
@@ -67,6 +68,7 @@ import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapKeyColumn;
+import org.netbeans.db.modeler.spec.DBMapKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
 import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
@@ -327,7 +329,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                 }
                             }
                         } else if (column instanceof DBMapKeyColumn) {
-                                 tableWidget.addMapKeyColumn(column.getName(), (DBMapKeyColumn)column);
+                            tableWidget.addMapKeyColumn(column.getName(), (DBMapKeyColumn)column);
+                        } else if (column instanceof DBMapKeyJoinColumn) {
+                            tableWidget.addMapKeyJoinColumn(column.getName(), (DBMapKeyJoinColumn)column);
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
                         } else {
@@ -511,6 +515,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new DiscriminatorColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         }  else if (widgetInfo.getDocumentId().equals(MapKeyColumnWidget.class.getSimpleName())) {
             widget = new MapKeyColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(MapKeyJoinColumnWidget.class.getSimpleName())) {
+            widget = new MapKeyJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }

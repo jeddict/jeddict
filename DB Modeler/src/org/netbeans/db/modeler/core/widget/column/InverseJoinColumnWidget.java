@@ -92,7 +92,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
         return menuList;
     }
 
-    void convertToJoinTable(String name) {
+    private void convertToJoinTable(String name) {
         DBInverseJoinColumn inverseJoinColumnSpec = (DBInverseJoinColumn) this.getBaseElementSpec();
         inverseJoinColumnSpec.getJoinColumns().removeIf(c -> true);
         inverseJoinColumnSpec.getAttribute().getJoinTable().setName(name);

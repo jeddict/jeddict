@@ -17,11 +17,18 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.JOIN_COLUMN;
+import static org.netbeans.jcode.jpa.JPAConstants.JOIN_COLUMN_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_JOIN_COLUMN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_PARANTHESES;
 
 public class JoinColumnSnippet implements Snippet {
 
+    private boolean mapKey;
+    
     private boolean insertable = true;
     private boolean nullable = true;
     private boolean unique = false;
@@ -33,6 +40,14 @@ public class JoinColumnSnippet implements Snippet {
     private String table = null;
     
     private ForeignKeySnippet foreignKey;
+    
+    
+    public JoinColumnSnippet(boolean mapKey) {
+        this.mapKey = mapKey;
+    }
+
+    public JoinColumnSnippet() {
+    }
 
     public boolean isInsertable() {
         return insertable;
@@ -100,6 +115,13 @@ public class JoinColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder("@");
+        if (mapKey) {
+            builder.append(MAP_KEY_JOIN_COLUMN);
+        } else {
+            builder.append(JOIN_COLUMN);
+        }
+        
         if (!GeneratorUtil.isGenerateDefaultValue()) {
             if (insertable == true
                     && nullable == true
@@ -110,14 +132,11 @@ public class JoinColumnSnippet implements Snippet {
                     && referencedColumnName == null
                     && table == null 
                     && foreignKey==null) {
-
-                return "@JoinColumn";
+                return builder.toString();
             }
         }
 
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@JoinColumn(");
+        builder.append(OPEN_PARANTHESES);
 
         if (columnDefinition != null && !columnDefinition.trim().isEmpty()) {
             builder.append("columnDefinition=\"");
@@ -199,8 +218,11 @@ public class JoinColumnSnippet implements Snippet {
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add("javax.persistence.JoinColumn");
+        if (mapKey) {
+            importSnippets.add(MAP_KEY_JOIN_COLUMN_FQN);
+        } else {
+            importSnippets.add(JOIN_COLUMN_FQN);
+        }
         if (foreignKey != null) {
             importSnippets.addAll(foreignKey.getImportSnippets());
         }
