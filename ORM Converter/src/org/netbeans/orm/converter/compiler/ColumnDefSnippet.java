@@ -17,11 +17,17 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.netbeans.jcode.jpa.JPAConstants.COLUMN;
+import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ColumnDefSnippet implements Snippet {
 
+    private boolean mapKey;
     private Boolean unique = false;
     private Boolean updatable = true;
     private Boolean insertable = true;
@@ -35,6 +41,14 @@ public class ColumnDefSnippet implements Snippet {
     private String table = null;
     private String name = null;
 
+    public ColumnDefSnippet(boolean mapKey) {
+        this.mapKey = mapKey;
+    }
+
+    public ColumnDefSnippet() {
+    }
+
+    
     public boolean isEmptyObject() {
         boolean empty = false;
         if (!GeneratorUtil.isGenerateDefaultValue()) {
@@ -209,13 +223,13 @@ public class ColumnDefSnippet implements Snippet {
             builder.append(precision);
             builder.append(ORMConverterUtil.COMMA);
         }
-//BUG Resolved : output @Column) if no attribute exist
-        return "@Column" + ORMConverterUtil.OPEN_PARANTHESES + (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : "")
+        
+        return "@" + (mapKey? MAP_KEY_COLUMN : COLUMN) + ORMConverterUtil.OPEN_PARANTHESES + (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.Column");
+        return Collections.singletonList((mapKey? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
     }
 }

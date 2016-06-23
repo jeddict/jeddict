@@ -15,10 +15,12 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
+import java.util.Collections;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.mappings.MapKeyMetadata;
+import org.netbeans.jpa.modeler.db.accessor.spec.MapKeyAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
@@ -29,7 +31,7 @@ import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
  *
  * @author Gaurav Gupta
  */
-public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
+public class ElementCollectionSpecAccessor extends ElementCollectionAccessor implements MapKeyAccessor{
 
     private final ElementCollection elementCollection;
 
@@ -49,6 +51,13 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
                 if(StringUtils.isNotBlank(elementCollection.getMapKeyAttributeType())){
                     AccessorUtil.setEnumerated(accessor,elementCollection.getMapKeyEnumerated(), ResultType.MAP);
                     AccessorUtil.setTemporal(accessor, elementCollection.getMapKeyTemporal(), ResultType.MAP);
+                    accessor.setMapKeyClassName(elementCollection.getMapKeyAttributeType());
+                } else if(elementCollection.getMapKeyEntity()!=null){
+                    accessor.setMapKeyClassName(elementCollection.getMapKeyEntity().getClazz());
+//                    accessor.setMapKeyJoinColumns(Collections.EMPTY_LIST);
+                } else if(elementCollection.getMapKeyEmbeddable()!=null){
+                    accessor.setMapKeyClassName(elementCollection.getMapKeyEmbeddable().getClazz());
+//                    accessor.setMapKeyJoinColumns(Collections.EMPTY_LIST);
                 }
                 
             } else {

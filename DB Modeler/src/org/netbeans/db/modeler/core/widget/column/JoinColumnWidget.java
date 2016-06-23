@@ -51,13 +51,6 @@ public class JoinColumnWidget extends ForeignKeyWidget<DBJoinColumn> {
         });
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(JoinColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected void updateName(String name) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumn();

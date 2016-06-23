@@ -13,30 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.core.widget.column;
+package org.netbeans.db.modeler.core.widget.column.map;
 
-import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
+import org.netbeans.db.modeler.spec.DBMapKeyColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class BasicColumnWidget<E extends DBColumn<Attribute>> extends ColumnWidget<E> {
+public class MapKeyColumnWidget extends BasicColumnWidget<DBMapKeyColumn<Attribute>> {
 
-    public BasicColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
+    public MapKeyColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-
     }
-
-    @Override
+    
+        @Override
     public void createPropertySet(ElementPropertySet set) {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof ColumnHandler) {  // cover PersistenceBaseAttribute + ElementCollection
-            ColumnHandler baseAttribute = (ColumnHandler) attribute;
-            set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
+        if (attribute instanceof MapKeyHandler) {  // cover MultiRelational Attribute + ElementCollection
+            MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
+            
+            set.createPropertySet(this, mapKeyHandler.getMapKeyColumn(), getPropertyChangeListeners());
             this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) this::setPropertyName);
             this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
         }
@@ -45,8 +47,8 @@ public class BasicColumnWidget<E extends DBColumn<Attribute>> extends ColumnWidg
     @Override
     protected String evaluateName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof ColumnHandler) {
-            return ((ColumnHandler) attribute).getDefaultColumnName();
+        if (attribute instanceof MapKeyHandler) {
+            return "BBB";//((MapKeyHandler) attribute).getDefaultColumnName();
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }
@@ -55,11 +57,12 @@ public class BasicColumnWidget<E extends DBColumn<Attribute>> extends ColumnWidg
     @Override
     protected void updateName(String newName) {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        if (attribute instanceof ColumnHandler) {
-            ColumnHandler baseAttribute = (ColumnHandler) attribute;
-            baseAttribute.getColumn().setName(this.name);
+        if (attribute instanceof MapKeyHandler) {
+            MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
+            mapKeyHandler.getMapKeyColumn().setName(this.name);
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }
     }
+
 }

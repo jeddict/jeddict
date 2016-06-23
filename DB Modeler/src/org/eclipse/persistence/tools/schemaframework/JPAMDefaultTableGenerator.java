@@ -433,7 +433,7 @@ public class JPAMDefaultTableGenerator {
 //                        isFKField = true;
 //                    }
                     //build or retrieve the field definition.
-                    FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, isInverse, isFKField, false, isInherited, false, false, dbField);
+                    FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, isInverse, isFKField, false, isInherited, false, false, false, dbField);
                     if (isPKField) {
                         fieldDef.setIsPrimaryKey(true);
                         // Check if the generation strategy is IDENTITY
@@ -469,9 +469,9 @@ public class JPAMDefaultTableGenerator {
 
             FieldDefinition fieldDef;
             if (intrinsicEntity.get(0).getDiscriminatorColumnName().equalsIgnoreCase(dbField.getNameDelimited(databasePlatform))) {//managedAttribute == null &&
-                fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), null, null, isInverse, isFKField, false, false, true, false, dbField);
+                fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), null, null, isInverse, isFKField, false, false, true, false, false, dbField);
             } else {
-                fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), null, null, isInverse, isFKField, false, false, false, true, dbField);
+                fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), null, null, isInverse, isFKField, false, false, false, true, false, dbField);
             }
             //build or retrieve the field definition.
 
@@ -615,7 +615,7 @@ public class JPAMDefaultTableGenerator {
             Iterator<DatabaseField> i = keyFields.iterator();
             while (i.hasNext()) {
                 DatabaseField foreignKey = i.next();
-                FieldDefinition fieldDef = getFieldDefFromDBField(foreignKey);
+                FieldDefinition fieldDef =  getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, false, false, isInherited, false, false, true, foreignKey);
                 if (!table.getFields().contains(fieldDef)) {
                     table.addField(fieldDef);
                 }
@@ -716,7 +716,7 @@ public class JPAMDefaultTableGenerator {
             targetFieldNames.add(targetField.getNameDelimited(databasePlatform));
 
             fkField = resolveDatabaseField(fkField, targetField);
-            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, true, false, isInherited, false, false, fkField);//todo pass entity
+            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, true, false, isInherited, false, false, false, fkField);//todo pass entity
             // Avoid adding fields twice for table per class.
             if (!table.getFields().contains(fieldDef)) {
                 table.addField(fieldDef);
@@ -728,7 +728,7 @@ public class JPAMDefaultTableGenerator {
         TableDefinition targetTblDef = getTableDefFromDBTable(managedClass, intrinsicEntity, targetTable);
 
         //add the direct collection field to the table.
-        FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, false, false, isInherited, false, false, mapping.getDirectField());
+        FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, false, false, isInherited, false, false, false, mapping.getDirectField());
         if (!table.getFields().contains(fieldDef)) {
             table.addField(fieldDef);
         }
@@ -1036,26 +1036,26 @@ public class JPAMDefaultTableGenerator {
     }
 
     protected FieldDefinition getFieldDefFromDBField(DatabaseField dbField) {
-        return getFieldDefFromDBField(null, null, null, false, false, false, false, false, false, dbField);
+        return getFieldDefFromDBField(null, null, null, false, false, false, false, false, false, false, dbField);
     }
 
     /**
      * Build a field definition object from a database field.
      */
-    protected FieldDefinition getFieldDefFromDBField(Entity intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable, boolean inherited, boolean dtype, boolean primarykeyjoincolumn, DatabaseField dbField) {
+    protected FieldDefinition getFieldDefFromDBField(Entity intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable, boolean inherited, boolean dtype, boolean primarykeyjoincolumn, boolean mapKey, DatabaseField dbField) {
         FieldDefinition fieldDef = this.fieldMap.get(dbField);
         if (fieldDef == null) {
             //not built yet, build one
 //            intrinsicEntity.getAttributes().findAllAttribute(name)
             if (inherited) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity, managedAttribute, inverse, foriegnKey, relationTable);
-            } else
-                if (dtype) {
-                    fieldDef = new JPAMFieldDefinition(intrinsicEntity);
-                } else
-                    if (primarykeyjoincolumn) {
-                        fieldDef = new JPAMFieldDefinition(intrinsicEntity, true, true);
-                    } else {
+            } else if (dtype) {
+                fieldDef = new JPAMFieldDefinition(intrinsicEntity);
+            } else if (primarykeyjoincolumn) {
+                fieldDef = new JPAMFieldDefinition(intrinsicEntity, true, true);
+            } else if(mapKey) {
+                fieldDef = new JPAMFieldDefinition(intrinsicAttribute, managedAttribute, mapKey);
+            } else {
                 fieldDef = new JPAMFieldDefinition(intrinsicAttribute, managedAttribute, inverse, foriegnKey, relationTable);
             }
             fieldDef.setName(dbField.getNameDelimited(databasePlatform));
@@ -1111,7 +1111,7 @@ public class JPAMDefaultTableGenerator {
      * Build and add a field definition object to relation table
      */
     protected void setFieldToRelationTable(Entity intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean isInherited, DatabaseField dbField, TableDefinition table) {
-        FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity, intrinsicAttribute, managedAttribute, inverse, true, true, isInherited, false, false, dbField);
+        FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity, intrinsicAttribute, managedAttribute, inverse, true, true, isInherited, false, false, false, dbField);
 
         if (!table.getFields().contains(fieldDef)) {
             //only add the field once, to avoid add twice if m:m is bi-directional.
@@ -1203,7 +1203,7 @@ public class JPAMDefaultTableGenerator {
             if (targetFieldDef != null) {
                 // UnidirectionalOneToOneMapping case
                 if (fkFieldDef == null) {
-                    fkFieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, true, true, false, isInherited, false, false, fkField);//TODO confirm boolean
+                    fkFieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, true, true, false, isInherited, false, false, false, fkField);//TODO confirm boolean
                     if (!sourceTableDef.getFields().contains(fkFieldDef)) {
                         sourceTableDef.addField(fkFieldDef);
                     }

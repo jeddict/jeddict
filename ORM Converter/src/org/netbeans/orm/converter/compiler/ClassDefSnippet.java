@@ -30,6 +30,8 @@ import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -588,16 +590,16 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         
     public String getJavaDoc() {
         StringBuilder doc = new StringBuilder();
-        doc.append("    /**").append('\n');
+        doc.append("/**").append(NEW_LINE);
         if (StringUtils.isNotBlank(description)) {
             for (String line : description.split("\\r\\n|\\n|\\r")) {
-                doc.append("     * ").append(line).append('\n');
+                doc.append(" * ").append(line).append(NEW_LINE);
             }
         }
         if (StringUtils.isNotBlank(JavaSourceHelper.getAuthor())) {
-            doc.append("     * @author  ").append(JavaSourceHelper.getAuthor());
+            doc.append(" * @author  ").append(JavaSourceHelper.getAuthor()).append(NEW_LINE);
         }
-        doc.append("     */");
+        doc.append(" */");
         return doc.toString();
     }
     

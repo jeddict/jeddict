@@ -56,6 +56,7 @@ import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.Lob;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.MapKeyColumn;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
@@ -210,7 +211,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return null;
         }
 
-        ColumnDefSnippet columnDef = new ColumnDefSnippet();
+        ColumnDefSnippet columnDef = new ColumnDefSnippet(column instanceof MapKeyColumn);
 
         columnDef.setColumnDefinition(column.getColumnDefinition());
         columnDef.setName(column.getName());

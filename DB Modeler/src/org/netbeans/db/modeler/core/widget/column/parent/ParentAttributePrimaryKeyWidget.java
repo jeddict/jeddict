@@ -18,7 +18,6 @@ package org.netbeans.db.modeler.core.widget.column.parent;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -32,13 +31,6 @@ public class ParentAttributePrimaryKeyWidget extends ParentAttributeColumnWidget
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.PRIMARYKEY);
 
-    }
-
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(ParentAttributePrimaryKeyWidget.class.getSimpleName());
-        return pinWidgetInfo;
     }
 
 }

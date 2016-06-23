@@ -46,13 +46,6 @@ public class ParentAttributeColumnWidget extends ColumnWidget<DBParentAttributeC
         this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(ParentAttributeColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected String evaluateName() {
         AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();

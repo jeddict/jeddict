@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.netbeans.jpa.modeler.spec.validator.column.ColumnValidator;
 
 /**
  *
@@ -54,7 +56,8 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "mkc")
+@XmlType(name = "map-key-column")
+@XmlJavaTypeAdapter(value = ColumnValidator.class)
 public class MapKeyColumn extends Column {
 
     @Override

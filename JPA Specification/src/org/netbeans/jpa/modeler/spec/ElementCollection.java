@@ -129,11 +129,11 @@ import org.netbeans.modeler.core.NBModelerUtil;
 @XmlType(name = "element-collection", propOrder = {
     "orderBy",
     "orderColumn",
+    "mapKeyColumn",
     "mapKeyTemporal",
     "mapKeyEnumerated",
     "mapKeyAttributeOverride",
     "mapKeyConvert",
-    "mapKeyColumn",
     "mapKeyJoinColumn",
     "mapKeyForeignKey",
     "column",
@@ -504,11 +504,14 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
      *
      */
     public MapKeyColumn getMapKeyColumn() {
+        if(mapKeyColumn==null){
+            mapKeyColumn = new MapKeyColumn();
+        }
         return mapKeyColumn;
     }
 
     /**
-     * Sets the value of the mapKeyColumn property.
+     * Sets the value of the =property.
      *
      * @param value allowed object is {@link MapKeyColumn }
      *
@@ -934,6 +937,19 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     public String getDefaultColumnName() {
         return this.getName().toUpperCase();
     }
+    
+//    public String getDefaultMapKeyColumnName() {
+//        if(getValidatedMapKeyType()==MapKeyType.NEW){
+//            if(mapKeyAttributeType != null){
+//                
+//            } else if(mapKeyEmbeddable != null){
+//                
+//            } else if(mapKeyEntity != null){
+//                
+//            }
+//        }
+//        return this.getName().toUpperCase();
+//    }
 
     public String getColumnName() {
         if (this.getColumn() != null && StringUtils.isNotBlank(this.getColumn().getName())) {

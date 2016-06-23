@@ -19,10 +19,10 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 
-public class ColumnValidator extends MarshalValidator<Column> {
+public class ColumnValidator<E extends Column> extends MarshalValidator<E> {
 
     @Override
-    public Column marshal(Column column) throws Exception {
+    public E marshal(E column) throws Exception {
         if (column != null && isEmpty(column)) {
             return null;
         }

@@ -17,9 +17,9 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
 public class ElementCollectionSnippet implements Snippet {
 
@@ -41,7 +41,7 @@ public class ElementCollectionSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
-            builder.append(mapKeySnippet.getSnippet());
+            builder.append(mapKeySnippet.getSnippet()).append(TAB);
         }
         builder.append("@ElementCollection");
         if (fetchType != null) {

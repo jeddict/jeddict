@@ -35,13 +35,6 @@ public class PrimaryKeyJoinColumnWidget extends ForeignKeyWidget<DBPrimaryKeyJoi
         });
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(PrimaryKeyJoinColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected String evaluateName() {
         Id attribute = this.getBaseElementSpec().getAttribute();

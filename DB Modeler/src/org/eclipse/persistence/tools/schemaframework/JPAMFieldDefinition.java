@@ -55,9 +55,22 @@ public class JPAMFieldDefinition extends FieldDefinition {
     private boolean foriegnKey;
     private boolean relationTable;
     private boolean inherited;
+    private boolean mapKey;
     private DiscriminatorColumn discriminatorColumn;
 
     public JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
+        this(intrinsicAttribute, managedAttribute);
+        this.inverse = inverse;
+        this.foriegnKey = foriegnKey;
+        this.relationTable = relationTable;
+    }   
+    
+    public JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean mapKey) {
+        this(intrinsicAttribute, managedAttribute);
+        this.mapKey = mapKey;
+    }   
+    
+    private JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute) {
         if (intrinsicAttribute != null) {
             intrinsicAttribute.stream().forEach((attr) -> {
                 if (attr != null && attr.getOrignalObject() != null) {
@@ -68,19 +81,16 @@ public class JPAMFieldDefinition extends FieldDefinition {
             });
         }
 //       if(managedAttribute!=null){
-        this.managedAttribute = managedAttribute != null && managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
+        this.managedAttribute = managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
 //       } else {
 //           this.managedAttribute = null;
 //       }
-        this.inverse = inverse;
-        this.foriegnKey = foriegnKey;
-        this.relationTable = relationTable;
         this.inherited = false;
         this.intrinsicClass = null;
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass) {
-        this.intrinsicClass = intrinsicClass != null && intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
+        this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
         if (intrinsicClass.getDiscriminatorColumn() == null) {
             intrinsicClass.setDiscriminatorColumn(new DiscriminatorColumn());
         }
@@ -88,19 +98,19 @@ public class JPAMFieldDefinition extends FieldDefinition {
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass, boolean inverse, boolean foriegnKey) {
-        this.intrinsicClass = intrinsicClass != null && intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
+        this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
         this.inverse = inverse;
         this.foriegnKey = foriegnKey;
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
 //        if(intrinsicAttribute!=null){
-        this.intrinsicClass = intrinsicClass != null && intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
+        this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
 //        }else {
 //           this.intrinsicClass = null;
 //       }
 //        if(managedAttribute!=null){
-        this.managedAttribute = managedAttribute != null && managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
+        this.managedAttribute = managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
 //        } else {
 //           this.managedAttribute = null;
 //       }
@@ -148,6 +158,8 @@ public class JPAMFieldDefinition extends FieldDefinition {
             } else if (intrinsicAttribute.peek() instanceof ElementCollection) {
                 if (foriegnKey) {
                     column = new DBJoinColumn(name, managedAttribute, relationTable);
+                } else if(mapKey){
+                    column = new DBMapKeyColumn(name, managedAttribute);
                 } else {
                     column = new DBColumn(name, managedAttribute);
                 }
