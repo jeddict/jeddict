@@ -195,20 +195,26 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         dataType_ComboBox.setEditable(true);
         dataType_Action.setVisible(true);
     }
+    
+    private void setDataTypeNonEditable() {
+        dataType_ComboBox.setEditable(false);
+        dataType_Action.setVisible(false);
+    }
 
     private void initDataTypeComboBox() {
         String[] dataType = null;
         List<ComboBoxValue> classList = null;
-
         setDataTypeEditable();
         String type = (String) type_ComboBox.getSelectedItem();
         if (mapKey) {
             switch (type) {
                 case ENTITY:
                     classList = entityMappings.getEntity().stream().map(e -> new ComboBoxValue<Entity>(e, e.getClazz())).collect(toList());
+                    setDataTypeNonEditable();
                     break;
                 case EMBEDDABLE:
                     classList = entityMappings.getEmbeddable().stream().map(e -> new ComboBoxValue<Embeddable>(e, e.getClazz())).collect(toList());
+                    setDataTypeNonEditable();
                     break;
                 case ENUMERATED:
                     break;
@@ -264,16 +270,18 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         } else if (attribute instanceof Transient) {
             //skip
         }
-        if (dataType == null) {
-            dataType = new String[]{EMPTY};
-        }
+        
         dataType_ComboBox.removeAllItems();
         if (mapKey && classList != null) {
             dataType_ComboBox.setModel(new DefaultComboBoxModel(classList.toArray()));
         } else {
+            if (dataType == null) {
+             dataType = new String[]{EMPTY};
+            }
             dataType_ComboBox.setModel(new DefaultComboBoxModel(dataType));
+            dataType_ComboBox.setSelectedItem(dataType[0]);
         }
-        dataType_ComboBox.setSelectedItem(dataType[0]);
+        
     }
 
     @Override
@@ -327,10 +335,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         }
         type_ComboBoxActionPerformed(null);
         initDataTypeComboBox();
-        if (attribute instanceof BaseAttribute) {
-            dataType_ComboBox.setSelectedItem(((BaseAttribute) attribute).getAttributeType());
-        } else if (attribute instanceof MapKeyHandler) {
-            MapKeyHandler relationAttribute = (MapKeyHandler) attribute;
+        
+        if (mapKey) {
+             MapKeyHandler relationAttribute = (MapKeyHandler) attribute;
             if (relationAttribute.getMapKeyEntity() != null) {
                 dataType_ComboBox.setSelectedItem(new ComboBoxValue<>(relationAttribute.getMapKeyEntity(), relationAttribute.getMapKeyEntity().getClazz()));
             } else if (relationAttribute.getMapKeyEmbeddable() != null) {
@@ -338,6 +345,8 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
             } else if (relationAttribute.getMapKeyAttributeType() != null) {
                 dataType_ComboBox.setSelectedItem(relationAttribute.getMapKeyAttributeType());
             }
+        } else {
+            dataType_ComboBox.setSelectedItem(((BaseAttribute) attribute).getAttributeType());
         }
 
     }
@@ -495,6 +504,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         dataType_ComboBox.setEditable(true);
 
         dataType_Action.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/searchbutton.png"))); // NOI18N
+        dataType_Action.setPreferredSize(new java.awt.Dimension(37, 37));
         dataType_Action.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dataType_ActionActionPerformed(evt);
@@ -510,14 +520,14 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 .addComponent(dataType_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(dataType_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         dataType_LayeredPaneLayout.setVerticalGroup(
             dataType_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dataType_LayeredPaneLayout.createSequentialGroup()
-                .addGroup(dataType_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(dataType_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(dataType_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(dataType_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
