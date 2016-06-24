@@ -561,7 +561,7 @@ public class JPAMDefaultTableGenerator {
             } else if (mapping.isManyToManyMapping()) {
                 buildRelationTableDefinition(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, (ManyToManyMapping) mapping, ((ManyToManyMapping) mapping).getRelationTableMechanism(), ((ManyToManyMapping) mapping).getListOrderField(), mapping.getContainerPolicy());
             } else if (mapping.isDirectCollectionMapping()) {
-                buildDirectCollectionTableDefinition(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, (DirectCollectionMapping) mapping, descriptor);
+                buildDirectCollectionTableDefinition(mapping.getDescriptor(), managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, (DirectCollectionMapping) mapping, descriptor);
             } else if (mapping.isDirectToFieldMapping()) {
                 Converter converter = ((DirectToFieldMapping) mapping).getConverter();
                 if (converter != null) {
@@ -699,7 +699,7 @@ public class JPAMDefaultTableGenerator {
     /**
      * Build direct collection table definitions in a EclipseLink descriptor
      */
-    protected void buildDirectCollectionTableDefinition(ManagedClass managedClass, Attribute managedAttribute, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, boolean isInherited, DirectCollectionMapping mapping, ClassDescriptor descriptor) {
+    protected void buildDirectCollectionTableDefinition(ClassDescriptor classDescriptor, ManagedClass managedClass, Attribute managedAttribute, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, boolean isInherited, DirectCollectionMapping mapping, ClassDescriptor descriptor) {
         //first create direct collection table
         TableDefinition table = getTableDefFromDBTable(managedClass, managedAttribute, intrinsicEntity, mapping.getReferenceTable());
 
@@ -743,8 +743,9 @@ public class JPAMDefaultTableGenerator {
                 table.addField(fieldDef);
             }
         } else {
+            //            to fetch managed embedded attribute
+            //getManagedAttribute(classDescriptor, mapping.getContainerPolicy().getIdentityFieldsForMapKey().get(0),  intrinsicAttribute);
             addFieldsForMappedKeyMapContainerPolicy(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, mapping.getContainerPolicy(), table);
-
             if (mapping.getListOrderField() != null) {
                 fieldDef = getFieldDefFromDBField(mapping.getListOrderField());
                 if (!table.getFields().contains(fieldDef)) {

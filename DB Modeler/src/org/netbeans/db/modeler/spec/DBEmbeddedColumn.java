@@ -21,7 +21,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public abstract class DBEmbeddedColumn<E extends Attribute> extends DBColumn<E> {
 
-    private final List<Embedded> embeddedList;
+    protected final List<Embedded> embeddedList;
     private String keyName;
 
     public DBEmbeddedColumn(String name, List<Embedded> embedded, E managedAttribute) {
@@ -50,7 +50,6 @@ public abstract class DBEmbeddedColumn<E extends Attribute> extends DBColumn<E> 
             keyNameBuilder.append(next.getName()).append('.');
         }
         keyNameBuilder.append(getAttribute().getName());
-        keyName = keyNameBuilder.toString();
-        return keyName;
+        return keyName = keyNameBuilder.toString();
     }
 }

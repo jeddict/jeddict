@@ -16,6 +16,7 @@
 package org.eclipse.persistence.tools.schemaframework;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.persistence.exceptions.ValidationException;
@@ -162,9 +163,12 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 } else if(mapKey){
                     MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
                     if(mapKeyHandler.getMapKeyEntity()!=null){
-                         column = new DBMapKeyJoinColumn(name, managedAttribute);
+                        column = new DBMapKeyJoinColumn(name, managedAttribute);
+                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ 
+                        // Wrap AttributeOverride to Embedded to reuse the api
+                        column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
                     } else {
-                    column = new DBMapKeyColumn(name, managedAttribute);
+                        column = new DBMapKeyColumn(name, managedAttribute);
                     }
                 } else {
                     column = new DBColumn(name, managedAttribute);

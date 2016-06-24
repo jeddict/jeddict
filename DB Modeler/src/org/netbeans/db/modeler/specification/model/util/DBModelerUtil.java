@@ -45,6 +45,7 @@ import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJo
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.map.MapKeyEmbeddedColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
@@ -68,6 +69,7 @@ import org.netbeans.db.modeler.spec.DBEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapKeyColumn;
+import org.netbeans.db.modeler.spec.DBMapKeyEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBMapKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
@@ -123,7 +125,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public static Image COLLECTION_TABLE;
     public static String RELATION_TABLE_ICON_PATH;
     public static Image RELATION_TABLE;
-    
+
     public static String COLUMN_ICON_PATH;
     public static String FOREIGNKEY_ICON_PATH;
     public static String PRIMARYKEY_ICON_PATH;
@@ -150,11 +152,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             BASE_TABLE = new ImageIcon(cl.getResource(BASE_TABLE_ICON_PATH)).getImage();
             COLLECTION_TABLE = new ImageIcon(cl.getResource(COLLECTION_TABLE_ICON_PATH)).getImage();
             RELATION_TABLE = new ImageIcon(cl.getResource(RELATION_TABLE_ICON_PATH)).getImage();
-           
+
             COLUMN_ICON_PATH = "org/netbeans/db/modeler/resource/image/COLUMN.gif";
             FOREIGNKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/FOREIGN_KEY.gif";
             PRIMARYKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/PRIMARY_KEY.gif";
-            
+
             COLUMN = new ImageIcon(cl.getResource(COLUMN_ICON_PATH)).getImage();
             FOREIGNKEY = new ImageIcon(cl.getResource(FOREIGNKEY_ICON_PATH)).getImage();
             PRIMARYKEY = new ImageIcon(cl.getResource(PRIMARYKEY_ICON_PATH)).getImage();
@@ -304,7 +306,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                             tableWidget.addNewPrimaryKeyJoinColumn(column.getName(), column);
                         } else if (column instanceof DBEmbeddedColumn) {
                             if (column instanceof DBEmbeddedAttributeColumn) {
-                                tableWidget.addEmbeddedAttributeColumn(column.getName(), column);
+                                if (column instanceof DBMapKeyEmbeddedColumn) {
+                                    tableWidget.addMapKeyEmbeddedColumn(column.getName(), (DBMapKeyEmbeddedColumn) column);
+                                } else {
+                                    tableWidget.addEmbeddedAttributeColumn(column.getName(), column);
+                                }
                             } else if (column instanceof DBEmbeddedAttributeJoinColumn) {
                                 tableWidget.addEmbeddedAttributeJoinColumn(column.getName(), column);
                             } else if (column instanceof DBEmbeddedAssociationColumn) {
@@ -329,9 +335,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                                 }
                             }
                         } else if (column instanceof DBMapKeyColumn) {
-                            tableWidget.addMapKeyColumn(column.getName(), (DBMapKeyColumn)column);
+                            tableWidget.addMapKeyColumn(column.getName(), (DBMapKeyColumn) column);
                         } else if (column instanceof DBMapKeyJoinColumn) {
-                            tableWidget.addMapKeyJoinColumn(column.getName(), (DBMapKeyJoinColumn)column);
+                            tableWidget.addMapKeyJoinColumn(column.getName(), (DBMapKeyJoinColumn) column);
                         } else if (column.isPrimaryKey()) {
                             tableWidget.addNewPrimaryKey(column.getName(), column);
                         } else {
@@ -368,7 +374,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             return;
         }
         TableWidget targetTableWidget = (TableWidget) scene.getBaseElement(sourceColumn.getReferenceTable().getId());
-        
+
         ColumnWidget targetColumnWidget = (ColumnWidget) targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
         if (targetColumnWidget == null) { // TODO remove this block
             return;
@@ -513,10 +519,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             widget = new PrimaryKeyJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(DiscriminatorColumnWidget.class.getSimpleName())) {
             widget = new DiscriminatorColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        }  else if (widgetInfo.getDocumentId().equals(MapKeyColumnWidget.class.getSimpleName())) {
+        } else if (widgetInfo.getDocumentId().equals(MapKeyColumnWidget.class.getSimpleName())) {
             widget = new MapKeyColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else if (widgetInfo.getDocumentId().equals(MapKeyJoinColumnWidget.class.getSimpleName())) {
             widget = new MapKeyJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(MapKeyEmbeddedColumnWidget.class.getSimpleName())) {
+            widget = new MapKeyEmbeddedColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
             throw new InvalidElmentException("Invalid DB Element");
         }

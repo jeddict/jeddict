@@ -43,6 +43,7 @@ import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationCo
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.map.MapKeyEmbeddedColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
@@ -50,6 +51,7 @@ import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryK
 import org.netbeans.db.modeler.properties.PropertiesHandler;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBMapKeyColumn;
+import org.netbeans.db.modeler.spec.DBMapKeyEmbeddedColumn;
 import org.netbeans.db.modeler.spec.DBMapKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
@@ -126,6 +128,10 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
      
      public void addMapKeyJoinColumn(String name, DBMapKeyJoinColumn column) {
         foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyJoinColumnWidget.class));
+    }
+     
+      public void addMapKeyEmbeddedColumn(String name, DBMapKeyEmbeddedColumn column) {
+        columnWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyEmbeddedColumnWidget.class));
     }
 
     public void addDiscriminatorColumn(String name, DBColumn column) {

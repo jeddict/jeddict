@@ -17,37 +17,21 @@ package org.netbeans.db.modeler.spec;
 
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBEmbeddedAttributeColumn extends DBEmbeddedColumn<Attribute> {
+public class DBMapKeyEmbeddedColumn extends DBEmbeddedAttributeColumn {
 
-    protected AttributeOverride attributeOverride;
-
-    public DBEmbeddedAttributeColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute) {
+    public DBMapKeyEmbeddedColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute) {
         super(name, embeddedList, managedAttribute);
-        init();
     }
     
     protected void init(){
-        if (getAttribute() instanceof ElementCollection) {
-
-        } else {
             attributeOverride = embeddedList.get(0).findAttributeOverride(getKeyName());
             if (attributeOverride == null) {
                 attributeOverride = new AttributeOverride();
                 attributeOverride.setName(getKeyName());
                 embeddedList.get(0).addAttributeOverride(attributeOverride);
             }
-        }
     }
-
-    /**
-     * @return the attributeOverride
-     */
-    public AttributeOverride getAttributeOverride() {
-        return attributeOverride;
-    }
-
 }
