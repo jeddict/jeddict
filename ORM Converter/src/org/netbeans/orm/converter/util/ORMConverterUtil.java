@@ -332,7 +332,11 @@ public class ORMConverterUtil {
         // Once we start formatting, the task can't be canceled
 
         for (PositionRegion region : regions) {
+            try {
             formatter.reformat(region.getStartOffset(), region.getEndOffset());
+            } catch(Exception ex){
+                ex.printStackTrace();
+            }
         }
     }
 

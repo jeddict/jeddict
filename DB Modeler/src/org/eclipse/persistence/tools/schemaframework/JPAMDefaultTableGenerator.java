@@ -822,16 +822,16 @@ public class JPAMDefaultTableGenerator {
      * Add the foreign key to the aggregate collection mapping target table.
      * Also add listOrderField if specified.
      */
-    protected void createAggregateTargetTable(ManagedClass managedClass, Attribute elementCollection, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, boolean isInherited, AggregateCollectionMapping mapping) {
+    protected void createAggregateTargetTable(ManagedClass managedClass, Attribute managedAttribute, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, boolean isInherited, AggregateCollectionMapping mapping) {
         //intrinsicEntity Table
-        TableDefinition targetTable = getTableDefFromDBTable(managedClass, elementCollection, intrinsicEntity, mapping.getReferenceDescriptor().getDefaultTable());
-        addFieldsForMappedKeyMapContainerPolicy(managedClass, elementCollection, intrinsicEntity, intrinsicAttribute, isInherited, mapping.getContainerPolicy(), targetTable);
+        TableDefinition targetTable = getTableDefFromDBTable(managedClass, managedAttribute, intrinsicEntity, mapping.getReferenceDescriptor().getDefaultTable());
+        addFieldsForMappedKeyMapContainerPolicy(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, mapping.getContainerPolicy(), targetTable);
 
         Iterator aggregateFieldIterator = mapping.getReferenceDescriptor().getFields().iterator();
         while (aggregateFieldIterator.hasNext()) {
             DatabaseField dbField = (DatabaseField) aggregateFieldIterator.next();
             //add the target definition to the table definition
-            FieldDefinition fieldDef = getFieldDefFromDBField(dbField);
+            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, false, false, false, false, false, false, dbField);
             if (!targetTable.getFields().contains(fieldDef)) {
                 targetTable.addField(fieldDef);
             }
@@ -851,7 +851,7 @@ public class JPAMDefaultTableGenerator {
             targetFieldNames.add(targetField.getNameDelimited(databasePlatform));
 
             fkField = resolveDatabaseField(fkField, targetField);
-            FieldDefinition fieldDef = getFieldDefFromDBField(fkField);
+            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, true, false, false, false, false, false, fkField);//TODO true/false
             if (!targetTable.getFields().contains(fieldDef)) {
                 targetTable.addField(fieldDef);
             }
@@ -862,7 +862,7 @@ public class JPAMDefaultTableGenerator {
         TableDefinition sourceTable = getTableDefFromDBTable(managedClass, intrinsicEntity, sourceDatabaseTable);
 
         if (mapping.getListOrderField() != null) {
-            FieldDefinition fieldDef = getFieldDefFromDBField(mapping.getListOrderField());
+            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, false, false, false, false, false, false, mapping.getListOrderField());//TODO true/false
             TableDefinition table = getTableDefFromDBTable(mapping.getListOrderField().getTable());
             if (!table.getFields().contains(fieldDef)) {
                 table.addField(fieldDef);

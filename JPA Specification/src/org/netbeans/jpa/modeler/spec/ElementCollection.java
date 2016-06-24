@@ -309,6 +309,9 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             
             elementCollection.mapKeyForeignKey = ForeignKey.load(element, null);
             elementCollection.getMapKeyAttributeOverride().addAll(AttributeOverride.load(element));
+//            elementCollection.getAttributeOverride().clear();
+            // TODO if both side are Embeddable then how to diffrentiat MapKeyAttributeOverride and AttributeOverride 
+            // with single @AttributeOverride means there is no @MapKeyAttributeOverride  ?
         
         }
         return elementCollection;
