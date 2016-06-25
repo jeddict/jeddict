@@ -326,11 +326,11 @@ public class PropertiesHandler {
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "fetchType", "Fetch Type", "", comboBoxListener);
     }
 
-    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec) {
+    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<? extends JoinColumn> joinColumnsSpec) {
         return getJoinColumnsProperty(id, name, desc, modelerScene, joinColumnsSpec, null);
     }
 
-    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec, Entity entity) {
+    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<? extends JoinColumn> joinColumnsSpec, Entity entity) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
 
@@ -357,9 +357,9 @@ public class PropertiesHandler {
 
             @Override
             public void initData() {
-                List<JoinColumn> joinColumns = joinColumnsSpec;
+                List<? extends JoinColumn> joinColumns = joinColumnsSpec;
                 List<Object[]> data_local = new LinkedList<>();
-                Iterator<JoinColumn> itr = joinColumns.iterator();
+                Iterator<? extends JoinColumn> itr = joinColumns.iterator();
                 while (itr.hasNext()) {
                     JoinColumn joinColumn = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
@@ -380,7 +380,7 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 joinColumnsSpec.clear();
                 data.stream().forEach((row) -> {
-                    joinColumnsSpec.add((JoinColumn) row[0]);
+                    ((List<JoinColumn>)joinColumnsSpec).add((JoinColumn) row[0]);
                 });
                 this.data = data;
             }
@@ -1017,41 +1017,33 @@ public class PropertiesHandler {
     public static EmbeddedPropertySupport getFieldTypeProperty(String id, String name, String description, boolean mapKey,
             AttributeWidget attributeWidget) {
 
-        GenericEmbedded properrty = new GenericEmbedded(id, name, description);
+        GenericEmbedded property = new GenericEmbedded(id, name, description);
         
         if (mapKey) {
-            properrty.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),true));
-            properrty.setAfter("mapKeyType");
+            property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),true));
+            property.setAfter("mapKeyType");
         } else {
             if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
                 if (attributeWidget.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
-                    properrty.setEntityEditor(null);
+                    property.setEntityEditor(null);
                 } else if (attributeWidget.getBaseElementSpec() instanceof Embedded) {//to Disable it
-                    properrty.setEntityEditor(null);
+                    property.setEntityEditor(null);
                 } else {
-                    properrty.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),false));
-                    properrty.setBefore("collectionType");
+                    property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),false));
+                    property.setBefore("collectionType");
                 }
 
             } else if (attributeWidget.getBaseElementSpec() instanceof RelationAttribute) {
-                properrty.setEntityEditor(null);
-                properrty.setBefore("collectionType");
+                property.setEntityEditor(null);
+                property.setBefore("collectionType");
             }
         }
-        properrty.setDataListener(new EmbeddedDataListener<Attribute>() {
+        property.setDataListener(new EmbeddedDataListener<Attribute>() {
             private Attribute attribute;
-//            private PersistenceClassWidget persistenceClassWidget = null;
 
             @Override
             public void init() {
                 attribute = (Attribute) attributeWidget.getBaseElementSpec();
-//                if (attribute instanceof RelationAttribute) {
-//                    persistenceClassWidget = (PersistenceClassWidget)attributeWidget.getModelerScene().getBaseElement(((RelationAttribute) attribute).getConnectedEntity().getId());
-//                } else if (attribute instanceof ElementCollection && ((ElementCollection) attribute).getConnectedClass() != null) { //Embedded Collection
-//                    persistenceClassWidget = (PersistenceClassWidget) attributeWidget.getModelerScene().getBaseElement(((ElementCollection) attribute).getConnectedClass().getId());
-//                } else if (attribute instanceof Embedded) {
-//                    persistenceClassWidget = (PersistenceClassWidget) attributeWidget.getModelerScene().getBaseElement(((Embedded) attribute).getConnectedClass().getId());
-//                }
             }
 
             @Override
@@ -1061,14 +1053,10 @@ public class PropertiesHandler {
 
             @Override
             public void setData(Attribute baseAttribute) {
-                if(mapKey){
-                    return; //in-case of map key refresh not required
-                }
-//                attributeWidget.setBaseElementSpec(baseAttribute);
                 if (attributeWidget instanceof BaseAttributeWidget) {
                     ((BaseAttributeWidget)attributeWidget).createBeanValidationPropertySet(attributeWidget.getPropertyManager().getElementPropertySet());
-                    attributeWidget.refreshProperties();
                 }
+                attributeWidget.refreshProperties();
             }
 
             @Override
@@ -1081,7 +1069,7 @@ public class PropertiesHandler {
             }
 
         });
-        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), properrty);
+        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), property);
     }
  
     public static EmbeddedPropertySupport getCascadeProperty(RelationAttributeWidget attributeWidget) {

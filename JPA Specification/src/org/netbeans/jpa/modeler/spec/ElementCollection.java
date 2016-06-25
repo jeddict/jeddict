@@ -29,6 +29,7 @@ import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
+import static org.netbeans.jcode.core.util.AttributeType.STRING;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED_FQN;
@@ -265,7 +266,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
                 elementCollection.setTargetClass(declaredType.toString());
             }
         } else {
-            elementCollection.setTargetClass("java.lang.String");
+            elementCollection.setTargetClass(STRING);
         }
         elementCollection.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element));
         JavaSourceParserUtil.getBeanValidation(elementCollection,element);
@@ -309,10 +310,9 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
             
             elementCollection.mapKeyForeignKey = ForeignKey.load(element, null);
             elementCollection.getMapKeyAttributeOverride().addAll(AttributeOverride.load(element));
-//            elementCollection.getAttributeOverride().clear();
             // TODO if both side are Embeddable then how to diffrentiat MapKeyAttributeOverride and AttributeOverride 
             // with single @AttributeOverride means there is no @MapKeyAttributeOverride  ?
-        
+            // currently AttributeValidator will remove the invalid
         }
         return elementCollection;
     }
@@ -1117,7 +1117,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     
         @Override
     public String getMapKeyDataTypeLabel(){
-        if(mapKeyType == MapKeyType.EXT){
+        if(mapKeyType == MapKeyType.EXT && mapKeyAttribute!=null){
             return mapKeyAttribute.getDataTypeLabel();
         } else {
             if(mapKeyEntity!=null){
