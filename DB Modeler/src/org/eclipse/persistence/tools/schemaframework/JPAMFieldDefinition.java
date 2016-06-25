@@ -218,6 +218,37 @@ public class JPAMFieldDefinition extends FieldDefinition {
 //                        column = new DBEmbeddedIdAttributeColumn(name, embeddedId, managedAttribute);
                     }
                 }
+            } else if (intrinsicAttribute.get(0) instanceof ElementCollection) {
+                if(mapKey){
+                    MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
+                    if(mapKeyHandler.getMapKeyEntity()!=null){
+                        column = new DBMapKeyJoinColumn(name, managedAttribute);
+                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ 
+                        // Wrap AttributeOverride to Embedded to reuse the api
+                        column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
+                    } else {
+                        column = new DBMapKeyColumn(name, managedAttribute);
+                    }
+                } else {//e.g : Map<Entity,Embedded>, List<Embedded>
+                    ElementCollection elementCollection = (ElementCollection)intrinsicAttribute.peek();
+                    List<Embedded> embeddedList = new ArrayList<>();
+                    embeddedList.add(new Embedded(elementCollection.getAttributeOverride()));
+                    for (int i = 1; i < intrinsicAttribute.size() - 1; i++) {//skip first it ElementCollection
+                        embeddedList.add((Embedded) intrinsicAttribute.get(i));
+                    }
+
+                    if (managedAttribute instanceof RelationAttribute) {
+                        if (inverse) {
+                            column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                        } else {
+                            column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                        }
+                    } else if (foriegnKey) {
+                        column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
+                    } else {
+                        column = new DBEmbeddedAttributeColumn(name, embeddedList, managedAttribute);
+                    }
+                }
             }
         } 
         

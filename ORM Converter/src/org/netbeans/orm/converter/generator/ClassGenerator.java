@@ -82,13 +82,10 @@ import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
-import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
-import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
-import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
@@ -132,7 +129,6 @@ import org.netbeans.orm.converter.compiler.JoinTableSnippet;
 import org.netbeans.orm.converter.compiler.ManyToManySnippet;
 import org.netbeans.orm.converter.compiler.ManyToOneSnippet;
 import org.netbeans.orm.converter.compiler.MapKeySnippet;
-import org.netbeans.orm.converter.compiler.MultiRelationAttributeSnippet;
 import org.netbeans.orm.converter.compiler.NamedAttributeNodeSnippet;
 import org.netbeans.orm.converter.compiler.NamedEntityGraphSnippet;
 import org.netbeans.orm.converter.compiler.NamedEntityGraphsSnippet;
@@ -371,25 +367,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return;
         }
         for (ElementCollection parsedElementCollection : parsedElementCollections) {
-            ColumnDefSnippet columnDef = getColumnDef(parsedElementCollection.getColumn());
-            EnumType enumType = parsedElementCollection.getEnumerated();
-
+            
             CollectionTableSnippet collectionTable = getCollectionTable(parsedElementCollection.getCollectionTable());
 
-            EnumType parsedEnumType = parsedElementCollection.getEnumerated();
-            EnumeratedSnippet enumerated = null;
-            if (parsedEnumType != null) {
-                enumerated = new EnumeratedSnippet();
-                enumerated.setValue(parsedEnumType);
-            }
-            
-            TemporalType parsedTemporalType = parsedElementCollection.getTemporal();
-            TemporalSnippet temporal = null;
-            if (parsedTemporalType != null) {
-                temporal = new TemporalSnippet();
-                temporal.setValue(parsedTemporalType);
-            }
-            
             FetchType parsedFetchType = parsedElementCollection.getFetch();
             ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
@@ -403,9 +383,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(parsedElementCollection);
             variableDef.setElementCollection(elementCollection);
             variableDef.setCollectionTable(collectionTable);
-            variableDef.setColumnDef(columnDef);
-            variableDef.setEnumerated(enumerated);
-            variableDef.setTemporal(temporal);
+     
             
             if (parsedElementCollection.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
@@ -415,9 +393,28 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 variableDef.setLob(true);
             }
 
-            processInternalAttributeOverride(classDef, parsedElementCollection.getAttributeOverride());
-            processInternalAssociationOverride(classDef, parsedElementCollection.getAssociationOverride());
+            if (parsedElementCollection.getConnectedClass() == null) {//if not embeddable
 
+                EnumType parsedEnumType = parsedElementCollection.getEnumerated();
+                EnumeratedSnippet enumerated = null;
+                if (parsedEnumType != null) {
+                    enumerated = new EnumeratedSnippet();
+                    enumerated.setValue(parsedEnumType);
+                }
+
+                TemporalType parsedTemporalType = parsedElementCollection.getTemporal();
+                TemporalSnippet temporal = null;
+                if (parsedTemporalType != null) {
+                    temporal = new TemporalSnippet();
+                    temporal.setValue(parsedTemporalType);
+                }
+                variableDef.setEnumerated(enumerated);
+                variableDef.setTemporal(temporal);
+                variableDef.setColumnDef(getColumnDef(parsedElementCollection.getColumn()));
+            } else {
+                processInternalAttributeOverride(variableDef, parsedElementCollection.getAttributeOverride());
+                processInternalAssociationOverride(variableDef, parsedElementCollection.getAssociationOverride());
+            }
         }
     }
 
@@ -810,8 +807,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         for (AttributeOverride parsedAttributeOverride : parsedAttributeOverrides) {
 
-            ColumnDefSnippet columnDef = getColumnDef(
-                    parsedAttributeOverride.getColumn());
+            ColumnDefSnippet columnDef = getColumnDef(parsedAttributeOverride.getColumn());
             if (columnDef == null) {
                 continue;
             }

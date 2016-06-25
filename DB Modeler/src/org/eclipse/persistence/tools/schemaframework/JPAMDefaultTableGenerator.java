@@ -535,7 +535,7 @@ public class JPAMDefaultTableGenerator {
             Attribute managedAttribute = (Attribute) mapping.getProperty(Attribute.class);
             Boolean isInherited = (Boolean) mapping.getProperty(Inheritance.class);
             isInherited = isInherited == null ? false : isInherited;
-
+            
             if (mapping.isForeignReferenceMapping()) {
                 if (managedAttribute instanceof RelationAttribute) {
                     RelationAttribute relationAttribute = (RelationAttribute) managedAttribute;
@@ -561,7 +561,7 @@ public class JPAMDefaultTableGenerator {
             } else if (mapping.isManyToManyMapping()) {
                 buildRelationTableDefinition(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, (ManyToManyMapping) mapping, ((ManyToManyMapping) mapping).getRelationTableMechanism(), ((ManyToManyMapping) mapping).getListOrderField(), mapping.getContainerPolicy());
             } else if (mapping.isDirectCollectionMapping()) {
-                buildDirectCollectionTableDefinition(mapping.getDescriptor(), managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, (DirectCollectionMapping) mapping, descriptor);
+                buildDirectCollectionTableDefinition(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, (DirectCollectionMapping) mapping, descriptor);
             } else if (mapping.isDirectToFieldMapping()) {
                 Converter converter = ((DirectToFieldMapping) mapping).getConverter();
                 if (converter != null) {
@@ -699,7 +699,7 @@ public class JPAMDefaultTableGenerator {
     /**
      * Build direct collection table definitions in a EclipseLink descriptor
      */
-    protected void buildDirectCollectionTableDefinition(ClassDescriptor classDescriptor, ManagedClass managedClass, Attribute managedAttribute, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, boolean isInherited, DirectCollectionMapping mapping, ClassDescriptor descriptor) {
+    protected void buildDirectCollectionTableDefinition(ManagedClass managedClass, Attribute managedAttribute, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, boolean isInherited, DirectCollectionMapping mapping, ClassDescriptor descriptor) {
         //first create direct collection table
         TableDefinition table = getTableDefFromDBTable(managedClass, managedAttribute, intrinsicEntity, mapping.getReferenceTable());
 
@@ -743,9 +743,10 @@ public class JPAMDefaultTableGenerator {
                 table.addField(fieldDef);
             }
         } else {
-            //            to fetch managed embedded attribute
-            //getManagedAttribute(classDescriptor, mapping.getContainerPolicy().getIdentityFieldsForMapKey().get(0),  intrinsicAttribute);
-            addFieldsForMappedKeyMapContainerPolicy(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, mapping.getContainerPolicy(), table);
+            // to fetch managed embedded attribute
+            LinkedList<Attribute> intrinsicAttribute_Local = new LinkedList<>(intrinsicAttribute);
+            Attribute managedAttribute_Local = getManagedAttribute(mapping.getContainerPolicy().getDescriptorForMapKey(), mapping.getContainerPolicy().getIdentityFieldsForMapKey().get(0),  intrinsicAttribute_Local);
+            addFieldsForMappedKeyMapContainerPolicy(managedClass, managedAttribute_Local, intrinsicEntity, intrinsicAttribute_Local, isInherited, mapping.getContainerPolicy(), table);
             if (mapping.getListOrderField() != null) {
                 fieldDef = getFieldDefFromDBField(mapping.getListOrderField());
                 if (!table.getFields().contains(fieldDef)) {
@@ -831,7 +832,10 @@ public class JPAMDefaultTableGenerator {
         while (aggregateFieldIterator.hasNext()) {
             DatabaseField dbField = (DatabaseField) aggregateFieldIterator.next();
             //add the target definition to the table definition
-            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, false, false, false, false, false, false, dbField);
+            
+            LinkedList<Attribute> intrinsicAttribute_Local = new LinkedList<>(intrinsicAttribute);
+            Attribute managedAttribute_Local = getManagedAttribute(mapping.getReferenceDescriptor(), dbField,  intrinsicAttribute_Local);
+            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute_Local, managedAttribute_Local, false, false, false, false, false, false, false, dbField);
             if (!targetTable.getFields().contains(fieldDef)) {
                 targetTable.addField(fieldDef);
             }
@@ -1046,8 +1050,6 @@ public class JPAMDefaultTableGenerator {
     protected FieldDefinition getFieldDefFromDBField(Entity intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable, boolean inherited, boolean dtype, boolean primarykeyjoincolumn, boolean mapKey, DatabaseField dbField) {
         FieldDefinition fieldDef = this.fieldMap.get(dbField);
         if (fieldDef == null) {
-            //not built yet, build one
-//            intrinsicEntity.getAttributes().findAllAttribute(name)
             if (inherited) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity, managedAttribute, inverse, foriegnKey, relationTable);
             } else if (dtype) {

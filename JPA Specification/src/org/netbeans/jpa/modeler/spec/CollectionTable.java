@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
+import static org.netbeans.jcode.jpa.JPAConstants.COLLECTION_TABLE_FQN;
 import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.table.CollectionTableValidator;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -91,7 +92,7 @@ public class CollectionTable {
     protected String schema;
 
     public static CollectionTable load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinTable");
+        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, COLLECTION_TABLE_FQN);
 
         CollectionTable collectionTable = null;
         if (annotationMirror != null) {

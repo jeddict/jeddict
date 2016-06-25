@@ -22,6 +22,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_FQN;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.QUOTE;
 
 public class MapKeySnippet implements Snippet {
@@ -41,7 +42,7 @@ public class MapKeySnippet implements Snippet {
     private JoinColumnsSnippet joinColumnsSnippet;
             
     //New MapKeyType - Embeddable
-    private AttributeOverridesSnippet attributeOverrideSnippet;//REVENG PENDING
+    private AttributeOverridesSnippet attributeOverrideSnippet;
      
          
     @Override
@@ -63,17 +64,18 @@ public class MapKeySnippet implements Snippet {
            builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
         } else {
              if (columnSnippet != null) {
-                builder.append(columnSnippet.getSnippet()).append("\n");
+                builder.append(columnSnippet.getSnippet());
             } else if (temporalSnippet != null) {
-                builder.append(temporalSnippet.getSnippet()).append("\n");
+                builder.append(temporalSnippet.getSnippet());
             } else if (enumeratedSnippet != null) {
-                builder.append(enumeratedSnippet.getSnippet()).append("\n");
+                builder.append(enumeratedSnippet.getSnippet());
             } else if (joinColumnsSnippet!= null) {
-                builder.append(joinColumnsSnippet.getSnippet()).append("\n");
+                builder.append(joinColumnsSnippet.getSnippet());
             } else if (attributeOverrideSnippet!= null) {
-                builder.append(attributeOverrideSnippet.getSnippet()).append("\n");
+                builder.append(attributeOverrideSnippet.getSnippet());
             }
         }
+//        builder.append(NEW_LINE);
         
         return builder.toString();
     }

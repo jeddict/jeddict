@@ -40,12 +40,12 @@ public class ElementCollectionSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
-            builder.append(mapKeySnippet.getSnippet()).append(TAB);
-        }
         builder.append("@ElementCollection");
         if (fetchType != null) {
             builder.append("(fetch=FetchType.").append(fetchType).append(ORMConverterUtil.CLOSE_PARANTHESES);
+        }
+        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
+            builder.append(mapKeySnippet.getSnippet()).append(TAB);
         }
         return builder.toString();
     }
