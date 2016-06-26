@@ -169,7 +169,8 @@ public class PropertiesHandler {
                 } catch (ClassNotFoundException ex) {
                 }
 
-                if ((prevClass != null && newClass != null && prevClass != newClass && (Map.class.isAssignableFrom(prevClass) || Map.class.isAssignableFrom(newClass)))
+                if ((prevClass != null && newClass != null && prevClass != newClass &&
+                        (Map.class.isAssignableFrom(prevClass) || Map.class.isAssignableFrom(newClass)))
                         || (prevClass == null && newClass != null && Map.class.isAssignableFrom(newClass))
                         || (prevClass != null && newClass == null && Map.class.isAssignableFrom(prevClass))) {
                     if(newClass==null || !Map.class.isAssignableFrom(newClass)){

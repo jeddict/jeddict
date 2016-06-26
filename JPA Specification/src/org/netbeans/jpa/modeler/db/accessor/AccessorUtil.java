@@ -35,7 +35,7 @@ import org.netbeans.jpa.modeler.spec.TemporalType;
  */
 public class AccessorUtil {
 
-    public static void setEnumerated(DirectAccessor accessor, EnumType enumType, ResultType resultType) {
+    public static void setEnumerated(MapKeyAccessor accessor, EnumType enumType) {
         if (enumType == null) {
             return;
         }
@@ -45,32 +45,46 @@ public class AccessorUtil {
         } else {
             enumeratedMetadata.setEnumeratedType(JPA_ENUM_ORDINAL);
         }
-        if (resultType == ResultType.MAP) {
-            ((MapKeyAccessor) accessor).setMapKeyEnumerated(enumeratedMetadata);
-            ((MapKeyAccessor) accessor).setMapKeyClassName(ProxyEnum.class.getName());
-        } else if (resultType == ResultType.COLLECTION) {
-            ((MapKeyAccessor) accessor).setTargetClassName(ProxyEnum.class.getName());
-            accessor.setEnumerated(enumeratedMetadata);
-        } else {
-            accessor.setAttributeType(ProxyEnum.class.getName()); //using the proxy enum instead of the orignal enum 
-            accessor.setEnumerated(enumeratedMetadata);
-        }
-
+        accessor.setMapKeyEnumerated(enumeratedMetadata);
+        accessor.setMapKeyClassName(ProxyEnum.class.getName());
         // orignal enum is not accessible in classloader so either to use proxy enum or create dynamic enum
     }
+    
+    public static void setEnumerated(DirectAccessor accessor, EnumType enumType) {
+        if (enumType == null) {
+            return;
+        }
+        EnumeratedMetadata enumeratedMetadata = new EnumeratedMetadata();
+        if (enumType == EnumType.STRING) {
+            enumeratedMetadata.setEnumeratedType(JPA_ENUM_STRING);
+        } else {
+            enumeratedMetadata.setEnumeratedType(JPA_ENUM_ORDINAL);
+        }
+        if (accessor instanceof ElementCollectionAccessor) {
+            ((ElementCollectionAccessor) accessor).setTargetClassName(ProxyEnum.class.getName());
+            accessor.setEnumerated(enumeratedMetadata);
+        } else {
+            accessor.setAttributeType(ProxyEnum.class.getName()); 
+            accessor.setEnumerated(enumeratedMetadata);
+        }
+    }
 
-    public static void setTemporal(DirectAccessor accessor, TemporalType temporalType, ResultType resultType) {
+    public static void setTemporal(MapKeyAccessor accessor, TemporalType temporalType) {
         if (temporalType == null) {
             return;
         }
         TemporalMetadata temporalMetadata = new TemporalMetadata();
         temporalMetadata.setTemporalType(temporalType.toString());
-        if (resultType == ResultType.MAP) {
-            ((MapKeyAccessor) accessor).setMapKeyTemporal(temporalMetadata);
-        } else {
-            accessor.setTemporal(temporalMetadata);// JPA_TEMPORAL_DATE = "DATE"; JPA_TEMPORAL_TIME = "TIME"; JPA_TEMPORAL_TIMESTAMP = "TIMESTAMP";
-
+        accessor.setMapKeyTemporal(temporalMetadata);
+    }
+    
+     public static void setTemporal(DirectAccessor accessor, TemporalType temporalType) {
+        if (temporalType == null) {
+            return;
         }
+        TemporalMetadata temporalMetadata = new TemporalMetadata();
+        temporalMetadata.setTemporalType(temporalType.toString());
+        accessor.setTemporal(temporalMetadata);// JPA_TEMPORAL_DATE = "DATE"; JPA_TEMPORAL_TIME = "TIME"; JPA_TEMPORAL_TIMESTAMP = "TIMESTAMP";
     }
 
     public static void setLob(DirectAccessor accessor, Lob lob, String attributeType, boolean isCollectionType) {

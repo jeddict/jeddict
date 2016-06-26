@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.OneToManyAccessor;
 import org.netbeans.db.modeler.exception.DBValidationException;
+import org.netbeans.jpa.modeler.db.accessor.spec.MapKeyAccessor;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -29,7 +30,7 @@ import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
  *
  * @author Gaurav Gupta
  */
-public class OneToManySpecAccessor extends OneToManyAccessor {
+public class OneToManySpecAccessor extends OneToManyAccessor implements MapKeyAccessor {
 
     private final OneToMany oneToMany;
 
@@ -49,6 +50,7 @@ public class OneToManySpecAccessor extends OneToManyAccessor {
         JoinColumnValidator.filter(oneToMany.getJoinColumn());
         accessor.setJoinColumns(oneToMany.getJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));
 
+        MapKeyUtil.load(accessor, oneToMany); 
         return accessor;
 
     }

@@ -15,12 +15,30 @@
  */
 package org.netbeans.jpa.modeler.db.accessor.spec;
 
+import java.util.List;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.MappedKeyMapAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.columns.AttributeOverrideMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.converters.EnumeratedMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.converters.TemporalMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.mappings.MapKeyMetadata;
 
-public interface MapKeyAccessor {
+public interface MapKeyAccessor extends MappedKeyMapAccessor {
+
     void setMapKeyEnumerated(EnumeratedMetadata mapKeyEnumerated);
-     void setMapKeyClassName(String mapKeyClassName);
-     void setTargetClassName(String targetClassName);
-     void setMapKeyTemporal(TemporalMetadata mapKeyTemporal);
+
+    void setMapKeyClassName(String mapKeyClassName);
+
+//    void setTargetClassName(String targetClassName);
+
+    void setMapKeyTemporal(TemporalMetadata mapKeyTemporal);
+
+    void setMapKeyColumn(ColumnMetadata mapKeyColumn);
+
+    void setMapKeyAttributeOverrides(List<AttributeOverrideMetadata> mapKeyAttributeOverrides);
+
+    void setMapKeyJoinColumns(List<JoinColumnMetadata> mapKeyJoinColumns);
+
+    void setMapKey(MapKeyMetadata mapKey);
 }
