@@ -223,7 +223,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
                     MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
                     if(mapKeyHandler.getMapKeyEntity()!=null){
                         column = new DBMapKeyJoinColumn(name, managedAttribute);
-                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ 
+                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ //Map<Embedded,Basic>
                         // Wrap AttributeOverride to Embedded to reuse the api
                         column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
                     } else {

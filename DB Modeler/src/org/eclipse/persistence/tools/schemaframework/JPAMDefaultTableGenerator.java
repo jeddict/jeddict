@@ -616,7 +616,13 @@ public class JPAMDefaultTableGenerator {
             Iterator<DatabaseField> i = keyFields.iterator();
             while (i.hasNext()) {
                 DatabaseField foreignKey = i.next();
-                FieldDefinition fieldDef =  getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, false, false, isInherited, false, false, true, foreignKey);
+                // to fetch managed embedded attribute
+                LinkedList<Attribute> intrinsicAttribute_Local = new LinkedList<>(intrinsicAttribute);
+                Attribute managedAttribute_Local = managedAttribute;
+                if (managedAttribute instanceof MapKeyHandler && ((MapKeyHandler) managedAttribute).getMapKeyEmbeddable() != null) {
+                    managedAttribute_Local = getManagedAttribute(cp.getDescriptorForMapKey(), foreignKey, intrinsicAttribute_Local);
+                }
+                FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute_Local, managedAttribute_Local, false, false, false, isInherited, false, false, true, foreignKey);
                 if (!table.getFields().contains(fieldDef)) {
                     table.addField(fieldDef);
                 }
@@ -744,13 +750,7 @@ public class JPAMDefaultTableGenerator {
                 table.addField(fieldDef);
             }
         } else {
-            // to fetch managed embedded attribute
-            LinkedList<Attribute> intrinsicAttribute_Local = new LinkedList<>(intrinsicAttribute);
-            Attribute managedAttribute_Local = managedAttribute;
-            if(managedAttribute instanceof MapKeyHandler && ((MapKeyHandler)managedAttribute).getMapKeyEmbeddable()!=null){
-                managedAttribute_Local = getManagedAttribute(mapping.getContainerPolicy().getDescriptorForMapKey(), mapping.getContainerPolicy().getIdentityFieldsForMapKey().get(0),  intrinsicAttribute_Local);
-            }
-            addFieldsForMappedKeyMapContainerPolicy(managedClass, managedAttribute_Local, intrinsicEntity, intrinsicAttribute_Local, isInherited, mapping.getContainerPolicy(), table);
+            addFieldsForMappedKeyMapContainerPolicy(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, mapping.getContainerPolicy(), table);
             if (mapping.getListOrderField() != null) {
                 fieldDef = getFieldDefFromDBField(mapping.getListOrderField());
                 if (!table.getFields().contains(fieldDef)) {
