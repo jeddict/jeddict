@@ -19,11 +19,10 @@ import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.MTMRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
-import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -37,6 +36,12 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
 
     public MTMRelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+    }
+    
+    @Override
+    public void init() {
+        super.init();
+        AttributeValidator.scanMapKeyHandlerError(this);
     }
 
     /**

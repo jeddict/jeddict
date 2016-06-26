@@ -52,6 +52,7 @@ import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPan
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
 import static org.netbeans.jpa.modeler.spec.AccessType.PROPERTY;
@@ -231,6 +232,7 @@ public class PropertiesHandler {
             public void setItem(ComboBoxValue<Attribute> value) {
                 Attribute newType = value.getValue();
                 mapKeyHandler.setMapKeyAttribute(newType);
+                AttributeValidator.scanMapKeyHandlerError(attributeWidget);
             }
 
             @Override
@@ -243,7 +245,7 @@ public class PropertiesHandler {
                       if(!attributeWidgets.isEmpty()){
                          attribute = attributeWidgets.get(0).getBaseElementSpec();
                          mapKeyHandler.setMapKeyAttribute(attribute);
-                         
+                         AttributeValidator.scanMapKeyHandlerError(attributeWidget);
                       }
                 }
                 if (attribute != null) {
@@ -1055,6 +1057,9 @@ public class PropertiesHandler {
             public void setData(Attribute baseAttribute) {
                 if (attributeWidget instanceof BaseAttributeWidget) {
                     ((BaseAttributeWidget)attributeWidget).createBeanValidationPropertySet(attributeWidget.getPropertyManager().getElementPropertySet());
+                }
+                if (mapKey) {
+                    AttributeValidator.scanMapKeyHandlerError(attributeWidget);
                 }
                 attributeWidget.refreshProperties();
             }

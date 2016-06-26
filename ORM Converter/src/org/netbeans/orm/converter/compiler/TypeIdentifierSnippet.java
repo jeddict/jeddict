@@ -107,7 +107,7 @@ public class TypeIdentifierSnippet implements Snippet {
                 Class _class = collectionTypeClassHelper.getClazz();
                   
                 if (_class != null && Map.class.isAssignableFrom(_class)) {
-                    if (multiRelationAttributeSnippet.getMapKeySnippet() != null) {
+                    if (multiRelationAttributeSnippet.getMapKeySnippet() != null && multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType().getClassName()!=null) {
                         mapKeyClassHelper = multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType();
                         type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
                     } else {
@@ -140,7 +140,7 @@ public class TypeIdentifierSnippet implements Snippet {
             ClassHelper mapKeyClassHelper = null;
             Class _class = collectionTypeClassHelper.getClazz();
                 if (_class != null && Map.class.isAssignableFrom(_class)) {
-                    if (elementCollection.getMapKeySnippet() != null) {
+                    if (elementCollection.getMapKeySnippet() != null && elementCollection.getMapKeySnippet().getMapKeyAttributeType().getClassName()!=null) {
                         mapKeyClassHelper = elementCollection.getMapKeySnippet().getMapKeyAttributeType();
                         type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
                     } else {

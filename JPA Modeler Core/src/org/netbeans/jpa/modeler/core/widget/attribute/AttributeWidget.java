@@ -235,7 +235,10 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("mapKeyJoinColumns", "MapKey Join Columns", "", this.getModelerScene(), mapKeyHandler.getMapKeyJoinColumn()));
         
         
-        this.addPropertyChangeListener("mapKeyType",(val) -> mapKeyHandler.resetMapAttribute());
+        this.addPropertyChangeListener("mapKeyType",(val) -> {
+            mapKeyHandler.resetMapAttribute(); 
+            AttributeValidator.scanMapKeyHandlerError(this);
+        });
         this.addPropertyVisibilityHandler("mapKeyType", mapKeyVisibilityHandler);
         this.addPropertyVisibilityHandler("mapKeyFieldType", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() == MapKeyType.NEW);
         this.addPropertyVisibilityHandler("mapKey", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() == MapKeyType.EXT);

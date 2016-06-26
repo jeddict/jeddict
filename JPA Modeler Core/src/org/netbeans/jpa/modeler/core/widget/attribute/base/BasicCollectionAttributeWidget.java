@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import java.awt.Image;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -36,6 +37,12 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(getIcon());
 
+    }
+    
+    @Override
+    public void init() {
+        super.init();
+        AttributeValidator.scanMapKeyHandlerError(this);
     }
 
     @Override

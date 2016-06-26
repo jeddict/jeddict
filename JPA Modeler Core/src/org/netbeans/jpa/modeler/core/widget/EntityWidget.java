@@ -53,6 +53,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
     @Override
     public void init() {
+        super.init();
         Entity entity = this.getBaseElementSpec();
         if (entity.getAttributes().getAllAttribute().isEmpty() && this.getModelerScene().getModelerFile().isLoaded()) {
             addNewIdAttribute("id");

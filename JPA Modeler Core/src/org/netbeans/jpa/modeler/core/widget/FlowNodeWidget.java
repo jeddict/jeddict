@@ -83,11 +83,8 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
 
     @Override
     public void init() {
-        FlowNode flowNode = this.getBaseElementSpec();
-        this.setName(flowNode.getName());
-        this.setLabel(flowNode.getName());
     }
-
+    
     @Override
     public void destroy() {
     }

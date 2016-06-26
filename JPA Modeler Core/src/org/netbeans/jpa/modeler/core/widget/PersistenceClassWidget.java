@@ -89,6 +89,7 @@ import org.openide.util.RequestProcessor;
  */
 public abstract class PersistenceClassWidget<E extends ManagedClass> extends JavaClassWidget<E> {
 
+       
     public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
 
         return getAllAttributeWidgets(true);
@@ -998,6 +999,15 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     public List<BasicCollectionAttributeWidget> getBasicCollectionAttributeWidgets() {
         return basicCollectionAttributeWidgets;
     }
+    
+    public List<AttributeWidget> getMapKeyAttributeWidgets() {
+        List<AttributeWidget> attributeWidgets = new ArrayList<>(basicCollectionAttributeWidgets);
+        attributeWidgets.addAll(multiValueEmbeddedAttributeWidgets);
+        attributeWidgets.addAll(manyToOneRelationAttributeWidgets);
+        attributeWidgets.addAll(manyToManyRelationAttributeWidgets);
+        return attributeWidgets;
+    }
+    
 
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
 

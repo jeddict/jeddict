@@ -34,6 +34,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
 
     @Override
     public void init() {
+        super.init();
         MappedSuperclass mappedSuperclass = this.getBaseElementSpec();
         if (mappedSuperclass.getAttributes() == null) {
             mappedSuperclass.setAttributes(new Attributes());
