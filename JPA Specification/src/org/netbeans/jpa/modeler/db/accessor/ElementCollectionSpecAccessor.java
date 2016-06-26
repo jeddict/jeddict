@@ -52,6 +52,9 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor imp
                     AccessorUtil.setEnumerated(accessor,elementCollection.getMapKeyEnumerated(), ResultType.MAP);
                     AccessorUtil.setTemporal(accessor, elementCollection.getMapKeyTemporal(), ResultType.MAP);
                     accessor.setMapKeyClassName(elementCollection.getMapKeyAttributeType());
+                    if (elementCollection.getMapKeyColumn() != null) {
+                        accessor.setMapKeyColumn(elementCollection.getMapKeyColumn().getAccessor());
+                    }
                 } else if(elementCollection.getMapKeyEntity()!=null){
                     accessor.setMapKeyClassName(elementCollection.getMapKeyEntity().getClazz());
                     accessor.setMapKeyJoinColumns(elementCollection.getMapKeyJoinColumn().stream().map(JoinColumn::getAccessor).collect(toList()));

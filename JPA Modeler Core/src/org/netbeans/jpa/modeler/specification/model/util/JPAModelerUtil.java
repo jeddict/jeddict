@@ -436,7 +436,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             entityMappings.repairDefinition(IO);
             entityMappings.getAllManagedClass().stream().
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            System.out.println("EM PS Total time : " + (new Date().getTime() - st) + " sec");
 
             entityMappings.initJavaInheritenceMapping();
             loadFlowEdge(scene);

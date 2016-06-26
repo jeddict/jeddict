@@ -35,7 +35,6 @@ public class OrderAction extends NodeAction implements Presenter.Popup, LeafNode
 
     @Override
     protected void performAction(Node[] activatedNodes) {
-        System.out.println("");
     }
 
     @Override

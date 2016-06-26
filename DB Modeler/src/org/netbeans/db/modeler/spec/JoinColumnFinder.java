@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.MapKeyJoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -112,11 +111,7 @@ public class JoinColumnFinder {
         }
 
         if (!created) {
-            if (mapKey) {
-                joinColumn = new MapKeyJoinColumn();
-            } else {
-                joinColumn = new JoinColumn();
-            }
+            joinColumn = new JoinColumn();
             joinColumn.setImplicitName(name);
             joinColumnList.add(joinColumn);
         }

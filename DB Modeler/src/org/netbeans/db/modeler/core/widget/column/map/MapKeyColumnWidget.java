@@ -59,7 +59,7 @@ public class MapKeyColumnWidget extends BasicColumnWidget<DBMapKeyColumn<Attribu
         Attribute attribute = this.getBaseElementSpec().getAttribute();
         if (attribute instanceof MapKeyHandler) {
             MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
-            mapKeyHandler.getMapKeyColumn().setName(this.name);
+            mapKeyHandler.getMapKeyColumn().setName(newName);
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }

@@ -16,8 +16,6 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.BasicAccessor;
-import org.eclipse.persistence.internal.jpa.metadata.converters.LobMetadata;
-import org.eclipse.persistence.internal.jpa.metadata.converters.TemporalMetadata;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;

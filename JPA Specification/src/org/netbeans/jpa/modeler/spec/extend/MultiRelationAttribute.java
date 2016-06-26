@@ -44,8 +44,8 @@ import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.MapKey;
 import org.netbeans.jpa.modeler.spec.MapKeyClass;
-import org.netbeans.jpa.modeler.spec.MapKeyColumn;
-import org.netbeans.jpa.modeler.spec.MapKeyJoinColumn;
+import org.netbeans.jpa.modeler.spec.Column;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OrderColumn;
 import org.netbeans.jpa.modeler.spec.TemporalType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
@@ -105,7 +105,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     @XmlAttribute(name="mkat")
     private String mapKeyAttributeType; //e.g String, int, Enum, Date    applicable for basic,enumerated,temporal
     @XmlElement(name = "mkc")
-    protected MapKeyColumn mapKeyColumn;
+    protected Column mapKeyColumn;
     @XmlElement(name = "mktemp")
     protected TemporalType mapKeyTemporal;
     @XmlElement(name = "mkenum")
@@ -116,7 +116,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     @XmlIDREF
     private Entity mapKeyEntity;
     @XmlElement(name = "mkjc")
-    protected List<MapKeyJoinColumn> mapKeyJoinColumn;
+    protected List<JoinColumn> mapKeyJoinColumn;
     @XmlElement(name = "mkfk")
     protected ForeignKey mapKeyForeignKey;
             
@@ -176,7 +176,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
                  this.mapKeyAttributeType = keyDeclaredType.toString();
             }
             
-            this.mapKeyColumn = new MapKeyColumn().load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_COLUMN_FQN));
+            this.mapKeyColumn = new Column().load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_COLUMN_FQN));
             this.mapKeyTemporal = TemporalType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_TEMPORAL_FQN));
             this.mapKeyEnumerated = EnumType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_ENUMERATED_FQN));
             
@@ -185,13 +185,13 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
                 List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
                 if (joinColumnsAnnot != null) {
                     for (Object joinColumnObj : joinColumnsAnnot) {
-                        this.getMapKeyJoinColumn().add(new MapKeyJoinColumn().load(element, (AnnotationMirror) joinColumnObj));
+                        this.getMapKeyJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
                     }
                 }
             } else {
                 AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.MapKeyJoinColumn");
                 if (joinColumnAnnotationMirror != null) {
-                    this.getMapKeyJoinColumn().add(new MapKeyJoinColumn().load(element, joinColumnAnnotationMirror));
+                    this.getMapKeyJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
                 }
             }
             
@@ -365,7 +365,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      * @return possible object is {@link MapKeyColumn }
      *
      */
-    public MapKeyColumn getMapKeyColumn() {
+    public Column getMapKeyColumn() {
         return mapKeyColumn;
     }
 
@@ -375,7 +375,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      * @param value allowed object is {@link MapKeyColumn }
      *
      */
-    public void setMapKeyColumn(MapKeyColumn value) {
+    public void setMapKeyColumn(Column value) {
         this.mapKeyColumn = value;
     }
 
@@ -401,9 +401,9 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      *
      *
      */
-    public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
+    public List<JoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
-            mapKeyJoinColumn = new ArrayList<MapKeyJoinColumn>();
+            mapKeyJoinColumn = new ArrayList<>();
         }
         return this.mapKeyJoinColumn;
     }

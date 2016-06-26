@@ -18,13 +18,13 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.util.List;
 import java.util.Set;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
+import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
+import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.MapKey;
-import org.netbeans.jpa.modeler.spec.MapKeyColumn;
-import org.netbeans.jpa.modeler.spec.MapKeyJoinColumn;
 import org.netbeans.jpa.modeler.spec.TemporalType;
 
 /**
@@ -65,11 +65,11 @@ public interface MapKeyHandler {
 
     void setMapKeyEnumerated(EnumType value);
 
-    MapKeyColumn getMapKeyColumn();
+    Column getMapKeyColumn();
 
-    void setMapKeyColumn(MapKeyColumn value);
+    void setMapKeyColumn(Column value);
 
-    List<MapKeyJoinColumn> getMapKeyJoinColumn();
+    List<JoinColumn> getMapKeyJoinColumn();
 
     ForeignKey getMapKeyForeignKey();
 

@@ -92,6 +92,7 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
 /**
@@ -745,7 +746,10 @@ public class JPAMDefaultTableGenerator {
         } else {
             // to fetch managed embedded attribute
             LinkedList<Attribute> intrinsicAttribute_Local = new LinkedList<>(intrinsicAttribute);
-            Attribute managedAttribute_Local = getManagedAttribute(mapping.getContainerPolicy().getDescriptorForMapKey(), mapping.getContainerPolicy().getIdentityFieldsForMapKey().get(0),  intrinsicAttribute_Local);
+            Attribute managedAttribute_Local = managedAttribute;
+            if(managedAttribute instanceof MapKeyHandler && ((MapKeyHandler)managedAttribute).getMapKeyEmbeddable()!=null){
+                managedAttribute_Local = getManagedAttribute(mapping.getContainerPolicy().getDescriptorForMapKey(), mapping.getContainerPolicy().getIdentityFieldsForMapKey().get(0),  intrinsicAttribute_Local);
+            }
             addFieldsForMappedKeyMapContainerPolicy(managedClass, managedAttribute_Local, intrinsicEntity, intrinsicAttribute_Local, isInherited, mapping.getContainerPolicy(), table);
             if (mapping.getListOrderField() != null) {
                 fieldDef = getFieldDefFromDBField(mapping.getListOrderField());
@@ -834,7 +838,11 @@ public class JPAMDefaultTableGenerator {
             //add the target definition to the table definition
             
             LinkedList<Attribute> intrinsicAttribute_Local = new LinkedList<>(intrinsicAttribute);
-            Attribute managedAttribute_Local = getManagedAttribute(mapping.getReferenceDescriptor(), dbField,  intrinsicAttribute_Local);
+            
+            Attribute managedAttribute_Local = managedAttribute;
+            if(managedAttribute instanceof MapKeyHandler && ((MapKeyHandler)managedAttribute).getMapKeyEmbeddable()!=null){
+                managedAttribute_Local = getManagedAttribute(mapping.getReferenceDescriptor(), dbField,  intrinsicAttribute_Local);
+            }
             FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute_Local, managedAttribute_Local, false, false, false, false, false, false, false, dbField);
             if (!targetTable.getFields().contains(fieldDef)) {
                 targetTable.addField(fieldDef);
@@ -971,7 +979,6 @@ public class JPAMDefaultTableGenerator {
             tableDefinition.setTable(databaseTable);
             tableDefinition.setName(tableName);
             tableDefinition.setQualifier(databaseTable.getTableQualifier());
-            System.out.println("Table :" + tableDefinition.getName());
             if (databaseTable.hasUniqueConstraints()) {
                 addUniqueKeyConstraints(tableDefinition, databaseTable.getUniqueConstraints());
             }
@@ -1063,7 +1070,6 @@ public class JPAMDefaultTableGenerator {
             }
             fieldDef.setName(dbField.getNameDelimited(databasePlatform));
 
-            System.out.println("Field :" + fieldDef.getName());
             //added for extending tables where the field needs to be looked up
             fieldDef.setDatabaseField(dbField);
 

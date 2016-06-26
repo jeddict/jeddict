@@ -56,7 +56,6 @@ import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.Lob;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
-import org.netbeans.jpa.modeler.spec.MapKeyColumn;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
@@ -202,12 +201,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected ColumnDefSnippet getColumnDef(Column column) {
+        return getColumnDef(column, false);
+    }   
+    
+    protected ColumnDefSnippet getColumnDef(Column column, boolean mapKey) {
 
         if (column == null) {
             return null;
         }
 
-        ColumnDefSnippet columnDef = new ColumnDefSnippet(column instanceof MapKeyColumn);
+        ColumnDefSnippet columnDef = new ColumnDefSnippet(mapKey);
 
         columnDef.setColumnDefinition(column.getColumnDefinition());
         columnDef.setName(column.getName());
@@ -1241,7 +1244,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                    temporalSnippet.setValue(mapKeyHandler.getMapKeyTemporal());
                    snippet.setTemporalSnippet(temporalSnippet);
                }
-               snippet.setColumnSnippet(getColumnDef(mapKeyHandler.getMapKeyColumn()));
+               snippet.setColumnSnippet(getColumnDef(mapKeyHandler.getMapKeyColumn(), true));
                snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttributeType());
            }
        }

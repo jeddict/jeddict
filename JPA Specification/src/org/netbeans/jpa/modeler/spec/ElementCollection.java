@@ -197,7 +197,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     @XmlAttribute(name="mkat")
     private String mapKeyAttributeType; //e.g String, int, Enum, Date    applicable for basic,enumerated,temporal
     @XmlElement(name = "mkc")
-    protected MapKeyColumn mapKeyColumn;
+    protected Column mapKeyColumn;
     @XmlElement(name = "mktemp")
     protected TemporalType mapKeyTemporal;
     @XmlElement(name = "mkenum")
@@ -210,7 +210,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
     @XmlIDREF
     private Entity mapKeyEntity;
     @XmlElement(name = "mkjc")
-    protected List<MapKeyJoinColumn> mapKeyJoinColumn;
+    protected List<JoinColumn> mapKeyJoinColumn;
     @XmlElement(name = "mkfk")
     protected ForeignKey mapKeyForeignKey;
             
@@ -289,7 +289,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
                  elementCollection.mapKeyAttributeType = keyDeclaredType.toString();
             }
             
-            elementCollection.mapKeyColumn = new MapKeyColumn().load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_COLUMN_FQN));
+            elementCollection.mapKeyColumn = new Column().load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_COLUMN_FQN));
             elementCollection.mapKeyTemporal = TemporalType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_TEMPORAL_FQN));
             elementCollection.mapKeyEnumerated = EnumType.load(element, JavaSourceParserUtil.findAnnotation(element, MAP_KEY_ENUMERATED_FQN));
             
@@ -298,13 +298,13 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
                 List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
                 if (joinColumnsAnnot != null) {
                     for (Object joinColumnObj : joinColumnsAnnot) {
-                        elementCollection.getMapKeyJoinColumn().add(new MapKeyJoinColumn().load(element, (AnnotationMirror) joinColumnObj));
+                        elementCollection.getMapKeyJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
                     }
                 }
             } else {
                 AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.MapKeyJoinColumn");
                 if (joinColumnAnnotationMirror != null) {
-                    elementCollection.getMapKeyJoinColumn().add(new MapKeyJoinColumn().load(element, joinColumnAnnotationMirror));
+                    elementCollection.getMapKeyJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
                 }
             }
             
@@ -506,9 +506,9 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
      * @return possible object is {@link MapKeyColumn }
      *
      */
-    public MapKeyColumn getMapKeyColumn() {
+    public Column getMapKeyColumn() {
         if(mapKeyColumn==null){
-            mapKeyColumn = new MapKeyColumn();
+            mapKeyColumn = new Column();
         }
         return mapKeyColumn;
     }
@@ -519,7 +519,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
      * @param value allowed object is {@link MapKeyColumn }
      *
      */
-    public void setMapKeyColumn(MapKeyColumn value) {
+    public void setMapKeyColumn(Column value) {
         this.mapKeyColumn = value;
     }
 
@@ -545,7 +545,7 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
      *
      *
      */
-    public List<MapKeyJoinColumn> getMapKeyJoinColumn() {
+    public List<JoinColumn> getMapKeyJoinColumn() {
         if (mapKeyJoinColumn == null) {
             mapKeyJoinColumn = new ArrayList<>();
         }
