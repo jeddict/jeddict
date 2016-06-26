@@ -23,6 +23,7 @@ import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 
@@ -42,28 +43,32 @@ public class JoinColumnFinder {
     
     private static List<? extends JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse, boolean mapKey) {
         List<? extends JoinColumn> joinColumns;
-        if (attribute instanceof RelationAttribute) {
-            if (!relationTableExist) {
-                if (attribute instanceof SingleRelationAttribute) {
-                    joinColumns = ((SingleRelationAttribute) attribute).getJoinColumn();
-                } else if (attribute instanceof OneToMany) {
-                    joinColumns = ((OneToMany) attribute).getJoinColumn();
-                } else {
-                    throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
-                }
-            } else if (inverse) {
-                joinColumns = ((RelationAttribute) attribute).getJoinTable().getInverseJoinColumn();
+        if (mapKey) {
+            if (attribute instanceof MapKeyHandler) {
+                joinColumns = ((MapKeyHandler) attribute).getMapKeyJoinColumn();
             } else {
-                joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
-            }
-        } else if (attribute instanceof ElementCollection) { // not applicable for inverse-join-column
-            if (mapKey) {
-                joinColumns = ((ElementCollection) attribute).getMapKeyJoinColumn();
-            } else {
-                joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();
+                throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
             }
         } else {
-            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+            if (attribute instanceof RelationAttribute) {
+                if (!relationTableExist) {
+                    if (attribute instanceof SingleRelationAttribute) {
+                        joinColumns = ((SingleRelationAttribute) attribute).getJoinColumn();
+                    } else if (attribute instanceof OneToMany) {
+                        joinColumns = ((OneToMany) attribute).getJoinColumn();
+                    } else {
+                        throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+                    }
+                } else if (inverse) {
+                    joinColumns = ((RelationAttribute) attribute).getJoinTable().getInverseJoinColumn();
+                } else {
+                    joinColumns = ((RelationAttribute) attribute).getJoinTable().getJoinColumn();
+                }
+            } else if (attribute instanceof ElementCollection) { // not applicable for inverse-join-column
+                joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();
+            } else {
+                throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+            }
         }
         return joinColumns;
     }

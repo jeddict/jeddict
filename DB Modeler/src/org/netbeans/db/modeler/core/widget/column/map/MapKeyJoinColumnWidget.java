@@ -17,21 +17,15 @@ package org.netbeans.db.modeler.core.widget.column.map;
 
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
-import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBMapKeyJoinColumn;
-import org.netbeans.db.modeler.spec.DBRelationTable;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public class MapKeyJoinColumnWidget extends ForeignKeyWidget<DBMapKeyJoinColumn> {
 
@@ -44,7 +38,7 @@ public class MapKeyJoinColumnWidget extends ForeignKeyWidget<DBMapKeyJoinColumn>
     @Override
     public void createPropertySet(ElementPropertySet set) {
         JoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
-        set.createPropertySet("JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+        set.createPropertySet("JOIN_COLUMN", this, joinColumn, null);
         set.createPropertySet("FOREIGN_KEY", this, joinColumn.getForeignKey() , null);
     }
     
