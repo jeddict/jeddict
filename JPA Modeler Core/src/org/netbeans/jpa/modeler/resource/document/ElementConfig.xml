@@ -103,17 +103,29 @@
                    <attribute id="updatable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="updatable">
                     <display-name>Updatable</display-name>
                 </attribute>
-                  <attribute id="length" groupId="COLUMN_PROP" class="java.lang.Integer" name="length">
+                <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
                     <display-name>Length</display-name>
-                    <visible><![CDATA["String".equals(node.getAttributeType())]]></visible>
+                    <visible><![CDATA[
+                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.isTextMapKeyAttributeType()
+                                : node.isTextAttributeType()
+                                ]]></visible>
                 </attribute>
-                <attribute id="precision" groupId="COLUMN_PROP" class="java.lang.Integer" name="precision">
+                <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
                     <display-name>Precision</display-name>
-                    <visible><![CDATA[node.isPrecisionAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.isPrecisionpMapKeyAttributeType()
+                                : node.isPrecisionAttributeType()
+                                ]]></visible>
                 </attribute>
-                <attribute id="scale" groupId="COLUMN_PROP" class="java.lang.Integer" name="scale">
+                <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
                     <display-name>Scale</display-name>
-                    <visible><![CDATA[node.isScaleAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.isScaleMapKeyAttributeType()
+                                : node.isScaleAttributeType()
+                                ]]></visible>
                 </attribute>
                  <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">
                     <display-name>Column Definition</display-name>

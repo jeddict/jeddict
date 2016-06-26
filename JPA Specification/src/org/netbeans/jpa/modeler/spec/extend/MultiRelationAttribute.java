@@ -25,12 +25,17 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ErrorType;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyJoinColumn;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
+import static org.netbeans.jcode.core.util.AttributeType.STRING;
+import static org.netbeans.jcode.core.util.AttributeType.STRING_FQN;
 import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED_FQN;
@@ -62,8 +67,6 @@ import static org.netbeans.jpa.source.JavaSourceParserUtil.loadEntityClass;
 @XmlType(propOrder = {
     "orderBy",
     "orderColumn",
-//    "mapKey",
-//    "mapKeyClass",
     "mapKeyTemporal",
     "mapKeyEnumerated",
     "mapKeyAttributeOverride",
@@ -155,8 +158,6 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
             declaredType = (DeclaredType) ((DeclaredType) variableElement.asType()).getTypeArguments().get(mapKeyExist?1:0);
         }
         this.targetEntity = declaredType.asElement().getSimpleName().toString();
-        
-        
         
         if (mapKeyExist) {
             this.mapKey = new MapKey().load(element, null);
@@ -323,10 +324,11 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      * {@link AttributeOverride }
      *
      *
+     * @return
      */
     public Set<AttributeOverride> getMapKeyAttributeOverride() {
         if (mapKeyAttributeOverride == null) {
-            mapKeyAttributeOverride = new TreeSet<AttributeOverride>();
+            mapKeyAttributeOverride = new TreeSet<>();
         }
         return this.mapKeyAttributeOverride;
     }
@@ -366,6 +368,9 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
      *
      */
     public Column getMapKeyColumn() {
+        if(mapKeyColumn==null){
+            mapKeyColumn = new Column();
+        }
         return mapKeyColumn;
     }
 
@@ -661,7 +666,7 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
     
         @Override
     public String getMapKeyDataTypeLabel(){
-        if(mapKeyType == MapKeyType.EXT){
+        if(mapKeyType == MapKeyType.EXT && mapKeyAttribute!=null){
             return mapKeyAttribute.getDataTypeLabel();
         } else {
             if(mapKeyEntity!=null){
@@ -674,5 +679,27 @@ public abstract class MultiRelationAttribute extends RelationAttribute implement
         }
         return null;
     }
+    
+    public boolean isTextMapKeyAttributeType() {
+        if (STRING.equals(getMapKeyAttributeType()) || STRING_FQN.equals(getMapKeyAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isPrecisionpMapKeyAttributeType() {
+        if (BIGDECIMAL.equals(getMapKeyAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isScaleMapKeyAttributeType() {
+        if (BIGDECIMAL.equals(getMapKeyAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+
 
 }

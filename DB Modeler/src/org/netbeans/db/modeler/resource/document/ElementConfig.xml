@@ -75,15 +75,27 @@
                 </attribute>
                 <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
                     <display-name>Length</display-name>
-                    <visible><![CDATA["String".equals(node.getAttribute().getAttributeType())]]></visible>
+                    <visible><![CDATA[
+                                  node.getAttribute() instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.getAttribute().isTextMapKeyAttributeType()
+                                : node.getAttribute().isTextAttributeType()
+                                ]]></visible>
                 </attribute>
                 <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
                     <display-name>Precision</display-name>
-                    <visible><![CDATA[node.getAttribute().isPrecisionAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node.getAttribute() instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.getAttribute().isPrecisionpMapKeyAttributeType()
+                                : node.getAttribute().isPrecisionAttributeType()
+                                ]]></visible>
                 </attribute>
                 <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
                     <display-name>Scale</display-name>
-                    <visible><![CDATA[node.getAttribute().isScaleAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node.getAttribute() instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.getAttribute().isScaleMapKeyAttributeType()
+                                : node.getAttribute().isScaleAttributeType()
+                                ]]></visible>
                 </attribute>
                 <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
                     <display-name>Column Definition</display-name>
@@ -113,15 +125,27 @@
                 </attribute>
                 <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
                     <display-name>Length</display-name>
-                    <visible><![CDATA["String".equals(node.getAttribute().getAttributeType())]]></visible>
+                    <visible><![CDATA[
+                                  node.getAttribute() instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.getAttribute().isTextMapKeyAttributeType()
+                                : node.getAttribute().isTextAttributeType()
+                                ]]></visible>
                 </attribute>
                 <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
                     <display-name>Precision</display-name>
-                    <visible><![CDATA[node.getAttribute().isPrecisionAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node.getAttribute() instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.getAttribute().isPrecisionpMapKeyAttributeType()
+                                : node.getAttribute().isPrecisionAttributeType()
+                                ]]></visible>
                 </attribute>
                 <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
                     <display-name>Scale</display-name>
-                    <visible><![CDATA[node.getAttribute().isScaleAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node.getAttribute() instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.getAttribute().isScaleMapKeyAttributeType()
+                                : node.getAttribute().isScaleAttributeType()
+                                ]]></visible>
                 </attribute>
                 <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
                     <display-name>Column Definition</display-name>

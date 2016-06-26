@@ -24,6 +24,8 @@ import org.netbeans.jpa.modeler.spec.AccessType;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.TemporalType;
 import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
+import static org.netbeans.jcode.core.util.AttributeType.STRING;
+import static org.netbeans.jcode.core.util.AttributeType.STRING_FQN;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -71,7 +73,13 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
             this.attributeType = attributeType;
         }
     }
-
+    
+    public boolean isTextAttributeType() {
+        if (STRING.equals(attributeType) || STRING_FQN.equals(attributeType)) {
+            return true;
+        }
+        return false;
+    }
     public boolean isPrecisionAttributeType() {
 //        if (attributeType.equals("byte") || attributeType.equals("Byte")) {
 //            return true;
@@ -109,12 +117,7 @@ public abstract class PersistenceBaseAttribute extends BaseAttribute implements 
         return false;
     }
 
-    public boolean isTextAttributeType() {
-        if (attributeType.equals(String.class.getName())) {
-            return true;
-        }
-        return false;
-    }
+ 
 
 //    void beforeMarshal(Marshaller marshaller) {
 //        if (NBModelerUtil.isEmptyObject(getColumn())) {

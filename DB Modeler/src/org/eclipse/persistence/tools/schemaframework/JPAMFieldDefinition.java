@@ -152,10 +152,22 @@ public class JPAMFieldDefinition extends FieldDefinition {
             column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
         } else if (intrinsicAttribute.size() == 1) {
             if (intrinsicAttribute.peek() instanceof RelationAttribute) {
+                if(mapKey){//e.g Map<Basic,Basic>
+                    MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
+                    if(mapKeyHandler.getMapKeyEntity()!=null){
+                        column = new DBMapKeyJoinColumn(name, managedAttribute);
+                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ 
+                        // Wrap AttributeOverride to Embedded to reuse the api
+                        column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
+                    } else {
+                        column = new DBMapKeyColumn(name, managedAttribute);
+                    }
+                } else {
                 if (inverse) {
                     column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable);
                 } else {
                     column = new DBJoinColumn(name, managedAttribute, relationTable);
+                }
                 }
             } else if (intrinsicAttribute.peek() instanceof ElementCollection) {
                 if (foriegnKey) {

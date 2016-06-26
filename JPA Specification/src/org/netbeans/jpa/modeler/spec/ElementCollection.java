@@ -30,6 +30,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import static org.netbeans.jcode.core.util.AttributeType.BIGDECIMAL;
 import static org.netbeans.jcode.core.util.AttributeType.STRING;
+import static org.netbeans.jcode.core.util.AttributeType.STRING_FQN;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED_FQN;
@@ -923,6 +924,13 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         return this.getConnectedClass() != null ? super.getAttributeType() : targetClass;
     }
 
+     public boolean isTextAttributeType() {
+        if (STRING.equals(getAttributeType()) || STRING_FQN.equals(getAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+     
     public boolean isPrecisionAttributeType() {
         if (BIGDECIMAL.equals(getAttributeType())) {
             return true;
@@ -932,6 +940,28 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
 
     public boolean isScaleAttributeType() {
         if (BIGDECIMAL.equals(getAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+    
+    
+     public boolean isTextMapKeyAttributeType() {
+        if (STRING.equals(getMapKeyAttributeType()) || STRING_FQN.equals(getMapKeyAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+     
+        public boolean isPrecisionpMapKeyAttributeType() {
+        if (BIGDECIMAL.equals(getMapKeyAttributeType())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isScaleMapKeyAttributeType() {
+        if (BIGDECIMAL.equals(getMapKeyAttributeType())) {
             return true;
         }
         return false;
