@@ -270,6 +270,8 @@ public class PropertiesHandler {
                 PersistenceClassWidget classWidget;
                 if (attributeWidget instanceof MultiRelationAttributeWidget) {
                     classWidget = ((MultiRelationAttributeWidget) attributeWidget).getRelationFlowWidget().getTargetEntityWidget();
+                } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
+                    classWidget = ((MultiValueEmbeddedAttributeWidget) attributeWidget).getEmbeddableFlowWidget().getTargetEmbeddableWidget();
                 } else {
                     classWidget = attributeWidget.getClassWidget();
                 }

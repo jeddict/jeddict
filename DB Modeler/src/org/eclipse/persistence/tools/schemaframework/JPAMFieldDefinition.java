@@ -143,8 +143,6 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 } else {
                     column = new DBParentAssociationJoinColumn(name, intrinsicClass, (RelationAttribute) managedAttribute, relationTable);
                 }
-//            } else if (foriegnKey) {
-//                column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
             } else {
                 column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
             }
@@ -153,15 +151,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
         } else if (intrinsicAttribute.size() == 1) {
             if (intrinsicAttribute.peek() instanceof RelationAttribute) {
                 if(mapKey){//e.g Map<Basic,Basic>
-                    MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
-                    if(mapKeyHandler.getMapKeyEntity()!=null){
-                        column = new DBMapKeyJoinColumn(name, managedAttribute);
-                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ 
-                        // Wrap AttributeOverride to Embedded to reuse the api
-                        column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
-                    } else {
-                        column = new DBMapKeyColumn(name, managedAttribute);
-                    }
+                    column = buildMapKeyColumn();
                 } else {
                 if (inverse) {
                     column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable);
@@ -173,15 +163,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 if (foriegnKey) {
                     column = new DBJoinColumn(name, managedAttribute, relationTable);
                 } else if(mapKey){//e.g Map<Basic,Basic>
-                    MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
-                    if(mapKeyHandler.getMapKeyEntity()!=null){
-                        column = new DBMapKeyJoinColumn(name, managedAttribute);
-                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ 
-                        // Wrap AttributeOverride to Embedded to reuse the api
-                        column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
-                    } else {
-                        column = new DBMapKeyColumn(name, managedAttribute);
-                    }
+                    column = buildMapKeyColumn();
                 } else {
                     column = new DBColumn(name, managedAttribute);
                 }
@@ -193,15 +175,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
         } else if (intrinsicAttribute.size() > 1) {
             if (intrinsicAttribute.get(0) instanceof RelationAttribute) { // nested derived Identity / shared relationship IdClass
                 if (mapKey) {
-                      MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
-                    if(mapKeyHandler.getMapKeyEntity()!=null){
-                        column = new DBMapKeyJoinColumn(name, managedAttribute);
-                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ //Map<Embedded,Basic>
-                        // Wrap AttributeOverride to Embedded to reuse the api
-                        column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
-                    } else {
-                        column = new DBMapKeyColumn(name, managedAttribute);
-                    }
+                    column = buildMapKeyColumn();
                 } else {
                     //Ex 3.a
                     if (inverse) {
@@ -244,15 +218,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 }
             } else if (intrinsicAttribute.get(0) instanceof ElementCollection) {
                 if(mapKey){
-                    MapKeyHandler mapKeyHandler = (MapKeyHandler)intrinsicAttribute.peek();
-                    if(mapKeyHandler.getMapKeyEntity()!=null){
-                        column = new DBMapKeyJoinColumn(name, managedAttribute);
-                    } else if(mapKeyHandler.getMapKeyEmbeddable()!=null){ //Map<Embedded,Basic>
-                        // Wrap AttributeOverride to Embedded to reuse the api
-                        column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
-                    } else {
-                        column = new DBMapKeyColumn(name, managedAttribute);
-                    }
+                    column = buildMapKeyColumn();
                 } else {//e.g : Map<Entity,Embedded>, List<Embedded>
                     ElementCollection elementCollection = (ElementCollection)intrinsicAttribute.peek();
                     List<Embedded> embeddedList = new ArrayList<>();
@@ -317,6 +283,20 @@ public class JPAMFieldDefinition extends FieldDefinition {
 
         table.addColumn(column);
 
+    }
+    
+    private DBColumn buildMapKeyColumn() {
+        DBColumn column;
+        MapKeyHandler mapKeyHandler = (MapKeyHandler) intrinsicAttribute.peek();
+        if (mapKeyHandler.getMapKeyEntity() != null) {
+            column = new DBMapKeyJoinColumn(name, managedAttribute);
+        } else if (mapKeyHandler.getMapKeyEmbeddable() != null) {
+            // Wrap AttributeOverride to Embedded to reuse the api
+            column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
+        } else {
+            column = new DBMapKeyColumn(name, managedAttribute);
+        }
+        return column;
     }
 
 }

@@ -17,7 +17,7 @@ package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.persistence.internal.jpa.metadata.mappings.MapKeyMetadata;
+import static org.netbeans.jcode.core.util.Constants.LIST_TYPE;
 import org.netbeans.jpa.modeler.db.accessor.spec.MapKeyAccessor;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
@@ -50,9 +50,10 @@ public class MapKeyUtil {
                     accessor.setMapKeyAttributeOverrides(mapKeyHandler.getMapKeyAttributeOverride().stream().map(AttributeOverrideSpecMetadata::getInstance).collect(toList()));
                 }
             } else {
-                MapKeyMetadata mapKeyMetadata = new MapKeyMetadata();
-                mapKeyMetadata.setName(mapKeyHandler.getMapKeyAttribute().getName());
-                accessor.setMapKey(mapKeyMetadata);
+//                MapKeyMetadata mapKeyMetadata = new MapKeyMetadata();
+//                mapKeyMetadata.setName(mapKeyHandler.getMapKeyAttribute().getName());
+//                accessor.setMapKey(mapKeyMetadata);
+                accessor.setAttributeType(LIST_TYPE);//ignore @MapKey(<Key>) and set List type
             }
         }
     }

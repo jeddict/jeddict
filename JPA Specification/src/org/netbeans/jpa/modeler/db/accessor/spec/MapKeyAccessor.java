@@ -41,4 +41,7 @@ public interface MapKeyAccessor extends MappedKeyMapAccessor {
     void setMapKeyJoinColumns(List<JoinColumnMetadata> mapKeyJoinColumns);
 
     void setMapKey(MapKeyMetadata mapKey);
+    
+    void setAttributeType(String attributeType);
+    
 }
