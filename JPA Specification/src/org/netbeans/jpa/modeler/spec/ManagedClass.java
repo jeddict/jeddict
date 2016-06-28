@@ -26,8 +26,6 @@ public abstract class ManagedClass extends JavaClass {
     @XmlAttribute
     protected AccessType access;
 
-    @XmlAttribute(name = "sm")
-    private Boolean generateStaticMetamodel = false;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;//REVENG PENDING
 
@@ -43,20 +41,6 @@ public abstract class ManagedClass extends JavaClass {
         super.load(entityMappings, element, fieldAccess);
         this.getAttributes().load(entityMappings, element, fieldAccess);
         this.access = AccessType.load(element);
-    }
-
-    /**
-     * @return the generateStaticMetamodel
-     */
-    public boolean getGenerateStaticMetamodel() {
-        return generateStaticMetamodel;
-    }
-
-    /**
-     * @param generateStaticMetamodel the generateStaticMetamodel to set
-     */
-    public void setGenerateStaticMetamodel(Boolean generateStaticMetamodel) {
-        this.generateStaticMetamodel = generateStaticMetamodel;
     }
 
     /**

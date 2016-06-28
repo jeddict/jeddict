@@ -21,6 +21,10 @@ import java.util.HashSet;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.console.Console;
+import static org.netbeans.jcode.console.Console.BOLD;
+import static org.netbeans.jcode.console.Console.FG_RED;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jcode.task.ITaskSupervisor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -41,42 +45,47 @@ public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
     private org.netbeans.jcode.task.ITaskSupervisor task;
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
     private String packageName;
+    private String entityPackageName;
     private File destDir;
 
     @Override
     public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
+        if (!parsedEntityMappings.getGenerateStaticMetamodel()) {
+            return;
+        }
         this.staticMetamodelClass = new HashSet<>();
         this.task = task;
         destDir = FileUtil.toFile(sourceGroup.getRootFolder());
-        this.packageName = parsedEntityMappings.getPackage();
+        this.entityPackageName = parsedEntityMappings.getPackage();
+        this.packageName = parsedEntityMappings.getStaticMetamodelPackage();
+        if(!JavaSourceHelper.isValidPackageName(packageName)){
+            this.packageName = parsedEntityMappings.getPackage();
+        }
+        task.log(Console.wrap("Generating StaticModel Class : " , FG_RED, BOLD), true);
         try {
             for (JavaClass javaClass : parsedEntityMappings.getJavaClass()) {
-                generateStaticMetamodel((ManagedClass) javaClass);
+                    generateStaticMetamodel((ManagedClass) javaClass);
             }
             flushStaticMetamodel();
-        } catch (InvalidDataException ex) {
-            ExceptionUtils.printStackTrace(ex);
-        } catch (IOException ex) {
+        } catch (InvalidDataException | IOException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
     }
 
     private void generateStaticMetamodel(ManagedClass managedClass) throws InvalidDataException, IOException {
-        if (managedClass.getGenerateStaticMetamodel()) {
-            StaticMetamodelGenerator staticMetamodel = new StaticMetamodelGenerator(managedClass, packageName);
+            StaticMetamodelGenerator staticMetamodel = new StaticMetamodelGenerator(managedClass, entityPackageName, packageName);
             ClassDefSnippet staticMetamodelClassDef = staticMetamodel.getClassDef();
             classesRepository.addWritableSnippet(ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
-            task.log("Generating StaticMetamodel : " + managedClass.getClazz() + "_", true);
+            task.log(managedClass.getClazz() + "_", true);
             ORMConverterUtil.writeSnippet(staticMetamodelClassDef, destDir);
 
             if (staticMetamodelClass.contains(staticMetamodel)) {
                 staticMetamodelClass.remove(staticMetamodel);
             }
             if (managedClass.getSuperclass() != null) {
-                StaticMetamodelGenerator staticMetamodelSuperClass = new StaticMetamodelGenerator(managedClass, packageName);
+                StaticMetamodelGenerator staticMetamodelSuperClass = new StaticMetamodelGenerator(managedClass, entityPackageName, packageName);
                 staticMetamodelClass.add(staticMetamodelSuperClass);
             }
-        }
     }
 
     private void flushStaticMetamodel() throws InvalidDataException, IOException {
@@ -89,11 +98,11 @@ public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
     private void flushStaticMetamodel(StaticMetamodelGenerator staticMetamodel) throws InvalidDataException, IOException {
         ClassDefSnippet staticMetamodelClassDef = staticMetamodel.getClassDef();
         classesRepository.addWritableSnippet(ClassType.STATIC_METAMODEL_CLASS, staticMetamodelClassDef);
-        task.log("Generating StaticMetamodel Parent Class : " + staticMetamodel.getManagedClass().getClazz(), true);
+        task.log(staticMetamodel.getManagedClass().getClazz(), true);
         ORMConverterUtil.writeSnippet(staticMetamodelClassDef, destDir);
 
         if (staticMetamodel.getManagedClass().getSuperclass() != null) {
-            StaticMetamodelGenerator staticMetamodelSuperClass = new StaticMetamodelGenerator((ManagedClass) staticMetamodel.getManagedClass().getSuperclass(), packageName);
+            StaticMetamodelGenerator staticMetamodelSuperClass = new StaticMetamodelGenerator((ManagedClass) staticMetamodel.getManagedClass().getSuperclass(), entityPackageName, packageName);
             flushStaticMetamodel(staticMetamodelSuperClass);
         }
     }

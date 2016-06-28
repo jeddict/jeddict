@@ -338,7 +338,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
                 if (template != null) {
                     template.merge(velocityContext, writer);
                 }
-                
+
                 writer.flush();
             }
 
@@ -349,8 +349,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         }
     }
 
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImports() throws InvalidDataException {
 
         //Sort and eliminate duplicates
         Collection<String> importSnippets = new TreeSet<>();
@@ -370,7 +369,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         if (tableDef != null) {
             importSnippets.addAll(tableDef.getImportSnippets());
         }
-        
+
         if (cacheableDef != null) {
             importSnippets.addAll(cacheableDef.getImportSnippets());
         }
@@ -450,11 +449,17 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         if (excludeSuperClassListener) {
             importSnippets.add("javax.persistence.ExcludeSuperclassListeners");
         }
-        
+
         for (AnnotationSnippet snippet : this.getAnnotation()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
+        return importSnippets;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Collection<String> importSnippets = getImports();
         importSnippets = ORMConverterUtil.eliminateSamePkgImports(
                 classHelper.getPackageName(), importSnippets);
 
@@ -586,8 +591,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public void setDescription(String description) {
         this.description = description;
     }
-    
-        
+
     public String getJavaDoc() {
         StringBuilder doc = new StringBuilder();
         doc.append("/**").append(NEW_LINE);
@@ -602,12 +606,11 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         doc.append(" */");
         return doc.toString();
     }
-    
-    public boolean isJavaDocExist(){
-        return StringUtils.isNotBlank(description) || StringUtils.isNotBlank(JavaSourceHelper.getAuthor()) ;
+
+    public boolean isJavaDocExist() {
+        return StringUtils.isNotBlank(description) || StringUtils.isNotBlank(JavaSourceHelper.getAuthor());
     }
-    
-    
+
     /**
      * @return the toStringMethodSnippet
      */
@@ -654,7 +657,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      * @return the constructorSnippets
      */
     public List<ConstructorSnippet> getConstructors() {
-        if(constructorSnippets==null){
+        if (constructorSnippets == null) {
             constructorSnippets = new ArrayList<>();
         }
         return constructorSnippets;
@@ -674,7 +677,5 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public boolean removeConstructor(ConstructorSnippet constructorSnippet) {
         return getConstructors().remove(constructorSnippet);
     }
-    
-    
 
 }

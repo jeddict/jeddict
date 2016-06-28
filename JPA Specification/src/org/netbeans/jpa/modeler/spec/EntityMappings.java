@@ -181,6 +181,10 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     @XmlElement(name = "c")
     private Cache cache;
+    @XmlAttribute(name = "sm")
+    private Boolean generateStaticMetamodel = false;
+    @XmlAttribute(name = "smpkg")
+    private String staticMetamodelPackage;
 
     /**
      * JAXB Attributes Start *
@@ -1428,11 +1432,39 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
         this.diagramVersion = diagramVersion;
     }
 
+    /**
+     * @return the generateStaticMetamodel
+     */
+    public Boolean getGenerateStaticMetamodel() {
+        return generateStaticMetamodel;
+    }
+
+    /**
+     * @param generateStaticMetamodel the generateStaticMetamodel to set
+     */
+    public void setGenerateStaticMetamodel(Boolean generateStaticMetamodel) {
+        this.generateStaticMetamodel = generateStaticMetamodel;
+    }
+    
     public List<ManagedClass> getAllManagedClass() {
         List<ManagedClass> managedClasses = new ArrayList<>();
         managedClasses.addAll(getEntity());
         managedClasses.addAll(getMappedSuperclass());
         managedClasses.addAll(getEmbeddable());
         return managedClasses;
+    }
+
+    /**
+     * @return the staticMetamodelPackage
+     */
+    public String getStaticMetamodelPackage() {
+        return staticMetamodelPackage;
+    }
+
+    /**
+     * @param staticMetamodelPackage the staticMetamodelPackage to set
+     */
+    public void setStaticMetamodelPackage(String staticMetamodelPackage) {
+        this.staticMetamodelPackage = staticMetamodelPackage;
     }
 }

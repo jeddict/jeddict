@@ -39,11 +39,13 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
     private static Logger logger = ORMConvLogger.getLogger(StaticMetamodelGenerator.class);
 
     private ManagedClass managedClass = null;
+    private String entityPackageName;
 
-    public StaticMetamodelGenerator(ManagedClass managedClass, String packageName) {
+    public StaticMetamodelGenerator(ManagedClass managedClass, String entityPackageName, String packageName) {
         super(new StaticMetamodelClassDefSnippet());
         this.managedClass = managedClass;
         this.packageName = packageName;
+        this.entityPackageName=entityPackageName;
     }
 
     @Override
@@ -145,6 +147,10 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         classDef.setClassName(classHelper.getFQClassName());
 
         classDef.setPackageName(classHelper.getPackageName());
+        
+        
+        classDef.getEntityClassHelper().setClassName(managedClass.getClazz());
+        classDef.getEntityClassHelper().setPackageName(entityPackageName);
 //        classDef.setStaticMetamodel(true);
 
         classDef.setValue(managedClass.getClazz());//@StaticMetamodel( Person.class )
