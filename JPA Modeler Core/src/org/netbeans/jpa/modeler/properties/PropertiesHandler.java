@@ -153,10 +153,36 @@ public class PropertiesHandler {
 
             @Override
             public void setItem(ComboBoxValue<String> value) {
+                manageMapType(value);
+                setCollectionType(value);
+                attributeWidget.setAttributeTooltip();
+                attributeWidget.visualizeDataType();
+            }
+
+            void setCollectionType(ComboBoxValue<String> value) {
+                String collectionType = value.getValue();
+                boolean valid = false;
+                try {
+                    if (collectionType != null && !collectionType.trim().isEmpty()) {
+                        if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim())) ||
+                                java.util.Map.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
+                            valid = true;
+                        }
+                    }
+                } catch (ClassNotFoundException ex) {
+                    //skip allow = false;
+                }
+                if (!valid) {
+                    collectionType = java.util.Collection.class.getName();
+                }
+
+                colSpec.setCollectionType(collectionType);
+                em.getCache().addCollectionClass(collectionType);//move item to top in cache
+            }
+
+            void manageMapType(ComboBoxValue<String> value) {
                 String prevType = colSpec.getCollectionType();
                 String newType = value.getValue();
-                colSpec.setCollectionType(newType);
-                em.getCache().addCollectionClass(newType);//move item to top in cache
 
                 Class prevClass = null;
                 try {
@@ -169,12 +195,12 @@ public class PropertiesHandler {
                 } catch (ClassNotFoundException ex) {
                 }
 
-                if ((prevClass != null && newClass != null && prevClass != newClass &&
-                        (Map.class.isAssignableFrom(prevClass) || Map.class.isAssignableFrom(newClass)))
+                if ((prevClass != null && newClass != null && prevClass != newClass
+                        && (Map.class.isAssignableFrom(prevClass) || Map.class.isAssignableFrom(newClass)))
                         || (prevClass == null && newClass != null && Map.class.isAssignableFrom(newClass))
                         || (prevClass != null && newClass == null && Map.class.isAssignableFrom(prevClass))) {
-                    if(newClass==null || !Map.class.isAssignableFrom(newClass)){
-                       ((MapKeyHandler)attributeWidget.getBaseElementSpec()).resetMapAttribute();
+                    if (newClass == null || !Map.class.isAssignableFrom(newClass)) {
+                        ((MapKeyHandler) attributeWidget.getBaseElementSpec()).resetMapAttribute();
                     }
                     attributeWidget.refreshProperties();
                 }
@@ -223,7 +249,7 @@ public class PropertiesHandler {
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionType", "Collection Type", "", comboBoxListener);
     }
-    
+
     public static ComboBoxPropertySupport getMapKeyProperty(AttributeWidget<? extends Attribute> attributeWidget, final MapKeyHandler mapKeyHandler, PropertyVisibilityHandler mapKeyVisibilityHandler) {
         JPAModelerScene modelerScene = attributeWidget.getModelerScene();
         EntityMappings em = modelerScene.getBaseElementSpec();
@@ -234,6 +260,7 @@ public class PropertiesHandler {
                 Attribute newType = value.getValue();
                 mapKeyHandler.setMapKeyAttribute(newType);
                 AttributeValidator.scanMapKeyHandlerError(attributeWidget);
+                attributeWidget.visualizeDataType();
             }
 
             @Override
@@ -1065,6 +1092,7 @@ public class PropertiesHandler {
                     AttributeValidator.scanMapKeyHandlerError(attributeWidget);
                 }
                 attributeWidget.refreshProperties();
+                attributeWidget.visualizeDataType();
             }
 
             @Override

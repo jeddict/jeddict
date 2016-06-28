@@ -15,18 +15,23 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.netbeans.api.visual.widget.LabelWidget;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.settings.view.ViewPanel;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
@@ -55,6 +60,50 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
     public AttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+    }
+   
+    
+    private LabelWidget dataTypeWidget;
+    public void visualizeDataType() {
+        AttributeViewAs viewAs = ViewPanel.getDataType();
+        String dataType = ((Attribute) this.getBaseElementSpec()).getDataTypeLabel();
+        if (viewAs == AttributeViewAs.SIMPLE_CLASS_NAME) {
+            dataType = JavaSourceHelper.getSimpleClassName(dataType);
+        } else if (viewAs == AttributeViewAs.SHORT_CLASS_NAME) {
+            dataType = JavaSourceHelper.getSimpleClassName(dataType);
+            if (dataType.length() > 3) {
+                dataType = dataType.substring(0, 3);
+            }
+        } else if (viewAs == AttributeViewAs.NONE) {
+            return;
+        }
+        if (dataTypeWidget == null) {
+            dataTypeWidget = new LabelWidget(this.getScene());
+            Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+            dataTypeWidget.setFont(font);
+            dataTypeWidget.setForeground(Color.DARK_GRAY);
+            addChild(dataTypeWidget);
+        }
+        dataTypeWidget.setLabel(dataType);
+        this.getPNodeWidget().revalidate();
+
+    }
+
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
+            set.put("BASIC_PROP", getFieldTypeProperty("fieldType", "Field Type", "", false, this));
+        } else {
+            try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
+                set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
+                       "compositePrimaryKeyClass", "compositePrimaryKeyClass", "Field Type", "", null));
+            } catch (NoSuchMethodException | NoSuchFieldException ex) {
+                this.getModelerScene().getModelerFile().handleException(ex);;
+            }
+        }
+        PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
+        
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
@@ -90,44 +139,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 errorHandler.clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
-
-        this.addPropertyChangeListener("collectionType", (PropertyChangeListener<String>) (String collectionType) -> {
-            Attribute attribute = getBaseElementSpec();
-            boolean valid = false;
-            try {
-                if (collectionType != null && !collectionType.trim().isEmpty()) {
-                    if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
-                        valid = true;
-                    }
-                }
-            } catch (ClassNotFoundException ex) {
-                //skip allow = false;
-            }
-            if (!valid) {
-                collectionType = java.util.Collection.class.getName();
-            }
-
-            ((CollectionTypeHandler) attribute).setCollectionType(collectionType.trim());
-            setAttributeTooltip();
-
-        });
-
-    }
-
-    @Override
-    public void createPropertySet(ElementPropertySet set) {
-        super.createPropertySet(set);
-        if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
-            set.put("BASIC_PROP", getFieldTypeProperty("fieldType", "Field Type", "", false, this));
-        } else {
-            try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
-                set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
-                       "compositePrimaryKeyClass", "compositePrimaryKeyClass", "Field Type", "", null));
-            } catch (NoSuchMethodException | NoSuchFieldException ex) {
-                this.getModelerScene().getModelerFile().handleException(ex);;
-            }
-        }
-        PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
+        
     }
    
     public static <T> T getInstance(IPNodeWidget nodeWidget, String name, IBaseElement baseElement, Class documentId) {
@@ -158,6 +170,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         setAttributeTooltip();
         this.getClassWidget().scanDuplicateAttributes(null, this.name);
         validateName(null, this.getName());
+        visualizeDataType();
     }
 
     @Override
@@ -202,9 +215,9 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    protected abstract void setAttributeTooltip();
-
-
+    public void setAttributeTooltip() {
+        this.setToolTipText(this.getBaseElementSpec().getDataTypeLabel());
+    }
 
     /**
      * @return the classWidget
@@ -238,6 +251,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         this.addPropertyChangeListener("mapKeyType",(val) -> {
             mapKeyHandler.resetMapAttribute(); 
             AttributeValidator.scanMapKeyHandlerError(this);
+            visualizeDataType();
         });
         this.addPropertyVisibilityHandler("mapKeyType", mapKeyVisibilityHandler);
         this.addPropertyVisibilityHandler("mapKeyFieldType", () -> mapKeyVisibilityHandler.isVisible() && mapKeyHandler.getMapKeyType() == MapKeyType.NEW);

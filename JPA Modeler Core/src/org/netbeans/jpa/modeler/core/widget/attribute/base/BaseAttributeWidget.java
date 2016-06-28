@@ -40,19 +40,6 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
     }
 
     @Override
-    protected void setAttributeTooltip() {
-        if (getBaseElementSpec() instanceof ElementCollection) {
-            ElementCollection elementCollection = (ElementCollection) getBaseElementSpec();
-            StringBuilder writer = new StringBuilder();
-            writer.append(elementCollection.getCollectionType().substring(elementCollection.getCollectionType().lastIndexOf('.') + 1));
-            writer.append('<').append(elementCollection.getAttributeType()).append('>');
-            this.setToolTipText(writer.toString());
-        } else {
-            this.setToolTipText(this.getBaseElementSpec().getAttributeType());//TODO init called before initialization of connectedClass for CompositionAttribute
-        }
-    }
-
-    @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
 

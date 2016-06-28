@@ -406,7 +406,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         menuList.add(5, null);
         menuList.add(6, shareModeler);
         menuList.add(7, EnhancementRequestHandler.getInstance().getComponent());
-
+        
         return menuList;
     }
 

@@ -48,19 +48,6 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
     }
 
     @Override
-    protected void setAttributeTooltip() {
-        if (getBaseElementSpec() instanceof CollectionTypeHandler) {
-            CollectionTypeHandler collectionTypeHandler = (CollectionTypeHandler) getBaseElementSpec();
-            StringBuilder writer = new StringBuilder();
-            writer.append(collectionTypeHandler.getCollectionType().substring(collectionTypeHandler.getCollectionType().lastIndexOf('.') + 1));
-//                writer.append('<').append(this.getBaseElementSpec().get()).append('>');//TODO
-            this.setToolTipText(writer.toString());
-        } else {
-            this.setToolTipText(this.getBaseElementSpec().getTargetEntity());//TODO
-        }
-    }
-
-    @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         set.put("BASIC_PROP", getCascadeProperty(this));
