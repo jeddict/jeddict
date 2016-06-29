@@ -1,6 +1,6 @@
 # JPA Modeler Releases #
 
-### Version 1.8 (upcoming release)###
+### Version 1.8 Alpha(Pre-Release) ###
 
 *  [@MapKey](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKey.html)
 *  [@MapKeyTemporal](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyTemporal.html)
