@@ -29,16 +29,30 @@ public final class ViewPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLayeredPane1 = new javax.swing.JLayeredPane();
         rootLayeredPane = new javax.swing.JLayeredPane();
         dataTypeLayeredPane = new javax.swing.JLayeredPane();
         dataTypeLabel = new javax.swing.JLabel();
         dataTypeComboBox = new javax.swing.JComboBox();
+
+        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
+        jLayeredPane1.setLayout(jLayeredPane1Layout);
+        jLayeredPane1Layout.setHorizontalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jLayeredPane1Layout.setVerticalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setLayout(new java.awt.GridLayout(1, 0));
 
         dataTypeLayeredPane.setLayout(new java.awt.BorderLayout());
 
         org.openide.awt.Mnemonics.setLocalizedText(dataTypeLabel, org.openide.util.NbBundle.getMessage(ViewPanel.class, "ViewPanel.dataTypeLabel.text")); // NOI18N
+        dataTypeLabel.setMinimumSize(new java.awt.Dimension(90, 17));
+        dataTypeLabel.setPreferredSize(new java.awt.Dimension(100, 17));
         dataTypeLayeredPane.add(dataTypeLabel, java.awt.BorderLayout.WEST);
 
         List<ComboBoxValue> values = new ArrayList<>();
@@ -52,14 +66,14 @@ public final class ViewPanel extends javax.swing.JPanel {
         rootLayeredPane.setLayout(rootLayeredPaneLayout);
         rootLayeredPaneLayout.setHorizontalGroup(
             rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(dataTypeLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(dataTypeLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         rootLayeredPaneLayout.setVerticalGroup(
             rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rootLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(dataTypeLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addContainerGap(356, Short.MAX_VALUE))
         );
         rootLayeredPane.setLayer(dataTypeLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -86,6 +100,7 @@ public final class ViewPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox dataTypeComboBox;
     private javax.swing.JLabel dataTypeLabel;
     private javax.swing.JLayeredPane dataTypeLayeredPane;
+    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane rootLayeredPane;
     // End of variables declaration//GEN-END:variables
 }

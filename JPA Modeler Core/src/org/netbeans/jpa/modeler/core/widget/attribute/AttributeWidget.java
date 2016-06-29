@@ -66,22 +66,27 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     private LabelWidget dataTypeWidget;
     public void visualizeDataType() {
         AttributeViewAs viewAs = ViewPanel.getDataType();
+        
         String dataType = ((Attribute) this.getBaseElementSpec()).getDataTypeLabel();
         if (viewAs == AttributeViewAs.SIMPLE_CLASS_NAME) {
             dataType = JavaSourceHelper.getSimpleClassName(dataType);
         } else if (viewAs == AttributeViewAs.SHORT_CLASS_NAME) {
             dataType = JavaSourceHelper.getSimpleClassName(dataType);
-            if (dataType.length() > 3) {
-                dataType = dataType.substring(0, 3);
+            final int SHORT_LENGTH = 3;
+            if (dataType.length() > SHORT_LENGTH) {
+                dataType = dataType.substring(0, SHORT_LENGTH);
             }
         } else if (viewAs == AttributeViewAs.NONE) {
             return;
         }
         if (dataTypeWidget == null) {
             dataTypeWidget = new LabelWidget(this.getScene());
-            Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+            Font font = getPinNameWidget().getFont();
+            font = font.deriveFont((float)font.getSize()-3);
             dataTypeWidget.setFont(font);
-            dataTypeWidget.setForeground(Color.DARK_GRAY);
+            Color color = getPinNameWidget().getForeground().brighter();
+            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()/2);
+            dataTypeWidget.setForeground(color);
             addChild(dataTypeWidget);
         }
         dataTypeWidget.setLabel(dataType);
@@ -113,9 +118,6 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 setLabel(value);
             }
         });
-//        this.addPropertyChangeListener("description", (PropertyChangeListener<String>) (String value) -> {
-//                setToolTipText(value);
-//        });
 
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
