@@ -502,9 +502,6 @@
                 <package>org.netbeans.jpa.modeler.core.widget.relation.flow.direction</package>
                 <package>org.netbeans.jpa.modeler.core.widget.ui</package>
                 <package>org.netbeans.jpa.modeler.navigator.dbview</package>
-                <package>org.netbeans.jpa.modeler.navigator.entitygraph</package>
-                <package>org.netbeans.jpa.modeler.navigator.entitygraph.component</package>
-                <package>org.netbeans.jpa.modeler.navigator.entitygraph.component.spec</package>
                 <package>org.netbeans.jpa.modeler.navigator.nodes</package>
                 <package>org.netbeans.jpa.modeler.navigator.overrideview</package>
                 <package>org.netbeans.jpa.modeler.properties</package>
