@@ -652,7 +652,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             Bounds bounds = shape.getBounds();
             Widget widget = (Widget) scene.getBaseElement(shape.getElementRef());
             if (widget != null) {
-                if (widget instanceof INodeWidget) { //reverse refactorRelationSynchronously
+                if (widget instanceof INodeWidget) {
                     INodeWidget nodeWidget = (INodeWidget) widget;
                     Point location = new Point((int) bounds.getX(), (int) bounds.getY());
                     nodeWidget.setPreferredLocation(location);
@@ -1054,7 +1054,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     public static void updateDiagramFlowElement(Plane plane, Widget widget) {
         //Diagram Model
-        if (widget instanceof INodeWidget) { //reverse refactorRelationSynchronously
+        if (widget instanceof INodeWidget) { 
             INodeWidget nodeWidget = (INodeWidget) widget;
 
             Rectangle rec = nodeWidget.getSceneViewBound();

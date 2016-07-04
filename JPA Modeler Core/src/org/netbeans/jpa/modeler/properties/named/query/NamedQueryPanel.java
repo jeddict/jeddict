@@ -165,7 +165,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
         query_ScrollPane.setPreferredSize(new java.awt.Dimension(400, 100));
 
-        query_EditorPane.setPreferredSize(new java.awt.Dimension(206, 23));
+        query_EditorPane.setPreferredSize(new java.awt.Dimension(210, 23));
         query_ScrollPane.setViewportView(query_EditorPane);
         //jEditorPane1.getDocument().removeDocumentListener(NamedStoredProcedureQueryPanel.this);
         query_EditorPane.setEditorKit(CloneableEditorSupport.getEditorKit("text/x-jpql-jpam"));
@@ -175,6 +175,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
         editButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/resource/image/misc/jpqlEditor.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(editButton, org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.editButton.text")); // NOI18N
+        editButton.setPreferredSize(new java.awt.Dimension(25, 25));
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
@@ -216,6 +217,8 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         queryHint_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.queryHint_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         queryHint_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
 
+        queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout queryHint_LayeredPaneLayout = new javax.swing.GroupLayout(queryHint_LayeredPane);
         queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
         queryHint_LayeredPaneLayout.setHorizontalGroup(
@@ -225,10 +228,15 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         queryHint_LayeredPaneLayout.setVerticalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(query_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(lockModeType_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(queryHint_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -262,11 +270,6 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(query_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(lockModeType_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(queryHint_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

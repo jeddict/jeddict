@@ -149,7 +149,7 @@
                     <Component class="javax.swing.JEditorPane" name="query_EditorPane">
                       <Properties>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[206, 23]"/>
+                          <Dimension value="[210, 23]"/>
                         </Property>
                       </Properties>
                       <AuxValues>
@@ -165,6 +165,9 @@
                     </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="NamedQueryPanel.editButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                    </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[25, 25]"/>
                     </Property>
                   </Properties>
                   <Events>

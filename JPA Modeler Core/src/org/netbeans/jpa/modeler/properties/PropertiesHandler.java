@@ -580,8 +580,8 @@ public class PropertiesHandler {
                     NamedQuery namedQuery = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedQuery;
-                    row[1] = namedQuery.getName();
-                    row[2] = getShortQueryName(identifiableClass, namedQuery.getQuery());
+                    row[1] = getShortQueryName(identifiableClass, namedQuery.getName());
+                    row[2] = namedQuery.getQuery();
                     row[3] = namedQuery.getLockMode();
                     data_local.add(row);
                 }

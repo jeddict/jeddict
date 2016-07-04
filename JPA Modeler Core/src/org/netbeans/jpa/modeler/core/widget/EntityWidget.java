@@ -188,8 +188,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         return getUnidirectionalRelationFlowWidget().add(e);
     }
 
-    public boolean removeUnidirectionalRelationFlowWidget(Object o) {
-        return getUnidirectionalRelationFlowWidget().remove(o);
+    public boolean removeUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
+        return getUnidirectionalRelationFlowWidget().remove(e);
     }
 
     public void clearUnidirectionalRelationFlowWidget() {

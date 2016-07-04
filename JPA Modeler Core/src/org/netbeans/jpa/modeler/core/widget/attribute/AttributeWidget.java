@@ -23,22 +23,39 @@ import java.util.Map;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
+import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
+import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
+import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
+import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -49,6 +66,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.NbBundle;
+import org.openide.util.RequestProcessor;
 import org.openide.windows.WindowManager;
 
 /**
@@ -200,10 +218,54 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setName(this.name);
+                refactorReference(previousName, this.name);
             }
         }
        validateName(previousName,this.getName());
     }
+    
+    private void refactorReference(String previousName, String newName) {
+        if (previousName == null) {
+            return;
+        }
+        ModelerFile modelerFile = this.getModelerScene().getModelerFile();
+        RequestProcessor.getDefault().post(() -> {
+            try {
+
+                String singularPreName = Character.toLowerCase(previousName.charAt(0)) + (previousName.length() > 1 ? previousName.substring(1) : "");
+                String pluralPreName = English.plural(singularPreName);
+                String singularNewName = Character.toLowerCase(newName.charAt(0)) + (newName.length() > 1 ? newName.substring(1) : "");
+                String pluralNewName = English.plural(singularNewName);
+       
+
+           
+                //Refactor NamedQuery, NamedNativeQuery
+                if (this.getClassWidget().getBaseElementSpec() instanceof IdentifiableClass) {
+                    ((IdentifiableClass)this.getClassWidget().getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
+                         if (!obj.refactorName(singularPreName, singularNewName)) {
+                            obj.refactorName(pluralPreName, pluralNewName);
+                        }
+                         if (!obj.refactorQuery(singularPreName, singularNewName)) {
+                            obj.refactorQuery(pluralPreName, pluralNewName);
+                        }
+                    }); 
+                    ((IdentifiableClass)this.getClassWidget().getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
+                        if (!obj.refactorName(singularPreName, singularNewName)) {
+                            obj.refactorName(pluralPreName, pluralNewName);
+                        }
+                         if (!obj.refactorQuery(singularPreName, singularNewName)) {
+                            obj.refactorQuery(pluralPreName, pluralNewName);
+                        }
+                    }); 
+                }
+
+               
+            } catch (Throwable t) {
+                modelerFile.handleException(t);
+            }
+        });
+    }
+
 
     @Override
     public void setLabel(String label) {

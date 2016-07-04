@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.QueryMapping;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -59,7 +60,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "query",
     "hint"
 })
-public class NamedNativeQuery {
+public class NamedNativeQuery extends QueryMapping {
 
     protected String description;
     @XmlElement(required = true)

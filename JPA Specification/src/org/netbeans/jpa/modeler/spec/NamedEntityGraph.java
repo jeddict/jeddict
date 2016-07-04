@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.DataMapping;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -58,7 +59,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "subgraph",
     "subclassSubgraph"
 })
-public class NamedEntityGraph {
+public class NamedEntityGraph extends DataMapping {
 
     @XmlElement(name = "named-attribute-node")
     protected List<NamedAttributeNode> namedAttributeNode;

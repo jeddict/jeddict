@@ -54,10 +54,13 @@ import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
+import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
+import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
@@ -1011,7 +1014,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
 
-    public void refactorReference(String previousName, String newName) {
+    private void refactorReference(String previousName, String newName) {
         if (previousName == null) {
             return;
         }
@@ -1042,7 +1045,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     }
                 }
 
-                if (this instanceof EntityWidget) {
+                if (this.getBaseElementSpec() instanceof Entity) {
                     for (RelationFlowWidget relationFlowWidget : ((EntityWidget) this).getUnidirectionalRelationFlowWidget()) {
                         RelationAttributeWidget<RelationAttribute> relationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
                         if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
@@ -1057,9 +1060,29 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                             }
                         }
                     }
-                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph eg) -> {
-                        if (eg.getName().contains(singularPreName)) {
-                            eg.setName(eg.getName().replaceAll(singularPreName, singularNewName));
+                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph obj) -> {
+                       if (!obj.refactorName(singularPreName, singularNewName)) {
+                            obj.refactorName(pluralPreName, pluralNewName);
+                        }
+                    });
+                }
+                
+                //Refactor NamedQuery, NamedNativeQuery
+                if (this.getBaseElementSpec() instanceof IdentifiableClass) {
+                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
+                        if (!obj.refactorName(singularPreName, singularNewName)) {
+                            obj.refactorName(pluralPreName, pluralNewName);
+                        }
+                        if (!obj.refactorQuery(singularPreName, singularNewName)) {
+                            obj.refactorQuery(pluralPreName, pluralNewName);
+                        }
+                    });
+                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
+                        if (!obj.refactorName(singularPreName, singularNewName)) {
+                            obj.refactorName(pluralPreName, pluralNewName);
+                        }
+                        if (!obj.refactorQuery(singularPreName, singularNewName)) {
+                            obj.refactorQuery(pluralPreName, pluralNewName);
                         }
                     });
                 }
