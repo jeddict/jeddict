@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getShortQueryName;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.LockModeType;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.QueryHint;
@@ -41,11 +43,12 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
     private NamedQuery namedQuery;
     private NAttributeEntity attributeEntity;
     private ModelerFile modelerFile;
-    public NamedQueryPanel(ModelerFile modelerFile) {
-        this.modelerFile=modelerFile;
-    }
-
+    private IdentifiableClass identifiableClass;
     
+    public NamedQueryPanel(IdentifiableClass identifiableClass, ModelerFile modelerFile) {
+        this.modelerFile=modelerFile;
+        this.identifiableClass = identifiableClass;
+    }
     
     @Override
     public void postConstruct() {
@@ -73,10 +76,9 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
             this.setEntity(new RowValue(new Object[4]));
         }
         namedQuery = null;
-        name_TextField.setText("");
-        query_EditorPane.setText("");
+        name_TextField.setText(identifiableClass.getClazz() + '.' + "findByX");
+        query_EditorPane.setText("Select e from " + identifiableClass.getClazz() + " e");
         lockModeType_jComboBox.setSelectedIndex(0);
-
         initCustomNAttributeEditor();
         attributeEntity = getQueryHint();
         customNAttributeClientEditor.setAttributeEntity(attributeEntity);
@@ -111,7 +113,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         }
     }
 
-    void initCustomNAttributeEditor() {
+    private void initCustomNAttributeEditor() {
         customNAttributeClientEditor = NEntityEditor.createInstance(queryHint_LayeredPane, 602, 249);
     }
 
@@ -282,11 +284,11 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
     private boolean validateField() {
         if (this.name_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, "Name field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Name can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
         if (this.query_EditorPane.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, "Query field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Query can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
         return true;
@@ -312,7 +314,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedQuery;
-            row[1] = namedQuery.getName();
+            row[1] = getShortQueryName(identifiableClass, namedQuery.getName());
             row[2] = namedQuery.getQuery();
             row[3] = namedQuery.getLockMode();
         }

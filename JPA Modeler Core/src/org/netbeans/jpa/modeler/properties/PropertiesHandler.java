@@ -64,6 +64,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
@@ -543,9 +544,10 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getNamedQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<NamedQuery> namedQueriesSpec) {
+    public static PropertySupport getNamedQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, IdentifiableClass identifiableClass) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No NamedQueries exist", "One NamedQuery exist", "NamedQueries exist"});
+        final List<NamedQuery> namedQueriesSpec = identifiableClass.getNamedQuery();
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
@@ -553,7 +555,7 @@ public class PropertiesHandler {
         columns.add(new Column("Query", false, String.class));
         columns.add(new Column("Lock Mode Type", false, true, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedQueryPanel(modelerScene.getModelerFile()));
+        attributeEntity.setCustomDialog(new NamedQueryPanel(identifiableClass, modelerScene.getModelerFile()));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
@@ -579,13 +581,13 @@ public class PropertiesHandler {
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedQuery;
                     row[1] = namedQuery.getName();
-                    row[2] = namedQuery.getQuery();
+                    row[2] = getShortQueryName(identifiableClass, namedQuery.getQuery());
                     row[3] = namedQuery.getLockMode();
                     data_local.add(row);
                 }
                 this.data = data_local;
             }
-
+            
             @Override
             public List<Object[]> getData() {
                 return data;
@@ -603,6 +605,15 @@ public class PropertiesHandler {
         });
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
+    public static String getShortQueryName(IdentifiableClass identifiableClass, String queryFullName) {
+        String clazz = identifiableClass.getClazz();
+        if (queryFullName.startsWith(clazz + '.')) {
+            return queryFullName.substring(clazz.length() + 1);
+        } else {
+            return queryFullName;
+        }
     }
 
     public static PropertySupport getNamedEntityGraphProperty(String id, String name, String desc, final EntityWidget entityWidget) {
