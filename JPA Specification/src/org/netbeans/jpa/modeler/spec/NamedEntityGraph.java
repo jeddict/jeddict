@@ -66,8 +66,6 @@ public class NamedEntityGraph extends DataMapping {
     protected List<NamedSubgraph> subgraph;
     @XmlElement(name = "subclass-subgraph")
     protected List<NamedSubgraph> subclassSubgraph;
-    @XmlAttribute(name = "name")
-    protected String name;
     @XmlAttribute(name = "include-all-attributes")
     protected Boolean includeAllAttributes;
 
@@ -261,26 +259,6 @@ public class NamedEntityGraph extends DataMapping {
             subclassSubgraph = new ArrayList<NamedSubgraph>();
         }
         return this.subclassSubgraph;
-    }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Lists the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
     }
 
     /**

@@ -488,7 +488,8 @@ public class PropertiesHandler {
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
-        columns.add(new Column("Name", false, String.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Name", true, String.class));
         columns.add(new Column("ProcedureName", false, String.class));
         columns.add(new Column("Parameters", false, Integer.class));
         attributeEntity.setColumns(columns);
@@ -517,9 +518,10 @@ public class PropertiesHandler {
                     NamedStoredProcedureQuery namedStoredProcedureQuery = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedStoredProcedureQuery;
-                    row[1] = namedStoredProcedureQuery.getName();
-                    row[2] = namedStoredProcedureQuery.getProcedureName();
-                    row[3] = namedStoredProcedureQuery.getParameter().size();
+                    row[1] = namedStoredProcedureQuery.isEnable();
+                    row[2] = namedStoredProcedureQuery.getName();
+                    row[3] = namedStoredProcedureQuery.getProcedureName();
+                    row[4] = namedStoredProcedureQuery.getParameter().size();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -551,7 +553,8 @@ public class PropertiesHandler {
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
-        columns.add(new Column("Name", false, String.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Name", true, String.class));
         columns.add(new Column("Query", false, String.class));
         columns.add(new Column("Lock Mode Type", false, true, String.class));
         attributeEntity.setColumns(columns);
@@ -580,9 +583,10 @@ public class PropertiesHandler {
                     NamedQuery namedQuery = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedQuery;
-                    row[1] = getShortQueryName(identifiableClass, namedQuery.getName());
-                    row[2] = namedQuery.getQuery();
-                    row[3] = namedQuery.getLockMode();
+                    row[1] = namedQuery.isEnable();
+                    row[2] = getShortQueryName(identifiableClass, namedQuery.getName());
+                    row[3] = namedQuery.getQuery();
+                    row[4] = namedQuery.getLockMode();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -624,6 +628,7 @@ public class PropertiesHandler {
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedEntityGraphPanel(entityWidget));
@@ -651,7 +656,8 @@ public class PropertiesHandler {
                     NamedEntityGraph entityGraph = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = entityGraph;
-                    row[1] = entityGraph.getName();
+                    row[1] = entityGraph.isEnable();
+                    row[2] = entityGraph.getName();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -682,10 +688,9 @@ public class PropertiesHandler {
         List<NamedNativeQuery> namedNativeQueriesSpec = entity.getNamedNativeQuery();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
-        columns.add(new Column("Name", false, String.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Name", true, String.class));
         columns.add(new Column("Query", false, String.class));
-        columns.add(new Column("Result Class", false, true, String.class));
-        columns.add(new Column("ResultSet Mapping", false, true, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedNativeQueryPanel(modelerScene.getModelerFile(), entity));
 
@@ -712,10 +717,9 @@ public class PropertiesHandler {
                     NamedNativeQuery namedNativeQuery = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedNativeQuery;
-                    row[1] = namedNativeQuery.getName();
-                    row[2] = namedNativeQuery.getQuery();
-                    row[3] = namedNativeQuery.getResultClass();
-                    row[4] = namedNativeQuery.getResultSetMapping();
+                    row[1] = namedNativeQuery.isEnable();
+                    row[2] = namedNativeQuery.getName();
+                    row[3] = namedNativeQuery.getQuery();
                     data_local.add(row);
                 }
                 this.data = data_local;

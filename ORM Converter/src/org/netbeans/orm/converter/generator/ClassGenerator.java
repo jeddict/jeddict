@@ -202,8 +202,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected ColumnDefSnippet getColumnDef(Column column) {
         return getColumnDef(column, false);
-    }   
-    
+    }
+
     protected ColumnDefSnippet getColumnDef(Column column, boolean mapKey) {
 
         if (column == null) {
@@ -249,23 +249,23 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
-        if(classMembers.getAttributes().isEmpty()){
-          return null;  
-        } 
+        if (classMembers.getAttributes().isEmpty()) {
+            return null;
+        }
         return new HashcodeMethodSnippet(className, classMembers);
     }
 
     protected EqualsMethodSnippet getEqualsMethodSnippet(String className, ClassMembers classMembers) {
-       if(classMembers.getAttributes().isEmpty()){
-          return null;  
-        } 
-       return new EqualsMethodSnippet(className, classMembers);
+        if (classMembers.getAttributes().isEmpty()) {
+            return null;
+        }
+        return new EqualsMethodSnippet(className, classMembers);
     }
 
     protected ToStringMethodSnippet getToStringMethodSnippet(String className, ClassMembers classMembers) {
-        if(classMembers.getAttributes().isEmpty()){
-          return null;  
-        } 
+        if (classMembers.getAttributes().isEmpty()) {
+            return null;
+        }
         ToStringMethodSnippet snippet = new ToStringMethodSnippet(className);
         snippet.setAttributes(classMembers.getAttributeNames());
         return snippet;
@@ -330,7 +330,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 enumerated = new EnumeratedSnippet();
                 enumerated.setValue(parsedEnumType);
             }
-            
+
             TemporalType parsedTemporalType = parsedBasic.getTemporal();
             TemporalSnippet temporal = null;
             if (parsedTemporalType != null) {
@@ -358,7 +358,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setTemporal(temporal);
             variableDef.setType(parsedBasic.getAttributeType());
 
-
             if (parsedLob != null) {
                 variableDef.setLob(true);
             }
@@ -370,7 +369,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return;
         }
         for (ElementCollection parsedElementCollection : parsedElementCollections) {
-            
+
             CollectionTableSnippet collectionTable = getCollectionTable(parsedElementCollection.getCollectionTable());
 
             FetchType parsedFetchType = parsedElementCollection.getFetch();
@@ -386,8 +385,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(parsedElementCollection);
             variableDef.setElementCollection(elementCollection);
             variableDef.setCollectionTable(collectionTable);
-     
-            
+
             if (parsedElementCollection.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
             }
@@ -601,12 +599,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
 
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
-                parsedCollectionTable.getJoinColumn(),false);
+                parsedCollectionTable.getJoinColumn(), false);
 
         Set<UniqueConstraint> parsedUniqueConstraints = parsedCollectionTable.getUniqueConstraint();
 
         List<UniqueConstraintSnippet> uniqueConstraints = getUniqueConstraints(parsedUniqueConstraints);
-        
 
         CollectionTableSnippet collectionTable = new CollectionTableSnippet();
 
@@ -616,7 +613,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         collectionTable.setJoinColumns(joinColumns);
         collectionTable.setUniqueConstraints(uniqueConstraints);
         collectionTable.setIndices(getIndexes(parsedCollectionTable.getIndex()));
-        
+
         collectionTable.setForeignKey(getForeignKey(parsedCollectionTable.getForeignKey()));
 
         return collectionTable;
@@ -628,10 +625,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
 
         List<JoinColumnSnippet> inverseJoinColumns = getJoinColumns(
-                parsedJoinTable.getInverseJoinColumn(),false);
+                parsedJoinTable.getInverseJoinColumn(), false);
 
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
-                parsedJoinTable.getJoinColumn(),false);
+                parsedJoinTable.getJoinColumn(), false);
 
         Set<UniqueConstraint> parsedUniqueConstraints
                 = parsedJoinTable.getUniqueConstraint();
@@ -647,7 +644,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         joinTable.setInverseJoinColumns(inverseJoinColumns);
         joinTable.setUniqueConstraints(uniqueConstraints);
         joinTable.setIndices(getIndexes(parsedJoinTable.getIndex()));
-        
 
         joinTable.setForeignKey(getForeignKey(parsedJoinTable.getForeignKey()));
         joinTable.setInverseForeignKey(getForeignKey(parsedJoinTable.getInverseForeignKey()));
@@ -760,7 +756,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
         return parsedUniqueConstraints.stream().map(c -> new UniqueConstraintSnippet(c)).collect(toList());
     }
-    
+
     protected List<IndexSnippet> getIndexes(List<Index> parsedIndexes) {
         if (parsedIndexes == null || parsedIndexes.isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -781,7 +777,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         for (AssociationOverride parsedAssociationOverride : parsedAssociationOverrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(),false);
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(), false);
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
             if ((joinTable == null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
@@ -821,11 +817,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             attributeOverridesSnippet.addAttributeOverrides(attributeOverride);
         }
-        
-        if(attributeOverridesSnippet.getAttributeOverrides().isEmpty()){
+
+        if (attributeOverridesSnippet.getAttributeOverrides().isEmpty()) {
             return null;
         }
-        
+
         return attributeOverridesSnippet;
     }
 
@@ -882,24 +878,27 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected void processNamedEntityGraphs(List<NamedEntityGraph> parsedNamedEntityGraphs) {
 
-        if (parsedNamedEntityGraphs == null
-                || parsedNamedEntityGraphs.isEmpty()) {
+        if (parsedNamedEntityGraphs == null || parsedNamedEntityGraphs.isEmpty()) {
             return;
         }
 
         NamedEntityGraphsSnippet namedEntityGraphs = new NamedEntityGraphsSnippet();
 
-        classDef.setNamedEntityGraphs(namedEntityGraphs);
-
         for (NamedEntityGraph parsedNamedEntityGraph : parsedNamedEntityGraphs) {
-            NamedEntityGraphSnippet namedEntityGraph = new NamedEntityGraphSnippet();
-            namedEntityGraph.setName(parsedNamedEntityGraph.getName());
-            namedEntityGraph.setIncludeAllAttributes(parsedNamedEntityGraph.isIncludeAllAttributes());
-            namedEntityGraph.setNamedAttributeNodes(getNamedAttributeNodes(parsedNamedEntityGraph.getNamedAttributeNode()));
-            namedEntityGraph.setSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubgraph()));
-            namedEntityGraph.setSubclassSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubclassSubgraph()));
+            if (parsedNamedEntityGraph.isEnable()) {
+                NamedEntityGraphSnippet namedEntityGraph = new NamedEntityGraphSnippet();
+                namedEntityGraph.setName(parsedNamedEntityGraph.getName());
+                namedEntityGraph.setIncludeAllAttributes(parsedNamedEntityGraph.isIncludeAllAttributes());
+                namedEntityGraph.setNamedAttributeNodes(getNamedAttributeNodes(parsedNamedEntityGraph.getNamedAttributeNode()));
+                namedEntityGraph.setSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubgraph()));
+                namedEntityGraph.setSubclassSubgraphs(getNamedSubgraphs(parsedNamedEntityGraph.getSubclassSubgraph()));
 
-            namedEntityGraphs.addNamedEntityGraph(namedEntityGraph);
+                namedEntityGraphs.addNamedEntityGraph(namedEntityGraph);
+            }
+
+        }
+        if (!namedEntityGraphs.getNamedEntityGraphs().isEmpty()) {
+            classDef.setNamedEntityGraphs(namedEntityGraphs);
         }
     }
 
@@ -911,18 +910,21 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries = new NamedStoredProcedureQueriesSnippet();
 
-        classDef.setNamedStoredProcedureQueries(namedStoredProcedureQueries);
-
         for (NamedStoredProcedureQuery parsedNamedStoredProcedureQuery : parsedNamedStoredProcedureQueries) {
-            NamedStoredProcedureQuerySnippet namedStoredProcedureQuery = new NamedStoredProcedureQuerySnippet();
-            namedStoredProcedureQuery.setName(parsedNamedStoredProcedureQuery.getName());
-            namedStoredProcedureQuery.setProcedureName(parsedNamedStoredProcedureQuery.getProcedureName());
-            namedStoredProcedureQuery.setQueryHints(getQueryHints(parsedNamedStoredProcedureQuery.getHint()));
-            namedStoredProcedureQuery.setResultClasses(getResultClasses(entityMappings, parsedNamedStoredProcedureQuery.getResultClass()));
-            namedStoredProcedureQuery.setResultSetMappings(parsedNamedStoredProcedureQuery.getResultSetMapping());
-            namedStoredProcedureQuery.setParameters(getStoredProcedureParameters(parsedNamedStoredProcedureQuery.getParameter()));
+            if (parsedNamedStoredProcedureQuery.isEnable()) {
+                NamedStoredProcedureQuerySnippet namedStoredProcedureQuery = new NamedStoredProcedureQuerySnippet();
+                namedStoredProcedureQuery.setName(parsedNamedStoredProcedureQuery.getName());
+                namedStoredProcedureQuery.setProcedureName(parsedNamedStoredProcedureQuery.getProcedureName());
+                namedStoredProcedureQuery.setQueryHints(getQueryHints(parsedNamedStoredProcedureQuery.getHint()));
+                namedStoredProcedureQuery.setResultClasses(getResultClasses(entityMappings, parsedNamedStoredProcedureQuery.getResultClass()));
+                namedStoredProcedureQuery.setResultSetMappings(parsedNamedStoredProcedureQuery.getResultSetMapping());
+                namedStoredProcedureQuery.setParameters(getStoredProcedureParameters(parsedNamedStoredProcedureQuery.getParameter()));
 
-            namedStoredProcedureQueries.addNamedStoredProcedureQuery(namedStoredProcedureQuery);
+                namedStoredProcedureQueries.addNamedStoredProcedureQuery(namedStoredProcedureQuery);
+            }
+        }
+        if (!namedStoredProcedureQueries.getNamedStoredProcedureQueries().isEmpty()) {
+            classDef.setNamedStoredProcedureQueries(namedStoredProcedureQueries);
         }
     }
 
@@ -966,36 +968,32 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return storedProcedureParameters;
     }
 
-    protected void processNamedNativeQueries(
-            List<NamedNativeQuery> parsedNamedNativeQueries) {
+    protected void processNamedNativeQueries(List<NamedNativeQuery> parsedNamedNativeQueries) {
 
-        if (parsedNamedNativeQueries == null
-                || parsedNamedNativeQueries.isEmpty()) {
+        if (parsedNamedNativeQueries == null || parsedNamedNativeQueries.isEmpty()) {
             return;
         }
 
         NamedNativeQueriesSnippet namedNativeQueries = new NamedNativeQueriesSnippet();
 
-        classDef.setNamedNativeQueries(namedNativeQueries);
-
         for (NamedNativeQuery parsedNamedNativeQuery : parsedNamedNativeQueries) {
+            if (parsedNamedNativeQuery.isEnable()) {
+                List<QueryHintSnippet> queryHints = getQueryHints(parsedNamedNativeQuery.getHint());
 
-            List<QueryHintSnippet> queryHints = getQueryHints(
-                    parsedNamedNativeQuery.getHint());
-
-            NamedNativeQuerySnippet namedNativeQuery = new NamedNativeQuerySnippet();
-
-            namedNativeQuery.setName(parsedNamedNativeQuery.getName());
-            namedNativeQuery.setQuery(parsedNamedNativeQuery.getQuery());
-            namedNativeQuery.setResultClass(
-                    parsedNamedNativeQuery.getResultClass());
-            namedNativeQuery.setPackageName(packageName);
-            namedNativeQuery.setResultSetMapping(
-                    parsedNamedNativeQuery.getResultSetMapping());
-            namedNativeQuery.setQueryHints(queryHints);
+                NamedNativeQuerySnippet namedNativeQuery = new NamedNativeQuerySnippet();
+                namedNativeQuery.setName(parsedNamedNativeQuery.getName());
+                namedNativeQuery.setQuery(parsedNamedNativeQuery.getQuery());
+                namedNativeQuery.setResultClass(parsedNamedNativeQuery.getResultClass());
+                namedNativeQuery.setPackageName(packageName);
+                namedNativeQuery.setResultSetMapping(parsedNamedNativeQuery.getResultSetMapping());
+                namedNativeQuery.setQueryHints(queryHints);
 //            namedNativeQuery.setAttributeType(parsedNamedNativeQuery.getAttributeType());
+                namedNativeQueries.addNamedQuery(namedNativeQuery);
+            }
+        }
 
-            classDef.getNamedNativeQueries().addNamedQuery(namedNativeQuery);
+        if (!namedNativeQueries.getNamedQueries().isEmpty()) {
+            classDef.setNamedNativeQueries(namedNativeQueries);
         }
     }
 
@@ -1008,22 +1006,24 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         NamedQueriesSnippet namedQueries = new NamedQueriesSnippet();
 
-        classDef.setNamedQueries(namedQueries);
-
         for (NamedQuery parsedNamedQuery : parsedNamedQueries) {
 
-            List<QueryHintSnippet> queryHints = getQueryHints(
-                    parsedNamedQuery.getHint());
+            if (parsedNamedQuery.isEnable()) {
+                List<QueryHintSnippet> queryHints = getQueryHints(parsedNamedQuery.getHint());
 
-            NamedQueryDefSnippet namedQuery = new NamedQueryDefSnippet();
+                NamedQueryDefSnippet namedQuery = new NamedQueryDefSnippet();
+                namedQuery.setName(parsedNamedQuery.getName());
+                namedQuery.setQuery(parsedNamedQuery.getQuery());
+                //  namedQuery.setAttributeType(parsedNamedQuery.getAttributeType());
+                namedQuery.setQueryHints(queryHints);
+                namedQuery.setLockMode(parsedNamedQuery.getLockMode());
 
-            namedQuery.setName(parsedNamedQuery.getName());
-            namedQuery.setQuery(parsedNamedQuery.getQuery());
-//            namedQuery.setAttributeType(parsedNamedQuery.getAttributeType());
-            namedQuery.setQueryHints(queryHints);
-            namedQuery.setLockMode(parsedNamedQuery.getLockMode());
+                namedQueries.addNamedQuery(namedQuery);
+            }
+        }
 
-            classDef.getNamedQueries().addNamedQuery(namedQuery);
+        if (!namedQueries.getNamedQueries().isEmpty()) {
+            classDef.setNamedQueries(namedQueries);
         }
     }
 
@@ -1072,7 +1072,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         for (AssociationOverride parsedAssociationOverride : associationOverrrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(),false);
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(), false);
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
             if (joinTable.isEmpty() && joinColumnsList.isEmpty()) {
@@ -1158,7 +1158,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
                 }
             }
-            
+
             TemporalType parsedTemporalType = parsedId.getTemporal();
             TemporalSnippet temporal = null;
             if (parsedTemporalType != null) {
@@ -1212,44 +1212,44 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
         }
     }
-   private MapKeySnippet updateMapKeyAttributeSnippet(MapKeyHandler mapKeyHandler) {
-       if(mapKeyHandler.getMapKeyType() == null || mapKeyHandler.getValidatedMapKeyType()==null){
-           return null;
-       }
-       MapKeySnippet snippet = new MapKeySnippet();
-       if(mapKeyHandler.getMapKeyType() == MapKeyType.EXT && mapKeyHandler.getValidatedMapKeyType() == MapKeyType.EXT){
-           snippet.setMapKeyAttribute(mapKeyHandler.getMapKeyAttribute());
-           snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttribute().getDataTypeLabel());
-       } else {
-           if (mapKeyHandler.getMapKeyEntity() != null) {
-               List<JoinColumnSnippet> joinColumnsList = getJoinColumns(mapKeyHandler.getMapKeyJoinColumn(),true);
-               JoinColumnsSnippet joinColumns = null;
-               if (!joinColumnsList.isEmpty()) {
-                   joinColumns = new JoinColumnsSnippet(true);
-                   joinColumns.setJoinColumns(joinColumnsList);
-                   joinColumns.setForeignKey(getForeignKey(mapKeyHandler.getMapKeyForeignKey()));
-               }
-               snippet.setJoinColumnsSnippet(joinColumns);
-               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEntity().getClazz());
-           } else if (mapKeyHandler.getMapKeyEmbeddable() != null) {//TODO attr override
-               snippet.setAttributeOverrideSnippet(processAttributeOverrides(mapKeyHandler.getMapKeyAttributeOverride()));
-               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEmbeddable().getClazz());
-           } else {
-               if (mapKeyHandler.getMapKeyEnumerated() != null) {
-                   EnumeratedSnippet enumeratedSnippet = new EnumeratedSnippet(true);
-                   enumeratedSnippet.setValue(mapKeyHandler.getMapKeyEnumerated());
-                   snippet.setEnumeratedSnippet(enumeratedSnippet);
-               } else if (mapKeyHandler.getMapKeyTemporal() != null) {
-                   TemporalSnippet temporalSnippet = new TemporalSnippet(true);
-                   temporalSnippet.setValue(mapKeyHandler.getMapKeyTemporal());
-                   snippet.setTemporalSnippet(temporalSnippet);
-               }
-               snippet.setColumnSnippet(getColumnDef(mapKeyHandler.getMapKeyColumn(), true));
-               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttributeType());
-           }
-       }
-       return snippet;
+
+    private MapKeySnippet updateMapKeyAttributeSnippet(MapKeyHandler mapKeyHandler) {
+        if (mapKeyHandler.getMapKeyType() == null || mapKeyHandler.getValidatedMapKeyType() == null) {
+            return null;
+        }
+        MapKeySnippet snippet = new MapKeySnippet();
+        if (mapKeyHandler.getMapKeyType() == MapKeyType.EXT && mapKeyHandler.getValidatedMapKeyType() == MapKeyType.EXT) {
+            snippet.setMapKeyAttribute(mapKeyHandler.getMapKeyAttribute());
+            snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttribute().getDataTypeLabel());
+        } else if (mapKeyHandler.getMapKeyEntity() != null) {
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(mapKeyHandler.getMapKeyJoinColumn(), true);
+            JoinColumnsSnippet joinColumns = null;
+            if (!joinColumnsList.isEmpty()) {
+                joinColumns = new JoinColumnsSnippet(true);
+                joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(mapKeyHandler.getMapKeyForeignKey()));
+            }
+            snippet.setJoinColumnsSnippet(joinColumns);
+            snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEntity().getClazz());
+        } else if (mapKeyHandler.getMapKeyEmbeddable() != null) {//TODO attr override
+            snippet.setAttributeOverrideSnippet(processAttributeOverrides(mapKeyHandler.getMapKeyAttributeOverride()));
+            snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEmbeddable().getClazz());
+        } else {
+            if (mapKeyHandler.getMapKeyEnumerated() != null) {
+                EnumeratedSnippet enumeratedSnippet = new EnumeratedSnippet(true);
+                enumeratedSnippet.setValue(mapKeyHandler.getMapKeyEnumerated());
+                snippet.setEnumeratedSnippet(enumeratedSnippet);
+            } else if (mapKeyHandler.getMapKeyTemporal() != null) {
+                TemporalSnippet temporalSnippet = new TemporalSnippet(true);
+                temporalSnippet.setValue(mapKeyHandler.getMapKeyTemporal());
+                snippet.setTemporalSnippet(temporalSnippet);
+            }
+            snippet.setColumnSnippet(getColumnDef(mapKeyHandler.getMapKeyColumn(), true));
+            snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttributeType());
+        }
+        return snippet;
     }
+
     protected void processManyToOne(List<ManyToOne> parsedManyToOnes) {
 
         if (parsedManyToOnes == null) {
@@ -1339,8 +1339,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             JoinTableSnippet joinTable = getJoinTable(parsedOneToOne.getJoinTable());
 
-            
-
             OneToOneSnippet oneToOne = new OneToOneSnippet();
 
             oneToOne.setCascadeTypes(cascadeTypes);
@@ -1363,16 +1361,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
         }
     }
-    
-    private JoinColumnsSnippet getJoinColumnsSnippet(JoinColumnHandler joinColumnHandler, boolean mapKey){
+
+    private JoinColumnsSnippet getJoinColumnsSnippet(JoinColumnHandler joinColumnHandler, boolean mapKey) {
         List<JoinColumnSnippet> joinColumnsList = getJoinColumns(joinColumnHandler.getJoinColumn(), mapKey);
-            JoinColumnsSnippet joinColumns = null;
-            if (!joinColumnsList.isEmpty()) {
-                joinColumns = new JoinColumnsSnippet(mapKey);
-                joinColumns.setJoinColumns(joinColumnsList);
-                joinColumns.setForeignKey(getForeignKey(joinColumnHandler.getForeignKey()));
-            }
-            return joinColumns;
+        JoinColumnsSnippet joinColumns = null;
+        if (!joinColumnsList.isEmpty()) {
+            joinColumns = new JoinColumnsSnippet(mapKey);
+            joinColumns.setJoinColumns(joinColumnsList);
+            joinColumns.setForeignKey(getForeignKey(joinColumnHandler.getForeignKey()));
+        }
+        return joinColumns;
     }
 
     protected void processVersion(List<Version> parsedVersions) {
@@ -1632,4 +1630,3 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 }
-

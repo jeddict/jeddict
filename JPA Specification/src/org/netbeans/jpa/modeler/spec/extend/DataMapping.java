@@ -15,14 +15,25 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  *
  * @author Gaurav Gupta
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class DataMapping {
 
-    public abstract String getName();
-    public abstract void setName(String name);
+    
+    @XmlAttribute(name = "e")
+    private boolean enable = true;
+    @XmlAttribute(required = true)
+    protected String name;
+    
+    protected String description;
 
     public boolean refactorName(String prevName, String newName) {
         if (this.getName().contains(prevName)) {
@@ -31,5 +42,60 @@ public abstract class DataMapping {
         } else {
             return false;
         }
+    }
+    
+     /**
+     * Gets the value of the name property.
+     *
+     * @return possible object is {@link String }
+     *
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the value of the name property.
+     *
+     * @param value allowed object is {@link String }
+     *
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
+
+
+    /**
+     * @return the enable
+     */
+    public boolean isEnable() {
+        return enable;
+    }
+
+    /**
+     * @param enable the enable to set
+     */
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+    
+        /**
+     * Gets the value of the description property.
+     *
+     * @return possible object is {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value allowed object is {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
     }
 }

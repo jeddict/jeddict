@@ -54,21 +54,16 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-query", propOrder = {
-    "description",
-    "query",
+//    "description",
+//    "query",
     "lockMode",
     "hint"
 })
 public class NamedQuery extends QueryMapping {
 
-    protected String description;
-    @XmlElement(required = true)
-    protected String query;
     @XmlElement(name = "lock-mode")
     protected LockModeType lockMode;
     protected List<QueryHint> hint;
-    @XmlAttribute(required = true)
-    protected String name;
 
     public static NamedQuery load(Element element, AnnotationMirror annotationMirror) {
         NamedQuery namedQuery = null;
@@ -91,45 +86,7 @@ public class NamedQuery extends QueryMapping {
         return namedQuery;
     }
 
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getDescription() {
-        return description;
-    }
 
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
-    /**
-     * Gets the value of the query property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getQuery() {
-        return query;
-    }
-
-    /**
-     * Sets the value of the query property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setQuery(String value) {
-        this.query = value;
-    }
 
     /**
      * Gets the value of the lockMode property.
@@ -178,26 +135,6 @@ public class NamedQuery extends QueryMapping {
             hint = new ArrayList<QueryHint>();
         }
         return this.hint;
-    }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
     }
 
 }

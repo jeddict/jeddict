@@ -79,7 +79,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Create new Named Native Query");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[5]));
+            this.setEntity(new RowValue(new Object[4]));
         }
         namedNativeQuery = null;
         name_TextField.setText(StringUtils.EMPTY);
@@ -367,8 +367,9 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedNativeQuery;
-            row[1] = namedNativeQuery.getName();
-            row[2] = namedNativeQuery.getQuery();
+            row[1] = namedNativeQuery.isEnable();
+            row[2] = namedNativeQuery.getName();
+            row[3] = namedNativeQuery.getQuery();
         }
         attributeEntity.getTableDataListener().setData(customNAttributeClientEditor.getSavedModel());
         saveActionPerformed(evt);

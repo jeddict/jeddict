@@ -80,7 +80,6 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
             namedEntityGraph = (NamedEntityGraph) row[0];
             name_TextField.setText(namedEntityGraph.getName());
         }
-
     }
 
     /**
@@ -323,7 +322,8 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedEntityGraph;
-            row[1] = namedEntityGraph.getName();
+            row[1] = namedEntityGraph.isEnable();
+            row[2] = namedEntityGraph.getName();
         }
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed

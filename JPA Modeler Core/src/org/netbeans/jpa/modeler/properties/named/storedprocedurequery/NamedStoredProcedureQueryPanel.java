@@ -98,7 +98,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Create new Named StoredProcedure Query");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[4]));
+            this.setEntity(new RowValue(new Object[5]));
         }
         namedStoredProcedureQuery = null;
         name_TextField.setText("");
@@ -569,9 +569,10 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedStoredProcedureQuery;
-            row[1] = namedStoredProcedureQuery.getName();
-            row[2] = namedStoredProcedureQuery.getProcedureName();
-            row[3] = namedStoredProcedureQuery.getParameter().size();
+            row[1] = namedStoredProcedureQuery.isEnable();
+            row[2] = namedStoredProcedureQuery.getName();
+            row[3] = namedStoredProcedureQuery.getProcedureName();
+            row[4] = namedStoredProcedureQuery.getParameter().size();
         }
 
         queryHintEntity.getTableDataListener().setData(queryHintEditor.getSavedModel());
@@ -629,7 +630,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             Procedure procedure = (Procedure) comboBoxValue.getValue();
 
             if (name_TextField.getText().trim().isEmpty()
-                || previousProcedureName == null || previousProcedureName.equalsIgnoreCase(name_TextField.getText().trim())) {
+                    || previousProcedureName == null || previousProcedureName.equalsIgnoreCase(name_TextField.getText().trim())) {
                 name_TextField.setText(procedure.getName());
             }
             previousProcedureName = procedure.getName();
@@ -687,6 +688,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     }
 
     private String previousProcedureName;
+
     private static void setDocumentText(Document doc, String text) {
         try {
             doc.remove(0, doc.getLength());

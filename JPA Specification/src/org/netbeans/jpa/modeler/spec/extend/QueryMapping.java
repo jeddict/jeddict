@@ -15,14 +15,16 @@
  */
 package org.netbeans.jpa.modeler.spec.extend;
 
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  *
  * @author Gaurav Gupta
  */
 public abstract class QueryMapping extends DataMapping {
-
-    public abstract String getQuery();
-    public abstract void setQuery(String query);
+    
+    @XmlElement(required = true)
+    protected String query;
 
     public boolean refactorQuery(String prevQuery, String newQuery) {
         if (this.getQuery().contains(prevQuery)) {
@@ -31,5 +33,27 @@ public abstract class QueryMapping extends DataMapping {
         } else {
             return false;
         }
+    }
+    
+    
+
+    /**
+     * Gets the value of the query property.
+     *
+     * @return possible object is {@link String }
+     *
+     */
+    public String getQuery() {
+        return query;
+    }
+
+    /**
+     * Sets the value of the query property.
+     *
+     * @param value allowed object is {@link String }
+     *
+     */
+    public void setQuery(String value) {
+        this.query = value;
     }
 }

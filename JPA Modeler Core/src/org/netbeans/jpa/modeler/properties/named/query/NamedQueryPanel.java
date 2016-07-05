@@ -317,9 +317,10 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedQuery;
-            row[1] = getShortQueryName(identifiableClass, namedQuery.getName());
-            row[2] = namedQuery.getQuery();
-            row[3] = namedQuery.getLockMode();
+            row[1] = namedQuery.isEnable();
+            row[2] = getShortQueryName(identifiableClass, namedQuery.getName());
+            row[3] = namedQuery.getQuery();
+            row[4] = namedQuery.getLockMode();
         }
         attributeEntity.getTableDataListener().setData(customNAttributeClientEditor.getSavedModel());
         saveActionPerformed(evt);
