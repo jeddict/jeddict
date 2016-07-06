@@ -176,6 +176,8 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     private String status;//GENERATED (DBRE,JCRE)
     @XmlAttribute(name = "thm")
     private String theme;
+    @XmlAttribute(name = "dbthm")
+    private String dbTheme;
     @XmlAttribute
     private String persistenceUnitName;
 
@@ -1466,5 +1468,19 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      */
     public void setStaticMetamodelPackage(String staticMetamodelPackage) {
         this.staticMetamodelPackage = staticMetamodelPackage;
+    }
+
+    /**
+     * @return the dbTheme
+     */
+    public String getDbTheme() {
+        return dbTheme;
+    }
+
+    /**
+     * @param dbTheme the dbTheme to set
+     */
+    public void setDbTheme(String dbTheme) {
+        this.dbTheme = dbTheme;
     }
 }
