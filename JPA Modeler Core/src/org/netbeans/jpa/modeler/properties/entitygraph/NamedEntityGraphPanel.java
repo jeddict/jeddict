@@ -65,7 +65,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Create new Named Entity Graph");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[2]));
+            this.setEntity(new RowValue(new Object[3]));
         }
         namedEntityGraph = null;
         name_TextField.setText("");
@@ -129,6 +129,9 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
             }
         });
 
+        finalGraph_LayeredPane.setLayer(finalGraph_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        finalGraph_LayeredPane.setLayer(finalGraph_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout finalGraph_LayeredPaneLayout = new javax.swing.GroupLayout(finalGraph_LayeredPane);
         finalGraph_LayeredPane.setLayout(finalGraph_LayeredPaneLayout);
         finalGraph_LayeredPaneLayout.setHorizontalGroup(
@@ -146,8 +149,6 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
                 .addComponent(finalGraph_Label)
                 .addComponent(finalGraph_Button, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        finalGraph_LayeredPane.setLayer(finalGraph_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        finalGraph_LayeredPane.setLayer(finalGraph_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         actionLayeredPane.setLayout(new java.awt.FlowLayout());
 
@@ -163,7 +164,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedEntityGraphPanel.class, "NamedEntityGraphPanel.cancel_Button.toolTipText")); // NOI18N
-        cancel_Button.setPreferredSize(new java.awt.Dimension(60, 30));
+        cancel_Button.setPreferredSize(new java.awt.Dimension(70, 30));
         cancel_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancel_ButtonActionPerformed(evt);
@@ -180,6 +181,11 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         name_TextField.setPreferredSize(new java.awt.Dimension(10, 15));
         nameLayeredPane.add(name_TextField, java.awt.BorderLayout.CENTER);
 
+        rootLayeredPane.setLayer(graphLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(finalGraph_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(actionLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(nameLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout rootLayeredPaneLayout = new javax.swing.GroupLayout(rootLayeredPane);
         rootLayeredPane.setLayout(rootLayeredPaneLayout);
         rootLayeredPaneLayout.setHorizontalGroup(
@@ -188,8 +194,8 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
             .addComponent(nameLayeredPane)
             .addGroup(rootLayeredPaneLayout.createSequentialGroup()
                 .addComponent(finalGraph_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
-                .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(actionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
         );
         rootLayeredPaneLayout.setVerticalGroup(
             rootLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,10 +212,6 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
                         .addComponent(finalGraph_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
-        rootLayeredPane.setLayer(graphLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(finalGraph_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(actionLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(nameLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

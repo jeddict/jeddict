@@ -225,7 +225,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 29);
+        save_Button.setBounds(0, 0, 70, 30);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.cancel_Button.toolTipText")); // NOI18N
@@ -241,6 +241,8 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
         queryHint_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(NamedNativeQueryPanel.class, "NamedNativeQueryPanel.queryHint_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         queryHint_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
 
+        queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout queryHint_LayeredPaneLayout = new javax.swing.GroupLayout(queryHint_LayeredPane);
         queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
         queryHint_LayeredPaneLayout.setHorizontalGroup(
@@ -251,7 +253,6 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
         );
-        queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         resultClass_LayeredPane.setLayout(new java.awt.BorderLayout());
 
@@ -276,6 +277,14 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
         resultSetMapping_LayeredPane.add(resultSetMapping_Label, java.awt.BorderLayout.WEST);
 
         resultSetMapping_LayeredPane.add(resultSetMapping_jComboBox, java.awt.BorderLayout.CENTER);
+
+        root_jLayeredPane.setLayer(dbCon_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(query_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(queryHint_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(resultClass_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(resultSetMapping_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -317,17 +326,10 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(resultSetMapping_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        root_jLayeredPane.setLayer(dbCon_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(query_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(queryHint_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(resultClass_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(resultSetMapping_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         getContentPane().add(root_jLayeredPane);
 

@@ -106,7 +106,9 @@ public class NamedNativeQuerySnippet extends NamedQueryDefSnippet implements Sni
         List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add("javax.persistence.NamedNativeQuery");
-        importSnippets.add(classHelper.getFQClassName());
+        if (classHelper.getClassName() != null) {
+            importSnippets.add(classHelper.getFQClassName());
+        }
         if (!queryHints.isEmpty()) {
         importSnippets.addAll(queryHints.get(0).getImportSnippets());
         }

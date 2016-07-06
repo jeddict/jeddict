@@ -42,8 +42,8 @@
               <Component id="nameLayeredPane" alignment="0" max="32767" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="finalGraph_LayeredPane" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="24" max="32767" attributes="0"/>
-                  <Component id="actionLayeredPane" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="actionLayeredPane" pref="149" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -176,7 +176,7 @@
                   <ResourceString bundle="org/netbeans/jpa/modeler/properties/entitygraph/Bundle.properties" key="NamedEntityGraphPanel.cancel_Button.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[60, 30]"/>
+                  <Dimension value="[70, 30]"/>
                 </Property>
               </Properties>
               <Events>

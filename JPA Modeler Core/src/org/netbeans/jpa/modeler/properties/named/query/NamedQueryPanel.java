@@ -73,7 +73,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Create new Named Query");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[4]));
+            this.setEntity(new RowValue(new Object[5]));
         }
         namedQuery = null;
         name_TextField.setText(identifiableClass.getClazz() + '.' + "findByX");
