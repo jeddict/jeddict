@@ -12,9 +12,9 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.QueryMapping;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
@@ -60,7 +60,8 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "hint"
 })
 public class NamedQuery extends QueryMapping {
-
+    
+    public static final String FIND_BY = "findBy";
     @XmlElement(name = "lock-mode")
     protected LockModeType lockMode;
     protected List<QueryHint> hint;
@@ -135,6 +136,15 @@ public class NamedQuery extends QueryMapping {
             hint = new ArrayList<QueryHint>();
         }
         return this.hint;
+    }
+        
+    public static NamedQuery getTemplate(IdentifiableClass identifiableClass, Attribute attribute){
+        NamedQuery namedQuery = new NamedQuery();    
+        namedQuery.setName(FIND_BY + attribute.getName());
+        StringBuilder builder = new StringBuilder();
+        builder.append("SELECT ");
+        namedQuery.setQuery(builder.toString());
+        return namedQuery;
     }
 
 }

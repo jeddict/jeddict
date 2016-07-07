@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
@@ -412,6 +413,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         } else if (attributeWidget instanceof BasicAttributeWidget) {
             getBasicAttributeWidgets().remove((BasicAttributeWidget) attributeWidget);
             attributes.removeBasic(((BasicAttributeWidget) attributeWidget).getBaseElementSpec());
+            removeNamedQuery((Attribute)attributeWidget.getBaseElementSpec());
         } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
             getBasicCollectionAttributeWidgets().remove((BasicCollectionAttributeWidget) attributeWidget);
             attributes.getElementCollection().remove(((BasicCollectionAttributeWidget) attributeWidget).getBaseElementSpec());
@@ -576,6 +578,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             basic.setAttributeType(String.class.getName());
             basic.setName(name);
             javaClass.getAttributes().addBasic(basic);
+            addNamedQuery(basic, false);
         }
         BasicAttributeWidget attributeWidget = AttributeWidget.<BasicAttributeWidget>getInstance(this, name, basic, BasicAttributeWidget.class);
         getBasicAttributeWidgets().add(attributeWidget);
@@ -764,6 +767,26 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         return attributeWidget;
     }
 
+    private void addNamedQuery(Attribute attribute, boolean enable) {
+        ManagedClass managedClass = this.getBaseElementSpec();
+        if (managedClass instanceof IdentifiableClass) {
+            IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
+            NamedQuery namedQuery = NamedQuery.getTemplate(identifiableClass, attribute);
+            namedQuery.setEnable(enable);
+            identifiableClass.addNamedQuery(namedQuery);
+        }
+    }
+    
+    private void removeNamedQuery(Attribute attribute) {
+        ManagedClass managedClass = this.getBaseElementSpec();
+        if (managedClass instanceof IdentifiableClass) {
+            IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
+            Optional<NamedQuery> value = identifiableClass.findNamedQuery(attribute);
+            if(value.isPresent()){
+             identifiableClass.removeNamedQuery(value.get());
+            }
+        }
+    }
     public String getNextAttributeName() {
         return getNextAttributeName(null);
     }
