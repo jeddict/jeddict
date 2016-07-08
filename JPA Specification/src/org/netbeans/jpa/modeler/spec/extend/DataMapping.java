@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jcode.core.util.StringHelper;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import static org.netbeans.jpa.modeler.spec.NamedQuery.FIND_BY;
 
 /**
@@ -39,15 +40,16 @@ public abstract class DataMapping {
     protected String description;
 
     public boolean refactorName(String prevName, String newName) {
-        if (StringUtils.containsIgnoreCase(this.getName(), FIND_BY + prevName)) {
-            this.setName(this.getName().replaceAll("\\b(?i)" + Pattern.quote(FIND_BY + prevName) + "\\b", FIND_BY + StringHelper.firstUpper(newName)));
-            return true;
-        } else if (StringUtils.containsIgnoreCase(this.getName(), prevName)) {
-            this.setName(this.getName().replaceAll("\\b(?i)" + Pattern.quote(prevName) + "\\b", newName));
-            return true;
-        } else {
-            return false;
+        if (CodePanel.isRefactorQuery()) {
+            if (StringUtils.containsIgnoreCase(this.getName(), FIND_BY + prevName)) {
+                this.setName(this.getName().replaceAll("\\b(?i)" + Pattern.quote(FIND_BY + prevName) + "\\b", FIND_BY + StringHelper.firstUpper(newName)));
+                return true;
+            } else if (StringUtils.containsIgnoreCase(this.getName(), prevName)) {
+                this.setName(this.getName().replaceAll("\\b(?i)" + Pattern.quote(prevName) + "\\b", newName));
+                return true;
+            }
         }
+        return false;
     }
     
      /**

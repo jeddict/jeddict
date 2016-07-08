@@ -458,7 +458,7 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
     }
     
     public Optional<NamedQuery> findNamedQuery(Attribute attribute){
-        return this.getNamedQuery().stream().filter(q -> q.getName().equalsIgnoreCase(FIND_BY + attribute.getName())).findAny();
+        return this.getNamedQuery().stream().filter(q -> q.getName().equalsIgnoreCase(this.getClazz() + '.' + FIND_BY + attribute.getName())).findAny();
     }
 
     /**

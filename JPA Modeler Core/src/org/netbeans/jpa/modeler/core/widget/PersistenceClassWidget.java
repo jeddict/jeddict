@@ -49,6 +49,7 @@ import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConstruct
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashcodeEqualsProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -784,7 +785,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     
     private void removeNamedQuery(Attribute attribute) {
         ManagedClass managedClass = this.getBaseElementSpec();
-        if (managedClass instanceof IdentifiableClass) {
+        if (CodePanel.isDeleteQuery() && managedClass instanceof IdentifiableClass) {
             IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
             Optional<NamedQuery> value = identifiableClass.findNamedQuery(attribute);
             if(value.isPresent()){

@@ -123,6 +123,15 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.options.api</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.44.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.projectapi</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -147,6 +156,14 @@
                     <run-dependency>
                         <release-version>1</release-version>
                         <specification-version>1.21.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.awt</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.65.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -181,6 +198,14 @@
                         <specification-version>8.24.1</specification-version>
                     </run-dependency>
                 </dependency>
+                <dependency>
+                    <code-name-base>org.openide.util.ui</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>9.4.1</specification-version>
+                    </run-dependency>
+                </dependency>
             </module-dependencies>
             <friend-packages>
                 <friend>org.netbeans.db.modeler</friend>
@@ -194,6 +219,8 @@
                 <package>org.netbeans.db.modeler.manager</package>
                 <package>org.netbeans.jpa.modeler._import.javaclass</package>
                 <package>org.netbeans.jpa.modeler.db.accessor</package>
+                <package>org.netbeans.jpa.modeler.settings.code</package>
+                <package>org.netbeans.jpa.modeler.settings.view</package>
                 <package>org.netbeans.jpa.modeler.source</package>
                 <package>org.netbeans.jpa.modeler.spec</package>
                 <package>org.netbeans.jpa.modeler.spec.design</package>

@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
+import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;

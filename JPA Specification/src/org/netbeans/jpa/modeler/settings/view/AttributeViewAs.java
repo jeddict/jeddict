@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.core.widget.attribute;
+package org.netbeans.jpa.modeler.settings.view;
 
 public enum AttributeViewAs {
     NONE("None"),

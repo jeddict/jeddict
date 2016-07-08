@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.spec.extend;
 import java.util.regex.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 
 /**
  *
@@ -29,7 +30,7 @@ public abstract class QueryMapping extends DataMapping {
     protected String query;
 
     public boolean refactorQuery(String prevQuery, String newQuery) {
-        if (StringUtils.containsIgnoreCase(this.getQuery(), prevQuery)) {
+        if (CodePanel.isRefactorQuery() && StringUtils.containsIgnoreCase(this.getQuery(), prevQuery)) {
             this.setQuery(this.getQuery().replaceAll("\\b(?i)" + Pattern.quote(prevQuery) + "\\b", newQuery));
             return true;
         } else {
