@@ -39,6 +39,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWid
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.MultiRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.properties.annotation.AnnotationPanel;
 import org.netbeans.jpa.modeler.properties.classmember.ClassMemberPanel;
 import org.netbeans.jpa.modeler.properties.classmember.ConstructorPanel;
 import org.netbeans.jpa.modeler.properties.classmember.HashcodeEqualsPanel;
@@ -84,6 +85,7 @@ import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_TRANSIENT;
@@ -606,6 +608,67 @@ public class PropertiesHandler {
                     NamedQuery namedQuery = (NamedQuery) row[0];
                     namedQuery.setEnable((boolean)row[1]);
                     namedQueriesSpec.add(namedQuery);
+                });
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+    
+    public static PropertySupport getCustomAnnoation(String id, String name, String desc, JPAModelerScene modelerScene, List<Annotation> annotations) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        attributeEntity.setCountDisplay(new String[]{"No Annotations exist", "One Annotation exist", "Annotations exist"});
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Annoation", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new AnnotationPanel(modelerScene.getModelerFile()));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = annotations.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<Annotation> itr = annotations.iterator();
+                while (itr.hasNext()) {
+                    Annotation annotation = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = annotation;
+                    row[1] = annotation.isEnable();
+                    row[2] = annotation.getName();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+            
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                annotations.clear();
+                data.stream().forEach((row) -> {
+                    Annotation annotationElement = (Annotation) row[0];
+                    annotationElement.setEnable((boolean)row[1]);
+                    annotations.add(annotationElement);
                 });
                 this.data = data;
             }

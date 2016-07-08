@@ -38,7 +38,6 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.M
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
@@ -104,7 +103,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         set.put("BASIC_PROP", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));
         set.put("BASIC_PROP", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));
         set.put("BASIC_PROP", PropertiesHandler.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
-        set.put("BASIC_PROP", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));
+        set.put("BASIC_PROP", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));        
     }
 
 

@@ -241,9 +241,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected List<AnnotationSnippet> getAnnotationSnippet(List<Annotation> annotations) {
         List<AnnotationSnippet> snippets = new ArrayList<>();
         for (Annotation annotation : annotations) {
-            AnnotationSnippet snippet = new AnnotationSnippet();
-            snippet.setName(annotation.getName());
-            snippets.add(snippet);
+            if(annotation.isEnable()){
+                AnnotationSnippet snippet = new AnnotationSnippet();
+                snippet.setName(annotation.getName());
+                snippets.add(snippet);
+            }
         }
         return snippets;
     }

@@ -19,51 +19,32 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import org.netbeans.jpa.modeler.spec.extend.DataMapping;
 
 /**
  *
  * @author Gaurav Gupta
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AnnotationElement {
+public class AnnotationElement { //TODO extend to DataMapping and remove name and enable attribute 
+
+    @XmlElement(name = "v")
+    private Object value;
     
-    @XmlAttribute(name="n")
-         private String name;
-    @XmlElement(name="v")
-        private Object value;
+ 
 
-        /**
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @param name the name to set
-         */
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        /**
-         * @return the value
-         */
-        public Object getValue() {
-            return value;
-        }
-
-        /**
-         * @param value the value to set
-         */
-        public void setValue(Object value) {
-            this.value = value;
-        }
-
-    @Override
-    public String toString() {
-        return "AnnotationElement{" + "name=" + name + ", value=" + value + '}';
+    /**
+     * @return the value
+     */
+    public Object getValue() {
+        return value;
     }
-        
-        
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
 }

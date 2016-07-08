@@ -127,7 +127,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             }
         }
         PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
-        
+        set.put("BASIC_PROP", PropertiesHandler.getCustomAnnoation("Annotations", "Annotations", "", this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
+
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
@@ -162,6 +163,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         });
         
     }
+
    
     public static <T> T getInstance(IPNodeWidget nodeWidget, String name, IBaseElement baseElement, Class documentId) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(baseElement.getId(), baseElement);

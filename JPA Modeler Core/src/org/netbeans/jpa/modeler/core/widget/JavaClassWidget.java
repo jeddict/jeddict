@@ -28,6 +28,7 @@ import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.SourceGroups;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -36,6 +37,7 @@ import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
@@ -79,6 +81,14 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
         this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         this.getImageWidget().getActions().addAction(new JavaClassAction());
+    }
+   
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        JavaClass entity = this.getBaseElementSpec();
+       
+        set.put("BASIC_PROP", PropertiesHandler.getCustomAnnoation("Annotations", "Annotations", "", this.getModelerScene(), entity.getAnnotation()));
     }
 
     private final class JavaClassAction extends WidgetAction.Adapter {
