@@ -767,11 +767,16 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         return attributeWidget;
     }
 
-    private void addNamedQuery(Attribute attribute, boolean enable) {
+    protected void addNamedQuery(Attribute attribute, boolean enable) {
         ManagedClass managedClass = this.getBaseElementSpec();
         if (managedClass instanceof IdentifiableClass) {
             IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
-            NamedQuery namedQuery = NamedQuery.getTemplate(identifiableClass, attribute);
+            NamedQuery namedQuery;
+            if(attribute!=null){
+                namedQuery = NamedQuery.getTemplate(identifiableClass, attribute);
+            } else {
+                namedQuery = NamedQuery.getTemplate(identifiableClass);
+            }
             namedQuery.setEnable(enable);
             identifiableClass.addNamedQuery(namedQuery);
         }
@@ -1045,9 +1050,9 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         RequestProcessor.getDefault().post(() -> {
             try {
 
-                String singularPreName = Character.toLowerCase(previousName.charAt(0)) + (previousName.length() > 1 ? previousName.substring(1) : "");
+                String singularPreName = previousName;
                 String pluralPreName = English.plural(singularPreName);
-                String singularNewName = Character.toLowerCase(newName.charAt(0)) + (newName.length() > 1 ? newName.substring(1) : "");
+                String singularNewName = newName;
                 String pluralNewName = English.plural(singularNewName);
                 for (RelationAttributeWidget attributeWidget : this.getAllRelationAttributeWidgets(true)) {
                     if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
@@ -1093,20 +1098,16 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                 //Refactor NamedQuery, NamedNativeQuery
                 if (this.getBaseElementSpec() instanceof IdentifiableClass) {
                     ((IdentifiableClass) this.getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
-                        if (!obj.refactorName(singularPreName, singularNewName)) {
-                            obj.refactorName(pluralPreName, pluralNewName);
-                        }
-                        if (!obj.refactorQuery(singularPreName, singularNewName)) {
-                            obj.refactorQuery(pluralPreName, pluralNewName);
-                        }
+                        obj.refactorName(singularPreName, singularNewName);
+                        obj.refactorName(pluralPreName, pluralNewName);
+                        obj.refactorQuery(singularPreName, singularNewName);
+                        obj.refactorQuery(pluralPreName, pluralNewName);
                     });
                     ((IdentifiableClass) this.getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
-                        if (!obj.refactorName(singularPreName, singularNewName)) {
-                            obj.refactorName(pluralPreName, pluralNewName);
-                        }
-                        if (!obj.refactorQuery(singularPreName, singularNewName)) {
-                            obj.refactorQuery(pluralPreName, pluralNewName);
-                        }
+                        obj.refactorName(singularPreName, singularNewName);
+                        obj.refactorName(pluralPreName, pluralNewName);
+                        obj.refactorQuery(singularPreName, singularNewName);
+                        obj.refactorQuery(pluralPreName, pluralNewName);
                     });
                 }
 

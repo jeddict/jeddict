@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jcode.core.util.StringHelper;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.QueryMapping;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -61,7 +62,10 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 })
 public class NamedQuery extends QueryMapping {
     
+    
     public static final String FIND_BY = "findBy";
+    public static final String FIND_ALL = "findAll";
+    
     @XmlElement(name = "lock-mode")
     protected LockModeType lockMode;
     protected List<QueryHint> hint;
@@ -140,9 +144,24 @@ public class NamedQuery extends QueryMapping {
         
     public static NamedQuery getTemplate(IdentifiableClass identifiableClass, Attribute attribute){
         NamedQuery namedQuery = new NamedQuery();    
-        namedQuery.setName(FIND_BY + attribute.getName());
+        namedQuery.setName(identifiableClass.getClazz() + '.' +FIND_BY + StringHelper.firstUpper(attribute.getName()));
         StringBuilder builder = new StringBuilder();
-        builder.append("SELECT ");
+        char var = Character.toLowerCase(identifiableClass.getClazz().charAt(0));
+        builder.append("Select ").append(var).append(" from ")
+        .append(identifiableClass.getClazz()).append(" ").append(var)
+        .append(" where ")
+        .append(var).append(".").append(attribute.getName()).append("=:").append(attribute.getName());
+        namedQuery.setQuery(builder.toString());
+        return namedQuery;
+    }
+    
+    public static NamedQuery getTemplate(IdentifiableClass identifiableClass){
+        NamedQuery namedQuery = new NamedQuery();    
+        namedQuery.setName(identifiableClass.getClazz() + '.' +FIND_ALL);
+        StringBuilder builder = new StringBuilder();
+        char var = Character.toLowerCase(identifiableClass.getClazz().charAt(0));
+        builder.append("Select ").append(var).append(" from ")
+        .append(identifiableClass.getClazz()).append(" ").append(var);
         namedQuery.setQuery(builder.toString());
         return namedQuery;
     }

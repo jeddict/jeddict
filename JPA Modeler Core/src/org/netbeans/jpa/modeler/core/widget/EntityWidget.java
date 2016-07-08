@@ -61,6 +61,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
             entity.setClazz(this.getModelerScene().getNextClassName("Entity_"));
+            addNamedQuery(null, false);
         }
 
         setName(entity.getClazz());

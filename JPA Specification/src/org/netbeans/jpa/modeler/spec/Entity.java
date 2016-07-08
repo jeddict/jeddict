@@ -666,8 +666,8 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      */
     @Override
     public void setClazz(String value) {
-//        this.clazz = value;
-        notifyListeners("clazz", this.clazz, this.clazz = value);
+        notifyListeners("clazz", this.clazz, value);
+        super.setClazz(value);
     }
 
     /**

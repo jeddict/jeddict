@@ -94,7 +94,7 @@ public abstract class BaseElement implements IBaseElement {
         this.extensionElement = extensionElement;
     }
 
-    private transient List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
+    private final transient List<PropertyChangeListener> listener = new ArrayList<>();
 
     protected void notifyListeners(String property, String oldValue, String newValue) {
         for (PropertyChangeListener propertyChangeListener : listener) {
