@@ -15,6 +15,7 @@
         <group id="CONSTRAINTS" name="Bean Validation Properties"/>
         <group id="CLASS_STRUCTURE" name="Class Properties"/>
         <group id="PACKAGE" name="Package"/>
+        <group id="QUERY" name="Query"/>
     </groups>
     <elements>
         <element id="EntityMappings" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.EntityMappings">
