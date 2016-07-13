@@ -436,6 +436,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             entityMappings.repairDefinition(IO);
             entityMappings.getAllManagedClass().stream().
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
+            entityMappings.getAllManagedClass().stream().
+                    forEach(node -> loadAttribute(scene, node));
 
             entityMappings.initJavaInheritenceMapping();
             loadFlowEdge(scene);
@@ -483,9 +485,20 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             if (flowNode.isMinimized()) {
                 ((PNodeWidget) nodeWidget).setMinimized(true);
             }
+        
+//            nodeWidget.i
+            //clear incomming & outgoing it will added on sequenceflow auto connection
+//            ((FlowNode) flowElement).getIncoming().clear();
+//            ((FlowNode) flowElement).getOutgoing().clear();
+
+        }
+    }
+    
+    private void loadAttribute(JPAModelerScene scene, IFlowNode flowElement){
+        IBaseElementWidget baseElementWidget = scene.getBaseElement(flowElement.getId());
             if (flowElement instanceof ManagedClass) {
                 ManagedClass _class = (ManagedClass) flowElement;
-                PersistenceClassWidget entityWidget = (PersistenceClassWidget) nodeWidget;
+                PersistenceClassWidget entityWidget = (PersistenceClassWidget) baseElementWidget;
                 if (_class.getAttributes() != null) {
                     if (_class.getAttributes() instanceof IPersistenceAttributes) {
                         ((IPersistenceAttributes) _class.getAttributes()).getId().stream().
@@ -543,12 +556,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
 
             }
-//            nodeWidget.i
-            //clear incomming & outgoing it will added on sequenceflow auto connection
-//            ((FlowNode) flowElement).getIncoming().clear();
-//            ((FlowNode) flowElement).getOutgoing().clear();
-
-        }
     }
 
     private void loadFlowEdge(JPAModelerScene scene) {
