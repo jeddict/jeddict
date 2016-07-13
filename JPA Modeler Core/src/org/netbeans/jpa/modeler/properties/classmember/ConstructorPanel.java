@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.properties.classmember;
 import java.awt.event.ItemEvent;
 import java.util.Set;
 import javax.swing.JOptionPane;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
@@ -31,7 +32,7 @@ import static org.openide.util.NbBundle.getMessage;
 public class ConstructorPanel extends EntityComponent<Constructor> {
 
     private Constructor constructor;
-    private Set<Constructor> constructors;
+    private final Set<Constructor> constructors;
     private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
 
     public ConstructorPanel(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
@@ -48,7 +49,8 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
     public void init() {
         ((ClassMemberPanel) classMemberPanel).init();
         preScrollPane.setVisible(false);
-            postScrollPane.setVisible(false);
+        postScrollPane.setVisible(false);
+        customCodeButton.setSelected(false);
         accessModifierComboInit();
         pack();
     }
@@ -71,6 +73,9 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
         setAccessModifierType(AccessModifierType.PUBLIC);
         ((ClassMemberPanel)classMemberPanel).setPersistenceClassWidget(persistenceClassWidget);
         ((ClassMemberPanel) classMemberPanel).setValue(constructor);
+        preEditorPane.setText(null);
+        postEditorPane.setText(null);
+        
     }
 
     @Override
@@ -82,6 +87,14 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
             constructor = (Constructor) row[0];
             ((ClassMemberPanel)classMemberPanel).setPersistenceClassWidget(persistenceClassWidget);
             ((ClassMemberPanel) classMemberPanel).setValue(constructor);
+            preEditorPane.setText(constructor.getPreCode());
+            postEditorPane.setText(constructor.getPostCode());
+            
+            if(StringUtils.isNotBlank(constructor.getPreCode()) ||
+               StringUtils.isNotBlank(constructor.getPostCode())){
+                displayEditorPane(ItemEvent.SELECTED);
+            }
+            
         }
         
     }
@@ -144,7 +157,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
         );
         classMemberPanelLayout.setVerticalGroup(
             classMemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 223, Short.MAX_VALUE)
+            .addGap(0, 208, Short.MAX_VALUE)
         );
 
         jLayeredPane1.add(classMemberPanel, java.awt.BorderLayout.CENTER);
@@ -161,6 +174,8 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
 
         rootLayeredPane.add(jLayeredPane1, java.awt.BorderLayout.CENTER);
 
+        jLayeredPane2.setPreferredSize(new java.awt.Dimension(472, 80));
+
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(ConstructorPanel.class, "ConstructorPanel.save_Button.text")); // NOI18N
         save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(ConstructorPanel.class, "ConstructorPanel.save_Button.toolTipText")); // NOI18N
         save_Button.addActionListener(new java.awt.event.ActionListener() {
@@ -169,7 +184,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 29);
+        save_Button.setBounds(10, 0, 80, 30);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(ConstructorPanel.class, "ConstructorPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(ConstructorPanel.class, "ConstructorPanel.cancel_Button.toolTipText")); // NOI18N
@@ -180,57 +195,33 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
             }
         });
         action_jLayeredPane.add(cancel_Button);
-        cancel_Button.setBounds(80, 0, 70, 30);
+        cancel_Button.setBounds(100, 0, 70, 30);
 
+        jLayeredPane2.add(action_jLayeredPane);
+        action_jLayeredPane.setBounds(280, 40, 170, 40);
+
+        accessModifierComboBox.setToolTipText(org.openide.util.NbBundle.getMessage(ConstructorPanel.class, "ConstructorPanel.accessModifierComboBox.toolTipText")); // NOI18N
+        accessModifierComboBox.setPreferredSize(new java.awt.Dimension(28, 23));
+        accessModifierLayeredPane.add(accessModifierComboBox);
+        accessModifierComboBox.setBounds(100, 30, 150, 27);
+
+        customCodeButton.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         customCodeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/expand.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(customCodeButton, org.openide.util.NbBundle.getMessage(ConstructorPanel.class, "ConstructorPanel.customCodeButton.text")); // NOI18N
+        customCodeButton.setToolTipText(org.openide.util.NbBundle.getMessage(ConstructorPanel.class, "ConstructorPanel.customCodeButton.toolTipText")); // NOI18N
+        customCodeButton.setAlignmentY(0.0F);
+        customCodeButton.setIconTextGap(1);
+        customCodeButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
         customCodeButton.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 customCodeButtonItemStateChanged(evt);
             }
         });
+        accessModifierLayeredPane.add(customCodeButton);
+        customCodeButton.setBounds(0, 30, 90, 27);
 
-        javax.swing.GroupLayout accessModifierLayeredPaneLayout = new javax.swing.GroupLayout(accessModifierLayeredPane);
-        accessModifierLayeredPane.setLayout(accessModifierLayeredPaneLayout);
-        accessModifierLayeredPaneLayout.setHorizontalGroup(
-            accessModifierLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(accessModifierLayeredPaneLayout.createSequentialGroup()
-                .addComponent(customCodeButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(accessModifierComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
-        );
-        accessModifierLayeredPaneLayout.setVerticalGroup(
-            accessModifierLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(accessModifierLayeredPaneLayout.createSequentialGroup()
-                .addGroup(accessModifierLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(customCodeButton)
-                    .addComponent(accessModifierComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        accessModifierLayeredPane.setLayer(accessModifierComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        accessModifierLayeredPane.setLayer(customCodeButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        javax.swing.GroupLayout jLayeredPane2Layout = new javax.swing.GroupLayout(jLayeredPane2);
-        jLayeredPane2.setLayout(jLayeredPane2Layout);
-        jLayeredPane2Layout.setHorizontalGroup(
-            jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane2Layout.createSequentialGroup()
-                .addComponent(accessModifierLayeredPane)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jLayeredPane2Layout.setVerticalGroup(
-            jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jLayeredPane2Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(accessModifierLayeredPane)
-                    .addComponent(action_jLayeredPane))
-                .addGap(0, 0, 0))
-        );
-        jLayeredPane2.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane2.setLayer(accessModifierLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.add(accessModifierLayeredPane);
+        accessModifierLayeredPane.setBounds(0, 10, 270, 70);
 
         rootLayeredPane.add(jLayeredPane2, java.awt.BorderLayout.SOUTH);
 
@@ -238,7 +229,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(rootLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(rootLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,7 +257,8 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
         if (!validateField()) {
             return;
         }
-        
+        constructor.setPreCode(preEditorPane.getText());
+        constructor.setPostCode(postEditorPane.getText());
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = constructor;
@@ -280,17 +272,21 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
     private void customCodeButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_customCodeButtonItemStateChanged
-        if(evt.getStateChange() == ItemEvent.SELECTED){
+        displayEditorPane(evt.getStateChange());
+        pack();
+    }//GEN-LAST:event_customCodeButtonItemStateChanged
+
+    private void displayEditorPane(int display){
+        if(display == ItemEvent.SELECTED){
             preScrollPane.setVisible(true);
             postScrollPane.setVisible(true);
-        } else if(evt.getStateChange() == ItemEvent.DESELECTED){
+        } else if(display == ItemEvent.DESELECTED){
             preScrollPane.setVisible(false);
             postScrollPane.setVisible(false);
         }
         pack();
-//        classMemberPanel.
-    }//GEN-LAST:event_customCodeButtonItemStateChanged
-
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox accessModifierComboBox;
     private javax.swing.JLayeredPane accessModifierLayeredPane;

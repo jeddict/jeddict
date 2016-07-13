@@ -275,7 +275,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected ConstructorSnippet getConstructorSnippet(String className, Constructor constructor) {
         List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream().map(attr -> variables.get(attr.getName())).collect(toList());
-        ConstructorSnippet snippet = new ConstructorSnippet(className, constructor.getAccessModifier(), variableSnippets);
+        ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, variableSnippets);
         return snippet;
     }
 

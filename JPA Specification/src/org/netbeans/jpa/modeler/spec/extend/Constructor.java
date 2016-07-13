@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -28,12 +29,14 @@ import org.apache.commons.lang.StringUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Constructor extends ClassMembers {
 
+    @XmlAttribute(name="am")
     private AccessModifierType accessModifier;
+    private String preCode;
+    private String postCode;
     
     public static final Constructor getNoArgsInstance(){
         return new Constructor();
     }
-
     
     /**
      * @return the accessModifier
@@ -102,5 +105,33 @@ public class Constructor extends ClassMembers {
 //        constructor.getAttributes().addAll(attributes);
 //        return constructor;
 //    }
+
+    /**
+     * @return the preCode
+     */
+    public String getPreCode() {
+        return preCode;
+    }
+
+    /**
+     * @param preCode the preCode to set
+     */
+    public void setPreCode(String preCode) {
+        this.preCode = preCode;
+    }
+
+    /**
+     * @return the postCode
+     */
+    public String getPostCode() {
+        return postCode;
+    }
+
+    /**
+     * @param postCode the postCode to set
+     */
+    public void setPostCode(String postCode) {
+        this.postCode = postCode;
+    }
 
 }
