@@ -81,9 +81,8 @@ public class MappedSuperclass extends IdentifiableClass {
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
 //        AnnotationMirror annotationMirror = JavaSourceParserUtil.getAnnotation(element, "javax.persistence.MappedSuperclass");
-        if (entityMappings.findMappedSuperclass(element.getSimpleName().toString()) == null) {
+            if (entityMappings.findMappedSuperclass(element.getSimpleName().toString()) == null) {
             super.load(entityMappings, element, fieldAccess);
-
             TypeElement superClassElement = JavaSourceParserUtil.getSuperclassTypeElement(element);
             if (!superClassElement.getQualifiedName().toString().equals("java.lang.Object")) {
                 if (JavaSourceParserUtil.isEntityClass(superClassElement)) {
@@ -101,7 +100,7 @@ public class MappedSuperclass extends IdentifiableClass {
                 }
             }
 
-        }
+        } 
     }
 
     @Override

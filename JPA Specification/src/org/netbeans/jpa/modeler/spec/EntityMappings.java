@@ -1274,11 +1274,14 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
     }
 
     public JavaClass getJavaClass(String classId) {
+        if(StringUtils.isBlank(classId)){
+            return null;
+        }
         List<JavaClass> javaClassList = new ArrayList<>(this.getEntity());
         javaClassList.addAll(this.getMappedSuperclass());
         javaClassList.addAll(this.getEmbeddable());
         for (JavaClass javaClass : javaClassList) {
-            if (javaClass.getId().equals(classId)) {
+            if (StringUtils.equals(javaClass.getId(),classId)) {
                 return javaClass;
             }
         }
