@@ -1,6 +1,18 @@
 # JPA Modeler Releases #
 
-### Version 1.8 (upcoming release)###
+### Version 1.9 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.9) ###
+
+*  Annotation UI support
+*  Constructor ProCode & PostCode added
+*  Generate code for selected Classes #28
+*  Refactor and Delete query option
+*  Refactor @NamedQuery on attribute deletd/added/renamed
+*  Query enable/disable support
+*  Dark Theme
+*  Branding and OS specific release support
+*  Display Datatype in diagram
+
+### Version 1.8 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.8) ###
 
 *  [@MapKey](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKey.html)
 *  [@MapKeyTemporal](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyTemporal.html)
@@ -82,3 +94,16 @@
 
 *  Static MetaModel Support 
 *  JAXB Annotation Support
+
+
+### Version 0.1 ### [10 Feb 2014]
+
+*  Basic functionality and code generation
+
+
+### Development started ### [Feb 2013]
+
+
+### Idea Born ### [May 2011]
+
+
