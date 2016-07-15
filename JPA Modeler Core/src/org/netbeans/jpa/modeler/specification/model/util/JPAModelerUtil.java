@@ -180,6 +180,10 @@ import org.openide.windows.WindowManager;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
+    public static String PACKAGE_ICON_PATH;
+    public static String SUCCESS_ICON_PATH;
+    public static String WARNING_ICON_PATH;
+    public static String ERROR_ICON_PATH;
     public static String ENTITY_ICON_PATH;
     public static String MAPPED_SUPER_CLASS_ICON_PATH;
     public static String EMBEDDABLE_ICON_PATH;
@@ -279,6 +283,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     @Override
     public void init() {
         if (ENTITY_ICON_PATH == null) {
+            PACKAGE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/PACKAGE.png";
+            SUCCESS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/success_16.png";
+            WARNING_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/warning_16.png";
+            ERROR_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/error_16.png";
             ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/ENTITY.png";
             MAPPED_SUPER_CLASS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/MAPPED_SUPER_CLASS.png";
             EMBEDDABLE_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/EMBEDDABLE.png";
@@ -771,7 +779,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             //another Enity E2 class use EmbeddedId is also IC1
                             //then register IdClass name here to append @Embeddable annotation
                             DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
-                            
+                            _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
                             if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID){
                                     _class.setEmbeddable(true);
                                     persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
@@ -797,6 +805,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             pkContainerSpec.setCompositePrimaryKeyClass(persistenceClassWidget.getName()+"PK");
                         }
                         DefaultClass _class = entityMappings.addDefaultClass(pkContainerSpec.getCompositePrimaryKeyClass());
+                        _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
                         if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                             idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
                             _class.setEmbeddable(true);

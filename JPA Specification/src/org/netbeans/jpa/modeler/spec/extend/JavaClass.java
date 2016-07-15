@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -81,6 +82,10 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
             
     @XmlTransient
     private FileObject fileObject;
+    
+    
+    @XmlAttribute(name = "gen")
+    private Boolean generatesourceCode;
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -361,6 +366,28 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
      */
     public void setConstructors(Set<Constructor> constructors) {
         this.constructors = constructors;
+    }
+
+    /**
+     * @return the generatesourceCode
+     */
+    public Boolean getGeneratesourceCode() {
+        if(generatesourceCode==null){
+            return true;
+        }
+        return generatesourceCode;
+    }
+
+    /**
+     * @param generatesourceCode the generatesourceCode to set
+     */
+    public void setGeneratesourceCode(Boolean generatesourceCode) {
+        if(generatesourceCode!=false){
+            this.generatesourceCode = null;
+        } else {
+            this.generatesourceCode = false;
+        }
+        // default value will be true, store only for false
     }
 
 }

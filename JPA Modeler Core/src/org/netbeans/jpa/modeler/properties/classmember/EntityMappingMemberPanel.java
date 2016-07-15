@@ -15,37 +15,32 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember;
 
-import org.netbeans.jpa.modeler.properties.classmember.nodes.ClassMemberChildFactory;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.SwingUtilities;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.properties.classmember.nodes.CMLeafNode;
-import org.netbeans.jpa.modeler.properties.classmember.nodes.CMRootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeParentNode;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.properties.rootmember.nodes.EntityManagerChildFactory;
+import org.netbeans.jpa.modeler.properties.rootmember.nodes.RMLeafNode;
+import org.netbeans.jpa.modeler.properties.rootmember.nodes.RMRootNode;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
 
-public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implements ExplorerManager.Provider {
+public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappings> implements ExplorerManager.Provider {
 
     private ExplorerManager manager;
     private final String title;
 
-    private ClassMembers classMembers;
-    private PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
-    private CMRootNode node;
+    private EntityMappings entityMappings;
+    private JPAModelerScene scene;
+    private RMRootNode node;
 
-    public ClassMemberPanel(String title, PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        this.persistenceClassWidget = persistenceClassWidget;
-        this.title=title;
-    }
-
-    public ClassMemberPanel(String title) {
+    public EntityMappingMemberPanel(String title, JPAModelerScene scene) {
+        this.scene = scene;
         this.title=title;
     }
 
@@ -56,20 +51,19 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     }
 
     @Override
-    public void setValue(ClassMembers classMembers) {
-        this.classMembers = classMembers;
+    public void setValue(EntityMappings entityMappings) {
+        this.entityMappings = entityMappings;
         SwingUtilities.invokeLater(() -> {
-            node = new CMRootNode(persistenceClassWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode());
+            node = new RMRootNode(scene, entityMappings, new EntityManagerChildFactory(), new CheckableAttributeNode());
             manager.setRootContext(node);
             node.init();
         });
     }
 
     @Override
-    public ClassMembers getValue() {
-        classMembers.getAttributes().clear();
-        loadClassMember(classMembers, node);
-        return classMembers;
+    public EntityMappings getValue() {
+        loadClassNode(node);
+        return entityMappings;
     }
 
     /**
@@ -86,7 +80,7 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
 
         rootLayeredPane.setLayout(new java.awt.GridLayout(1, 0));
 
-        outlineView.setToolTipText(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "ClassMemberPanel.outlineView.toolTipText")); // NOI18N
+        outlineView.setToolTipText(org.openide.util.NbBundle.getMessage(EntityMappingMemberPanel.class, "EntityMappingMemberPanel.outlineView.toolTipText")); // NOI18N
         rootLayeredPane.add(outlineView);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -101,28 +95,18 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void loadClassMember(ClassMembers classMembers, TreeNode parentNode) {
+    private void loadClassNode(TreeNode parentNode) {
         if (parentNode instanceof TreeParentNode) {
-            for (TreeNode childNode : ((TreeParentNode<ClassMembers>) parentNode).getChildList()) {
-                loadAttributeNode(classMembers, childNode);
+            for (TreeNode childNode : ((TreeParentNode<EntityMappings>) parentNode).getChildList()) {
+                if (childNode instanceof TreeChildNode && childNode.getCheckableNode() != null) {
+                    JavaClass javaClass = ((JavaClass) (((RMLeafNode) childNode).getLeafWidget().getBaseElementSpec()));
+                    javaClass.setGeneratesourceCode(childNode.getCheckableNode().isSelected());
+                }
             }
-//        } else if (parentNode instanceof CMInternalNode) {
-//            for (TreeNode childNode : ((CMInternalNode) parentNode).getChildList()) {
-//                loadSubGraph(classMembers, childNode);
-//            }
         }
 
     }
 
-    private void loadAttributeNode(ClassMembers classMembers, TreeNode childNode) {
-        if (childNode.getCheckableNode() == null || !childNode.getCheckableNode().isSelected() || !childNode.getCheckableNode().isCheckEnabled()) {
-            return;
-        }
-        if (childNode instanceof TreeChildNode) {
-            Attribute attribute = ((Attribute) (((CMLeafNode) childNode).getLeafAttributeWidget().getBaseElementSpec()));
-            classMembers.addAttribute(attribute);
-        }
-    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -136,10 +120,10 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     }
 
     /**
-     * @param persistenceClassWidget the persistenceClassWidget to set
+     * @param scene the scene to set
      */
-    public void setPersistenceClassWidget(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        this.persistenceClassWidget = persistenceClassWidget;
+    public void setSceneWidget(JPAModelerScene scene) {
+        this.scene = scene;
     }
 
     /**

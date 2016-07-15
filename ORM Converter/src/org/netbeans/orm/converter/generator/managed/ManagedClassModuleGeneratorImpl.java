@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jcode.console.Console;
@@ -76,7 +77,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateDefaultClasses() throws InvalidDataException, IOException {
-        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getDefaultClass();
+        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getDefaultClass().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
         if(!parsedDefaultClasses.isEmpty()){
             task.log(Console.wrap("Generating IdClass/PrimaryKey Class : " , FG_RED, BOLD), true);
         }
@@ -90,7 +91,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         }
     }
     private void generateEmbededClasses() throws InvalidDataException, IOException {
-        List<Embeddable> parsedEmbeddables = parsedEntityMappings.getEmbeddable();
+        List<Embeddable> parsedEmbeddables = parsedEntityMappings.getEmbeddable().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
         if(!parsedEmbeddables.isEmpty()){
             task.log(Console.wrap("Generating Embeddable Class : " , FG_RED, BOLD), true);
         }
@@ -105,7 +106,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateEntityClasses() throws InvalidDataException, IOException {
-        List<Entity> parsedEntities = parsedEntityMappings.getEntity();
+        List<Entity> parsedEntities = parsedEntityMappings.getEntity().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
         if(!parsedEntities.isEmpty()){
             task.log(Console.wrap("Generating Entity Class : " , FG_RED, BOLD), true);
         }
@@ -120,7 +121,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateMappedSuperClasses() throws InvalidDataException, IOException {
-        List<MappedSuperclass> parsedMappedSuperclasses = parsedEntityMappings.getMappedSuperclass();
+        List<MappedSuperclass> parsedMappedSuperclasses = parsedEntityMappings.getMappedSuperclass().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
         if(!parsedMappedSuperclasses.isEmpty()){
         task.log(Console.wrap("Generating MappedSuperclass Class : " , FG_RED, BOLD), true);
         }
