@@ -22,6 +22,7 @@
 *  [@MapKeyColumn](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyColumn.html)
 *  [@MapKeyClass](http://docs.oracle.com/javaee/7/api/javax/persistence/MapKeyClass.html)
 *  equals() and hashcode() generator
+*  [Display data type in diagram](https://github.com/jGauravGupta/JPAModeler/issues/23)
 
 ### Version 1.7 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.7) ###
 
