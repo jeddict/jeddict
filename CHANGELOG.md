@@ -9,8 +9,6 @@
 *  Refractor @NamedQuery on attribute deleted/added/renamed
 *  Query enable/disable support
 *  Dark Theme
-*  Branding and OS specific release support
-*  Display Datatype in diagram
 
 ### Version 1.8 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.8) ###
 
