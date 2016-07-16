@@ -363,7 +363,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
         
-//         String content;
 //        try {
 //            content = FileUtils.readFileToString(file);
 //        } catch (IOException ex) {
@@ -371,7 +370,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //        }
 //        content = content.replaceAll("jpa:", "");
 //        
-//        definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(new StringReader(content)), EntityMappings.class).getValue();
         
         definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
         MODELER_UNMARSHALLER = null;//GC issue
@@ -438,8 +436,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMappings);
             scene.setBaseElementSpec(entityMappings);
-            long st = new Date().getTime();
-
             scene.startSceneGeneration();
             entityMappings.repairDefinition(IO);
             entityMappings.getAllManagedClass().stream().
@@ -493,12 +489,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             if (flowNode.isMinimized()) {
                 ((PNodeWidget) nodeWidget).setMinimized(true);
             }
-        
-//            nodeWidget.i
-            //clear incomming & outgoing it will added on sequenceflow auto connection
-//            ((FlowNode) flowElement).getIncoming().clear();
-//            ((FlowNode) flowElement).getOutgoing().clear();
-
         }
     }
     
