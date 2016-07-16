@@ -32,11 +32,6 @@ public final class CodePanel extends javax.swing.JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(refractorNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.refractorNamedQueryComp.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(deleteNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.deleteNamedQueryComp.text")); // NOI18N
-        deleteNamedQueryComp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteNamedQueryCompActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -59,10 +54,6 @@ public final class CodePanel extends javax.swing.JPanel {
                 .addContainerGap(12, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void deleteNamedQueryCompActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteNamedQueryCompActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_deleteNamedQueryCompActionPerformed
 
     void load() {
          refractorNamedQueryComp.setSelected(isRefractorQuery());
@@ -87,7 +78,7 @@ public final class CodePanel extends javax.swing.JPanel {
     
     public static boolean isDeleteQuery(){
         if (deleteNamedQuery == null) {
-            deleteNamedQuery = pref.getBoolean("deleteNamedQuery", Boolean.TRUE);
+            deleteNamedQuery = pref.getBoolean("deleteNamedQuery", Boolean.FALSE);
         }
         return deleteNamedQuery;
     }

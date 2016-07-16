@@ -52,9 +52,6 @@
           <ResourceString bundle="org/netbeans/jpa/modeler/settings/code/Bundle.properties" key="CodePanel.deleteNamedQueryComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteNamedQueryCompActionPerformed"/>
-      </Events>
     </Component>
   </SubComponents>
 </Form>
