@@ -39,7 +39,7 @@ public class AnnotationSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        if(StringUtils.isBlank(_import)){
+        if(StringUtils.isNotBlank(_import)){
             importSnippets.add(_import);
         }
         return importSnippets;

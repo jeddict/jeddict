@@ -88,7 +88,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         super.createPropertySet(set);
         JavaClass entity = this.getBaseElementSpec();
        
-        set.put("BASIC_PROP", PropertiesHandler.getCustomAnnoation("Annotations", "Annotations", "", this.getModelerScene(), entity.getAnnotation()));
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomAnnoation("Annotations", "Annotations", "", this.getModelerScene(), entity.getAnnotation()));
     }
 
     private final class JavaClassAction extends WidgetAction.Adapter {
