@@ -21,6 +21,7 @@ import java.util.Random;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import static org.netbeans.orm.converter.compiler.JavaHashcodeEqualsUtil.getHashcodeExpression;
 
 public class HashcodeMethodSnippet implements Snippet {
@@ -43,7 +44,7 @@ public class HashcodeMethodSnippet implements Snippet {
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
             String expression;
-            if(attribute instanceof BaseAttribute){
+            if(attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)){
                 expression = getHashcodeExpression(((BaseAttribute)attribute).getAttributeType(), attribute.getName());
             } else {
                 expression = getHashcodeExpression(attribute.getName());
