@@ -3,10 +3,10 @@
 ### Version 1.9 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.9) ###
 
 *  Annotation UI support
-*  Constructor ProCode & PostCode added
+*  Constructor PreCode & PostCode added
 *  Generate code for selected Classes #28
-*  Refactor and Delete query option
-*  Refactor @NamedQuery on attribute deletd/added/renamed
+*  Refractor and Delete query option
+*  Refractor @NamedQuery on attribute deleted/added/renamed
 *  Query enable/disable support
 *  Dark Theme
 *  Branding and OS specific release support
@@ -46,7 +46,7 @@
 *  Enumerated, Temporal, Lob support added for DB Modeler
 *  Plural words converter added
 *  Custom annotation support
-*  Synchronous Refactoring of relation name
+*  Synchronous Refractoring of relation name
 
 
 ### Version 1.4 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.4) ###

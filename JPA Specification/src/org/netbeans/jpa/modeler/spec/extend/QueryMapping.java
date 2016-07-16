@@ -29,8 +29,8 @@ public abstract class QueryMapping extends DataMapping {
     @XmlElement(required = true)
     protected String query;
 
-    public boolean refactorQuery(String prevQuery, String newQuery) {
-        if (CodePanel.isRefactorQuery() && StringUtils.containsIgnoreCase(this.getQuery(), prevQuery)) {
+    public boolean refractorQuery(String prevQuery, String newQuery) {
+        if (CodePanel.isRefractorQuery() && StringUtils.containsIgnoreCase(this.getQuery(), prevQuery)) {
             this.setQuery(this.getQuery().replaceAll("\\b(?i)" + Pattern.quote(prevQuery) + "\\b", newQuery));
             return true;
         } else {

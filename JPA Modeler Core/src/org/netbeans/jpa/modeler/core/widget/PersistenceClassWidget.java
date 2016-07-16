@@ -1043,7 +1043,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
 
-    private void refactorReference(String previousName, String newName) {
+    private void refractorReference(String previousName, String newName) {
         if (previousName == null) {
             return;
         }
@@ -1059,7 +1059,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
                         Bidirectional flowWidget = (Bidirectional) attributeWidget.getRelationFlowWidget();
                         RelationAttributeWidget<RelationAttribute> relationAttributeWidget = flowWidget.getTargetRelationAttributeWidget();
-                        if (relationAttributeWidget == attributeWidget) { // refactoring not from owner side
+                        if (relationAttributeWidget == attributeWidget) { // refractoring not from owner side
                             relationAttributeWidget = flowWidget.getSourceRelationAttributeWidget();
                         }
                         if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
@@ -1090,25 +1090,25 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                         }
                     }
                     ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph obj) -> {
-                       if (!obj.refactorName(singularPreName, singularNewName)) {
-                            obj.refactorName(pluralPreName, pluralNewName);
+                       if (!obj.refractorName(singularPreName, singularNewName)) {
+                            obj.refractorName(pluralPreName, pluralNewName);
                         }
                     });
                 }
                 
-                //Refactor NamedQuery, NamedNativeQuery
+                //Refractor NamedQuery, NamedNativeQuery
                 if (this.getBaseElementSpec() instanceof IdentifiableClass) {
                     ((IdentifiableClass) this.getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
-                        obj.refactorName(singularPreName, singularNewName);
-                        obj.refactorName(pluralPreName, pluralNewName);
-                        obj.refactorQuery(singularPreName, singularNewName);
-                        obj.refactorQuery(pluralPreName, pluralNewName);
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
                     });
                     ((IdentifiableClass) this.getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
-                        obj.refactorName(singularPreName, singularNewName);
-                        obj.refactorName(pluralPreName, pluralNewName);
-                        obj.refactorQuery(singularPreName, singularNewName);
-                        obj.refactorQuery(pluralPreName, pluralNewName);
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
                     });
                 }
 
@@ -1140,7 +1140,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setClazz(this.name);
-                refactorReference(previousName, this.name);
+                refractorReference(previousName, this.name);
             }
             validateName(previousName, this.getName());
         }

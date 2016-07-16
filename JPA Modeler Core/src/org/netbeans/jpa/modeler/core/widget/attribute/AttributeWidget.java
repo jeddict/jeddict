@@ -221,13 +221,13 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setName(this.name);
-                refactorReference(previousName, this.name);
+                refractorReference(previousName, this.name);
             }
         }
        validateName(previousName,this.getName());
     }
     
-    private void refactorReference(String previousName, String newName) {
+    private void refractorReference(String previousName, String newName) {
         if (previousName == null) {
             return;
         }
@@ -242,19 +242,19 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
        
 
            
-                //Refactor NamedQuery, NamedNativeQuery
+                //Refractor NamedQuery, NamedNativeQuery
                 if (this.getClassWidget().getBaseElementSpec() instanceof IdentifiableClass) {
                     ((IdentifiableClass)this.getClassWidget().getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
-                        obj.refactorName(singularPreName, singularNewName);
-                        obj.refactorName(pluralPreName, pluralNewName);
-                        obj.refactorQuery(singularPreName, singularNewName);
-                        obj.refactorQuery(pluralPreName, pluralNewName);
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
                     }); 
                     ((IdentifiableClass)this.getClassWidget().getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
-                        obj.refactorName(singularPreName, singularNewName);
-                        obj.refactorName(pluralPreName, pluralNewName);
-                        obj.refactorQuery(singularPreName, singularNewName);
-                        obj.refactorQuery(pluralPreName, pluralNewName);
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
                     }); 
                 }
 

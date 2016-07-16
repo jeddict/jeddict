@@ -20,7 +20,7 @@
               <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="deleteNamedQueryComp" min="-2" max="-2" attributes="0"/>
-                  <Component id="refactorNamedQueryComp" min="-2" max="-2" attributes="0"/>
+                  <Component id="refractorNamedQueryComp" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -30,7 +30,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="refactorNamedQueryComp" min="-2" max="-2" attributes="0"/>
+              <Component id="refractorNamedQueryComp" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="deleteNamedQueryComp" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="12" max="32767" attributes="0"/>
@@ -39,10 +39,10 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JCheckBox" name="refactorNamedQueryComp">
+    <Component class="javax.swing.JCheckBox" name="refractorNamedQueryComp">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/jpa/modeler/settings/code/Bundle.properties" key="CodePanel.refactorNamedQueryComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/netbeans/jpa/modeler/settings/code/Bundle.properties" key="CodePanel.refractorNamedQueryComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

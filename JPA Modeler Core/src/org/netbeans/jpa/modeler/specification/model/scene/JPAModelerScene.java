@@ -148,7 +148,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     public void deleteBaseElement(IBaseElementWidget baseElementWidget) {
         EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getModelerScene().getBaseElementSpec();
         if (baseElementWidget instanceof IFlowElementWidget) {
-            if (baseElementWidget instanceof FlowNodeWidget) { //reverse refactorRelationSynchronously
+            if (baseElementWidget instanceof FlowNodeWidget) { //reverse refractorRelationSynchronously
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
                 if (baseElementWidget instanceof JavaClassWidget) {
@@ -250,11 +250,11 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
             this.addBaseElement((IFlowElementWidget) baseElementWidget);
-            if (baseElementWidget instanceof IFlowNodeWidget) { //reverse refactorRelationSynchronously
+            if (baseElementWidget instanceof IFlowNodeWidget) { //reverse refractorRelationSynchronously
                 ((FlowNodeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((FlowNodeWidget) baseElementWidget).getId();
                 isExist = ((FlowNodeWidget) baseElementWidget).getNodeWidgetInfo().isExist();
-            } else if (baseElementWidget instanceof IFlowEdgeWidget) { //reverse refactorRelationSynchronously
+            } else if (baseElementWidget instanceof IFlowEdgeWidget) { //reverse refractorRelationSynchronously
                 ((IFlowEdgeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((IFlowEdgeWidget) baseElementWidget).getId();
                 isExist = ((PEdgeWidget) baseElementWidget).getEdgeWidgetInfo().isExist();

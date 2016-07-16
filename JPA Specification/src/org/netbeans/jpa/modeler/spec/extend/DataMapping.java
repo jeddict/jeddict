@@ -39,8 +39,8 @@ public abstract class DataMapping {
     
     protected String description;
 
-    public boolean refactorName(String prevName, String newName) {
-        if (CodePanel.isRefactorQuery()) {
+    public boolean refractorName(String prevName, String newName) {
+        if (CodePanel.isRefractorQuery()) {
             if (StringUtils.containsIgnoreCase(this.getName(), FIND_BY + prevName)) {
                 this.setName(this.getName().replaceAll("\\b(?i)" + Pattern.quote(FIND_BY + prevName) + "\\b", FIND_BY + StringHelper.firstUpper(newName)));
                 return true;

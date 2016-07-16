@@ -26,10 +26,10 @@ public final class CodePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        refactorNamedQueryComp = new javax.swing.JCheckBox();
+        refractorNamedQueryComp = new javax.swing.JCheckBox();
         deleteNamedQueryComp = new javax.swing.JCheckBox();
 
-        org.openide.awt.Mnemonics.setLocalizedText(refactorNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.refactorNamedQueryComp.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(refractorNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.refractorNamedQueryComp.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(deleteNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.deleteNamedQueryComp.text")); // NOI18N
         deleteNamedQueryComp.addActionListener(new java.awt.event.ActionListener() {
@@ -46,14 +46,14 @@ public final class CodePanel extends javax.swing.JPanel {
                 .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(deleteNamedQueryComp)
-                    .addComponent(refactorNamedQueryComp))
+                    .addComponent(refractorNamedQueryComp))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(refactorNamedQueryComp)
+                .addComponent(refractorNamedQueryComp)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteNamedQueryComp)
                 .addContainerGap(12, Short.MAX_VALUE))
@@ -65,24 +65,24 @@ public final class CodePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteNamedQueryCompActionPerformed
 
     void load() {
-         refactorNamedQueryComp.setSelected(isRefactorQuery());
+         refractorNamedQueryComp.setSelected(isRefractorQuery());
          deleteNamedQueryComp.setSelected(isDeleteQuery());
     }
 
     void store() {
-       NbPreferences.forModule(CodePanel.class).putBoolean("refactorNamedQuery", refactorNamedQueryComp.isSelected());
+       NbPreferences.forModule(CodePanel.class).putBoolean("refractorNamedQuery", refractorNamedQueryComp.isSelected());
        NbPreferences.forModule(CodePanel.class).putBoolean("deleteNamedQuery", deleteNamedQueryComp.isSelected());
-       refactorNamedQuery=null;
+       refractorNamedQuery=null;
        deleteNamedQuery=null;
     }
 
     private static Boolean deleteNamedQuery;
-    private static Boolean refactorNamedQuery;
-    public static boolean isRefactorQuery() {
-        if (refactorNamedQuery == null) {
-            refactorNamedQuery = pref.getBoolean("refactorNamedQuery", Boolean.TRUE);
+    private static Boolean refractorNamedQuery;
+    public static boolean isRefractorQuery() {
+        if (refractorNamedQuery == null) {
+            refractorNamedQuery = pref.getBoolean("refractorNamedQuery", Boolean.TRUE);
         }
-        return refactorNamedQuery;
+        return refractorNamedQuery;
     }
     
     public static boolean isDeleteQuery(){
@@ -99,6 +99,6 @@ public final class CodePanel extends javax.swing.JPanel {
 private static final Preferences pref = NbPreferences.forModule(CodePanel.class);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox deleteNamedQueryComp;
-    private javax.swing.JCheckBox refactorNamedQueryComp;
+    private javax.swing.JCheckBox refractorNamedQueryComp;
     // End of variables declaration//GEN-END:variables
 }
