@@ -41,13 +41,6 @@ public class EmbeddedAttributeJoinColumnWidget extends ForeignKeyWidget<DBEmbedd
         this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(EmbeddedAttributeJoinColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected void updateName(String name) {
         //     AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();

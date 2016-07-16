@@ -68,25 +68,34 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
             generateMappedSuperClasses();
             generateEntityClasses();
             generateEmbededClasses();
-            for (DefaultClass defaultClass : parsedEntityMappings.getDefaultClass()) {
-                if (defaultClass.isEmbeddable()) {
-                    generateEmbededIdClasses(defaultClass);
-                } else {
-                    generateIdClasses(defaultClass);
-                }
-            }
+            generateDefaultClasses();
             // generateLifeCycleClasses(); // TODO
-        } catch (InvalidDataException ex) {
-            ExceptionUtils.printStackTrace(ex);
-        } catch (IOException ex) {
+        } catch (InvalidDataException | IOException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
     }
 
+    private void generateDefaultClasses() throws InvalidDataException, IOException {
+        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getDefaultClass();
+        if(!parsedDefaultClasses.isEmpty()){
+            task.log(Console.wrap("Generating IdClass/PrimaryKey Class : " , FG_RED, BOLD), true);
+        }
+        for (DefaultClass parsedDefaultClasse : parsedDefaultClasses) {
+            task.log(parsedDefaultClasse.getClazz(), true);
+            if (parsedDefaultClasse.isEmbeddable()) {
+                generateEmbededIdClasses(parsedDefaultClasse);
+            } else {
+                generateIdClasses(parsedDefaultClasse);
+            }
+        }
+    }
     private void generateEmbededClasses() throws InvalidDataException, IOException {
         List<Embeddable> parsedEmbeddables = parsedEntityMappings.getEmbeddable();
+        if(!parsedEmbeddables.isEmpty()){
+            task.log(Console.wrap("Generating Embeddable Class : " , FG_RED, BOLD), true);
+        }
         for (Embeddable parsedEmbeddable : parsedEmbeddables) {
-            task.log("Generating Embeddable Class : " + parsedEmbeddable.getClazz(), true);
+            task.log(parsedEmbeddable.getClazz(), true);
             ManagedClassDefSnippet classDef = new EmbeddableGenerator(parsedEmbeddable, packageName).getClassDef();
             classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
 
@@ -97,8 +106,9 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
 
     private void generateEntityClasses() throws InvalidDataException, IOException {
         List<Entity> parsedEntities = parsedEntityMappings.getEntity();
-        task.log(Console.wrap("Generating Entity Class : " , FG_RED, BOLD), true);
-           
+        if(!parsedEntities.isEmpty()){
+            task.log(Console.wrap("Generating Entity Class : " , FG_RED, BOLD), true);
+        }
         for (Entity parsedEntity : parsedEntities) {
             task.log(parsedEntity.getClazz(), true);
             ManagedClassDefSnippet classDef = new EntityGenerator(parsedEntity, packageName).getClassDef();
@@ -111,8 +121,11 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
 
     private void generateMappedSuperClasses() throws InvalidDataException, IOException {
         List<MappedSuperclass> parsedMappedSuperclasses = parsedEntityMappings.getMappedSuperclass();
+        if(!parsedMappedSuperclasses.isEmpty()){
+        task.log(Console.wrap("Generating MappedSuperclass Class : " , FG_RED, BOLD), true);
+        }
         for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
-            task.log("Generating MappedSuperclass Class : " + parsedMappedSuperclass.getClazz(), true);
+            task.log(parsedMappedSuperclass.getClazz(), true);
             ManagedClassDefSnippet classDef = new MappedSuperClassGenerator(parsedMappedSuperclass, packageName).getClassDef();
             classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
 
@@ -133,14 +146,12 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateEmbededIdClasses(DefaultClass defaultClass) throws InvalidDataException, IOException {
-        task.log("Generating EmbeddedId Class : " + defaultClass.getClazz(), true);
         ClassDefSnippet classDef = new EmbeddableIdClassGenerator(defaultClass, packageName).getClassDef();
         classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
         ORMConverterUtil.writeSnippet(classDef, destDir);//TODO set file object
     }
 
     private void generateIdClasses(DefaultClass defaultClass) throws InvalidDataException, IOException {
-        task.log("Generating IdClass Class : " + defaultClass.getClazz(), true);
         ClassDefSnippet classDef = new DefaultClassGenerator(defaultClass, packageName).getClassDef();
         classesRepository.addWritableSnippet(ClassType.SERIALIZER_CLASS, classDef);
         ORMConverterUtil.writeSnippet(classDef, destDir);//TODO set file object

@@ -108,6 +108,16 @@ public class ClassHelper {
         return packageName + ORMConverterUtil.DOT + className;
     }
 
+    public Class getClazz() {
+        Class _class = null;
+        try {
+            _class = Class.forName(getFQClassName());
+        } catch (ClassNotFoundException ex) {
+            //skip
+        }
+        return _class;
+    }
+
     public String getFQClassNameWithClassSuffix() {
 
         if (className == null) {
@@ -202,13 +212,4 @@ public class ClassHelper {
         }
     }
 
-    public static String getSimpleClassName(String fullClassName) {
-        //if FQ className split packageName and className
-        int dotIndex = fullClassName.lastIndexOf(ORMConverterUtil.DOT);
-
-        if (dotIndex != -1) {
-            fullClassName = fullClassName.substring(dotIndex + 1);
-        }
-        return fullClassName;
-    }
 }

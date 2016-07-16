@@ -30,6 +30,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
+import static org.netbeans.jcode.core.util.AttributeType.STRING_FQN;
 import org.netbeans.jpa.modeler.reveng.database.ImportHelper;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.GenerationType;
@@ -325,7 +326,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
             }
 
             protected boolean isCharacterType(String type) {
-                if ("java.lang.String".equals(type)) { // NOI18N
+                if (STRING_FQN.equals(type)) { // NOI18N
                     // XXX also need to check for char[] and Character[]
                     // (better to use TypeMirror)
                     return true;

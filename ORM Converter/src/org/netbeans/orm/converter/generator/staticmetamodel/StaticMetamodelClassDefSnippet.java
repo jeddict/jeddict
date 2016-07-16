@@ -15,7 +15,13 @@
  */
 package org.netbeans.orm.converter.generator.staticmetamodel;
 
+import java.util.Collection;
+import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
+import org.netbeans.orm.converter.compiler.InvalidDataException;
+import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
@@ -33,6 +39,18 @@ public class StaticMetamodelClassDefSnippet extends ClassDefSnippet {
     }
 
     private String value;//i.e: @StaticMetamodel( Person.class )   Class being modelled by the annotated class. //entity, mapped superclass, or embeddable class
+    private final ClassHelper entityClassHelper = new ClassHelper();
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Collection<String> importSnippets = super.getImports();
+        if (StringUtils.isNotBlank(getEntityPackageName()) && !StringUtils.equals(getPackageName(), getEntityPackageName())) {
+            importSnippets.add(entityClassHelper.getFQClassName());
+        }
+        
+        importSnippets = ORMConverterUtil.eliminateSamePkgImports(getClassHelper().getPackageName(), importSnippets);
+        return ORMConverterUtil.processedImportStatements(importSnippets);
+    }
 
     /**
      * @return the value
@@ -48,4 +66,23 @@ public class StaticMetamodelClassDefSnippet extends ClassDefSnippet {
         this.value = value;
     }
 
+    public String getEntityPackageName() {
+        return entityClassHelper.getPackageName();
+    }
+
+    public void setEntityPackageName(String packageName) {
+        this.entityClassHelper.setPackageName(packageName);
+    }
+
+    public String getEntityClassName() {
+        return entityClassHelper.getClassName();
+    }
+
+    public ClassHelper getEntityClassHelper() {
+        return entityClassHelper;
+    }
+
+    public void setEntityClassName(String className) {
+        entityClassHelper.setClassName(className);
+    }
 }

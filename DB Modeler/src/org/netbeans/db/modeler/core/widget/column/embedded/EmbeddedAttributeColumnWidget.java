@@ -26,32 +26,16 @@ import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
-public class EmbeddedAttributeColumnWidget extends ColumnWidget<DBEmbeddedAttributeColumn> {
+public class EmbeddedAttributeColumnWidget<E extends DBEmbeddedAttributeColumn> extends ColumnWidget<E> {
 
     public EmbeddedAttributeColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
-            setMultiPropertyName(value);
-        });
-
-        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (String value) -> {
-            setMultiPropertyName(value);
-        });
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
-        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
-    }
-
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(EmbeddedAttributeColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
+        
     }
 
     @Override
@@ -100,5 +84,9 @@ public class EmbeddedAttributeColumnWidget extends ColumnWidget<DBEmbeddedAttrib
         } else if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
             //in dev
         }
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) this::setMultiPropertyName);
+        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) this::setMultiPropertyName);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
     }
 }

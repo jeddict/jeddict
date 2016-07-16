@@ -255,6 +255,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Unmarshaller MODELER_UNMARSHALLER;
     public static Marshaller MODELER_MARSHALLER;
     public final static InputOutput IO;
+    public final static String JPA_FILE_TYPE = "text/jpa+xml";
 
     static {
 
@@ -278,10 +279,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     @Override
     public void init() {
         if (ENTITY_ICON_PATH == null) {
-            ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/element/java/ENTITY.png";
-            MAPPED_SUPER_CLASS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/element/java/MAPPED_SUPER_CLASS.png";
-            EMBEDDABLE_ICON_PATH = "/org/netbeans/jpa/modeler/resource/element/java/EMBEDDABLE.png";
-            ABSTRACT_ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/element/java/ABSTRACT_ENTITY.png";
+            ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/ENTITY.png";
+            MAPPED_SUPER_CLASS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/MAPPED_SUPER_CLASS.png";
+            EMBEDDABLE_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/EMBEDDABLE.png";
+            ABSTRACT_ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/ABSTRACT_ENTITY.png";
             ID_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/id-attribute.png";
             BASIC_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/basic-attribute.png";
             BASIC_COLLECTION_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/basic-collection-attribute.png";
@@ -397,7 +398,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
             }
             if (entityMappings == null) {
-                ElementConfigFactory elementConfigFactory = file.getVendorSpecification().getElementConfigFactory();
+                ElementConfigFactory elementConfigFactory = file.getModelerDiagramModel().getElementConfigFactory();
                 entityMappings = EntityMappings.getNewInstance(file.getCurrentVersion().getValue());
                 elementConfigFactory.initializeObjectValue(entityMappings);
             } else {
@@ -435,7 +436,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             entityMappings.repairDefinition(IO);
             entityMappings.getAllManagedClass().stream().
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            System.out.println("EM PS Total time : " + (new Date().getTime() - st) + " sec");
 
             entityMappings.initJavaInheritenceMapping();
             loadFlowEdge(scene);
@@ -457,7 +457,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     private void loadFlowNode(JPAModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
         IModelerDocument document = null;
-        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getVendorSpecification().getModelerDocumentFactory();
+        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getModelerDiagramModel().getModelerDocumentFactory();
         if (flowElement instanceof FlowNode) {
             FlowNode flowNode = (FlowNode) flowElement;
             if (flowElement instanceof JavaClass) { //skip class creation in case of hidden visibility
@@ -471,7 +471,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             } catch (ModelerException ex) {
                 scene.getModelerFile().handleException(ex);
             }
-            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
+            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getModelerDiagramModel().getPaletteConfig().findSubCategoryNodeConfig(document);
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
             nodeWidgetInfo.setName(flowElement.getName());
             nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA

@@ -15,8 +15,10 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -28,6 +30,14 @@ public abstract class MultiRelationAttributeWidget<E extends MultiRelationAttrib
 
     public MultiRelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+    }
+    
+        @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        MultiRelationAttribute relationAttribute = this.getBaseElementSpec();
+        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, relationAttribute));
+        createMapKeyPropertySet(set);
     }
 
 }

@@ -17,15 +17,16 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
 public class ElementCollectionSnippet implements Snippet {
 
     private String collectionType;
     private String targetClass;
     private String fetchType = null;
+    private MapKeySnippet mapKeySnippet;
 //    private String accessType = null;
 
     public String getFetchType() {
@@ -38,25 +39,27 @@ public class ElementCollectionSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (fetchType == null) {
-            return "@ElementCollection";
+        StringBuilder builder = new StringBuilder();
+        builder.append("@ElementCollection");
+        if (fetchType != null) {
+            builder.append("(fetch=FetchType.").append(fetchType).append(ORMConverterUtil.CLOSE_PARANTHESES);
         }
-
-        return "@ElementCollection(fetch=FetchType." + fetchType + ORMConverterUtil.CLOSE_PARANTHESES;
+        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
+            builder.append(mapKeySnippet.getSnippet()).append(TAB);
+        }
+        return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (fetchType == null) {
-            return Collections.singletonList("javax.persistence.ElementCollection");
-        }
-
-        List<String> importSnippets = new ArrayList<String>();
-
+        List<String> importSnippets = new ArrayList<>();
         importSnippets.add("javax.persistence.ElementCollection");
-        importSnippets.add("javax.persistence.FetchType");
-
+        if (fetchType != null) {
+            importSnippets.add("javax.persistence.FetchType");
+        }
+        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
+            importSnippets.addAll(mapKeySnippet.getImportSnippets());
+        }
         return importSnippets;
     }
 
@@ -99,5 +102,19 @@ public class ElementCollectionSnippet implements Snippet {
      */
     public void setCollectionType(String collectionType) {
         this.collectionType = collectionType;
+    }
+
+    /**
+     * @return the mapKeySnippet
+     */
+    public MapKeySnippet getMapKeySnippet() {
+        return mapKeySnippet;
+    }
+
+    /**
+     * @param mapKeySnippet the mapKeySnippet to set
+     */
+    public void setMapKeySnippet(MapKeySnippet mapKeySnippet) {
+        this.mapKeySnippet = mapKeySnippet;
     }
 }

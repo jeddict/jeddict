@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
 import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
+import org.netbeans.jpa.source.JAREAnnotationLoader;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -61,7 +62,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "join-column")
 @XmlJavaTypeAdapter(value = JoinColumnValidator.class)
-public class JoinColumn {
+public class JoinColumn implements JAREAnnotationLoader {
 
     @XmlAttribute(name = "name")
     protected String name;
@@ -84,13 +85,14 @@ public class JoinColumn {
     @XmlElement(name = "fk")
     private ForeignKey foreignKey;
 
-    public static JoinColumn load(Element element, AnnotationMirror annotationMirror) {
-        if (annotationMirror == null) {
+       @Override
+    public JoinColumn load(Element element, AnnotationMirror annotationMirror) {
+       if (annotationMirror == null) {
             annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
         }
         JoinColumn joinColumn = null;
         if (annotationMirror != null) {
-            joinColumn = new JoinColumn();
+            joinColumn = this;
             joinColumn.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
             joinColumn.referencedColumnName = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "referencedColumnName");
             joinColumn.unique = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "unique");
@@ -106,8 +108,8 @@ public class JoinColumn {
             }
         }
         return joinColumn;
-
     }
+   
 
     /**
      * Gets the value of the name property.

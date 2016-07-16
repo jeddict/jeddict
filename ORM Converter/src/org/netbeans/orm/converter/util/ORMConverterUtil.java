@@ -62,6 +62,7 @@ public class ORMConverterUtil {
     public static final String IMPORT = "import ";
     public static final String LESS_THAN = "<";
     public static final String NEW_LINE = "\n";
+    public static final String NEW_TAB = "\t";
     public static final String TAB = "    ";
     public static final String OPEN_BRACES = "{";
     public static final String OPEN_PARANTHESES = "(";
@@ -331,7 +332,11 @@ public class ORMConverterUtil {
         // Once we start formatting, the task can't be canceled
 
         for (PositionRegion region : regions) {
+            try {
             formatter.reformat(region.getStartOffset(), region.getEndOffset());
+            } catch(Exception ex){
+                ex.printStackTrace();
+            }
         }
     }
 

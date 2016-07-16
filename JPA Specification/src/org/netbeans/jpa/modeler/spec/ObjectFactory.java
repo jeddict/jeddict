@@ -222,13 +222,6 @@ public class ObjectFactory {
         return new PersistenceUnitDefaults();
     }
 
-    /**
-     * Create an instance of {@link MapKeyColumn }
-     *
-     */
-    public MapKeyColumn createMapKeyColumn() {
-        return new MapKeyColumn();
-    }
 
     /**
      * Create an instance of {@link AssociationOverride }
@@ -260,14 +253,6 @@ public class ObjectFactory {
      */
     public Column createColumn() {
         return new Column();
-    }
-
-    /**
-     * Create an instance of {@link MapKeyJoinColumn }
-     *
-     */
-    public MapKeyJoinColumn createMapKeyJoinColumn() {
-        return new MapKeyJoinColumn();
     }
 
     /**

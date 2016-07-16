@@ -31,13 +31,6 @@ public class EmbeddedAssociationInverseJoinColumnWidget extends EmbeddedAssociat
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected String evaluateName() {
         AssociationOverride associationOverride = this.getBaseElementSpec().getAssociationOverride();

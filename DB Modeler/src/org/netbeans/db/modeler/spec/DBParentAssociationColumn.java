@@ -27,10 +27,10 @@ public abstract class DBParentAssociationColumn<E extends RelationAttribute> ext
     protected final boolean relationTableExist;
 
     protected JoinColumn joinColumn;
-    protected List<JoinColumn> joinColumns;
+    protected List<? extends JoinColumn> joinColumns;
 
     protected JoinColumn joinColumnOverride;
-    protected List<JoinColumn> joinColumnsOverride;
+    protected List<? extends JoinColumn> joinColumnsOverride;
 
     public DBParentAssociationColumn(String name, Entity intrinsicClass, E managedAttribute, boolean relationTableExist) {
         super(name, intrinsicClass, managedAttribute);
@@ -58,7 +58,7 @@ public abstract class DBParentAssociationColumn<E extends RelationAttribute> ext
         return joinColumn;
     }
 
-    public List<JoinColumn> getJoinColumns() {
+    public List<? extends JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 
@@ -66,7 +66,7 @@ public abstract class DBParentAssociationColumn<E extends RelationAttribute> ext
         return joinColumnOverride;
     }
 
-    public List<JoinColumn> getJoinColumnsOverride() {
+    public List<? extends JoinColumn> getJoinColumnsOverride() {
         return joinColumnsOverride;
     }
 

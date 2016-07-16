@@ -59,7 +59,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
         processIdClass(entity.getIdClass());
         processAssociationOverrides(entity.getAssociationOverride());
-        processAttributeOverrides(entity.getAttributeOverride());
+        classDef.setAttributeOverrides(processAttributeOverrides(entity.getAttributeOverride()));
 
         processSecondaryTable(entity.getSecondaryTable());
         processPrimaryKeyJoinColumns(entity.getPrimaryKeyJoinColumn());

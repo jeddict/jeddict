@@ -40,19 +40,6 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
     }
 
     @Override
-    protected void setAttributeTooltip() {
-        if (getBaseElementSpec() instanceof ElementCollection) {
-            ElementCollection elementCollection = (ElementCollection) getBaseElementSpec();
-            StringBuilder writer = new StringBuilder();
-            writer.append(elementCollection.getCollectionType().substring(elementCollection.getCollectionType().lastIndexOf('.') + 1));
-            writer.append('<').append(elementCollection.getAttributeType()).append('>');
-            this.setToolTipText(writer.toString());
-        } else {
-            this.setToolTipText(this.getBaseElementSpec().getAttributeType());//TODO init called before initialization of connectedClass for CompositionAttribute
-        }
-    }
-
-    @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
 
@@ -85,66 +72,4 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
         });
     }
 
-//    public PropertySupport getValidationProperty() {
-//
-//        final List<JoinColumn> joinColumnsSpec = null;
-//
-//        final NAttributeEntity attributeEntity = new NAttributeEntity("VALIDATION_PROPERTY", "Validation", "");
-//        attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
-//
-//        List<org.netbeans.modeler.properties.nentity.Column> columns = new ArrayList<org.netbeans.modeler.properties.nentity.Column>();
-//        columns.add(new org.netbeans.modeler.properties.nentity.Column("OBJECT", false, true, Object.class));
-//        columns.add(new org.netbeans.modeler.properties.nentity.Column("Column Name", false, String.class));
-//        columns.add(new org.netbeans.modeler.properties.nentity.Column("Referenced Column Name", false, String.class));
-//        attributeEntity.setColumns(columns);
-//        attributeEntity.setCustomDialog(new JoinColumnPanel());
-//
-//        attributeEntity.setTableDataListener(new NEntityDataListener() {
-//            List<Object[]> data;
-//            int count;
-//
-//            @Override
-//            public void initCount() {
-//                count = joinColumnsSpec.size();
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return count;
-//            }
-//
-//            @Override
-//            public void initData() {
-//                List<JoinColumn> joinColumns = joinColumnsSpec;
-//                List<Object[]> data_local = new LinkedList<Object[]>();
-//                Iterator<JoinColumn> itr = joinColumns.iterator();
-//                while (itr.hasNext()) {
-//                    JoinColumn joinColumn = itr.next();
-//                    Object[] row = new Object[attributeEntity.getColumns().size()];
-//                    row[0] = joinColumn;
-//                    row[1] = joinColumn.getName();
-//                    row[2] = joinColumn.getReferencedColumnName();
-//                    data_local.add(row);
-//                }
-//                this.data = data_local;
-//            }
-//
-//            @Override
-//            public List<Object[]> getData() {
-//                return data;
-//            }
-//
-//            @Override
-//            public void setData(List data) {
-//                joinColumnsSpec.clear();
-//                for (Object[] row : (List<Object[]>) data) {
-//                    joinColumnsSpec.add((JoinColumn) row[0]);
-//                }
-//                this.data = data;
-//            }
-//
-//        });
-//
-//        return new NEntityPropertySupport(this.getModelerScene().getModelerFile(), attributeEntity);
-//    }
 }

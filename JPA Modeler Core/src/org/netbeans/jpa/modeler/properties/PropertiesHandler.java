@@ -23,9 +23,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.apache.velocity.util.StringUtils;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -50,6 +52,7 @@ import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPan
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
 import static org.netbeans.jpa.modeler.spec.AccessType.PROPERTY;
@@ -64,12 +67,10 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
-import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -104,7 +105,6 @@ import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
-import org.netbeans.orm.converter.util.ClassHelper;
 import org.openide.nodes.PropertySupport;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
@@ -153,11 +153,55 @@ public class PropertiesHandler {
 
             @Override
             public void setItem(ComboBoxValue<String> value) {
+                manageMapType(value);
+                setCollectionType(value);
+                attributeWidget.setAttributeTooltip();
+                attributeWidget.visualizeDataType();
+            }
+
+            void setCollectionType(ComboBoxValue<String> value) {
+                String collectionType = value.getValue();
+                boolean valid = false;
+                try {
+                    if (collectionType != null && !collectionType.trim().isEmpty()) {
+                        if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim())) ||
+                                java.util.Map.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
+                            valid = true;
+                        }
+                    }
+                } catch (ClassNotFoundException ex) {
+                    //skip allow = false;
+                }
+                if (!valid) {
+                    collectionType = java.util.Collection.class.getName();
+                }
+
+                colSpec.setCollectionType(collectionType);
+                em.getCache().addCollectionClass(collectionType);//move item to top in cache
+            }
+
+            void manageMapType(ComboBoxValue<String> value) {
                 String prevType = colSpec.getCollectionType();
                 String newType = value.getValue();
-                colSpec.setCollectionType(newType);
-                em.getCache().addCollectionClass(newType);//move item to top in cache
-                if(Map.class.getName().equals(prevType) || Map.class.getName().equals(prevType)){
+
+                Class prevClass = null;
+                try {
+                    prevClass = Class.forName(prevType);
+                } catch (ClassNotFoundException ex) {
+                }
+                Class newClass = null;
+                try {
+                    newClass = Class.forName(newType);
+                } catch (ClassNotFoundException ex) {
+                }
+
+                if ((prevClass != null && newClass != null && prevClass != newClass
+                        && (Map.class.isAssignableFrom(prevClass) || Map.class.isAssignableFrom(newClass)))
+                        || (prevClass == null && newClass != null && Map.class.isAssignableFrom(newClass))
+                        || (prevClass != null && newClass == null && Map.class.isAssignableFrom(prevClass))) {
+                    if (newClass == null || !Map.class.isAssignableFrom(newClass)) {
+                        ((MapKeyHandler) attributeWidget.getBaseElementSpec()).resetMapAttribute();
+                    }
                     attributeWidget.refreshProperties();
                 }
             }
@@ -205,29 +249,35 @@ public class PropertiesHandler {
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionType", "Collection Type", "", comboBoxListener);
     }
-    public static ComboBoxPropertySupport getMapKeyProperty(AttributeWidget<? extends Attribute> attributeWidget, final MapKeyHandler mapKeySpec) {
+
+    public static ComboBoxPropertySupport getMapKeyProperty(AttributeWidget<? extends Attribute> attributeWidget, final MapKeyHandler mapKeyHandler, PropertyVisibilityHandler mapKeyVisibilityHandler) {
         JPAModelerScene modelerScene = attributeWidget.getModelerScene();
         EntityMappings em = modelerScene.getBaseElementSpec();
-        ModelerFile modelerFile = modelerScene.getModelerFile();
         ComboBoxListener<Attribute> comboBoxListener = new ComboBoxListener<Attribute>() {
-            private final Set<Attribute> value = new HashSet<>();
 
             @Override
             public void setItem(ComboBoxValue<Attribute> value) {
                 Attribute newType = value.getValue();
-                mapKeySpec.setMapKeyAttribute(newType);
+                mapKeyHandler.setMapKeyAttribute(newType);
+                AttributeValidator.scanMapKeyHandlerError(attributeWidget);
+                attributeWidget.visualizeDataType();
             }
 
             @Override
             public ComboBoxValue<Attribute> getItem() {
-                Attribute attribute;
-                if (mapKeySpec.getMapKeyAttribute() != null) {
-                    attribute = mapKeySpec.getMapKeyAttribute();
-                } else {
-                    attribute = value.size() < 1 ? null : value.stream().findAny().get();
+                Attribute attribute = null;
+                if (mapKeyHandler.getMapKeyAttribute() != null) {
+                    attribute = mapKeyHandler.getMapKeyAttribute();
+                }else { //select any attribute if not found //TODO ensure PK
+                      List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(); 
+                      if(!attributeWidgets.isEmpty()){
+                         attribute = attributeWidgets.get(0).getBaseElementSpec();
+                         mapKeyHandler.setMapKeyAttribute(attribute);
+                         AttributeValidator.scanMapKeyHandlerError(attributeWidget);
+                      }
                 }
                 if (attribute != null) {
-                    return new ComboBoxValue(attribute, attribute.getName() + " : " + attribute.getDataTypeLabel());
+                    return new ComboBoxValue(attribute, attribute.getName() + " : " + JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel()));
                 } else {
                     return new ComboBoxValue(null, EMPTY);
                 }
@@ -236,20 +286,25 @@ public class PropertiesHandler {
             @Override
             public List<ComboBoxValue<Attribute>> getItemList() {
                 List<ComboBoxValue<Attribute>> comboBoxValues = new ArrayList<>();
-                
-                if(attributeWidget instanceof MultiRelationAttributeWidget){
-                    ((MultiRelationAttributeWidget)attributeWidget).getRelationFlowWidget().getTargetEntityWidget().
-                    getAllAttributeWidgets().stream().filter(a -> !(a instanceof MultiValueEmbeddedAttributeWidget) ||
-                            !(a instanceof TransientAttributeWidget) || !(a instanceof MultiRelationAttributeWidget) || !(a instanceof BasicCollectionAttributeWidget))
-                           .forEach(classAttributeWidget -> {
-                               Attribute attribute = ((AttributeWidget<? extends Attribute>)classAttributeWidget).getBaseElementSpec();
-                               comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName() + " " +attribute.getDataTypeLabel()));
-                               value.add(attribute);
-
-                   });
-                }
-                
+                        getAllAttributeWidgets().forEach(classAttributeWidget -> {
+                            Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
+                            comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName() + " : " + JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel())));
+                        });
                 return comboBoxValues;
+            }
+            
+            List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(){
+                PersistenceClassWidget classWidget;
+                if (attributeWidget instanceof MultiRelationAttributeWidget) {
+                    classWidget = ((MultiRelationAttributeWidget) attributeWidget).getRelationFlowWidget().getTargetEntityWidget();
+                } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
+                    classWidget = ((MultiValueEmbeddedAttributeWidget) attributeWidget).getEmbeddableFlowWidget().getTargetEmbeddableWidget();
+                } else {
+                    classWidget = attributeWidget.getClassWidget();
+                }
+               return (List<AttributeWidget<? extends Attribute>>)classWidget.getAllAttributeWidgets().stream().filter(a -> !(a instanceof MultiValueEmbeddedAttributeWidget)
+                        && !(a instanceof TransientAttributeWidget) && !(a instanceof MultiRelationAttributeWidget)
+                        && !(a instanceof BasicCollectionAttributeWidget)).collect(toList());
             }
 
             @Override
@@ -257,35 +312,10 @@ public class PropertiesHandler {
                 return EMPTY;
             }
 
-            @Override
-            public ActionHandler getActionHandler() {
-                return ActionHandler.getInstance(() -> {
-                    String collectionType = NBModelerUtil.browseClass(modelerFile);
-                    return new ComboBoxValue<String>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
-                })
-                        .afterCreation(e -> em.getCache().addCollectionClass(e.getValue()))
-                        .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
-                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you sue you want to delete this collection class ?", "Delete Collection Class", JOptionPane.OK_CANCEL_OPTION));
-            }
         };
-        
-        attributeWidget.addPropertyVisibilityHandler("mapKey", (PropertyVisibilityHandler<String>) () -> {
-            Attribute attribute = attributeWidget.getBaseElementSpec();
-            if(attribute instanceof CollectionTypeHandler){
-                String classname = ((CollectionTypeHandler)attribute).getCollectionType();
-                Class _class;
-                    try {
-                        _class = Class.forName(classname);
-                        if(Map.class.isAssignableFrom(_class)){
-                             return true;
-                        }
-                    } catch (ClassNotFoundException ex) {
-                    }
-            }
-            return false;
-        });
-        
-        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "mapKey", "Map Key", "", comboBoxListener);
+        org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("mapKey", "Map Key", "");
+        attribute.setAfter("mapKeyType");
+        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
     }
 
     public static ComboBoxPropertySupport getFetchTypeProperty(JPAModelerScene modelerScene, final FetchTypeHandler fetchTypeHandlerSpec) {
@@ -328,11 +358,11 @@ public class PropertiesHandler {
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "fetchType", "Fetch Type", "", comboBoxListener);
     }
 
-    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec) {
+    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<? extends JoinColumn> joinColumnsSpec) {
         return getJoinColumnsProperty(id, name, desc, modelerScene, joinColumnsSpec, null);
     }
 
-    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<JoinColumn> joinColumnsSpec, Entity entity) {
+    public static PropertySupport getJoinColumnsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<? extends JoinColumn> joinColumnsSpec, Entity entity) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
 
@@ -359,9 +389,9 @@ public class PropertiesHandler {
 
             @Override
             public void initData() {
-                List<JoinColumn> joinColumns = joinColumnsSpec;
+                List<? extends JoinColumn> joinColumns = joinColumnsSpec;
                 List<Object[]> data_local = new LinkedList<>();
-                Iterator<JoinColumn> itr = joinColumns.iterator();
+                Iterator<? extends JoinColumn> itr = joinColumns.iterator();
                 while (itr.hasNext()) {
                     JoinColumn joinColumn = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
@@ -382,7 +412,7 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 joinColumnsSpec.clear();
                 data.stream().forEach((row) -> {
-                    joinColumnsSpec.add((JoinColumn) row[0]);
+                    ((List<JoinColumn>)joinColumnsSpec).add((JoinColumn) row[0]);
                 });
                 this.data = data;
             }
@@ -1016,36 +1046,36 @@ public class PropertiesHandler {
         return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
     }
 
-    public static EmbeddedPropertySupport getFieldTypeProperty(AttributeWidget attributeWidget) {
+    public static EmbeddedPropertySupport getFieldTypeProperty(String id, String name, String description, boolean mapKey,
+            AttributeWidget attributeWidget) {
 
-        GenericEmbedded entity = new GenericEmbedded("fieldType", "Field Type", "");
-        if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
-            if (attributeWidget.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
-                entity.setEntityEditor(null);
-            } else if (attributeWidget.getBaseElementSpec() instanceof Embedded) {//to Disable it
-                entity.setEntityEditor(null);
-            } else {
-                entity.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile()));
+        GenericEmbedded property = new GenericEmbedded(id, name, description);
+        
+        if (mapKey) {
+            property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),true));
+            property.setAfter("mapKeyType");
+        } else {
+            if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
+                if (attributeWidget.getBaseElementSpec() instanceof ElementCollection && ((ElementCollection) attributeWidget.getBaseElementSpec()).getConnectedClass() != null) {//SingleValueEmbeddableFlowWidget
+                    property.setEntityEditor(null);
+                } else if (attributeWidget.getBaseElementSpec() instanceof Embedded) {//to Disable it
+                    property.setEntityEditor(null);
+                } else {
+                    property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),false));
+                    property.setBefore("collectionType");
+                }
+
+            } else if (attributeWidget.getBaseElementSpec() instanceof RelationAttribute) {
+                property.setEntityEditor(null);
+                property.setBefore("collectionType");
             }
-
-        } else if (attributeWidget.getBaseElementSpec() instanceof RelationAttribute) {
-            entity.setEntityEditor(null);
         }
-        entity.setDataListener(new EmbeddedDataListener<Attribute>() {
+        property.setDataListener(new EmbeddedDataListener<Attribute>() {
             private Attribute attribute;
-            private String displayName = null;
-            private PersistenceClassWidget persistenceClassWidget = null;
 
             @Override
             public void init() {
                 attribute = (Attribute) attributeWidget.getBaseElementSpec();
-                if (attribute instanceof RelationAttribute) {
-                    persistenceClassWidget = (PersistenceClassWidget)attributeWidget.getModelerScene().getBaseElement(((RelationAttribute) attribute).getConnectedEntity().getId());
-                } else if (attribute instanceof ElementCollection && ((ElementCollection) attribute).getConnectedClass() != null) { //Embedded Collection
-                    persistenceClassWidget = (PersistenceClassWidget) attributeWidget.getModelerScene().getBaseElement(((ElementCollection) attribute).getConnectedClass().getId());
-                } else if (attribute instanceof Embedded) {
-                    persistenceClassWidget = (PersistenceClassWidget) attributeWidget.getModelerScene().getBaseElement(((Embedded) attribute).getConnectedClass().getId());
-                }
             }
 
             @Override
@@ -1055,50 +1085,27 @@ public class PropertiesHandler {
 
             @Override
             public void setData(Attribute baseAttribute) {
-                attributeWidget.setBaseElementSpec(baseAttribute);
                 if (attributeWidget instanceof BaseAttributeWidget) {
                     ((BaseAttributeWidget)attributeWidget).createBeanValidationPropertySet(attributeWidget.getPropertyManager().getElementPropertySet());
-                    attributeWidget.refreshProperties();
                 }
+                if (mapKey) {
+                    AttributeValidator.scanMapKeyHandlerError(attributeWidget);
+                }
+                attributeWidget.refreshProperties();
+                attributeWidget.visualizeDataType();
             }
 
             @Override
             public String getDisplay() {
-                if (attribute instanceof BaseAttribute) {
-                    if (attribute instanceof ElementCollection) {
-                        String collectionType = ((ElementCollection) attribute).getCollectionType();
-                        if (((ElementCollection) attribute).getConnectedClass() == null) { //Basic
-                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + ((ElementCollection) attribute).getTargetClass() + ">";
-                        } else { //Embedded
-                            displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
-                        }
-                    } else if (attribute instanceof Embedded) {
-                        displayName = persistenceClassWidget.getName();
-                    } else {
-                        displayName = ((BaseAttribute) attribute).getAttributeType();
-                    }
-                } else if (attribute instanceof RelationAttribute) {
-                    // Issue Fix #5851 Start
-                    if (attribute instanceof OneToMany || attribute instanceof ManyToMany) {
-                        String collectionType = null;
-                        if (attribute instanceof OneToMany) {
-                            collectionType = ((OneToMany) attribute).getCollectionType();
-                        } else if (attribute instanceof ManyToMany) {
-                            collectionType = ((ManyToMany) attribute).getCollectionType();
-                        }
-                        displayName = ClassHelper.getSimpleClassName(collectionType) + "<" + persistenceClassWidget.getName() + ">";
-                    } else {
-                        displayName = persistenceClassWidget.getName();
-                    }
-                    // Issue Fix #5851 End
-
+                if (mapKey) {
+                    return JavaSourceHelper.getSimpleClassName(((MapKeyHandler)attribute).getMapKeyDataTypeLabel());
+                } else {
+                    return JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel());
                 }
-                return displayName;
-
             }
 
         });
-        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
+        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), property);
     }
  
     public static EmbeddedPropertySupport getCascadeProperty(RelationAttributeWidget attributeWidget) {

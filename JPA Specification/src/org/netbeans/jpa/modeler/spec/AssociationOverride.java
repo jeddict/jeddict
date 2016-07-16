@@ -84,7 +84,7 @@ public class AssociationOverride implements Comparable<AssociationOverride> {
             List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "joinColumns");
             if (joinColumnsAnnot != null) {
                 for (Object joinColumnObj : joinColumnsAnnot) {
-                    associationOverride.getJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) joinColumnObj));
+                    associationOverride.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
                 }
             }
 

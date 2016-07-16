@@ -53,6 +53,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
     @Override
     public void init() {
+        super.init();
         Entity entity = this.getBaseElementSpec();
         if (entity.getAttributes().getAllAttribute().isEmpty() && this.getModelerScene().getModelerFile().isLoaded()) {
             addNewIdAttribute("id");
@@ -103,7 +104,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         set.put("BASIC_PROP", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));
         set.put("BASIC_PROP", PropertiesHandler.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
         set.put("BASIC_PROP", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));
-
     }
 
 

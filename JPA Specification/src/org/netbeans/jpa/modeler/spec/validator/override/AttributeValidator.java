@@ -27,6 +27,7 @@ import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.validator.MarshalValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.ColumnValidator;
 
@@ -106,6 +107,23 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
                 -> !isExist(attributeOverride.getName().split("\\."), elementCollection.getConnectedClass())
                 || AttributeValidator.isEmpty(attributeOverride)
         );
+        
+        
+        elementCollection.getMapKeyAttributeOverride().removeIf(attributeOverride
+                -> !isExist(attributeOverride.getName().split("\\."), elementCollection.getMapKeyEmbeddable())
+                || AttributeValidator.isEmpty(attributeOverride)
+        );
+    }
+    
+    /**
+     * Used for MapKey filter
+     * @param mapKeyHandler 
+     */
+        public static void filterMapKey(MapKeyHandler mapKeyHandler) {
+        mapKeyHandler.getMapKeyAttributeOverride().removeIf(attributeOverride
+                -> !isExist(attributeOverride.getName().split("\\."), mapKeyHandler.getMapKeyEmbeddable())
+                || AttributeValidator.isEmpty(attributeOverride)
+        );
     }
 
     /**
@@ -114,6 +132,9 @@ public class AttributeValidator extends MarshalValidator<AttributeOverride> {
      * @param embeddable next intrinsic element , incremented in each recursion
      */
     private static boolean isExist(String[] keys, Embeddable embeddable) {
+        if(embeddable==null){
+            return false;
+        }
         if (keys.length > 1) {
             Optional<Embedded> embeddedOptional = embeddable.getAttributes().getEmbedded().stream().filter(e -> e.getName().equalsIgnoreCase(keys[0])).findAny();
             if (embeddedOptional.isPresent()) {

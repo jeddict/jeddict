@@ -29,8 +29,8 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @ModelerConfig(palette = "org/netbeans/jpa/modeler/resource/document/PaletteConfig.xml",
         document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/jpa/modeler/resource/document/ElementConfig.xml")
-@org.netbeans.modeler.specification.annotaton.Vendor(id = "JPA", name = "JPA", displayName = "JPA 2.1 Specification")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "Default", name = "", version = "1.7", architectureVersion = "1.4",
+@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA", name = "JPA 2.1 Specification", 
+        version = "1.7", architectureVersion = "1.4",
         modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class, exportManager = ExportManagerImpl.class,
         relationValidator = RelationValidator.class, exceptionHandler = ExceptionUtils.class)
 public class JPAFileActionListener extends ModelerFileActionListener {

@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.db.accessor;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ManyToManyAccessor;
 import org.netbeans.db.modeler.exception.DBValidationException;
+import org.netbeans.jpa.modeler.db.accessor.spec.MapKeyAccessor;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
@@ -26,7 +27,7 @@ import org.netbeans.jpa.modeler.spec.validator.table.JoinTableValidator;
  *
  * @author Gaurav Gupta
  */
-public class ManyToManySpecAccessor extends ManyToManyAccessor {
+public class ManyToManySpecAccessor extends ManyToManyAccessor implements MapKeyAccessor  {
 
     private final ManyToMany manyToMany;
 
@@ -43,6 +44,8 @@ public class ManyToManySpecAccessor extends ManyToManyAccessor {
         if (!JoinTableValidator.isEmpty(manyToMany.getJoinTable())) {
             accessor.setJoinTable(manyToMany.getJoinTable().getAccessor());
         }
+        
+        MapKeyUtil.load(accessor, manyToMany);
         return accessor;
     }
 

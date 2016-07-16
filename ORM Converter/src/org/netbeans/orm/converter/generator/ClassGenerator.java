@@ -82,6 +82,9 @@ import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
@@ -124,6 +127,7 @@ import org.netbeans.orm.converter.compiler.JoinColumnsSnippet;
 import org.netbeans.orm.converter.compiler.JoinTableSnippet;
 import org.netbeans.orm.converter.compiler.ManyToManySnippet;
 import org.netbeans.orm.converter.compiler.ManyToOneSnippet;
+import org.netbeans.orm.converter.compiler.MapKeySnippet;
 import org.netbeans.orm.converter.compiler.NamedAttributeNodeSnippet;
 import org.netbeans.orm.converter.compiler.NamedEntityGraphSnippet;
 import org.netbeans.orm.converter.compiler.NamedEntityGraphsSnippet;
@@ -148,6 +152,7 @@ import org.netbeans.orm.converter.compiler.SequenceGeneratorSnippet;
 import org.netbeans.orm.converter.compiler.StoredProcedureParameterSnippet;
 import org.netbeans.orm.converter.compiler.TableDefSnippet;
 import org.netbeans.orm.converter.compiler.TableGeneratorSnippet;
+import org.netbeans.orm.converter.compiler.TemporalSnippet;
 import org.netbeans.orm.converter.compiler.ToStringMethodSnippet;
 import org.netbeans.orm.converter.compiler.UniqueConstraintSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
@@ -157,8 +162,6 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
-
-    private static final String TEMPORAL_TYPE_PREFIX = "TemporalType.";
 
     private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
 
@@ -198,12 +201,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected ColumnDefSnippet getColumnDef(Column column) {
+        return getColumnDef(column, false);
+    }   
+    
+    protected ColumnDefSnippet getColumnDef(Column column, boolean mapKey) {
 
         if (column == null) {
             return null;
         }
 
-        ColumnDefSnippet columnDef = new ColumnDefSnippet();
+        ColumnDefSnippet columnDef = new ColumnDefSnippet(mapKey);
 
         columnDef.setColumnDefinition(column.getColumnDefinition());
         columnDef.setName(column.getName());
@@ -318,17 +325,17 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ColumnDefSnippet columnDef = getColumnDef(parsedBasic.getColumn());
 
             EnumType parsedEnumType = parsedBasic.getEnumerated();
-
             EnumeratedSnippet enumerated = null;
-
             if (parsedEnumType != null) {
                 enumerated = new EnumeratedSnippet();
-
-                if (parsedEnumType.equals(EnumType.ORDINAL)) {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_ORDINAL);
-                } else {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_STRING);
-                }
+                enumerated.setValue(parsedEnumType);
+            }
+            
+            TemporalType parsedTemporalType = parsedBasic.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
             }
 
             FetchType parsedFetchType = parsedBasic.getFetch();
@@ -341,7 +348,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 basic.setOptional(parsedBasic.getOptional());
             }
 
-            TemporalType parsedTemporal = parsedBasic.getTemporal();
             Lob parsedLob = parsedBasic.getLob();
 
             VariableDefSnippet variableDef = getVariableDef(parsedBasic);
@@ -349,13 +355,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setBasic(basic);
             variableDef.setColumnDef(columnDef);
             variableDef.setEnumerated(enumerated);
+            variableDef.setTemporal(temporal);
             variableDef.setType(parsedBasic.getAttributeType());
 
-            if (parsedTemporal != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(
-                        TEMPORAL_TYPE_PREFIX + parsedTemporal.value());
-            }
 
             if (parsedLob != null) {
                 variableDef.setLob(true);
@@ -368,53 +370,54 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return;
         }
         for (ElementCollection parsedElementCollection : parsedElementCollections) {
-            ColumnDefSnippet columnDef = getColumnDef(parsedElementCollection.getColumn());
-            EnumType enumType = parsedElementCollection.getEnumerated();
-
+            
             CollectionTableSnippet collectionTable = getCollectionTable(parsedElementCollection.getCollectionTable());
 
-            EnumeratedSnippet enumerated = null;
-
-            if (enumType != null) {
-                enumerated = new EnumeratedSnippet();
-
-                if (enumType.equals(EnumType.ORDINAL)) {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_ORDINAL);
-                } else {
-                    enumerated.setValue(EnumeratedSnippet.TYPE_STRING);
-                }
-            }
             FetchType parsedFetchType = parsedElementCollection.getFetch();
             ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
-            elementCollection.setTargetClass(parsedElementCollection.getTargetClass());
+            elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
+            elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
             if (parsedFetchType != null) {
                 elementCollection.setFetchType(parsedFetchType.value());
             }
-            TemporalType parsedTemporal = parsedElementCollection.getTemporal();
             Lob parsedLob = parsedElementCollection.getLob();
 
             VariableDefSnippet variableDef = getVariableDef(parsedElementCollection);
             variableDef.setElementCollection(elementCollection);
             variableDef.setCollectionTable(collectionTable);
-            variableDef.setColumnDef(columnDef);
-            variableDef.setEnumerated(enumerated);
+     
+            
             if (parsedElementCollection.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
-            }
-            if (parsedTemporal != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(
-                        TEMPORAL_TYPE_PREFIX + parsedTemporal.value());
             }
 
             if (parsedLob != null) {
                 variableDef.setLob(true);
             }
 
-            processInternalAttributeOverride(classDef, parsedElementCollection.getAttributeOverride());
-            processInternalAssociationOverride(classDef, parsedElementCollection.getAssociationOverride());
+            if (parsedElementCollection.getConnectedClass() == null) {//if not embeddable
 
+                EnumType parsedEnumType = parsedElementCollection.getEnumerated();
+                EnumeratedSnippet enumerated = null;
+                if (parsedEnumType != null) {
+                    enumerated = new EnumeratedSnippet();
+                    enumerated.setValue(parsedEnumType);
+                }
+
+                TemporalType parsedTemporalType = parsedElementCollection.getTemporal();
+                TemporalSnippet temporal = null;
+                if (parsedTemporalType != null) {
+                    temporal = new TemporalSnippet();
+                    temporal.setValue(parsedTemporalType);
+                }
+                variableDef.setEnumerated(enumerated);
+                variableDef.setTemporal(temporal);
+                variableDef.setColumnDef(getColumnDef(parsedElementCollection.getColumn()));
+            } else {
+                processInternalAttributeOverride(variableDef, parsedElementCollection.getAttributeOverride());
+                processInternalAssociationOverride(variableDef, parsedElementCollection.getAssociationOverride());
+            }
         }
     }
 
@@ -554,13 +557,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return fieldResults;
     }
 
-    protected List<JoinColumnSnippet> getJoinColumns(List<JoinColumn> parsedJoinColumns) {
+    protected List<JoinColumnSnippet> getJoinColumns(List<? extends JoinColumn> parsedJoinColumns, boolean mapKey) {
 
         List<JoinColumnSnippet> joinColumns = new ArrayList<>();
 
         parsedJoinColumns.stream().filter(JoinColumnValidator::isNotEmpty).forEach(parsedJoinColumn -> {
 
-            JoinColumnSnippet joinColumn = new JoinColumnSnippet();
+            JoinColumnSnippet joinColumn = new JoinColumnSnippet(mapKey);
 
             joinColumn.setColumnDefinition(
                     parsedJoinColumn.getColumnDefinition());
@@ -598,7 +601,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
 
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
-                parsedCollectionTable.getJoinColumn());
+                parsedCollectionTable.getJoinColumn(),false);
 
         Set<UniqueConstraint> parsedUniqueConstraints = parsedCollectionTable.getUniqueConstraint();
 
@@ -625,10 +628,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
 
         List<JoinColumnSnippet> inverseJoinColumns = getJoinColumns(
-                parsedJoinTable.getInverseJoinColumn());
+                parsedJoinTable.getInverseJoinColumn(),false);
 
         List<JoinColumnSnippet> joinColumns = getJoinColumns(
-                parsedJoinTable.getJoinColumn());
+                parsedJoinTable.getJoinColumn(),false);
 
         Set<UniqueConstraint> parsedUniqueConstraints
                 = parsedJoinTable.getUniqueConstraint();
@@ -720,13 +723,12 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<NamedSubgraphSnippet> namedSubgraphs = new ArrayList<NamedSubgraphSnippet>();
+        List<NamedSubgraphSnippet> namedSubgraphs = new ArrayList<>();
         for (NamedSubgraph parsedNamedSubgraph : parsedNamedSubgraphs) {
             NamedSubgraphSnippet namedSubgraph = new NamedSubgraphSnippet();
             namedSubgraph.setName(parsedNamedSubgraph.getName());
             namedSubgraph.setNamedAttributeNode(getNamedAttributeNodes(parsedNamedSubgraph.getNamedAttributeNode()));
             namedSubgraph.setType(parsedNamedSubgraph.getClazz());
-//            idClass.setPackageName(packageName);
             namedSubgraphs.add(namedSubgraph);
         }
         return namedSubgraphs;
@@ -739,7 +741,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<QueryHintSnippet> queryHints = new ArrayList<QueryHintSnippet>();
+        List<QueryHintSnippet> queryHints = new ArrayList<>();
 
         for (QueryHint parsedQueryHint : parsedQueryHints) {
             QueryHintSnippet queryHint = new QueryHintSnippet();
@@ -779,7 +781,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         for (AssociationOverride parsedAssociationOverride : parsedAssociationOverrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(),false);
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
             if ((joinTable == null || joinTable.isEmpty()) && joinColumnsList.isEmpty()) {
@@ -798,19 +800,17 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    protected void processAttributeOverrides(
+    protected AttributeOverridesSnippet processAttributeOverrides(
             Set<AttributeOverride> parsedAttributeOverrides) {
 
         if (parsedAttributeOverrides == null || parsedAttributeOverrides.isEmpty()) {
-            return;
+            return null;
         }
-
-        classDef.setAttributeOverrides(new AttributeOverridesSnippet());
+        AttributeOverridesSnippet attributeOverridesSnippet = new AttributeOverridesSnippet();
 
         for (AttributeOverride parsedAttributeOverride : parsedAttributeOverrides) {
 
-            ColumnDefSnippet columnDef = getColumnDef(
-                    parsedAttributeOverride.getColumn());
+            ColumnDefSnippet columnDef = getColumnDef(parsedAttributeOverride.getColumn());
             if (columnDef == null) {
                 continue;
             }
@@ -819,13 +819,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             attributeOverride.setColumnDef(columnDef);
             attributeOverride.setName(parsedAttributeOverride.getName());
 
-            classDef.getAttributeOverrides().addAttributeOverrides(
-                    attributeOverride);
+            attributeOverridesSnippet.addAttributeOverrides(attributeOverride);
         }
-
-        if (classDef.getAttributeOverrides().getAttributeOverrides().isEmpty()) {
-            classDef.setAttributeOverrides(null);
+        
+        if(attributeOverridesSnippet.getAttributeOverrides().isEmpty()){
+            return null;
         }
+        
+        return attributeOverridesSnippet;
     }
 
     protected void processEntityListeners(EntityListeners parsedEntityListeners) {
@@ -1071,7 +1072,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         for (AssociationOverride parsedAssociationOverride : associationOverrrides) {
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn());
+            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(parsedAssociationOverride.getJoinColumn(),false);
             JoinTableSnippet joinTable = getJoinTable(parsedAssociationOverride.getJoinTable());
 
             if (joinTable.isEmpty() && joinColumnsList.isEmpty()) {
@@ -1157,13 +1158,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     variableDef.setTableGenerator(processTableGenerator(parsedTableGenerator));
                 }
             }
-
-            TemporalType parsedTemporal = parsedId.getTemporal();
-
-            if (parsedTemporal != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX + parsedTemporal.value());
+            
+            TemporalType parsedTemporalType = parsedId.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
             }
+            variableDef.setTemporal(temporal);
         }
     }
 
@@ -1184,6 +1186,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ManyToManySnippet manyToMany = new ManyToManySnippet();
 
             manyToMany.setCollectionType(parsedManyToMany.getCollectionType());
+            manyToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedManyToMany));
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
             manyToMany.setCascadeTypes(cascadeTypes);
@@ -1209,7 +1212,44 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
         }
     }
-
+   private MapKeySnippet updateMapKeyAttributeSnippet(MapKeyHandler mapKeyHandler) {
+       if(mapKeyHandler.getMapKeyType() == null || mapKeyHandler.getValidatedMapKeyType()==null){
+           return null;
+       }
+       MapKeySnippet snippet = new MapKeySnippet();
+       if(mapKeyHandler.getMapKeyType() == MapKeyType.EXT && mapKeyHandler.getValidatedMapKeyType() == MapKeyType.EXT){
+           snippet.setMapKeyAttribute(mapKeyHandler.getMapKeyAttribute());
+           snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttribute().getDataTypeLabel());
+       } else {
+           if (mapKeyHandler.getMapKeyEntity() != null) {
+               List<JoinColumnSnippet> joinColumnsList = getJoinColumns(mapKeyHandler.getMapKeyJoinColumn(),true);
+               JoinColumnsSnippet joinColumns = null;
+               if (!joinColumnsList.isEmpty()) {
+                   joinColumns = new JoinColumnsSnippet(true);
+                   joinColumns.setJoinColumns(joinColumnsList);
+                   joinColumns.setForeignKey(getForeignKey(mapKeyHandler.getMapKeyForeignKey()));
+               }
+               snippet.setJoinColumnsSnippet(joinColumns);
+               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEntity().getClazz());
+           } else if (mapKeyHandler.getMapKeyEmbeddable() != null) {//TODO attr override
+               snippet.setAttributeOverrideSnippet(processAttributeOverrides(mapKeyHandler.getMapKeyAttributeOverride()));
+               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyEmbeddable().getClazz());
+           } else {
+               if (mapKeyHandler.getMapKeyEnumerated() != null) {
+                   EnumeratedSnippet enumeratedSnippet = new EnumeratedSnippet(true);
+                   enumeratedSnippet.setValue(mapKeyHandler.getMapKeyEnumerated());
+                   snippet.setEnumeratedSnippet(enumeratedSnippet);
+               } else if (mapKeyHandler.getMapKeyTemporal() != null) {
+                   TemporalSnippet temporalSnippet = new TemporalSnippet(true);
+                   temporalSnippet.setValue(mapKeyHandler.getMapKeyTemporal());
+                   snippet.setTemporalSnippet(temporalSnippet);
+               }
+               snippet.setColumnSnippet(getColumnDef(mapKeyHandler.getMapKeyColumn(), true));
+               snippet.setMapKeyAttributeType(mapKeyHandler.getMapKeyAttributeType());
+           }
+       }
+       return snippet;
+    }
     protected void processManyToOne(List<ManyToOne> parsedManyToOnes) {
 
         if (parsedManyToOnes == null) {
@@ -1223,17 +1263,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     parsedManyToOne.getCascade());
 
             JoinTableSnippet joinTable = getJoinTable(parsedManyToOne.getJoinTable());
-
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(
-                    parsedManyToOne.getJoinColumn());
-
-            JoinColumnsSnippet joinColumns = null;
-
-            if (!joinColumnsList.isEmpty()) {
-                joinColumns = new JoinColumnsSnippet();
-                joinColumns.setJoinColumns(joinColumnsList);
-                joinColumns.setForeignKey(getForeignKey(parsedManyToOne.getForeignKey()));
-            }
 
             ManyToOneSnippet manyToOne = new ManyToOneSnippet();
 
@@ -1254,8 +1283,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             variableDef.setRelationDef(manyToOne);
             variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(joinColumns);
-//            variableDef.setType(parsedManyToOne.getAttributeType());
+            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne, false));
         }
     }
 
@@ -1272,24 +1300,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             JoinTableSnippet joinTable = getJoinTable(parsedOneToMany.getJoinTable());
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(
-                    parsedOneToMany.getJoinColumn());
-
-            JoinColumnsSnippet joinColumns = null;
-
-            if (!joinColumnsList.isEmpty()) {
-                joinColumns = new JoinColumnsSnippet();
-                joinColumns.setJoinColumns(joinColumnsList);
-                joinColumns.setForeignKey(getForeignKey(parsedOneToMany.getForeignKey()));
-            }
-
             OneToManySnippet oneToMany = new OneToManySnippet();
 
             oneToMany.setCascadeTypes(cascadeTypes);
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
-
+            oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }
@@ -1298,11 +1315,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             variableDef.setRelationDef(oneToMany);
             variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(joinColumns);
+            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToMany, false));
             if (parsedOneToMany.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
             }
-//            variableDef.setType(parsedOneToMany.getAttributeType());
 
             if (parsedOneToMany.getMapKey() != null) {
                 variableDef.setMapKey(parsedOneToMany.getMapKey().getName());
@@ -1323,17 +1339,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             JoinTableSnippet joinTable = getJoinTable(parsedOneToOne.getJoinTable());
 
-            List<JoinColumnSnippet> joinColumnsList = getJoinColumns(
-                    parsedOneToOne.getJoinColumn());
-
-            JoinColumnsSnippet joinColumns = null;
-
-            if (!joinColumnsList.isEmpty()) {
-                joinColumns = new JoinColumnsSnippet();
-                joinColumns.setJoinColumns(joinColumnsList);
-                joinColumns.setForeignKey(getForeignKey(parsedOneToOne.getForeignKey()));
-
-            }
+            
 
             OneToOneSnippet oneToOne = new OneToOneSnippet();
 
@@ -1354,9 +1360,19 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             variableDef.setRelationDef(oneToOne);
             variableDef.setJoinTable(joinTable);
-            variableDef.setJoinColumns(joinColumns);
-//            variableDef.setType(parsedOneToOne.getAttributeType());
+            variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
         }
+    }
+    
+    private JoinColumnsSnippet getJoinColumnsSnippet(JoinColumnHandler joinColumnHandler, boolean mapKey){
+        List<JoinColumnSnippet> joinColumnsList = getJoinColumns(joinColumnHandler.getJoinColumn(), mapKey);
+            JoinColumnsSnippet joinColumns = null;
+            if (!joinColumnsList.isEmpty()) {
+                joinColumns = new JoinColumnsSnippet(mapKey);
+                joinColumns.setJoinColumns(joinColumnsList);
+                joinColumns.setForeignKey(getForeignKey(joinColumnHandler.getForeignKey()));
+            }
+            return joinColumns;
     }
 
     protected void processVersion(List<Version> parsedVersions) {
@@ -1372,11 +1388,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setVersion(true);
             variableDef.setColumnDef(columnDef);
 
-            if (parsedVersion.getTemporal() != null) {
-                variableDef.setTemporal(true);
-                variableDef.setTemporalType(TEMPORAL_TYPE_PREFIX
-                        + parsedVersion.getTemporal().value());
+            TemporalType parsedTemporalType = parsedVersion.getTemporal();
+            TemporalSnippet temporal = null;
+            if (parsedTemporalType != null) {
+                temporal = new TemporalSnippet();
+                temporal.setValue(parsedTemporalType);
             }
+            variableDef.setTemporal(temporal);
         }
     }
 

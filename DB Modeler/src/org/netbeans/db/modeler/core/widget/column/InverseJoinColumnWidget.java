@@ -47,13 +47,6 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
         });
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(InverseJoinColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected String evaluateName() {
         return InverseJoinColumnWidget.evaluateName(this.getBaseElementSpec().getAttribute(), this.getBaseElementSpec().getReferenceColumn());
@@ -99,7 +92,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
         return menuList;
     }
 
-    void convertToJoinTable(String name) {
+    private void convertToJoinTable(String name) {
         DBInverseJoinColumn inverseJoinColumnSpec = (DBInverseJoinColumn) this.getBaseElementSpec();
         inverseJoinColumnSpec.getJoinColumns().removeIf(c -> true);
         inverseJoinColumnSpec.getAttribute().getJoinTable().setName(name);

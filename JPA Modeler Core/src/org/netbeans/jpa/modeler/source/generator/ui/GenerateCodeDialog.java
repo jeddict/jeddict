@@ -588,7 +588,6 @@ public class GenerateCodeDialog extends GenericDialog
     }//GEN-LAST:event_resourcePackageComboActionPerformed
 
     private void changebusinessLayer(TechContext businessLayer) {
-        System.out.println("Generator.getController(businessLayer) " + Generator.getController(businessLayer));
         controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
         controllerLayerCombo.setEnabled(businessLayer.isValid());
         viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));

@@ -88,19 +88,19 @@ public class EmbeddableAttributes extends BaseAttributes {
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")) {
                     OneToOne oneToOneObj = new OneToOne();
                     this.addOneToOne(oneToOneObj);
-                    oneToOneObj.load(element, variableElement);
+                    oneToOneObj.load(entityMappings, element, variableElement, null);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne")) {
                     ManyToOne manyToOneObj = new ManyToOne();
                     this.addManyToOne(manyToOneObj);
-                    manyToOneObj.load(element, variableElement);
+                    manyToOneObj.load(entityMappings, element, variableElement, null);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToMany")) {
                     OneToMany oneToManyObj = new OneToMany();
                     this.addOneToMany(oneToManyObj);
-                    oneToManyObj.load(element, variableElement);
+                    oneToManyObj.load(entityMappings, element, variableElement, null);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToMany")) {
                     ManyToMany manyToManyObj = new ManyToMany();
                     this.addManyToMany(manyToManyObj);
-                    manyToManyObj.load(element, variableElement);
+                    manyToManyObj.load(entityMappings, element, variableElement, null);
                 } else if (JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.Embedded")) {
                     this.addEmbedded(Embedded.load(entityMappings, element, variableElement));
                 } else {

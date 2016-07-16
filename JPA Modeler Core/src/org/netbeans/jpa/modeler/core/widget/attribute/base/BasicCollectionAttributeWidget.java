@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import java.awt.Image;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -37,6 +38,12 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
         this.setImage(getIcon());
 
     }
+    
+    @Override
+    public void init() {
+        super.init();
+        AttributeValidator.scanMapKeyHandlerError(this);
+    }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
@@ -48,70 +55,8 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
+        createMapKeyPropertySet(set);
     }
-//
-//      private PropertySupport getCollectionTableColumnProperty() {
-//        final RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
-//        final NAttributeEntity attributeEntity = new NAttributeEntity("CollectionTable_JoinColumns", "Join Columns", "");
-//        attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
-//
-//        List<Column> columns = new ArrayList<Column>();
-//        columns.add(new Column("OBJECT", false, true, Object.class));
-//        columns.add(new Column("Column Name", false, String.class));
-//        columns.add(new Column("Referenced Column Name", false, String.class));
-//        attributeEntity.setColumns(columns);
-//        attributeEntity.setCustomDialog(new JoinColumnPanel());
-//
-//        attributeEntity.setTableDataListener(new NEntityDataListener() {
-//            List<Object[]> data;
-//            int count;
-//
-//            @Override
-//            public void initCount() {
-//                count = relationAttributeSpec.getJoinTable().getJoinColumn().size();
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return count;
-//            }
-//
-//            @Override
-//            public void initData() {
-//                List<JoinColumn> joinColumns = relationAttributeSpec.getJoinTable().getJoinColumn();
-//                List<Object[]> data_local = new LinkedList<Object[]>();
-//                Iterator<JoinColumn> itr = joinColumns.iterator();
-//                while (itr.hasNext()) {
-//                    JoinColumn joinColumn = itr.next();
-//                    Object[] row = new Object[attributeEntity.getColumns().size()];
-//                    row[0] = joinColumn;
-//                    row[1] = joinColumn.getName();
-//                    row[2] = joinColumn.getReferencedColumnName();
-//                    data_local.add(row);
-//                }
-//                this.data = data_local;
-//            }
-//
-//            @Override
-//            public List<Object[]> getData() {
-//                return data;
-//            }
-//
-//            @Override
-//            public void setData(List data) {
-//                relationAttributeSpec.getJoinTable().getJoinColumn().clear();
-//                for (Object[] row : (List<Object[]>) data) {
-//                    relationAttributeSpec.getJoinTable().getJoinColumn().add((JoinColumn) row[0]);
-//                }
-//                this.data = data;
-//            }
-//
-//        });
-//
-//        return new NEntityPropertySupport(this.getModelerScene().getModelerFile(), attributeEntity);
-//    }
-//
-//
 
     @Override
     public String getIconPath() {

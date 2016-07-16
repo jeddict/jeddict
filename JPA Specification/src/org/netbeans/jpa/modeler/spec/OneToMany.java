@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
+import org.netbeans.jpa.source.JARELoader;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -102,22 +103,25 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
     @XmlAttribute(name = "orphan-removal")
     protected Boolean orphanRemoval;
 
-    public void load(Element element, VariableElement variableElement) {
-        AnnotationMirror annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToMany");
-        super.load(annotationMirror, element, variableElement);
+    @Override
+    public OneToMany load(EntityMappings entityMappings,Element element, VariableElement variableElement, AnnotationMirror annotationMirror) {
+        if(annotationMirror==null){
+           annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.OneToMany");
+        }
+        super.loadAttribute(entityMappings, element, variableElement, annotationMirror);
 
         AnnotationMirror joinColumnsAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumns");
         if (joinColumnsAnnotationMirror != null) {
             List joinColumnsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(joinColumnsAnnotationMirror, "value");
             if (joinColumnsAnnot != null) {
                 for (Object joinColumnObj : joinColumnsAnnot) {
-                    this.getJoinColumn().add(JoinColumn.load(element, (AnnotationMirror) joinColumnObj));
+                    this.getJoinColumn().add(new JoinColumn().load(element, (AnnotationMirror) joinColumnObj));
                 }
             }
         } else {
             AnnotationMirror joinColumnAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.JoinColumn");
             if (joinColumnAnnotationMirror != null) {
-                this.getJoinColumn().add(JoinColumn.load(element, joinColumnAnnotationMirror));
+                this.getJoinColumn().add(new JoinColumn().load(element, joinColumnAnnotationMirror));
             }
         }
         this.orphanRemoval = (Boolean) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "orphanRemoval");
@@ -126,6 +130,7 @@ public class OneToMany extends MultiRelationAttribute implements JoinColumnHandl
         if (foreignKeyValue != null) {
             this.foreignKey = ForeignKey.load(element, foreignKeyValue);
         }
+        return this;
     }
 
     /**

@@ -32,13 +32,6 @@ public class ParentAssociationJoinColumnWidget extends ParentAssociationColumnWi
         super(scene, nodeWidget, pinWidgetInfo);
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(ParentAssociationJoinColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     protected boolean prePersistName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();

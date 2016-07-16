@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -34,6 +35,12 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<ElementCollection> {
 
     private EmbeddableFlowWidget embeddableFlowWidget;
+    
+    @Override
+    public void init() {
+        super.init();
+        AttributeValidator.scanMapKeyHandlerError(this);
+    }
 
     public MultiValueEmbeddedAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
@@ -59,7 +66,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
 
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
-
+        createMapKeyPropertySet(set);
     }
     /**
      * @return the embeddableFlowWidget

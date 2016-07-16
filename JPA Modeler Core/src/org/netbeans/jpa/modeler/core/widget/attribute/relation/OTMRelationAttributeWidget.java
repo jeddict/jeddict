@@ -21,6 +21,7 @@ import org.netbeans.jpa.modeler.core.widget.flow.relation.HierarchicalRelationFl
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -42,14 +43,10 @@ public class OTMRelationAttributeWidget extends MultiRelationAttributeWidget<One
     }
 
     @Override
-    public void createPropertySet(ElementPropertySet set) {
-        super.createPropertySet(set);
-        OneToMany otmSpec = this.getBaseElementSpec();
-        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, otmSpec));
-        set.put("BASIC_PROP", PropertiesHandler.getMapKeyProperty(this, otmSpec));
-        
+    public void init() {
+        super.init();
+        AttributeValidator.scanMapKeyHandlerError(this);
     }
-
     /**
      * @return the hierarchicalRelationFlowWidget
      */

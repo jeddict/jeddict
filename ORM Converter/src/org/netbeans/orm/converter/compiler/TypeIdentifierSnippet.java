@@ -18,10 +18,19 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import org.netbeans.jcode.core.util.AttributeType;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
+import static org.netbeans.jcode.core.util.AttributeType.BYTE_ARRAY;
+import static org.netbeans.jcode.core.util.AttributeType.CALENDAR;
+import static org.netbeans.jcode.core.util.AttributeType.DOUBLE;
+import static org.netbeans.jcode.core.util.AttributeType.LONG;
+import static org.netbeans.jcode.core.util.AttributeType.STRING;
 import org.netbeans.orm.converter.util.ClassHelper;
 
 public class TypeIdentifierSnippet implements Snippet {
 
+    private static final String SELECT_MAP_KEY = "Map_Key_Missing";
     private String type = null;
 
     private VariableDefSnippet variableDef = null;
@@ -67,6 +76,14 @@ public class TypeIdentifierSnippet implements Snippet {
 
         return classHelper;
     }
+    
+    private String wrap(String dataType) {
+        if(dataType==null){
+            return null;
+        }
+        return AttributeType.Type.PRIMITIVE ==  AttributeType.getType(dataType) ?
+                AttributeType.getWrapperType(dataType) : dataType;
+    }
 
     private void processVariableType() {
 
@@ -78,21 +95,32 @@ public class TypeIdentifierSnippet implements Snippet {
 
             RelationDefSnippet relationDef = variableDef.getRelationDef();
 
-            if (relationDef instanceof OneToManySnippet
-                    || relationDef instanceof ManyToManySnippet) {
+            if (relationDef instanceof MultiRelationAttributeSnippet) {
+                MultiRelationAttributeSnippet multiRelationAttributeSnippet = (MultiRelationAttributeSnippet) relationDef;
 
                 importSnippets = new ArrayList<>();
 
-                ClassHelper collectionTypeClassHelper = null;
-                if (relationDef instanceof OneToManySnippet) {
-                    collectionTypeClassHelper = getClassHelper(((OneToManySnippet) relationDef).getCollectionType());
-                } else if (relationDef instanceof ManyToManySnippet) {
-                    collectionTypeClassHelper = getClassHelper(((ManyToManySnippet) relationDef).getCollectionType());
+                ClassHelper collectionTypeClassHelper = getClassHelper(((MultiRelationAttributeSnippet) relationDef).getCollectionType());
+                
+                ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
+                ClassHelper mapKeyClassHelper = null;
+                Class _class = collectionTypeClassHelper.getClazz();
+                  
+                if (_class != null && Map.class.isAssignableFrom(_class)) {
+                    if (multiRelationAttributeSnippet.getMapKeySnippet() != null && multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType().getClassName()!=null) {
+                        mapKeyClassHelper = multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType();
+                        type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
+                    } else {
+                        type = collectionTypeClassHelper.getClassName() + "<" + SELECT_MAP_KEY + "," + wrap(classHelper.getClassName()) + ">";
+                    }
+                } else {
+                    type = collectionTypeClassHelper.getClassName() + "<" + wrap(classHelper.getClassName()) + ">";
                 }
 
-                ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
-                type = collectionTypeClassHelper.getClassName() + "<" + classHelper.getClassName() + ">";
                 importSnippets.add(collectionTypeClassHelper.getFQClassName());
+                if (_class != null && Map.class.isAssignableFrom(_class) && mapKeyClassHelper!=null) {
+                    importSnippets.add(mapKeyClassHelper.getFQClassName());
+                }
                 importSnippets.add(classHelper.getFQClassName());
                 return;
             } else {
@@ -109,20 +137,35 @@ public class TypeIdentifierSnippet implements Snippet {
 
             ClassHelper collectionTypeClassHelper = getClassHelper(elementCollection.getCollectionType());
             ClassHelper classHelper = getClassHelper(elementCollection.getTargetClass());
-            type = collectionTypeClassHelper.getClassName() + "<" + classHelper.getClassName() + ">";
+            ClassHelper mapKeyClassHelper = null;
+            Class _class = collectionTypeClassHelper.getClazz();
+                if (_class != null && Map.class.isAssignableFrom(_class)) {
+                    if (elementCollection.getMapKeySnippet() != null && elementCollection.getMapKeySnippet().getMapKeyAttributeType().getClassName()!=null) {
+                        mapKeyClassHelper = elementCollection.getMapKeySnippet().getMapKeyAttributeType();
+                        type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
+                    } else {
+                        type = collectionTypeClassHelper.getClassName() + "<" + SELECT_MAP_KEY + "," + wrap(classHelper.getClassName()) + ">";
+                    }
+                } else {
+                    type = collectionTypeClassHelper.getClassName() + "<" + wrap(classHelper.getClassName()) + ">";
+                }
+            
             importSnippets.add(collectionTypeClassHelper.getFQClassName());
+            if (_class != null && Map.class.isAssignableFrom(_class) && mapKeyClassHelper!=null) {
+                    importSnippets.add(mapKeyClassHelper.getFQClassName());
+            }
             importSnippets.add(classHelper.getFQClassName());
             return;
         }
 
         if (variableDef.isLob()) {
-            type = "byte[]";
+            type = BYTE_ARRAY;
             return;
         }
 
-        if (variableDef.isTemporal()) {
-            importSnippets = Collections.singletonList("java.util.Calendar");
-            type = "Calendar";
+        if (variableDef.getTemporal()!=null) {
+            importSnippets = Collections.singletonList(CALENDAR);
+            type = JavaSourceHelper.getSimpleClassName(CALENDAR);
             return;
         }
 
@@ -133,16 +176,16 @@ public class TypeIdentifierSnippet implements Snippet {
             if (columnDef.getPrecision() != 0
                     && columnDef.getScale() != 0) {
 
-                type = "double";
+                type = DOUBLE;
                 return;
             } else if (columnDef.getPrecision() != 0
                     && columnDef.getScale() == 0) {
 
-                type = "long";
+                type = LONG;
                 return;
             }
         }
 
-        type = "String";
+        type = STRING;
     }
 }

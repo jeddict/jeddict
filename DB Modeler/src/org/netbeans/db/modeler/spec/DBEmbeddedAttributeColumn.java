@@ -23,11 +23,15 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public class DBEmbeddedAttributeColumn extends DBEmbeddedColumn<Attribute> {
 
-    private AttributeOverride attributeOverride;
+    protected AttributeOverride attributeOverride;
 
     public DBEmbeddedAttributeColumn(String name, List<Embedded> embeddedList, Attribute managedAttribute) {
         super(name, embeddedList, managedAttribute);
-        if (managedAttribute instanceof ElementCollection) {
+        init();
+    }
+    
+    protected void init(){
+        if (getAttribute() instanceof ElementCollection) {
 
         } else {
             attributeOverride = embeddedList.get(0).findAttributeOverride(getKeyName());

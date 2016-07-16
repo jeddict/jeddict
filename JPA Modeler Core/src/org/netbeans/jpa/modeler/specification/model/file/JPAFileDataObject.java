@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.specification.model.file;
 
 import java.awt.Image;
 import java.io.IOException;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.JPA_FILE_TYPE;
 import org.netbeans.modeler.file.ModelerFileDataObject;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
 import org.openide.awt.ActionID;
@@ -34,10 +35,10 @@ import org.openide.util.NbBundle.Messages;
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_JPAModel_LOADER",
-        mimeType = "text/jpa+xml",
+        mimeType = JPA_FILE_TYPE,
         extension = {"jpa", "JPA"})
 @DataObject.Registration(
-        mimeType = "text/jpa+xml",
+        mimeType = JPA_FILE_TYPE,
         iconBase = "org/netbeans/jpa/modeler/specification/model/file/JPA_FILE_ICON.png",
         displayName = "#LBL_JPAModel_LOADER",
         position = 300)
@@ -97,7 +98,7 @@ public class JPAFileDataObject extends ModelerFileDataObject {
 
     public JPAFileDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        registerEditor("text/jpa+xml", false);
+        registerEditor(JPA_FILE_TYPE, false);
     }
 
     @Override

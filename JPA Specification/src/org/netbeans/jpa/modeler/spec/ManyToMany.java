@@ -77,12 +77,16 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "many-to-many", propOrder = {})
+@XmlType(name = "many-to-many")
 public class ManyToMany extends MultiRelationAttribute {
 
-    public void load(Element element, VariableElement variableElement) {
-        AnnotationMirror relationAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ManyToMany");
-        super.load(relationAnnotationMirror, element, variableElement);
+    @Override
+    public ManyToMany load(EntityMappings entityMappings, Element element, VariableElement variableElement, AnnotationMirror annotationMirror) {
+        if (annotationMirror == null) {
+            annotationMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.ManyToMany");
+        }
+        super.loadAttribute(entityMappings, element, variableElement, annotationMirror);
+        return this;
     }
 
 }

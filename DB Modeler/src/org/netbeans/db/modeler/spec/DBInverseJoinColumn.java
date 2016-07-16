@@ -24,7 +24,7 @@ public class DBInverseJoinColumn extends DBColumn<RelationAttribute> implements 
     private final boolean relationTableExist;
 
     private final JoinColumn joinColumn;
-    private final List<JoinColumn> joinColumns;
+    private final List<? extends JoinColumn> joinColumns;
 
     public DBInverseJoinColumn(String name, RelationAttribute attribute, boolean relationTableExist) {
         super(name, attribute);
@@ -40,7 +40,7 @@ public class DBInverseJoinColumn extends DBColumn<RelationAttribute> implements 
         return joinColumn;
     }
 
-    public List<JoinColumn> getJoinColumns() {
+    public List<? extends JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 

@@ -17,20 +17,29 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ENUMERATED;
+import static org.netbeans.jcode.jpa.JPAConstants.ENUMERATED_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_ORDINAL;
+import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_STRING;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED_FQN;
+import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class EnumeratedSnippet implements Snippet {
 
-    public static final String TYPE_ORDINAL = "EnumType.ORDINAL";
-    public static final String TYPE_STRING = "EnumType.STRING";
-
     private String value = null;
-
     private static final List<String> ENUM_TYPES = getEnumTypes();
+    private boolean mapKey;
 
     public EnumeratedSnippet() {
+    }
+
+    public EnumeratedSnippet(boolean mapKey) {
+        this.mapKey = mapKey;
     }
 
     public EnumeratedSnippet(String value) {
@@ -42,48 +51,73 @@ public class EnumeratedSnippet implements Snippet {
     }
 
     public void setValue(String value) {
-
         if (!ENUM_TYPES.contains(value)) {
-            throw new IllegalArgumentException(
-                    "Invalid Enumerated Type, Supported types"
-                    + ENUM_TYPES);
+            throw new IllegalArgumentException("Invalid Enumerated Type, Supported types" + ENUM_TYPES);
         }
-
         this.value = value;
+    }
+
+    public void setValue(EnumType parsedEnumType) {
+        if (parsedEnumType.equals(EnumType.ORDINAL)) {
+            this.setValue(ENUM_TYPE_ORDINAL);
+        } else if (parsedEnumType.equals(EnumType.STRING)) {
+            this.setValue(ENUM_TYPE_STRING);
+        }
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (GeneratorUtil.isGenerateDefaultValue()) {
-            if (value == null || value.equals(TYPE_ORDINAL)) {
-                return "@Enumerated(EnumType.ORDINAL)";
-            } else {
-                return "@Enumerated(EnumType.STRING)";
-            }
-        } else if (value == null || value.equals(TYPE_ORDINAL)) {
-            return "@Enumerated";
+        StringBuilder builder = new StringBuilder();
+        builder.append('@');
+         if (mapKey) {
+            builder.append(MAP_KEY_ENUMERATED);
         } else {
-            return "@Enumerated(EnumType.STRING)";
+            builder.append(ENUMERATED);
         }
+        if (ENUM_TYPE_STRING.equals(value)) {
+            builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_STRING).append(ORMConverterUtil.CLOSE_PARANTHESES);
+        } else if (ENUM_TYPE_ORDINAL.equals(value)) {
+            builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_ORDINAL).append(ORMConverterUtil.CLOSE_PARANTHESES);
+        } else if (GeneratorUtil.isGenerateDefaultValue()){
+            builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_ORDINAL).append(ORMConverterUtil.CLOSE_PARANTHESES);  
+        }
+        return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        if ((value == null || value.equals(TYPE_ORDINAL)) && !GeneratorUtil.isGenerateDefaultValue()) {
-            return Collections.singleton("javax.persistence.Enumerated");
-        }
-
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.Enumerated");
-        importSnippets.add("javax.persistence.EnumType");
+        if (mapKey) {
+            importSnippets.add(MAP_KEY_ENUMERATED_FQN);
+        } else {
+            importSnippets.add(ENUMERATED_FQN);
+        }
+        
+        if(ENUM_TYPE_STRING.equals(value) || ENUM_TYPE_ORDINAL.equals(value) || GeneratorUtil.isGenerateDefaultValue()){
+            importSnippets.add(ENUM_TYPE_FQN);
+        }
         return importSnippets;
     }
 
     private static List<String> getEnumTypes() {
         List<String> enumTypes = new ArrayList<>();
-        enumTypes.add(TYPE_STRING);
-        enumTypes.add(TYPE_ORDINAL);
+        enumTypes.add(ENUM_TYPE_STRING);
+        enumTypes.add(ENUM_TYPE_ORDINAL);
         return enumTypes;
+    }
+
+    /**
+     * @return the mapKey
+     */
+    public boolean isMapKey() {
+        return mapKey;
+    }
+
+    /**
+     * @param mapKey the mapKey to set
+     */
+    public void setMapKey(boolean mapKey) {
+        this.mapKey = mapKey;
     }
 }

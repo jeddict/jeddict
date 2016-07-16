@@ -48,14 +48,6 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.modules.db.core</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <implementation-version/>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>org.netbeans.jcode.javaee.generator</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -140,6 +132,14 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
+                        <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.db.core</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
                         <implementation-version/>
                     </run-dependency>
                 </dependency>
@@ -291,6 +291,15 @@
                     <run-dependency>
                         <release-version>2</release-version>
                         <specification-version>1.59.1.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.options.api</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.41.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -493,9 +502,6 @@
                 <package>org.netbeans.jpa.modeler.core.widget.relation.flow.direction</package>
                 <package>org.netbeans.jpa.modeler.core.widget.ui</package>
                 <package>org.netbeans.jpa.modeler.navigator.dbview</package>
-                <package>org.netbeans.jpa.modeler.navigator.entitygraph</package>
-                <package>org.netbeans.jpa.modeler.navigator.entitygraph.component</package>
-                <package>org.netbeans.jpa.modeler.navigator.entitygraph.component.spec</package>
                 <package>org.netbeans.jpa.modeler.navigator.nodes</package>
                 <package>org.netbeans.jpa.modeler.navigator.overrideview</package>
                 <package>org.netbeans.jpa.modeler.properties</package>

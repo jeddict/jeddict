@@ -53,8 +53,7 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "embeddable", propOrder = {
-    //    "description",
-    "attributes", //    "interfaces"
+    "attributes"
 })
 public class Embeddable extends ManagedClass {
 

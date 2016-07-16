@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.awt.Cursor;
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;

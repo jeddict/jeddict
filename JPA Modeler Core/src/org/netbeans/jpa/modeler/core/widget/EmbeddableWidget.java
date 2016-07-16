@@ -39,6 +39,7 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
 
     @Override
     public void init() {
+        super.init();
         Embeddable embeddable = this.getBaseElementSpec();
         if (embeddable.getAttributes() == null) {
             embeddable.setAttributes(new EmbeddableAttributes());

@@ -51,7 +51,6 @@ public final class ExceptionUtils implements IExceptionHandler {
     }
 
     public static void printStackTrace(String errorMessage, final Throwable t, final ModelerFile file) {
-        System.out.println("EventDispatch Thread : " + SwingUtilities.isEventDispatchThread());
         
         if (StringUtils.isBlank(errorMessage)) {
             errorMessage = t.getMessage();

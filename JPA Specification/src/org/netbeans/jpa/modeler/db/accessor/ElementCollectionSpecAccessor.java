@@ -16,8 +16,9 @@
 package org.netbeans.jpa.modeler.db.accessor;
 
 import static java.util.stream.Collectors.toList;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.DirectAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementCollectionAccessor;
-import org.eclipse.persistence.internal.jpa.metadata.converters.LobMetadata;
+import org.netbeans.jpa.modeler.db.accessor.spec.MapKeyAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
@@ -27,9 +28,9 @@ import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
  *
  * @author Gaurav Gupta
  */
-public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
+public class ElementCollectionSpecAccessor extends ElementCollectionAccessor implements MapKeyAccessor{
 
-    private ElementCollection elementCollection;
+    private final ElementCollection elementCollection;
 
     private ElementCollectionSpecAccessor(ElementCollection elementCollection) {
         this.elementCollection = elementCollection;
@@ -40,11 +41,10 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
         accessor.setName(elementCollection.getName());
         accessor.setAttributeType(elementCollection.getCollectionType());
         accessor.setTargetClassName(elementCollection.getAttributeType());
-
-        AccessorUtil.setEnumerated(accessor,elementCollection.getEnumerated(), true);
-        AccessorUtil.setLob(accessor, elementCollection.getLob(), elementCollection.getAttributeType(), true);
-        AccessorUtil.setTemporal(accessor, elementCollection.getTemporal(), true);
         
+        AccessorUtil.setEnumerated((DirectAccessor)accessor,elementCollection.getEnumerated());
+        AccessorUtil.setLob(accessor, elementCollection.getLob(), elementCollection.getAttributeType(), true);
+        AccessorUtil.setTemporal((DirectAccessor)accessor, elementCollection.getTemporal());
         if (elementCollection.getColumn() != null) {
             accessor.setColumn(elementCollection.getColumn().getAccessor());
         }
@@ -57,6 +57,7 @@ public class ElementCollectionSpecAccessor extends ElementCollectionAccessor {
         AssociationValidator.filter(elementCollection);
         accessor.setAssociationOverrides(elementCollection.getAssociationOverride().stream().map(AssociationOverrideSpecMetadata::getInstance).collect(toList()));
 
+        MapKeyUtil.load(accessor, elementCollection); 
         return accessor;
 
     }

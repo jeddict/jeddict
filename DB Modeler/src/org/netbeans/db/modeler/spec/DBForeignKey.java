@@ -26,5 +26,5 @@ public interface DBForeignKey {
 
     public JoinColumn getJoinColumn();
 
-    public List<JoinColumn> getJoinColumns();
+    public List<? extends JoinColumn> getJoinColumns();
 }

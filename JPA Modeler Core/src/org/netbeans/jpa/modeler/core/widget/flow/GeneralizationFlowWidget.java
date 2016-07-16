@@ -115,7 +115,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
             ((EntityWidget) this.getSubclassWidget()).scanKeyError();
             ((EntityWidget) this.getSubclassWidget()).scanDuplicateInheritedAttributes();
         }
-
+        
     }
 
     @Override

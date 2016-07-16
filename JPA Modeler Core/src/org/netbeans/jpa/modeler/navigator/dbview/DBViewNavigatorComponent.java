@@ -110,14 +110,11 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
     public void propertyChange(PropertyChangeEvent evt) {
         if (TopComponent.Registry.PROP_ACTIVATED.equals(evt.getPropertyName())) {
             if (opened) {
-                System.out.println("In propertyChange opened");
                 checkNodes();
             } else {
-                System.out.println("In propertyChange ^^opened");
                 ((BeanTreeView) navigatorPane).setVisible(false);
             }
         }
-//        System.out.println("evt.getPropertyName() " + evt.getPropertyName());
     }
 
     private BasePropertyViewManager basePropertyViewManager;
@@ -126,10 +123,8 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
         if (arr != null) {
             if (arr.length == 0) {
                 if (basePropertyViewManager != null) {
-                    System.out.println("0-In checkNodes2 BPVM");
 //                    update(basePropertyViewManager.getModelerScene());
                 } else {
-                    System.out.println("0-In checkNodes2 ^^BPVM");
                     ((BeanTreeView) navigatorPane).setVisible(false);
                 }
             } else if (arr.length == 1) {
@@ -138,25 +133,20 @@ public final class DBViewNavigatorComponent extends TopComponent implements Expl
                 if (basePropertyViewManager_Cur != null) {
                     if (basePropertyViewManager_Pre != basePropertyViewManager_Cur) {
                         basePropertyViewManager = basePropertyViewManager_Cur;
-                        System.out.println("1-In checkNodes2 BPVM");
                         update((JPAModelerScene) basePropertyViewManager.getModelerScene());
                     } else {
-                        System.out.println("1-In checkNodes2 same BPVM");
                     }
 
                 } else if (arr[0].getClass().getPackage().getName().equals("org.netbeans.jpa.modeler.navigator.dbview")) {
                     System.out.println("1-In checkNodes2 Self look");
                 } else {
                     basePropertyViewManager = null;
-                    System.out.println("1-In checkNodes2 ^^BPVM");
                     ((BeanTreeView) navigatorPane).setVisible(false);
                 }
             } else {
-                System.out.println("M-In checkNodes2 multi " + arr);
                 ((BeanTreeView) navigatorPane).setVisible(false);
             }
         } else {
-            System.out.println("NULL-In checkNodes2 null " + arr);
             ((BeanTreeView) navigatorPane).setVisible(false);
         }
     }

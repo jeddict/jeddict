@@ -24,6 +24,7 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.ElementC
 import org.eclipse.persistence.internal.jpa.metadata.converters.EnumeratedMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.converters.LobMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.converters.TemporalMetadata;
+import org.netbeans.jpa.modeler.db.accessor.spec.MapKeyAccessor;
 import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.spec.Lob;
 import org.netbeans.jpa.modeler.spec.TemporalType;
@@ -34,7 +35,7 @@ import org.netbeans.jpa.modeler.spec.TemporalType;
  */
 public class AccessorUtil {
 
-    public static void setEnumerated(DirectAccessor accessor, EnumType enumType, boolean isCollectionType) {
+    public static void setEnumerated(MapKeyAccessor accessor, EnumType enumType) {
         if (enumType == null) {
             return;
         }
@@ -44,16 +45,40 @@ public class AccessorUtil {
         } else {
             enumeratedMetadata.setEnumeratedType(JPA_ENUM_ORDINAL);
         }
-        accessor.setEnumerated(enumeratedMetadata);
-        if (isCollectionType) {
-            ((ElementCollectionAccessor) accessor).setTargetClassName(ProxyEnum.class.getName());
-        } else {
-            accessor.setAttributeType(ProxyEnum.class.getName()); //using the proxy enum instead of the orignal enum 
-        }
+        accessor.setMapKeyEnumerated(enumeratedMetadata);
+        accessor.setMapKeyClassName(ProxyEnum.class.getName());
         // orignal enum is not accessible in classloader so either to use proxy enum or create dynamic enum
     }
+    
+    public static void setEnumerated(DirectAccessor accessor, EnumType enumType) {
+        if (enumType == null) {
+            return;
+        }
+        EnumeratedMetadata enumeratedMetadata = new EnumeratedMetadata();
+        if (enumType == EnumType.STRING) {
+            enumeratedMetadata.setEnumeratedType(JPA_ENUM_STRING);
+        } else {
+            enumeratedMetadata.setEnumeratedType(JPA_ENUM_ORDINAL);
+        }
+        if (accessor instanceof ElementCollectionAccessor) {
+            ((ElementCollectionAccessor) accessor).setTargetClassName(ProxyEnum.class.getName());
+            accessor.setEnumerated(enumeratedMetadata);
+        } else {
+            accessor.setAttributeType(ProxyEnum.class.getName()); 
+            accessor.setEnumerated(enumeratedMetadata);
+        }
+    }
 
-    public static void setTemporal(DirectAccessor accessor, TemporalType temporalType, boolean isCollectionType) {
+    public static void setTemporal(MapKeyAccessor accessor, TemporalType temporalType) {
+        if (temporalType == null) {
+            return;
+        }
+        TemporalMetadata temporalMetadata = new TemporalMetadata();
+        temporalMetadata.setTemporalType(temporalType.toString());
+        accessor.setMapKeyTemporal(temporalMetadata);
+    }
+    
+     public static void setTemporal(DirectAccessor accessor, TemporalType temporalType) {
         if (temporalType == null) {
             return;
         }
@@ -63,31 +88,30 @@ public class AccessorUtil {
     }
 
     public static void setLob(DirectAccessor accessor, Lob lob, String attributeType, boolean isCollectionType) {
-        if (lob == null || attributeType==null) {
+        if (lob == null || attributeType == null) {
             return;
         }
-        
+
         if (attributeType.equals("byte[]") || attributeType.equals("Byte[]")) { //https://github.com/jGauravGupta/jpamodeler/issues/5 , https://github.com/jGauravGupta/jpamodeler/issues/6
             if (isCollectionType) {
                 ((ElementCollectionAccessor) accessor).setTargetClassName(Blob.class.getName());
             } else {
-                accessor.setAttributeType(Blob.class.getName()); 
+                accessor.setAttributeType(Blob.class.getName());
             }
         } else if (attributeType.equals("char[]") || attributeType.equals("Character[]")) {
             if (isCollectionType) {
                 ((ElementCollectionAccessor) accessor).setTargetClassName(Clob.class.getName());
             } else {
-                accessor.setAttributeType(Clob.class.getName()); 
+                accessor.setAttributeType(Clob.class.getName());
             }
         }
-        
-        
-        
+
         accessor.setLob(new LobMetadata());
 
     }
 
     public static enum ProxyEnum {
+
         DEFAULT;
     }
 

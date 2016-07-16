@@ -16,12 +16,18 @@
 package org.netbeans.jpa.modeler.rules.attribute;
 
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.netbeans.jcode.core.util.JavaUtil;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
+import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 
 public class AttributeValidator {
 
@@ -33,6 +39,7 @@ public class AttributeValidator {
     public final static String ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_AttrTableNamedWithReservedSQLKeyword";
     public final static String ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_AttrColumnNamedWithReservedSQLKeyword";
     public final static String PRIMARYKEY_INVALID_LOCATION = "MSG_PrimaryKeyInvalidLocation";
+    public final static String INVALID_MAPKEY_ATTRIBUTE = "MSG_InvalidMapKeyAttribute";
 
     public final static String EMBEDDEDID_AND_ID_FOUND = "MSG_EmbeddedIdAndIdFound";
     public final static String MULTIPLE_EMBEDDEDID_FOUND = "MSG_MultipleEmbeddedIdFound";
@@ -96,5 +103,21 @@ public class AttributeValidator {
             }
         }
 
+    }
+    
+    public static void scanMapKeyHandlerError(AttributeWidget attributeWidget) {
+        if (attributeWidget.getBaseElementSpec() instanceof MapKeyHandler) {
+            if (JavaUtil.isMap(((CollectionTypeHandler) attributeWidget.getBaseElementSpec()).getCollectionType())) {
+                MapKeyHandler mapKeyHandler = (MapKeyHandler) attributeWidget.getBaseElementSpec();
+                if (mapKeyHandler.getMapKeyType() == MapKeyType.EXT && mapKeyHandler.getMapKeyAttribute() == null) {
+                    attributeWidget.getErrorHandler().throwError(AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
+                } else if (mapKeyHandler.getMapKeyType() == MapKeyType.NEW && mapKeyHandler.getMapKeyEntity() == null
+                        && mapKeyHandler.getMapKeyEmbeddable() == null && StringUtils.isEmpty(mapKeyHandler.getMapKeyAttributeType())) {
+                    attributeWidget.getErrorHandler().throwError(AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
+                } else {
+                    attributeWidget.getErrorHandler().clearError(AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
+                }
+            }
+        }
     }
 }

@@ -14,16 +14,20 @@
         <group id="JAXB_ELE_PROP" name="JAXB Element Properties"/>
         <group id="CONSTRAINTS" name="Bean Validation Properties"/>
         <group id="CLASS_STRUCTURE" name="Class Properties"/>
-        
-        
-        
-        <!--<group id="COMPOSITE_PK_PROP" name="Composite PrimaryKey"/>-->
+        <group id="PACKAGE" name="Package"/>
     </groups>
     <elements>
         <element id="EntityMappings" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.EntityMappings">
             <attributes>
                 <attribute id="jaxbSupport" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="jaxbSupport" refresh-onchange="true" >
                     <display-name>JAXB Source</display-name>
+                </attribute>
+                <attribute id="generateStaticMetamodel" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="generateStaticMetamodel" refresh-onchange="true">
+                    <display-name>StaticMetamodel</display-name>
+                </attribute>
+                <attribute id="staticMetamodelPackage" groupId="PACKAGE" class="java.lang.String" name="staticMetamodelPackage">
+                    <display-name>StaticMetamodel Package</display-name>
+                    <visible><![CDATA[root.generateStaticMetamodel==true]]></visible>
                 </attribute>
                 <attribute id="jaxbNameSpace" groupId="JAXB_PROP" class="java.lang.String" name="jaxbNameSpace">
                     <display-name>JAXB NameSpace</display-name>
@@ -32,8 +36,8 @@
                 <attribute id="persistenceUnitName" groupId="BASIC_PROP" class="java.lang.String" name="persistenceUnitName">
                     <display-name>PersistenceUnit Name</display-name>
                 </attribute>
-                <attribute id="package" groupId="BASIC_PROP" class="java.lang.String" name="package">
-                    <display-name>Package</display-name>
+                <attribute id="package" groupId="PACKAGE" class="java.lang.String" name="package">
+                    <display-name>Entity Package</display-name>
                 </attribute>
                 <attribute id="schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">
                     <display-name>Schema</display-name>
@@ -51,8 +55,22 @@
         </element>
         <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
             <attributes>
-                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description" after="name">
                     <display-name>Description</display-name>
+                </attribute>  
+            </attributes>
+        </element>
+        <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">
+            <attributes>
+                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                    <display-name>MapKey Type</display-name>
+                </attribute>  
+            </attributes>
+        </element>
+        <element id="ElementCollection" class="org.netbeans.jpa.modeler.spec.ElementCollection">
+            <attributes>
+                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                    <display-name>MapKey Type</display-name>
                 </attribute>  
             </attributes>
         </element>
@@ -89,17 +107,29 @@
                    <attribute id="updatable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="updatable">
                     <display-name>Updatable</display-name>
                 </attribute>
-                  <attribute id="length" groupId="COLUMN_PROP" class="java.lang.Integer" name="length">
+                <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
                     <display-name>Length</display-name>
-                    <visible><![CDATA["String".equals(node.getAttributeType())]]></visible>
+                    <visible><![CDATA[
+                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.isTextMapKeyAttributeType()
+                                : node.isTextAttributeType()
+                                ]]></visible>
                 </attribute>
-                <attribute id="precision" groupId="COLUMN_PROP" class="java.lang.Integer" name="precision">
+                <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
                     <display-name>Precision</display-name>
-                    <visible><![CDATA[node.isPrecisionAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.isPrecisionpMapKeyAttributeType()
+                                : node.isPrecisionAttributeType()
+                                ]]></visible>
                 </attribute>
-                <attribute id="scale" groupId="COLUMN_PROP" class="java.lang.Integer" name="scale">
+                <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
                     <display-name>Scale</display-name>
-                    <visible><![CDATA[node.isScaleAttributeType()]]></visible>
+                    <visible><![CDATA[
+                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
+                                ? node.isScaleMapKeyAttributeType()
+                                : node.isScaleAttributeType()
+                                ]]></visible>
                 </attribute>
                  <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">
                     <display-name>Column Definition</display-name>
@@ -118,9 +148,6 @@
         </element>
           <element id="ManagedClass" class="org.netbeans.jpa.modeler.spec.ManagedClass">
             <attributes>
-                <attribute id="generateStaticMetamodel" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="generateStaticMetamodel">
-                    <display-name>StaticMetamodel</display-name>
-                </attribute>
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
                 </attribute>

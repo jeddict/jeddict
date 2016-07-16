@@ -16,6 +16,7 @@
 package org.eclipse.persistence.tools.schemaframework;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.persistence.exceptions.ValidationException;
@@ -43,6 +44,7 @@ import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.core.NBModelerUtil;
 
@@ -55,9 +57,22 @@ public class JPAMFieldDefinition extends FieldDefinition {
     private boolean foriegnKey;
     private boolean relationTable;
     private boolean inherited;
+    private boolean mapKey;
     private DiscriminatorColumn discriminatorColumn;
 
     public JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
+        this(intrinsicAttribute, managedAttribute);
+        this.inverse = inverse;
+        this.foriegnKey = foriegnKey;
+        this.relationTable = relationTable;
+    }   
+    
+    public JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean mapKey) {
+        this(intrinsicAttribute, managedAttribute);
+        this.mapKey = mapKey;
+    }   
+    
+    private JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute) {
         if (intrinsicAttribute != null) {
             intrinsicAttribute.stream().forEach((attr) -> {
                 if (attr != null && attr.getOrignalObject() != null) {
@@ -68,19 +83,16 @@ public class JPAMFieldDefinition extends FieldDefinition {
             });
         }
 //       if(managedAttribute!=null){
-        this.managedAttribute = managedAttribute != null && managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
+        this.managedAttribute = managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
 //       } else {
 //           this.managedAttribute = null;
 //       }
-        this.inverse = inverse;
-        this.foriegnKey = foriegnKey;
-        this.relationTable = relationTable;
         this.inherited = false;
         this.intrinsicClass = null;
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass) {
-        this.intrinsicClass = intrinsicClass != null && intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
+        this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
         if (intrinsicClass.getDiscriminatorColumn() == null) {
             intrinsicClass.setDiscriminatorColumn(new DiscriminatorColumn());
         }
@@ -88,19 +100,19 @@ public class JPAMFieldDefinition extends FieldDefinition {
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass, boolean inverse, boolean foriegnKey) {
-        this.intrinsicClass = intrinsicClass != null && intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
+        this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
         this.inverse = inverse;
         this.foriegnKey = foriegnKey;
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
 //        if(intrinsicAttribute!=null){
-        this.intrinsicClass = intrinsicClass != null && intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
+        this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
 //        }else {
 //           this.intrinsicClass = null;
 //       }
 //        if(managedAttribute!=null){
-        this.managedAttribute = managedAttribute != null && managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
+        this.managedAttribute = managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
 //        } else {
 //           this.managedAttribute = null;
 //       }
@@ -131,8 +143,6 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 } else {
                     column = new DBParentAssociationJoinColumn(name, intrinsicClass, (RelationAttribute) managedAttribute, relationTable);
                 }
-//            } else if (foriegnKey) {
-//                column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
             } else {
                 column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
             }
@@ -140,14 +150,20 @@ public class JPAMFieldDefinition extends FieldDefinition {
             column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
         } else if (intrinsicAttribute.size() == 1) {
             if (intrinsicAttribute.peek() instanceof RelationAttribute) {
+                if(mapKey){//e.g Map<Basic,Basic>
+                    column = buildMapKeyColumn();
+                } else {
                 if (inverse) {
                     column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable);
                 } else {
                     column = new DBJoinColumn(name, managedAttribute, relationTable);
                 }
+                }
             } else if (intrinsicAttribute.peek() instanceof ElementCollection) {
                 if (foriegnKey) {
                     column = new DBJoinColumn(name, managedAttribute, relationTable);
+                } else if(mapKey){//e.g Map<Basic,Basic>
+                    column = buildMapKeyColumn();
                 } else {
                     column = new DBColumn(name, managedAttribute);
                 }
@@ -158,11 +174,15 @@ public class JPAMFieldDefinition extends FieldDefinition {
             }
         } else if (intrinsicAttribute.size() > 1) {
             if (intrinsicAttribute.get(0) instanceof RelationAttribute) { // nested derived Identity / shared relationship IdClass
-                //Ex 3.a
-                if (inverse) {
-                    column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable);
+                if (mapKey) {
+                    column = buildMapKeyColumn();
                 } else {
-                    column = new DBJoinColumn(name, managedAttribute, relationTable);
+                    //Ex 3.a
+                    if (inverse) {
+                        column = new DBInverseJoinColumn(name, (RelationAttribute) managedAttribute, relationTable);
+                    } else {
+                        column = new DBJoinColumn(name, managedAttribute, relationTable);
+                    }
                 }
             } else if (intrinsicAttribute.get(0) instanceof Embedded) {
                 List<Embedded> embeddedList = new ArrayList<>();
@@ -196,6 +216,29 @@ public class JPAMFieldDefinition extends FieldDefinition {
 //                        column = new DBEmbeddedIdAttributeColumn(name, embeddedId, managedAttribute);
                     }
                 }
+            } else if (intrinsicAttribute.get(0) instanceof ElementCollection) {
+                if(mapKey){
+                    column = buildMapKeyColumn();
+                } else {//e.g : Map<Entity,Embedded>, List<Embedded>
+                    ElementCollection elementCollection = (ElementCollection)intrinsicAttribute.peek();
+                    List<Embedded> embeddedList = new ArrayList<>();
+                    embeddedList.add(new Embedded(elementCollection.getAttributeOverride()));
+                    for (int i = 1; i < intrinsicAttribute.size() - 1; i++) {//skip first it ElementCollection
+                        embeddedList.add((Embedded) intrinsicAttribute.get(i));
+                    }
+
+                    if (managedAttribute instanceof RelationAttribute) {
+                        if (inverse) {
+                            column = new DBEmbeddedAssociationInverseJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                        } else {
+                            column = new DBEmbeddedAssociationJoinColumn(name, embeddedList, (RelationAttribute) managedAttribute, relationTable);
+                        }
+                    } else if (foriegnKey) {
+                        column = new DBEmbeddedAttributeJoinColumn(name, embeddedList, managedAttribute);
+                    } else {
+                        column = new DBEmbeddedAttributeColumn(name, embeddedList, managedAttribute);
+                    }
+                }
             }
         } 
         
@@ -203,7 +246,6 @@ public class JPAMFieldDefinition extends FieldDefinition {
             column = new DBColumn(name, managedAttribute);
         }
         
-        System.out.println("Name : "+ name + " - " + column.getClass());
 
         column.setId(NBModelerUtil.getAutoGeneratedStringId());
 
@@ -241,6 +283,20 @@ public class JPAMFieldDefinition extends FieldDefinition {
 
         table.addColumn(column);
 
+    }
+    
+    private DBColumn buildMapKeyColumn() {
+        DBColumn column;
+        MapKeyHandler mapKeyHandler = (MapKeyHandler) intrinsicAttribute.peek();
+        if (mapKeyHandler.getMapKeyEntity() != null) {
+            column = new DBMapKeyJoinColumn(name, managedAttribute);
+        } else if (mapKeyHandler.getMapKeyEmbeddable() != null) {
+            // Wrap AttributeOverride to Embedded to reuse the api
+            column = new DBMapKeyEmbeddedColumn(name, Collections.singletonList(new Embedded(mapKeyHandler.getMapKeyAttributeOverride())), managedAttribute);
+        } else {
+            column = new DBMapKeyColumn(name, managedAttribute);
+        }
+        return column;
     }
 
 }

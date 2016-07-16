@@ -61,4 +61,25 @@
 *  Interfaces, Abstract Entity generation, custom CollectionType
 
 
-Release older than 1.2 managed on java.net
+###### Release older than 1.2 managed on java.net
+
+
+### Version 0.9 ###
+
+*  Reverse Engineering support for - @NamedEntityGraph,@ExcluseDefaultListener,@EntityListener,@SqlResultSetMapping,@ConstructorResult	
+*  Bug 6756 fix (java.net)
+
+
+### Version 0.7.2 ###
+
+*  Bug 6366 - Does not preserve Named Queries when Reverse Engineering from JPA Entities
+*  Bug 6306 - Add @Temporal annotation for java.util.Date fields
+*  Bug 6304 - Add length to column annotation for strings
+*  Bug 5992 - IDE freezes when a class is clicked on the diagram
+*  Derived Identities
+
+
+### Version 0.8.3 ###
+
+*  Static MetaModel Support 
+*  JAXB Annotation Support

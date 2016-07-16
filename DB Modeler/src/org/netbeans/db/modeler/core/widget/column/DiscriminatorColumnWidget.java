@@ -34,13 +34,6 @@ public class DiscriminatorColumnWidget extends ColumnWidget<DBDiscriminatorColum
         });
     }
 
-    public static PinWidgetInfo create(String id, String name, IBaseElement baseElement) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(DiscriminatorColumnWidget.class.getSimpleName());
-        return pinWidgetInfo;
-    }
-
     @Override
     public void createPropertySet(ElementPropertySet set) {
         DiscriminatorColumn discriminatorColumn = this.getBaseElementSpec().getAttribute();

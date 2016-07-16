@@ -40,17 +40,19 @@ import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.map.MapKeyColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.map.MapKeyEmbeddedColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.map.MapKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
 import org.netbeans.db.modeler.properties.PropertiesHandler;
 import org.netbeans.db.modeler.spec.DBColumn;
+import org.netbeans.db.modeler.spec.DBMapKeyColumn;
+import org.netbeans.db.modeler.spec.DBMapKeyEmbeddedColumn;
+import org.netbeans.db.modeler.spec.DBMapKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
@@ -61,9 +63,11 @@ import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import static org.netbeans.modeler.core.engine.ModelerDiagramEngine.NODE_WIDGET_SELECT_PROVIDER;
+import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, DBModelerScene> {
 
@@ -98,7 +102,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         }
     }
 
-    public ColumnWidget addNewBasicColumn(String name, DBColumn column) {
+    public void addNewBasicColumn(String name, DBColumn column) {
 //        E table = this.getBaseElementSpec();
 //        if (column == null) {
 //            column = new DBColumn();
@@ -107,76 +111,58 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 //            table.addColumn(column);
 //        }
 
-        BasicColumnWidget widget = (BasicColumnWidget) createPinWidget(BasicColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        columnWidgets.put(column.getId(), widget);
-        return widget;
+        columnWidgets.put(column.getId(), create(column.getId(), name, column, BasicColumnWidget.class));
     }
 
-    public ColumnWidget addEmbeddedAttributeColumn(String name, DBColumn column) {
-        EmbeddedAttributeColumnWidget widget = (EmbeddedAttributeColumnWidget) createPinWidget(EmbeddedAttributeColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        columnWidgets.put(column.getId(), widget);
-        return widget;
+    public void addEmbeddedAttributeColumn(String name, DBColumn column) {
+        columnWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAttributeColumnWidget.class));
     }
 
-    public ColumnWidget addParentPrimaryKeyAttributeColumn(String name, DBColumn column) {
-        ParentAttributePrimaryKeyWidget widget = (ParentAttributePrimaryKeyWidget) createPinWidget(ParentAttributePrimaryKeyWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        primaryKeyWidgets.put(column.getId(), widget);
-        return widget;
+    public void addParentPrimaryKeyAttributeColumn(String name, DBColumn column) {
+        primaryKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAttributePrimaryKeyWidget.class));
+    }
+    
+     public void addMapKeyColumn(String name, DBMapKeyColumn column) {
+        columnWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyColumnWidget.class));
+    }
+     
+     public void addMapKeyJoinColumn(String name, DBMapKeyJoinColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyJoinColumnWidget.class));
+    }
+     
+      public void addMapKeyEmbeddedColumn(String name, DBMapKeyEmbeddedColumn column) {
+        columnWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyEmbeddedColumnWidget.class));
     }
 
-    public ColumnWidget addDiscriminatorColumn(String name, DBColumn column) {
-        DiscriminatorColumnWidget widget = (DiscriminatorColumnWidget) createPinWidget(DiscriminatorColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        columnWidgets.put(column.getId(), widget);
-        return widget;
+    public void addDiscriminatorColumn(String name, DBColumn column) {
+        columnWidgets.put(column.getId(), create(column.getId(), name, column, DiscriminatorColumnWidget.class));
     }
 
-    public ColumnWidget addParentAttributeColumn(String name, DBColumn column) {
-        ParentAttributeColumnWidget widget = (ParentAttributeColumnWidget) createPinWidget(ParentAttributeColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        columnWidgets.put(column.getId(), widget);
-        return widget;
+    public void addParentAttributeColumn(String name, DBColumn column) {
+        columnWidgets.put(column.getId(), create(column.getId(), name, column, ParentAttributeColumnWidget.class));
     }
 
-    public ColumnWidget addParentAssociationInverseJoinColumn(String name, DBColumn column) {
-        ParentAssociationColumnWidget widget = (ParentAssociationColumnWidget) createPinWidget(ParentAssociationInverseJoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+    public void addParentAssociationInverseJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationColumnWidget.class));
     }
 
-    public ColumnWidget addParentAssociationJoinColumn(String name, DBColumn column) {
-        ParentAssociationColumnWidget widget = (ParentAssociationColumnWidget) createPinWidget(ParentAssociationJoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+    public void addParentAssociationJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationColumnWidget.class));
     }
 
-    public ColumnWidget addEmbeddedAttributeJoinColumn(String name, DBColumn column) {
-        EmbeddedAttributeJoinColumnWidget widget = (EmbeddedAttributeJoinColumnWidget) createPinWidget(EmbeddedAttributeJoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+    public void addEmbeddedAttributeJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAttributeJoinColumnWidget.class));
     }
 
-    public ColumnWidget addEmbeddedAssociationInverseJoinColumn(String name, DBColumn column) {
-        EmbeddedAssociationColumnWidget widget = (EmbeddedAssociationColumnWidget) createPinWidget(EmbeddedAssociationInverseJoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+    public void addEmbeddedAssociationInverseJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationColumnWidget.class));
     }
 
-    public ColumnWidget addEmbeddedAssociationJoinColumn(String name, DBColumn column) {
-        EmbeddedAssociationColumnWidget widget = (EmbeddedAssociationColumnWidget) createPinWidget(EmbeddedAssociationJoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+    public void addEmbeddedAssociationJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationColumnWidget.class));
     }
 
-    public ColumnWidget addNewJoinKey(String name, DBColumn column) {
+    public void addNewJoinKey(String name, DBColumn column) {
 //        E table = this.getBaseElementSpec();
 //        if (column == null) {
 //            column = new DBColumn();
@@ -185,13 +171,10 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 //            table.addColumn(column);
 //        }
 
-        JoinColumnWidget widget = (JoinColumnWidget) createPinWidget(JoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, JoinColumnWidget.class));
     }
 
-    public ColumnWidget addNewInverseJoinKey(String name, DBColumn column) {
+    public void addNewInverseJoinKey(String name, DBColumn column) {
 //        E table = this.getBaseElementSpec();
 //        if (column == null) {
 //            column = new DBColumn();
@@ -200,20 +183,14 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 //            table.addColumn(column);
 //        }
 
-        InverseJoinColumnWidget widget = (InverseJoinColumnWidget) createPinWidget(InverseJoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, InverseJoinColumnWidget.class));
     }
 
-    public ColumnWidget addNewPrimaryKeyJoinColumn(String name, DBColumn column) {
-        PrimaryKeyJoinColumnWidget widget = (PrimaryKeyJoinColumnWidget) createPinWidget(PrimaryKeyJoinColumnWidget.create(column.getId(), name, column));
-        widget.setDatatypeTooltip();
-        foreignKeyWidgets.put(column.getId(), widget);
-        return widget;
+    public void addNewPrimaryKeyJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, PrimaryKeyJoinColumnWidget.class));
     }
 
-    public ColumnWidget addNewPrimaryKey(String name, DBColumn column) {
+    public void addNewPrimaryKey(String name, DBColumn column) {
 //        E table = this.getBaseElementSpec();
 //        if (column == null) {
 //            column = new DBColumn();
@@ -221,11 +198,16 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 //            column.setName(name);
 //            table.addColumn(column);
 //        }
-
-        PrimaryKeyWidget widget = (PrimaryKeyWidget) createPinWidget(PrimaryKeyWidget.create(column.getId(), name, column));
+        primaryKeyWidgets.put(column.getId(), create(column.getId(), name, column, PrimaryKeyWidget.class));
+    }
+    
+    
+    private <W extends ColumnWidget> W create(String id, String name, IBaseElement baseElement, Class<W> widgetClass) {
+        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
+        pinWidgetInfo.setName(name);
+        pinWidgetInfo.setDocumentId(widgetClass.getSimpleName());
+        W widget = (W)createPinWidget(pinWidgetInfo);
         widget.setDatatypeTooltip();
-        primaryKeyWidgets.put(column.getId(), widget);
-
         return widget;
     }
 

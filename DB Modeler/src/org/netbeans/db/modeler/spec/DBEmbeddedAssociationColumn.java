@@ -27,10 +27,10 @@ public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends D
     protected final boolean relationTableExist;
 
     protected JoinColumn joinColumn;
-    protected List<JoinColumn> joinColumns;
+    protected List<? extends JoinColumn> joinColumns;
 
     protected JoinColumn joinColumnOverride;
-    protected List<JoinColumn> joinColumnsOverride;
+    protected List<? extends JoinColumn> joinColumnsOverride;
 
     public DBEmbeddedAssociationColumn(String name, List<Embedded> embeddedList, E managedAttribute, boolean relationTableExist) {
         super(name, embeddedList, managedAttribute);
@@ -58,7 +58,7 @@ public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends D
         return joinColumn;
     }
 
-    public List<JoinColumn> getJoinColumns() {
+    public List<? extends JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 
@@ -66,7 +66,7 @@ public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends D
         return joinColumnOverride;
     }
 
-    public List<JoinColumn> getJoinColumnsOverride() {
+    public List<? extends JoinColumn> getJoinColumnsOverride() {
         return joinColumnsOverride;
     }
 

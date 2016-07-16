@@ -23,7 +23,7 @@ public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
 
     private final boolean relationTableExist;
     private final JoinColumn joinColumn;
-    private final List<JoinColumn> joinColumns;
+    private final List<? extends JoinColumn> joinColumns;
 
     public DBJoinColumn(String name, Attribute attribute, boolean relationTableExist) {
         super(name, attribute);
@@ -39,7 +39,7 @@ public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
         return joinColumn;
     }
 
-    public List<JoinColumn> getJoinColumns() {
+    public List<? extends JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 

@@ -122,9 +122,6 @@ $varDef.getJavaDoc()
 #if($varDef.getElementCollection())
     $varDef.getElementCollection().getSnippet()
 #end
-#if($varDef.isTemporal())
-    $varDef.getTemporalTypeString()
-#end
 #if($varDef.isVersion())
     @Version
 #end
@@ -167,6 +164,9 @@ $varDef.getJavaDoc()
 #if($varDef.getEnumerated())
     $varDef.getEnumerated().getSnippet()
 #end
+#if($varDef.getTemporal())
+    $varDef.getTemporal().getSnippet()
+#end
 #if ($varDef.getAssociationOverrides())
 $varDef.getAssociationOverrides().getSnippet()
 #end
@@ -183,12 +183,11 @@ $varDef.getAttributeOverrides().getSnippet()
     private $varDef.type $varDef.name;
 
 #end
-
 #####################Constructor #################################
 #foreach($constructor in $classDef.getConstructors())
     $constructor.getSnippet()
-#end
 
+#end
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
 #set($method = $varDef.getMethodName())

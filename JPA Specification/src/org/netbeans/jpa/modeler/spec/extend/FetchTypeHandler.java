@@ -23,7 +23,7 @@ import org.netbeans.jpa.modeler.spec.FetchType;
  */
 public interface FetchTypeHandler {
 
-    public abstract FetchType getFetch();
+    public FetchType getFetch();
 
-    public abstract void setFetch(FetchType value);
+    public void setFetch(FetchType value);
 }

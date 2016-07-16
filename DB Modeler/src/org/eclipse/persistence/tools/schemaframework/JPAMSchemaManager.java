@@ -208,7 +208,7 @@ public class JPAMSchemaManager {
 
         for (UniqueKeyConstraint uniqueKey : tableDefinition.getUniqueKeys()) {
             String query = tableDefinition.buildUniqueConstraintCreationWriter(session, uniqueKey, new StringWriter()).toString();
-            System.out.println("GG unique : " + query);
+            System.out.println("unique : " + query);
         }
     }
 
@@ -268,7 +268,6 @@ public class JPAMSchemaManager {
                     }
                 }
 
-                //                System.out.println("GG foreign : " + query);
             }
         }
 

@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.spec.extend;
 
 import java.util.List;
+import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 
 /**
@@ -29,5 +30,9 @@ public interface JoinColumnHandler {
     public void addJoinColumn(JoinColumn joinColumn);
 
     public void removeJoinColumn(JoinColumn joinColumn);
+    
+    public ForeignKey getForeignKey();
+
+    public void setForeignKey(ForeignKey value);
 
 }
