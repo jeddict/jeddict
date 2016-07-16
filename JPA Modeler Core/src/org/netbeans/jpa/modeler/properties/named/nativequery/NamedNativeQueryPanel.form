@@ -75,7 +75,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="resultSetMapping_LayeredPane" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="queryHint_LayeredPane" pref="190" max="32767" attributes="0"/>
+                  <Component id="queryHint_LayeredPane" pref="197" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="action_jLayeredPane" min="-2" pref="37" max="-2" attributes="0"/>
               </Group>
@@ -238,7 +238,7 @@
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="0" width="70" height="-1"/>
+                  <AbsoluteConstraints x="0" y="0" width="70" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>

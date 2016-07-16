@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
+import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -23,22 +24,39 @@ import java.util.Map;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
+import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
+import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
+import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
+import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -49,6 +67,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.util.NbBundle;
+import org.openide.util.RequestProcessor;
 import org.openide.windows.WindowManager;
 
 /**
@@ -108,7 +127,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             }
         }
         PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
-        
+        set.put("BASIC_PROP", PropertiesHandler.getCustomAnnoation("Annotations", "Annotations", "", this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
+
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             if (value == null || value.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
@@ -143,6 +163,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         });
         
     }
+
    
     public static <T> T getInstance(IPNodeWidget nodeWidget, String name, IBaseElement baseElement, Class documentId) {
         PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(baseElement.getId(), baseElement);
@@ -200,10 +221,50 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setName(this.name);
+                refractorReference(previousName, this.name);
             }
         }
        validateName(previousName,this.getName());
     }
+    
+    private void refractorReference(String previousName, String newName) {
+        if (previousName == null) {
+            return;
+        }
+        ModelerFile modelerFile = this.getModelerScene().getModelerFile();
+        RequestProcessor.getDefault().post(() -> {
+            try {
+
+                String singularPreName = previousName;
+                String pluralPreName = English.plural(singularPreName);
+                String singularNewName = newName;
+                String pluralNewName = English.plural(singularNewName);
+       
+
+           
+                //Refractor NamedQuery, NamedNativeQuery
+                if (this.getClassWidget().getBaseElementSpec() instanceof IdentifiableClass) {
+                    ((IdentifiableClass)this.getClassWidget().getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
+                    }); 
+                    ((IdentifiableClass)this.getClassWidget().getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
+                    }); 
+                }
+
+               
+            } catch (Throwable t) {
+                modelerFile.handleException(t);
+            }
+        });
+    }
+
 
     @Override
     public void setLabel(String label) {

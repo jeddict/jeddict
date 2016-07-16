@@ -33,8 +33,6 @@ public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers,Attri
         PersistenceClassWidget<? extends ManagedClass> classWidget = null;
         if (parentNode instanceof CMRootNode) {
             classWidget = ((CMRootNode) parentNode).getRootWidget();
-        } else if (parentNode instanceof CMInternalNode) {
-            classWidget = ((CMInternalNode) parentNode).getParentWidget();
         }
         if (classWidget != null) {
             attributeWidgets.addAll(classWidget.getAllAttributeWidgets());
@@ -46,32 +44,16 @@ public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers,Attri
     protected Node createNodeForKey(final AttributeWidget attributeWidget) {
         CMLeafNode childNode;
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
-//        Attribute attribute = null;
         Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
 
-//        boolean isPK = attributeWidget instanceof IdAttributeWidget || attributeWidget instanceof EmbeddedIdAttributeWidget || attributeWidget instanceof VersionAttributeWidget;
         if (parentNode.getBaseElementSpec() != null) {
-            boolean exist = false;
-            if (parentNode instanceof CMRootNode) {
-                exist = parentNode.getBaseElementSpec().isExist(attribute);
-//            } else if (parentNode instanceof CMInternalNode && ((CMInternalNode) parentNode).getAttribute() != null) {
-//                exist = ((CMInternalNode) parentNode).getAttribute().findNamedAttributeNode(attribute.getName());
-            }
-
-            if (exist) {
-                checkableNode.setSelected(Boolean.TRUE);
-//                if (exist.getSubgraph() != null && !exist.getSubgraph().isEmpty()) {
-//                    subgraph = parentNode.getBaseElementSpec().findSubgraph(exist.getSubgraph());
-//                }
-            }
+            checkableNode.setSelected(parentNode.getBaseElementSpec().isExist(attribute));
         }
 
         childNode = new CMLeafNode(attributeWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode);
-
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
         childNode.init();
-
         return (Node) childNode;
     }
 

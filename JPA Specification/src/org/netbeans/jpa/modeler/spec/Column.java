@@ -141,6 +141,9 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      *
      */
     public Boolean getUnique() {//isUnique
+        if(unique == null){
+            unique = false;
+        }
         return unique;
     }
 
@@ -161,6 +164,9 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      *
      */
     public Boolean getNullable() {//isNullable
+        if(nullable == null){
+            nullable = true;
+        }
         return nullable;
     }
 
@@ -181,6 +187,9 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      *
      */
     public Boolean getInsertable() {//isInsertable
+        if(insertable == null){
+            insertable = true;
+        }
         return insertable;
     }
 
@@ -201,6 +210,9 @@ public class Column extends BaseElement implements JAREAnnotationLoader {
      *
      */
     public Boolean getUpdatable() {//isUpdatable
+        if(updatable == null){
+            updatable = true;
+        }
         return updatable;
     }
 

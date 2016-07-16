@@ -30,11 +30,27 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Annotation implements Serializable {
 
-    @XmlAttribute(name="n")
+    @XmlAttribute(name = "e")
+    private boolean enable = true;
+    @XmlAttribute(name = "n", required = true)
     private String name;
     @XmlElement(name="e")
     private List<AnnotationElement> elements;
   
+
+ /**
+     * @return the enable
+     */
+    public boolean isEnable() {
+        return enable;
+    }
+
+    /**
+     * @param enable the enable to set
+     */
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 
     /**
      * @return the name

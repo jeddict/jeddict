@@ -7,7 +7,6 @@ package org.netbeans.jpa.modeler.settings.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.netbeans.jpa.modeler.core.widget.attribute.AttributeViewAs;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.openide.util.NbPreferences;
 
@@ -84,12 +83,17 @@ public final class ViewPanel extends javax.swing.JPanel {
         dataTypeComboBox.setSelectedItem(getDataType());
     }
     
-    public static AttributeViewAs getDataType(){
-        return AttributeViewAs.valueOf(NbPreferences.forModule(ViewPanel.class).get("dataType", AttributeViewAs.NONE.name()));
+    private static AttributeViewAs attributeViewAs;
+    public static AttributeViewAs getDataType() {
+        if (attributeViewAs == null) {
+            attributeViewAs = AttributeViewAs.valueOf(NbPreferences.forModule(ViewPanel.class).get("dataType", AttributeViewAs.NONE.name()));
+        }
+        return attributeViewAs;
     }
 
     void store() {
         NbPreferences.forModule(ViewPanel.class).put("dataType", ((AttributeViewAs)((ComboBoxValue)dataTypeComboBox.getSelectedItem()).getValue()).name());
+        attributeViewAs = null;
     }
 
     boolean valid() {

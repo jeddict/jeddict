@@ -18,6 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.netbeans.jcode.core.util.AttributeType;
+import org.netbeans.jcode.core.util.StringHelper;
 
 public class JavaHashcodeEqualsUtil {
 
@@ -53,8 +54,8 @@ public class JavaHashcodeEqualsUtil {
         EQUALS_PATTERNS.put(KindOfType.INT, NOT_EQUAL_COMP);
         EQUALS_PATTERNS.put(KindOfType.LONG, NOT_EQUAL_COMP);
         EQUALS_PATTERNS.put(KindOfType.CHAR, NOT_EQUAL_COMP);
-        EQUALS_PATTERNS.put(KindOfType.FLOAT, "java.lang.Float.floatToIntBits(this.{VAR}) != java.lang.Float.floatToIntBits(other.{VAR})");
-        EQUALS_PATTERNS.put(KindOfType.DOUBLE, "java.lang.Double.doubleToLongBits(this.{VAR}) != java.lang.Double.doubleToLongBits(other.{VAR})");
+        EQUALS_PATTERNS.put(KindOfType.FLOAT, "Float.floatToIntBits(this.{VAR}) != Float.floatToIntBits(other.{VAR})");
+        EQUALS_PATTERNS.put(KindOfType.DOUBLE, "Double.doubleToLongBits(this.{VAR}) != Double.doubleToLongBits(other.{VAR})");
         EQUALS_PATTERNS.put(KindOfType.PRIMITIVE_ARRAY, "! java.util.Arrays.equals(this.{VAR}, other.{VAR})");
         EQUALS_PATTERNS.put(KindOfType.ARRAY, "! java.util.Arrays.deepEquals(this.{VAR}, other.{VAR})");
         EQUALS_PATTERNS.put(KindOfType.ENUM, "this.{VAR} != other.{VAR}");
@@ -70,7 +71,7 @@ public class JavaHashcodeEqualsUtil {
         HASH_CODE_PATTERNS.put(KindOfType.INT, DEFAULT_HASHCODE);
         HASH_CODE_PATTERNS.put(KindOfType.CHAR, DEFAULT_HASHCODE);
         HASH_CODE_PATTERNS.put(KindOfType.LONG, "(int) (this.{VAR} ^ (this.{VAR} >>> 32))");
-        HASH_CODE_PATTERNS.put(KindOfType.FLOAT, "java.lang.Float.floatToIntBits(this.{VAR})");
+        HASH_CODE_PATTERNS.put(KindOfType.FLOAT, "Float.floatToIntBits(this.{VAR})");
         HASH_CODE_PATTERNS.put(KindOfType.DOUBLE, "(int) (Double.doubleToLongBits(this.{VAR}) ^ (Double.doubleToLongBits(this.{VAR}) >>> 32))");
         HASH_CODE_PATTERNS.put(KindOfType.BOOLEAN, "(this.{VAR} ? 1 : 0)");
         HASH_CODE_PATTERNS.put(KindOfType.PRIMITIVE_ARRAY, "java.util.Arrays.hashCode(this.{VAR})");
@@ -81,36 +82,49 @@ public class JavaHashcodeEqualsUtil {
     }
 
     public static String getEqualExpression(String dataType, String attributeName) {
-        return EQUALS_PATTERNS.get(detectKind(dataType)).replace(VAR_EXPRESSION, attributeName);
+        KindOfType type = detectKind(dataType);
+        String attributeFunction = (type==KindOfType.BOOLEAN?"is" : "get") + StringHelper.firstUpper(attributeName) + "()";
+        return EQUALS_PATTERNS.get(type).replace(VAR_EXPRESSION, attributeFunction);
     }
     
     public static String getEqualExpression(String attributeName) {
-        return EQUALS_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeName);
+        String attributeFunction =  "get" + StringHelper.firstUpper(attributeName) + "()";
+        return EQUALS_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeFunction);
     }
     
     public static String getHashcodeExpression(String dataType, String attributeName) {
-        return HASH_CODE_PATTERNS.get(detectKind(dataType)).replace(VAR_EXPRESSION, attributeName);
+        KindOfType type = detectKind(dataType);
+        String attributeFunction = (type==KindOfType.BOOLEAN?"is" : "get") + StringHelper.firstUpper(attributeName) + "()";
+        return HASH_CODE_PATTERNS.get(type).replace(VAR_EXPRESSION, attributeFunction);
     }
     
     public static String getHashcodeExpression(String attributeName) {
-        return HASH_CODE_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeName);
+        String attributeFunction =  "get" + StringHelper.firstUpper(attributeName) + "()";
+        return HASH_CODE_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeFunction);
     }
     
     private static KindOfType detectKind(String dataType){ //enum not detected
-        KindOfType kindOfType;
+        KindOfType kindOfType = null;
         AttributeType.Type type = AttributeType.getType(dataType);
-        if (type == AttributeType.Type.STRING) {
-            kindOfType = KindOfType.STRING;
-        } else if (type == AttributeType.Type.PRIMITIVE) {
-            kindOfType = KindOfType.valueOf(dataType.toUpperCase());
-        } else if (type == AttributeType.Type.WRAPPER) {
-            kindOfType = KindOfType.OTHER;//valueOf(AttributeType.getPrimitiveType(dataType).toUpperCase());
-        } else if (type == AttributeType.Type.ARRAY) {
-            kindOfType = KindOfType.ARRAY;
-        } else if (type == AttributeType.Type.PRIMITIVE_ARRAY) {
-            kindOfType = KindOfType.PRIMITIVE_ARRAY;
-        } else {
-            kindOfType = KindOfType.OTHER;
+        if (null != type) switch (type) {
+            case STRING:
+                kindOfType = KindOfType.STRING;
+                break;
+            case PRIMITIVE:
+                kindOfType = KindOfType.valueOf(dataType.toUpperCase());
+                break;
+            case WRAPPER:
+                kindOfType = KindOfType.OTHER;//valueOf(AttributeType.getPrimitiveType(dataType).toUpperCase());
+                break;
+            case ARRAY:
+                kindOfType = KindOfType.ARRAY;
+                break;
+            case PRIMITIVE_ARRAY:
+                kindOfType = KindOfType.PRIMITIVE_ARRAY;
+                break;
+            default:
+                kindOfType = KindOfType.OTHER;
+                break;
         }
         return kindOfType;
     }

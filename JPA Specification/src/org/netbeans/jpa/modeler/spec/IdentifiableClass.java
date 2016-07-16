@@ -18,12 +18,15 @@ package org.netbeans.jpa.modeler.spec;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import static org.netbeans.jpa.modeler.spec.NamedQuery.FIND_BY;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
@@ -440,6 +443,22 @@ public abstract class IdentifiableClass extends ManagedClass implements PrimaryK
             namedQuery = new ArrayList<NamedQuery>();
         }
         return this.namedQuery;
+    }
+    
+    public void addNamedQuery(NamedQuery namedQuery) {
+        if(namedQuery!=null){
+            this.getNamedQuery().add(namedQuery);
+        }
+    }
+    
+    public void removeNamedQuery(NamedQuery namedQuery) {
+        if(namedQuery!=null){
+            this.getNamedQuery().remove(namedQuery);
+        }
+    }
+    
+    public Optional<NamedQuery> findNamedQuery(Attribute attribute){
+        return this.getNamedQuery().stream().filter(q -> q.getName().equalsIgnoreCase(this.getClazz() + '.' + FIND_BY + attribute.getName())).findAny();
     }
 
     /**

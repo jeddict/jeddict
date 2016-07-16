@@ -98,7 +98,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Create new Named StoredProcedure Query");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[4]));
+            this.setEntity(new RowValue(new Object[5]));
         }
         namedStoredProcedureQuery = null;
         name_TextField.setText("");
@@ -275,7 +275,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         dbCon_Label.setToolTipText(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.dbCon_Label.toolTipText")); // NOI18N
         dbCon_LayeredPane.add(dbCon_Label, java.awt.BorderLayout.WEST);
 
-        dbCon_jComboBox.setPreferredSize(new java.awt.Dimension(45, 27));
+        dbCon_jComboBox.setPreferredSize(new java.awt.Dimension(45, 24));
         dbCon_jComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 dbCon_jComboBoxItemStateChanged(evt);
@@ -286,6 +286,8 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         parameters_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.parameters_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         parameters_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
 
+        parameters_LayeredPane.setLayer(parametersEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout parameters_LayeredPaneLayout = new javax.swing.GroupLayout(parameters_LayeredPane);
         parameters_LayeredPane.setLayout(parameters_LayeredPaneLayout);
         parameters_LayeredPaneLayout.setHorizontalGroup(
@@ -295,10 +297,14 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         parameters_LayeredPaneLayout.setVerticalGroup(
             parameters_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(parameters_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(parametersEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+                .addComponent(parametersEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        parameters_LayeredPane.setLayer(parametersEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        base_jLayeredPane.setLayer(procedureName_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        base_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        base_jLayeredPane.setLayer(dbCon_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        base_jLayeredPane.setLayer(parameters_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout base_jLayeredPaneLayout = new javax.swing.GroupLayout(base_jLayeredPane);
         base_jLayeredPane.setLayout(base_jLayeredPaneLayout);
@@ -310,26 +316,22 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                     .addComponent(procedureName_LayeredPane)
                     .addComponent(name_LayeredPane)
                     .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
-                    .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE))
+                    .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE))
                 .addContainerGap())
         );
         base_jLayeredPaneLayout.setVerticalGroup(
             base_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(base_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(dbCon_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
                 .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
                 .addComponent(procedureName_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                .addComponent(parameters_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        base_jLayeredPane.setLayer(procedureName_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        base_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        base_jLayeredPane.setLayer(dbCon_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        base_jLayeredPane.setLayer(parameters_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.base_jLayeredPane.TabConstraints.tabTitle"), base_jLayeredPane); // NOI18N
 
@@ -343,6 +345,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                 resultSetMappingTypeActionPerformed(evt);
             }
         });
+
+        resultSetMappingType_jLayeredPane.setLayer(resultSetMappingType_jLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        resultSetMappingType_jLayeredPane.setLayer(resultSetMappingType_jComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout resultSetMappingType_jLayeredPaneLayout = new javax.swing.GroupLayout(resultSetMappingType_jLayeredPane);
         resultSetMappingType_jLayeredPane.setLayout(resultSetMappingType_jLayeredPaneLayout);
@@ -364,8 +369,6 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                     .addComponent(resultSetMappingType_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-        resultSetMappingType_jLayeredPane.setLayer(resultSetMappingType_jLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        resultSetMappingType_jLayeredPane.setLayer(resultSetMappingType_jComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         result_jLayeredPane.add(resultSetMappingType_jLayeredPane, java.awt.BorderLayout.NORTH);
 
@@ -384,6 +387,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             }
         });
 
+        resultClasses_jLayeredPane.setLayer(resultClasses_jScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        resultClasses_jLayeredPane.setLayer(resultClasses_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout resultClasses_jLayeredPaneLayout = new javax.swing.GroupLayout(resultClasses_jLayeredPane);
         resultClasses_jLayeredPane.setLayout(resultClasses_jLayeredPaneLayout);
         resultClasses_jLayeredPaneLayout.setHorizontalGroup(
@@ -401,12 +407,12 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                 .addComponent(resultClasses_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(resultClasses_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
-        resultClasses_jLayeredPane.setLayer(resultClasses_jScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        resultClasses_jLayeredPane.setLayer(resultClasses_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         resultSet_jLayeredPane.add(resultClasses_jLayeredPane);
 
         resultSetMappings_jLayeredPane.setPreferredSize(new java.awt.Dimension(530, 400));
+
+        resultSetMappings_jLayeredPane.setLayer(resultSetMappingsEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout resultSetMappings_jLayeredPaneLayout = new javax.swing.GroupLayout(resultSetMappings_jLayeredPane);
         resultSetMappings_jLayeredPane.setLayout(resultSetMappings_jLayeredPaneLayout);
@@ -428,13 +434,14 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                     .addComponent(resultSetMappingsEditor, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(82, Short.MAX_VALUE)))
         );
-        resultSetMappings_jLayeredPane.setLayer(resultSetMappingsEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         resultSet_jLayeredPane.add(resultSetMappings_jLayeredPane);
 
         result_jLayeredPane.add(resultSet_jLayeredPane, java.awt.BorderLayout.CENTER);
 
         jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.result_jLayeredPane.TabConstraints.tabTitle"), result_jLayeredPane); // NOI18N
+
+        queryHint_LayeredPane.setLayer(queryHintEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout queryHint_LayeredPaneLayout = new javax.swing.GroupLayout(queryHint_LayeredPane);
         queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
@@ -448,7 +455,6 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                 .addComponent(queryHintEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        queryHint_LayeredPane.setLayer(queryHintEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(NamedStoredProcedureQueryPanel.class, "NamedStoredProcedureQueryPanel.queryHint_LayeredPane.TabConstraints.tabTitle"), queryHint_LayeredPane); // NOI18N
 
@@ -469,6 +475,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             }
         });
 
+        action_jLayeredPane.setLayer(Save, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        action_jLayeredPane.setLayer(cancel_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout action_jLayeredPaneLayout = new javax.swing.GroupLayout(action_jLayeredPane);
         action_jLayeredPane.setLayout(action_jLayeredPaneLayout);
         action_jLayeredPaneLayout.setHorizontalGroup(
@@ -487,8 +496,9 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
                     .addComponent(cancel_Button, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 12, Short.MAX_VALUE))
         );
-        action_jLayeredPane.setLayer(Save, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        action_jLayeredPane.setLayer(cancel_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        root_jLayeredPane.setLayer(jTabbedPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -503,12 +513,10 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         root_jLayeredPaneLayout.setVerticalGroup(
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
-                .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                .addComponent(jTabbedPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        root_jLayeredPane.setLayer(jTabbedPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         getContentPane().add(root_jLayeredPane);
 
@@ -569,9 +577,10 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedStoredProcedureQuery;
-            row[1] = namedStoredProcedureQuery.getName();
-            row[2] = namedStoredProcedureQuery.getProcedureName();
-            row[3] = namedStoredProcedureQuery.getParameter().size();
+            row[1] = namedStoredProcedureQuery.isEnable();
+            row[2] = namedStoredProcedureQuery.getName();
+            row[3] = namedStoredProcedureQuery.getProcedureName();
+            row[4] = namedStoredProcedureQuery.getParameter().size();
         }
 
         queryHintEntity.getTableDataListener().setData(queryHintEditor.getSavedModel());
@@ -629,7 +638,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
             Procedure procedure = (Procedure) comboBoxValue.getValue();
 
             if (name_TextField.getText().trim().isEmpty()
-                || previousProcedureName == null || previousProcedureName.equalsIgnoreCase(name_TextField.getText().trim())) {
+                    || previousProcedureName == null || previousProcedureName.equalsIgnoreCase(name_TextField.getText().trim())) {
                 name_TextField.setText(procedure.getName());
             }
             previousProcedureName = procedure.getName();
@@ -687,6 +696,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
     }
 
     private String previousProcedureName;
+
     private static void setDocumentText(Document doc, String text) {
         try {
             doc.remove(0, doc.getLength());

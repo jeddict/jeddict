@@ -180,6 +180,10 @@ import org.openide.windows.WindowManager;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
+    public static String PACKAGE_ICON_PATH;
+    public static String SUCCESS_ICON_PATH;
+    public static String WARNING_ICON_PATH;
+    public static String ERROR_ICON_PATH;
     public static String ENTITY_ICON_PATH;
     public static String MAPPED_SUPER_CLASS_ICON_PATH;
     public static String EMBEDDABLE_ICON_PATH;
@@ -279,6 +283,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     @Override
     public void init() {
         if (ENTITY_ICON_PATH == null) {
+            PACKAGE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/PACKAGE.png";
+            SUCCESS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/success_16.png";
+            WARNING_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/warning_16.png";
+            ERROR_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/error_16.png";
             ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/ENTITY.png";
             MAPPED_SUPER_CLASS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/MAPPED_SUPER_CLASS.png";
             EMBEDDABLE_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/EMBEDDABLE.png";
@@ -355,7 +363,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
         
-//         String content;
 //        try {
 //            content = FileUtils.readFileToString(file);
 //        } catch (IOException ex) {
@@ -363,7 +370,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //        }
 //        content = content.replaceAll("jpa:", "");
 //        
-//        definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(new StringReader(content)), EntityMappings.class).getValue();
         
         definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
         MODELER_UNMARSHALLER = null;//GC issue
@@ -430,12 +436,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMappings);
             scene.setBaseElementSpec(entityMappings);
-            long st = new Date().getTime();
-
             scene.startSceneGeneration();
             entityMappings.repairDefinition(IO);
             entityMappings.getAllManagedClass().stream().
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
+            entityMappings.getAllManagedClass().stream().
+                    forEach(node -> loadAttribute(scene, node));
 
             entityMappings.initJavaInheritenceMapping();
             loadFlowEdge(scene);
@@ -483,9 +489,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             if (flowNode.isMinimized()) {
                 ((PNodeWidget) nodeWidget).setMinimized(true);
             }
+        }
+    }
+    
+    private void loadAttribute(JPAModelerScene scene, IFlowNode flowElement){
+        IBaseElementWidget baseElementWidget = scene.getBaseElement(flowElement.getId());
             if (flowElement instanceof ManagedClass) {
                 ManagedClass _class = (ManagedClass) flowElement;
-                PersistenceClassWidget entityWidget = (PersistenceClassWidget) nodeWidget;
+                PersistenceClassWidget entityWidget = (PersistenceClassWidget) baseElementWidget;
                 if (_class.getAttributes() != null) {
                     if (_class.getAttributes() instanceof IPersistenceAttributes) {
                         ((IPersistenceAttributes) _class.getAttributes()).getId().stream().
@@ -543,12 +554,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
 
             }
-//            nodeWidget.i
-            //clear incomming & outgoing it will added on sequenceflow auto connection
-//            ((FlowNode) flowElement).getIncoming().clear();
-//            ((FlowNode) flowElement).getOutgoing().clear();
-
-        }
     }
 
     private void loadFlowEdge(JPAModelerScene scene) {
@@ -652,7 +657,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             Bounds bounds = shape.getBounds();
             Widget widget = (Widget) scene.getBaseElement(shape.getElementRef());
             if (widget != null) {
-                if (widget instanceof INodeWidget) { //reverse refactorRelationSynchronously
+                if (widget instanceof INodeWidget) {
                     INodeWidget nodeWidget = (INodeWidget) widget;
                     Point location = new Point((int) bounds.getX(), (int) bounds.getY());
                     nodeWidget.setPreferredLocation(location);
@@ -764,7 +769,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             //another Enity E2 class use EmbeddedId is also IC1
                             //then register IdClass name here to append @Embeddable annotation
                             DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
-                            
+                            _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
                             if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID){
                                     _class.setEmbeddable(true);
                                     persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
@@ -790,6 +795,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             pkContainerSpec.setCompositePrimaryKeyClass(persistenceClassWidget.getName()+"PK");
                         }
                         DefaultClass _class = entityMappings.addDefaultClass(pkContainerSpec.getCompositePrimaryKeyClass());
+                        _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
                         if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                             idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
                             _class.setEmbeddable(true);
@@ -1054,7 +1060,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     public static void updateDiagramFlowElement(Plane plane, Widget widget) {
         //Diagram Model
-        if (widget instanceof INodeWidget) { //reverse refactorRelationSynchronously
+        if (widget instanceof INodeWidget) { 
             INodeWidget nodeWidget = (INodeWidget) widget;
 
             Rectangle rec = nodeWidget.getSceneViewBound();

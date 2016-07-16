@@ -392,50 +392,6 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     }
 
-    private void loadDiagram(DBModelerScene scene, Diagram diagram, DiagramElement diagramElement) {
-        if (diagramElement instanceof Shape) {
-            Shape shape = (Shape) diagramElement;
-            Bounds bounds = shape.getBounds();
-            Widget widget = (Widget) scene.getBaseElement(shape.getElementRef());
-            if (widget != null) {
-                if (widget instanceof INodeWidget) { //reverse ref
-                    INodeWidget nodeWidget = (INodeWidget) widget;
-//                  nodeWidget.setPreferredSize(new Dimension((int) bounds.getWidth(), (int) bounds.getHeight()));
-                    Point location = new Point((int) bounds.getX(), (int) bounds.getY());
-                    nodeWidget.setPreferredLocation(location);
-//                    nodeWidget.setActiveStatus(false);//Active Status is used to prevent reloading SVGDocument until complete document is loaded
-//                    nodeWidget.setActiveStatus(true);
-                } else {
-                    throw new InvalidElmentException("Invalid JPA Element : " + widget);
-                }
-            }
-        } else if (diagramElement instanceof Edge) {
-//            JPAEdge edge = (JPAEdge) diagramElement;
-//            Widget widget = (Widget) scene.getBaseElement(edge.getJPAElement());
-//            if (widget != null && widget instanceof EdgeWidget) {
-//                if (widget instanceof SequenceFlowWidget) {
-//                    SequenceFlowWidget sequenceFlowWidget = (SequenceFlowWidget) widget;
-//                    sequenceFlowWidget.setControlPoints(edge.getWaypointCollection(), true);
-//                    if (edge.getJPALabel() != null) {
-//                        Bounds bound = edge.getJPALabel().getBounds();
-////                        sequenceFlowWidget.getLabelManager().getLabelWidget().getParentWidget().setPreferredLocation(bound.toPoint());
-//                        sequenceFlowWidget.getLabelManager().getLabelWidget().getParentWidget().setPreferredLocation(
-//                                sequenceFlowWidget.getLabelManager().getLabelWidget().convertSceneToLocal(bound.toPoint()));
-//                    }
-//                } else if (widget instanceof AssociationWidget) {
-//                    AssociationWidget associationWidget = (AssociationWidget) widget;
-//                    associationWidget.setControlPoints(edge.getWaypointCollection(), true);
-//                } else {
-//                    throw new InvalidElmentException("Invalid JPA Element");
-//                }
-////                EdgeWidget edgeWidget = (EdgeWidget)widget;
-////                edgeWidget.manageControlPoint();
-//
-//            }
-//
-        }
-    }
-
     @Override
     public void saveModelerFile(ModelerFile file) {
         file.getParentFile().getModelerUtil().saveModelerFile(file.getParentFile());

@@ -115,14 +115,12 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     }
 
     private void loadAttributeNode(ClassMembers classMembers, TreeNode childNode) {
-        if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
+        if (childNode.getCheckableNode() == null || !childNode.getCheckableNode().isSelected() || !childNode.getCheckableNode().isCheckEnabled()) {
             return;
         }
         if (childNode instanceof TreeChildNode) {
             Attribute attribute = ((Attribute) (((CMLeafNode) childNode).getLeafAttributeWidget().getBaseElementSpec()));
-            if (childNode.getCheckableNode().isCheckEnabled()) {
-                classMembers.addAttribute(attribute);
-            }
+            classMembers.addAttribute(attribute);
         }
     }
 

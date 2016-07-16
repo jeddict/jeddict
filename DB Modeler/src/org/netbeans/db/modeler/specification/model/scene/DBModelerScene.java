@@ -16,13 +16,11 @@
 package org.netbeans.db.modeler.specification.model.scene;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
@@ -35,6 +33,7 @@ import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.VIE
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
@@ -48,6 +47,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
+import org.netbeans.modeler.widget.node.vmd.internal.PDarkColorScheme;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 
 public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
@@ -156,21 +156,18 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public IColorScheme getColorScheme() {
-//        DBMapping entityMappings = this.getBaseElementSpec();
-//        if (PFactory.getNetBeans60Scheme().getSimpleName().equals(entityMappings.getTheme())) {
-//            return PFactory.getColorScheme(PFactory.getNetBeans60Scheme());
-//        }  else if (PFactory.getMetroScheme().getSimpleName().equals(entityMappings.getTheme())) {
-//            return PFactory.getColorScheme(PFactory.getMetroScheme());
-//        }  else {
-//            return PFactory.getColorScheme(PFactory.getMacScheme());
-//        }
-        return PFactory.getColorScheme(DBColorScheme.class);
+        EntityMappings entityMappings = (EntityMappings)this.getModelerFile().getParentFile().getDefinitionElement();
+         if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
+            return PFactory.getColorScheme(PFactory.getDarkScheme());
+        } else {
+            return PFactory.getColorScheme(DBColorScheme.class);
+        }
     }
 
     @Override
     public void setColorScheme(Class<? extends IColorScheme> scheme) {
-//        DBMapping entityMappings = this.getBaseElementSpec();
-//        entityMappings.setTheme(scheme.getSimpleName());
+        EntityMappings entityMappings = (EntityMappings)this.getModelerFile().getParentFile().getDefinitionElement();
+        entityMappings.setDbTheme(scheme.getSimpleName());
     }
 
     @Override
@@ -178,6 +175,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
         Map<String, Class<? extends IColorScheme>> colorSchemes = new HashMap<>();
 //        colorSchemes.put("Classic",PFactory.getNetBeans60Scheme());
         colorSchemes.put("Default", DBColorScheme.class);
+        colorSchemes.put("Dark", PDarkColorScheme.class);
 //        colorSchemes.put("Mac", PFactory.getMacScheme());
         return colorSchemes;
     }

@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.source.generator.task;
 
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
@@ -102,7 +103,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
         if (appicationConfigData.getBussinesLayerConfig() != null) {
             EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-            for (Entity entity : entityMappings.getEntity()) {
+            for (Entity entity : entityMappings.getEntity().stream().filter(e -> e.getGeneratesourceCode()).collect(toList())) {
                 String entiyFQN = StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + entity.getClazz() : entity.getClazz();
                 appicationConfigData.putEntity(entiyFQN, entity.getFileObject());
             }

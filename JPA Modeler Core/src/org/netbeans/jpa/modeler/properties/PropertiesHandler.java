@@ -39,6 +39,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWid
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.MultiRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.properties.annotation.AnnotationPanel;
 import org.netbeans.jpa.modeler.properties.classmember.ClassMemberPanel;
 import org.netbeans.jpa.modeler.properties.classmember.ConstructorPanel;
 import org.netbeans.jpa.modeler.properties.classmember.HashcodeEqualsPanel;
@@ -64,6 +65,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
@@ -83,6 +85,7 @@ import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_TRANSIENT;
@@ -487,6 +490,7 @@ public class PropertiesHandler {
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("ProcedureName", false, String.class));
         columns.add(new Column("Parameters", false, Integer.class));
@@ -516,9 +520,10 @@ public class PropertiesHandler {
                     NamedStoredProcedureQuery namedStoredProcedureQuery = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedStoredProcedureQuery;
-                    row[1] = namedStoredProcedureQuery.getName();
-                    row[2] = namedStoredProcedureQuery.getProcedureName();
-                    row[3] = namedStoredProcedureQuery.getParameter().size();
+                    row[1] = namedStoredProcedureQuery.isEnable();
+                    row[2] = namedStoredProcedureQuery.getName();
+                    row[3] = namedStoredProcedureQuery.getProcedureName();
+                    row[4] = namedStoredProcedureQuery.getParameter().size();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -533,7 +538,9 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 namedStoredProcedureQueriesSpec.clear();
                 data.stream().forEach((row) -> {
-                    namedStoredProcedureQueriesSpec.add((NamedStoredProcedureQuery) row[0]);
+                    NamedStoredProcedureQuery procedureQuery = (NamedStoredProcedureQuery) row[0];
+                    procedureQuery.setEnable((boolean)row[1]);
+                    namedStoredProcedureQueriesSpec.add(procedureQuery);
                 });
                 this.data = data;
             }
@@ -543,17 +550,19 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getNamedQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, final List<NamedQuery> namedQueriesSpec) {
+    public static PropertySupport getNamedQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, IdentifiableClass identifiableClass) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No NamedQueries exist", "One NamedQuery exist", "NamedQueries exist"});
+        final List<NamedQuery> namedQueriesSpec = identifiableClass.getNamedQuery();
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
         columns.add(new Column("Lock Mode Type", false, true, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new NamedQueryPanel(modelerScene.getModelerFile()));
+        attributeEntity.setCustomDialog(new NamedQueryPanel(identifiableClass, modelerScene.getModelerFile()));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
@@ -578,14 +587,15 @@ public class PropertiesHandler {
                     NamedQuery namedQuery = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedQuery;
-                    row[1] = namedQuery.getName();
-                    row[2] = namedQuery.getQuery();
-                    row[3] = namedQuery.getLockMode();
+                    row[1] = namedQuery.isEnable();
+                    row[2] = getShortQueryName(identifiableClass, namedQuery.getName());
+                    row[3] = namedQuery.getQuery();
+                    row[4] = namedQuery.getLockMode();
                     data_local.add(row);
                 }
                 this.data = data_local;
             }
-
+            
             @Override
             public List<Object[]> getData() {
                 return data;
@@ -595,7 +605,9 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 namedQueriesSpec.clear();
                 data.stream().forEach((row) -> {
-                    namedQueriesSpec.add((NamedQuery) row[0]);
+                    NamedQuery namedQuery = (NamedQuery) row[0];
+                    namedQuery.setEnable((boolean)row[1]);
+                    namedQueriesSpec.add(namedQuery);
                 });
                 this.data = data;
             }
@@ -603,6 +615,76 @@ public class PropertiesHandler {
         });
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+    
+    public static PropertySupport getCustomAnnoation(String id, String name, String desc, JPAModelerScene modelerScene, List<Annotation> annotations) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        attributeEntity.setCountDisplay(new String[]{"No Annotations exist", "One Annotation exist", "Annotations exist"});
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Annoation", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new AnnotationPanel(modelerScene.getModelerFile()));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = annotations.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<Annotation> itr = annotations.iterator();
+                while (itr.hasNext()) {
+                    Annotation annotation = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = annotation;
+                    row[1] = annotation.isEnable();
+                    row[2] = annotation.getName();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+            
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                annotations.clear();
+                data.stream().forEach((row) -> {
+                    Annotation annotationElement = (Annotation) row[0];
+                    annotationElement.setEnable((boolean)row[1]);
+                    annotations.add(annotationElement);
+                });
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
+    public static String getShortQueryName(IdentifiableClass identifiableClass, String queryFullName) {
+        String clazz = identifiableClass.getClazz();
+        if (queryFullName.startsWith(clazz + '.')) {
+            return queryFullName.substring(clazz.length() + 1);
+        } else {
+            return queryFullName;
+        }
     }
 
     public static PropertySupport getNamedEntityGraphProperty(String id, String name, String desc, final EntityWidget entityWidget) {
@@ -613,6 +695,7 @@ public class PropertiesHandler {
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedEntityGraphPanel(entityWidget));
@@ -640,7 +723,8 @@ public class PropertiesHandler {
                     NamedEntityGraph entityGraph = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = entityGraph;
-                    row[1] = entityGraph.getName();
+                    row[1] = entityGraph.isEnable();
+                    row[2] = entityGraph.getName();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -655,7 +739,9 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 entityGraphsSpec.clear();
                 data.stream().forEach((row) -> {
-                    entityGraphsSpec.add((NamedEntityGraph) row[0]);
+                    NamedEntityGraph entityGraph = (NamedEntityGraph) row[0];
+                    entityGraph.setEnable((boolean)row[1]);
+                    entityGraphsSpec.add(entityGraph);
                 });
                 this.data = data;
             }
@@ -671,10 +757,9 @@ public class PropertiesHandler {
         List<NamedNativeQuery> namedNativeQueriesSpec = entity.getNamedNativeQuery();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
-        columns.add(new Column("Result Class", false, true, String.class));
-        columns.add(new Column("ResultSet Mapping", false, true, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedNativeQueryPanel(modelerScene.getModelerFile(), entity));
 
@@ -701,10 +786,9 @@ public class PropertiesHandler {
                     NamedNativeQuery namedNativeQuery = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = namedNativeQuery;
-                    row[1] = namedNativeQuery.getName();
-                    row[2] = namedNativeQuery.getQuery();
-                    row[3] = namedNativeQuery.getResultClass();
-                    row[4] = namedNativeQuery.getResultSetMapping();
+                    row[1] = namedNativeQuery.isEnable();
+                    row[2] = namedNativeQuery.getName();
+                    row[3] = namedNativeQuery.getQuery();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -719,7 +803,9 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 namedNativeQueriesSpec.clear();
                 data.stream().forEach((row) -> {
-                    namedNativeQueriesSpec.add((NamedNativeQuery) row[0]);
+                    NamedNativeQuery nativeQuery = (NamedNativeQuery) row[0];
+                    nativeQuery.setEnable((boolean)row[1]);
+                    namedNativeQueriesSpec.add(nativeQuery);
                 });
                 this.data = data;
             }

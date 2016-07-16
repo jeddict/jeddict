@@ -41,6 +41,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
         }
         if (mappedSuperclass.getClazz() == null || mappedSuperclass.getClazz().isEmpty()) {
             mappedSuperclass.setClazz(this.getModelerScene().getNextClassName("MappedSuperclass_"));
+            addNamedQuery(null, false);
         }
         setName(mappedSuperclass.getClazz());
         setLabel(mappedSuperclass.getClazz());

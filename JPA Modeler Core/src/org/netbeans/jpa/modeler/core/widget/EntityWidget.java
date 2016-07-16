@@ -38,7 +38,6 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.M
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
@@ -61,6 +60,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
             entity.setClazz(this.getModelerScene().getNextClassName("Entity_"));
+            addNamedQuery(null, false);
         }
 
         setName(entity.getClazz());
@@ -99,11 +99,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             set.put("BASIC_PROP", getInheritenceProperty(EntityWidget.this));
         }
 
-        set.put("BASIC_PROP", PropertiesHandler.getNamedEntityGraphProperty("NamedEntityGraphs", "Named Entity Graphs", "", this));
-        set.put("BASIC_PROP", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity.getNamedQuery()));
-        set.put("BASIC_PROP", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));
-        set.put("BASIC_PROP", PropertiesHandler.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
-        set.put("BASIC_PROP", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));
+        set.put("QUERY", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));
+        set.put("QUERY", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));
+        set.put("QUERY", PropertiesHandler.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
+        set.put("QUERY", PropertiesHandler.getNamedEntityGraphProperty("NamedEntityGraphs", "Named Entity Graphs", "", this));
+        set.put("QUERY", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));        
     }
 
 
@@ -154,7 +154,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
     public void scanCompositeKeyError() {
-
+        //TODO
     }
 
     @Override
@@ -188,8 +188,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         return getUnidirectionalRelationFlowWidget().add(e);
     }
 
-    public boolean removeUnidirectionalRelationFlowWidget(Object o) {
-        return getUnidirectionalRelationFlowWidget().remove(o);
+    public boolean removeUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
+        return getUnidirectionalRelationFlowWidget().remove(e);
     }
 
     public void clearUnidirectionalRelationFlowWidget() {

@@ -18,6 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 public class AnnotationSnippet implements Snippet {
 
@@ -38,7 +39,9 @@ public class AnnotationSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(_import);
+        if(StringUtils.isNotBlank(_import)){
+            importSnippets.add(_import);
+        }
         return importSnippets;
     }
 

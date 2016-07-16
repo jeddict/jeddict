@@ -148,7 +148,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     public void deleteBaseElement(IBaseElementWidget baseElementWidget) {
         EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getModelerScene().getBaseElementSpec();
         if (baseElementWidget instanceof IFlowElementWidget) {
-            if (baseElementWidget instanceof FlowNodeWidget) { //reverse refactorRelationSynchronously
+            if (baseElementWidget instanceof FlowNodeWidget) { //reverse refractorRelationSynchronously
                 FlowNodeWidget flowNodeWidget = (FlowNodeWidget) baseElementWidget;
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
                 if (baseElementWidget instanceof JavaClassWidget) {
@@ -250,11 +250,11 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         Boolean isExist = false;
         if (baseElementWidget instanceof IFlowElementWidget) {
             this.addBaseElement((IFlowElementWidget) baseElementWidget);
-            if (baseElementWidget instanceof IFlowNodeWidget) { //reverse refactorRelationSynchronously
+            if (baseElementWidget instanceof IFlowNodeWidget) { //reverse refractorRelationSynchronously
                 ((FlowNodeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((FlowNodeWidget) baseElementWidget).getId();
                 isExist = ((FlowNodeWidget) baseElementWidget).getNodeWidgetInfo().isExist();
-            } else if (baseElementWidget instanceof IFlowEdgeWidget) { //reverse refactorRelationSynchronously
+            } else if (baseElementWidget instanceof IFlowEdgeWidget) { //reverse refractorRelationSynchronously
                 ((IFlowEdgeWidget) baseElementWidget).setFlowElementsContainer(this);
                 baseElementId = ((IFlowEdgeWidget) baseElementWidget).getId();
                 isExist = ((PEdgeWidget) baseElementWidget).getEdgeWidgetInfo().isExist();
@@ -403,7 +403,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         menuList.add(3, openJPQLPanel);
         menuList.add(4, null);
         menuList.add(5, manageVisibility);
-        menuList.add(5, null);
         menuList.add(6, shareModeler);
         menuList.add(7, EnhancementRequestHandler.getInstance().getComponent());
         
@@ -453,6 +452,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             return PFactory.getColorScheme(PFactory.getNetBeans60Scheme());
         } else if (PFactory.getMetroScheme().getSimpleName().equals(entityMappings.getTheme())) {
             return PFactory.getColorScheme(PFactory.getMetroScheme());
+       } else if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getTheme())) {
+            return PFactory.getColorScheme(PFactory.getDarkScheme());
 //        } else if (PFactory.getWoodScheme().getSimpleName().equals(entityMappings.getTheme())) {
 //            return PFactory.getColorScheme(PFactory.getWoodScheme());
         } else {
@@ -472,6 +473,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         colorSchemes.put("Classic", PFactory.getNetBeans60Scheme());
         colorSchemes.put("Metro", PFactory.getMetroScheme());
         colorSchemes.put("Mac", PFactory.getMacScheme());
+        colorSchemes.put("Dark", PFactory.getDarkScheme());
 //      colorSchemes.put("Wood", PFactory.getWoodScheme());
         return colorSchemes;
     }

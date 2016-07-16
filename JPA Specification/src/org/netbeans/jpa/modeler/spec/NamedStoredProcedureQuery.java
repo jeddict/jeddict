@@ -63,8 +63,10 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "resultSetMapping",
     "hint"
 })
-public class NamedStoredProcedureQuery {
+public class NamedStoredProcedureQuery {//TODO extend to DataMapping and remove name and enable attribute 
 
+    @XmlAttribute(name = "e")
+    private boolean enable = true;
     protected String description;
     @XmlElement(name = "p")
     protected List<StoredProcedureParameter> parameter;
@@ -312,6 +314,20 @@ public class NamedStoredProcedureQuery {
      */
     public void setProcedureName(String value) {
         this.procedureName = value;
+    }
+
+    /**
+     * @return the enable
+     */
+    public boolean isEnable() {
+        return enable;
+    }
+
+    /**
+     * @param enable the enable to set
+     */
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
 }

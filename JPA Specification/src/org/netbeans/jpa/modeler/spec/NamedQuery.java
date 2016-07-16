@@ -12,9 +12,11 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jcode.core.util.StringHelper;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.QueryMapping;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -53,21 +55,20 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-query", propOrder = {
-    "description",
-    "query",
+//    "description",
+//    "query",
     "lockMode",
     "hint"
 })
-public class NamedQuery {
-
-    protected String description;
-    @XmlElement(required = true)
-    protected String query;
+public class NamedQuery extends QueryMapping {
+    
+    
+    public static final String FIND_BY = "findBy";
+    public static final String FIND_ALL = "findAll";
+    
     @XmlElement(name = "lock-mode")
     protected LockModeType lockMode;
     protected List<QueryHint> hint;
-    @XmlAttribute(required = true)
-    protected String name;
 
     public static NamedQuery load(Element element, AnnotationMirror annotationMirror) {
         NamedQuery namedQuery = null;
@@ -90,45 +91,7 @@ public class NamedQuery {
         return namedQuery;
     }
 
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getDescription() {
-        return description;
-    }
 
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
-    /**
-     * Gets the value of the query property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getQuery() {
-        return query;
-    }
-
-    /**
-     * Sets the value of the query property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setQuery(String value) {
-        this.query = value;
-    }
 
     /**
      * Gets the value of the lockMode property.
@@ -178,25 +141,29 @@ public class NamedQuery {
         }
         return this.hint;
     }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
+        
+    public static NamedQuery getTemplate(IdentifiableClass identifiableClass, Attribute attribute){
+        NamedQuery namedQuery = new NamedQuery();    
+        namedQuery.setName(identifiableClass.getClazz() + '.' +FIND_BY + StringHelper.firstUpper(attribute.getName()));
+        StringBuilder builder = new StringBuilder();
+        char var = Character.toLowerCase(identifiableClass.getClazz().charAt(0));
+        builder.append("Select ").append(var).append(" from ")
+        .append(identifiableClass.getClazz()).append(" ").append(var)
+        .append(" where ")
+        .append(var).append(".").append(attribute.getName()).append("=:").append(attribute.getName());
+        namedQuery.setQuery(builder.toString());
+        return namedQuery;
     }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
+    
+    public static NamedQuery getTemplate(IdentifiableClass identifiableClass){
+        NamedQuery namedQuery = new NamedQuery();    
+        namedQuery.setName(identifiableClass.getClazz() + '.' +FIND_ALL);
+        StringBuilder builder = new StringBuilder();
+        char var = Character.toLowerCase(identifiableClass.getClazz().charAt(0));
+        builder.append("Select ").append(var).append(" from ")
+        .append(identifiableClass.getClazz()).append(" ").append(var);
+        namedQuery.setQuery(builder.toString());
+        return namedQuery;
     }
 
 }

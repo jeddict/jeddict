@@ -17,7 +17,9 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
+import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
@@ -29,21 +31,21 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.SPACE;
 public class ConstructorSnippet implements Snippet {
 
     private final String className;
-    private final AccessModifierType accessModifier;
+    private final Constructor constructor;
     private final List<VariableDefSnippet> variableSnippets;
     
 
-    public ConstructorSnippet(String className, AccessModifierType accessModifier, List<VariableDefSnippet> variableSnippets) {
+    public ConstructorSnippet(String className, Constructor constructor, List<VariableDefSnippet> variableSnippets) {
         this.className = className;
-        this.accessModifier = accessModifier;
+        this.constructor = constructor;
         this.variableSnippets = variableSnippets;
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
                 StringBuilder builder = new StringBuilder();
-                if(accessModifier!=AccessModifierType.DEFAULT){
-                    builder.append(accessModifier.getValue()).append(SPACE);
+                if(constructor.getAccessModifier()!=AccessModifierType.DEFAULT){
+                    builder.append(constructor.getAccessModifier().getValue()).append(SPACE);
                 }
                 builder.append(className).append(OPEN_PARANTHESES);
                 StringBuilder varAssign = new StringBuilder();
@@ -57,7 +59,13 @@ public class ConstructorSnippet implements Snippet {
                 builder.append(CLOSE_PARANTHESES);
                 
                 builder.append(OPEN_BRACES).append(NEW_LINE);
+                if(StringUtils.isNotBlank(constructor.getPreCode())){
+                    builder.append(constructor.getPreCode()).append(NEW_LINE);
+                }
                 builder.append(varAssign);
+                if(StringUtils.isNotBlank(constructor.getPostCode())){
+                    builder.append(constructor.getPostCode()).append(NEW_LINE);
+                }
                 builder.append(CLOSE_BRACES);
                 
         return builder.toString();

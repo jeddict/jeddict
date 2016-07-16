@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getShortQueryName;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.LockModeType;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.QueryHint;
@@ -41,11 +43,12 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
     private NamedQuery namedQuery;
     private NAttributeEntity attributeEntity;
     private ModelerFile modelerFile;
-    public NamedQueryPanel(ModelerFile modelerFile) {
-        this.modelerFile=modelerFile;
-    }
-
+    private IdentifiableClass identifiableClass;
     
+    public NamedQueryPanel(IdentifiableClass identifiableClass, ModelerFile modelerFile) {
+        this.modelerFile=modelerFile;
+        this.identifiableClass = identifiableClass;
+    }
     
     @Override
     public void postConstruct() {
@@ -70,13 +73,12 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Create new Named Query");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[4]));
+            this.setEntity(new RowValue(new Object[5]));
         }
         namedQuery = null;
-        name_TextField.setText("");
-        query_EditorPane.setText("");
+        name_TextField.setText(identifiableClass.getClazz() + '.' + "findByX");
+        query_EditorPane.setText("Select e from " + identifiableClass.getClazz() + " e");
         lockModeType_jComboBox.setSelectedIndex(0);
-
         initCustomNAttributeEditor();
         attributeEntity = getQueryHint();
         customNAttributeClientEditor.setAttributeEntity(attributeEntity);
@@ -111,7 +113,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         }
     }
 
-    void initCustomNAttributeEditor() {
+    private void initCustomNAttributeEditor() {
         customNAttributeClientEditor = NEntityEditor.createInstance(queryHint_LayeredPane, 602, 249);
     }
 
@@ -163,7 +165,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
         query_ScrollPane.setPreferredSize(new java.awt.Dimension(400, 100));
 
-        query_EditorPane.setPreferredSize(new java.awt.Dimension(206, 23));
+        query_EditorPane.setPreferredSize(new java.awt.Dimension(210, 23));
         query_ScrollPane.setViewportView(query_EditorPane);
         //jEditorPane1.getDocument().removeDocumentListener(NamedStoredProcedureQueryPanel.this);
         query_EditorPane.setEditorKit(CloneableEditorSupport.getEditorKit("text/x-jpql-jpam"));
@@ -173,6 +175,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
         editButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/resource/image/misc/jpqlEditor.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(editButton, org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.editButton.text")); // NOI18N
+        editButton.setPreferredSize(new java.awt.Dimension(25, 25));
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
@@ -214,6 +217,8 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         queryHint_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.queryHint_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         queryHint_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
 
+        queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout queryHint_LayeredPaneLayout = new javax.swing.GroupLayout(queryHint_LayeredPane);
         queryHint_LayeredPane.setLayout(queryHint_LayeredPaneLayout);
         queryHint_LayeredPaneLayout.setHorizontalGroup(
@@ -223,10 +228,15 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         queryHint_LayeredPaneLayout.setVerticalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        queryHint_LayeredPane.setLayer(customNAttributeClientEditor, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(query_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(lockModeType_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(queryHint_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -260,11 +270,6 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        root_jLayeredPane.setLayer(name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(query_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(lockModeType_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(queryHint_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -282,11 +287,11 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
     private boolean validateField() {
         if (this.name_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, "Name field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Name can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
         if (this.query_EditorPane.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, "Query field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Query can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
         return true;
@@ -312,9 +317,10 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = namedQuery;
-            row[1] = namedQuery.getName();
-            row[2] = namedQuery.getQuery();
-            row[3] = namedQuery.getLockMode();
+            row[1] = namedQuery.isEnable();
+            row[2] = getShortQueryName(identifiableClass, namedQuery.getName());
+            row[3] = namedQuery.getQuery();
+            row[4] = namedQuery.getLockMode();
         }
         attributeEntity.getTableDataListener().setData(customNAttributeClientEditor.getSavedModel());
         saveActionPerformed(evt);

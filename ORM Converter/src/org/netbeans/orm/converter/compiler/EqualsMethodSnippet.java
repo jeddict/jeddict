@@ -20,6 +20,7 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 
@@ -37,13 +38,13 @@ public class EqualsMethodSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         builder.append("if (obj == null) {return false;}\n");
-        builder.append("if (getClass() != obj.getClass()) {return false;}\n");
+        builder.append("if (!java.util.Objects.equals(getClass(), obj.getClass())) {return false;}\n");
         builder.append(String.format("final %s other = (%s) obj;\n", className, className));
 
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
             String expression;
-            if (attribute instanceof BaseAttribute) {
+            if (attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)) {
                 expression = JavaHashcodeEqualsUtil.getEqualExpression(((BaseAttribute) attribute).getAttributeType(), attribute.getName());
             } else {
                 expression = JavaHashcodeEqualsUtil.getEqualExpression(attribute.getName());

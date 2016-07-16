@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.DataMapping;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -58,15 +59,13 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
     "subgraph",
     "subclassSubgraph"
 })
-public class NamedEntityGraph {
+public class NamedEntityGraph extends DataMapping {
 
     @XmlElement(name = "named-attribute-node")
     protected List<NamedAttributeNode> namedAttributeNode;
     protected List<NamedSubgraph> subgraph;
     @XmlElement(name = "subclass-subgraph")
     protected List<NamedSubgraph> subclassSubgraph;
-    @XmlAttribute(name = "name")
-    protected String name;
     @XmlAttribute(name = "include-all-attributes")
     protected Boolean includeAllAttributes;
 
@@ -260,26 +259,6 @@ public class NamedEntityGraph {
             subclassSubgraph = new ArrayList<NamedSubgraph>();
         }
         return this.subclassSubgraph;
-    }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Lists the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
     }
 
     /**

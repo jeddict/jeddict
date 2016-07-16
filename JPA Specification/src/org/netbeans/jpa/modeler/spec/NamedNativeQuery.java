@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.netbeans.jpa.modeler.spec.extend.QueryMapping;
 import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
@@ -55,18 +56,13 @@ import org.netbeans.jpa.source.JavaSourceParserUtil;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-native-query", propOrder = {
-    "description",
-    "query",
+//    "description",
+//    "query",
     "hint"
 })
-public class NamedNativeQuery {
+public class NamedNativeQuery extends QueryMapping {
 
-    protected String description;
-    @XmlElement(required = true)
-    protected String query;
     protected List<QueryHint> hint;
-    @XmlAttribute(required = true)
-    protected String name;
     @XmlAttribute(name = "result-class")
     protected String resultClass;
     @XmlAttribute(name = "result-set-mapping")
@@ -91,46 +87,6 @@ public class NamedNativeQuery {
             }
         }
         return namedNativeQuery;
-    }
-
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
-    /**
-     * Gets the value of the query property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getQuery() {
-        return query;
-    }
-
-    /**
-     * Sets the value of the query property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setQuery(String value) {
-        this.query = value;
     }
 
     /**
@@ -160,26 +116,6 @@ public class NamedNativeQuery {
             hint = new ArrayList<QueryHint>();
         }
         return this.hint;
-    }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
     }
 
     /**
