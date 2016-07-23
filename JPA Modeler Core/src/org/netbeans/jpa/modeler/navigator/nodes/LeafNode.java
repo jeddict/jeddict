@@ -35,7 +35,7 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
     private List<LeafNodeAction> actionInstances;
 
     public LeafNode(IModelerScene modelerScene, T baseElementSpec, Children children, CheckableAttributeNode checkableNode,List<Class<? extends LeafNodeAction>> actions) {
-        super(modelerScene, children, Lookups.singleton(checkableNode));
+        super(modelerScene, children, checkableNode==null?null:Lookups.singleton(checkableNode));
         this.baseElementSpec = baseElementSpec;
         this.checkableNode = checkableNode;
         if (checkableNode != null) {
