@@ -199,7 +199,8 @@ public class JPAMDefaultTableGenerator {
         this.project.getOrderedDescriptors().stream().map(d -> (DBRelationalDescriptor) d).forEach((descriptor) -> {
             /**
              * Table per concrete class #Id : SUPERCLASS_ATTR_CLONE.
-             * Description : Fix for If class have             * super class then super class mapping is cloned and copied to
+             * Description : Fix for If class have super class 
+             * then super class mapping is cloned and copied to
              * subclass, to share the attributes but in the cloning process,
              * Attribute Spec property is missed.
              */
@@ -229,7 +230,13 @@ public class JPAMDefaultTableGenerator {
 
         });
         //go through each descriptor and build the table/field definitions out of mappings
-        for (ClassDescriptor descriptor : this.project.getOrderedDescriptors()) {
+        /**
+         * sorted use :
+         * method is used to create table definition first for parent entity 
+         * problem : child has both parent & child table definition but only child entity object which is associated with parent table
+         * solution : sort and create the table definition first for parent entity
+         */
+        this.project.getOrderedDescriptors().stream().sorted((d1, d2) -> Integer.compare(d1.getTables().size(), d2.getTables().size())).forEach(descriptor -> {
 //            if ((descriptor instanceof XMLDescriptor) || (descriptor instanceof EISDescriptor) || (descriptor instanceof ObjectRelationalDataTypeDescriptor)) {
 //                //default table generator does not support ox, eis and object-relational descriptor
 //                AbstractSessionLog.getLog().log(SessionLog.WARNING, SessionLog.DDL, "relational_descriptor_support_only", (Object[]) null, true);
@@ -239,10 +246,11 @@ public class JPAMDefaultTableGenerator {
             // processed through their owning entities. Aggregate descriptors
             // can not exist on their own.
             // Table per tenant descriptors will not be initialized.
+            System.out.println("descriptor size xxxxx : " + descriptor.getTables().size());
             if (!descriptor.isDescriptorTypeAggregate() && !(descriptor.hasTablePerMultitenantPolicy() && !project.allowTablePerMultitenantDDLGeneration())) {
                 initTableSchema(descriptor);
             }
-        }
+        });
 
         //Post init the schema for relation table and direct collection/map tables, and several special mapping handlings.
         for (ClassDescriptor descriptor : this.project.getOrderedDescriptors()) {
