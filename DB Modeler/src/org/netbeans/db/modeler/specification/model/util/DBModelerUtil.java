@@ -55,6 +55,7 @@ import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
+import org.netbeans.db.modeler.core.widget.table.SecondaryTableWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
@@ -150,7 +151,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ClassLoader cl = DBModelerUtil.class.getClassLoader();
 
             BASE_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/TABLE.gif";
-            SECONDARY_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/JOIN_TABLE.png";
+            SECONDARY_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/SECONDARY_TABLE.gif";
             COLLECTION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/COLLECTION_TABLE.gif";
             RELATION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/JOIN_TABLE.png";
             BASE_TABLE = new ImageIcon(cl.getResource(BASE_TABLE_ICON_PATH)).getImage();
@@ -546,6 +547,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         switch (modelerDocument.getId()) {
             case "BaseTable":
                 widget = new BaseTableWidget(scene, widgetInfo);
+                break;
+            case "SecondaryTable":
+                widget = new SecondaryTableWidget(scene, widgetInfo);
                 break;
             case "RelationTable":
                 widget = new RelationTableWidget(scene, widgetInfo);
