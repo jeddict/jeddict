@@ -7,14 +7,15 @@
 package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.internal.jpa.metadata.tables.SecondaryTableMetadata;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 
 /**
  *
@@ -59,27 +60,63 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "secondary-table", propOrder = {
     "primaryKeyJoinColumn",
     "primaryKeyForeignKey",
-    "uniqueConstraint",
-    "index",
+//    "uniqueConstraint",
+//    "index",
     "foreignKey"
 })
-public class SecondaryTable {
+public class SecondaryTable extends Table {
 
     @XmlElement(name = "primary-key-join-column")
     protected List<PrimaryKeyJoinColumn> primaryKeyJoinColumn;
     @XmlElement(name = "primary-key-foreign-key")
     protected ForeignKey primaryKeyForeignKey;//REVENG PENDING
-    @XmlElement(name = "unique-constraint")
-    protected Set<UniqueConstraint> uniqueConstraint;
-    protected List<Index> index;//REVENG PENDING
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
-    @XmlAttribute(name = "catalog")
-    protected String catalog;
-    @XmlAttribute(name = "schema")
-    protected String schema;
     @XmlElement(name = "fk")
     protected ForeignKey foreignKey;//REVENG PENDING
+
+    private static SecondaryTable loadSecondaryTable(Element element, AnnotationMirror annotationMirror) {
+        SecondaryTable secondaryTable = null;
+        if (annotationMirror != null) {
+            secondaryTable = new SecondaryTable();
+            List uniqueConstraintsAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "uniqueConstraints");
+            if (uniqueConstraintsAnnot != null) {
+                for (Object uniqueConstraintsObj : uniqueConstraintsAnnot) {
+                    secondaryTable.getUniqueConstraint().add(UniqueConstraint.load(element, (AnnotationMirror) uniqueConstraintsObj));
+                }
+            }
+            
+            List indexesAnnot = (List) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "indexes");
+            if (indexesAnnot != null) {
+                for (Object indexObj : indexesAnnot) {
+                    secondaryTable.getIndex().add(Index.load(element, (AnnotationMirror) indexObj));
+                }
+            }
+
+            secondaryTable.name = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "name");
+            secondaryTable.catalog = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "catalog");
+            secondaryTable.schema = (String) JavaSourceParserUtil.findAnnotationValue(annotationMirror, "schema");
+        }
+        return secondaryTable;
+    }
+
+    public static List<SecondaryTable> loadTables(Element element) {
+        List<SecondaryTable> secondaryTables = new ArrayList<>();
+
+        AnnotationMirror secondaryTablesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SecondaryTables");
+        if (secondaryTablesMirror != null) {
+            List secondaryTablesMirrorList = (List) JavaSourceParserUtil.findAnnotationValue(secondaryTablesMirror, "value");
+            if (secondaryTablesMirrorList != null) {
+                for (Object secondaryTableObj : secondaryTablesMirrorList) {
+                    secondaryTables.add(SecondaryTable.loadSecondaryTable(element, (AnnotationMirror) secondaryTableObj));
+                }
+            }
+        } else {
+            secondaryTablesMirror = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.SecondaryTable");
+            if (secondaryTablesMirror != null) {
+                secondaryTables.add(SecondaryTable.loadSecondaryTable(element, secondaryTablesMirror));
+            }
+        }
+        return secondaryTables;
+    }
     
 
     /**
@@ -130,124 +167,6 @@ public class SecondaryTable {
     public void setPrimaryKeyForeignKey(ForeignKey value) {
         this.primaryKeyForeignKey = value;
     }
-
-    /**
-     * Gets the value of the uniqueConstraint property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the uniqueConstraint property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUniqueConstraint().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link UniqueConstraint }
-     *
-     *
-     */
-    public Set<UniqueConstraint> getUniqueConstraint() {
-        if (uniqueConstraint == null) {
-            uniqueConstraint = new LinkedHashSet<>();
-        }
-        return this.uniqueConstraint;
-    }
-
-    /**
-     * Gets the value of the index property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a
-     * snapshot. Therefore any modification you make to the returned list will
-     * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the index property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIndex().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link Index }
-     *
-     *
-     */
-    public List<Index> getIndex() {
-        if (index == null) {
-            index = new ArrayList<Index>();
-        }
-        return this.index;
-    }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
-
-    /**
-     * Gets the value of the catalog property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getCatalog() {
-        return catalog;
-    }
-
-    /**
-     * Sets the value of the catalog property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setCatalog(String value) {
-        this.catalog = value;
-    }
-
-    /**
-     * Gets the value of the schema property.
-     *
-     * @return possible object is {@link String }
-     *
-     */
-    public String getSchema() {
-        return schema;
-    }
-
-    /**
-     * Sets the value of the schema property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    public void setSchema(String value) {
-        this.schema = value;
-    }
-    
     
     /**
      * Gets the value of the foreignKey property.
@@ -270,6 +189,15 @@ public class SecondaryTable {
      */
     public void setForeignKey(ForeignKey value) {
         this.foreignKey = value;
+    }
+
+    public SecondaryTableMetadata getAccessor() {
+        SecondaryTableMetadata accessor = new SecondaryTableMetadata();
+        accessor.setName(name);
+        accessor.setCatalog(catalog);
+        accessor.setSchema(schema);
+
+        return accessor;
     }
 
 }

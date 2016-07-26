@@ -77,6 +77,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 
     public TableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
+        this.setName(((DBTable)node.getBaseElementSpec()).getName()); 
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
         this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         this.getImageWidget().getActions().addAction(new TableAction());

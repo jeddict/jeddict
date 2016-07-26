@@ -98,6 +98,7 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.exception.ModelerException;
+import org.netbeans.modeler.core.exception.ProcessInterruptedException;
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
@@ -121,6 +122,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     public static String BASE_TABLE_ICON_PATH;
     public static Image BASE_TABLE;
+    public static String SECONDARY_TABLE_ICON_PATH;
+    public static Image SECONDARY_TABLE;
     public static String COLLECTION_TABLE_ICON_PATH;
     public static Image COLLECTION_TABLE;
     public static String RELATION_TABLE_ICON_PATH;
@@ -147,9 +150,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             ClassLoader cl = DBModelerUtil.class.getClassLoader();
 
             BASE_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/TABLE.gif";
+            SECONDARY_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/JOIN_TABLE.png";
             COLLECTION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/COLLECTION_TABLE.gif";
             RELATION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/JOIN_TABLE.png";
             BASE_TABLE = new ImageIcon(cl.getResource(BASE_TABLE_ICON_PATH)).getImage();
+            SECONDARY_TABLE = new ImageIcon(cl.getResource(SECONDARY_TABLE_ICON_PATH)).getImage();
             COLLECTION_TABLE = new ImageIcon(cl.getResource(COLLECTION_TABLE_ICON_PATH)).getImage();
             RELATION_TABLE = new ImageIcon(cl.getResource(RELATION_TABLE_ICON_PATH)).getImage();
 
@@ -170,7 +175,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public void loadModelerFile(ModelerFile file) throws org.netbeans.modeler.core.exception.ProcessInterruptedException {
         try {
             loadModelerFileInternal(file);
-        } catch (Exception ie) {
+        } catch (DBConnectionNotFound | ProcessInterruptedException ie) {
             DeploymentExceptionManager.handleException(file, ie);
         }
     }
@@ -181,8 +186,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
-            DBMapping dbMapping = null;
-            dbMapping = createDBMapping(file, entityMapping);
+            DBMapping dbMapping = createDBMapping(file, entityMapping);
 
             scene.setBaseElementSpec(dbMapping);
 

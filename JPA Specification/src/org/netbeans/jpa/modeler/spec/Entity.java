@@ -8,6 +8,7 @@ package org.netbeans.jpa.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.lang.model.element.AnnotationMirror;
@@ -196,6 +197,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
             }
         }
         this.table = Table.load(element);
+        this.getSecondaryTable().addAll(SecondaryTable.loadTables(element));
         this.inheritance = Inheritance.load(element);
         AnnotationMirror annotDiscrValue = JavaSourceParserUtil.findAnnotation(element, "javax.persistence.DiscriminatorValue");
         if (annotDiscrValue != null) {
@@ -226,7 +228,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         this.getAssociationOverride().addAll(AssociationOverride.load(element));
         this.getNamedEntityGraph().addAll(NamedEntityGraph.load(element));
         this.getNamedStoredProcedureQuery().addAll(NamedStoredProcedureQuery.load(element));
-
+        
     }
 
     void beforeMarshal(Marshaller marshaller) {
@@ -293,9 +295,17 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
      */
     public List<SecondaryTable> getSecondaryTable() {
         if (secondaryTable == null) {
-            secondaryTable = new ArrayList<SecondaryTable>();
+            secondaryTable = new ArrayList<>();
         }
         return this.secondaryTable;
+    }
+
+    public boolean addSecondaryTable(SecondaryTable secondaryTable_In) {
+        return secondaryTable.add(secondaryTable_In);
+    }
+
+    public boolean removeSecondaryTable(SecondaryTable secondaryTable_In) {
+        return secondaryTable.remove(secondaryTable_In);
     }
 
     /**
@@ -777,4 +787,17 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         }
     }
 
+    public Table getTable(String tableName){
+        if(this.getTable()!=null && StringUtils.equalsIgnoreCase(this.getTable().getName(), tableName)){
+            return this.getTable();
+        }
+//        }
+        if(!this.getSecondaryTable().isEmpty()){
+            Optional<SecondaryTable> secondaryTableOptional = this.getSecondaryTable().stream().filter(table -> StringUtils.equalsIgnoreCase(table.getName(), tableName)).findFirst();
+            if(secondaryTableOptional.isPresent()){
+                return secondaryTableOptional.get();
+            }
+        }
+        return null;
+    }
 }

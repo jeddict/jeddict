@@ -15,16 +15,27 @@
  */
 package org.netbeans.db.modeler.core.widget.table;
 
+import java.awt.Component;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE_ICON_PATH;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.SecondaryTable;
+import org.netbeans.jpa.modeler.spec.Table;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
@@ -37,6 +48,15 @@ public class BaseTableWidget extends TableWidget<DBTable> {
             setName(value);
             setLabel(name);
         });
+    }
+    
+    @Override
+    public void init() {
+        super.init();
+        Table table = this.getBaseElementSpec().getEntity().getTable(this.getName());
+        if(table instanceof SecondaryTable){
+            this.setImage(DBModelerUtil.SECONDARY_TABLE);
+        }
     }
 
     private void setDefaultName() {
@@ -78,7 +98,33 @@ public class BaseTableWidget extends TableWidget<DBTable> {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         Entity entity = this.getBaseElementSpec().getEntity();
-        set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
+        Table table = entity.getTable(this.getName());
+        if (table == null) {
+            table = entity.getTable();
+        }
+        set.createPropertySet(this, table, getPropertyChangeListeners());
+    }
+
+    @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuList = super.getPopupMenuItemList();
+        JMenuItem joinTable = new JMenuItem("Create Secondary Table");
+        joinTable.addActionListener((ActionEvent e) -> {
+            Entity entity = this.getBaseElementSpec().getEntity();
+            String secondaryTableName = JOptionPane.showInputDialog((Component) BaseTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter secondary table name");
+            if (entity.getTable(secondaryTableName) == null) { //check from complete table list
+                SecondaryTable secondaryTable = new SecondaryTable();
+                secondaryTable.setName(secondaryTableName);
+                entity.addSecondaryTable(secondaryTable);
+                ModelerFile parentFile = BaseTableWidget.this.getModelerScene().getModelerFile().getParentFile();
+                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+            } else {
+                JOptionPane.showMessageDialog((Component) BaseTableWidget.this.getModelerScene().getModelerPanelTopComponent(),
+                        "Table already exist");
+            }
+        });
+        menuList.add(0, joinTable);
+        return menuList;
     }
 
     @Override
@@ -90,4 +136,5 @@ public class BaseTableWidget extends TableWidget<DBTable> {
     public Image getIcon() {
         return BASE_TABLE;
     }
+
 }

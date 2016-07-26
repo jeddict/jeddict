@@ -15,10 +15,14 @@
  */
 package org.netbeans.jpa.modeler.db.accessor;
 
+import java.util.ArrayList;
+import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EntityAccessor;
+import org.eclipse.persistence.internal.jpa.metadata.tables.SecondaryTableMetadata;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
+import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
@@ -43,6 +47,13 @@ public class EntitySpecAccessor extends EntityAccessor {
         accessor.setAttributes(entity.getAttributes().getAccessor());
         if (entity.getTable() != null) {
             accessor.setTable(entity.getTable().getAccessor());
+        }
+        if(!entity.getSecondaryTable().isEmpty()){
+            List<SecondaryTableMetadata> secondaryTableMetadata = new ArrayList<>();
+            for(SecondaryTable secondaryTable : entity.getSecondaryTable()){
+               secondaryTableMetadata.add(secondaryTable.getAccessor());
+            }
+            accessor.setSecondaryTables(secondaryTableMetadata);
         }
         processSuperClass(entity, accessor);
         if (entity.getInheritance() != null) {
