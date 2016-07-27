@@ -25,6 +25,7 @@ import javax.lang.model.type.ErrorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ForeignKey;
 import org.netbeans.jpa.modeler.spec.IdClass;
@@ -97,7 +98,7 @@ public abstract class SingleRelationAttribute extends RelationAttribute implemen
             if (variableElement.asType() instanceof ErrorType) { //variable => "<any>"
                 throw new TypeNotPresentException(this.name + " type not found", null);
             }
-           this.targetEntity = variableElement.getSimpleName().toString();
+           this.targetEntity = getSimpleClassName(variableElement.asType().toString());
         } else {
             this.targetEntity = declaredType.asElement().getSimpleName().toString();
         }
