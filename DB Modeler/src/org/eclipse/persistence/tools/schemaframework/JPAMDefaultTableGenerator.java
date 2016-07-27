@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import static java.util.stream.Collectors.toSet;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
 import org.eclipse.persistence.exceptions.DatabaseException;
@@ -91,6 +92,7 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -368,17 +370,19 @@ public class JPAMDefaultTableGenerator {
             return;
         }
 
+        List<DatabaseTable> processTables = new ArrayList<>();
         //create a table definition for each mapped database table
         for (DatabaseTable table : descriptor.getTables()) {
             tableDefintion = getTableDefFromDBTable(intrinsicEntity.peek(), null, intrinsicEntity, table);
+             if(intrinsicEntity.peek().getTable(table.getName()) instanceof SecondaryTable){
+                 processTables.add(table);
+             }
         }
-        DatabaseTable defaultTable = descriptor.getDefaultTable();
-
+        processTables.add(descriptor.getDefaultTable());
+        Set<String> processTablesName = processTables.stream().map(t -> t.getName()).collect(toSet());
+        
         Set<DatabaseField> remainingDatabaseFields = new HashSet<>(descriptor.getFields());
 
-//        for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
-//            databaseMapping.getField().getTable()
-//        }
         //build each field definition and figure out which table it goes
         for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
             LinkedList<Attribute> intrinsicAttribute;
@@ -396,9 +400,8 @@ public class JPAMDefaultTableGenerator {
 
                 remainingDatabaseFields.remove(dbField);
 
-                //JoinedStrategy or SecondryTable(TODO)
                 //In JoinedStrategy, it contains parent mapping so skipped
-                if (defaultTable != dbField.getTable()) {
+                if (!processTablesName.contains(dbField.getTable().getName())) {
                     continue;
                 }
 
@@ -472,7 +475,7 @@ public class JPAMDefaultTableGenerator {
             boolean isInverse = false;
 
             //JoinedStrategy //it contains also parent mapping so skipped
-            if (defaultTable != dbField.getTable()) {
+            if (!processTablesName.contains(dbField.getTable().getName())) {
                 continue;
             }
 
@@ -495,9 +498,6 @@ public class JPAMDefaultTableGenerator {
 
     }
 
-    private void initDatabaseField() {
-
-    }
 
     /**
      * Build additional table/field definitions for the descriptor, like
