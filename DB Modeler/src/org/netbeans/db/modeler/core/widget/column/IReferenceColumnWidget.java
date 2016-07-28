@@ -30,6 +30,8 @@ public interface IReferenceColumnWidget<E extends BaseElement> {
 
     boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget);
 
+    String getId();
+    
     String getName();
 
     TableWidget getTableWidget();

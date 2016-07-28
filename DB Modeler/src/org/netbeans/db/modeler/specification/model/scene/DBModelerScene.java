@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
@@ -61,10 +62,10 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                 IBaseElement baseElementSpec = flowNodeWidget.getBaseElementSpec();
                 if (baseElementWidget instanceof TableWidget) {
                     TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
-                    tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
-                    for (ForeignKeyWidget foreignKeyWidget : tableWidget.getForeignKeyWidgets()) {
+                    tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion procced each element locked
+                     for (ForeignKeyWidget foreignKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getForeignKeyWidgets())) {
                         foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
-                            ((ReferenceFlowWidget) w).remove();
+                            ((ReferenceFlowWidget) w).remove(); 
                         });
                     }
                     tableWidget.setLocked(false);
@@ -78,8 +79,10 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                     referenceFlowWidget.setLocked(true);
                     ForeignKeyWidget foreignKeyWidget = referenceFlowWidget.getSourceWidget();
                     foreignKeyWidget.remove();
+                    foreignKeyWidget.getTableWidget().removeForeignKeyWidget(foreignKeyWidget);
                     ColumnWidget columnWidget = (ColumnWidget) referenceFlowWidget.getTargetWidget();
                     columnWidget.remove();
+                    columnWidget.getTableWidget().removeColumnWidget(columnWidget);
                     referenceFlowWidget.setLocked(false);
                     referenceFlowWidget.setFlowElementsContainer(null);
                     this.removeBaseElement(referenceFlowWidget);

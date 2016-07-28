@@ -58,22 +58,6 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     }
 
     @Override
-    public boolean remove() {
-        return remove(false);
-    }
-
-    @Override
-    public boolean remove(boolean notification) {
-        // Issue Fix #5855 Start
-//        if (super.remove(notification)) {
-//            getClassWidget().deleteAttribute(ColumnWidget.this);
-//            return true;
-//        }
-        // Issue Fix #5855 End
-        return false;
-    }
-
-    @Override
     public void setLabel(String label) {
         if (label != null && !label.trim().isEmpty()) {
             this.setPinName(label.replaceAll("\\s+", ""));
