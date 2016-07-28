@@ -15,6 +15,8 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
+import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -28,6 +30,26 @@ public abstract class SingleRelationAttributeWidget<E extends SingleRelationAttr
 
     public SingleRelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
+    }
+
+    @Override
+    public void onConnection() {
+        compile();
+    }
+
+    public void compile() {
+        this.getClassWidget().sortAttributes();
+        this.getClassWidget().scanDuplicateAttributes(null, this.getBaseElementSpec().getName());
+        if (this.getBaseElementSpec().isPrimaryKey()) {
+            AttributeValidator.validateEmbeddedIdAndIdFound(this.getClassWidget());
+            if (this.getClassWidget() instanceof EntityWidget) {
+                ((EntityWidget) this.getClassWidget()).scanKeyError();
+            }
+            this.getClassWidget().getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
+                ((EntityWidget) classWidget).scanKeyError();
+            });
+            this.getClassWidget().isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+        }
     }
 
 }

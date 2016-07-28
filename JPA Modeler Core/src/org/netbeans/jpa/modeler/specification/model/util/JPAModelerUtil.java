@@ -496,7 +496,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         }
                     });
                     _class.getAttributes().getOneToOne().stream().filter(OneToOne::isVisibile).forEach((oneToOne) -> {
-                        OTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToOneRelationAttribute(oneToOne.getName(), oneToOne);
+                        OTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToOneRelationAttribute(oneToOne.getName(), oneToOne.isPrimaryKey(), oneToOne);
 //                        if (oneToOne.getMappedBy() == null) {
 //                            oneToOne.setOwner(true);
 //                        }
@@ -508,7 +508,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //                        }
                     });
                     _class.getAttributes().getManyToOne().stream().filter(ManyToOne::isVisibile).forEach((manyToOne) -> {
-                        MTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToOneRelationAttribute(manyToOne.getName(), manyToOne);
+                        MTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToOneRelationAttribute(manyToOne.getName(), manyToOne.isPrimaryKey(), manyToOne);
 //                        manyToOne.setOwner(true);//always
                     });
                     _class.getAttributes().getManyToMany().stream().filter(ManyToMany::isVisibile).forEach((manyToMany) -> {
@@ -620,17 +620,22 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         edgeInfo.setSource(sourcePersistenceClassWidget.getNodeWidgetInfo().getId());
         edgeInfo.setTarget(targetEntityWidget.getNodeWidgetInfo().getId());
         String contextToolId;
+        boolean primaryKey = sourceRelationAttributeWidget.getBaseElementSpec() instanceof SingleRelationAttribute && ((SingleRelationAttribute)sourceRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey();
         if (sourceRelationAttribute.getConnectedAttribute() != null) {
             targetRelationAttributeWidget = targetEntityWidget.findRelationAttributeWidget(sourceRelationAttribute.getConnectedAttribute().getId(), targetRelationAttributeWidgetClass);
             contextToolId = "B" + abstractTool;//OTM_RELATION";
         } else {
             contextToolId = "U" + abstractTool;
         }
-        edgeInfo.setType(NBModelerUtil.getEdgeType(sourcePersistenceClassWidget, targetEntityWidget, contextToolId));
+        edgeInfo.setType(NBModelerUtil.getEdgeType(sourcePersistenceClassWidget, targetEntityWidget, primaryKey?"PK"+contextToolId : contextToolId));
         IEdgeWidget edgeWidget = scene.createEdgeWidget(edgeInfo);
 
         scene.setEdgeWidgetSource(edgeInfo, getEdgeSourcePinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, sourceRelationAttributeWidget));
         scene.setEdgeWidgetTarget(edgeInfo, getEdgeTargetPinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, targetRelationAttributeWidget));
+        ((IBaseElementWidget)edgeWidget.getSourceAnchor().getRelatedWidget()).onConnection();
+        ((IBaseElementWidget)edgeWidget.getTargetAnchor().getRelatedWidget()).onConnection();
+        ((IBaseElementWidget)edgeWidget).onConnection();
+    
 
     }
 
@@ -1322,11 +1327,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             if (relationFlowWidget instanceof OTORelationFlowWidget) {
                 OTORelationFlowWidget otoRelationFlowWidget = (OTORelationFlowWidget) relationFlowWidget;
                 OTORelationAttributeWidget otoRelationAttributeWidget;
+                boolean primaryKey = otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUOTO_RELATION") || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBOTO_RELATION");
                 if (sourceAttributeWidget == null) {
-                    otoRelationAttributeWidget = sourcePersistenceWidget.addNewOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
+                    otoRelationAttributeWidget = sourcePersistenceWidget.addNewOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()),primaryKey);
                 } else {
                     otoRelationAttributeWidget = (OTORelationAttributeWidget) sourceAttributeWidget;
                 }
+                
                 if (otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUOTO_RELATION") || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBOTO_RELATION")) {
                     otoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
                 }
@@ -1344,11 +1351,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             } else if (relationFlowWidget instanceof MTORelationFlowWidget) {
                 MTORelationFlowWidget mtoRelationFlowWidget = (MTORelationFlowWidget) relationFlowWidget;
                 MTORelationAttributeWidget mtoRelationAttributeWidget;
+                boolean primaryKey = mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION");
                 if (sourceAttributeWidget == null) {
-                    mtoRelationAttributeWidget = sourcePersistenceWidget.addNewManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
+                    mtoRelationAttributeWidget = sourcePersistenceWidget.addNewManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()), primaryKey);
                 } else {
                     mtoRelationAttributeWidget = (MTORelationAttributeWidget) sourceAttributeWidget;
                 }
+                
                 if (mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION")) {
                     mtoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
                 }
@@ -1448,7 +1457,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         BOTORelationFlowWidget botoRelationFlowWidget = (BOTORelationFlowWidget) edgeWidget;
                         OTORelationAttributeWidget targetOTORelationAttributeWidget;
                         if (targetRelationAttributeWidget == null) {
-                            targetOTORelationAttributeWidget = targetEntityWidget.addNewOneToOneRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName()));
+                            targetOTORelationAttributeWidget = targetEntityWidget.addNewOneToOneRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName()), false);
                             RelationAttributeWidget sourceOTORelationAttributeWidget = botoRelationFlowWidget.getSourceRelationAttributeWidget();
                             sourceOTORelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetOTORelationAttributeWidget);
                             targetOTORelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceOTORelationAttributeWidget);
@@ -1789,7 +1798,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
      * @return
      */
     public static String getModelerFileVersion() {
-        Class _class = JPAFileActionListener.class;//.get
+        Class _class = JPAFileActionListener.class;
         Annotation[] annotations = _class.getAnnotations();
 
         for (Annotation annotation : annotations) {

@@ -43,6 +43,10 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
         });
         setAnchorGap(4);
     }
+    
+    @Override
+    public void onConnection() {
+    }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
