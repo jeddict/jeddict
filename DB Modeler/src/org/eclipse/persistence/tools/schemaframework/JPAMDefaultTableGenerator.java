@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import static java.util.stream.Collectors.toSet;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
 import org.eclipse.persistence.exceptions.DatabaseException;
@@ -91,6 +92,7 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -199,7 +201,8 @@ public class JPAMDefaultTableGenerator {
         this.project.getOrderedDescriptors().stream().map(d -> (DBRelationalDescriptor) d).forEach((descriptor) -> {
             /**
              * Table per concrete class #Id : SUPERCLASS_ATTR_CLONE.
-             * Description : Fix for If class have             * super class then super class mapping is cloned and copied to
+             * Description : Fix for If class have super class 
+             * then super class mapping is cloned and copied to
              * subclass, to share the attributes but in the cloning process,
              * Attribute Spec property is missed.
              */
@@ -229,7 +232,13 @@ public class JPAMDefaultTableGenerator {
 
         });
         //go through each descriptor and build the table/field definitions out of mappings
-        for (ClassDescriptor descriptor : this.project.getOrderedDescriptors()) {
+        /**
+         * sorted use :
+         * method is used to create table definition first for parent entity 
+         * problem : child has both parent & child table definition but only child entity object which is associated with parent table
+         * solution : sort and create the table definition first for parent entity
+         */
+        this.project.getOrderedDescriptors().stream().sorted((d1, d2) -> Integer.compare(d1.getTables().size(), d2.getTables().size())).forEach(descriptor -> {
 //            if ((descriptor instanceof XMLDescriptor) || (descriptor instanceof EISDescriptor) || (descriptor instanceof ObjectRelationalDataTypeDescriptor)) {
 //                //default table generator does not support ox, eis and object-relational descriptor
 //                AbstractSessionLog.getLog().log(SessionLog.WARNING, SessionLog.DDL, "relational_descriptor_support_only", (Object[]) null, true);
@@ -239,10 +248,11 @@ public class JPAMDefaultTableGenerator {
             // processed through their owning entities. Aggregate descriptors
             // can not exist on their own.
             // Table per tenant descriptors will not be initialized.
+            System.out.println("descriptor size xxxxx : " + descriptor.getTables().size());
             if (!descriptor.isDescriptorTypeAggregate() && !(descriptor.hasTablePerMultitenantPolicy() && !project.allowTablePerMultitenantDDLGeneration())) {
                 initTableSchema(descriptor);
             }
-        }
+        });
 
         //Post init the schema for relation table and direct collection/map tables, and several special mapping handlings.
         for (ClassDescriptor descriptor : this.project.getOrderedDescriptors()) {
@@ -360,17 +370,19 @@ public class JPAMDefaultTableGenerator {
             return;
         }
 
+        List<DatabaseTable> processTables = new ArrayList<>();
         //create a table definition for each mapped database table
         for (DatabaseTable table : descriptor.getTables()) {
             tableDefintion = getTableDefFromDBTable(intrinsicEntity.peek(), null, intrinsicEntity, table);
+             if(intrinsicEntity.peek().getTable(table.getName()) instanceof SecondaryTable){
+                 processTables.add(table);
+             }
         }
-        DatabaseTable defaultTable = descriptor.getDefaultTable();
-
+        processTables.add(descriptor.getDefaultTable());
+        Set<String> processTablesName = processTables.stream().map(t -> t.getName()).collect(toSet());
+        
         Set<DatabaseField> remainingDatabaseFields = new HashSet<>(descriptor.getFields());
 
-//        for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
-//            databaseMapping.getField().getTable()
-//        }
         //build each field definition and figure out which table it goes
         for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
             LinkedList<Attribute> intrinsicAttribute;
@@ -388,9 +400,8 @@ public class JPAMDefaultTableGenerator {
 
                 remainingDatabaseFields.remove(dbField);
 
-                //JoinedStrategy or SecondryTable(TODO)
                 //In JoinedStrategy, it contains parent mapping so skipped
-                if (defaultTable != dbField.getTable()) {
+                if (!processTablesName.contains(dbField.getTable().getName())) {
                     continue;
                 }
 
@@ -464,7 +475,7 @@ public class JPAMDefaultTableGenerator {
             boolean isInverse = false;
 
             //JoinedStrategy //it contains also parent mapping so skipped
-            if (defaultTable != dbField.getTable()) {
+            if (!processTablesName.contains(dbField.getTable().getName())) {
                 continue;
             }
 
@@ -487,9 +498,6 @@ public class JPAMDefaultTableGenerator {
 
     }
 
-    private void initDatabaseField() {
-
-    }
 
     /**
      * Build additional table/field definitions for the descriptor, like

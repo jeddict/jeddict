@@ -46,6 +46,10 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
             }
         });
     }
+    
+    @Override
+    public void onConnection() {
+    }
 
     protected String id;
     protected String name;

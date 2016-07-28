@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
@@ -49,20 +48,16 @@ import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConstruct
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashcodeEqualsProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
 import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
-import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
-import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
@@ -414,7 +409,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         } else if (attributeWidget instanceof BasicAttributeWidget) {
             getBasicAttributeWidgets().remove((BasicAttributeWidget) attributeWidget);
             attributes.removeBasic(((BasicAttributeWidget) attributeWidget).getBaseElementSpec());
-            removeNamedQuery((Attribute)attributeWidget.getBaseElementSpec());
         } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
             getBasicCollectionAttributeWidgets().remove((BasicCollectionAttributeWidget) attributeWidget);
             attributes.getElementCollection().remove(((BasicCollectionAttributeWidget) attributeWidget).getBaseElementSpec());
@@ -579,7 +573,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             basic.setAttributeType(String.class.getName());
             basic.setName(name);
             javaClass.getAttributes().addBasic(basic);
-            addNamedQuery(basic, false);
         }
         BasicAttributeWidget attributeWidget = AttributeWidget.<BasicAttributeWidget>getInstance(this, name, basic, BasicAttributeWidget.class);
         getBasicAttributeWidgets().add(attributeWidget);
@@ -746,31 +739,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         return attributeWidget;
     }
 
-    protected void addNamedQuery(Attribute attribute, boolean enable) {
-        ManagedClass managedClass = this.getBaseElementSpec();
-        if (managedClass instanceof IdentifiableClass) {
-            IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
-            NamedQuery namedQuery;
-            if(attribute!=null){
-                namedQuery = NamedQuery.getTemplate(identifiableClass, attribute);
-            } else {
-                namedQuery = NamedQuery.getTemplate(identifiableClass);
-            }
-            namedQuery.setEnable(enable);
-            identifiableClass.addNamedQuery(namedQuery);
-        }
-    }
-    
-    private void removeNamedQuery(Attribute attribute) {
-        ManagedClass managedClass = this.getBaseElementSpec();
-        if (CodePanel.isDeleteQuery() && managedClass instanceof IdentifiableClass) {
-            IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
-            Optional<NamedQuery> value = identifiableClass.findNamedQuery(attribute);
-            if(value.isPresent()){
-             identifiableClass.removeNamedQuery(value.get());
-            }
-        }
-    }
     public String getNextAttributeName() {
         return getNextAttributeName(null);
     }
@@ -1021,7 +989,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
 
-    private void refractorReference(String previousName, String newName) {
+    public void refactorReference(String previousName, String newName) {
         if (previousName == null) {
             return;
         }
@@ -1029,15 +997,15 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         RequestProcessor.getDefault().post(() -> {
             try {
 
-                String singularPreName = previousName;
+                String singularPreName = Character.toLowerCase(previousName.charAt(0)) + (previousName.length() > 1 ? previousName.substring(1) : "");
                 String pluralPreName = English.plural(singularPreName);
-                String singularNewName = newName;
+                String singularNewName = Character.toLowerCase(newName.charAt(0)) + (newName.length() > 1 ? newName.substring(1) : "");
                 String pluralNewName = English.plural(singularNewName);
                 for (RelationAttributeWidget attributeWidget : this.getAllRelationAttributeWidgets(true)) {
                     if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
                         Bidirectional flowWidget = (Bidirectional) attributeWidget.getRelationFlowWidget();
                         RelationAttributeWidget<RelationAttribute> relationAttributeWidget = flowWidget.getTargetRelationAttributeWidget();
-                        if (relationAttributeWidget == attributeWidget) { // refractoring not from owner side
+                        if (relationAttributeWidget == attributeWidget) { // refactoring not from owner side
                             relationAttributeWidget = flowWidget.getSourceRelationAttributeWidget();
                         }
                         if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
@@ -1052,7 +1020,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     }
                 }
 
-                if (this.getBaseElementSpec() instanceof Entity) {
+                if (this instanceof EntityWidget) {
                     for (RelationFlowWidget relationFlowWidget : ((EntityWidget) this).getUnidirectionalRelationFlowWidget()) {
                         RelationAttributeWidget<RelationAttribute> relationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
                         if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
@@ -1067,26 +1035,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                             }
                         }
                     }
-                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph obj) -> {
-                       if (!obj.refractorName(singularPreName, singularNewName)) {
-                            obj.refractorName(pluralPreName, pluralNewName);
+                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph eg) -> {
+                        if (eg.getName().contains(singularPreName)) {
+                            eg.setName(eg.getName().replaceAll(singularPreName, singularNewName));
                         }
-                    });
-                }
-                
-                //Refractor NamedQuery, NamedNativeQuery
-                if (this.getBaseElementSpec() instanceof IdentifiableClass) {
-                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
-                        obj.refractorName(singularPreName, singularNewName);
-                        obj.refractorName(pluralPreName, pluralNewName);
-                        obj.refractorQuery(singularPreName, singularNewName);
-                        obj.refractorQuery(pluralPreName, pluralNewName);
-                    });
-                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
-                        obj.refractorName(singularPreName, singularNewName);
-                        obj.refractorName(pluralPreName, pluralNewName);
-                        obj.refractorQuery(singularPreName, singularNewName);
-                        obj.refractorQuery(pluralPreName, pluralNewName);
                     });
                 }
 
@@ -1118,7 +1070,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setClazz(this.name);
-                refractorReference(previousName, this.name);
+                refactorReference(previousName, this.name);
             }
             validateName(previousName, this.getName());
         }

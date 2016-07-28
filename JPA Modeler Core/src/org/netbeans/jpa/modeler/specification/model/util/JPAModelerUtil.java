@@ -164,7 +164,6 @@ import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
-import org.openide.actions.SaveAction;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -440,9 +439,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             entityMappings.repairDefinition(IO);
             entityMappings.getAllManagedClass().stream().
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            entityMappings.getAllManagedClass().stream().
-                    forEach(node -> loadAttribute(scene, node));
-
+            scene.getJavaClassWidges().stream().forEach(javaClassWidget -> loadAttribute(javaClassWidget));
+            
             entityMappings.initJavaInheritenceMapping();
             loadFlowEdge(scene);
             diagram.getJPAPlane().getDiagramElement().stream().
@@ -461,42 +459,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     }
 
-    private void loadFlowNode(JPAModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
-        IModelerDocument document = null;
-        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getModelerDiagramModel().getModelerDocumentFactory();
-        if (flowElement instanceof FlowNode) {
-            FlowNode flowNode = (FlowNode) flowElement;
-            if (flowElement instanceof JavaClass) { //skip class creation in case of hidden visibility
-                JavaClass _class = (JavaClass) flowElement;
-                if (!_class.isVisibile()) {
-                    return;
-                }
-            }
-            try {
-                document = modelerDocumentFactory.getModelerDocument(flowElement);
-            } catch (ModelerException ex) {
-                scene.getModelerFile().handleException(ex);
-            }
-            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getModelerDiagramModel().getPaletteConfig().findSubCategoryNodeConfig(document);
-            NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
-            nodeWidgetInfo.setName(flowElement.getName());
-            nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
-            nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
-            INodeWidget nodeWidget = scene.createNodeWidget(nodeWidgetInfo);
-            if (flowElement.getName() != null) {
-                nodeWidget.setLabel(flowElement.getName());
-            }
-            if (flowNode.isMinimized()) {
-                ((PNodeWidget) nodeWidget).setMinimized(true);
-            }
-        }
-    }
     
-    private void loadAttribute(JPAModelerScene scene, IFlowNode flowElement){
-        IBaseElementWidget baseElementWidget = scene.getBaseElement(flowElement.getId());
-            if (flowElement instanceof ManagedClass) {
-                ManagedClass _class = (ManagedClass) flowElement;
-                PersistenceClassWidget entityWidget = (PersistenceClassWidget) baseElementWidget;
+    private void loadAttribute(JavaClassWidget nodeWidget){
+            if (nodeWidget.getBaseElementSpec() instanceof ManagedClass) {
+                ManagedClass _class = (ManagedClass) nodeWidget.getBaseElementSpec();
+                PersistenceClassWidget entityWidget = (PersistenceClassWidget) nodeWidget;
                 if (_class.getAttributes() != null) {
                     if (_class.getAttributes() instanceof IPersistenceAttributes) {
                         ((IPersistenceAttributes) _class.getAttributes()).getId().stream().
@@ -529,7 +496,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         }
                     });
                     _class.getAttributes().getOneToOne().stream().filter(OneToOne::isVisibile).forEach((oneToOne) -> {
-                        OTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToOneRelationAttribute(oneToOne.getName(), oneToOne);
+                        OTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToOneRelationAttribute(oneToOne.getName(), oneToOne.isPrimaryKey(), oneToOne);
 //                        if (oneToOne.getMappedBy() == null) {
 //                            oneToOne.setOwner(true);
 //                        }
@@ -541,7 +508,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //                        }
                     });
                     _class.getAttributes().getManyToOne().stream().filter(ManyToOne::isVisibile).forEach((manyToOne) -> {
-                        MTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToOneRelationAttribute(manyToOne.getName(), manyToOne);
+                        MTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToOneRelationAttribute(manyToOne.getName(), manyToOne.isPrimaryKey(), manyToOne);
 //                        manyToOne.setOwner(true);//always
                     });
                     _class.getAttributes().getManyToMany().stream().filter(ManyToMany::isVisibile).forEach((manyToMany) -> {
@@ -554,6 +521,43 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
 
             }
+    }
+
+    private void loadFlowNode(JPAModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
+        IModelerDocument document = null;
+        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getModelerDiagramModel().getModelerDocumentFactory();
+        if (flowElement instanceof FlowNode) {
+            FlowNode flowNode = (FlowNode) flowElement;
+            if (flowElement instanceof JavaClass) { //skip class creation in case of hidden visibility
+                JavaClass _class = (JavaClass) flowElement;
+                if (!_class.isVisibile()) {
+                    return;
+                }
+            }
+            try {
+                document = modelerDocumentFactory.getModelerDocument(flowElement);
+            } catch (ModelerException ex) {
+                scene.getModelerFile().handleException(ex);
+            }
+            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getModelerDiagramModel().getPaletteConfig().findSubCategoryNodeConfig(document);
+            NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
+            nodeWidgetInfo.setName(flowElement.getName());
+            nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
+            nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
+            INodeWidget nodeWidget = scene.createNodeWidget(nodeWidgetInfo);
+            if (flowElement.getName() != null) {
+                nodeWidget.setLabel(flowElement.getName());
+            }
+            if (flowNode.isMinimized()) {
+                ((PNodeWidget) nodeWidget).setMinimized(true);
+            }
+
+//            nodeWidget.i
+            //clear incomming & outgoing it will added on sequenceflow auto connection
+//            ((FlowNode) flowElement).getIncoming().clear();
+//            ((FlowNode) flowElement).getOutgoing().clear();
+
+        }
     }
 
     private void loadFlowEdge(JPAModelerScene scene) {
@@ -616,17 +620,22 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         edgeInfo.setSource(sourcePersistenceClassWidget.getNodeWidgetInfo().getId());
         edgeInfo.setTarget(targetEntityWidget.getNodeWidgetInfo().getId());
         String contextToolId;
+        boolean primaryKey = sourceRelationAttributeWidget.getBaseElementSpec() instanceof SingleRelationAttribute && ((SingleRelationAttribute)sourceRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey();
         if (sourceRelationAttribute.getConnectedAttribute() != null) {
             targetRelationAttributeWidget = targetEntityWidget.findRelationAttributeWidget(sourceRelationAttribute.getConnectedAttribute().getId(), targetRelationAttributeWidgetClass);
             contextToolId = "B" + abstractTool;//OTM_RELATION";
         } else {
             contextToolId = "U" + abstractTool;
         }
-        edgeInfo.setType(NBModelerUtil.getEdgeType(sourcePersistenceClassWidget, targetEntityWidget, contextToolId));
+        edgeInfo.setType(NBModelerUtil.getEdgeType(sourcePersistenceClassWidget, targetEntityWidget, primaryKey?"PK"+contextToolId : contextToolId));
         IEdgeWidget edgeWidget = scene.createEdgeWidget(edgeInfo);
 
         scene.setEdgeWidgetSource(edgeInfo, getEdgeSourcePinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, sourceRelationAttributeWidget));
         scene.setEdgeWidgetTarget(edgeInfo, getEdgeTargetPinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, targetRelationAttributeWidget));
+        ((IBaseElementWidget)edgeWidget.getSourceAnchor().getRelatedWidget()).onConnection();
+        ((IBaseElementWidget)edgeWidget.getTargetAnchor().getRelatedWidget()).onConnection();
+        ((IBaseElementWidget)edgeWidget).onConnection();
+    
 
     }
 
@@ -1318,11 +1327,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             if (relationFlowWidget instanceof OTORelationFlowWidget) {
                 OTORelationFlowWidget otoRelationFlowWidget = (OTORelationFlowWidget) relationFlowWidget;
                 OTORelationAttributeWidget otoRelationAttributeWidget;
+                boolean primaryKey = otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUOTO_RELATION") || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBOTO_RELATION");
                 if (sourceAttributeWidget == null) {
-                    otoRelationAttributeWidget = sourcePersistenceWidget.addNewOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
+                    otoRelationAttributeWidget = sourcePersistenceWidget.addNewOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()),primaryKey);
                 } else {
                     otoRelationAttributeWidget = (OTORelationAttributeWidget) sourceAttributeWidget;
                 }
+                
                 if (otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUOTO_RELATION") || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBOTO_RELATION")) {
                     otoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
                 }
@@ -1340,11 +1351,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             } else if (relationFlowWidget instanceof MTORelationFlowWidget) {
                 MTORelationFlowWidget mtoRelationFlowWidget = (MTORelationFlowWidget) relationFlowWidget;
                 MTORelationAttributeWidget mtoRelationAttributeWidget;
+                boolean primaryKey = mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION");
                 if (sourceAttributeWidget == null) {
-                    mtoRelationAttributeWidget = sourcePersistenceWidget.addNewManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()));
+                    mtoRelationAttributeWidget = sourcePersistenceWidget.addNewManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()), primaryKey);
                 } else {
                     mtoRelationAttributeWidget = (MTORelationAttributeWidget) sourceAttributeWidget;
                 }
+                
                 if (mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION")) {
                     mtoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
                 }
@@ -1444,7 +1457,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         BOTORelationFlowWidget botoRelationFlowWidget = (BOTORelationFlowWidget) edgeWidget;
                         OTORelationAttributeWidget targetOTORelationAttributeWidget;
                         if (targetRelationAttributeWidget == null) {
-                            targetOTORelationAttributeWidget = targetEntityWidget.addNewOneToOneRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName()));
+                            targetOTORelationAttributeWidget = targetEntityWidget.addNewOneToOneRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName()), false);
                             RelationAttributeWidget sourceOTORelationAttributeWidget = botoRelationFlowWidget.getSourceRelationAttributeWidget();
                             sourceOTORelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetOTORelationAttributeWidget);
                             targetOTORelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceOTORelationAttributeWidget);
@@ -1785,7 +1798,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
      * @return
      */
     public static String getModelerFileVersion() {
-        Class _class = JPAFileActionListener.class;//.get
+        Class _class = JPAFileActionListener.class;
         Annotation[] annotations = _class.getAnnotations();
 
         for (Annotation annotation : annotations) {

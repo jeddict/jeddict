@@ -33,6 +33,10 @@ public abstract class AbstractEdgeWidget<S extends IPModelerScene> extends PEdge
         super(scene, edge);
 
     }
+    
+    @Override
+    public void onConnection() {
+    }
 
     /**
      * @return the baseElementSpec
