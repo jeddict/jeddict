@@ -164,7 +164,6 @@ import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
-import org.openide.actions.SaveAction;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -440,9 +439,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             entityMappings.repairDefinition(IO);
             entityMappings.getAllManagedClass().stream().
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            entityMappings.getAllManagedClass().stream().
-                    forEach(node -> loadAttribute(scene, node));
-
+            scene.getJavaClassWidges().stream().forEach(javaClassWidget -> loadAttribute(javaClassWidget));
+            
             entityMappings.initJavaInheritenceMapping();
             loadFlowEdge(scene);
             diagram.getJPAPlane().getDiagramElement().stream().
@@ -461,42 +459,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     }
 
-    private void loadFlowNode(JPAModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
-        IModelerDocument document = null;
-        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getModelerDiagramModel().getModelerDocumentFactory();
-        if (flowElement instanceof FlowNode) {
-            FlowNode flowNode = (FlowNode) flowElement;
-            if (flowElement instanceof JavaClass) { //skip class creation in case of hidden visibility
-                JavaClass _class = (JavaClass) flowElement;
-                if (!_class.isVisibile()) {
-                    return;
-                }
-            }
-            try {
-                document = modelerDocumentFactory.getModelerDocument(flowElement);
-            } catch (ModelerException ex) {
-                scene.getModelerFile().handleException(ex);
-            }
-            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getModelerDiagramModel().getPaletteConfig().findSubCategoryNodeConfig(document);
-            NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
-            nodeWidgetInfo.setName(flowElement.getName());
-            nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
-            nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
-            INodeWidget nodeWidget = scene.createNodeWidget(nodeWidgetInfo);
-            if (flowElement.getName() != null) {
-                nodeWidget.setLabel(flowElement.getName());
-            }
-            if (flowNode.isMinimized()) {
-                ((PNodeWidget) nodeWidget).setMinimized(true);
-            }
-        }
-    }
     
-    private void loadAttribute(JPAModelerScene scene, IFlowNode flowElement){
-        IBaseElementWidget baseElementWidget = scene.getBaseElement(flowElement.getId());
-            if (flowElement instanceof ManagedClass) {
-                ManagedClass _class = (ManagedClass) flowElement;
-                PersistenceClassWidget entityWidget = (PersistenceClassWidget) baseElementWidget;
+    private void loadAttribute(JavaClassWidget nodeWidget){
+            if (nodeWidget.getBaseElementSpec() instanceof ManagedClass) {
+                ManagedClass _class = (ManagedClass) nodeWidget.getBaseElementSpec();
+                PersistenceClassWidget entityWidget = (PersistenceClassWidget) nodeWidget;
                 if (_class.getAttributes() != null) {
                     if (_class.getAttributes() instanceof IPersistenceAttributes) {
                         ((IPersistenceAttributes) _class.getAttributes()).getId().stream().
@@ -554,6 +521,43 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
 
             }
+    }
+
+    private void loadFlowNode(JPAModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
+        IModelerDocument document = null;
+        ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getModelerDiagramModel().getModelerDocumentFactory();
+        if (flowElement instanceof FlowNode) {
+            FlowNode flowNode = (FlowNode) flowElement;
+            if (flowElement instanceof JavaClass) { //skip class creation in case of hidden visibility
+                JavaClass _class = (JavaClass) flowElement;
+                if (!_class.isVisibile()) {
+                    return;
+                }
+            }
+            try {
+                document = modelerDocumentFactory.getModelerDocument(flowElement);
+            } catch (ModelerException ex) {
+                scene.getModelerFile().handleException(ex);
+            }
+            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getModelerDiagramModel().getPaletteConfig().findSubCategoryNodeConfig(document);
+            NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
+            nodeWidgetInfo.setName(flowElement.getName());
+            nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
+            nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
+            INodeWidget nodeWidget = scene.createNodeWidget(nodeWidgetInfo);
+            if (flowElement.getName() != null) {
+                nodeWidget.setLabel(flowElement.getName());
+            }
+            if (flowNode.isMinimized()) {
+                ((PNodeWidget) nodeWidget).setMinimized(true);
+            }
+
+//            nodeWidget.i
+            //clear incomming & outgoing it will added on sequenceflow auto connection
+//            ((FlowNode) flowElement).getIncoming().clear();
+//            ((FlowNode) flowElement).getOutgoing().clear();
+
+        }
     }
 
     private void loadFlowEdge(JPAModelerScene scene) {
