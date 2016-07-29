@@ -15,10 +15,12 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember;
 
+import java.awt.event.ItemEvent;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
+import org.netbeans.jpa.modeler.properties.classmember.ClassMemberPanel;
 
 public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
@@ -46,6 +48,7 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
         ((ClassMemberPanel)equalsMethodPanel).setValue(javaClass.getEqualsMethod());
         ((ClassMemberPanel)hashcodeMethodPanel).setValue(javaClass.getHashCodeMethod());
+        
     }
     
     @Override
@@ -67,13 +70,19 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
         jSplitPane2 = new javax.swing.JSplitPane();
         jSplitPane = new javax.swing.JSplitPane();
+        hashcodeClassMemberPanel = new javax.swing.JPanel();
         hashcodeMethodPanel = new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "LBL_hashcode_select"));
+        hashcodeCustomCodeButton = new javax.swing.JToggleButton();
+        equalsClassMemberPanel = new javax.swing.JPanel();
         equalsMethodPanel = new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "LBL_equals_select"));
+        equalsCustomCodeButton = new javax.swing.JToggleButton();
 
         jSplitPane2.setToolTipText(org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.jSplitPane2.toolTipText")); // NOI18N
 
         jSplitPane.setDividerSize(10);
         jSplitPane.setResizeWeight(0.5d);
+
+        hashcodeClassMemberPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout hashcodeMethodPanelLayout = new javax.swing.GroupLayout(hashcodeMethodPanel);
         hashcodeMethodPanel.setLayout(hashcodeMethodPanelLayout);
@@ -86,7 +95,25 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jSplitPane.setLeftComponent(hashcodeMethodPanel);
+        hashcodeClassMemberPanel.add(hashcodeMethodPanel, java.awt.BorderLayout.CENTER);
+
+        hashcodeCustomCodeButton.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        hashcodeCustomCodeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/expand.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(hashcodeCustomCodeButton, org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.hashcodeCustomCodeButton.text")); // NOI18N
+        hashcodeCustomCodeButton.setToolTipText(org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.hashcodeCustomCodeButton.toolTipText")); // NOI18N
+        hashcodeCustomCodeButton.setAlignmentY(0.0F);
+        hashcodeCustomCodeButton.setIconTextGap(1);
+        hashcodeCustomCodeButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        hashcodeCustomCodeButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                hashcodeCustomCodeButtonItemStateChanged(evt);
+            }
+        });
+        hashcodeClassMemberPanel.add(hashcodeCustomCodeButton, java.awt.BorderLayout.SOUTH);
+
+        jSplitPane.setRightComponent(hashcodeClassMemberPanel);
+
+        equalsClassMemberPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout equalsMethodPanelLayout = new javax.swing.GroupLayout(equalsMethodPanel);
         equalsMethodPanel.setLayout(equalsMethodPanelLayout);
@@ -96,16 +123,32 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
         );
         equalsMethodPanelLayout.setVerticalGroup(
             equalsMethodPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 492, Short.MAX_VALUE)
+            .addGap(0, 469, Short.MAX_VALUE)
         );
 
-        jSplitPane.setRightComponent(equalsMethodPanel);
+        equalsClassMemberPanel.add(equalsMethodPanel, java.awt.BorderLayout.CENTER);
+
+        equalsCustomCodeButton.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        equalsCustomCodeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/expand.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(equalsCustomCodeButton, org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.equalsCustomCodeButton.text")); // NOI18N
+        equalsCustomCodeButton.setToolTipText(org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.equalsCustomCodeButton.toolTipText")); // NOI18N
+        equalsCustomCodeButton.setAlignmentY(0.0F);
+        equalsCustomCodeButton.setIconTextGap(1);
+        equalsCustomCodeButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        equalsCustomCodeButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                equalsCustomCodeButtonItemStateChanged(evt);
+            }
+        });
+        equalsClassMemberPanel.add(equalsCustomCodeButton, java.awt.BorderLayout.SOUTH);
+
+        jSplitPane.setLeftComponent(equalsClassMemberPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+            .addComponent(jSplitPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,9 +156,21 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void hashcodeCustomCodeButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_hashcodeCustomCodeButtonItemStateChanged
+        ((ClassMemberPanel) hashcodeClassMemberPanel).displayPostEditorPane(evt.getStateChange()==ItemEvent.SELECTED);
+    }//GEN-LAST:event_hashcodeCustomCodeButtonItemStateChanged
+
+    private void equalsCustomCodeButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_equalsCustomCodeButtonItemStateChanged
+        ((ClassMemberPanel) equalsClassMemberPanel).displayPostEditorPane(evt.getStateChange()==ItemEvent.SELECTED);
+    }//GEN-LAST:event_equalsCustomCodeButtonItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel equalsClassMemberPanel;
+    private javax.swing.JToggleButton equalsCustomCodeButton;
     private javax.swing.JPanel equalsMethodPanel;
+    private javax.swing.JPanel hashcodeClassMemberPanel;
+    private javax.swing.JToggleButton hashcodeCustomCodeButton;
     private javax.swing.JPanel hashcodeMethodPanel;
     private javax.swing.JSplitPane jSplitPane;
     private javax.swing.JSplitPane jSplitPane2;

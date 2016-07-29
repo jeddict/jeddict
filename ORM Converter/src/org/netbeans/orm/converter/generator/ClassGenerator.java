@@ -185,10 +185,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
         classDef.setVariableDefs(new ArrayList<>(variables.values()));
 
-        for (Constructor constructor : javaClass.getConstructors()) {
-            classDef.addConstructor(getConstructorSnippet(javaClass.getClazz(), constructor));
-        }
-
+        classDef.setConstructors(getConstructorSnippets(javaClass));
         classDef.setHashcodeMethod(getHashcodeMethodSnippet(javaClass.getClazz(), javaClass.getHashCodeMethod()));
         classDef.setEqualsMethod(getEqualsMethodSnippet(javaClass.getClazz(), javaClass.getEqualsMethod()));
         classDef.setToStringMethod(getToStringMethodSnippet(javaClass.getClazz(), javaClass.getToStringMethod()));
@@ -273,10 +270,17 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippet;
     }
 
-    protected ConstructorSnippet getConstructorSnippet(String className, Constructor constructor) {
-        List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream().map(attr -> variables.get(attr.getName())).collect(toList());
-        ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, variableSnippets);
-        return snippet;
+    protected List<ConstructorSnippet> getConstructorSnippets(JavaClass javaClass) {
+        List<ConstructorSnippet> constructorSnippets = new ArrayList<>();
+        for (Constructor constructor : javaClass.getConstructors()) {
+            if (constructor.isEnable()) {
+                String className = javaClass.getClazz();
+                List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream().map(attr -> variables.get(attr.getName())).collect(toList());
+                ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, variableSnippets);
+                constructorSnippets.add(snippet);
+            }
+        }
+        return constructorSnippets;
     }
 
     protected List<ConstraintSnippet> getConstraintSnippet(Set<Constraint> constraints) {

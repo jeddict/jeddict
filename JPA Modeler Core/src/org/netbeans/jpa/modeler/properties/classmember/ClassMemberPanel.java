@@ -53,25 +53,47 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     public void init() {
         manager = new ExplorerManager();
         initComponents();
+        displayEditorPane(false);
     }
 
     @Override
     public void setValue(ClassMembers classMembers) {
+        preEditorPane.setText("");
+        postEditorPane.setText("");
+        
         this.classMembers = classMembers;
         SwingUtilities.invokeLater(() -> {
             node = new CMRootNode(persistenceClassWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode());
             manager.setRootContext(node);
             node.init();
+            
         });
+        preEditorPane.setText(classMembers.getPreCode());
+        postEditorPane.setText(classMembers.getPostCode());
     }
 
     @Override
     public ClassMembers getValue() {
         classMembers.getAttributes().clear();
         loadClassMember(classMembers, node);
+        classMembers.setPreCode(preEditorPane.getText());
+        classMembers.setPostCode(postEditorPane.getText());
         return classMembers;
     }
-
+    
+    public void displayEditorPane(boolean visible){
+            preScrollPane.setVisible(visible);
+            postScrollPane.setVisible(visible);
+    }
+    
+    public void displayPreEditorPane(boolean visible){
+            preScrollPane.setVisible(visible);
+    }
+    
+    public void displayPostEditorPane(boolean visible){
+            postScrollPane.setVisible(visible);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -83,11 +105,35 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
 
         rootLayeredPane = new javax.swing.JLayeredPane();
         outlineView = new OutlineView(getTitle());
+        postScrollPane = new javax.swing.JScrollPane();
+        postEditorPane = new javax.swing.JEditorPane();
+        preScrollPane = new javax.swing.JScrollPane();
+        preEditorPane = new javax.swing.JEditorPane();
 
-        rootLayeredPane.setLayout(new java.awt.GridLayout(1, 0));
+        rootLayeredPane.setLayout(new java.awt.BorderLayout());
 
         outlineView.setToolTipText(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "ClassMemberPanel.outlineView.toolTipText")); // NOI18N
-        rootLayeredPane.add(outlineView);
+        rootLayeredPane.add(outlineView, java.awt.BorderLayout.CENTER);
+
+        postScrollPane.setMaximumSize(new java.awt.Dimension(32767, 102));
+
+        postEditorPane.setContentType("text/x-java"); // NOI18N
+        postEditorPane.setMaximumSize(new java.awt.Dimension(2147483647, 100));
+        postEditorPane.setMinimumSize(new java.awt.Dimension(106, 60));
+        postEditorPane.setPreferredSize(new java.awt.Dimension(106, 60));
+        postScrollPane.setViewportView(postEditorPane);
+
+        rootLayeredPane.add(postScrollPane, java.awt.BorderLayout.SOUTH);
+
+        preScrollPane.setMaximumSize(new java.awt.Dimension(32767, 102));
+
+        preEditorPane.setContentType("text/x-java"); // NOI18N
+        preEditorPane.setMaximumSize(new java.awt.Dimension(2147483647, 100));
+        preEditorPane.setMinimumSize(new java.awt.Dimension(106, 60));
+        preEditorPane.setPreferredSize(new java.awt.Dimension(106, 60));
+        preScrollPane.setViewportView(preEditorPane);
+
+        rootLayeredPane.add(preScrollPane, java.awt.BorderLayout.NORTH);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -127,6 +173,10 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane outlineView;
+    private javax.swing.JEditorPane postEditorPane;
+    private javax.swing.JScrollPane postScrollPane;
+    private javax.swing.JEditorPane preEditorPane;
+    private javax.swing.JScrollPane preScrollPane;
     private javax.swing.JLayeredPane rootLayeredPane;
     // End of variables declaration//GEN-END:variables
 

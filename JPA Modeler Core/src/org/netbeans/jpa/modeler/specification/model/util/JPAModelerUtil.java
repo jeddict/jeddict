@@ -359,7 +359,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         EntityMappings definition_Load = null;
         if (MODELER_UNMARSHALLER == null) {
             MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
-//            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
+            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
         
 //        try {

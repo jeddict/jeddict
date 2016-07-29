@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -31,11 +33,16 @@ public class Constructor extends ClassMembers {
 
     @XmlAttribute(name="am")
     private AccessModifierType accessModifier;
-    private String preCode;
-    private String postCode;
-    
+
+     
     public static final Constructor getNoArgsInstance(){
-        return new Constructor();
+        Constructor constructor = new Constructor();
+        constructor.setAccessModifier(AccessModifierType.PUBLIC);
+        return constructor;
+    }
+    
+    public boolean isNoArgs(){
+        return attributes.isEmpty();
     }
     
     /**
@@ -96,42 +103,6 @@ public class Constructor extends ClassMembers {
             sign = NO_ARG;
         }
         return sign;
-    }
-//    
-//    @Override
-//    public Object clone() {
-//        Constructor constructor = new Constructor();
-//        constructor.setAccessModifier(accessModifier);
-//        constructor.getAttributes().addAll(attributes);
-//        return constructor;
-//    }
-
-    /**
-     * @return the preCode
-     */
-    public String getPreCode() {
-        return preCode;
-    }
-
-    /**
-     * @param preCode the preCode to set
-     */
-    public void setPreCode(String preCode) {
-        this.preCode = preCode;
-    }
-
-    /**
-     * @return the postCode
-     */
-    public String getPostCode() {
-        return postCode;
-    }
-
-    /**
-     * @param postCode the postCode to set
-     */
-    public void setPostCode(String postCode) {
-        this.postCode = postCode;
     }
 
 }

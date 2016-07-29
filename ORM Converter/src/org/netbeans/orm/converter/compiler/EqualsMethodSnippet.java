@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
@@ -41,6 +42,9 @@ public class EqualsMethodSnippet implements Snippet {
         builder.append("if (!java.util.Objects.equals(getClass(), obj.getClass())) {return false;}\n");
         builder.append(String.format("final %s other = (%s) obj;\n", className, className));
 
+        if (StringUtils.isNotBlank(classMembers.getPreCode())) {
+            builder.append(classMembers.getPreCode()).append(NEW_LINE);
+        }
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
             String expression;
@@ -53,6 +57,9 @@ public class EqualsMethodSnippet implements Snippet {
             builder.append("return false;");
             builder.append(CLOSE_BRACES).append(NEW_LINE);
 
+        }
+        if (StringUtils.isNotBlank(classMembers.getPostCode())) {
+            builder.append(classMembers.getPostCode()).append(NEW_LINE);
         }
         builder.append("return true;");
         return builder.toString();

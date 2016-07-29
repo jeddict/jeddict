@@ -18,11 +18,13 @@ package org.netbeans.orm.converter.compiler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import static org.netbeans.orm.converter.compiler.JavaHashcodeEqualsUtil.getHashcodeExpression;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 
 public class HashcodeMethodSnippet implements Snippet {
 
@@ -40,7 +42,12 @@ public class HashcodeMethodSnippet implements Snippet {
         int startNumber = generatePrimeNumber(2, 10);
         int multiplyNumber = generatePrimeNumber(10, 100);
 
-        builder.append(String.format("int hash = %s;\n",startNumber));
+        builder.append(String.format("int hash = %s;",startNumber)).append(NEW_LINE);
+        
+        if (StringUtils.isNotBlank(classMembers.getPreCode())) {
+            builder.append(classMembers.getPreCode()).append(NEW_LINE);
+        }
+        
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
             String expression;
@@ -51,6 +58,11 @@ public class HashcodeMethodSnippet implements Snippet {
             }
             builder.append(String.format("hash = %s * hash + %s;\n", multiplyNumber, expression));
         }
+        
+        if (StringUtils.isNotBlank(classMembers.getPostCode())) {
+            builder.append(classMembers.getPostCode()).append(NEW_LINE);
+        }
+        
         builder.append("return hash;");
         return builder.toString();
     }

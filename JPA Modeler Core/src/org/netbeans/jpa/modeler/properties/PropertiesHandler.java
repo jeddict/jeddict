@@ -74,6 +74,7 @@ import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
+import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
@@ -1033,9 +1034,10 @@ public class PropertiesHandler {
     public static PropertySupport getConstructorProperties(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("constructor", "Constructor", "Constructor");
         attributeEntity.setCountDisplay(new String[]{"No Constructors exist", "One Constructor exist", "Constructors exist"});
-        Set<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
+        List<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
+         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Constructor List", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ConstructorPanel(persistenceClassWidget));
@@ -1062,7 +1064,8 @@ public class PropertiesHandler {
                     Constructor constructor = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = constructor;
-                    row[1] = constructor.toString();
+                    row[1] = constructor.isEnable();
+                    row[2] = constructor.toString();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -1078,10 +1081,21 @@ public class PropertiesHandler {
                 constructors.clear();
                 
                 data.stream().forEach((row) -> {
-                    constructors.add((Constructor) row[0]);
+                    Constructor constructorElement = (Constructor) row[0];
+                    constructorElement.setEnable((boolean)row[1]);
+                    constructors.add(constructorElement);
                 });
-                if(!constructors.isEmpty()){
+                //add no-arg constructor, if no-arg constructor not exist and other constructor exist
+                if(!constructors.isEmpty() && !constructors.stream().anyMatch(con -> con.getAttributes().isEmpty())){
                     constructors.add(Constructor.getNoArgsInstance());
+                }
+                
+                //Enable no-args constructor and disable other no-args constructor , if more then one are available 
+                if(!constructors.isEmpty()){
+                   List<Constructor> noArgsConstructors = constructors.stream().filter(con -> con.isNoArgs()).collect(toList());
+                   noArgsConstructors.stream().forEach(con -> con.setEnable(false));
+                   noArgsConstructors.get(0).setEnable(true);
+                   noArgsConstructors.get(0).setAccessModifier(AccessModifierType.PUBLIC);
                 }
                 
                 this.data = data;
