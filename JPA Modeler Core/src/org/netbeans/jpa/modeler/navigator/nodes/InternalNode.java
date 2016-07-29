@@ -30,7 +30,7 @@ public abstract class InternalNode<T extends Object> extends AbstractNode implem
     private final List<TreeChildNode<T>> childList = new ArrayList<>();
 
     public InternalNode(T baseElementSpec, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
-        super(Children.create(childFactory, true), Lookups.singleton(checkableNode));
+        super(Children.create(childFactory, true), checkableNode==null?null:Lookups.singleton(checkableNode));
         this.checkableNode = checkableNode;
         this.classMembers = baseElementSpec;
         if (checkableNode != null) {
