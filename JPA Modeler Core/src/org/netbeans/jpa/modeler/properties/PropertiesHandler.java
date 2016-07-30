@@ -969,7 +969,7 @@ public class PropertiesHandler {
     }
 
     public static EmbeddedPropertySupport getHashcodeEqualsProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "hashcode() & equals()", "Define hashcode & equals implementation for the Entity");
+        GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "equals() & hashcode()", "Define equals & hashcode implementation for the Entity");
 
         final JavaClass javaClassObj = persistenceClassWidget.getBaseElementSpec();
         entity.setEntityEditor(new HashcodeEqualsPanel(persistenceClassWidget));
@@ -1003,7 +1003,8 @@ public class PropertiesHandler {
     public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         GenericEmbedded entity = new GenericEmbedded("toString", "toString()",getMessage(ClassMemberPanel.class, "LBL_tostring_select"));
         final ClassMembers classMembersObj = persistenceClassWidget.getBaseElementSpec().getToStringMethod();
-        entity.setEntityEditor(new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget));
+        ClassMemberPanel classMemberPanel = new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget,false);
+        entity.setEntityEditor(classMemberPanel);
         entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
             private ClassMembers classMembers;
 

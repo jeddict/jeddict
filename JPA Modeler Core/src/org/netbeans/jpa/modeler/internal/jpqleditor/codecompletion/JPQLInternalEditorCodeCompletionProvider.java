@@ -63,7 +63,6 @@ import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
-import org.netbeans.jpa.modeler.internal.jpqleditor.JPQLEditorPanel;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModel;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModelAction;
