@@ -143,13 +143,13 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
                     : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
 
             if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
-                getErrorHandler().throwError(EntityValidator.NO_PRIMARYKEY_EXIST);
+                getErrorHandler().throwSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
-                getErrorHandler().clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
+                getErrorHandler().clearSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
             }
             // Issue Fix #6041 End
         } else {
-            getErrorHandler().clearError(EntityValidator.NO_PRIMARYKEY_EXIST);
+            getErrorHandler().clearSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
         }
     }
 

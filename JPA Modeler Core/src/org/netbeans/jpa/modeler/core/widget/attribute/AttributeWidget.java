@@ -142,23 +142,23 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    warningHandler.throwSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String columnName) -> {
             if (columnName != null && !columnName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(columnName)) {
-                    errorHandler.throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    warningHandler.throwSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    errorHandler.clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                errorHandler.clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
         
@@ -202,14 +202,14 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     }
     private void validateName(String previousName,String name){
         if (JavaPersistenceQLKeywords.isKeyword(name)) {
-            errorHandler.throwError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            errorHandler.throwSignal(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         } else {
-            errorHandler.clearError(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            errorHandler.clearSignal(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         }
         if(SourceVersion.isName(name)){
-            errorHandler.clearError(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+            errorHandler.clearSignal(AttributeValidator.INVALID_ATTRIBUTE_NAME);
         } else {
-            errorHandler.throwError(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+            errorHandler.throwSignal(AttributeValidator.INVALID_ATTRIBUTE_NAME);
         }
         this.getClassWidget().scanDuplicateAttributes(previousName, name);
 

@@ -24,18 +24,21 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.specification.model.document.widget.IFlowPinWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
+import org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType;
 import org.netbeans.modeler.widget.pin.PinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends PinWidget<S> implements IFlowPinWidget<E> {
 
-    protected final ErrorHandler errorHandler;
+    protected final SignalHandler errorHandler;
+    protected final SignalHandler warningHandler;
 
     public FlowPinWidget(S scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.name = pinWidgetInfo.getName();
-        errorHandler = new ErrorHandler(this);
+        errorHandler = new SignalHandler(this,StateType.ERROR);
+        warningHandler = new SignalHandler(this,StateType.WARNING);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
 
@@ -139,9 +142,18 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
     /**
      * @return the errorHandler
      */
-    public ErrorHandler getErrorHandler() {
+    public SignalHandler getErrorHandler() {
         return errorHandler;
     }
+    
+    /**
+     * @return the warningHandler
+     */
+    public SignalHandler getWarningHandler() {
+        return warningHandler;
+    }
+    
+    
     
 
     public abstract String getIconPath();

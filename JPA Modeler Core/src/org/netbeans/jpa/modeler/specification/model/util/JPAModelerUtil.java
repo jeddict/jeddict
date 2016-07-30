@@ -176,6 +176,7 @@ import org.openide.util.RequestProcessor;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
+import static org.openide.util.NbBundle.getMessage;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 

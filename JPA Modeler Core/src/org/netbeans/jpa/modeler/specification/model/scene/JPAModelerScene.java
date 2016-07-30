@@ -114,17 +114,17 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             boolean failure = false;
             if (e instanceof PersistenceClassWidget) {
                 PersistenceClassWidget<ManagedClass> p = ((PersistenceClassWidget<ManagedClass>) e);
-                if (!p.getErrorHandler().getErrorList().isEmpty()) {
+                if (!p.getErrorHandler().getSignalList().isEmpty()) {
                     errorMessage.append(p.getName()).append(':').append('\n');
-                    p.getErrorHandler().getErrorList().values().forEach(v -> {
+                    p.getErrorHandler().getSignalList().values().forEach(v -> {
                         errorMessage.append('\t').append(v).append('\n');
                     });
                     failure = true;
                 }
                 for (AttributeWidget attributeWidget : p.getAllAttributeWidgets()) {
-                    if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
+                    if (!attributeWidget.getErrorHandler().getSignalList().isEmpty()) {
                         errorMessage.append('\t').append(p.getName()).append('.').append(attributeWidget.getName()).append(':').append('\n');
-                        attributeWidget.getErrorHandler().getErrorList().values().forEach(v -> {
+                        attributeWidget.getErrorHandler().getSignalList().values().forEach(v -> {
                             errorMessage.append('\t').append('\t').append(v).append('\n');
                         });
                         failure = true;

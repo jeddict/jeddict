@@ -73,16 +73,16 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
             setDefaultName();
         }
         if (SQLKeywords.isSQL99ReservedKeyword(RelationTableWidget.this.getName())) {
-            this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getErrorHandler().throwSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getErrorHandler().clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBMapping mapping = RelationTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(RelationTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

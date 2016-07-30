@@ -160,28 +160,28 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
     protected void validateName(String name) {
         if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-            this.getErrorHandler().throwError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getErrorHandler().throwSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearError(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
         if (tableSpec.findColumns(name).size() > 1) {
-            errorHandler.throwError(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
+            getErrorHandler().throwSignal(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         } else {
-            errorHandler.clearError(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
+            getErrorHandler().clearSignal(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         }
     }
 
     protected void validateTableName(String name) {
         if (name != null && !name.trim().isEmpty()) {
             if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-                errorHandler.throwError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getErrorHandler().throwSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             } else {
-                errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         } else {
-            errorHandler.clearError(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
     }
 
