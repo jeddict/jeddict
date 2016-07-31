@@ -21,17 +21,18 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
+import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -44,7 +45,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private EqualsMethodSnippet equalsMethodSnippet;
     private ToStringMethodSnippet toStringMethodSnippet;
 
-    private List<AnnotationSnippet> annotation = new ArrayList<>();
+    private List<AnnotationSnippet> annotation;
+    private Map<SnippetLocationType,List<String>> customSnippet;
 
     static {
         AUTO_GENERATE.setName("id");
@@ -331,6 +333,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("classDef", this);
+            velocityContext.put("n", NEW_LINE);
+            
 
             ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
 
@@ -676,6 +680,24 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     public boolean removeConstructor(ConstructorSnippet constructorSnippet) {
         return getConstructors().remove(constructorSnippet);
+    }
+
+    /**
+     * @return the customSnippet
+     */
+    public Map<SnippetLocationType,List<String>> getCustomSnippet() {
+        return customSnippet;
+    }
+    
+    public List<String> getCustomSnippet(String type) {
+        return customSnippet.get(SnippetLocationType.valueOf(type));
+    }
+
+    /**
+     * @param customSnippet the customSnippet to set
+     */
+    public void setCustomSnippet(Map<SnippetLocationType,List<String>> customSnippet) {
+        this.customSnippet = customSnippet;
     }
 
 }

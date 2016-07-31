@@ -51,12 +51,11 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
         pack();
     }
     
-    private void accessModifierComboInit(){
+    private void accessModifierComboInit() {
         accessModifierComboBox.removeAllItems();
-        accessModifierComboBox.addItem(new ComboBoxValue(AccessModifierType.PUBLIC, AccessModifierType.PUBLIC.getValue()));
-        accessModifierComboBox.addItem(new ComboBoxValue(AccessModifierType.PROTECTED, AccessModifierType.PROTECTED.getValue()));
-        accessModifierComboBox.addItem(new ComboBoxValue(AccessModifierType.PRIVATE, AccessModifierType.PRIVATE.getValue()));
-        accessModifierComboBox.addItem(new ComboBoxValue(AccessModifierType.DEFAULT, AccessModifierType.DEFAULT.getValue()));
+        for (AccessModifierType accessModifierType : AccessModifierType.values()) {
+            accessModifierComboBox.addItem(new ComboBoxValue(accessModifierType, accessModifierType.getValue()));
+        }
     }
 
 

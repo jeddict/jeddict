@@ -45,6 +45,7 @@ import org.netbeans.jpa.modeler.properties.classmember.ConstructorPanel;
 import org.netbeans.jpa.modeler.properties.classmember.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.properties.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
+import org.netbeans.jpa.modeler.properties.custom.source.CustomSnippetPanel;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
@@ -86,6 +87,7 @@ import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
@@ -112,6 +114,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.openide.nodes.PropertySupport;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
+import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
 
@@ -618,8 +621,8 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
     
-    public static PropertySupport getCustomAnnoation(String id, String name, String desc, JPAModelerScene modelerScene, List<Annotation> annotations) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+    public static PropertySupport getCustomAnnoation(JPAModelerScene modelerScene, List<Annotation> annotations) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("Annotations", "Annotations", "");
         attributeEntity.setCountDisplay(new String[]{"No Annotations exist", "One Annotation exist", "Annotations exist"});
 
         List<Column> columns = new ArrayList<>();
@@ -670,6 +673,69 @@ public class PropertiesHandler {
                     Annotation annotationElement = (Annotation) row[0];
                     annotationElement.setEnable((boolean)row[1]);
                     annotations.add(annotationElement);
+                });
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
+      public static PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<Snippet> snippets) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("Snippets", "Snippets", "");
+        attributeEntity.setCountDisplay(new String[]{"No Snippets exist", "One Snippet exist", "Snippets exist"});
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Snippet", false, String.class));
+        columns.add(new Column("Location", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new CustomSnippetPanel(modelerScene.getModelerFile()));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = snippets.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<Snippet> itr = snippets.iterator();
+                while (itr.hasNext()) {
+                    Snippet snippet = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = snippet;
+                    row[1] = snippet.isEnable();
+                    row[2] = snippet.getValue();
+                    row[3] = snippet.getLocationType().getTitle();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+            
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                snippets.clear();
+                data.stream().forEach((row) -> {
+                    Snippet snippet = (Snippet) row[0];
+                    snippet.setEnable((boolean)row[1]);
+                    snippets.add(snippet);
                 });
                 this.data = data;
             }

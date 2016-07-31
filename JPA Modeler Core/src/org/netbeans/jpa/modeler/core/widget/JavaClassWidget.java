@@ -213,9 +213,10 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        JavaClass entity = this.getBaseElementSpec();
+        JavaClass javaClass = this.getBaseElementSpec();
        
-        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomAnnoation("Annotations", "Annotations", "", this.getModelerScene(), entity.getAnnotation()));
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomAnnoation(this.getModelerScene(), javaClass.getAnnotation()));
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomSnippet(this.getModelerScene(), javaClass.getSnippets()));
     }
 
     private final class JavaClassAction extends WidgetAction.Adapter {

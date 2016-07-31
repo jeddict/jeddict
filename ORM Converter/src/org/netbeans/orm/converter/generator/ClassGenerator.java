@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.generator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,8 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
+import org.netbeans.jpa.modeler.spec.extend.Snippet;
+import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
@@ -183,6 +186,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setAbstractClass(javaClass.getAbstract());
         classDef.setInterfaces(javaClass.getInterfaces());
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
+        
+        List<Snippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
+        snippets.addAll(javaClass.getSnippets());
+        classDef.setCustomSnippet(getCustomSnippet(snippets));
+        
         classDef.setVariableDefs(new ArrayList<>(variables.values()));
 
         classDef.setConstructors(getConstructorSnippets(javaClass));
@@ -245,6 +253,18 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
         }
         return snippets;
+    }
+    protected Map<SnippetLocationType,List<String>> getCustomSnippet(List<Snippet> snippets) {
+        Map<SnippetLocationType,List<String>> snippetsMap = new HashMap<>();
+        for (Snippet snippet : snippets) {
+            if(snippet.isEnable()){
+                if(snippetsMap.get(snippet.getLocationType())==null){
+                   snippetsMap.put(snippet.getLocationType(), new ArrayList<>());
+                }
+                snippetsMap.get(snippet.getLocationType()).add(snippet.getValue());
+            }
+        }
+        return snippetsMap;
     }
 
     protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
