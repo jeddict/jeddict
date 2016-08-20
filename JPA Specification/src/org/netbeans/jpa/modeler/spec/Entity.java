@@ -18,10 +18,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
@@ -168,6 +170,10 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     protected String name;
     @XmlAttribute
     protected Boolean cacheable;
+    
+    @XmlAttribute(name = "lbl-ref")
+    @XmlIDREF
+    private Attribute labelAttribute;//to diplay value in UI
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -800,4 +806,19 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
         }
         return null;
     }
+
+    /**
+     * @return the labelAttribute
+     */
+    public Attribute getLabelAttribute() {
+        return labelAttribute;
+    }
+
+    /**
+     * @param labelAttribute the labelAttribute to set
+     */
+    public void setLabelAttribute(Attribute labelAttribute) {
+        this.labelAttribute = labelAttribute;
+    }
+
 }

@@ -28,6 +28,7 @@ import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETO
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEntityDisplayProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritenceProperty;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -98,6 +99,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         if (entity instanceof InheritenceHandler) {
             set.put("BASIC_PROP", getInheritenceProperty(EntityWidget.this));
         }
+        
+        set.put("BASIC_PROP", getEntityDisplayProperty(EntityWidget.this));
 
         set.put("QUERY", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));
         set.put("QUERY", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));

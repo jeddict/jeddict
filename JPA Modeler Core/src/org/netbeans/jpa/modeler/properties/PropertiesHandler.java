@@ -33,6 +33,7 @@ import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
@@ -322,6 +323,63 @@ public class PropertiesHandler {
         };
         org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("mapKey", "Map Key", "");
         attribute.setAfter("mapKeyType");
+        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
+    }
+
+    public static ComboBoxPropertySupport getEntityDisplayProperty(PersistenceClassWidget<Entity> classWidget) {
+        JPAModelerScene modelerScene = classWidget.getModelerScene();
+        Entity entity = classWidget.getBaseElementSpec();
+        ComboBoxListener<Attribute> comboBoxListener = new ComboBoxListener<Attribute>() {
+
+            @Override
+            public void setItem(ComboBoxValue<Attribute> value) {
+                Attribute newType = value.getValue();
+                entity.setLabelAttribute(newType);
+            }
+
+            @Override
+            public ComboBoxValue<Attribute> getItem() {
+                Attribute attribute = null;
+                if (entity.getLabelAttribute()!= null) {
+                    attribute = entity.getLabelAttribute();
+                }else { //select any attribute if not found 
+                      List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(); 
+                      if(!attributeWidgets.isEmpty()){
+                         attribute = attributeWidgets.get(0).getBaseElementSpec();
+                         entity.setLabelAttribute(attribute);
+                      }
+                }
+                if (attribute != null) {
+                    return new ComboBoxValue(attribute, attribute.getName());
+                } else {
+                    return new ComboBoxValue(null, EMPTY);
+                }
+            }
+
+            @Override
+            public List<ComboBoxValue<Attribute>> getItemList() {
+                List<ComboBoxValue<Attribute>> comboBoxValues = new ArrayList<>();
+                        getAllAttributeWidgets().forEach(classAttributeWidget -> {
+                            Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
+                            comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName()));
+                        });
+                return comboBoxValues;
+            }
+            
+            private List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(){
+               return (List<AttributeWidget<? extends Attribute>>)classWidget.getAllAttributeWidgets().stream().filter(a -> !(a instanceof EmbeddedAttributeWidget)
+                        && !(a instanceof TransientAttributeWidget) && !(a instanceof RelationAttributeWidget)
+                        && !(a instanceof BasicCollectionAttributeWidget)).collect(toList());
+            }
+
+            @Override
+            public String getDefaultText() {
+                return EMPTY;
+            }
+
+        };
+        org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("label", "UI Display Reference", "Select the attribute to represent the entity in UI");
+//        attribute.setAfter("mapKeyType");
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
     }
 
