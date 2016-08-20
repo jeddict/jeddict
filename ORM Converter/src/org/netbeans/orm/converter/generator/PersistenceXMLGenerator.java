@@ -15,12 +15,11 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
@@ -33,7 +32,6 @@ import org.netbeans.modules.j2ee.persistence.wizard.Util;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.PersistenceXMLUnitSnippet;
 import org.netbeans.orm.converter.util.ORMConvLogger;
-import org.openide.filesystems.FileUtil;
 
 public class PersistenceXMLGenerator {
 
@@ -59,18 +57,9 @@ public class PersistenceXMLGenerator {
     //Reference : org.netbeans.modules.j2ee.persistence.wizard.unit.PersistenceUnitWizard.instantiateWProgress
     public void generatePersistenceXML(Project project, SourceGroup sourceGroup) {
 
-        List<String> classNames = new ArrayList<String>();
-
-        /*
-         * Classes to scan for annotations.  It should be annotated
-         * with either @Entity, @Embeddable or @MappedSuperclass.         *
-         */
-        for (ClassDefSnippet classDef : classDefs) {
-            classNames.add(classDef.getClassHelper().getFQClassName());
-        }
+        List<String> classNames = classDefs.stream().map(classDef->classDef.getClassHelper().getFQClassName()).collect(toList());
 
         PersistenceXMLUnitSnippet persistenceXMLUnit = new PersistenceXMLUnitSnippet();
-
         persistenceXMLUnit.setName(puName);
         persistenceXMLUnit.setClassNames(classNames);
 
@@ -90,7 +79,6 @@ public class PersistenceXMLGenerator {
                     }
                 }
             }
-            File xmlFile = FileUtil.toFile(pud.getPrimaryFile());
             if (!existFile) {
                 if (Persistence.VERSION_2_1.equals(version)) {
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_2_1.PersistenceUnit();
@@ -160,8 +148,6 @@ public class PersistenceXMLGenerator {
                 pud.addClass(punit, entityClass, false);
             }
             pud.save();
-// Issue Fix #5915 End
-            System.out.println("Java: Generated file :" + xmlFile.getAbsolutePath());
         } catch (Exception ex) {
             logger.log(Level.SEVERE, "compiler_error", ex);
         }

@@ -134,6 +134,8 @@ import org.openide.windows.InputOutput;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EntityMappings extends BaseElement implements IDefinitionElement, IRootElement {
 
+    private static final String DEFAULT_PU_NAME = "DEFAULT_PU";
+
     protected String description;
     @XmlElement(name = "persistence-unit-metadata")
     protected PersistenceUnitMetadata persistenceUnitMetadata;
@@ -889,6 +891,9 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      * @return the persistenceUnitName
      */
     public String getPersistenceUnitName() {
+        if(persistenceUnitName==null){
+            return DEFAULT_PU_NAME;
+        }
         return persistenceUnitName;
     }
 

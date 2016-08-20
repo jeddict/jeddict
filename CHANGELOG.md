@@ -3,6 +3,7 @@
 ### Version 2.1 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.1) ###
 
 *  Secondary Table support
+*  Custom Snippet support
 *  Minor issue fix
 
 ### Version 1.9 [#](https://github.com/jGauravGupta/jpamodeler/releases/1.9) ###

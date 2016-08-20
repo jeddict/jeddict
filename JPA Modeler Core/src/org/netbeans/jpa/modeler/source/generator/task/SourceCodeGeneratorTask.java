@@ -107,6 +107,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
                 String entiyFQN = StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + entity.getClazz() : entity.getClazz();
                 appicationConfigData.putEntity(entiyFQN, entity.getFileObject());
             }
+            appicationConfigData.setPersistenceUnitName(entityMappings.getPersistenceUnitName());
             ProgressHandler handler = new ProgressConsoleHandler(this);
             JEEApplicationGenerator.generate(handler, appicationConfigData);
         }

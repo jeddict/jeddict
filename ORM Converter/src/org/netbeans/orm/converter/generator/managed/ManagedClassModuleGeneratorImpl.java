@@ -160,7 +160,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
 
     private List<ClassDefSnippet> getPUXMLEntries() {
         List<WritableSnippet> entitySnippets = classesRepository.getWritableSnippets(ClassType.ENTITY_CLASS);
-        List<ClassDefSnippet> classDefs = new ArrayList<ClassDefSnippet>();
+        List<ClassDefSnippet> classDefs = new ArrayList<>();
         for (WritableSnippet writableSnippet : entitySnippets) {
             classDefs.add((ClassDefSnippet) writableSnippet);
         }
