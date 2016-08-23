@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 
 //created by gaurav gupta
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -22,9 +23,14 @@ public class DefaultAttribute extends Attribute {
 
     @XmlTransient
     private DefaultClass _class;
+    
+    private Column column;
 
     public DefaultAttribute(Attribute connectedAttribute) {
         this.connectedAttribute = connectedAttribute;
+        if(connectedAttribute instanceof ColumnHandler){ // to load embeddable attribute @Column
+            column = ((ColumnHandler)connectedAttribute).getColumn();
+        }
     }
     
     public DefaultClass getJavaClass() {
@@ -77,6 +83,20 @@ public class DefaultAttribute extends Attribute {
     @Override
     public String getDataTypeLabel() {
         return getAttributeType();
+    }
+
+    /**
+     * @return the column
+     */
+    public Column getColumn() {
+        return column;
+    }
+
+    /**
+     * @param column the column to set
+     */
+    public void setColumn(Column column) {
+        this.column = column;
     }
     
 }
