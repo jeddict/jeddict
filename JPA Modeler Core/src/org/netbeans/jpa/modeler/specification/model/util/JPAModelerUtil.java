@@ -1,5 +1,5 @@
 /**
- * Copyright [2013] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -176,6 +176,7 @@ import org.openide.util.RequestProcessor;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
+import static org.openide.util.NbBundle.getMessage;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
@@ -359,7 +360,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         EntityMappings definition_Load = null;
         if (MODELER_UNMARSHALLER == null) {
             MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
-//            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
+            MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
         
 //        try {

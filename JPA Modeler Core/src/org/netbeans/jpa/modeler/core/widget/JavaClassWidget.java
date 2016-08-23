@@ -48,6 +48,133 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
@@ -69,12 +196,12 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    warningHandler.throwSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    warningHandler.clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                warningHandler.clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
 
@@ -86,9 +213,10 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        JavaClass entity = this.getBaseElementSpec();
+        JavaClass javaClass = this.getBaseElementSpec();
        
-        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomAnnoation("Annotations", "Annotations", "", this.getModelerScene(), entity.getAnnotation()));
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomAnnoation(this.getModelerScene(), javaClass.getAnnotation()));
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomSnippet(this.getModelerScene(), javaClass.getSnippets()));
     }
 
     private final class JavaClassAction extends WidgetAction.Adapter {
@@ -150,14 +278,14 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
     protected void validateName(String previousName, String name) {
         if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
-            getErrorHandler().throwError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+            getErrorHandler().throwSignal(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
         } else {
-            getErrorHandler().clearError(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
+            getErrorHandler().clearSignal(EntityValidator.CLASS_NAME_WITH_JPQL_KEYWORD);
         }
         if (SourceVersion.isName(name)) {
-            getErrorHandler().clearError(EntityValidator.INVALID_CLASS_NAME);
+            getErrorHandler().clearSignal(EntityValidator.INVALID_CLASS_NAME);
         } else {
-            getErrorHandler().throwError(EntityValidator.INVALID_CLASS_NAME);
+            getErrorHandler().throwSignal(EntityValidator.INVALID_CLASS_NAME);
         }
         scanDuplicateClass(previousName, name);
     }
@@ -170,17 +298,17 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
             if (javaClass.getClazz().equals(previousName)) {
                 if (++previousNameCount > 1) {
-                    javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
-                } else if (!javaClassWidget.getErrorHandler().getErrorList().isEmpty()) {
-                    javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                    javaClassWidget.getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                } else if (!javaClassWidget.getErrorHandler().getSignalList().isEmpty()) {
+                    javaClassWidget.getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_JAVA_CLASS);
                 }
             }
 
             if (javaClass.getClazz().equals(newName)) {
                 if (++newNameCount > 1) {
-                    javaClassWidget.getErrorHandler().throwError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
-                } else if (!javaClassWidget.getErrorHandler().getErrorList().isEmpty()) {
-                    javaClassWidget.getErrorHandler().clearError(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                    javaClassWidget.getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_JAVA_CLASS);
+                } else if (!javaClassWidget.getErrorHandler().getSignalList().isEmpty()) {
+                    javaClassWidget.getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_JAVA_CLASS);
                 }
             }
         }

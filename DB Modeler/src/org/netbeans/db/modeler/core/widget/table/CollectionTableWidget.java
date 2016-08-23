@@ -61,16 +61,16 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
         }
 
         if (SQLKeywords.isSQL99ReservedKeyword(CollectionTableWidget.this.getName())) {
-            this.getErrorHandler().throwError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getErrorHandler().throwSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearError(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getErrorHandler().clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBMapping mapping = CollectionTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(CollectionTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwError(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearError(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

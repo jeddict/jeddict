@@ -33,6 +33,7 @@ import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
@@ -45,6 +46,7 @@ import org.netbeans.jpa.modeler.properties.classmember.ConstructorPanel;
 import org.netbeans.jpa.modeler.properties.classmember.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.properties.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
+import org.netbeans.jpa.modeler.properties.custom.source.CustomSnippetPanel;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.properties.inheritence.InheritencePanel;
@@ -74,6 +76,7 @@ import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
+import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
@@ -85,6 +88,7 @@ import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
@@ -111,6 +115,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.openide.nodes.PropertySupport;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
+import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
 
@@ -318,6 +323,63 @@ public class PropertiesHandler {
         };
         org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("mapKey", "Map Key", "");
         attribute.setAfter("mapKeyType");
+        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
+    }
+
+    public static ComboBoxPropertySupport getEntityDisplayProperty(PersistenceClassWidget<Entity> classWidget) {
+        JPAModelerScene modelerScene = classWidget.getModelerScene();
+        Entity entity = classWidget.getBaseElementSpec();
+        ComboBoxListener<Attribute> comboBoxListener = new ComboBoxListener<Attribute>() {
+
+            @Override
+            public void setItem(ComboBoxValue<Attribute> value) {
+                Attribute newType = value.getValue();
+                entity.setLabelAttribute(newType);
+            }
+
+            @Override
+            public ComboBoxValue<Attribute> getItem() {
+                Attribute attribute = null;
+                if (entity.getLabelAttribute()!= null) {
+                    attribute = entity.getLabelAttribute();
+                }else { //select any attribute if not found 
+                      List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(); 
+                      if(!attributeWidgets.isEmpty()){
+                         attribute = attributeWidgets.get(0).getBaseElementSpec();
+                         entity.setLabelAttribute(attribute);
+                      }
+                }
+                if (attribute != null) {
+                    return new ComboBoxValue(attribute, attribute.getName());
+                } else {
+                    return new ComboBoxValue(null, EMPTY);
+                }
+            }
+
+            @Override
+            public List<ComboBoxValue<Attribute>> getItemList() {
+                List<ComboBoxValue<Attribute>> comboBoxValues = new ArrayList<>();
+                        getAllAttributeWidgets().forEach(classAttributeWidget -> {
+                            Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
+                            comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName()));
+                        });
+                return comboBoxValues;
+            }
+            
+            private List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(){
+               return (List<AttributeWidget<? extends Attribute>>)classWidget.getAllAttributeWidgets().stream().filter(a -> !(a instanceof EmbeddedAttributeWidget)
+                        && !(a instanceof TransientAttributeWidget) && !(a instanceof RelationAttributeWidget)
+                        && !(a instanceof BasicCollectionAttributeWidget)).collect(toList());
+            }
+
+            @Override
+            public String getDefaultText() {
+                return EMPTY;
+            }
+
+        };
+        org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("label", "UI Display Reference", "Select the attribute to represent the entity in UI");
+//        attribute.setAfter("mapKeyType");
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
     }
 
@@ -617,8 +679,8 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
     
-    public static PropertySupport getCustomAnnoation(String id, String name, String desc, JPAModelerScene modelerScene, List<Annotation> annotations) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+    public static PropertySupport getCustomAnnoation(JPAModelerScene modelerScene, List<Annotation> annotations) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("Annotations", "Annotations", "");
         attributeEntity.setCountDisplay(new String[]{"No Annotations exist", "One Annotation exist", "Annotations exist"});
 
         List<Column> columns = new ArrayList<>();
@@ -669,6 +731,69 @@ public class PropertiesHandler {
                     Annotation annotationElement = (Annotation) row[0];
                     annotationElement.setEnable((boolean)row[1]);
                     annotations.add(annotationElement);
+                });
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
+      public static PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<Snippet> snippets) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("Snippets", "Snippets", "");
+        attributeEntity.setCountDisplay(new String[]{"No Snippets exist", "One Snippet exist", "Snippets exist"});
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Snippet", false, String.class));
+        columns.add(new Column("Location", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new CustomSnippetPanel(modelerScene.getModelerFile()));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = snippets.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<Snippet> itr = snippets.iterator();
+                while (itr.hasNext()) {
+                    Snippet snippet = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = snippet;
+                    row[1] = snippet.isEnable();
+                    row[2] = snippet.getValue();
+                    row[3] = snippet.getLocationType().getTitle();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+            
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                snippets.clear();
+                data.stream().forEach((row) -> {
+                    Snippet snippet = (Snippet) row[0];
+                    snippet.setEnable((boolean)row[1]);
+                    snippets.add(snippet);
                 });
                 this.data = data;
             }
@@ -968,7 +1093,7 @@ public class PropertiesHandler {
     }
 
     public static EmbeddedPropertySupport getHashcodeEqualsProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "hashcode() & equals()", "Define hashcode & equals implementation for the Entity");
+        GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "equals() & hashcode()", "Define equals & hashcode implementation for the Entity");
 
         final JavaClass javaClassObj = persistenceClassWidget.getBaseElementSpec();
         entity.setEntityEditor(new HashcodeEqualsPanel(persistenceClassWidget));
@@ -1002,7 +1127,8 @@ public class PropertiesHandler {
     public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         GenericEmbedded entity = new GenericEmbedded("toString", "toString()",getMessage(ClassMemberPanel.class, "LBL_tostring_select"));
         final ClassMembers classMembersObj = persistenceClassWidget.getBaseElementSpec().getToStringMethod();
-        entity.setEntityEditor(new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget));
+        ClassMemberPanel classMemberPanel = new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget,false);
+        entity.setEntityEditor(classMemberPanel);
         entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
             private ClassMembers classMembers;
 
@@ -1033,9 +1159,10 @@ public class PropertiesHandler {
     public static PropertySupport getConstructorProperties(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("constructor", "Constructor", "Constructor");
         attributeEntity.setCountDisplay(new String[]{"No Constructors exist", "One Constructor exist", "Constructors exist"});
-        Set<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
+        List<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
+         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Constructor List", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ConstructorPanel(persistenceClassWidget));
@@ -1062,7 +1189,8 @@ public class PropertiesHandler {
                     Constructor constructor = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = constructor;
-                    row[1] = constructor.toString();
+                    row[1] = constructor.isEnable();
+                    row[2] = constructor.toString();
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -1078,10 +1206,21 @@ public class PropertiesHandler {
                 constructors.clear();
                 
                 data.stream().forEach((row) -> {
-                    constructors.add((Constructor) row[0]);
+                    Constructor constructorElement = (Constructor) row[0];
+                    constructorElement.setEnable((boolean)row[1]);
+                    constructors.add(constructorElement);
                 });
-                if(!constructors.isEmpty()){
+                //add no-arg constructor, if no-arg constructor not exist and other constructor exist
+                if(!constructors.isEmpty() && !constructors.stream().anyMatch(con -> con.getAttributes().isEmpty())){
                     constructors.add(Constructor.getNoArgsInstance());
+                }
+                
+                //Enable no-args constructor and disable other no-args constructor , if more then one are available 
+                if(!constructors.isEmpty()){
+                   List<Constructor> noArgsConstructors = constructors.stream().filter(con -> con.isNoArgs()).collect(toList());
+                   noArgsConstructors.stream().forEach(con -> con.setEnable(false));
+                   noArgsConstructors.get(0).setEnable(true);
+                   noArgsConstructors.get(0).setAccessModifier(AccessModifierType.PUBLIC);
                 }
                 
                 this.data = data;

@@ -54,7 +54,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     private ClassMembers equalsMethod;
 
     @XmlElement(name = "con")
-    private Set<Constructor> constructors;
+    private List<Constructor> constructors;
 
     @XmlAttribute(name = "abs")
     protected Boolean _abstract = false;
@@ -65,7 +65,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     @XmlAttribute
     private String superclassId;
 
-//    @XmlElementWrapper(name = "interface-list")
+//  @XmlElementWrapper(name = "interface-list")
     @XmlElement(name = "inf")
     private List<String> interfaces;
 
@@ -79,7 +79,10 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     private boolean visibile = true;
 
     private List<Annotation> annotation;
-            
+    
+    @XmlElement(name = "snp")
+    private List<Snippet> snippets;
+    
     @XmlTransient
     private FileObject fileObject;
     
@@ -354,9 +357,9 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     /**
      * @return the constructors
      */
-    public Set<Constructor> getConstructors() {
+    public List<Constructor> getConstructors() {
         if(constructors==null){
-            constructors = new LinkedHashSet<>();
+            constructors = new ArrayList<>();
         }
         return constructors;
     }
@@ -364,7 +367,7 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
     /**
      * @param constructors the constructors to set
      */
-    public void setConstructors(Set<Constructor> constructors) {
+    public void setConstructors(List<Constructor> constructors) {
         this.constructors = constructors;
     }
 
@@ -390,4 +393,28 @@ public abstract class JavaClass extends FlowNode implements JCRELoader {
         // default value will be true, store only for false
     }
 
+    /**
+     * @return the snippets
+     */
+    public List<Snippet> getSnippets() {
+        if(snippets==null){
+            snippets = new ArrayList<>();
+        }
+        return snippets;
+    }
+
+    /**
+     * @param snippets the snippets to set
+     */
+    public void setSnippets(List<Snippet> snippets) {
+        this.snippets = snippets;
+    }
+
+     public boolean addSnippet(Snippet snippet) {
+        return getSnippets().add(snippet);
+    }
+
+    public boolean removeSnippet(Snippet snippet) {
+        return getSnippets().remove(snippet);
+    }
 }

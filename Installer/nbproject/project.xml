@@ -15,7 +15,15 @@
                         <specification-version>1.38</specification-version>
                     </run-dependency>
                 </dependency>
-               <dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.api.progress.nb</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.46.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.autoupdate.services</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -47,7 +55,6 @@
                         <specification-version>8.3</specification-version>
                     </run-dependency>
                 </dependency>
-                
                 <dependency>
                     <code-name-base>org.openide.windows</code-name-base>
                     <build-prerequisite/>

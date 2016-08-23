@@ -28,10 +28,9 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class PersistenceXMLUnitSnippet implements Snippet {
 
     private static final String TEMPLATE_FILENAME = "persistence.vm";
-    private static final String DEFAULT_PU_NAME = "DEFAULT_PU";
 
-    private String name = DEFAULT_PU_NAME;
-    private List<String> classNames = new ArrayList<String>();
+    private String name;
+    private List<String> classNames = new ArrayList<>();
 
     public String getName() {
         return name;

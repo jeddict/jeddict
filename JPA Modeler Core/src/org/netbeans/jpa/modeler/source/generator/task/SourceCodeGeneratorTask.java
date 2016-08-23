@@ -21,6 +21,7 @@ import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.jcode.generator.JEEApplicationGenerator;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
+import org.netbeans.jcode.stack.config.data.EntityConfigData;
 import org.netbeans.jcode.task.AbstractNBTask;
 import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
 import org.netbeans.jcode.task.progress.ProgressHandler;
@@ -105,8 +106,11 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
             EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
             for (Entity entity : entityMappings.getEntity().stream().filter(e -> e.getGeneratesourceCode()).collect(toList())) {
                 String entiyFQN = StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + entity.getClazz() : entity.getClazz();
-                appicationConfigData.putEntity(entiyFQN, entity.getFileObject());
+                EntityConfigData entityConfigData = new EntityConfigData(entity.getFileObject());
+                entityConfigData.setLabelAttribute(entity.getLabelAttribute()!=null ? entity.getLabelAttribute().getName(): null);
+                appicationConfigData.putEntity(entiyFQN, entityConfigData);
             }
+            appicationConfigData.setPersistenceUnitName(entityMappings.getPersistenceUnitName());
             ProgressHandler handler = new ProgressConsoleHandler(this);
             JEEApplicationGenerator.generate(handler, appicationConfigData);
         }

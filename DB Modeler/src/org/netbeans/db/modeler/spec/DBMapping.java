@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
 import org.netbeans.modeler.specification.model.document.IRootElement;
@@ -29,9 +30,8 @@ import org.netbeans.modeler.specification.model.document.core.IBaseElement;
  *
  * @author Gaurav Gupta
  */
-public class DBMapping implements IDefinitionElement, IRootElement {
+public class DBMapping extends BaseElement implements IDefinitionElement, IRootElement {
 
-    private String id;
     private String name;
     private final Map<String, DBTable> tables = new HashMap<>();
     private final Map<String, String> creationQueries = new HashMap<>();
@@ -90,40 +90,6 @@ public class DBMapping implements IDefinitionElement, IRootElement {
             throw new InvalidElmentException("Invalid JPA Element");
         }
 
-    }
-
-    @Override
-    public Map<String, String> getCustomAttributes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setCustomAttributes(Map<String, String> customAttributes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object getRootElement() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setRootElement(Object rootElement) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**

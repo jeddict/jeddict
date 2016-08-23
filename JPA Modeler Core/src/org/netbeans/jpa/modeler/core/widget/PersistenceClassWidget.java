@@ -184,17 +184,17 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
             if (attribute.getName().equals(previousName)) {
                 if (++previousNameCount > 1) {
-                    attributeWidget.getErrorHandler().throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                } else if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
-                    attributeWidget.getErrorHandler().clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                    attributeWidget.getErrorHandler().throwSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getErrorHandler().getSignalList().isEmpty()) {
+                    attributeWidget.getErrorHandler().clearSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
                 }
             }
 
             if (attribute.getName().equals(newName)) {
                 if (++newNameCount > 1) {
-                    attributeWidget.getErrorHandler().throwError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                } else if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
-                    attributeWidget.getErrorHandler().clearError(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                    attributeWidget.getErrorHandler().throwSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getErrorHandler().getSignalList().isEmpty()) {
+                    attributeWidget.getErrorHandler().clearSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
                 }
             }
         }

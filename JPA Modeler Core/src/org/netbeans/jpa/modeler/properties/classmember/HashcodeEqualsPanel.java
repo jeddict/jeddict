@@ -15,13 +15,14 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember;
 
+import java.awt.event.ItemEvent;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
+import org.netbeans.jpa.modeler.properties.classmember.ClassMemberPanel;
 
 public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
-
 
     private JavaClass javaClass;
     private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
@@ -33,28 +34,28 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
     @Override
     public void init() {
         initComponents();
-        ((ClassMemberPanel)equalsMethodPanel).init();
-        ((ClassMemberPanel)hashcodeMethodPanel).init();
+        ((ClassMemberPanel) equalsMethodPanel).init();
+        ((ClassMemberPanel) hashcodeMethodPanel).init();
     }
 
-    
     @Override
     public void setValue(JavaClass javaClass) {
-        this.javaClass=javaClass;
-        ((ClassMemberPanel)equalsMethodPanel).setPersistenceClassWidget(persistenceClassWidget);
-        ((ClassMemberPanel)hashcodeMethodPanel).setPersistenceClassWidget(persistenceClassWidget);
+        this.javaClass = javaClass;
 
-        ((ClassMemberPanel)equalsMethodPanel).setValue(javaClass.getEqualsMethod());
-        ((ClassMemberPanel)hashcodeMethodPanel).setValue(javaClass.getHashCodeMethod());
+        ((ClassMemberPanel) equalsMethodPanel).setPersistenceClassWidget(persistenceClassWidget);
+        ((ClassMemberPanel) hashcodeMethodPanel).setPersistenceClassWidget(persistenceClassWidget);
+
+        ((ClassMemberPanel) equalsMethodPanel).setValue(javaClass.getEqualsMethod());
+        ((ClassMemberPanel) hashcodeMethodPanel).setValue(javaClass.getHashCodeMethod());
+
     }
-    
+
     @Override
     public JavaClass getValue() {
-        ((ClassMemberPanel)equalsMethodPanel).getValue();
-        ((ClassMemberPanel)hashcodeMethodPanel).getValue();
+        ((ClassMemberPanel) equalsMethodPanel).getValue();
+        ((ClassMemberPanel) hashcodeMethodPanel).getValue();
         return javaClass;
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -67,13 +68,17 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
         jSplitPane2 = new javax.swing.JSplitPane();
         jSplitPane = new javax.swing.JSplitPane();
+        hashcodeRootPanel = new javax.swing.JPanel();
         hashcodeMethodPanel = new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "LBL_hashcode_select"));
+        equalsRootPanel = new javax.swing.JPanel();
         equalsMethodPanel = new ClassMemberPanel(org.openide.util.NbBundle.getMessage(ClassMemberPanel.class, "LBL_equals_select"));
 
         jSplitPane2.setToolTipText(org.openide.util.NbBundle.getMessage(HashcodeEqualsPanel.class, "HashcodeEqualsPanel.jSplitPane2.toolTipText")); // NOI18N
 
         jSplitPane.setDividerSize(10);
         jSplitPane.setResizeWeight(0.5d);
+
+        hashcodeRootPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout hashcodeMethodPanelLayout = new javax.swing.GroupLayout(hashcodeMethodPanel);
         hashcodeMethodPanel.setLayout(hashcodeMethodPanelLayout);
@@ -86,7 +91,11 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jSplitPane.setLeftComponent(hashcodeMethodPanel);
+        hashcodeRootPanel.add(hashcodeMethodPanel, java.awt.BorderLayout.CENTER);
+
+        jSplitPane.setRightComponent(hashcodeRootPanel);
+
+        equalsRootPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout equalsMethodPanelLayout = new javax.swing.GroupLayout(equalsMethodPanel);
         equalsMethodPanel.setLayout(equalsMethodPanelLayout);
@@ -99,13 +108,15 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
             .addGap(0, 492, Short.MAX_VALUE)
         );
 
-        jSplitPane.setRightComponent(equalsMethodPanel);
+        equalsRootPanel.add(equalsMethodPanel, java.awt.BorderLayout.CENTER);
+
+        jSplitPane.setLeftComponent(equalsRootPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+            .addComponent(jSplitPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,10 +127,11 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel equalsMethodPanel;
+    private javax.swing.JPanel equalsRootPanel;
     private javax.swing.JPanel hashcodeMethodPanel;
+    private javax.swing.JPanel hashcodeRootPanel;
     private javax.swing.JSplitPane jSplitPane;
     private javax.swing.JSplitPane jSplitPane2;
     // End of variables declaration//GEN-END:variables
-
 
 }

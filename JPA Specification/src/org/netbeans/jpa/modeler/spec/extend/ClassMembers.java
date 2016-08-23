@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 
@@ -34,6 +35,13 @@ public class ClassMembers {
     @XmlIDREF
     @XmlElement(name = "a")
     protected List<Attribute> attributes;
+    @XmlAttribute(name = "e")
+    private boolean enable = true;
+    
+    @XmlElement(name="pre")
+    private String preCode;
+    @XmlElement(name="post")
+    private String postCode;
 
     public boolean addAttribute(Attribute attribute) {
         return getAttributes().add(attribute);
@@ -68,9 +76,51 @@ public class ClassMembers {
         this.attributes = attributes;
     }
 
+    /**
+     * @return the enable
+     */
+    public boolean isEnable() {
+        return enable;
+    }
+
+    /**
+     * @param enable the enable to set
+     */
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+    
     @Override
     public String toString() {
         return getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel() + " " + a.getName()).collect(Collectors.joining(", "));
+    }
+    
+    /**
+     * @return the preCode
+     */
+    public String getPreCode() {
+        return preCode;
+    }
+
+    /**
+     * @param preCode the preCode to set
+     */
+    public void setPreCode(String preCode) {
+        this.preCode = preCode;
+    }
+
+    /**
+     * @return the postCode
+     */
+    public String getPostCode() {
+        return postCode;
+    }
+
+    /**
+     * @param postCode the postCode to set
+     */
+    public void setPostCode(String postCode) {
+        this.postCode = postCode;
     }
 
 }

@@ -133,7 +133,7 @@ public abstract class BaseElement implements IBaseElement {
     }
 
     @Override
-    public Object getRootElement() {
+    public EntityMappings getRootElement() {
         return this.rootElement;
     }
 

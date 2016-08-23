@@ -46,6 +46,7 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -69,6 +70,7 @@ import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
@@ -87,6 +89,13 @@ import org.openide.windows.WindowManager;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        EntityMappings entityMappings = this.getBaseElementSpec();
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomSnippet(this, entityMappings.getSnippets()));
+    }
+    
     public List<EntityWidget> getEntityWidgets() {
         List<EntityWidget> entityWidgets = new ArrayList<>();
         for (IBaseElementWidget baseElement : getBaseElements()) {
@@ -114,17 +123,17 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             boolean failure = false;
             if (e instanceof PersistenceClassWidget) {
                 PersistenceClassWidget<ManagedClass> p = ((PersistenceClassWidget<ManagedClass>) e);
-                if (!p.getErrorHandler().getErrorList().isEmpty()) {
+                if (!p.getErrorHandler().getSignalList().isEmpty()) {
                     errorMessage.append(p.getName()).append(':').append('\n');
-                    p.getErrorHandler().getErrorList().values().forEach(v -> {
+                    p.getErrorHandler().getSignalList().values().forEach(v -> {
                         errorMessage.append('\t').append(v).append('\n');
                     });
                     failure = true;
                 }
                 for (AttributeWidget attributeWidget : p.getAllAttributeWidgets()) {
-                    if (!attributeWidget.getErrorHandler().getErrorList().isEmpty()) {
+                    if (!attributeWidget.getErrorHandler().getSignalList().isEmpty()) {
                         errorMessage.append('\t').append(p.getName()).append('.').append(attributeWidget.getName()).append(':').append('\n');
-                        attributeWidget.getErrorHandler().getErrorList().values().forEach(v -> {
+                        attributeWidget.getErrorHandler().getSignalList().values().forEach(v -> {
                             errorMessage.append('\t').append('\t').append(v).append('\n');
                         });
                         failure = true;
