@@ -142,8 +142,8 @@ public class GenerateCodeDialog extends GenericDialog
         this.pack();
     }
 
-    private final static int business_PANEL_INDEX = 0, CONTROLLER_PANEL_INDEX = 1, VIEWER_PANEL_INDEX = 2;
-    private LayerConfigPanel[] layerConfigPanels = new LayerConfigPanel[3];
+    private final static int BUSINESS_PANEL_INDEX = 0, CONTROLLER_PANEL_INDEX = 1, VIEWER_PANEL_INDEX = 2;
+    private final LayerConfigPanel[] layerConfigPanels = new LayerConfigPanel[3];
 
     private void setTechPanel(int index, JPanel techLayerPanel, TechContext technologyLayer) {
         try {
@@ -162,24 +162,30 @@ public class GenerateCodeDialog extends GenericDialog
             configPane.removeAll();
             configPane.setVisible(false);
             layerConfigPanels[index]= techPanel;
-            if (index == business_PANEL_INDEX) {
-                getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
-                getConfigData().setBussinesLayerGenerator(technologyLayer.getGenerator());
-                addLayerTab(getBusinessLayer().toString(), businessPanel);
-                getConfigData().setControllerLayerConfig(null);
-                getConfigData().setViewerLayerConfig(null);
-            } else if (index == CONTROLLER_PANEL_INDEX) {
-                getConfigData().setControllerLayerConfig(techPanel.getConfigData());
-                getConfigData().setControllerLayerGenerator(technologyLayer.getGenerator());
-                addLayerTab(getBusinessLayer().toString(), businessPanel);
-                addLayerTab(getControllerLayer().toString(), controllerPanel);
-                getConfigData().setViewerLayerConfig(null);
-            } else if (index == VIEWER_PANEL_INDEX) {
-                getConfigData().setViewerLayerConfig(techPanel.getConfigData());
-                getConfigData().setViewerLayerGenerator(technologyLayer.getGenerator());
-                addLayerTab(getBusinessLayer().toString(), businessPanel);
-                addLayerTab(getControllerLayer().toString(), controllerPanel);
-                addLayerTab(getViewerLayer().toString(), viewerPanel);
+            switch (index) {
+                case BUSINESS_PANEL_INDEX:
+                    getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
+                    getConfigData().setBussinesLayerGenerator(technologyLayer.getGenerator());
+                    addLayerTab(getBusinessLayer().toString(), businessPanel);
+                    getConfigData().setControllerLayerConfig(null);
+                    getConfigData().setViewerLayerConfig(null);
+                    break;
+                case CONTROLLER_PANEL_INDEX:
+                    getConfigData().setControllerLayerConfig(techPanel.getConfigData());
+                    getConfigData().setControllerLayerGenerator(technologyLayer.getGenerator());
+                    addLayerTab(getBusinessLayer().toString(), businessPanel);
+                    addLayerTab(getControllerLayer().toString(), controllerPanel);
+                    getConfigData().setViewerLayerConfig(null);
+                    break;
+                case VIEWER_PANEL_INDEX:
+                    getConfigData().setViewerLayerConfig(techPanel.getConfigData());
+                    getConfigData().setViewerLayerGenerator(technologyLayer.getGenerator());
+                    addLayerTab(getBusinessLayer().toString(), businessPanel);
+                    addLayerTab(getControllerLayer().toString(), controllerPanel);
+                    addLayerTab(getViewerLayer().toString(), viewerPanel);
+                    break;
+                default:
+                    break;
             }
 
             if (configPane.getComponentCount() > index) {
@@ -240,6 +246,7 @@ public class GenerateCodeDialog extends GenericDialog
         org.openide.awt.Mnemonics.setLocalizedText(packageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.packageLabel.text")); // NOI18N
         packageLabel.setPreferredSize(new java.awt.Dimension(150, 17));
 
+        resourcePackageCombo.setEditable(true);
         resourcePackageCombo.setEditable(true);
         resourcePackageCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -335,11 +342,11 @@ public class GenerateCodeDialog extends GenericDialog
                             .addGroup(optionPaneLayout.createSequentialGroup()
                                 .addComponent(targetProjectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(32, 32, 32)
+                                .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(25, 25, 25)
                                 .addComponent(sourceFolderLabel)
                                 .addGap(18, 18, 18)
-                                .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(sourceFolderCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(optionPaneLayout.createSequentialGroup()
                                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(viewerLayerLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -460,17 +467,15 @@ public class GenerateCodeDialog extends GenericDialog
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(entitySetting)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(optionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(28, 28, 28)
+                .addComponent(entitySetting)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 332, Short.MAX_VALUE)
+                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(optionPane)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -621,7 +626,7 @@ public class GenerateCodeDialog extends GenericDialog
         controllerLayerCombo.setEnabled(businessLayer.isValid());
         viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
         viewerLayerCombo.setEnabled(false);
-        setTechPanel(business_PANEL_INDEX, businessPanel, businessLayer);
+        setTechPanel(BUSINESS_PANEL_INDEX, businessPanel, businessLayer);
         if (!businessLayer.isValid()) {
             viewerLayerCombo.setEnabled(false);
         }
