@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jcode.core.util.StringHelper;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
@@ -163,16 +164,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      * getNickname()
      */
     public String getMethodName() {
-        if (name.charAt(0) == '_') {
-            char ch = Character.toUpperCase(name.charAt(1));
-
-            return Character.toString(ch) + name.substring(2);
-        } else {
-            char ch = Character.toUpperCase(name.charAt(0));
-
-            return Character.toString(ch) + name.substring(1);
-        }
-
+            return StringHelper.getMethodName(name);
     }
 
     public RelationDefSnippet getRelationDef() {

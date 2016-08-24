@@ -1,5 +1,10 @@
 # JPA Modeler Releases #
 
+### Version 2.5 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.1) ###
+
+*  Angular JS 1 client generator
+*  Minor issue fix
+
 ### Version 2.1 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.1) ###
 
 *  Secondary Table support
