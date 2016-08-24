@@ -30,9 +30,8 @@ See the [Quick Start](http://jpamodeler.github.io/tutorial/page.html?l=QuickStar
 ##### 7) SQL/DDL script generation (Beta)
 ##### 8) Model documentation
 ##### 9) Improves your productivity
-##### 10) Tech Stack : REST(JAX-RS), MVC 1.0(JSR-371), JavaEE Security(JSR-375), EJB, CDI, JSP, HTML5, Bootstrap
+##### 10) Tech Stack : REST(JAX-RS), MVC 1.0(JSR-371), JavaEE Security(JSR-375), EJB, CDI, JSP, HTML5, Bootstrap, Angular JS 
 
-## Upcoming release - Angular JS
 
 ## Communication
 
