@@ -581,7 +581,7 @@ public class JavaSourceParserUtil {
     }
 
     public static ExecutableElement getIdGetter(final boolean isFieldAccess, final TypeElement typeElement) {
-        ExecutableElement[] methods = JavaSourceParserUtil.getMethods(typeElement);
+        List<ExecutableElement> methods = JavaSourceParserUtil.getMethods(typeElement);
         for (ExecutableElement method : methods) {
             String methodName = method.getSimpleName().toString();
             if (methodName.startsWith("get")) {
@@ -671,10 +671,10 @@ public class JavaSourceParserUtil {
 //        }
 //        return result.toArray(new ExecutableElement[result.size()]);
 //    }
-    public static ExecutableElement[] getMethods(TypeElement typeElement) {
+    public static List<ExecutableElement> getMethods(TypeElement typeElement) {
         List<ExecutableElement> result = new LinkedList<ExecutableElement>();
         result.addAll(ElementFilter.methodsIn(typeElement.getEnclosedElements()));
-        return result.toArray(new ExecutableElement[result.size()]);
+        return result;//.toArray(new ExecutableElement[result.size()]);
     }
     // Issue Fix #5977 Start
 
@@ -684,11 +684,18 @@ public class JavaSourceParserUtil {
      * @author georgeeb <georgeeb@java.net>
      * @since Thu, 17 Apr 2014 15:04:13 +0000
      */
-    public static VariableElement[] getFields(TypeElement typeElement) {
+//    public static VariableElement[] getFields(TypeElement typeElement) {
+//        List<VariableElement> result = new LinkedList<VariableElement>();
+//        final List<VariableElement> fieldsIn = ElementFilter.fieldsIn(typeElement.getEnclosedElements());
+//        result.addAll(removeSerialVersionUid(fieldsIn));
+//        return result.toArray(new VariableElement[result.size()]);
+//    }
+    
+    public static List<VariableElement> getFields(TypeElement typeElement) {
         List<VariableElement> result = new LinkedList<VariableElement>();
         final List<VariableElement> fieldsIn = ElementFilter.fieldsIn(typeElement.getEnclosedElements());
         result.addAll(removeSerialVersionUid(fieldsIn));
-        return result.toArray(new VariableElement[result.size()]);
+        return result;
     }
 
     private static List<VariableElement> removeSerialVersionUid(List<VariableElement> fieldsIn) {

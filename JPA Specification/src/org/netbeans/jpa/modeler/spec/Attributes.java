@@ -97,17 +97,17 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
     public void load(EntityMappings entityMappings, TypeElement typeElement, boolean fieldAccess) {
         Set<String> mapsId = new HashSet<>();
         VariableElement embeddedIdVariableElement = null;
+        List<Element> elements = new ArrayList<>();
         for (ExecutableElement method : JavaSourceParserUtil.getMethods(typeElement)) {
             try {
             String methodName = method.getSimpleName().toString();
             if (methodName.startsWith("get")) {
                 Element element;
                 VariableElement variableElement = JavaSourceParserUtil.guessField(method);
-                // Issue Fix #5976 Start
+                 // Issue Fix #5976 Start
                 /**
                  * #5976 FIX fixed NPE when method is not attached to field
-                 * Transient or in
-                 *
+                 * Transient or in                 *
                  * @author Juraj Balaz <georgeeb@java.net>
                  * @since Thu, 17 Apr 2014 14:07:11 +0000
                  */
@@ -122,7 +122,25 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                 } else {
                     element = method;
                 }
-
+                elements.add(element);
+            } 
+            }catch(TypeNotPresentException ex){
+                //Ignore Erroneous variable Type : ClassA have relation with List<ClassB>. And ClassB does not exist on classpath 
+                //LOG TODO access to IO
+            }
+        }
+        //this is not manadatory but provided support for blog snippet which have no method
+        if(!fieldAccess && elements.isEmpty()){//if no elements then add all fields
+            elements.addAll(JavaSourceParserUtil.getFields(typeElement));
+        }
+        for(Element element : elements){
+                VariableElement variableElement ;
+                if(element instanceof VariableElement){
+                   variableElement = (VariableElement)element;;
+                } else {
+                    variableElement = JavaSourceParserUtil.guessField((ExecutableElement)element);
+                }
+                 
                 if (JavaSourceParserUtil.isAnnotatedWith(element, ID_FQN)
                         && !(JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.OneToOne")
                         || JavaSourceParserUtil.isAnnotatedWith(element, "javax.persistence.ManyToOne"))) {
@@ -166,14 +184,8 @@ public class Attributes extends BaseAttributes implements IPersistenceAttributes
                     this.addBasic(Basic.load(element, variableElement)); //Default Annotation
                 }
 
-            } 
-//            else if (!methodName.startsWith("set")) {
-//            }
-            }catch(TypeNotPresentException ex){
-                //Ignore Erroneous variable Type : ClassA have relation with List<ClassB>. And ClassB does not exist on classpath 
-                //LOG TODO access to IO
-            }
         }
+        
 
         if (this.getEmbeddedId() != null) {
             for (VariableElement variableElement : JavaSourceParserUtil.getFields(JavaSourceParserUtil.getAttributeTypeElement(embeddedIdVariableElement))) {
