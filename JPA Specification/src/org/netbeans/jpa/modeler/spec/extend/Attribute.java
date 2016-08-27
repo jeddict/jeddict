@@ -57,7 +57,9 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     @XmlAttribute(name = "name", required = true)
     protected String name;
-
+    
+    @XmlAttribute(name="ui")
+    private Boolean includeInUI;
     /**
      * Gets the value of the name property.
      *
@@ -265,6 +267,23 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return the includeInUI
+     */
+    public Boolean getIncludeInUI() {
+        if(includeInUI==null){
+            return true;
+        }
+        return includeInUI;
+    }
+
+    /**
+     * @param includeInUI the includeInUI to set
+     */
+    public void setIncludeInUI(Boolean includeInUI) {
+        this.includeInUI = includeInUI;
     }
     
     

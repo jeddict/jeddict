@@ -100,7 +100,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             set.put("BASIC_PROP", getInheritenceProperty(EntityWidget.this));
         }
         
-        set.put("BASIC_PROP", getEntityDisplayProperty(EntityWidget.this));
+        set.put("UI_PROP", getEntityDisplayProperty(EntityWidget.this));
 
         set.put("QUERY", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));
         set.put("QUERY", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));

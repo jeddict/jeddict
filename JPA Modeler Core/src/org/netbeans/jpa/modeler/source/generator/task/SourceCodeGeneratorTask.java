@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.source.generator.task;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
@@ -108,6 +109,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
                 String entiyFQN = StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + entity.getClazz() : entity.getClazz();
                 EntityConfigData entityConfigData = new EntityConfigData(entity.getFileObject());
                 entityConfigData.setLabelAttribute(entity.getLabelAttribute()!=null ? entity.getLabelAttribute().getName(): null);
+                entityConfigData.setSystemAttribute(entity.getAttributes().getAllAttribute().stream().filter(attr -> !attr.getIncludeInUI()).map(attr -> attr.getName()).collect(toSet()));
                 appicationConfigData.putEntity(entiyFQN, entityConfigData);
             }
             appicationConfigData.setPersistenceUnitName(entityMappings.getPersistenceUnitName());
