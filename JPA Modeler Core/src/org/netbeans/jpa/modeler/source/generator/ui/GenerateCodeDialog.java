@@ -109,15 +109,15 @@ public class GenerateCodeDialog extends GenericDialog
     void initLayer() {
         configPane.removeAll();
         configPane.setVisible(false);
-        if (!ProjectHelper.isJavaEE6AndHigher(getTargetPoject())) {
-            businessLayerCombo.setEnabled(false);
-            controllerLayerCombo.setEnabled(false);
-            viewerLayerCombo.setEnabled(false);
-            this.pack();
-            return;
-        } else {
+//        if (!ProjectHelper.isJavaEE6AndHigher(getTargetPoject())) { //removed for gradle project type support
+//            businessLayerCombo.setEnabled(false);
+//            controllerLayerCombo.setEnabled(false);
+//            viewerLayerCombo.setEnabled(false);
+//            this.pack();
+//            return;
+//        } else {
             businessLayerCombo.setEnabled(true);
-        }
+//        }
         businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
         controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultControllerLayer())}));
         viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));

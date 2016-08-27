@@ -38,10 +38,18 @@ public final class CodePanel extends javax.swing.JPanel {
 
         refractorNamedQueryComp = new javax.swing.JCheckBox();
         deleteNamedQueryComp = new javax.swing.JCheckBox();
+        generateFluentAPIComp = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(refractorNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.refractorNamedQueryComp.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(deleteNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.deleteNamedQueryComp.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(generateFluentAPIComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.generateFluentAPIComp.text")); // NOI18N
+        generateFluentAPIComp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateFluentAPICompActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -50,6 +58,7 @@ public final class CodePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(generateFluentAPIComp)
                     .addComponent(deleteNamedQueryComp)
                     .addComponent(refractorNamedQueryComp))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -61,29 +70,47 @@ public final class CodePanel extends javax.swing.JPanel {
                 .addComponent(refractorNamedQueryComp)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteNamedQueryComp)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(generateFluentAPIComp)
+                .addContainerGap(38, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void generateFluentAPICompActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateFluentAPICompActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_generateFluentAPICompActionPerformed
 
     void load() {
          refractorNamedQueryComp.setSelected(isRefractorQuery());
          deleteNamedQueryComp.setSelected(isDeleteQuery());
+         generateFluentAPIComp.setSelected(isGenerateFluentAPI());
     }
 
     void store() {
        NbPreferences.forModule(CodePanel.class).putBoolean("refractorNamedQuery", refractorNamedQueryComp.isSelected());
        NbPreferences.forModule(CodePanel.class).putBoolean("deleteNamedQuery", deleteNamedQueryComp.isSelected());
+       NbPreferences.forModule(CodePanel.class).putBoolean("generateFluentAPI", generateFluentAPIComp.isSelected());
        refractorNamedQuery=null;
        deleteNamedQuery=null;
+       generateFluentAPI=null;
     }
 
     private static Boolean deleteNamedQuery;
     private static Boolean refractorNamedQuery;
+    private static Boolean generateFluentAPI;
+    
     public static boolean isRefractorQuery() {
         if (refractorNamedQuery == null) {
             refractorNamedQuery = pref.getBoolean("refractorNamedQuery", Boolean.TRUE);
         }
         return refractorNamedQuery;
+    }
+    
+    public static boolean isGenerateFluentAPI() {
+        if (generateFluentAPI == null) {
+            generateFluentAPI = pref.getBoolean("generateFluentAPI", Boolean.FALSE);
+        }
+        return generateFluentAPI;
     }
     
     public static boolean isDeleteQuery(){
@@ -100,6 +127,7 @@ public final class CodePanel extends javax.swing.JPanel {
 private static final Preferences pref = NbPreferences.forModule(CodePanel.class);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox deleteNamedQueryComp;
+    private javax.swing.JCheckBox generateFluentAPIComp;
     private javax.swing.JCheckBox refractorNamedQueryComp;
     // End of variables declaration//GEN-END:variables
 }
