@@ -812,7 +812,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     @Override    // method should be called only onec in case of loadDocument
-    public void sortAttributes() {
+    public void sortAttributes() {//#ATTRIBUTE_SEQUENCE_FLOW#
         Map<String, List<Widget>> categories = new LinkedHashMap<>();
         if (embeddedIdAttributeWidget != null) {
             List<Widget> embeddedIdAttributeCatWidget = new ArrayList<>();
@@ -848,8 +848,8 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         }
 
         List<RelationAttributeWidget> relationAttributeWidgets = new LinkedList<>(oneToOneRelationAttributeWidgets);
-        relationAttributeWidgets.addAll(oneToManyRelationAttributeWidgets);
         relationAttributeWidgets.addAll(manyToOneRelationAttributeWidgets);
+        relationAttributeWidgets.addAll(oneToManyRelationAttributeWidgets);
         relationAttributeWidgets.addAll(manyToManyRelationAttributeWidgets);
 
         if (!relationAttributeWidgets.isEmpty()) {

@@ -58,22 +58,21 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         //Attributes -- Method level annotations
         Attributes parsedAttributes = mappedSuperclass.getAttributes();
 
-        if (parsedAttributes != null) {
+        if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(mappedSuperclass, parsedAttributes.getEmbeddedId());
             if (parsedAttributes.getEmbeddedId() == null) {
                 processId(parsedAttributes.getId());
             }
             processBasic(parsedAttributes.getBasic());
-            processTransient(parsedAttributes.getTransient());
             processElementCollection(parsedAttributes.getElementCollection());
-
             processEmbedded(parsedAttributes.getEmbedded());
 
-            processManyToMany(parsedAttributes.getManyToMany());
+            processOneToOne(parsedAttributes.getOneToOne());
             processManyToOne(parsedAttributes.getManyToOne());
             processOneToMany(parsedAttributes.getOneToMany());
-            processOneToOne(parsedAttributes.getOneToOne());
+            processManyToMany(parsedAttributes.getManyToMany());
             processVersion(parsedAttributes.getVersion());
+            processTransient(parsedAttributes.getTransient());
         }
 
         //Class decorations

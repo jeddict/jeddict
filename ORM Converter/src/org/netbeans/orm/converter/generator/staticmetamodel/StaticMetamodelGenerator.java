@@ -107,7 +107,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
     }
 
     @Override
-    public StaticMetamodelClassDefSnippet getClassDef() {
+    public StaticMetamodelClassDefSnippet getClassDef() {//#ATTRIBUTE_SEQUENCE_FLOW#
 
         //Attributes -- Method level annotations
         IAttributes parsedAttributes = managedClass.getAttributes();
@@ -119,18 +119,17 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
                 } else {
                     processBase(persistenceAttributes.getEmbeddedId());
                 }
-                processBase(persistenceAttributes.getVersion());
+                processBase(persistenceAttributes.getVersion());//todo move to last
             }
 
             processBase(parsedAttributes.getBasic());
-//            processTransient(parsedAttributes.getTransient());
             processBase(parsedAttributes.getElementCollection());
             processBase(parsedAttributes.getEmbedded());
-            processRelation(parsedAttributes.getManyToMany());
+            processRelation(parsedAttributes.getOneToOne());
             processRelation(parsedAttributes.getManyToOne());
             processRelation(parsedAttributes.getOneToMany());
-            processRelation(parsedAttributes.getOneToOne());
-        }
+            processRelation(parsedAttributes.getManyToMany());
+}
 
         // Classlevel annotations
         //Class decorations

@@ -105,14 +105,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
         if (appicationConfigData.getBussinesLayerConfig() != null) {
             EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-            for (Entity entity : entityMappings.getEntity().stream().filter(e -> e.getGeneratesourceCode()).collect(toList())) {
-                String entiyFQN = StringUtils.isNotBlank(entityMappings.getPackage()) ? entityMappings.getPackage() + '.' + entity.getClazz() : entity.getClazz();
-                EntityConfigData entityConfigData = new EntityConfigData(entity.getFileObject());
-                entityConfigData.setLabelAttribute(entity.getLabelAttribute()!=null ? entity.getLabelAttribute().getName(): null);
-                entityConfigData.setSystemAttribute(entity.getAttributes().getAllAttribute().stream().filter(attr -> !attr.getIncludeInUI()).map(attr -> attr.getName()).collect(toSet()));
-                appicationConfigData.putEntity(entiyFQN, entityConfigData);
-            }
-            appicationConfigData.setPersistenceUnitName(entityMappings.getPersistenceUnitName());
+            appicationConfigData.setEntityMappings(entityMappings);
             ProgressHandler handler = new ProgressConsoleHandler(this);
             JEEApplicationGenerator.generate(handler, appicationConfigData);
         }
