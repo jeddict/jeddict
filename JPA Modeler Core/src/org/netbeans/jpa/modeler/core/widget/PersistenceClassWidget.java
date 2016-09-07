@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
+import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
+import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -1119,8 +1121,8 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     @Override
     public void setName(String name) {
         String previousName = this.name;
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name.replaceAll("\\s+", "");
+        if (StringUtils.isNotBlank(name)) {
+            this.name = filterName(name);
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 getBaseElementSpec().setClazz(this.name);
                 refractorReference(previousName, this.name);

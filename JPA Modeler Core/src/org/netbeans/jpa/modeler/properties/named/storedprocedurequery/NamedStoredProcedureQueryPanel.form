@@ -93,7 +93,7 @@
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Component id="procedureName_LayeredPane" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="parameters_LayeredPane" pref="336" max="32767" attributes="0"/>
+                          <Component id="parameters_LayeredPane" pref="319" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -101,6 +101,11 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JLayeredPane" name="procedureName_LayeredPane">
+                  <Properties>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[170, 27]"/>
+                    </Property>
+                  </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
                   <SubComponents>
@@ -140,6 +145,11 @@
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JLayeredPane" name="name_LayeredPane">
+                  <Properties>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[170, 27]"/>
+                    </Property>
+                  </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
                   <SubComponents>
@@ -176,6 +186,11 @@
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JLayeredPane" name="dbCon_LayeredPane">
+                  <Properties>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[170, 27]"/>
+                    </Property>
+                  </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
                   <SubComponents>
@@ -186,6 +201,9 @@
                         </Property>
                         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                           <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/storedprocedurequery/Bundle.properties" key="NamedStoredProcedureQueryPanel.dbCon_Label.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                        </Property>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[90, 14]"/>
                         </Property>
                       </Properties>
                       <Constraints>
@@ -242,7 +260,7 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="parametersEditor" pref="302" max="32767" attributes="0"/>
+                              <Component id="parametersEditor" pref="285" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -473,7 +491,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="Save" min="-2" pref="70" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="cancel_Button" min="-2" max="-2" attributes="0"/>
+                      <Component id="cancel_Button" pref="75" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
