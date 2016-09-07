@@ -1,8 +1,11 @@
 # JPA Modeler Releases #
 
-### Version 2.5 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.1) ###
+### Version 2.5 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.5.5) ###
 
 *  Angular JS 1 client generator
+*  Swagger docs
+*  Metrics report generator
+*  Fluent API generator
 *  Minor issue fix
 
 ### Version 2.1 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.1) ###
