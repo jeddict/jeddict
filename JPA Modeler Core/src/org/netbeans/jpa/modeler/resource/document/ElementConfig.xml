@@ -16,6 +16,8 @@
         <group id="CLASS_STRUCTURE" name="Class Properties"/>
         <group id="PACKAGE" name="Package"/>
         <group id="QUERY" name="Query"/>
+        <group id="UI_PROP" name="UI Properties"/>
+
     </groups>
     <elements>
         <element id="EntityMappings" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.EntityMappings">
@@ -58,7 +60,13 @@
             <attributes>
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description" after="name">
                     <display-name>Description</display-name>
-                </attribute>  
+                </attribute>
+                <attribute id="includeInUI" groupId="UI_PROP" class="java.lang.Boolean" name="includeInUI">
+                    <display-name>Include in UI</display-name>
+                    <description>
+                        If unselected, will not be available in frontend.
+                    </description>
+                </attribute>
             </attributes>
         </element>
         <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">

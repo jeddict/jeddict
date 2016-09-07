@@ -88,22 +88,22 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         //Attributes -- Method level annotations
         Attributes parsedAttributes = entity.getAttributes();
 
-        if (parsedAttributes != null) {
+        if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(entity, parsedAttributes.getEmbeddedId());
             if (entity.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
                 processId(parsedAttributes.getId());
             }
             processBasic(parsedAttributes.getBasic());
-            processTransient(parsedAttributes.getTransient());
-            processElementCollection(parsedAttributes.getElementCollection());
-
+            processElementCollection(parsedAttributes.getElementCollection());//todo embedded collection should be generate after embedded
             processEmbedded(parsedAttributes.getEmbedded());
 
-            processManyToMany(parsedAttributes.getManyToMany());
+            processOneToOne(parsedAttributes.getOneToOne());
             processManyToOne(parsedAttributes.getManyToOne());
             processOneToMany(parsedAttributes.getOneToMany());
-            processOneToOne(parsedAttributes.getOneToOne());
+            processManyToMany(parsedAttributes.getManyToMany());
+
             processVersion(parsedAttributes.getVersion());
+            processTransient(parsedAttributes.getTransient());
         }
 
         // Classlevel annotations - Special case

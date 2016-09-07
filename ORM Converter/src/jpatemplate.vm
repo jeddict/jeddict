@@ -224,6 +224,13 @@ $n#end
         this.$varDef.name = $varDef.name;
     }
 
+    #if($fluentAPI)
+    #set($fluentMethod = $varDef.name)
+    public $classDef.getClassName() $fluentMethod($varDef.type $varDef.name) {
+        this.$varDef.name = $varDef.name;
+        return this;
+    }
+    #end
 #end
 #####################custom snippet - after method ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_METHOD") )

@@ -226,7 +226,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                         BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
                         //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
                         /*DATE, CALENDAR,*/
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
                     break;
             }
         } else if (attribute instanceof Basic) {
@@ -236,10 +236,13 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 case TEMPORAL:
                     dataType = new String[]{DATE, CALENDAR};
                     break;
+                case LOB:
+                    dataType = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                    break;
                 default:
                     dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
                         BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
                     break;
             }
         } else if (attribute instanceof ElementCollection) {
@@ -249,10 +252,13 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 case TEMPORAL:
                     dataType = new String[]{DATE, CALENDAR};
                     break;
+                case LOB:
+                    dataType = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                    break;
                 default:
                     dataType = new String[]{STRING, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER,
                         LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
                     break;
             }
         } else if (attribute instanceof Id) {

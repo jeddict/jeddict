@@ -26,6 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.SourceGroups;
+import org.netbeans.jcode.core.util.StringHelper;
+import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
@@ -188,6 +190,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
                 JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(EntityValidator.class, EntityValidator.EMPTY_CLASS_NAME));
                 setName(JavaClassWidget.this.getLabel());//rollback
             } else {
+                value = StringHelper.firstUpper(value);
                 setName(value);
                 setLabel(value);
             }
@@ -314,10 +317,18 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         }
     }
 
+    //to fix class name
+    protected String filterName(String name) {
+        if (StringUtils.isNotBlank(name)) {
+            name = firstUpper(name.replaceAll("\\s+", ""));
+        }
+        return name;
+    }
+        
     @Override
     public void setLabel(String label) {
-        if (label != null && !label.trim().isEmpty()) {
-            this.setNodeName(label.replaceAll("\\s+", ""));
+        if (StringUtils.isNotBlank(label)) {
+            this.setNodeName(filterName(label));
         }
     }
 

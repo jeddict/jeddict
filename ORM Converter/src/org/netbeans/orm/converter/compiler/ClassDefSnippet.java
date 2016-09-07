@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
@@ -334,6 +335,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("classDef", this);
             velocityContext.put("n", NEW_LINE);
+            velocityContext.put("fluentAPI", CodePanel.isGenerateFluentAPI());
             
 
             ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();

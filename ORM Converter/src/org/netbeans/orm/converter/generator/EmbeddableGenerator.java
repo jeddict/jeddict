@@ -49,16 +49,15 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         EmbeddableAttributes parsedEmbeddableAttributes
                 = embeddable.getAttributes();
 
-        if (parsedEmbeddableAttributes != null) {
+        if (parsedEmbeddableAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processBasic(parsedEmbeddableAttributes.getBasic());
-            processTransient(parsedEmbeddableAttributes.getTransient());
             processElementCollection(parsedEmbeddableAttributes.getElementCollection());
             processEmbedded(parsedEmbeddableAttributes.getEmbedded());
-            processManyToMany(parsedEmbeddableAttributes.getManyToMany());
+            processOneToOne(parsedEmbeddableAttributes.getOneToOne());
             processManyToOne(parsedEmbeddableAttributes.getManyToOne());
             processOneToMany(parsedEmbeddableAttributes.getOneToMany());
-            processOneToOne(parsedEmbeddableAttributes.getOneToOne());
-
+            processManyToMany(parsedEmbeddableAttributes.getManyToMany());
+            processTransient(parsedEmbeddableAttributes.getTransient());
         }
 
         //Class decorations
