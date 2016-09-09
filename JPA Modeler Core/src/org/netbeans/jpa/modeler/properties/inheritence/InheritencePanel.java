@@ -1,6 +1,8 @@
 package org.netbeans.jpa.modeler.properties.inheritence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.InheritenceStateType;
@@ -43,7 +45,19 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     private final EntityWidget entityWidget;
     private InheritenceStateType type;
     private InheritenceHandler classSpec;
-
+    
+    private static final Map<InheritanceType, String> ADVANTAGES = new HashMap<>();
+    private static final Map<InheritanceType, String> DISADVANTAGES = new HashMap<>();
+    
+    static {
+        ADVANTAGES.put(InheritanceType.SINGLE_TABLE, "Simplest to implement and performs better | No complex joins, unions, or subselects");
+        ADVANTAGES.put(InheritanceType.JOINED, "Normalized | Define constraints on subclass properties");
+        ADVANTAGES.put(InheritanceType.TABLE_PER_CLASS, "Define constraints on subclass properties | Easier to map a preexisting legacy schema");
+        DISADVANTAGES.put(InheritanceType.SINGLE_TABLE, "Not normalized, | All columns of subclass properties must be nullable");
+        DISADVANTAGES.put(InheritanceType.JOINED, "Not as fast as the SINGLE_TABLE strategy");
+        DISADVANTAGES.put(InheritanceType.TABLE_PER_CLASS, "Not normalized | Huge performance hit | UNION not supported by all relational databases");
+        
+    }
     @Override
     public void init() {
         initComponents();
@@ -74,6 +88,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                 break;
             }
         }
+        manageStrategyTypeState();
     }
 
     private void setColumnTypeSelectedItem(DiscriminatorColumn col) {
@@ -135,27 +150,22 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
         if (outgoingGeneralizationFlowWidget == null && incomingGeneralizationFlowWidgets.isEmpty()) {
             type = SINGLETON;
-            setEnablePanel(column_LayeredPane, false);
             setEnablePanel(strategy_LayeredPane, false);
             setEnablePanel(value_LayeredPane, false);
         } else if (outgoingGeneralizationFlowWidget != null && incomingGeneralizationFlowWidgets.isEmpty()) {
             type = LEAF;
-            setEnablePanel(column_LayeredPane, false);
             setEnablePanel(strategy_LayeredPane, false);
             setEnablePanel(value_LayeredPane, true);
         } else if (outgoingGeneralizationFlowWidget == null && !incomingGeneralizationFlowWidgets.isEmpty()) {
             type = ROOT;
-            setEnablePanel(column_LayeredPane, true);
             setEnablePanel(strategy_LayeredPane, true);
             setEnablePanel(value_LayeredPane, false);
         } else if (outgoingGeneralizationFlowWidget != null && !incomingGeneralizationFlowWidgets.isEmpty()) {
             type = BRANCH;
-            setEnablePanel(column_LayeredPane, true);
             setEnablePanel(strategy_LayeredPane, true);
             setEnablePanel(value_LayeredPane, true);
         } else {
             type = null;
-            setEnablePanel(column_LayeredPane, false);
             setEnablePanel(strategy_LayeredPane, false);
             setEnablePanel(value_LayeredPane, false);
         }
@@ -207,7 +217,6 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         main_LayeredPane = new javax.swing.JLayeredPane();
         strategy_LayeredPane = new javax.swing.JLayeredPane();
@@ -230,13 +239,27 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
         column_def_Label = new javax.swing.JLabel();
         column_def_ScrollPane = new javax.swing.JScrollPane();
         column_def_TextArea = new javax.swing.JTextArea();
+        advantagesPane = new javax.swing.JLayeredPane();
+        advantagesTitle = new javax.swing.JLabel();
+        advantagesText = new javax.swing.JLabel();
+        disadvantagesPane = new javax.swing.JLayeredPane();
+        disadvantagesTitle = new javax.swing.JLabel();
+        disadvantagesText = new javax.swing.JLabel();
 
         main_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Inheritance", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(51, 51, 51))); // NOI18N
-        main_LayeredPane.setLayout(new java.awt.GridBagLayout());
+        main_LayeredPane.setPreferredSize(new java.awt.Dimension(540, 456));
 
         strategy_Label.setText("Strategy :");
 
         strategy_ComboBox.setToolTipText("");
+        strategy_ComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                strategy_ComboBoxActionPerformed(evt);
+            }
+        });
+
+        strategy_LayeredPane.setLayer(strategy_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        strategy_LayeredPane.setLayer(strategy_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout strategy_LayeredPaneLayout = new javax.swing.GroupLayout(strategy_LayeredPane);
         strategy_LayeredPane.setLayout(strategy_LayeredPaneLayout);
@@ -245,7 +268,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
             .addGroup(strategy_LayeredPaneLayout.createSequentialGroup()
                 .addComponent(strategy_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(strategy_ComboBox, 0, 412, Short.MAX_VALUE)
+                .addComponent(strategy_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         strategy_LayeredPaneLayout.setVerticalGroup(
@@ -256,18 +279,11 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                     .addComponent(strategy_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        strategy_LayeredPane.setLayer(strategy_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        strategy_LayeredPane.setLayer(strategy_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 412;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(25, 25, 0, 0);
-        main_LayeredPane.add(strategy_LayeredPane, gridBagConstraints);
 
         value_Label.setText("DiscriminatorValue :");
+
+        value_LayeredPane.setLayer(value_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        value_LayeredPane.setLayer(value_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout value_LayeredPaneLayout = new javax.swing.GroupLayout(value_LayeredPane);
         value_LayeredPane.setLayout(value_LayeredPaneLayout);
@@ -276,7 +292,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
             .addGroup(value_LayeredPaneLayout.createSequentialGroup()
                 .addComponent(value_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(value_TextField, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                .addComponent(value_TextField)
                 .addContainerGap())
         );
         value_LayeredPaneLayout.setVerticalGroup(
@@ -287,17 +303,6 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                     .addComponent(value_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 14, Short.MAX_VALUE))
         );
-        value_LayeredPane.setLayer(value_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        value_LayeredPane.setLayer(value_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 406;
-        gridBagConstraints.ipady = 14;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 25, 0, 0);
-        main_LayeredPane.add(value_LayeredPane, gridBagConstraints);
 
         column_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Discriminator Column", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(51, 51, 51))); // NOI18N
 
@@ -305,6 +310,9 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
         column_name_TextField.setText("DTYPE");
         column_name_TextField.setToolTipText("Default DTYPE");
+
+        column_name_LayeredPane.setLayer(column_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        column_name_LayeredPane.setLayer(column_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout column_name_LayeredPaneLayout = new javax.swing.GroupLayout(column_name_LayeredPane);
         column_name_LayeredPane.setLayout(column_name_LayeredPaneLayout);
@@ -323,10 +331,11 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                     .addComponent(column_name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 9, Short.MAX_VALUE))
         );
-        column_name_LayeredPane.setLayer(column_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        column_name_LayeredPane.setLayer(column_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         column_type_Label.setText("Type :");
+
+        column_type_LayeredPane.setLayer(column_type_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        column_type_LayeredPane.setLayer(column_type_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout column_type_LayeredPaneLayout = new javax.swing.GroupLayout(column_type_LayeredPane);
         column_type_LayeredPane.setLayout(column_type_LayeredPaneLayout);
@@ -345,13 +354,14 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                     .addComponent(column_type_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        column_type_LayeredPane.setLayer(column_type_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        column_type_LayeredPane.setLayer(column_type_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         column_length_Label.setText("Length :");
 
-        column_length_Spinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(30), Integer.valueOf(0), null, Integer.valueOf(1)));
+        column_length_Spinner.setModel(new javax.swing.SpinnerNumberModel(30, 0, null, 1));
         column_length_Spinner.setToolTipText("Default 30");
+
+        column_length_LayeredPane.setLayer(column_length_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        column_length_LayeredPane.setLayer(column_length_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout column_length_LayeredPaneLayout = new javax.swing.GroupLayout(column_length_LayeredPane);
         column_length_LayeredPane.setLayout(column_length_LayeredPaneLayout);
@@ -371,14 +381,15 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                     .addComponent(column_length_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        column_length_LayeredPane.setLayer(column_length_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        column_length_LayeredPane.setLayer(column_length_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         column_def_Label.setText("Column Definition :");
 
         column_def_TextArea.setColumns(20);
         column_def_TextArea.setRows(5);
         column_def_ScrollPane.setViewportView(column_def_TextArea);
+
+        column_def_LayeredPane.setLayer(column_def_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        column_def_LayeredPane.setLayer(column_def_ScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout column_def_LayeredPaneLayout = new javax.swing.GroupLayout(column_def_LayeredPane);
         column_def_LayeredPane.setLayout(column_def_LayeredPaneLayout);
@@ -387,7 +398,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
             .addGroup(column_def_LayeredPaneLayout.createSequentialGroup()
                 .addComponent(column_def_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(column_def_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE))
+                .addComponent(column_def_ScrollPane))
         );
         column_def_LayeredPaneLayout.setVerticalGroup(
             column_def_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -399,8 +410,11 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                     .addComponent(column_def_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        column_def_LayeredPane.setLayer(column_def_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        column_def_LayeredPane.setLayer(column_def_ScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        column_LayeredPane.setLayer(column_name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        column_LayeredPane.setLayer(column_type_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        column_LayeredPane.setLayer(column_length_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        column_LayeredPane.setLayer(column_def_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout column_LayeredPaneLayout = new javax.swing.GroupLayout(column_LayeredPane);
         column_LayeredPane.setLayout(column_LayeredPaneLayout);
@@ -428,36 +442,101 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
                 .addComponent(column_def_LayeredPane)
                 .addGap(16, 16, 16))
         );
-        column_LayeredPane.setLayer(column_name_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        column_LayeredPane.setLayer(column_type_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        column_LayeredPane.setLayer(column_length_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        column_LayeredPane.setLayer(column_def_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipadx = 307;
-        gridBagConstraints.ipady = 99;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 24, 12);
-        main_LayeredPane.add(column_LayeredPane, gridBagConstraints);
+        advantagesPane.setLayout(new java.awt.BorderLayout());
+
+        advantagesTitle.setForeground(new java.awt.Color(51, 51, 51));
+        advantagesTitle.setText("Advantages :");
+        advantagesTitle.setPreferredSize(new java.awt.Dimension(90, 14));
+        advantagesPane.add(advantagesTitle, java.awt.BorderLayout.WEST);
+
+        advantagesText.setForeground(new java.awt.Color(0, 153, 0));
+        advantagesPane.add(advantagesText, java.awt.BorderLayout.CENTER);
+
+        disadvantagesPane.setLayout(new java.awt.BorderLayout());
+
+        disadvantagesTitle.setForeground(new java.awt.Color(51, 51, 51));
+        disadvantagesTitle.setText("Disadvantages :");
+        disadvantagesTitle.setPreferredSize(new java.awt.Dimension(90, 14));
+        disadvantagesPane.add(disadvantagesTitle, java.awt.BorderLayout.WEST);
+
+        disadvantagesText.setForeground(new java.awt.Color(215, 80, 80));
+        disadvantagesPane.add(disadvantagesText, java.awt.BorderLayout.CENTER);
+
+        main_LayeredPane.setLayer(strategy_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        main_LayeredPane.setLayer(value_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        main_LayeredPane.setLayer(column_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        main_LayeredPane.setLayer(advantagesPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        main_LayeredPane.setLayer(disadvantagesPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout main_LayeredPaneLayout = new javax.swing.GroupLayout(main_LayeredPane);
+        main_LayeredPane.setLayout(main_LayeredPaneLayout);
+        main_LayeredPaneLayout.setHorizontalGroup(
+            main_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(main_LayeredPaneLayout.createSequentialGroup()
+                .addGroup(main_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, main_LayeredPaneLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(strategy_LayeredPane))
+                    .addGroup(main_LayeredPaneLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(main_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(value_LayeredPane, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(column_LayeredPane)))
+                    .addGroup(main_LayeredPaneLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(advantagesPane))
+                    .addGroup(main_LayeredPaneLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(disadvantagesPane)))
+                .addContainerGap())
+        );
+        main_LayeredPaneLayout.setVerticalGroup(
+            main_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(main_LayeredPaneLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(strategy_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(value_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(column_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(advantagesPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(disadvantagesPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 712, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(main_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 406, Short.MAX_VALUE)
-                .addGap(1, 1, 1))
+            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void strategy_ComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strategy_ComboBoxActionPerformed
+        manageStrategyTypeState();
+    }//GEN-LAST:event_strategy_ComboBoxActionPerformed
+
+    private void manageStrategyTypeState(){
+        InheritanceType inheritanceType = (InheritanceType) ((Property) strategy_ComboBox.getSelectedItem()).getKey();
+        advantagesText.setText(ADVANTAGES.get(inheritanceType));
+        disadvantagesText.setText(DISADVANTAGES.get(inheritanceType));
+        setEnablePanel(column_LayeredPane,
+                (inheritanceType == InheritanceType.JOINED || inheritanceType == InheritanceType.SINGLE_TABLE)
+                && (type == BRANCH || type == ROOT));
+        
+    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLayeredPane advantagesPane;
+    private javax.swing.JLabel advantagesText;
+    private javax.swing.JLabel advantagesTitle;
     private javax.swing.JLayeredPane column_LayeredPane;
     private javax.swing.JLabel column_def_Label;
     private javax.swing.JLayeredPane column_def_LayeredPane;
@@ -472,6 +551,9 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     private javax.swing.JComboBox column_type_ComboBox;
     private javax.swing.JLabel column_type_Label;
     private javax.swing.JLayeredPane column_type_LayeredPane;
+    private javax.swing.JLayeredPane disadvantagesPane;
+    private javax.swing.JLabel disadvantagesText;
+    private javax.swing.JLabel disadvantagesTitle;
     private javax.swing.JLayeredPane main_LayeredPane;
     private javax.swing.JComboBox strategy_ComboBox;
     private javax.swing.JLabel strategy_Label;
