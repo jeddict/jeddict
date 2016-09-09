@@ -285,6 +285,14 @@
                 <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
                 </attribute>
+                
+                <attribute id="orphanRemoval" groupId="BASIC_PROP" class="java.lang.Boolean" name="orphanRemoval">
+                    <display-name>Orphan Removal</display-name>
+                    <description>
+                        The orphanRemoval functionality is intended for entities that are privately "owned" by their parent entity 
+                        and defines whether removing the relationship should also result in a removal of the referred entity.
+                    </description>
+                </attribute>
             </attributes>
         </element>
         <element id="OneToMany" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.OneToMany">
@@ -292,14 +300,13 @@
                 <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
-                <!--                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
-                    <display-name>Collection Class</display-name>
-                </attribute>-->
-
-                <!--                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
-                    <display-name>Optional</display-name>
-                </attribute>-->
-
+                <attribute id="orphanRemoval" groupId="BASIC_PROP" class="java.lang.Boolean" name="orphanRemoval">
+                    <display-name>Orphan Removal</display-name>
+                    <description>
+                        The orphanRemoval functionality is intended for entities that are privately "owned" by their parent entity 
+                        and defines whether removing the relationship should also result in a removal of the referred entity.
+                    </description>
+                </attribute>                
             </attributes>
         </element>
         <element id="ManyToOne" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ManyToOne">
@@ -320,9 +327,7 @@
                 <!--                <attribute id="collectionType" groupId="BASIC_PROP" class="java.lang.String" name="collectionType">
                     <display-name>Collection Class</display-name>
                 </attribute>-->
-                <!--                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
-                    <display-name>Optional</display-name>
-                </attribute>-->
+               
 
             </attributes>
         </element>

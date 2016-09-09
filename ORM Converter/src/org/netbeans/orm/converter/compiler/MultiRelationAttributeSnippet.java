@@ -28,7 +28,7 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
 
     protected String collectionType;
     protected String mappedBy = null;
-    private MapKeySnippet mapKeySnippet;
+    protected MapKeySnippet mapKeySnippet;
 
     public String getMappedBy() {
         return mappedBy;

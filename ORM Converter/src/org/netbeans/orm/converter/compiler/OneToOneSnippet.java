@@ -25,6 +25,7 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
         implements RelationDefSnippet {
 
     private boolean optional = false;
+    private boolean orphanRemoval = false;
     private String mappedBy = null;
     private String mapsId;
     private boolean primaryKey;
@@ -72,6 +73,10 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
 
         if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
             builder.append("optional=").append(optional).append(",");
+        }
+        
+        if (GeneratorUtil.isGenerateDefaultValue() || orphanRemoval == true) {
+            builder.append("orphanRemoval=").append(orphanRemoval).append(",");
         }
 
         if (!getCascadeTypes().isEmpty()) {
@@ -166,5 +171,19 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
      */
     public void setMapsId(String mapsId) {
         this.mapsId = mapsId;
+    }
+
+    /**
+     * @return the orphanRemoval
+     */
+    public boolean isOrphanRemoval() {
+        return orphanRemoval;
+    }
+
+    /**
+     * @param orphanRemoval the orphanRemoval to set
+     */
+    public void setOrphanRemoval(boolean orphanRemoval) {
+        this.orphanRemoval = orphanRemoval;
     }
 }

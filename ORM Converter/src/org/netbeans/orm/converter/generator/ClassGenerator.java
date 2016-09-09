@@ -1336,6 +1336,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
             }
+            oneToMany.setOrphanRemoval(parsedOneToMany.getOrphanRemoval());
 
             VariableDefSnippet variableDef = getVariableDef(parsedOneToMany);
 
@@ -1377,6 +1378,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());
             }
+            oneToOne.setOrphanRemoval(parsedOneToOne.getOrphanRemoval());
+
             oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
             oneToOne.setMapsId(parsedOneToOne.getMapsId());
 
