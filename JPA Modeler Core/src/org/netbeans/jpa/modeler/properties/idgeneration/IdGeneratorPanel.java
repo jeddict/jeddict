@@ -260,6 +260,9 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
             }
         });
 
+        strategy_LayeredPane.setLayer(strategy_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        strategy_LayeredPane.setLayer(strategy_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout strategy_LayeredPaneLayout = new javax.swing.GroupLayout(strategy_LayeredPane);
         strategy_LayeredPane.setLayout(strategy_LayeredPaneLayout);
         strategy_LayeredPaneLayout.setHorizontalGroup(
@@ -279,8 +282,6 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(strategy_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        strategy_LayeredPane.setLayer(strategy_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        strategy_LayeredPane.setLayer(strategy_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -294,6 +295,9 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         seqgen_LayeredPane.setLayout(new java.awt.GridLayout(3, 2));
 
         seqgen_name_Label.setText("Name : *");
+
+        seqgen_name_LayeredPane.setLayer(seqgen_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        seqgen_name_LayeredPane.setLayer(seqgen_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout seqgen_name_LayeredPaneLayout = new javax.swing.GroupLayout(seqgen_name_LayeredPane);
         seqgen_name_LayeredPane.setLayout(seqgen_name_LayeredPaneLayout);
@@ -314,12 +318,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(seqgen_name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
-        seqgen_name_LayeredPane.setLayer(seqgen_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        seqgen_name_LayeredPane.setLayer(seqgen_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         seqgen_LayeredPane.add(seqgen_name_LayeredPane);
 
         seqgen_seqname_Label.setText("Sequence Name :");
+
+        seqgen_seqname_LayeredPane.setLayer(seqgen_seqname_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        seqgen_seqname_LayeredPane.setLayer(seqgen_seqname_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout seqgen_seqname_LayeredPaneLayout = new javax.swing.GroupLayout(seqgen_seqname_LayeredPane);
         seqgen_seqname_LayeredPane.setLayout(seqgen_seqname_LayeredPaneLayout);
@@ -340,12 +345,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(seqgen_seqname_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
-        seqgen_seqname_LayeredPane.setLayer(seqgen_seqname_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        seqgen_seqname_LayeredPane.setLayer(seqgen_seqname_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         seqgen_LayeredPane.add(seqgen_seqname_LayeredPane);
 
         seqgen_initialValue_Label.setText("Initial Value :");
+
+        seqgen_initialValue_LayeredPane.setLayer(seqgen_initialValue_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        seqgen_initialValue_LayeredPane.setLayer(seqgen_initialValue_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout seqgen_initialValue_LayeredPaneLayout = new javax.swing.GroupLayout(seqgen_initialValue_LayeredPane);
         seqgen_initialValue_LayeredPane.setLayout(seqgen_initialValue_LayeredPaneLayout);
@@ -366,12 +372,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(seqgen_initialValue_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        seqgen_initialValue_LayeredPane.setLayer(seqgen_initialValue_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        seqgen_initialValue_LayeredPane.setLayer(seqgen_initialValue_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         seqgen_LayeredPane.add(seqgen_initialValue_LayeredPane);
 
         seqgen_allocationSize_Label.setText("Allocation Size :");
+
+        seqgen_allocationSize_LayeredPane.setLayer(seqgen_allocationSize_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        seqgen_allocationSize_LayeredPane.setLayer(seqgen_allocationSize_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout seqgen_allocationSize_LayeredPaneLayout = new javax.swing.GroupLayout(seqgen_allocationSize_LayeredPane);
         seqgen_allocationSize_LayeredPane.setLayout(seqgen_allocationSize_LayeredPaneLayout);
@@ -392,12 +399,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(seqgen_allocationSize_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        seqgen_allocationSize_LayeredPane.setLayer(seqgen_allocationSize_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        seqgen_allocationSize_LayeredPane.setLayer(seqgen_allocationSize_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         seqgen_LayeredPane.add(seqgen_allocationSize_LayeredPane);
 
         seqgen_schema_Label.setText("Schema :");
+
+        seqgen_schema_LayeredPane.setLayer(seqgen_schema_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        seqgen_schema_LayeredPane.setLayer(seqgen_schema_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout seqgen_schema_LayeredPaneLayout = new javax.swing.GroupLayout(seqgen_schema_LayeredPane);
         seqgen_schema_LayeredPane.setLayout(seqgen_schema_LayeredPaneLayout);
@@ -418,14 +426,15 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(seqgen_schema_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
-        seqgen_schema_LayeredPane.setLayer(seqgen_schema_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        seqgen_schema_LayeredPane.setLayer(seqgen_schema_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         seqgen_schema_TextField.getAccessibleContext().setAccessibleName("");
 
         seqgen_LayeredPane.add(seqgen_schema_LayeredPane);
 
         seqgen_catalog_Label.setText("Catalog :");
+
+        seqgen_catalog_LayeredPane.setLayer(seqgen_catalog_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        seqgen_catalog_LayeredPane.setLayer(seqgen_catalog_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout seqgen_catalog_LayeredPaneLayout = new javax.swing.GroupLayout(seqgen_catalog_LayeredPane);
         seqgen_catalog_LayeredPane.setLayout(seqgen_catalog_LayeredPaneLayout);
@@ -446,8 +455,6 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(seqgen_catalog_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
-        seqgen_catalog_LayeredPane.setLayer(seqgen_catalog_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        seqgen_catalog_LayeredPane.setLayer(seqgen_catalog_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         seqgen_LayeredPane.add(seqgen_catalog_LayeredPane);
 
@@ -465,6 +472,9 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         tabgen_LayeredPane.setLayout(new java.awt.GridLayout(2, 2));
 
         tabgen_name_Label.setText("Name : *");
+
+        tabgen_name_LayeredPane.setLayer(tabgen_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_name_LayeredPane.setLayer(tabgen_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_name_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_name_LayeredPane);
         tabgen_name_LayeredPane.setLayout(tabgen_name_LayeredPaneLayout);
@@ -485,12 +495,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12))
         );
-        tabgen_name_LayeredPane.setLayer(tabgen_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_name_LayeredPane.setLayer(tabgen_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_LayeredPane.add(tabgen_name_LayeredPane);
 
         tabgen_tableName_Label.setText("Table Name :");
+
+        tabgen_tableName_LayeredPane.setLayer(tabgen_tableName_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_tableName_LayeredPane.setLayer(tabgen_tableName_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_tableName_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_tableName_LayeredPane);
         tabgen_tableName_LayeredPane.setLayout(tabgen_tableName_LayeredPaneLayout);
@@ -511,12 +522,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_tableName_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
-        tabgen_tableName_LayeredPane.setLayer(tabgen_tableName_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_tableName_LayeredPane.setLayer(tabgen_tableName_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_LayeredPane.add(tabgen_tableName_LayeredPane);
 
         tabgen_catalog_Label.setText("Catalog :");
+
+        tabgen_catalog_LayeredPane.setLayer(tabgen_catalog_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_catalog_LayeredPane.setLayer(tabgen_catalog_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_catalog_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_catalog_LayeredPane);
         tabgen_catalog_LayeredPane.setLayout(tabgen_catalog_LayeredPaneLayout);
@@ -537,12 +549,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_catalog_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        tabgen_catalog_LayeredPane.setLayer(tabgen_catalog_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_catalog_LayeredPane.setLayer(tabgen_catalog_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_LayeredPane.add(tabgen_catalog_LayeredPane);
 
         tabgen_schema_Label.setText("Schema :");
+
+        tabgen_schema_LayeredPane.setLayer(tabgen_schema_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_schema_LayeredPane.setLayer(tabgen_schema_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_schema_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_schema_LayeredPane);
         tabgen_schema_LayeredPane.setLayout(tabgen_schema_LayeredPaneLayout);
@@ -563,8 +576,6 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_schema_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        tabgen_schema_LayeredPane.setLayer(tabgen_schema_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_schema_LayeredPane.setLayer(tabgen_schema_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_LayeredPane.add(tabgen_schema_LayeredPane);
 
@@ -582,6 +593,9 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         tabgen_pkcol_LayeredPane.setLayout(new java.awt.GridLayout(1, 0));
 
         tabgen_pkcol_name_Label.setText("Name :");
+
+        tabgen_pkcol_name_LayeredPane.setLayer(tabgen_pkcol_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_pkcol_name_LayeredPane.setLayer(tabgen_pkcol_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_pkcol_name_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_pkcol_name_LayeredPane);
         tabgen_pkcol_name_LayeredPane.setLayout(tabgen_pkcol_name_LayeredPaneLayout);
@@ -602,12 +616,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_pkcol_name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        tabgen_pkcol_name_LayeredPane.setLayer(tabgen_pkcol_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_pkcol_name_LayeredPane.setLayer(tabgen_pkcol_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_pkcol_LayeredPane.add(tabgen_pkcol_name_LayeredPane);
 
         tabgen_pkcol_value_Label.setText("Value :");
+
+        tabgen_pkcol_value_LayeredPane.setLayer(tabgen_pkcol_value_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_pkcol_value_LayeredPane.setLayer(tabgen_pkcol_value_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_pkcol_value_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_pkcol_value_LayeredPane);
         tabgen_pkcol_value_LayeredPane.setLayout(tabgen_pkcol_value_LayeredPaneLayout);
@@ -628,8 +643,6 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_pkcol_value_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        tabgen_pkcol_value_LayeredPane.setLayer(tabgen_pkcol_value_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_pkcol_value_LayeredPane.setLayer(tabgen_pkcol_value_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_pkcol_LayeredPane.add(tabgen_pkcol_value_LayeredPane);
 
@@ -647,6 +660,9 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
         tabgen_valuecol_LayeredPane.setLayout(new java.awt.GridLayout(2, 2));
 
         tabgen_valuecol_name_Label.setText("Name :");
+
+        tabgen_valuecol_name_LayeredPane.setLayer(tabgen_valuecol_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_valuecol_name_LayeredPane.setLayer(tabgen_valuecol_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_valuecol_name_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_valuecol_name_LayeredPane);
         tabgen_valuecol_name_LayeredPane.setLayout(tabgen_valuecol_name_LayeredPaneLayout);
@@ -667,12 +683,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_valuecol_name_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        tabgen_valuecol_name_LayeredPane.setLayer(tabgen_valuecol_name_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_valuecol_name_LayeredPane.setLayer(tabgen_valuecol_name_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_valuecol_LayeredPane.add(tabgen_valuecol_name_LayeredPane);
 
         tabgen_valuecol_initialValue_Label.setText("Initial Value :");
+
+        tabgen_valuecol_initialValue_LayeredPane.setLayer(tabgen_valuecol_initialValue_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_valuecol_initialValue_LayeredPane.setLayer(tabgen_valuecol_initialValue_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_valuecol_initialValue_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_valuecol_initialValue_LayeredPane);
         tabgen_valuecol_initialValue_LayeredPane.setLayout(tabgen_valuecol_initialValue_LayeredPaneLayout);
@@ -693,12 +710,13 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_valuecol_initialValue_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        tabgen_valuecol_initialValue_LayeredPane.setLayer(tabgen_valuecol_initialValue_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_valuecol_initialValue_LayeredPane.setLayer(tabgen_valuecol_initialValue_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_valuecol_LayeredPane.add(tabgen_valuecol_initialValue_LayeredPane);
 
         tabgen_valuecol_allocationSize_Label.setText("Allocation Size :");
+
+        tabgen_valuecol_allocationSize_LayeredPane.setLayer(tabgen_valuecol_allocationSize_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        tabgen_valuecol_allocationSize_LayeredPane.setLayer(tabgen_valuecol_allocationSize_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout tabgen_valuecol_allocationSize_LayeredPaneLayout = new javax.swing.GroupLayout(tabgen_valuecol_allocationSize_LayeredPane);
         tabgen_valuecol_allocationSize_LayeredPane.setLayout(tabgen_valuecol_allocationSize_LayeredPaneLayout);
@@ -719,8 +737,6 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
                     .addComponent(tabgen_valuecol_allocationSize_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        tabgen_valuecol_allocationSize_LayeredPane.setLayer(tabgen_valuecol_allocationSize_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        tabgen_valuecol_allocationSize_LayeredPane.setLayer(tabgen_valuecol_allocationSize_Spinner, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         tabgen_valuecol_LayeredPane.add(tabgen_valuecol_allocationSize_LayeredPane);
 
@@ -740,7 +756,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(main_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 557, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 1, Short.MAX_VALUE))
+                .addGap(0, 22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

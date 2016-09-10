@@ -133,7 +133,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         } else if (attribute instanceof PersistenceBaseAttribute) {// Id, Version, Basic
             PersistenceBaseAttribute persistenceBaseAttribute = (PersistenceBaseAttribute) attribute;
             persistenceBaseAttribute.setTemporal(null);
-            if (type.equals(TEMPORAL)) {
+            if ((persistenceBaseAttribute instanceof Basic || persistenceBaseAttribute instanceof Id) && type.equals(TEMPORAL)) {
                 persistenceBaseAttribute.setTemporal(getSelectedTemporalType());
             }
             persistenceBaseAttribute.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
