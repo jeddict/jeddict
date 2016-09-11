@@ -53,7 +53,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
         ADVANTAGES.put(InheritanceType.SINGLE_TABLE, "Simplest to implement and performs better | No complex joins, unions, or subselects");
         ADVANTAGES.put(InheritanceType.JOINED, "Normalized | Define constraints on subclass properties");
         ADVANTAGES.put(InheritanceType.TABLE_PER_CLASS, "Define constraints on subclass properties | Easier to map a preexisting legacy schema");
-        DISADVANTAGES.put(InheritanceType.SINGLE_TABLE, "Not normalized, | All columns of subclass properties must be nullable");
+        DISADVANTAGES.put(InheritanceType.SINGLE_TABLE, "Not normalized | All columns of subclass properties must be nullable");
         DISADVANTAGES.put(InheritanceType.JOINED, "Not as fast as the SINGLE_TABLE strategy");
         DISADVANTAGES.put(InheritanceType.TABLE_PER_CLASS, "Huge performance hit | UNION not supported by all relational databases | Poor support for polymorphic relationships");
         

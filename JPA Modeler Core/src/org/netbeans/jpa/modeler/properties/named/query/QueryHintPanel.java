@@ -38,7 +38,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
         if (entityWrapperType == RowValue.class) {
             this.setEntity(new RowValue(new Object[4]));
         }
-        name_TextField.setText("");
+        setHintName("");
         value_TextField.setText("");
     }
 
@@ -49,7 +49,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             QueryHint queryHint = (QueryHint) row[0];
-            name_TextField.setText(queryHint.getName());
+            setHintName(queryHint.getName());
             value_TextField.setText(queryHint.getValue());
         }
     }
@@ -66,7 +66,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
         root_jLayeredPane = new javax.swing.JLayeredPane();
         name_LayeredPane = new javax.swing.JLayeredPane();
         name_Label = new javax.swing.JLabel();
-        name_TextField = new javax.swing.JTextField();
+        name_Combobox = new javax.swing.JComboBox<>();
         query_LayeredPane = new javax.swing.JLayeredPane();
         value_Label = new javax.swing.JLabel();
         value_TextField = new javax.swing.JTextField();
@@ -82,8 +82,10 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
         org.openide.awt.Mnemonics.setLocalizedText(name_Label, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.name_Label.text")); // NOI18N
         name_LayeredPane.add(name_Label, java.awt.BorderLayout.WEST);
 
-        name_TextField.setText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.name_TextField.text")); // NOI18N
-        name_LayeredPane.add(name_TextField, java.awt.BorderLayout.CENTER);
+        name_Combobox.setEditable(true);
+        name_Combobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "","javax.persistence.lock.timeout", "javax.persistence.query.timeout", "javax.persistence.cache.retrieveMode", "javax.persistence.cache.storeMode", "javax.persistence.loadgraph", "javax.persistence.fetchgraph"}));
+        name_Combobox.setToolTipText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.name_Combobox.toolTipText")); // NOI18N
+        name_LayeredPane.add(name_Combobox, java.awt.BorderLayout.CENTER);
 
         query_LayeredPane.setPreferredSize(new java.awt.Dimension(65, 24));
         query_LayeredPane.setLayout(new java.awt.BorderLayout());
@@ -159,8 +161,14 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private String getHintName(){
+        return (String)name_Combobox.getSelectedItem();
+    }
+    private void setHintName(String name){
+        name_Combobox.setSelectedItem(name);
+    }
     private boolean validateField() {
-        if (this.name_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+        if (getHintName().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
             JOptionPane.showMessageDialog(this, "Name field can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }//I18n
@@ -184,7 +192,7 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
                 queryHint = (QueryHint) row[0];
             }
         }
-        queryHint.setName(name_TextField.getText());
+        queryHint.setName(getHintName());
         queryHint.setValue(value_TextField.getText());
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -202,9 +210,9 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JButton cancel_Button;
+    private javax.swing.JComboBox<String> name_Combobox;
     private javax.swing.JLabel name_Label;
     private javax.swing.JLayeredPane name_LayeredPane;
-    private javax.swing.JTextField name_TextField;
     private javax.swing.JLayeredPane query_LayeredPane;
     private javax.swing.JLayeredPane root_jLayeredPane;
     private javax.swing.JButton save_Button;
