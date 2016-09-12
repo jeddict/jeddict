@@ -15,11 +15,13 @@
  */
 package org.netbeans.jpa.modeler.properties.annotation;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
@@ -80,6 +82,7 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
         cancel_Button = new javax.swing.JButton();
         annotation_ScrollPane = new javax.swing.JScrollPane();
         annotation_EditorPane = new javax.swing.JEditorPane();
+        dataType_Action = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -128,8 +131,17 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
         annotation_EditorPane.setPreferredSize(new java.awt.Dimension(210, 23));
         annotation_ScrollPane.setViewportView(annotation_EditorPane);
 
+        dataType_Action.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/searchbutton.png"))); // NOI18N
+        dataType_Action.setPreferredSize(new java.awt.Dimension(37, 37));
+        dataType_Action.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataType_ActionActionPerformed(evt);
+            }
+        });
+
         root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(annotation_ScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(dataType_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -137,10 +149,11 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+                        .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -148,9 +161,11 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -208,11 +223,17 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
+    private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
+        String dataType = NBModelerUtil.browseClass(modelerFile);
+         annotation_EditorPane.setText('@' + dataType);
+    }//GEN-LAST:event_dataType_ActionActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JEditorPane annotation_EditorPane;
     private javax.swing.JScrollPane annotation_ScrollPane;
     private javax.swing.JButton cancel_Button;
+    private javax.swing.JButton dataType_Action;
     private javax.swing.JLayeredPane root_jLayeredPane;
     private javax.swing.JButton save_Button;
     // End of variables declaration//GEN-END:variables

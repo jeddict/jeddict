@@ -119,25 +119,19 @@
                 <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
                     <display-name>Length</display-name>
                     <visible><![CDATA[
-                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
-                                ? node.isTextMapKeyAttributeType()
-                                : node.isTextAttributeType()
+                                  node.isTextAttributeType()
                                 ]]></visible>
                 </attribute>
                 <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
                     <display-name>Precision</display-name>
                     <visible><![CDATA[
-                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
-                                ? node.isPrecisionpMapKeyAttributeType()
-                                : node.isPrecisionAttributeType()
+                                  node.isPrecisionAttributeType()
                                 ]]></visible>
                 </attribute>
                 <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
                     <display-name>Scale</display-name>
                     <visible><![CDATA[
-                                  node instanceof org.netbeans.jpa.modeler.spec.extend.MapKeyHandler
-                                ? node.isScaleMapKeyAttributeType()
-                                : node.isScaleAttributeType()
+                                  node.isScaleAttributeType()
                                 ]]></visible>
                 </attribute>
                  <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">

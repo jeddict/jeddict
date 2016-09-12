@@ -63,11 +63,17 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                 if (baseElementWidget instanceof TableWidget) {
                     TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
                     tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion procced each element locked
-                     for (ForeignKeyWidget foreignKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getForeignKeyWidgets())) {
+                    for (ForeignKeyWidget foreignKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getForeignKeyWidgets())) {
                         foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
-                            ((ReferenceFlowWidget) w).remove(); 
+                            ((ReferenceFlowWidget) w).remove();
                         });
                     }
+                    for (org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget primaryKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getPrimaryKeyWidgets())) {
+                        primaryKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
+                            ((ReferenceFlowWidget) w).remove();
+                        });
+                    }
+                    
                     tableWidget.setLocked(false);
                 }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);

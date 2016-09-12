@@ -257,8 +257,15 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             processor.addEntityListeners();
             session.getProject().convertClassNamesToClasses(dynamicClassLoader);
             processor.processCustomizers();
-            session.loginAndDetectDatasource();
-
+            try {
+                session.loginAndDetectDatasource();
+            } catch (Exception ex) {
+                if (ex instanceof org.eclipse.persistence.exceptions.DatabaseException) {
+                    throw new DBConnectionNotFound();
+                } else {
+                    throw ex;
+                }
+            }
             JPAMSchemaManager mgr = new JPAMSchemaManager(dbMapping, session);
             mgr.createDefaultTables(true);
 

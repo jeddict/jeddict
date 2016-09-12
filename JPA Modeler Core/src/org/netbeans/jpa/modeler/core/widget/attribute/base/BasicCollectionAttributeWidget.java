@@ -36,7 +36,6 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
     public BasicCollectionAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(getIcon());
-
     }
     
     @Override

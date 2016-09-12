@@ -80,6 +80,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     private Attribute attribute;
     private final EntityMappings entityMappings;
 
+    private static final String[] BASIC_DEFAULT_DATATYPE = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
+                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
     @Override
     public void init() {
         initComponents();
@@ -240,9 +243,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                     dataType = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
                     break;
                 default:
-                    dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
-                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+                    dataType = BASIC_DEFAULT_DATATYPE;
                     break;
             }
         } else if (attribute instanceof ElementCollection) {
@@ -274,7 +275,8 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         } else if (attribute instanceof Version) {
             dataType = new String[]{INT, INT_WRAPPER, SHORT, SHORT_WRAPPER, LONG, LONG_WRAPPER, SQL_TIMESTAMP};
         } else if (attribute instanceof Transient) {
-            //skip
+            //skip it // no datatype is specified in spec
+            dataType = BASIC_DEFAULT_DATATYPE;
         }
         
         dataType_ComboBox.removeAllItems();
