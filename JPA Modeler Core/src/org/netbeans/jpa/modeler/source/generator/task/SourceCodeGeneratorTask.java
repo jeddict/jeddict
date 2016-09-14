@@ -56,7 +56,8 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
     @Override
     protected void initTask() {
         setLogLevel(TERSE);
-        setTaskName(getBundleMessage("LBL_GenerateCodeDialogTitle")); // NOI18N
+//        setTaskName(modelerFile.getProject().getProjectDirectory().getName() + " - " +getBundleMessage("LBL_GenerateCodeDialogTitle")); // NOI18N
+        setTaskName(getBundleMessage("LBL_GenerateCodeDialogTitle")); 
 
         setDisplayOutput(true);
 

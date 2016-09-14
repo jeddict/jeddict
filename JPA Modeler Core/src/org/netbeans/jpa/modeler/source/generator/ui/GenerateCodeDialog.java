@@ -36,6 +36,7 @@ import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
 import org.netbeans.jcode.core.util.ProjectHelper;
 import static org.netbeans.jcode.core.util.ProjectHelper.getJavaProjects;
+import org.netbeans.jcode.core.util.ProjectType;
 import static org.netbeans.jcode.core.util.SourceGroups.getPackageForFolder;
 import org.netbeans.jcode.layer.DefaultBusinessLayer;
 import org.netbeans.jcode.layer.DefaultControllerLayer;
@@ -85,10 +86,11 @@ public class GenerateCodeDialog extends GenericDialog
 
     /**
      * Creates new form GenerateCodeDialog
+     *
      * @param modelerFile
      */
     public GenerateCodeDialog(ModelerFile modelerFile) {
-        this.scene=(JPAModelerScene)modelerFile.getModelerScene();
+        this.scene = (JPAModelerScene) modelerFile.getModelerScene();
         this.configData = new ApplicationConfigData();
         this.modelerFileObject = modelerFile.getFileObject();
         this.entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
@@ -102,43 +104,45 @@ public class GenerateCodeDialog extends GenericDialog
         getRootPane().setDefaultButton(generateSourceCode);
 
         modelerFilePackage = getPackageForFolder(sourceGroup, modelerFileObject.getParent());
-        
+
         initLayer();
     }
 
     void initLayer() {
         configPane.removeAll();
         configPane.setVisible(false);
-//        if (!ProjectHelper.isJavaEE6AndHigher(getTargetPoject())) { //removed for gradle project type support
-//            businessLayerCombo.setEnabled(false);
-//            controllerLayerCombo.setEnabled(false);
-//            viewerLayerCombo.setEnabled(false);
-//            this.pack();
-//            return;
-//        } else {
+        
+        ProjectType projectType = ProjectHelper.getProjectType(getTargetPoject());
+        if (projectType == ProjectType.JAR) {
+            businessLayerCombo.setEnabled(false);
+            controllerLayerCombo.setEnabled(false);
+            viewerLayerCombo.setEnabled(false);
+            this.pack();
+            return;
+        } else {
             businessLayerCombo.setEnabled(true);
-//        }
-        businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
-        controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultControllerLayer())}));
-        viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
-        controllerLayerCombo.setEnabled(false);
-        viewerLayerCombo.setEnabled(false);
+        }
      
-
+        businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
+        if (projectType == ProjectType.WEB) {
+            controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultControllerLayer())}));
+            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
+        }
+            controllerLayerCombo.setEnabled(false);
+            viewerLayerCombo.setEnabled(false);
+        
         TechContext businessContext = Generator.get(technologyLayerPref.get(BUSINESS.name(), DefaultBusinessLayer.class.getSimpleName()));
         TechContext controllerContext = Generator.get(technologyLayerPref.get(CONTROLLER.name(), DefaultControllerLayer.class.getSimpleName()));
         TechContext viewerContext = Generator.get(technologyLayerPref.get(VIEWER.name(), DefaultViewerLayer.class.getSimpleName()));
         if (businessContext != null) {
             businessLayerCombo.setSelectedItem(businessContext);
-            if (businessContext.isValid() && controllerContext != null) {
+            if (businessContext.isValid() && controllerContext != null && projectType == ProjectType.WEB) {
                 controllerLayerCombo.setSelectedItem(controllerContext);
                 if (controllerContext.isValid() && viewerContext != null) {
                     viewerLayerCombo.setSelectedItem(viewerContext);
                 }
             }
         }
-//        businessLayerCombo.getModel().getElementAt(1).hashCode().equals(businessContext.hashCode())
-
         this.pack();
     }
 
@@ -161,7 +165,7 @@ public class GenerateCodeDialog extends GenericDialog
 
             configPane.removeAll();
             configPane.setVisible(false);
-            layerConfigPanels[index]= techPanel;
+            layerConfigPanels[index] = techPanel;
             switch (index) {
                 case BUSINESS_PANEL_INDEX:
                     getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
@@ -346,7 +350,7 @@ public class GenerateCodeDialog extends GenericDialog
                                 .addGap(25, 25, 25)
                                 .addComponent(sourceFolderLabel)
                                 .addGap(18, 18, 18)
-                                .addComponent(sourceFolderCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(sourceFolderCombo, 0, 215, Short.MAX_VALUE))
                             .addGroup(optionPaneLayout.createSequentialGroup()
                                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(viewerLayerLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -469,9 +473,9 @@ public class GenerateCodeDialog extends GenericDialog
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(entitySetting)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 332, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addGap(23, 23, 23))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(optionPane)
@@ -510,7 +514,7 @@ public class GenerateCodeDialog extends GenericDialog
         String prop = getTargetPoject() == null ? PROP_NO_TARGET_PROJECT : PROP_TARGET_PROJECT;
 
         getPropertyChangeSupport().firePropertyChange(prop, null, evt);
-        
+
         initLayer();
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
@@ -522,7 +526,7 @@ public class GenerateCodeDialog extends GenericDialog
     }//GEN-LAST:event_sourceFolderComboItemStateChanged
 
     private void generateSourceCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSourceCodeActionPerformed
-        if(!hasError()){
+        if (!hasError()) {
             setVisible(false);
             this.setDialogResult(javax.swing.JOptionPane.OK_OPTION);
             dispose();
@@ -530,20 +534,20 @@ public class GenerateCodeDialog extends GenericDialog
         }
     }//GEN-LAST:event_generateSourceCodeActionPerformed
 
-    private boolean hasError(){
+    private boolean hasError() {
         if (sourceGroup == null) {
             NotifyDescriptor d = new NotifyDescriptor.Message("Please select the Source Folder .", NotifyDescriptor.INFORMATION_MESSAGE);
             d.setTitle("Source Folder");
             DialogDisplayer.getDefault().notify(d);
             return true;
         }
-        if(!SourceVersion.isName(getPackage())){
+        if (!SourceVersion.isName(getPackage())) {
             NotifyDescriptor d = new NotifyDescriptor.Message("Please select the Entity Package .", NotifyDescriptor.INFORMATION_MESSAGE);
             d.setTitle("Entity Package");
             DialogDisplayer.getDefault().notify(d);
             return true;
         }
-        
+
         for (int i = 0; i < configPane.getComponentCount(); i++) {
             if (layerConfigPanels[i].hasError()) {
                 configPane.setSelectedIndex(i);
@@ -554,8 +558,8 @@ public class GenerateCodeDialog extends GenericDialog
         }
         return false;
     }
-    
-    private void store(){
+
+    private void store() {
         entityMappings.setPackage(getPackage());
         if (getBusinessLayer() != null) {
             technologyLayerPref.put(BUSINESS.name(), getBusinessLayer().getGenerator().getClass().getSimpleName());
@@ -567,8 +571,8 @@ public class GenerateCodeDialog extends GenericDialog
             }
         }
     }
-    
-    
+
+
     private void cencelGenerateCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cencelGenerateCodeActionPerformed
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cencelGenerateCodeActionPerformed
@@ -605,31 +609,35 @@ public class GenerateCodeDialog extends GenericDialog
         manageGenerateButtonStatus();
     }//GEN-LAST:event_entitySettingActionPerformed
 
-    private void manageGenerateButtonStatus(){
+    private void manageGenerateButtonStatus() {
         List<JavaClass> javaClassList = entityMappings.getAllJavaClass().stream().filter(c -> c.getGeneratesourceCode()).collect(toList());
         if (javaClassList.isEmpty()) {
-            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(ERROR_ICON_PATH))); 
+            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(ERROR_ICON_PATH)));
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N
             generateSourceCode.setEnabled(false);
         } else if (javaClassList.size() < entityMappings.getAllJavaClass().size()) {
-            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(WARNING_ICON_PATH))); 
+            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(WARNING_ICON_PATH)));
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.warning.text")); // NOI18N
             generateSourceCode.setEnabled(true);
         } else {
-            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(SUCCESS_ICON_PATH))); 
+            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(SUCCESS_ICON_PATH)));
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N
             generateSourceCode.setEnabled(true);
         }
     }
+
     private void changebusinessLayer(TechContext businessLayer) {
-        controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
-        controllerLayerCombo.setEnabled(businessLayer.isValid());
-        viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
-        viewerLayerCombo.setEnabled(false);
-        setTechPanel(BUSINESS_PANEL_INDEX, businessPanel, businessLayer);
-        if (!businessLayer.isValid()) {
+        ProjectType projectType = ProjectHelper.getProjectType(getTargetPoject());
+        if (projectType == ProjectType.WEB) {
+            controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
+            controllerLayerCombo.setEnabled(businessLayer.isValid());
+            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
             viewerLayerCombo.setEnabled(false);
         }
+        setTechPanel(BUSINESS_PANEL_INDEX, businessPanel, businessLayer);
+//        if (!businessLayer.isValid()) {
+//            viewerLayerCombo.setEnabled(false);
+//        }
     }
 
     private void changeControllerLayer(TechContext controllerLayer) {
@@ -860,6 +868,8 @@ public class GenerateCodeDialog extends GenericDialog
         }
         ((JTextComponent) resourcePackageCombo.getEditor().getEditorComponent()).setText(_package);
     }
+    
+
 
     private PropertyChangeSupport propertyChangeSupport = null;
 
@@ -972,5 +982,5 @@ class JavaProjectConstants {
      * @see org.netbeans.spi.project.ActionProvider
      */
     public static final String COMMAND_DEBUG_FIX = "debug.fix"; // NOI18N
-
+  
 }

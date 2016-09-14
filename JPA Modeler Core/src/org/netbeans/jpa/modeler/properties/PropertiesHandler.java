@@ -161,8 +161,10 @@ public class PropertiesHandler {
 
             @Override
             public void setItem(ComboBoxValue<String> value) {
-                manageMapType(value);
+                String prevType = colSpec.getCollectionType();
+                String newType = value.getValue();
                 setCollectionType(value);
+                manageMapType(prevType, newType);
                 attributeWidget.setAttributeTooltip();
                 attributeWidget.visualizeDataType();
             }
@@ -188,9 +190,8 @@ public class PropertiesHandler {
                 em.getCache().addCollectionClass(collectionType);//move item to top in cache
             }
 
-            void manageMapType(ComboBoxValue<String> value) {
-                String prevType = colSpec.getCollectionType();
-                String newType = value.getValue();
+            void manageMapType(String prevType, String newType) {
+              
 
                 Class prevClass = null;
                 try {
