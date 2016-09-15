@@ -48,7 +48,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
-import org.netbeans.modeler.widget.node.vmd.internal.PDarkColorScheme;
+import org.netbeans.modeler.widget.node.vmd.internal.*;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 
 public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
@@ -168,6 +168,8 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
         EntityMappings entityMappings = (EntityMappings)this.getModelerFile().getParentFile().getDefinitionElement();
          if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
+        } else if (PFactory.getLightScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
+            return PFactory.getColorScheme(PFactory.getLightScheme());
         } else {
             return PFactory.getColorScheme(DBColorScheme.class);
         }
@@ -185,6 +187,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 //        colorSchemes.put("Classic",PFactory.getNetBeans60Scheme());
         colorSchemes.put("Default", DBColorScheme.class);
         colorSchemes.put("Dark", PDarkColorScheme.class);
+        colorSchemes.put("Light", PLightColorScheme.class);
 //        colorSchemes.put("Mac", PFactory.getMacScheme());
         return colorSchemes;
     }
