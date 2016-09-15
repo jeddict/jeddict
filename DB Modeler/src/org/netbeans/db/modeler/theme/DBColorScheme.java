@@ -163,8 +163,8 @@ public class DBColorScheme implements IColorScheme {
         PIN_WIDGET_SELECT_BACKGROUND = new Color(235, 112, 62);
         PIN_WIDGET_SELECT_LBACKGROUND = new Color(246, 129, 82);
 
-        PIN_WIDGET_TEXT_COLOR = new Color(76, 76, 76);
-        PIN_WIDGET_HOVER_TEXT_COLOR = new Color(66, 66, 66);
+        PIN_WIDGET_TEXT_COLOR = new Color(35, 35, 35);
+        PIN_WIDGET_HOVER_TEXT_COLOR = new Color(40, 40, 40);
         PIN_WIDGET_SELECT_TEXT_COLOR = Color.WHITE;
         PIN_WIDGET_SELECT_BORDER = BorderFactory.createCompositeBorder(BorderFactory.createLineBorder(0, 1, 0, 1, WIDGET_BORDER_COLOR), BorderFactory.createLineBorder(2, 3, 2, 3, WIDGET_HOVER_BORDER_COLOR));
 

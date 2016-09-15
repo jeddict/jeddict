@@ -21,7 +21,6 @@ import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
@@ -38,7 +37,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         document = "org/netbeans/db/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/db/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA_DB", name = "DB Viewer", 
-        modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class, exportManager = ExportManagerImpl.class,
+        modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class,
         relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
         version = "2.5.9", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
