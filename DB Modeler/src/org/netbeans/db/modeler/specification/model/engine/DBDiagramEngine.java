@@ -42,6 +42,7 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
     public void buildToolBar(JToolBar bar) {
 
         buildReloadTool(bar);
+        buildExportDocTool(bar);
         buildSatelliteTool(bar);
         bar.add(new JToolBar.Separator());
         buildDBCon(bar);

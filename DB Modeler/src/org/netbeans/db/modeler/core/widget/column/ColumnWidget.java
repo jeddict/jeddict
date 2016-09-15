@@ -15,10 +15,13 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -30,6 +33,9 @@ import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COL
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
+import org.netbeans.jpa.modeler.settings.view.ViewPanel;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -45,6 +51,22 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     public ColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.COLUMN);
+    }
+
+    public void visualizeDataType() {
+        AttributeViewAs viewAs = ViewPanel.getDataType();
+        DBColumn column = this.getBaseElementSpec();
+        
+        String dataType = column.getDataType();
+        if (viewAs == AttributeViewAs.CLASS_FQN || viewAs == AttributeViewAs.SIMPLE_CLASS_NAME) {
+            dataType = dataType + "(" + column.getSize()+ ")";
+        } else if (viewAs == AttributeViewAs.SHORT_CLASS_NAME) {
+            //skip
+        } else if (viewAs == AttributeViewAs.NONE) {
+            return;
+        }
+        
+        visualizeDataType(dataType);
     }
 
     public void setDatatypeTooltip() {
@@ -67,6 +89,8 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     @Override
     public void init() {
         validateName(this.getName());
+        visualizeDataType();
+        setDatatypeTooltip();
     }
 
     @Override

@@ -27,33 +27,21 @@ import javax.swing.JOptionPane;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
-import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
-import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
-import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
@@ -82,7 +70,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     }
    
     
-    private LabelWidget dataTypeWidget;
+    
     public void visualizeDataType() {
         AttributeViewAs viewAs = ViewPanel.getDataType();
         
@@ -98,19 +86,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         } else if (viewAs == AttributeViewAs.NONE) {
             return;
         }
-        if (dataTypeWidget == null) {
-            dataTypeWidget = new LabelWidget(this.getScene());
-            Font font = getPinNameWidget().getFont();
-            font = font.deriveFont((float)font.getSize()-3);
-            dataTypeWidget.setFont(font);
-            Color color = getPinNameWidget().getForeground().brighter();
-            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()/2);
-            dataTypeWidget.setForeground(color);
-            addChild(dataTypeWidget);
-        }
-        dataTypeWidget.setLabel(dataType);
-        this.getPNodeWidget().revalidate();
-
+        visualizeDataType(dataType);
     }
 
     @Override

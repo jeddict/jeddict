@@ -177,7 +177,6 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         pinWidgetInfo.setName(name);
         pinWidgetInfo.setDocumentId(widgetClass.getSimpleName());
         W widget = (W)createPinWidget(pinWidgetInfo);
-        widget.setDatatypeTooltip();
         return widget;
     }
 

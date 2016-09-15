@@ -15,7 +15,10 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
+import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.context.PinContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
@@ -34,6 +37,8 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
     protected final SignalHandler errorHandler;
     protected final SignalHandler warningHandler;
 
+    protected LabelWidget dataTypeWidget;
+    
     public FlowPinWidget(S scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.name = pinWidgetInfo.getName();
@@ -50,6 +55,20 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
         });
     }
     
+    protected void visualizeDataType(String dataType){
+        if (dataTypeWidget == null) {
+            dataTypeWidget = new LabelWidget(this.getScene());
+            Font font = getPinNameWidget().getFont();
+            font = font.deriveFont((float)font.getSize()-3);
+            dataTypeWidget.setFont(font);
+            Color color = getPinNameWidget().getForeground().brighter();
+            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()/2);
+            dataTypeWidget.setForeground(color);
+            addChild(dataTypeWidget);
+        }
+        dataTypeWidget.setLabel(dataType);
+        this.getPNodeWidget().revalidate();
+    }
     @Override
     public void onConnection() {
     }
