@@ -25,6 +25,7 @@ import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
@@ -1035,11 +1036,16 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         ModelerFile modelerFile = this.getModelerScene().getModelerFile();
         RequestProcessor.getDefault().post(() -> {
             try {
-
+                
                 String singularPreName = previousName;
                 String pluralPreName = English.plural(singularPreName);
                 String singularNewName = newName;
                 String pluralNewName = English.plural(singularNewName);
+                
+                String pluralPreVarName = StringHelper.firstLower(pluralPreName);
+                String pluralNewVarName = StringHelper.firstLower(pluralNewName);
+                String singularPreVarName = StringHelper.firstLower(singularPreName);
+                String singularNewVarName = StringHelper.firstLower(singularNewName);
                 for (RelationAttributeWidget attributeWidget : this.getAllRelationAttributeWidgets(true)) {
                     if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
                         Bidirectional flowWidget = (Bidirectional) attributeWidget.getRelationFlowWidget();
@@ -1048,13 +1054,13 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                             relationAttributeWidget = flowWidget.getSourceRelationAttributeWidget();
                         }
                         if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
-                            if (relationAttributeWidget.getName().equals(pluralPreName)) {
-                                relationAttributeWidget.setName(pluralNewName);
-                                relationAttributeWidget.setLabel(pluralNewName);
+                            if (relationAttributeWidget.getName().equals(pluralPreVarName)) {
+                                relationAttributeWidget.setName(pluralNewVarName);
+                                relationAttributeWidget.setLabel(pluralNewVarName);
                             }
-                        } else if (relationAttributeWidget.getName().equals(singularPreName)) {
-                            relationAttributeWidget.setName(singularNewName);
-                            relationAttributeWidget.setLabel(singularNewName);
+                        } else if (relationAttributeWidget.getName().equals(singularPreVarName)) {
+                            relationAttributeWidget.setName(singularNewVarName);
+                            relationAttributeWidget.setLabel(singularNewVarName);
                         }
                     }
                 }
@@ -1063,14 +1069,14 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     for (RelationFlowWidget relationFlowWidget : ((EntityWidget) this).getUnidirectionalRelationFlowWidget()) {
                         RelationAttributeWidget<RelationAttribute> relationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
                         if (relationAttributeWidget.getBaseElementSpec() instanceof MultiRelationAttribute) {
-                            if (relationAttributeWidget.getName().equals(pluralPreName)) {
-                                relationAttributeWidget.setName(pluralNewName);
-                                relationAttributeWidget.setLabel(pluralNewName);
+                            if (relationAttributeWidget.getName().equals(pluralPreVarName)) {
+                                relationAttributeWidget.setName(pluralNewVarName);
+                                relationAttributeWidget.setLabel(pluralNewVarName);
                             }
                         } else {
-                            if (relationAttributeWidget.getName().equals(singularPreName)) {
-                                relationAttributeWidget.setName(singularNewName);
-                                relationAttributeWidget.setLabel(singularNewName);
+                            if (relationAttributeWidget.getName().equals(singularPreVarName)) {
+                                relationAttributeWidget.setName(singularNewVarName);
+                                relationAttributeWidget.setLabel(singularNewVarName);
                             }
                         }
                     }
@@ -1101,13 +1107,13 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
                     for (EmbeddableFlowWidget embeddableFlowWidget : ((EmbeddableWidget) this).getIncomingEmbeddableFlowWidgets()) {
                         EmbeddedAttributeWidget embeddedAttributeWidget = embeddableFlowWidget.getSourceEmbeddedAttributeWidget();
                         if (embeddedAttributeWidget.getBaseElementSpec() instanceof ElementCollection) {
-                            if (embeddedAttributeWidget.getName().equals(pluralPreName)) {
-                                embeddedAttributeWidget.setName(pluralNewName);
-                                embeddedAttributeWidget.setLabel(pluralNewName);
+                            if (embeddedAttributeWidget.getName().equals(pluralPreVarName)) {
+                                embeddedAttributeWidget.setName(pluralNewVarName);
+                                embeddedAttributeWidget.setLabel(pluralNewVarName);
                             }
-                        } else if (embeddedAttributeWidget.getName().equals(singularPreName)) {
-                            embeddedAttributeWidget.setName(singularNewName);
-                            embeddedAttributeWidget.setLabel(singularNewName);
+                        } else if (embeddedAttributeWidget.getName().equals(singularPreVarName)) {
+                            embeddedAttributeWidget.setName(singularNewVarName);
+                            embeddedAttributeWidget.setLabel(singularNewVarName);
                         }
                     }
                 }
