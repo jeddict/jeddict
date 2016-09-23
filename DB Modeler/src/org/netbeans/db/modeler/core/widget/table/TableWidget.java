@@ -39,13 +39,15 @@ import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyEmbeddedColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.map.MapKeyJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
+import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
 import org.netbeans.db.modeler.properties.PropertiesHandler;
@@ -123,7 +125,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyJoinColumnWidget.class));
     }
      
-      public void addMapKeyEmbeddedColumn(String name, DBMapKeyEmbeddedColumn column) {
+    public void addMapKeyEmbeddedColumn(String name, DBMapKeyEmbeddedColumn column) {
         columnWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyEmbeddedColumnWidget.class));
     }
 
@@ -136,11 +138,11 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     }
 
     public void addParentAssociationInverseJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationInverseJoinColumnWidget.class));
     }
 
     public void addParentAssociationJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationJoinColumnWidget.class));
     }
 
     public void addEmbeddedAttributeJoinColumn(String name, DBColumn column) {
@@ -148,11 +150,11 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
     }
 
     public void addEmbeddedAssociationInverseJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationInverseJoinColumnWidget.class));
     }
 
     public void addEmbeddedAssociationJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationJoinColumnWidget.class));
     }
 
     public void addNewJoinKey(String name, DBColumn column) {
