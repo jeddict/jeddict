@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2016] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,10 @@
 package org.netbeans.jpa.modeler.properties.fieldtype;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
@@ -83,6 +86,19 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     private static final String[] BASIC_DEFAULT_DATATYPE = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
                         BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
                         SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+    
+    private static final String[] LOB_DATATYPE = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+    private static final String[] TEMPORAL_DATATYPE = new String[]{DATE, CALENDAR};
+    private static final String[] MAPKEY_DEFAULT_DATATYPE = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
+                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
+                        //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
+                        /*DATE, CALENDAR,*/
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+    private static final String[] ELEMENTCOLLECTION_DEFAULT_DATATYPE = new String[]{STRING, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER,
+                        LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
+                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+    private static final Set<String> BCLOB_DATATYPE_FILTER = new HashSet<>(Arrays.asList(BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY));
+
     @Override
     public void init() {
         initComponents();
@@ -91,6 +107,14 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     @Override
     public Attribute getValue() {
         String type = (String) type_ComboBox.getSelectedItem();
+        String dataType = null;
+        if(!ENTITY.equals(type) && !EMBEDDABLE.equals(type)){
+            dataType = dataType_ComboBox.getSelectedItem().toString();
+            if(BCLOB_DATATYPE_FILTER.contains(dataType)){//jpa provider issue , set lob if datatype is blob clob
+               type = LOB; 
+            }
+        }
+        
         if (mapKey) {
             MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
             mapKeyHandler.resetMapAttribute();
@@ -103,14 +127,14 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                     break;
                 case ENUMERATED:
                     mapKeyHandler.setMapKeyEnumerated(getSelectedEnumType());
-                    mapKeyHandler.setMapKeyAttributeType(dataType_ComboBox.getSelectedItem().toString());
+                    mapKeyHandler.setMapKeyAttributeType(dataType);
                     break;
                 case TEMPORAL:
                     mapKeyHandler.setMapKeyTemporal(getSelectedTemporalType());
-                    mapKeyHandler.setMapKeyAttributeType(dataType_ComboBox.getSelectedItem().toString());
+                    mapKeyHandler.setMapKeyAttributeType(dataType);
                     break;
                 case DEFAULT:
-                    mapKeyHandler.setMapKeyAttributeType(dataType_ComboBox.getSelectedItem().toString());
+                    mapKeyHandler.setMapKeyAttributeType(dataType);
                     break;
             }
         } else if (attribute instanceof ElementCollection) {
@@ -129,17 +153,17 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                     elementCollection.setTemporal(getSelectedTemporalType());
                     break;
             }
-            elementCollection.setTargetClass(dataType_ComboBox.getSelectedItem().toString());
+            elementCollection.setTargetClass(dataType);
         } else if (attribute instanceof Transient) {
             Transient _transient = (Transient) attribute;
-            _transient.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
+            _transient.setAttributeType(dataType);
         } else if (attribute instanceof PersistenceBaseAttribute) {// Id, Version, Basic
             PersistenceBaseAttribute persistenceBaseAttribute = (PersistenceBaseAttribute) attribute;
             persistenceBaseAttribute.setTemporal(null);
             if ((persistenceBaseAttribute instanceof Basic || persistenceBaseAttribute instanceof Id) && type.equals(TEMPORAL)) {
                 persistenceBaseAttribute.setTemporal(getSelectedTemporalType());
             }
-            persistenceBaseAttribute.setAttributeType(dataType_ComboBox.getSelectedItem().toString());
+            persistenceBaseAttribute.setAttributeType(dataType);
             if (persistenceBaseAttribute instanceof Basic) {
                 Basic basic = (Basic) persistenceBaseAttribute;
                 basic.setLob(null);
@@ -222,14 +246,10 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 case ENUMERATED:
                     break;
                 case TEMPORAL:
-                    dataType = new String[]{DATE, CALENDAR};
+                    dataType = TEMPORAL_DATATYPE;
                     break;
                 default:
-                    dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
-                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
-                        /*DATE, CALENDAR,*/
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+                    dataType = MAPKEY_DEFAULT_DATATYPE;
                     break;
             }
         } else if (attribute instanceof Basic) {
@@ -237,10 +257,10 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 case ENUMERATED:
                     break;
                 case TEMPORAL:
-                    dataType = new String[]{DATE, CALENDAR};
+                    dataType = TEMPORAL_DATATYPE;
                     break;
                 case LOB:
-                    dataType = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                    dataType = LOB_DATATYPE;
                     break;
                 default:
                     dataType = BASIC_DEFAULT_DATATYPE;
@@ -251,15 +271,13 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 case ENUMERATED:
                     break;
                 case TEMPORAL:
-                    dataType = new String[]{DATE, CALENDAR};
+                    dataType = TEMPORAL_DATATYPE;
                     break;
                 case LOB:
-                    dataType = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
+                    dataType = LOB_DATATYPE;
                     break;
                 default:
-                    dataType = new String[]{STRING, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER,
-                        LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+                    dataType = ELEMENTCOLLECTION_DEFAULT_DATATYPE;
                     break;
             }
         } else if (attribute instanceof Id) {

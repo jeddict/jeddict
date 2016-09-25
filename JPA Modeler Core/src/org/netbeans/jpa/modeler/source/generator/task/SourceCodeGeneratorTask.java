@@ -15,14 +15,10 @@
  */
 package org.netbeans.jpa.modeler.source.generator.task;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.jcode.generator.JEEApplicationGenerator;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
-import org.netbeans.jcode.stack.config.data.EntityConfigData;
 import org.netbeans.jcode.task.AbstractNBTask;
 import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
 import org.netbeans.jcode.task.progress.ProgressHandler;
@@ -31,7 +27,6 @@ import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFac
 import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm.ORMInputDefiniton;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;

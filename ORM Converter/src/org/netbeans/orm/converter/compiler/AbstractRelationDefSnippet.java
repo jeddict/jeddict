@@ -24,8 +24,9 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
 
     private static final String CASCADE_PREFIX = "CascadeType.";
 
-    private String fetchType = null;
-    private String targetEntity = null;
+    private String fetchType;
+    private String targetEntity;
+    private String targetEntityPackage;
 
     private List<String> cascadeTypes = Collections.EMPTY_LIST;
 
@@ -70,6 +71,16 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
 
         return targetEntity + ORMConverterUtil.CLASS_SUFFIX;
     }
+    
+    @Override
+    public String getTargetEntityName() {
+
+        if (targetEntity.endsWith(ORMConverterUtil.CLASS_SUFFIX)) {
+            return targetEntity.substring(0, targetEntity.lastIndexOf(ORMConverterUtil.CLASS_SUFFIX));
+        }
+
+        return targetEntity;
+    }
 
     @Override
     public void setTargetEntity(String targetEntity) {
@@ -77,10 +88,8 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
     }
 
     private List<String> processedCascadeTypes() {
-        List<String> processedCascadeTypes = new ArrayList<String>();
-
+        List<String> processedCascadeTypes = new ArrayList<>();
         for (String cascadeType : cascadeTypes) {
-
             if (!cascadeType.startsWith(CASCADE_PREFIX)) {
                 processedCascadeTypes.add(CASCADE_PREFIX + cascadeType);
             } else {
@@ -89,5 +98,21 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
         }
 
         return processedCascadeTypes;
+    }
+
+    /**
+     * @return the targetEntityPackage
+     */
+    @Override
+    public String getTargetEntityPackage() {
+        return targetEntityPackage;
+    }
+
+    /**
+     * @param targetEntityPackage the targetEntityPackage to set
+     */
+    @Override
+    public void setTargetEntityPackage(String targetEntityPackage) {
+        this.targetEntityPackage = targetEntityPackage;
     }
 }

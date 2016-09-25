@@ -168,11 +168,6 @@ public class ClassHelper {
     }
 
     public void setPackageName(String packageName) {
-        // Package specified as the part of class takes precedence.
-        if (this.packageName != null) {
-            return;
-        }
-
         this.packageName = packageName;
     }
 

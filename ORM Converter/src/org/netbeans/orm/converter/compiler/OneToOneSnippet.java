@@ -142,6 +142,9 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
             importSnippets.add("javax.persistence.CascadeType");
         }
 
+//        if (getTargetEntityPackage()!= null) {
+//            importSnippets.add(getTargetEntityPackage() + ORMConverterUtil.DOT + getTargetEntityName());
+//        }
         return importSnippets;
     }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jcode.core.util.AttributeType;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import static org.netbeans.jcode.core.util.AttributeType.BYTE_ARRAY;
@@ -26,7 +27,9 @@ import static org.netbeans.jcode.core.util.AttributeType.CALENDAR;
 import static org.netbeans.jcode.core.util.AttributeType.DOUBLE;
 import static org.netbeans.jcode.core.util.AttributeType.LONG;
 import static org.netbeans.jcode.core.util.AttributeType.STRING;
+import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TypeIdentifierSnippet implements Snippet {
 
@@ -64,16 +67,15 @@ public class TypeIdentifierSnippet implements Snippet {
 
     private ClassHelper getClassHelper(String targetEntity) {
 
-        CompilerConfigManager compilerConfigManager
-                = CompilerConfigManager.getInstance();
-
-        String defaultPkgName
-                = compilerConfigManager.getCompilerConfig().getDefaultPkgName();
-
         ClassHelper classHelper = new ClassHelper(targetEntity);
-
-        classHelper.setPackageName(defaultPkgName);
-
+        if (StringUtils.isNotBlank(targetEntity)) {
+            int count = targetEntity.endsWith(ORMConverterUtil.CLASS_SUFFIX) ? 2 : 1;
+            if (targetEntity.split("\\.").length <= count) {
+                CompilerConfigManager compilerConfigManager = CompilerConfigManager.getInstance();
+                String defaultPkgName = compilerConfigManager.getCompilerConfig().getDefaultPkgName();
+                classHelper.setPackageName(defaultPkgName);
+            }
+        }
         return classHelper;
     }
     
@@ -99,10 +101,11 @@ public class TypeIdentifierSnippet implements Snippet {
                 MultiRelationAttributeSnippet multiRelationAttributeSnippet = (MultiRelationAttributeSnippet) relationDef;
 
                 importSnippets = new ArrayList<>();
-
                 ClassHelper collectionTypeClassHelper = getClassHelper(((MultiRelationAttributeSnippet) relationDef).getCollectionType());
                 
                 ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
+                classHelper.setPackageName(relationDef.getTargetEntityPackage());
+                
                 ClassHelper mapKeyClassHelper = null;
                 Class _class = collectionTypeClassHelper.getClazz();
                   
@@ -137,6 +140,9 @@ public class TypeIdentifierSnippet implements Snippet {
 
             ClassHelper collectionTypeClassHelper = getClassHelper(elementCollection.getCollectionType());
             ClassHelper classHelper = getClassHelper(elementCollection.getTargetClass());
+            if(elementCollection.getTargetClassPackage()!=null){
+                classHelper.setPackageName(elementCollection.getTargetClassPackage());
+            }
             ClassHelper mapKeyClassHelper = null;
             Class _class = collectionTypeClassHelper.getClazz();
                 if (_class != null && Map.class.isAssignableFrom(_class)) {

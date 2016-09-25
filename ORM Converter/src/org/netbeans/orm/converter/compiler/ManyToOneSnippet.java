@@ -21,8 +21,7 @@ import java.util.List;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class ManyToOneSnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet {
+public class ManyToOneSnippet extends AbstractRelationDefSnippet {
 
     private boolean optional = false;
     private String mapsId;
@@ -93,13 +92,6 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-
-        if (getFetchType() == null
-                && getCascadeTypes().isEmpty() && !isPrimaryKey()) {
-
-            return Collections.singletonList("javax.persistence.ManyToOne");
-        }
-
         List<String> importSnippets = new ArrayList<String>();
         if (isPrimaryKey()) {
             if (mapsId == null) {

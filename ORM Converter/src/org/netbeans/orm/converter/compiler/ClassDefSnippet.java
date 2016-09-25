@@ -89,7 +89,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private NamedEntityGraphsSnippet namedEntityGraphs;
     private NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries;
 
-    private List<VariableDefSnippet> variableDefs = new ArrayList<VariableDefSnippet>();
+    private List<VariableDefSnippet> variableDefs = new ArrayList<>();
 
     public boolean isEmbeddable() {
         return embeddable;

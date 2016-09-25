@@ -17,7 +17,6 @@ package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
@@ -32,19 +31,17 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.ClassGenerator;
 import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClassDefSnippet> {
 
-    private static Logger logger = ORMConvLogger.getLogger(StaticMetamodelGenerator.class);
-
-    private ManagedClass managedClass = null;
-    private String entityPackageName;
+    private final ManagedClass managedClass;
+    private final String entityPackageName;
 
     public StaticMetamodelGenerator(ManagedClass managedClass, String entityPackageName, String packageName) {
         super(new StaticMetamodelClassDefSnippet());
         this.managedClass = managedClass;
-        this.packageName = packageName;
+        this.rootPackageName = packageName;
+        this.packageName = managedClass.getPackage(rootPackageName);
         this.entityPackageName=entityPackageName;
     }
 

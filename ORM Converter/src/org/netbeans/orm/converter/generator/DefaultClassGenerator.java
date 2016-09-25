@@ -15,23 +15,19 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
-import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
-
-    private static Logger logger = ORMConvLogger.getLogger(DefaultClassGenerator.class);
-
-    private DefaultClass defaultClass = null;
+    
+    private DefaultClass defaultClass;
 
     public DefaultClassGenerator(DefaultClass parsedDefaultClass, String packageName) {
         super(new ClassDefSnippet());
         this.defaultClass = parsedDefaultClass;
-        this.packageName = packageName;
+        this.rootPackageName = packageName;
+        this.packageName = defaultClass.getPackage(rootPackageName);
     }
 
     @Override

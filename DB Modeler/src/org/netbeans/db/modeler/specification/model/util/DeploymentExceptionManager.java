@@ -70,106 +70,108 @@ public class DeploymentExceptionManager {
             IntegrityException ie = (IntegrityException) exception;
             if (ie.getIntegrityChecker().getCaughtExceptions().get(0) instanceof DescriptorException) {
                 DescriptorException de = (DescriptorException) ie.getIntegrityChecker().getCaughtExceptions().get(0);
-                if (MULTIPLE_WRITE_MAPPINGS_FOR_FIELD == de.getErrorCode()) {
-                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
-                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
-                            String attributeName = de.getMapping().getAttributeName();
-                            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Multiple Same column name exist in entity " + entity.getClazz() + " for attribute " + attributeName
-                                    + '\n' + " Would you like to override the column name automatically using @JoinColumn ?",
-                                    "Error : Same column name exist in table", YES_NO_OPTION) == YES_NO_OPTION) {
-                                List<JoinColumn> joinColumns = new ArrayList<>();
-
-                                for (DatabaseField databaseField : de.getMapping().getFields()) {
-                                    if (databaseField.isPrimaryKey()) {
-                                        JoinColumn joinColumn = new JoinColumn();
-                                        joinColumn.setName(attributeName.toUpperCase() + "_" + databaseField.getName());
-                                        joinColumn.setReferencedColumnName(databaseField.getName());
-                                        joinColumns.add(joinColumn);
+                switch (de.getErrorCode()) {
+                    case MULTIPLE_WRITE_MAPPINGS_FOR_FIELD:
+                        if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                            Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                            Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
+                            if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                                String attributeName = de.getMapping().getAttributeName();
+                                if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Multiple Same column name exist in entity " + entity.getClazz() + " for attribute " + attributeName
+                                        + '\n' + " Would you like to override the column name automatically using @JoinColumn ?",
+                                        "Error : Same column name exist in table", YES_NO_OPTION) == YES_NO_OPTION) {
+                                    List<JoinColumn> joinColumns = new ArrayList<>();
+                                    
+                                    for (DatabaseField databaseField : de.getMapping().getFields()) {
+                                        if (databaseField.isPrimaryKey()) {
+                                            JoinColumn joinColumn = new JoinColumn();
+                                            joinColumn.setName(attributeName.toUpperCase() + "_" + databaseField.getName());
+                                            joinColumn.setReferencedColumnName(databaseField.getName());
+                                            joinColumns.add(joinColumn);
+                                        }
                                     }
+                                    JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName, joinColumns);
+                                    file.getModelerUtil().loadModelerFile(file);
+                                    fixError = true;
+                                } else {
+                                    fixError = false;
                                 }
-                                JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName, joinColumns);
-                                file.getModelerUtil().loadModelerFile(file);
-                                fixError = true;
-                            } else {
-                                fixError = false;
                             }
-                        }
-                    }
-                } else if (NO_TARGET_FOREIGN_KEYS_SPECIFIED == de.getErrorCode()) {
-                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
-                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
-                            String attributeName = de.getMapping().getAttributeName();
-                            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "No target foreign keys have been specified for this mapping. in entity " + entity.getClazz() + " for attribute " + attributeName
-                                    + '\n' + " Would you like to override the column name automatically using @JoinColumn ?",
-                                    "Error : No target foreign keys have been specified", YES_NO_OPTION) == YES_NO_OPTION) {
-                                JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
-                                file.getModelerUtil().loadModelerFile(file);
-                                fixError = true;
-                            } else {
-                                fixError = false;
+                        }   break;
+                    case NO_TARGET_FOREIGN_KEYS_SPECIFIED:
+                        if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                            Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                            Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
+                            if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                                String attributeName = de.getMapping().getAttributeName();
+                                if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "No target foreign keys have been specified for this mapping. in entity " + entity.getClazz() + " for attribute " + attributeName
+                                        + '\n' + " Would you like to override the column name automatically using @JoinColumn ?",
+                                        "Error : No target foreign keys have been specified", YES_NO_OPTION) == YES_NO_OPTION) {
+                                    JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
+                                    file.getModelerUtil().loadModelerFile(file);
+                                    fixError = true;
+                                } else {
+                                    fixError = false;
+                                }
                             }
-                        }
-                    }
-                } else if (NO_FOREIGN_KEYS_ARE_SPECIFIED == de.getErrorCode()) {
-                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
-                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
-                            String attributeName = de.getMapping().getAttributeName();
-                            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "No foreign keys are specified for this mapping. in entity " + entity.getClazz() + " for attribute " + attributeName
-                                    + '\n' + " Would you like to override the column name automatically using @JoinColumn ?",
-                                    "Error : No foreign keys are specified", YES_NO_OPTION) == YES_NO_OPTION) {
-                                JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
-                                file.getModelerUtil().loadModelerFile(file);
-                                fixError = true;
-                            } else {
-                                fixError = false;
+                        }   break;
+                    case NO_FOREIGN_KEYS_ARE_SPECIFIED:
+                        if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                            Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                            Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
+                            if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                                String attributeName = de.getMapping().getAttributeName();
+                                if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "No foreign keys are specified for this mapping. in entity " + entity.getClazz() + " for attribute " + attributeName
+                                        + '\n' + " Would you like to override the column name automatically using @JoinColumn ?",
+                                        "Error : No foreign keys are specified", YES_NO_OPTION) == YES_NO_OPTION) {
+                                    JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
+                                    file.getModelerUtil().loadModelerFile(file);
+                                    fixError = true;
+                                } else {
+                                    fixError = false;
+                                }
                             }
-                        }
-                    }
-                } else if (NO_SOURCE_RELATION_KEYS_SPECIFIED == de.getErrorCode()) {
-                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
-                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
-                            String attributeName = de.getMapping().getAttributeName();
+                        }   break;
+                    case NO_SOURCE_RELATION_KEYS_SPECIFIED:
+                        if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                            Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                            Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
+                            if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                                String attributeName = de.getMapping().getAttributeName();
 //                                fixError = false;//TODO
-                        }
-                    }
-                } else if (NO_MAPPING_FOR_PRIMARY_KEY == de.getErrorCode()) {
-                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
-                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof EntityWidget) {
-                            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
-                                    de.getMessage() + '\n' + " Would you like to fix it automatically using @Column(insertable=true) ?",
-                                    "Error : No non-read mapping found for Entity " + entity.getClazz(), YES_NO_OPTION) == YES_NO_OPTION) {
-                                EntityWidget entityWidget = (EntityWidget) optional.get();
-                                entityWidget.getAllIdAttributeWidgets().stream().filter(idAttrWidget -> !idAttrWidget.getBaseElementSpec().getColumn().getInsertable())
-                                        .forEach(idAttrWidget -> idAttrWidget.getBaseElementSpec().getColumn().setInsertable(true));
-                                file.getModelerUtil().loadModelerFile(file);
-                                fixError = true;
-                            } else {
-                                fixError = false;
                             }
-                        }
-                    }
-                } else if (TABLE_NOT_PRESENT == de.getErrorCode()) {
-                    if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
-                        Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Matcher matcher = Pattern.compile("\\[(.+?)\\]").matcher(de.getMessage());
-                        String tableName = matcher.find() ? matcher.group(1) : "";
-                        showErrorMessage("Error : @Table or @SecondaryTable missing",
-                                " @Column(table=\"" + tableName + "\") annotation defined on attributes but" + '\n'
-                                + " the @Table or @SecondaryTable is not found on Entity " + entity.getClazz() + "?");
-                        fixError = false;
-                    }
-                } else {
-                    System.out.println("NF");
+                        }   break;
+                    case NO_MAPPING_FOR_PRIMARY_KEY:
+                        if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                            Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                            Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
+                            if (optional.isPresent() && optional.get() instanceof EntityWidget) {
+                                if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
+                                        de.getMessage() + '\n' + " Would you like to fix it automatically using @Column(insertable=true) ?",
+                                        "Error : No non-read mapping found for Entity " + entity.getClazz(), YES_NO_OPTION) == YES_NO_OPTION) {
+                                    EntityWidget entityWidget = (EntityWidget) optional.get();
+                                    entityWidget.getAllIdAttributeWidgets().stream().filter(idAttrWidget -> !idAttrWidget.getBaseElementSpec().getColumn().getInsertable())
+                                            .forEach(idAttrWidget -> idAttrWidget.getBaseElementSpec().getColumn().setInsertable(true));
+                                    file.getModelerUtil().loadModelerFile(file);
+                                    fixError = true;
+                                } else {
+                                    fixError = false;
+                                }
+                            }
+                        }   break;
+                    case TABLE_NOT_PRESENT:
+                        if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
+                            Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
+                            Matcher matcher = Pattern.compile("\\[(.+?)\\]").matcher(de.getMessage());
+                            String tableName = matcher.find() ? matcher.group(1) : "";
+                            showErrorMessage("Error : @Table or @SecondaryTable missing",
+                                    " @Column(table=\"" + tableName + "\") annotation defined on attributes but" + '\n'
+                                            + " the @Table or @SecondaryTable is not found on Entity " + entity.getClazz() + "?");
+                            fixError = false;
+                        }   break;
+                    default:
+                        System.out.println("NF");
+                        break;
                 }
             }
 

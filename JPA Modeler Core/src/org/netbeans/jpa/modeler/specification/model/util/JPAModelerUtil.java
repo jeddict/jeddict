@@ -24,7 +24,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -171,7 +170,6 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
-import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
@@ -746,7 +744,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     private static boolean manageCompositePrimaryKey(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, EntityMappings entityMappings) {
         //Start : IDCLASS,EMBEDDEDID //((Entity) persistenceClassWidget.getBaseElementSpec()).getClazz()
         if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
-            PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) persistenceClassWidget.getBaseElementSpec();
+            ManagedClass managedClass = persistenceClassWidget.getBaseElementSpec();
+            PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer)managedClass ;
             CompositePKProperty compositePKProperty = persistenceClassWidget.isCompositePKPropertyAllow();
 
             if (compositePKProperty == CompositePKProperty.NONE) {
@@ -778,7 +777,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             // when Enity E1 class use IdClass IC1 and
                             //another Enity E2 class use EmbeddedId is also IC1
                             //then register IdClass name here to append @Embeddable annotation
-                            DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getCompositePrimaryKeyClass());
+                            DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getPackage(), targetPKConatinerSpec.getCompositePrimaryKeyClass());
                             _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
                             if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID){
                                     _class.setEmbeddable(true);
@@ -804,7 +803,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         if(pkContainerSpec.getCompositePrimaryKeyClass()==null){
                             pkContainerSpec.setCompositePrimaryKeyClass(persistenceClassWidget.getName()+"PK");
                         }
-                        DefaultClass _class = entityMappings.addDefaultClass(pkContainerSpec.getCompositePrimaryKeyClass());
+                        DefaultClass _class = entityMappings.addDefaultClass(managedClass.getPackage(), pkContainerSpec.getCompositePrimaryKeyClass());
                         _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
                         if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                             idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();

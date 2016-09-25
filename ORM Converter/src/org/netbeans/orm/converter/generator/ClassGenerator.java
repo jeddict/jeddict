@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Basic;
@@ -163,11 +164,13 @@ import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
 
+    protected String rootPackageName;
     protected String packageName;
     protected T classDef;
     protected Map<String, VariableDefSnippet> variables = new LinkedHashMap<>();
@@ -182,7 +185,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         ClassHelper classHelper = new ClassHelper(javaClass.getClazz());
         classHelper.setPackageName(packageName);
         classDef.setClassName(classHelper.getFQClassName());
-        classDef.setPackageName(classHelper.getPackageName());
+//        classDef.setPackageName(classHelper.getPackageName());
         classDef.setAbstractClass(javaClass.getAbstract());
         classDef.setInterfaces(javaClass.getInterfaces());
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
@@ -199,7 +202,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setToStringMethod(getToStringMethodSnippet(javaClass.getClazz(), javaClass.getToStringMethod()));
         if (javaClass.getSuperclass() != null) {
             ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
-            superClassHelper.setPackageName(packageName);
+            superClassHelper.setPackageName(javaClass.getSuperclass().getPackage(rootPackageName));
             classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
         return classDef;
@@ -403,6 +406,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
             elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
             elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
+            if(parsedElementCollection.getConnectedClass()!=null){
+                elementCollection.setTargetClassPackage(parsedElementCollection.getConnectedClass().getPackage(rootPackageName));
+            }
+            
             if (parsedFetchType != null) {
                 elementCollection.setFetchType(parsedFetchType.value());
             }
@@ -1062,7 +1069,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(parsedEmbeded);
 
             variableDef.setEmbedded(true);
-            variableDef.setType(parsedEmbeded.getAttributeType());
+            variableDef.setType(parsedEmbeded.getConnectedClass().getPackage(rootPackageName) + ORMConverterUtil.DOT +
+                    parsedEmbeded.getAttributeType());
 
             processInternalAttributeOverride(variableDef, parsedEmbeded.getAttributeOverride());
             processInternalAssociationOverride(variableDef, parsedEmbeded.getAssociationOverride());
@@ -1215,6 +1223,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             manyToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedManyToMany));
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
+            manyToMany.setTargetEntityPackage(parsedManyToMany.getConnectedEntity().getPackage(rootPackageName));
+            
             manyToMany.setCascadeTypes(cascadeTypes);
 
             if (parsedManyToMany.getFetch() != null) {
@@ -1293,6 +1303,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ManyToOneSnippet manyToOne = new ManyToOneSnippet();
 
             manyToOne.setTargetEntity(parsedManyToOne.getTargetEntity());
+            manyToOne.setTargetEntityPackage(parsedManyToOne.getConnectedEntity().getPackage(rootPackageName));
+            
             manyToOne.setCascadeTypes(cascadeTypes);
 
             if (parsedManyToOne.getOptional() != null) {
@@ -1330,6 +1342,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             oneToMany.setCascadeTypes(cascadeTypes);
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
+            oneToMany.setTargetEntityPackage(parsedOneToMany.getConnectedEntity().getPackage(rootPackageName));
+            
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
             oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
@@ -1370,6 +1384,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             oneToOne.setCascadeTypes(cascadeTypes);
             oneToOne.setTargetEntity(parsedOneToOne.getTargetEntity());
+            oneToOne.setTargetEntityPackage(parsedOneToOne.getConnectedEntity().getPackage(rootPackageName));
+            
             oneToOne.setMappedBy(parsedOneToOne.getMappedBy());
             if (parsedOneToOne.getOptional() != null) {
                 oneToOne.setOptional(parsedOneToOne.getOptional());

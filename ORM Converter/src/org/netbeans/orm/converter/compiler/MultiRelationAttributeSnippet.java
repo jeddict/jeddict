@@ -23,8 +23,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet, CollectionTypeHandler {
+public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet implements CollectionTypeHandler {
 
     protected String collectionType;
     protected String mappedBy = null;
@@ -113,6 +112,9 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         if(mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             importSnippets.addAll(mapKeySnippet.getImportSnippets());
         }
+//        if (getTargetEntityPackage()!= null) {
+//            importSnippets.add(getTargetEntityPackage() + ORMConverterUtil.DOT + getTargetEntityName());
+//        }
         return importSnippets;
     }
 

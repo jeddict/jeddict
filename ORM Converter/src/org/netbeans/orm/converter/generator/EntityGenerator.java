@@ -15,8 +15,6 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
@@ -32,21 +30,17 @@ import org.netbeans.orm.converter.compiler.DiscriminatorColumnSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorValueSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet.Type;
-import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
-    private static Logger logger = ORMConvLogger.getLogger(EntityGenerator.class);
-
-    private Entity entity = null;
+    private Entity entity;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
         super(new ManagedClassDefSnippet());
         this.entity = parsedEntity;
-        this.packageName = packageName;
+        this.rootPackageName = packageName;
+        this.packageName = entity.getPackage(rootPackageName);
     }
 
     @Override

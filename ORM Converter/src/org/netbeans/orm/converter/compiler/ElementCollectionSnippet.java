@@ -25,6 +25,8 @@ public class ElementCollectionSnippet implements Snippet {
 
     private String collectionType;
     private String targetClass;
+    private String targetClassPackage;
+    
     private String fetchType = null;
     private MapKeySnippet mapKeySnippet;
 //    private String accessType = null;
@@ -116,5 +118,19 @@ public class ElementCollectionSnippet implements Snippet {
      */
     public void setMapKeySnippet(MapKeySnippet mapKeySnippet) {
         this.mapKeySnippet = mapKeySnippet;
+    }
+
+    /**
+     * @return the targetClassPackage
+     */
+    public String getTargetClassPackage() {
+        return targetClassPackage;
+    }
+
+    /**
+     * @param targetClassPackage the targetClassPackage to set
+     */
+    public void setTargetClassPackage(String targetClassPackage) {
+        this.targetClassPackage = targetClassPackage;
     }
 }

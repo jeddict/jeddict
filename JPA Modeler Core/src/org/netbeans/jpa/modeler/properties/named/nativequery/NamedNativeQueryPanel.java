@@ -126,7 +126,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
         resultClass_jComboBox.setModel(model);
     }
     
-        private void initResultSetMappingModel() {
+    private void initResultSetMappingModel() {
         resultSetMapping_jComboBox.removeAllItems();
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         model.addElement(null);
