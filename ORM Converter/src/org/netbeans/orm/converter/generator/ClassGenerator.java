@@ -298,7 +298,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Constructor constructor : javaClass.getConstructors()) {
             if (constructor.isEnable()) {
                 String className = javaClass.getClazz();
-                List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream().map(attr -> variables.get(attr.getName())).collect(toList());
+                List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream()
+                        .map(attr -> {
+                            VariableDefSnippet variableDefSnippet = new VariableDefSnippet();
+                            variableDefSnippet.setName(attr.getName());
+                            variableDefSnippet.setType(attr.getDataTypeLabel());
+                            return variableDefSnippet;
+                        }).collect(toList());
                 ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, variableSnippets);
                 constructorSnippets.add(snippet);
             }
