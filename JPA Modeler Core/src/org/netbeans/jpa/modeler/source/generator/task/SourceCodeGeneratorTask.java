@@ -28,7 +28,7 @@ import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm.ORMInputDefiniton;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.PreExecutionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
@@ -71,7 +71,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
             modelerFile.getModelerUtil().saveModelerFile(modelerFile);//synchronous
             modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);//remove * from header
         } else {
-            JPAModelerUtil.preExecution(modelerFile);
+            PreExecutionUtil.preExecution(modelerFile);
         }
         // Issue Fix #5847 End
         try {

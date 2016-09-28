@@ -255,6 +255,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
             row[1] = constructor.isEnable();
             row[2] = constructor.toString();
         }
+        
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
 

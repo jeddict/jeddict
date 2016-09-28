@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
@@ -295,17 +296,23 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected List<ConstructorSnippet> getConstructorSnippets(JavaClass javaClass) {
         List<ConstructorSnippet> constructorSnippets = new ArrayList<>();
-        for (Constructor constructor : javaClass.getConstructors()) {
-            if (constructor.isEnable()) {
-                String className = javaClass.getClazz();
-                List<VariableDefSnippet> variableSnippets = constructor.getAttributes().stream()
-                        .map(attr -> {
+        Function<Attribute, VariableDefSnippet> buildVarDef = attr -> {
                             VariableDefSnippet variableDefSnippet = new VariableDefSnippet();
                             variableDefSnippet.setName(attr.getName());
                             variableDefSnippet.setType(attr.getDataTypeLabel());
                             return variableDefSnippet;
-                        }).collect(toList());
-                ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, variableSnippets);
+                        };
+        for (Constructor constructor : javaClass.getConstructors()) {
+            if (constructor.isEnable()) {
+                String className = javaClass.getClazz();
+              
+                List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes().stream()
+                        .filter(attr -> attr.getJavaClass() != javaClass).map(buildVarDef).collect(toList());
+                
+                List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes().stream()
+                        .filter(attr -> attr.getJavaClass() == javaClass).map(buildVarDef).collect(toList());
+                
+                ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, parentVariableSnippets, localVariableSnippets);
                 constructorSnippets.add(snippet);
             }
         }
