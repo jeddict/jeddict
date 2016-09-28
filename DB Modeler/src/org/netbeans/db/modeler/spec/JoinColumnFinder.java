@@ -20,8 +20,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -33,16 +35,16 @@ import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
  */
 public class JoinColumnFinder {
 
-    public static List<? extends JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse) {
+    public static List<JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse) {
         return findJoinColumns(attribute, relationTableExist, inverse, false);
     }
     
-    public static List<? extends JoinColumn> findMapKeyJoinColumns(Attribute attribute) {
+    public static List<JoinColumn> findMapKeyJoinColumns(Attribute attribute) {
         return findJoinColumns(attribute, false, false, true);
     }
     
-    private static List<? extends JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse, boolean mapKey) {
-        List<? extends JoinColumn> joinColumns;
+    private static List<JoinColumn> findJoinColumns(Attribute attribute, boolean relationTableExist, boolean inverse, boolean mapKey) {
+        List<JoinColumn> joinColumns;
         if (mapKey) {
             if (attribute instanceof MapKeyHandler) {
                 joinColumns = ((MapKeyHandler) attribute).getMapKeyJoinColumn();
@@ -73,8 +75,8 @@ public class JoinColumnFinder {
         return joinColumns;
     }
 
-    public static List<? extends JoinColumn> findJoinColumns(AssociationOverride associationOverride, Attribute attribute, boolean relationTableExist, boolean inverse) {
-        List<? extends JoinColumn> joinColumns;
+    public static List<JoinColumn> findJoinColumns(AssociationOverride associationOverride, Attribute attribute, boolean relationTableExist, boolean inverse) {
+        List<JoinColumn> joinColumns;
         if (attribute instanceof RelationAttribute) {
             if (!relationTableExist) {
                 if (attribute instanceof SingleRelationAttribute | attribute instanceof OneToMany) {
@@ -93,14 +95,14 @@ public class JoinColumnFinder {
         return joinColumns;
     }
 
-    public static JoinColumn findJoinColumn(String name, List<? extends JoinColumn> joinColumns) {
+    public static JoinColumn findJoinColumn(String name, List<JoinColumn> joinColumns) {
      return findJoinColumn(name, joinColumns, false);
     }
     
-    public static JoinColumn findMapKeyJoinColumn(String name, List<? extends JoinColumn> joinColumns) {
+    public static JoinColumn findMapKeyJoinColumn(String name, List<JoinColumn> joinColumns) {
      return findJoinColumn(name, joinColumns, true);
     }
-    private static JoinColumn findJoinColumn(String name, List<? extends JoinColumn> joinColumns, boolean mapKey) {
+    private static JoinColumn findJoinColumn(String name, List<JoinColumn> joinColumns, boolean mapKey) {
         JoinColumn joinColumn = null;
         boolean created = false;
         List<JoinColumn> joinColumnList = (List<JoinColumn>)joinColumns; //TODO remove casting
@@ -122,4 +124,29 @@ public class JoinColumnFinder {
         }
         return joinColumn;
     }
+
+    public static List<PrimaryKeyJoinColumn> findPrimaryKeyJoinColumns(Entity entity) {
+        return entity.getPrimaryKeyJoinColumn();
+    }
+    
+    public static PrimaryKeyJoinColumn findPrimaryKeyJoinColumn(String name, List<PrimaryKeyJoinColumn> joinColumns) {
+        PrimaryKeyJoinColumn joinColumn = null;
+        boolean created = false;
+        for (Iterator<PrimaryKeyJoinColumn> it = joinColumns.iterator(); it.hasNext();) {
+            PrimaryKeyJoinColumn column = it.next();
+            if (name.equals(column.getName())) {
+                joinColumn = column;
+                created = true;
+                break;
+            }
+        }
+
+        if (!created) {
+            joinColumn = new PrimaryKeyJoinColumn();
+            joinColumn.setImplicitName(name);
+            joinColumns.add(joinColumn);
+        }
+        return joinColumn;
+    }
+
 }

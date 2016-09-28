@@ -39,6 +39,7 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.M
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
@@ -48,7 +49,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
         this.addPropertyChangeListener("abstract", (input) -> setImage(getIcon()));
-
     }
 
     @Override
@@ -100,6 +100,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             set.put("BASIC_PROP", getInheritenceProperty(EntityWidget.this));
         }
         
+        set.put("BASIC_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
         set.put("UI_PROP", getEntityDisplayProperty(EntityWidget.this));
 
         set.put("QUERY", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));

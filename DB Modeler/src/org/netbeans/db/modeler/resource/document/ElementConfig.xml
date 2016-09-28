@@ -8,6 +8,7 @@
         <group id="EMBEDDABLE_JOINCOLUMN" name="Embeddable @JoinColumn"/>
         <group id="COLUMN" name="@Column"/>
         <group id="PARENT_JOINCOLUMN" name="Superclass @JoinColumn"/>
+        <group id="PK_JOIN_COLUMN" name="@PrimaryKeyJoinColumn"/>
         <group id="JOIN_COLUMN" name="@JoinColumn"/>
         <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn"/>
         <group id="FOREIGN_KEY" name="@ForeignKey"/>
@@ -183,6 +184,19 @@
                 </attribute>
                 <attribute id="updatable" groupId="BASIC_PROP" class="java.lang.Boolean" name="updatable">
                     <display-name>Updatable</display-name>
+                </attribute>
+                <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
+            </attributes>
+        </element>
+         <element id="PrimaryKeyJoinColumn" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn">
+            <attributes>
+                <attribute id="PrimaryKeyJoinColumn_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                    <display-name>Column Name</display-name>
+                </attribute>
+                <attribute id="PrimaryKeyJoinColumn_referencedname" groupId="BASIC_PROP" class="java.lang.String" name="referencedColumnName">
+                    <display-name>Referenced Column Name</display-name>
                 </attribute>
                 <attribute id="columnDefinition" groupId="BASIC_PROP" class="java.lang.String" name="columnDefinition">
                     <display-name>Column Definition</display-name>

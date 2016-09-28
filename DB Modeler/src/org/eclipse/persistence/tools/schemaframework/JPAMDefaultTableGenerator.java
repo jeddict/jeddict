@@ -28,7 +28,7 @@
  *       - 388564: Generated DDL does not match annotation
  ***************************************************************************** */
 package org.eclipse.persistence.tools.schemaframework;
-
+import org.netbeans.db.modeler.exception.DBValidationException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -84,6 +84,7 @@ import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Project;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.server.ServerSession;
+import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.jpa.modeler.db.accessor.DefaultClassSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
@@ -607,9 +608,9 @@ public class JPAMDefaultTableGenerator {
             intrinsicAttribute.clear();
         }
 
+        processAdditionalTablePkFields(intrinsicEntity, descriptor);
         intrinsicEntity.clear();
 
-        processAdditionalTablePkFields(descriptor);
     }
 
     /**
@@ -1156,7 +1157,7 @@ public class JPAMDefaultTableGenerator {
         return databaseMapping;
     }
 
-    protected void processAdditionalTablePkFields(DBRelationalDescriptor descriptor) {
+    protected void processAdditionalTablePkFields(LinkedList<Entity> intrinsicEntity, DBRelationalDescriptor descriptor) {
         // only if there are additional tables
         if (!descriptor.hasMultipleTables()) {
             return;
@@ -1178,7 +1179,7 @@ public class JPAMDefaultTableGenerator {
                     fkFields.add(srcFields.get(pkField));
                 }
                 //TODO : use isInherited instead of true value
-                addJoinColumnsFkConstraint(null, null, null, null, false, descriptor, fkFields, pkFields, descriptor.isCascadeOnDeleteSetOnDatabaseOnSecondaryTables());
+                addJoinColumnsFkConstraint(null, null, intrinsicEntity, null, false, descriptor, fkFields, pkFields, descriptor.isCascadeOnDeleteSetOnDatabaseOnSecondaryTables());
             }
         }
     }
@@ -1203,12 +1204,19 @@ public class JPAMDefaultTableGenerator {
             targetField = targetFields.get(i);
 
             if (descriptor != null && managedClass == null && managedAttribute == null) {
-                managedAttribute = (Attribute) getDatabaseMapping(descriptor, targetField).getProperty(Attribute.class);
-                intrinsicAttribute = new LinkedList<>();
-                intrinsicAttribute.add(managedAttribute);
-                managedClass = ((EntitySpecAccessor) descriptor.getAccessor()).getEntity();
-                intrinsicEntity = new LinkedList<>();
-                intrinsicEntity.add((Entity) managedAttribute.getJavaClass());
+                DatabaseMapping databaseMapping = getDatabaseMapping(descriptor, targetField);
+                if (databaseMapping != null) {
+                    managedAttribute = (Attribute) databaseMapping.getProperty(Attribute.class);
+                    intrinsicAttribute = new LinkedList<>();
+                    intrinsicAttribute.add(managedAttribute);
+                    managedClass = ((EntitySpecAccessor) descriptor.getAccessor()).getEntity();
+                    intrinsicEntity = new LinkedList<>();
+                    intrinsicEntity.add((Entity) managedAttribute.getJavaClass());
+                } else {
+                     DBValidationException exception = new DBValidationException(targetField.getName() + " column not found");
+                     exception.setJavaClass(intrinsicEntity.get(0));
+                     throw exception;
+                }
             }
 
             fkFieldNames.add(fkField.getNameDelimited(this.databasePlatform));

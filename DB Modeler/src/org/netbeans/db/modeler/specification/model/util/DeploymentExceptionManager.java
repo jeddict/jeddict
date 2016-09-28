@@ -160,6 +160,7 @@ public class DeploymentExceptionManager {
                             }
                         }   break;
                     case TABLE_NOT_PRESENT:
+                        //TODO fix for @PrimaryKeyJoinColumn on invalid referenceColumn
                         if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
                             Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
                             Matcher matcher = Pattern.compile("\\[(.+?)\\]").matcher(de.getMessage());

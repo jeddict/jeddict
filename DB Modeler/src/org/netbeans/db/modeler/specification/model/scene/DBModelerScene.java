@@ -36,7 +36,10 @@ import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.IJoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
+import org.netbeans.jpa.modeler.spec.validator.column.PrimaryKeyJoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
@@ -73,7 +76,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                             ((ReferenceFlowWidget) w).remove();
                         });
                     }
-                    
+
                     tableWidget.setLocked(false);
                 }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
@@ -165,8 +168,8 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public IColorScheme getColorScheme() {
-        EntityMappings entityMappings = (EntityMappings)this.getModelerFile().getParentFile().getDefinitionElement();
-         if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
+        EntityMappings entityMappings = (EntityMappings) this.getModelerFile().getParentFile().getDefinitionElement();
+        if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
         } else if (PFactory.getLightScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
             return PFactory.getColorScheme(PFactory.getLightScheme());
@@ -177,7 +180,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public void setColorScheme(Class<? extends IColorScheme> scheme) {
-        EntityMappings entityMappings = (EntityMappings)this.getModelerFile().getParentFile().getDefinitionElement();
+        EntityMappings entityMappings = (EntityMappings) this.getModelerFile().getParentFile().getDefinitionElement();
         entityMappings.setDbTheme(scheme.getSimpleName());
     }
 
@@ -203,12 +206,16 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                 this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
                         .filter(c -> c instanceof DBForeignKey).collect(toList())
                         .forEach((DBColumn column) -> {
-                            List<? extends JoinColumn> joinColumns;
-                            JoinColumn joinColumn;
+                            List<IJoinColumn> joinColumns;
+                            IJoinColumn joinColumn;
                             joinColumn = ((DBForeignKey) column).getJoinColumn();
                             joinColumns = ((DBForeignKey) column).getJoinColumns();
-                            if (joinColumn != null && JoinColumnValidator.isEmpty(joinColumn)) {
-                                joinColumns.remove(joinColumn);
+                            if (joinColumn != null) {
+                                if (joinColumn instanceof JoinColumn && JoinColumnValidator.isEmpty((JoinColumn) joinColumn)) {
+                                    joinColumns.remove(joinColumn);
+                                } else if (joinColumn instanceof PrimaryKeyJoinColumn && PrimaryKeyJoinColumnValidator.isEmpty((PrimaryKeyJoinColumn) joinColumn)) {
+                                    joinColumns.remove(joinColumn);
+                                }
                             }
                         });
             }
@@ -225,7 +232,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem openSQLEditor = new JMenuItem("View SQL (beta)",VIEW_SQL);
+        JMenuItem openSQLEditor = new JMenuItem("View SQL (beta)", VIEW_SQL);
         openSQLEditor.addActionListener((ActionEvent e) -> {
             SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
         });

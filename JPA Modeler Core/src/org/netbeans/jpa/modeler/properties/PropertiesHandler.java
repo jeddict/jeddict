@@ -29,6 +29,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.apache.velocity.util.StringUtils;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.InheritenceStateType;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
@@ -55,6 +56,7 @@ import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPan
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
+import org.netbeans.jpa.modeler.properties.pkjoincolumn.PrimaryKeyJoinColumnPanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
@@ -75,6 +77,7 @@ import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
 import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.NamedStoredProcedureQuery;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
@@ -485,6 +488,72 @@ public class PropertiesHandler {
 
         });
 
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+    
+    public static PropertySupport getPrimaryKeyJoinColumnsProperty(String id, String name, String desc, EntityWidget entityWidget, Entity entity) {
+        JPAModelerScene modelerScene = entityWidget.getModelerScene();
+        final List<? extends PrimaryKeyJoinColumn> primaryKeyJoinColumnsSpec = entity.getPrimaryKeyJoinColumn();
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        attributeEntity.setCountDisplay(new String[]{"No PrimaryKeyJoinColumns exist", "One PrimaryKeyJoinColumn exist", "PrimaryKeyJoinColumns exist"});
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Column Name", false, String.class));
+        columns.add(new Column("Referenced Column Name", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new PrimaryKeyJoinColumnPanel(entity));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = primaryKeyJoinColumnsSpec.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<? extends PrimaryKeyJoinColumn> primaryKeyJoinColumns = primaryKeyJoinColumnsSpec;
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<? extends PrimaryKeyJoinColumn> itr = primaryKeyJoinColumns.iterator();
+                while (itr.hasNext()) {
+                    PrimaryKeyJoinColumn primaryKeyJoinColumn = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = primaryKeyJoinColumn;
+                    row[1] = primaryKeyJoinColumn.getName();
+                    row[2] = primaryKeyJoinColumn.getReferencedColumnName();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                primaryKeyJoinColumnsSpec.clear();
+                data.stream().forEach((row) -> {
+                    ((List<PrimaryKeyJoinColumn>)primaryKeyJoinColumnsSpec).add((PrimaryKeyJoinColumn) row[0]);
+                });
+                this.data = data;
+            }
+
+        });
+
+        entityWidget.addPropertyVisibilityHandler("PrimaryKeyJoinColumns", (PropertyVisibilityHandler<String>) () -> {
+            InheritenceStateType inheritenceState = entityWidget.getInheritenceState();
+            return inheritenceState == InheritenceStateType.BRANCH || inheritenceState == InheritenceStateType.LEAF ;
+        });
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -1043,52 +1112,31 @@ public class PropertiesHandler {
 
             @Override
             public String getDisplay() {
-
-                GeneralizationFlowWidget outgoingGeneralizationFlowWidget = entityWidget.getOutgoingGeneralizationFlowWidget();
-                List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = entityWidget.getIncomingGeneralizationFlowWidgets();
-
-                if (outgoingGeneralizationFlowWidget != null && !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
-                    outgoingGeneralizationFlowWidget = null;
+                InheritenceStateType inheritenceState = entityWidget.getInheritenceState();
+                if (null != inheritenceState) switch (inheritenceState) {
+                    case LEAF:
+                        EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
+                        InheritenceHandler superClassSpec = (InheritenceHandler) superEntityWidget.getBaseElementSpec();
+                        if (superClassSpec.getInheritance() != null && superClassSpec.getInheritance().getStrategy() != null) {
+                            return superClassSpec.getInheritance().getStrategy().toString();
+                        } else {
+                            return InheritanceType.SINGLE_TABLE.toString();
+                        }
+                    case ROOT:
+                    case BRANCH:
+                        if (classSpec.getInheritance() != null && classSpec.getInheritance().getStrategy() != null) {
+                            return classSpec.getInheritance().getStrategy().toString();
+                        } else {
+                            return InheritanceType.SINGLE_TABLE.toString();
+                        }
                 }
-                if (outgoingGeneralizationFlowWidget != null && incomingGeneralizationFlowWidgets.isEmpty()) {
-                    EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
-                    InheritenceHandler superClassSpec = (InheritenceHandler) superEntityWidget.getBaseElementSpec();
-                    if (superClassSpec.getInheritance() != null && superClassSpec.getInheritance().getStrategy() != null) {
-                        return superClassSpec.getInheritance().getStrategy().toString();
-                    } else {
-                        return InheritanceType.SINGLE_TABLE.toString();
-                    }
-                } else if (outgoingGeneralizationFlowWidget == null && !incomingGeneralizationFlowWidgets.isEmpty()) {
-//                    type = "ROOT";
-                    if (classSpec.getInheritance() != null && classSpec.getInheritance().getStrategy() != null) {
-                        return classSpec.getInheritance().getStrategy().toString();
-                    } else {
-                        return InheritanceType.SINGLE_TABLE.toString();
-                    }
-                } else if (outgoingGeneralizationFlowWidget != null && !incomingGeneralizationFlowWidgets.isEmpty()) {
-//                    type = "BRANCH";
-                    if (classSpec.getInheritance() != null && classSpec.getInheritance().getStrategy() != null) {
-                        return classSpec.getInheritance().getStrategy().toString();
-                    } else {
-                        return InheritanceType.SINGLE_TABLE.toString();
-                    }
-                } else {
-                    return "";
-                }
+                return EMPTY;
             }
 
         });
         
         entityWidget.addPropertyVisibilityHandler("inheritence", (PropertyVisibilityHandler<String>) () -> {
-            GeneralizationFlowWidget outgoingGeneralizationFlowWidget1 = entityWidget.getOutgoingGeneralizationFlowWidget();
-            List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets1 = entityWidget.getIncomingGeneralizationFlowWidgets();
-            if (outgoingGeneralizationFlowWidget1 != null && !(outgoingGeneralizationFlowWidget1.getSuperclassWidget() instanceof EntityWidget)) {
-                outgoingGeneralizationFlowWidget1 = null;
-            }
-            if (outgoingGeneralizationFlowWidget1 != null || !incomingGeneralizationFlowWidgets1.isEmpty()) {
-                return true;
-            }
-            return false;
+            return entityWidget.getInheritenceState() != InheritenceStateType.SINGLETON;
         });
         return new EmbeddedPropertySupport(entityWidget.getModelerScene().getModelerFile(), entity);
     }

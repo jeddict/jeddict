@@ -23,10 +23,10 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
  *
  * @author Gaurav Gupta
  */
-public class DBMapKeyJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
+public class DBMapKeyJoinColumn extends DBColumn<Attribute> implements DBForeignKey<JoinColumn> {
 
     private final JoinColumn joinColumn;
-    private final List<? extends JoinColumn> joinColumns;
+    private final List<JoinColumn> joinColumns;
 
     public DBMapKeyJoinColumn(String name, Attribute attribute) {
         super(name, attribute);
@@ -41,7 +41,7 @@ public class DBMapKeyJoinColumn extends DBColumn<Attribute> implements DBForeign
         return joinColumn;
     }
 
-    public List<? extends JoinColumn> getJoinColumns() {
+    public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 

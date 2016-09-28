@@ -178,6 +178,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             loadModelerFileInternal(file);
         } catch (DBConnectionNotFound | ProcessInterruptedException ie) {
             DeploymentExceptionManager.handleException(file, ie);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            DeploymentExceptionManager.handleException(file, ex);
         }
     }
 

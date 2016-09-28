@@ -147,7 +147,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
                 column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
             }
         } else if (foriegnKey && inverse && (intrinsicAttribute == null || intrinsicAttribute.isEmpty())) {//intrinsicAttribute will be null in case of JoinTableStrategy primary key mapping to children
-            column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
+            column = new DBPrimaryKeyJoinColumn(name, intrinsicClass, (Id) managedAttribute);
         } else if (intrinsicAttribute.size() == 1) {
             if (intrinsicAttribute.peek() instanceof RelationAttribute) {
                 if(mapKey){//e.g Map<Basic,Basic>
@@ -168,7 +168,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
                     column = new DBColumn(name, managedAttribute);
                 }
             } else if (foriegnKey && inverse && intrinsicAttribute.peek() instanceof Id) {//PrimaryKeyJoinColumn
-                column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
+                column = new DBPrimaryKeyJoinColumn(name, intrinsicClass, (Id) managedAttribute);
             } else {
                 column = new DBColumn(name, managedAttribute);
             }

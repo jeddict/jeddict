@@ -26,7 +26,7 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.IJoinColumn;
 
 /**
  *
@@ -50,7 +50,7 @@ public class ColumnUtil {
                 Optional<ReferenceFlowWidget> optionalReferenceFlowWidget = primaryKeyWidget.getReferenceFlowWidget().stream().filter(r -> r.getForeignKeyWidget().getTableWidget() == targetTableWidget).findFirst();
                 if (optionalReferenceFlowWidget.isPresent()) {
                     ForeignKeyWidget foreignKeyWidget = optionalReferenceFlowWidget.get().getForeignKeyWidget();
-                    JoinColumn joinColumn;
+                    IJoinColumn joinColumn;
                     if (foreignKeyWidget instanceof ParentAssociationColumnWidget) {
                         joinColumn = ((DBParentAssociationColumn) foreignKeyWidget.getBaseElementSpec()).getJoinColumnOverride();
                     } else {
