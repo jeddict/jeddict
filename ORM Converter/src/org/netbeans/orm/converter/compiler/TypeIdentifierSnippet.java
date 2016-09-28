@@ -128,6 +128,7 @@ public class TypeIdentifierSnippet implements Snippet {
                 return;
             } else {
                 ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
+                classHelper.setPackageName(relationDef.getTargetEntityPackage());
                 type = classHelper.getClassName();
                 importSnippets = Collections.singletonList(classHelper.getFQClassName());
                 return;
