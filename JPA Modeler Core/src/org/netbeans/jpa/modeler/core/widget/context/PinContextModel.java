@@ -243,11 +243,11 @@ public class PinContextModel {
                 if (widget instanceof JavaClassWidget) {
                     JavaClassWidget classWidget = (JavaClassWidget) widget;
                     if (modelerScene.getHighlightedWidget() == classWidget) {
-                        classWidget.hideInheritencePath();
+                        classWidget.hideInheritancePath();
                         modelerScene.setHighlightedWidget(null);
                     } else {
                         PinContextModel.manageHightlight(modelerScene, widget);
-                        classWidget.showInheritencePath();
+                        classWidget.showInheritancePath();
                     }
                 } else if (widget instanceof SingleValueEmbeddedAttributeWidget) {
                     SingleValueEmbeddedAttributeWidget embeddedAttributeWidget = (SingleValueEmbeddedAttributeWidget) widget;
@@ -268,7 +268,7 @@ public class PinContextModel {
     private static void manageHightlight(JPAModelerScene modelerScene, IWidget widget) {
         if (modelerScene.getHighlightedWidget() != null) {
             if (modelerScene.getHighlightedWidget() instanceof JavaClassWidget) {
-                ((JavaClassWidget) modelerScene.getHighlightedWidget()).hideInheritencePath();
+                ((JavaClassWidget) modelerScene.getHighlightedWidget()).hideInheritancePath();
             } else if (modelerScene.getHighlightedWidget() instanceof EmbeddedAttributeWidget) {
                 ((EmbeddedAttributeWidget) modelerScene.getHighlightedWidget()).hideCompositionPath();
             }

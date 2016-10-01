@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.jpa.JPAConstants.ORDER_BY;
+import static org.netbeans.jcode.jpa.JPAConstants.ORDER_BY_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class OrderBySnippet implements Snippet {
@@ -49,12 +51,12 @@ public class OrderBySnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
 
         if (orderList.isEmpty()) {
-            return "@OrderBy";
+            return "@" + ORDER_BY;
         }
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@OrderBy(");
+        builder.append("@").append(ORDER_BY).append("(");
 
         for (String order : orderList) {
             builder.append(ORMConverterUtil.QUOTE);
@@ -69,6 +71,6 @@ public class OrderBySnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.OrderBy");
+        return Collections.singletonList(ORDER_BY_FQN);
     }
 }

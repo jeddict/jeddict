@@ -21,24 +21,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JMenuItem;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.BRANCH;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.LEAF;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.BRANCH;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.LEAF;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEntityDisplayProperty;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritenceProperty;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MICRO_DB;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
@@ -95,8 +95,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         Entity entity = this.getBaseElementSpec();
         set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
 
-        if (entity instanceof InheritenceHandler) {
-            set.put("BASIC_PROP", getInheritenceProperty(EntityWidget.this));
+        if (entity instanceof InheritanceHandler) {
+            set.put("BASIC_PROP", getInheritanceProperty(EntityWidget.this));
         }
         
         set.put("BASIC_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
@@ -111,14 +111,14 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
 
     @Override
-    public InheritenceStateType getInheritenceState() {
+    public InheritanceStateType getInheritanceState() {
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = this.getOutgoingGeneralizationFlowWidget();
         List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = this.getIncomingGeneralizationFlowWidgets();
         if (outgoingGeneralizationFlowWidget != null && outgoingGeneralizationFlowWidget.getSuperclassWidget() != null &&
                 !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
             outgoingGeneralizationFlowWidget = null;
         }
-        InheritenceStateType type;
+        InheritanceStateType type;
         if (outgoingGeneralizationFlowWidget == null && incomingGeneralizationFlowWidgets.isEmpty()) {
             type = SINGLETON;
         } else if (outgoingGeneralizationFlowWidget != null && incomingGeneralizationFlowWidgets.isEmpty()) {
@@ -128,7 +128,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         } else if (outgoingGeneralizationFlowWidget != null && !incomingGeneralizationFlowWidgets.isEmpty()) {
             type = BRANCH;
         } else {
-            throw new IllegalStateException("Illegal Inheritence State Exception Entity : " + this.getName());
+            throw new IllegalStateException("Illegal Inheritance State Exception Entity : " + this.getName());
         }
         return type;
     }
@@ -139,8 +139,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     }
 
     public void scanPrimaryKeyError() {
-        InheritenceStateType inheritenceState = this.getInheritenceState();
-        if (SINGLETON == inheritenceState || ROOT == inheritenceState) {
+        InheritanceStateType inheritanceState = this.getInheritanceState();
+        if (SINGLETON == inheritanceState || ROOT == inheritanceState) {
             // Issue Fix #6041 Start
             boolean relationKey = this.getOneToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey()) ? true
                     : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());

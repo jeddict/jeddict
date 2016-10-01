@@ -19,8 +19,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jcode.core.util.JavaUtil;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -92,8 +92,8 @@ public class AttributeValidator {
         }
     }
 
-    public static void scanInheritenceError(EntityWidget entityWidget) {
-        if (entityWidget.getInheritenceState() == SINGLETON || entityWidget.getInheritenceState() == ROOT) {
+    public static void scanInheritanceError(EntityWidget entityWidget) {
+        if (entityWidget.getInheritanceState() == SINGLETON || entityWidget.getInheritanceState() == ROOT) {
             for (IdAttributeWidget attributeWidget : entityWidget.getIdAttributeWidgets()) {
                 attributeWidget.getErrorHandler().clearSignal(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             }

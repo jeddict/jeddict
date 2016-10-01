@@ -27,6 +27,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
@@ -34,6 +44,7 @@ import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -256,18 +267,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public String getEntityString() {
 
         if (mappedSuperClass) {
-            return "@MappedSuperclass";
+            return "@" + MAPPED_SUPERCLASS;
         }
 
         if (embeddable) {
-            return "@Embeddable";
+            return "@" + EMBEDDABLE;
         }
 
         if (entity) {
             if (entityName == null || entityName.isEmpty()) {
-                return "@Entity";
+                return "@" + ENTITY;
             } else {
-                return "@Entity(name=\"" + entityName + "\")";
+                return "@" + ENTITY + "(name=\"" + entityName + "\")";
             }
 
         }
@@ -361,11 +372,11 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         Collection<String> importSnippets = new TreeSet<>();
 
         if (mappedSuperClass) {
-            importSnippets.add("javax.persistence.MappedSuperclass");
+            importSnippets.add(MAPPED_SUPERCLASS_FQN);
         } else if (embeddable) {
-            importSnippets.add("javax.persistence.Embeddable");
+            importSnippets.add(EMBEDDABLE_FQN);
         } else if (entity) {
-            importSnippets.add("javax.persistence.Entity");
+            importSnippets.add(ENTITY_FQN);
         }
 
         if (superClassHelper.getPackageName() != null) {
@@ -443,17 +454,17 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         }
 
         if (generateId) {
-            importSnippets.add("javax.persistence.Id");
-            importSnippets.add("javax.persistence.GenerateType");
-            importSnippets.add("javax.persistence.GenerateValue");
+            importSnippets.add(ID_FQN);
+            importSnippets.add(GENERATION_TYPE_FQN);
+            importSnippets.add(GENERATED_VALUE_FQN);
         }
 
         if (excludeDefaultListener) {
-            importSnippets.add("javax.persistence.ExcludeDefaultListeners");
+            importSnippets.add(EXCLUDE_DEFAULT_LISTENERS_FQN);
         }
 
         if (excludeSuperClassListener) {
-            importSnippets.add("javax.persistence.ExcludeSuperclassListeners");
+            importSnippets.add(EXCLUDE_SUPERCLASS_LISTENERS_FQN);
         }
 
         for (AnnotationSnippet snippet : this.getAnnotation()) {

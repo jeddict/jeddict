@@ -27,8 +27,8 @@ import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
@@ -219,13 +219,13 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     public CompositePKProperty isCompositePKPropertyAllow() {
         if (this.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) this.getBaseElementSpec();
-            InheritenceStateType inheritenceState = this.getInheritenceState();
+            InheritanceStateType inheritanceState = this.getInheritanceState();
             CompositePKProperty property = CompositePKProperty.NONE;
             List<SingleRelationAttributeWidget> derivedRelationAttributes = getDerivedRelationAttributeWidgets();
 
             boolean visible = false;
             if (this instanceof EntityWidget) {
-                visible = getIdAttributeWidgets().size() + derivedRelationAttributes.size() > 1 && (inheritenceState == ROOT || inheritenceState == SINGLETON);
+                visible = getIdAttributeWidgets().size() + derivedRelationAttributes.size() > 1 && (inheritanceState == ROOT || inheritanceState == SINGLETON);
             } else if (this instanceof MappedSuperclassWidget) {
                 visible = getIdAttributeWidgets().size() + derivedRelationAttributes.size() > 1;
             }
@@ -236,7 +236,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 //                Case (a): The dependent entity uses IdClass:
 //                CompositePKProperty.FIXED_CLASS
                 if (derivedRelationAttributes.size() == 1) {//check for parent entity pk count
-                    if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && (inheritenceState == ROOT || inheritenceState == SINGLETON))) {
+                    if ((this instanceof MappedSuperclassWidget) || (this instanceof EntityWidget && (inheritanceState == ROOT || inheritanceState == SINGLETON))) {
                         RelationAttributeWidget relationAttributeWidget = getDerivedRelationAttributeWidgets().get(0);
                         Entity targetEntitySpec = ((RelationAttribute) relationAttributeWidget.getBaseElementSpec()).getConnectedEntity();
                         EntityWidget targetEntityWidget = (EntityWidget) getModelerScene().getBaseElement(targetEntitySpec.getId());

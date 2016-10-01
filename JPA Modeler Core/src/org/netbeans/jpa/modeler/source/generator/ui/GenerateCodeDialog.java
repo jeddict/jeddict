@@ -69,6 +69,8 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.NbPreferences;
+import static org.openide.awt.Mnemonics.setLocalizedText;
+import static org.openide.util.NbBundle.getMessage;
 
 /**
  *

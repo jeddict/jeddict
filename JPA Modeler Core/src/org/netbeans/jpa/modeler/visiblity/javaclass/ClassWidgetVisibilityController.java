@@ -197,7 +197,7 @@ public class ClassWidgetVisibilityController extends GenericDialog {
         }
     }
 
-    private void manageInheritenceVisibility() {
+    private void manageInheritanceVisibility() {
         for (JavaClass javaClass : entityMappings.getJavaClass()) {
             isChildVisibile(entityMappings, javaClass);
         }
@@ -356,7 +356,7 @@ public class ClassWidgetVisibilityController extends GenericDialog {
                 classItem.getValue().setVisibile(false);
             }
             manageClassVisibility();
-            manageInheritenceVisibility();
+            manageInheritanceVisibility();
         }
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed

@@ -17,6 +17,7 @@ package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_METAMODEL_PACKAGE;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
@@ -41,20 +42,9 @@ public class MetamodelVariableDefSnippet extends VariableDefSnippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        Collection<String> importSnippets = new ArrayList<String>();
+        Collection<String> importSnippets = new ArrayList<>();
         importSnippets.addAll(super.getImportSnippets());
-        if (attributeType == MetamodelAttributeType.SINGULAR) {
-            importSnippets.add("javax.persistence.metamodel.SingularAttribute");
-        } else if (attributeType == MetamodelAttributeType.COLLECTION) {
-            importSnippets.add("javax.persistence.metamodel.CollectionAttribute");
-        } else if (attributeType == MetamodelAttributeType.SET) {
-            importSnippets.add("javax.persistence.metamodel.SetAttribute");
-        } else if (attributeType == MetamodelAttributeType.LIST) {
-            importSnippets.add("javax.persistence.metamodel.ListAttribute");
-        } else if (attributeType == MetamodelAttributeType.MAP) {
-            importSnippets.add("javax.persistence.metamodel.MapAttribute");
-        }
+        importSnippets.add(PERSISTENCE_METAMODEL_PACKAGE + attributeType.getType());
         return importSnippets;
     }
 

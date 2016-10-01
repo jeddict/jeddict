@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.BASIC;
+import static org.netbeans.jcode.jpa.JPAConstants.BASIC_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class BasicSnippet implements Snippet {
@@ -45,23 +48,23 @@ public class BasicSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         if (fetchType == null) {
-            return "@Basic";
+            return "@" + BASIC;
         }
 
-        return "@Basic(fetch=FetchType." + fetchType + ORMConverterUtil.CLOSE_PARANTHESES;
+        return "@"+ BASIC + "(fetch=FetchType." + fetchType + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (fetchType == null) {
-            return Collections.singletonList("javax.persistence.Basic");
+            return Collections.singletonList(BASIC_FQN);
         }
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.Basic");
-        importSnippets.add("javax.persistence.FetchType");
+        importSnippets.add(BASIC_FQN);
+        importSnippets.add(FETCH_TYPE_FQN);
 
         return importSnippets;
     }

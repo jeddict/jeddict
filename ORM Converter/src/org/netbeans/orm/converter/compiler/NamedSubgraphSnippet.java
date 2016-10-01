@@ -18,6 +18,8 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_SUBGRAPH;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_SUBGRAPH_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -81,7 +83,7 @@ public class NamedSubgraphSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedSubgraph(name=\"");
+        builder.append("@").append(NAMED_SUBGRAPH).append("(name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
@@ -108,9 +110,9 @@ public class NamedSubgraphSnippet implements Snippet {
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedSubgraph");
+        importSnippets.add(NAMED_SUBGRAPH_FQN);
         if (classHelper.getPackageName() != null) {
             importSnippets.add(classHelper.getFQClassName());
         }

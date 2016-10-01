@@ -56,9 +56,9 @@
                 </attribute>  
             </attributes>
         </element>
-        <element id="JavaClass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.JavaClass">
+        <element id="JavaClass" class="org.netbeans.jpa.modeler.spec.extend.JavaClass">
             <attributes>
-                <attribute id="package" groupId="PACKAGE" class="java.lang.String" name="package">
+                <attribute id="package" groupId="BASIC_PROP" class="java.lang.String" name="package">
                     <display-name>Sub-Package</display-name>
                 </attribute>
             </attributes>

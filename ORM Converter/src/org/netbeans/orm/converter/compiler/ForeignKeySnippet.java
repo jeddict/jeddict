@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.jpa.JPAConstants.CONSTRAINT_MODE;
+import static org.netbeans.jcode.jpa.JPAConstants.CONSTRAINT_MODE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.FOREIGN_KEY;
+import static org.netbeans.jcode.jpa.JPAConstants.FOREIGN_KEY_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -33,7 +37,7 @@ public class ForeignKeySnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@ForeignKey(");
+        builder.append("@").append(FOREIGN_KEY).append("(");
         if (StringUtils.isNotBlank(name)) {
             builder.append("name=\"");
             builder.append(name);
@@ -42,11 +46,11 @@ public class ForeignKeySnippet implements Snippet {
         }
 
         if (StringUtils.isNotBlank(constraintMode)) {
-            builder.append("value=ConstraintMode.");
+            builder.append("value=").append(CONSTRAINT_MODE).append(".");
             builder.append(constraintMode);
             builder.append(ORMConverterUtil.COMMA);
         } else if (GeneratorUtil.isGenerateDefaultValue()) {
-            builder.append("value=ConstraintMode.");
+            builder.append("value=").append(CONSTRAINT_MODE).append(".");
             builder.append("PROVIDER_DEFAULT");
             builder.append(ORMConverterUtil.COMMA);
         }
@@ -63,9 +67,9 @@ public class ForeignKeySnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
         if (StringUtils.isNotBlank(constraintMode) || GeneratorUtil.isGenerateDefaultValue()) {
-            importSnippets.add("javax.persistence.ConstraintMode");
+            importSnippets.add(CONSTRAINT_MODE_FQN);
         }
-        importSnippets.add("javax.persistence.ForeignKey");
+        importSnippets.add(FOREIGN_KEY_FQN);
         return importSnippets;
     }
 

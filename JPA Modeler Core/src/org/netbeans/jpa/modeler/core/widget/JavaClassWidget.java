@@ -50,6 +50,69 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
@@ -279,10 +342,10 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         incomingGeneralizationFlowWidgets.remove(generalizationFlowWidget);
     }
 
-    public abstract InheritenceStateType getInheritenceState();
+    public abstract InheritanceStateType getInheritanceState();
 
 ////    private static final Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25) ,2, new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25));
-    public void showInheritencePath() {
+    public void showInheritancePath() {
         IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         colorScheme.highlightUI(this);
         this.setHighlightStatus(true);
@@ -291,18 +354,18 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
             this.getOutgoingGeneralizationFlowWidget().setHighlightStatus(true);
             colorScheme.highlightUI(this.getOutgoingGeneralizationFlowWidget());
 //            this.getOutgoingGeneralizationFlowWidget().setForeground(Color.red);
-            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().showInheritencePath();
+            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().showInheritancePath();
         }
     }
 
-    public void hideInheritencePath() {
+    public void hideInheritancePath() {
         IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
         if (this.getOutgoingGeneralizationFlowWidget() != null) {
             this.getOutgoingGeneralizationFlowWidget().setHighlightStatus(false);
             colorScheme.updateUI(this.getOutgoingGeneralizationFlowWidget(), this.getOutgoingGeneralizationFlowWidget().getState(), this.getOutgoingGeneralizationFlowWidget().getState());
-            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().hideInheritencePath();
+            this.getOutgoingGeneralizationFlowWidget().getSuperclassWidget().hideInheritancePath();
         }
     }
 

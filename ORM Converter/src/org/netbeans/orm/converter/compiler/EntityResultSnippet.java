@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY_RESULT;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY_RESULT_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -81,7 +83,7 @@ public class EntityResultSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@EntityResult(entityClass=");
+        builder.append("@").append(ENTITY_RESULT).append("(entityClass=");
         builder.append(getEntityClass());
         builder.append(ORMConverterUtil.COMMA);
 
@@ -113,15 +115,14 @@ public class EntityResultSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (fieldResults.isEmpty()) {
-            return Collections.singletonList("javax.persistence.EntityResult");
-        }
-
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.EntityResult");
-        importSnippets.addAll(fieldResults.get(0).getImportSnippets());
+        importSnippets.add(ENTITY_RESULT_FQN);
+        if (!fieldResults.isEmpty()) {
+            for (FieldResultSnippet fieldResult : fieldResults) {
+                importSnippets.addAll(fieldResult.getImportSnippets());
+            }
+        }
         importSnippets.add(classHelper.getFQClassName());
 
         return importSnippets;

@@ -52,7 +52,7 @@ import org.openide.filesystems.FileUtil;
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
 
-    private EntityMappings parsedEntityMappings;//Required Generation based on inheritence means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
+    private EntityMappings parsedEntityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
     private String packageName;
     private File destDir;
     private ITaskSupervisor task;

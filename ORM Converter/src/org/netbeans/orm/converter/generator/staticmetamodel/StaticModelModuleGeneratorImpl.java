@@ -41,7 +41,7 @@ import org.openide.filesystems.FileUtil;
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
 
-    private Set<StaticMetamodelGenerator> staticMetamodelClass;//Required Generation based on inheritence means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
+    private Set<StaticMetamodelGenerator> staticMetamodelClass;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
     private org.netbeans.jcode.task.ITaskSupervisor task;
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
     private String packageName;

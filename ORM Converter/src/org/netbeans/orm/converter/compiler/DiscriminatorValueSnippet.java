@@ -17,6 +17,8 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
+import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_VALUE_FQN;
+import static org.netbeans.modules.j2ee.persistence.dd.orm.model_1_0.Entity.DISCRIMINATOR_VALUE;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class DiscriminatorValueSnippet implements Snippet {
@@ -44,12 +46,12 @@ public class DiscriminatorValueSnippet implements Snippet {
             throw new InvalidDataException("Value cannot be null");
         }
 
-        return "@DiscriminatorValue(\"" + value
+        return "@"+DISCRIMINATOR_VALUE+"(\"" + value
                 + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.DiscriminatorValue");
+        return Collections.singletonList(DISCRIMINATOR_VALUE_FQN);
     }
 }

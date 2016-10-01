@@ -61,7 +61,7 @@ public class JoinColumnsSnippet implements Snippet {
             return builder.toString();
         }
 
-        if (joinColumns.size() == 1) {
+        if (joinColumns.size() == 1 && foreignKey==null) {
             return joinColumns.get(0).getSnippet();
         }
 
@@ -97,6 +97,13 @@ public class JoinColumnsSnippet implements Snippet {
             }
         } else if (joinColumns.size() == 1) {
             importSnippets.addAll(joinColumns.get(0).getImportSnippets());
+            if(foreignKey != null){
+                if (mapKey) {
+                    importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
+                } else {
+                    importSnippets.add(JOIN_COLUMNS_FQN);
+                }
+            }
         } else {
             for (JoinColumnSnippet jc : joinColumns) {
                 importSnippets.addAll(jc.getImportSnippets());

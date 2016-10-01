@@ -17,6 +17,8 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
+import static org.netbeans.jcode.jpa.JPAConstants.SEQUENCE_GENERATOR;
+import static org.netbeans.jcode.jpa.JPAConstants.SEQUENCE_GENERATOR_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -71,7 +73,7 @@ public class SequenceGeneratorSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@SequenceGenerator(name=\"");
+        builder.append("@").append(SEQUENCE_GENERATOR).append("(name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
@@ -121,7 +123,7 @@ public class SequenceGeneratorSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singleton("javax.persistence.SequenceGenerator");
+        return Collections.singleton(SEQUENCE_GENERATOR_FQN);
     }
 
     /**

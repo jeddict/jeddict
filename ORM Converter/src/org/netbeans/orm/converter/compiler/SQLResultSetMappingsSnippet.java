@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
+import static org.netbeans.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPINGS;
+import static org.netbeans.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPINGS_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class SQLResultSetMappingsSnippet implements Snippet {
@@ -51,7 +53,7 @@ public class SQLResultSetMappingsSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         if (sqlResultSetMappings.isEmpty()) {
-            throw new InvalidDataException("Missing SQLResultSetMappings");
+            throw new InvalidDataException("Missing " + SQL_RESULTSET_MAPPINGS);
         }
 
         if (sqlResultSetMappings.size() == 1) {
@@ -60,7 +62,7 @@ public class SQLResultSetMappingsSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@SqlResultSetMappings({");
+        builder.append("@").append(SQL_RESULTSET_MAPPINGS).append("({");
 
         for (SQLResultSetMappingSnippet sqlResultSetMapping : sqlResultSetMappings) {
             builder.append(sqlResultSetMapping.getSnippet());
@@ -82,7 +84,7 @@ public class SQLResultSetMappingsSnippet implements Snippet {
         //Sort and eliminate duplicates
         Collection<String> importSnippets = new TreeSet<>();
 
-        importSnippets.add("javax.persistence.SqlResultSetMappings");
+        importSnippets.add(SQL_RESULTSET_MAPPINGS_FQN);
         for (SQLResultSetMappingSnippet sqlResultSetMapping : sqlResultSetMappings) {
             importSnippets.addAll(sqlResultSetMapping.getImportSnippets());
         }

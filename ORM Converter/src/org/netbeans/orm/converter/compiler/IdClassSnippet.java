@@ -18,6 +18,8 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_CLASS;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_CLASS_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -43,14 +45,14 @@ public class IdClassSnippet implements Snippet {
             throw new InvalidDataException("value is a required");
         }
 
-        return "@IdClass(" + getValue() + ORMConverterUtil.CLOSE_PARANTHESES;
+        return "@"+ID_CLASS+"(" + getValue() + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.IdClass");
+        importSnippets.add(ID_CLASS_FQN);
         if (classHelper.getFQClassName() != null) {
             importSnippets.add(classHelper.getFQClassName());
         }

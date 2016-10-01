@@ -21,8 +21,8 @@ import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
@@ -124,7 +124,7 @@ public class NodeContextModel {
 
         ContextPaletteButtonModel[] addAttributeSubModelList = null;
         if (nodeWidget instanceof EntityWidget) {
-            if (((EntityWidget) nodeWidget).getInheritenceState() == ROOT || ((EntityWidget) nodeWidget).getInheritenceState() == SINGLETON) {
+            if (((EntityWidget) nodeWidget).getInheritanceState() == ROOT || ((EntityWidget) nodeWidget).getInheritanceState() == SINGLETON) {
                 addAttributeSubModelList = new ContextPaletteButtonModel[]{addIdAttributeModel, addBasicAttributeModel, addBasicCollectionAttributeModel, addTransientAttributeModel, addVersionAttributeModel};
             } else {
                 addAttributeSubModelList = new ContextPaletteButtonModel[]{addBasicAttributeModel, addBasicCollectionAttributeModel, addTransientAttributeModel, addVersionAttributeModel};
@@ -365,7 +365,7 @@ public class NodeContextModel {
 //
 ////                        modelerScene.getMainLayer().setVisible(true);
 ////                        modelerScene.getConnectionLayer().setVisible(true);
-//                        entityWidget.hideInheritencePath();
+//                        entityWidget.hideInheritancePath();
 //                        entityWidget.setSelectedView(false);
 //                    } else {
 ////                        for (IBaseElementWidget baseElementWidget : entityWidget.getModelerScene().getBaseElements()) {
@@ -379,7 +379,7 @@ public class NodeContextModel {
 ////                        sceneLayout.invokeLayout();
 ////                        modelerScene.getMainLayer().setVisible(false);
 ////                        modelerScene.getConnectionLayer().setVisible(false);
-//                        entityWidget.showInheritencePath();
+//                        entityWidget.showInheritancePath();
 //                        entityWidget.setSelectedView(true);
 //                    }
 //

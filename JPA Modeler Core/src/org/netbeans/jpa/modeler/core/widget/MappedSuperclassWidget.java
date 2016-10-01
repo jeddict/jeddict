@@ -50,8 +50,8 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
     }
 
     @Override
-    public InheritenceStateType getInheritenceState() {
-        return InheritenceStateType.NONE;
+    public InheritanceStateType getInheritanceState() {
+        return InheritanceStateType.NONE;
     }
     
     @Override

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY_LISTENERS;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY_LISTENERS_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class EntityListenersSnippet implements Snippet {
@@ -33,7 +35,7 @@ public class EntityListenersSnippet implements Snippet {
         }
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("@EntityListeners({");
+        stringBuilder.append("@").append(ENTITY_LISTENERS).append("({");
 
         for (EntityListenerSnippet entityListener : entityListeners) {
             stringBuilder.append(entityListener.getSnippet());
@@ -53,7 +55,7 @@ public class EntityListenersSnippet implements Snippet {
 
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.EntityListeners");
+        importSnippets.add(ENTITY_LISTENERS_FQN);
 
         for (EntityListenerSnippet entityListener : entityListeners) {
             importSnippets.addAll(entityListener.getImportSnippets());

@@ -22,6 +22,16 @@ import java.util.List;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jcode.core.util.StringHelper;
+import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.LOB_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.TRANSIENT_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.VERSION_FQN;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
@@ -31,6 +41,7 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -250,10 +261,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getMapKeyString() {
 
         if (mapKey == null) {
-            return "@MapKey";
+            return "@" + MAP_KEY;
         }
 
-        return "@MapKey(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
+        return "@"+ MAP_KEY + "(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     public TypeIdentifierSnippet getTypeIdentifier() {
@@ -330,39 +341,39 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
 
         if (mapKey != null) {
-            importSnippets.add("javax.persistence.MapKey");
+            importSnippets.add(MAP_KEY_FQN);
         }
 
         if (autoGenerate) {
-            importSnippets.add("javax.persistence.GenerateType");
-            importSnippets.add("javax.persistence.GenerateValue");
+            importSnippets.add(GENERATION_TYPE_FQN);
+            importSnippets.add(GENERATED_VALUE_FQN);
         }
 
         if (elementCollection != null) {
-            importSnippets.add("javax.persistence.ElementCollection");
+            importSnippets.add(ELEMENT_COLLECTION_FQN);
         }
         if (embedded) {
-            importSnippets.add("javax.persistence.Embedded");
+            importSnippets.add(EMBEDDED_FQN);
         }
 
         if (embeddedId) {
-            importSnippets.add("javax.persistence.EmbeddedId");
+            importSnippets.add(EMBEDDED_ID_FQN);
         }
 
         if (lob) {
-            importSnippets.add("javax.persistence.Lob");
+            importSnippets.add(LOB_FQN);
         }
 
         if (primaryKey) {
-            importSnippets.add("javax.persistence.Id");
+            importSnippets.add(ID_FQN);
         }
 
         if (tranzient) {
-            importSnippets.add("javax.persistence.Transient");
+            importSnippets.add(TRANSIENT_FQN);
         }
 
         if (version) {
-            importSnippets.add("javax.persistence.Version");
+            importSnippets.add(VERSION_FQN);
         }
 
         if (this.getAttributeOverrides() != null) {

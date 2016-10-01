@@ -16,8 +16,9 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERY;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERY_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -60,7 +61,7 @@ public class NamedNativeQuerySnippet extends NamedQueryDefSnippet implements Sni
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedNativeQuery(name=\"");
+        builder.append("@").append(NAMED_NATIVE_QUERY).append("(name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
@@ -105,7 +106,7 @@ public class NamedNativeQuerySnippet extends NamedQueryDefSnippet implements Sni
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedNativeQuery");
+        importSnippets.add(NAMED_NATIVE_QUERY_FQN);
         if (classHelper.getClassName() != null) {
             importSnippets.add(classHelper.getFQClassName());
         }

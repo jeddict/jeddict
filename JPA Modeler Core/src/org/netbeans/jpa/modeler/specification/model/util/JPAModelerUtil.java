@@ -48,10 +48,10 @@ import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
-import org.netbeans.jpa.modeler.core.widget.InheritenceStateType;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.LEAF;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
+import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.LEAF;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -120,7 +120,6 @@ import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
-import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -174,6 +173,22 @@ import org.openide.util.RequestProcessor;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
+import static org.openide.util.NbBundle.getMessage;
 import static org.openide.util.NbBundle.getMessage;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
@@ -440,7 +455,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     forEach(node -> loadFlowNode(scene, (Widget) scene, node));
             scene.getJavaClassWidges().stream().forEach(javaClassWidget -> loadAttribute(javaClassWidget));
             
-            entityMappings.initJavaInheritenceMapping();
+            entityMappings.initJavaInheritanceMapping();
             loadFlowEdge(scene);
             diagram.getJPAPlane().getDiagramElement().stream().
                     forEach((diagramElement_Tmp) -> loadDiagram(scene, diagram, diagramElement_Tmp));

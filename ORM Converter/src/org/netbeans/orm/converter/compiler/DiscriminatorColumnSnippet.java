@@ -17,8 +17,10 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_COLUMN;
+import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_TYPE_FQN;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
@@ -66,7 +68,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("@DiscriminatorColumn(");
+        stringBuilder.append("@").append(DISCRIMINATOR_COLUMN).append("(");
 
         if (GeneratorUtil.isGenerateDefaultValue() || length != 30) {
             stringBuilder.append("length=");
@@ -108,15 +110,12 @@ public class DiscriminatorColumnSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (discriminatorType == null) {
-            return Collections.singletonList("javax.persistence.DiscriminatorColumn");
-        }
-
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.DiscriminatorColumn");
-        importSnippets.add("javax.persistence.DiscriminatorType");
+        importSnippets.add(DISCRIMINATOR_COLUMN_FQN);
+        if (discriminatorType != null) {
+            importSnippets.add(DISCRIMINATOR_TYPE_FQN);
+        }
 
         return importSnippets;
     }

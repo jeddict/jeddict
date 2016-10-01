@@ -721,19 +721,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns
-                = new ArrayList<PrimaryKeyJoinColumnSnippet>();
+        List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = new ArrayList<>();
 
         for (PrimaryKeyJoinColumn parsedPrimaryKeyJoinColumn : parsedPrimaryKeyJoinColumns) {
-
             PrimaryKeyJoinColumnSnippet primaryKeyJoinColumn = new PrimaryKeyJoinColumnSnippet();
-
-            primaryKeyJoinColumn.setColumnDefinition(
-                    parsedPrimaryKeyJoinColumn.getColumnDefinition());
+            primaryKeyJoinColumn.setColumnDefinition(parsedPrimaryKeyJoinColumn.getColumnDefinition());
             primaryKeyJoinColumn.setName(parsedPrimaryKeyJoinColumn.getName());
-            primaryKeyJoinColumn.setReferencedColumnName(
-                    parsedPrimaryKeyJoinColumn.getReferencedColumnName());
-
+            primaryKeyJoinColumn.setReferencedColumnName(parsedPrimaryKeyJoinColumn.getReferencedColumnName());
+            primaryKeyJoinColumn.setForeignKey(getForeignKey(parsedPrimaryKeyJoinColumn.getForeignKey()));
             primaryKeyJoinColumns.add(primaryKeyJoinColumn);
         }
 
@@ -1454,28 +1449,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
     }
 
-    protected void processPrimaryKeyJoinColumns(
-            List<PrimaryKeyJoinColumn> parsedPrimaryKeyJoinColumns) {
-
-        if (parsedPrimaryKeyJoinColumns == null
-                || parsedPrimaryKeyJoinColumns.isEmpty()) {
+    protected void processPrimaryKeyJoinColumns(List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns, ForeignKeySnippet primaryKeyForeignKey) {
+        if (primaryKeyJoinColumns == null || primaryKeyJoinColumns.isEmpty()) {
             return;
         }
-
         classDef.setPrimaryKeyJoinColumns(new PrimaryKeyJoinColumnsSnippet());
-
-        for (PrimaryKeyJoinColumn parsedPrimaryKeyJoinColumn : parsedPrimaryKeyJoinColumns) {
-            PrimaryKeyJoinColumnSnippet primaryKeyJoinColumn = new PrimaryKeyJoinColumnSnippet();
-
-            primaryKeyJoinColumn.setColumnDefinition(
-                    parsedPrimaryKeyJoinColumn.getColumnDefinition());
-            primaryKeyJoinColumn.setName(parsedPrimaryKeyJoinColumn.getName());
-            primaryKeyJoinColumn.setReferencedColumnName(
-                    parsedPrimaryKeyJoinColumn.getReferencedColumnName());
-
-            classDef.getPrimaryKeyJoinColumns().addPrimaryKeyJoinColumn(
-                    primaryKeyJoinColumn);
-        }
+        classDef.getPrimaryKeyJoinColumns().setPrimaryKeyJoinColumns(primaryKeyJoinColumns);
+        classDef.getPrimaryKeyJoinColumns().setForeignKey(primaryKeyForeignKey);
     }
 
     protected void processSecondaryTable(

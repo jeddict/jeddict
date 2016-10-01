@@ -91,6 +91,9 @@ public class BaseTableWidget extends TableWidget<DBBaseTable> {
         super.createPropertySet(set);
         Entity entity = this.getBaseElementSpec().getEntity();
         set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
+        if(entity.getSuperclass()!=null){ //for subclass only
+            set.createPropertySet("PK_FOREIGN_KEY", this, entity.getPrimaryKeyForeignKey() , null);
+        }
     }
 
     @Override

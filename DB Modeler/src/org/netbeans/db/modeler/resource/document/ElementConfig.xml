@@ -12,6 +12,7 @@
         <group id="JOIN_COLUMN" name="@JoinColumn"/>
         <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn"/>
         <group id="FOREIGN_KEY" name="@ForeignKey"/>
+        <group id="PK_FOREIGN_KEY" name="PrimaryKey @ForeignKey"/>
         <group id="INVERSE_FOREIGN_KEY" name="Inverse @ForeignKey"/>
     </groups>
     <elements>

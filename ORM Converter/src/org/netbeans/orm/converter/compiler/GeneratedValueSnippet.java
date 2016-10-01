@@ -18,7 +18,10 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 
 public class GeneratedValueSnippet implements Snippet {
 
@@ -58,12 +61,12 @@ public class GeneratedValueSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
 
         if (generator == null && strategy == null) {
-            return "@GeneratedValue";
+            return "@" + GENERATED_VALUE;
         }
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@GeneratedValue(");
+        builder.append("@").append(GENERATED_VALUE).append("(");
 
         if (generator != null) {
             builder.append("generator=\"");
@@ -85,8 +88,8 @@ public class GeneratedValueSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.GenerationType");
-        importSnippets.add("javax.persistence.GeneratedValue");
+        importSnippets.add(GENERATION_TYPE_FQN);
+        importSnippets.add(GENERATED_VALUE_FQN);
         return importSnippets;
     }
 

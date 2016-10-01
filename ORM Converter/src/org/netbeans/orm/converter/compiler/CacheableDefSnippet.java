@@ -15,9 +15,10 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import static org.netbeans.jcode.jpa.JPAConstants.CACHEABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.CACHEABLE_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 
 public class CacheableDefSnippet implements Snippet {
@@ -25,7 +26,7 @@ public class CacheableDefSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        builder.append("@Cacheable");
+        builder.append("@").append(CACHEABLE);
         if (GeneratorUtil.isGenerateDefaultValue()) {
             builder.append("(true)");
         }
@@ -34,6 +35,6 @@ public class CacheableDefSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singleton("javax.persistence.Cacheable");
+        return Collections.singleton(CACHEABLE_FQN);
     }
 }

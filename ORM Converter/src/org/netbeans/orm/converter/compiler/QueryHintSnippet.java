@@ -17,6 +17,8 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
+import static org.netbeans.jcode.jpa.JPAConstants.QUERY_HINT;
+import static org.netbeans.jcode.jpa.JPAConstants.QUERY_HINT_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class QueryHintSnippet implements Snippet {
@@ -49,7 +51,7 @@ public class QueryHintSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@QueryHint(");
+        builder.append("@").append(QUERY_HINT).append("(");
 
         builder.append("name=\"");
         builder.append(name);
@@ -67,6 +69,6 @@ public class QueryHintSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.QueryHint");
+        return Collections.singletonList(QUERY_HINT_FQN);
     }
 }

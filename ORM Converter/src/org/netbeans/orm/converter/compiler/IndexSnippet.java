@@ -17,8 +17,9 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.jpa.JPAConstants.INDEX;
+import static org.netbeans.jcode.jpa.JPAConstants.INDEX_FQN;
 import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
@@ -42,7 +43,7 @@ public class IndexSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@Index(");
+        builder.append("@").append(INDEX).append("(");
 
         if (StringUtils.isNotBlank(index.getName())) {
             builder.append("name=\"");
@@ -82,7 +83,7 @@ public class IndexSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.Index");
+        return Collections.singletonList(INDEX_FQN);
 
     }
 }

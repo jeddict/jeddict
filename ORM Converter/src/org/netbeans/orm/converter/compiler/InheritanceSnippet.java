@@ -18,6 +18,10 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.INHERITANCE;
+import static org.netbeans.jcode.jpa.JPAConstants.INHERITANCE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.INHERITANCE_TYPE;
+import static org.netbeans.jcode.jpa.JPAConstants.INHERITANCE_TYPE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class InheritanceSnippet implements Snippet {
@@ -39,15 +43,15 @@ public class InheritanceSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        return "@Inheritance(strategy=InheritanceType." + statergy + ORMConverterUtil.CLOSE_PARANTHESES;
+        return "@"+INHERITANCE+"(strategy="+INHERITANCE_TYPE+"." + statergy + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.Inheritance");
-        importSnippets.add("javax.persistence.InheritanceType");
+        importSnippets.add(INHERITANCE_FQN);
+        importSnippets.add(INHERITANCE_TYPE_FQN);
 
         return importSnippets;
     }

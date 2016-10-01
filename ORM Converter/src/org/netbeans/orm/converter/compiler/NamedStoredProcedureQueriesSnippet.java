@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERIES;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERIES_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
@@ -52,7 +54,7 @@ public class NamedStoredProcedureQueriesSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
 
         if (namedStoredProcedureQueries.isEmpty()) {
-            throw new InvalidDataException("Missing NamedStoredProcedureQueries");
+            throw new InvalidDataException("Missing " + NAMED_STORED_PROCEDURE_QUERIES);
         }
 
         if (namedStoredProcedureQueries.size() == 1) {
@@ -61,7 +63,7 @@ public class NamedStoredProcedureQueriesSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedStoredProcedureQueries({");
+        builder.append("@").append(NAMED_STORED_PROCEDURE_QUERIES).append("({");
 
         for (NamedStoredProcedureQuerySnippet namedStoredProcedureQuery : namedStoredProcedureQueries) {
             builder.append(namedStoredProcedureQuery.getSnippet());
@@ -86,7 +88,7 @@ public class NamedStoredProcedureQueriesSnippet implements Snippet {
 
         ArrayList<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedStoredProcedureQueries");
+        importSnippets.add(NAMED_STORED_PROCEDURE_QUERIES_FQN);
         for (NamedStoredProcedureQuerySnippet namedStoredProcedureQuery : namedStoredProcedureQueries) {
             importSnippets.addAll(namedStoredProcedureQuery.getImportSnippets());
         }

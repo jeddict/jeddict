@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES;
+import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class AttributeOverridesSnippet implements Snippet {
@@ -59,7 +61,7 @@ public class AttributeOverridesSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@AttributeOverrides({");
+        builder.append("@").append(ATTRIBUTE_OVERRIDES).append("({");
 
         for (AttributeOverrideSnippet attributeOverride : attributeOverrides) {
             builder.append(attributeOverride.getSnippet());
@@ -84,7 +86,7 @@ public class AttributeOverridesSnippet implements Snippet {
 
         Collection<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.AttributeOverrides");
+        importSnippets.add(ATTRIBUTE_OVERRIDES_FQN);
 
         for (AttributeOverrideSnippet attributeOverride : attributeOverrides) {
             importSnippets.addAll(attributeOverride.getImportSnippets());

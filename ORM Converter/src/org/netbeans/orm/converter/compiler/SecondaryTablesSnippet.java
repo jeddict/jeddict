@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.SECONDARY_TABLES;
+import static org.netbeans.jcode.jpa.JPAConstants.SECONDARY_TABLES_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class SecondaryTablesSnippet implements Snippet {
@@ -56,7 +58,7 @@ public class SecondaryTablesSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@SecondaryTables({");
+        builder.append("@").append(SECONDARY_TABLES).append("({");
 
         for (SecondaryTableSnippet secondaryTable : secondaryTables) {
             builder.append(secondaryTable.getSnippet());
@@ -81,7 +83,7 @@ public class SecondaryTablesSnippet implements Snippet {
 
         Collection<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.SecondaryTables");
+        importSnippets.add(SECONDARY_TABLES_FQN);
 
         for (SecondaryTableSnippet secondaryTable : secondaryTables) {
             importSnippets.addAll(secondaryTable.getImportSnippets());

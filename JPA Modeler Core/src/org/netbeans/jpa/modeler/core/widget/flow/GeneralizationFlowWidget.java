@@ -103,7 +103,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
     public void init() {
 
         if (this.getSubclassWidget() instanceof EntityWidget) {
-            AttributeValidator.scanInheritenceError((EntityWidget) this.getSubclassWidget());
+            AttributeValidator.scanInheritanceError((EntityWidget) this.getSubclassWidget());
             AttributeValidator.validateMultipleEmbeddedIdFound((EntityWidget) this.getSubclassWidget());
             AttributeValidator.validateEmbeddedIdAndIdFound((EntityWidget) this.getSubclassWidget());
         } else if (this.getSubclassWidget() instanceof MappedSuperclassWidget) {
@@ -121,7 +121,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
     @Override
     public void destroy() {
         if (this.getSubclassWidget() instanceof EntityWidget) {
-            AttributeValidator.scanInheritenceError((EntityWidget) this.getSubclassWidget());
+            AttributeValidator.scanInheritanceError((EntityWidget) this.getSubclassWidget());
             AttributeValidator.validateMultipleEmbeddedIdFound((EntityWidget) this.getSubclassWidget());
             AttributeValidator.validateEmbeddedIdAndIdFound((EntityWidget) this.getSubclassWidget());
         } else if (this.getSubclassWidget() instanceof MappedSuperclassWidget) {

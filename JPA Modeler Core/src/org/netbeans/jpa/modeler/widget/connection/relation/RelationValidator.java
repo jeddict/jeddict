@@ -65,7 +65,7 @@ public class RelationValidator implements IRelationValidator {
             } else if (!(proxy.getSource() instanceof EmbeddableWidget) && (proxy.getTarget() instanceof EmbeddableWidget)) {
                 return false;
             }
-            //Prevent Cyclic inheritence
+            //Prevent Cyclic inheritance
             JavaClassWidget sourceJavaClassWidget = (JavaClassWidget) proxy.getSource();
             JavaClassWidget targetJavaClassWidget = (JavaClassWidget) proxy.getTarget();
             List<JavaClassWidget> targetSuperclassWidgetList = targetJavaClassWidget.getAllSuperclassWidget();
@@ -78,7 +78,7 @@ public class RelationValidator implements IRelationValidator {
             if (!(proxy.getSource() instanceof PersistenceClassWidget) || !(proxy.getTarget() instanceof EmbeddableWidget)) {
                 return false;
             }
-//            //Prevent Cyclic inheritence
+//            //Prevent Cyclic inheritance
 //            JavaClassWidget sourceJavaClassWidget = (JavaClassWidget) proxy.getSource();
 //            EmbeddableWidget targetEmbeddableWidget = (EmbeddableWidget) proxy.getTarget();
 //            List<JavaClassWidget> targetContainerclassWidgetList = null ;//= targetEmbeddableWidget.getAllContainerclassWidget();

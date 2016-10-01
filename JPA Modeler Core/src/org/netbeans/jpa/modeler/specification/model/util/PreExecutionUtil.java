@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
-import org.netbeans.jpa.modeler.core.widget.InheritenceStateType;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
+import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -40,7 +40,6 @@ import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.*;
-import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -48,6 +47,7 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 
 /**
  *
@@ -70,9 +70,9 @@ public class PreExecutionUtil {
                         PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
                         if (persistenceClassWidget instanceof EntityWidget) {
                             EntityWidget entityWidget = (EntityWidget) persistenceClassWidget;
-                            InheritenceHandler classSpec = (InheritenceHandler) entityWidget.getBaseElementSpec();
-                            InheritenceStateType inheritenceState = entityWidget.getInheritenceState();
-                            switch (inheritenceState) {
+                            InheritanceHandler classSpec = (InheritanceHandler) entityWidget.getBaseElementSpec();
+                            InheritanceStateType inheritanceState = entityWidget.getInheritanceState();
+                            switch (inheritanceState) {
                                 case LEAF:
                                 case SINGLETON:
                                     classSpec.setDiscriminatorColumn(null);

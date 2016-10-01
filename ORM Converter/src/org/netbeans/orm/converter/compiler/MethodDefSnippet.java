@@ -20,10 +20,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
+import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
 
 public class MethodDefSnippet implements Snippet {
 
-    private static final String IMPORT_PREFIX = "javax.persistence.";
+    private static final String IMPORT_PREFIX = PERSISTENCE_PACKAGE;
 
     private String methodName = null;
 

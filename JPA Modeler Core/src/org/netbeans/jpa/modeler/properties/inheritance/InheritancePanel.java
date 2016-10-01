@@ -1,24 +1,24 @@
-package org.netbeans.jpa.modeler.properties.inheritence;
+package org.netbeans.jpa.modeler.properties.inheritance;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.core.widget.InheritenceStateType;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.BRANCH;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.LEAF;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritenceStateType.SINGLETON;
+import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.BRANCH;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.LEAF;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
-import org.netbeans.jpa.modeler.spec.extend.InheritenceHandler;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.widget.properties.customattr.Property;
+import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 
 /**
  * Copyright [2014] Gaurav Gupta
@@ -39,12 +39,12 @@ import org.netbeans.modeler.widget.properties.customattr.Property;
  *
  * @author Gaurav Gupta
  */
-public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> {
+public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> {
 
     private final ModelerFile modelerFile;
     private final EntityWidget entityWidget;
-    private InheritenceStateType type;
-    private InheritenceHandler classSpec;
+    private InheritanceStateType type;
+    private InheritanceHandler classSpec;
     
     private static final Map<InheritanceType, String> ADVANTAGES = new HashMap<>();
     private static final Map<InheritanceType, String> DISADVANTAGES = new HashMap<>();
@@ -79,11 +79,11 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
     }
 
-    private void setStrategySelectedItem(Inheritance inheritence) {
+    private void setStrategySelectedItem(Inheritance inheritance) {
         strategy_ComboBox.setSelectedItem(strategy_ComboBox.getItemAt(0));
         for (int i = 0; i < strategy_ComboBox.getItemCount(); i++) {
             Property property = (Property) strategy_ComboBox.getItemAt(i);
-            if (inheritence != null && (InheritanceType) property.getKey() == inheritence.getStrategy()) {
+            if (inheritance != null && (InheritanceType) property.getKey() == inheritance.getStrategy()) {
                 strategy_ComboBox.setSelectedItem(property);
                 break;
             }
@@ -103,7 +103,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     }
 
     @Override
-    public InheritenceHandler getValue() {
+    public InheritanceHandler getValue() {
         InheritanceType inheritanceType = (InheritanceType) ((Property) strategy_ComboBox.getSelectedItem()).getKey();
         if (type == ROOT || type == BRANCH) {
             if (classSpec.getInheritance() == null) {
@@ -138,7 +138,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     }
 
     @Override
-    public void setValue(InheritenceHandler classSpec) {
+    public void setValue(InheritanceHandler classSpec) {
         this.classSpec = classSpec;
 
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = entityWidget.getOutgoingGeneralizationFlowWidget();
@@ -174,7 +174,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
         if (type != null && type == LEAF) {
             EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
-            InheritenceHandler superClassSpec = (InheritenceHandler) superEntityWidget.getBaseElementSpec();
+            InheritanceHandler superClassSpec = (InheritanceHandler) superEntityWidget.getBaseElementSpec();
             setUIValue(superClassSpec);
         } else {
             setUIValue(classSpec);
@@ -182,7 +182,7 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
 
     }
 
-    private void setUIValue(InheritenceHandler classSpec) {
+    private void setUIValue(InheritanceHandler classSpec) {
         setStrategySelectedItem(classSpec.getInheritance());
         setColumnTypeSelectedItem(classSpec.getDiscriminatorColumn());
         if (classSpec.getDiscriminatorColumn() != null) {
@@ -202,9 +202,9 @@ public class InheritencePanel extends GenericEmbeddedEditor<InheritenceHandler> 
     }
 
     /**
-     * Creates new form Inheritence
+     * Creates new form Inheritance
      */
-    public InheritencePanel(ModelerFile modelerFile, EntityWidget entityWidget) {
+    public InheritancePanel(ModelerFile modelerFile, EntityWidget entityWidget) {
         this.modelerFile = modelerFile;
         this.entityWidget = entityWidget;
     }

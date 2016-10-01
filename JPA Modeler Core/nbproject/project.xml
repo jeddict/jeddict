@@ -566,7 +566,7 @@
                 <package>org.netbeans.jpa.modeler.properties.cascade</package>
                 <package>org.netbeans.jpa.modeler.properties.fieldtype</package>
                 <package>org.netbeans.jpa.modeler.properties.idgeneration</package>
-                <package>org.netbeans.jpa.modeler.properties.inheritence</package>
+                <package>org.netbeans.jpa.modeler.properties.inheritance</package>
                 <package>org.netbeans.jpa.modeler.properties.joincolumn</package>
                 <package>org.netbeans.jpa.modeler.properties.named.nativequery</package>
                 <package>org.netbeans.jpa.modeler.properties.named.query</package>

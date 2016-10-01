@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.JOIN_TABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.JOIN_TABLE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class JoinTableSnippet implements Snippet {
@@ -107,7 +109,7 @@ public class JoinTableSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@JoinTable(");
+        builder.append("@").append(JOIN_TABLE).append("(");
 
         if (name != null && !name.trim().isEmpty()) {
             builder.append("name=\"");
@@ -210,12 +212,12 @@ public class JoinTableSnippet implements Snippet {
 
         if (inverseJoinColumns.isEmpty() && joinColumns.isEmpty() && uniqueConstraints == null
                 && foreignKey == null && inverseForeignKey == null ) {
-            return Collections.singletonList("javax.persistence.JoinTable");
+            return Collections.singletonList(JOIN_TABLE_FQN);
         }
 
         Collection<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.JoinTable");
+        importSnippets.add(JOIN_TABLE_FQN);
 
         if (!joinColumns.isEmpty()) {
             Collection<String> joinColumnSnippets  = joinColumns.get(0).getImportSnippets();

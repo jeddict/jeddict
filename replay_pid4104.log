@@ -676,7 +676,7 @@ instanceKlass org/netbeans/jpa/modeler/properties/PropertiesHandler$4
 instanceKlass org/netbeans/jpa/modeler/properties/PropertiesHandler$$Lambda$246
 instanceKlass org/netbeans/jpa/modeler/properties/PropertiesHandler$15
 instanceKlass org/netbeans/modeler/widget/properties/customattr/Property
-instanceKlass org/netbeans/jpa/modeler/properties/inheritence/InheritencePanel$1
+instanceKlass org/netbeans/jpa/modeler/properties/inheritance/InheritancePanel$1
 instanceKlass javax/swing/plaf/basic/BasicSpinnerUI$Handler
 instanceKlass javax/swing/JSpinner$ModelListener
 instanceKlass javax/swing/text/NavigationFilter$FilterBypass
@@ -6540,7 +6540,7 @@ instanceKlass org/netbeans/jpa/modeler/spec/PersistenceUnitMetadata
 instanceKlass javax/xml/bind/annotation/XmlElement$DEFAULT
 instanceKlass org/netbeans/jpa/modeler/spec/extend/AssociationOverrideHandler
 instanceKlass org/netbeans/jpa/modeler/spec/extend/AttributeOverrideHandler
-instanceKlass org/netbeans/jpa/modeler/spec/extend/InheritenceHandler
+instanceKlass org/netbeans/jpa/modeler/spec/extend/InheritanceHandler
 instanceKlass org/netbeans/jpa/modeler/spec/extend/PrimaryKeyContainer
 instanceKlass org/netbeans/jpa/modeler/spec/extend/MapKeyHandler
 instanceKlass org/netbeans/jpa/modeler/spec/extend/CollectionTypeHandler
@@ -16535,7 +16535,7 @@ instanceKlass org/netbeans/jpa/modeler/settings/view/AttributeViewAs
 instanceKlass org/netbeans/jpa/modeler/core/widget/CompositePKProperty
 instanceKlass java/util/stream/StreamShape
 instanceKlass java/util/stream/MatchOps$MatchKind
-instanceKlass org/netbeans/jpa/modeler/core/widget/InheritenceStateType
+instanceKlass org/netbeans/jpa/modeler/core/widget/InheritanceStateType
 instanceKlass javax/lang/model/SourceVersion
 instanceKlass org/netbeans/modeler/widget/node/IWidgetStateHandler$StateType
 instanceKlass org/netbeans/api/visual/widget/SeparatorWidget$Orientation

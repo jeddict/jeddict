@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES;
+import static org.netbeans.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class AssociationOverridesSnippet implements Snippet {
@@ -61,7 +63,7 @@ public class AssociationOverridesSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@AssociationOverrides({");
+        builder.append("@").append(ASSOCIATION_OVERRIDES).append("({");
 
         for (AssociationOverrideSnippet associationOverride : associationOverrides) {
             builder.append(associationOverride.getSnippet());
@@ -86,7 +88,7 @@ public class AssociationOverridesSnippet implements Snippet {
 
         Collection<String> importSnippets = new ArrayList<String>();
 
-        importSnippets.add("javax.persistence.AssociationOverrides");
+        importSnippets.add(ASSOCIATION_OVERRIDES_FQN);
         importSnippets.addAll(associationOverrides.get(0).getImportSnippets());
 
         return importSnippets;

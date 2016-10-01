@@ -18,6 +18,8 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERY;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -45,7 +47,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedStoredProcedureQuery(");
+        builder.append("@").append(NAMED_STORED_PROCEDURE_QUERY).append("(");
 
         builder.append("name=\"");
         builder.append(name);
@@ -116,7 +118,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedStoredProcedureQuery");
+        importSnippets.add(NAMED_STORED_PROCEDURE_QUERY_FQN);
 
         for (StoredProcedureParameterSnippet parameter : parameters) {
             importSnippets.addAll(parameter.getImportSnippets());
