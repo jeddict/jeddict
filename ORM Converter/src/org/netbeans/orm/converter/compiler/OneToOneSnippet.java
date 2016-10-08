@@ -29,22 +29,10 @@ import static org.netbeans.jcode.jpa.JPAConstants.ONE_TO_ONE_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class OneToOneSnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet {
+public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
-    private boolean optional = false;
     private boolean orphanRemoval = false;
     private String mappedBy = null;
-    private String mapsId;
-    private boolean primaryKey;
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
 
     public String getMappedBy() {
         return mappedBy;
@@ -155,34 +143,6 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
 //            importSnippets.add(getTargetEntityPackage() + ORMConverterUtil.DOT + getTargetEntityName());
 //        }
         return importSnippets;
-    }
-
-    /**
-     * @return the primaryKey
-     */
-    public boolean isPrimaryKey() {
-        return primaryKey;
-    }
-
-    /**
-     * @param primaryKey the primaryKey to set
-     */
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
-
-    /**
-     * @return the mapsId
-     */
-    public String getMapsId() {
-        return mapsId;
-    }
-
-    /**
-     * @param mapsId the mapsId to set
-     */
-    public void setMapsId(String mapsId) {
-        this.mapsId = mapsId;
     }
 
     /**

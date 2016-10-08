@@ -28,7 +28,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>1</release-version>
-                        <specification-version>1.40</specification-version>
+                        <specification-version>1.46.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -221,7 +221,7 @@
                         <specification-version>1.36.1</specification-version>
                     </run-dependency>
                 </dependency>
-                <dependency>
+<!--                <dependency>
                     <code-name-base>org.netbeans.modules.j2ee.common</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -229,7 +229,7 @@
                         <release-version>1</release-version>
                         <implementation-version/>
                     </run-dependency>
-                </dependency>
+                </dependency>-->
                 <dependency>
                     <code-name-base>org.netbeans.modules.j2ee.core</code-name-base>
                     <build-prerequisite/>
@@ -255,14 +255,6 @@
                     <run-dependency>
                         <release-version>1</release-version>
                         <specification-version>1.29.2</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>org.netbeans.modules.j2ee.jpa.verification</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <implementation-version/>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -314,7 +306,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>0.138.3.32.2.25.8</specification-version>
+                        <specification-version>0.158.1.32.2.25.2.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -478,7 +470,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <specification-version>8.5.1</specification-version>
+                        <specification-version>9.10.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>

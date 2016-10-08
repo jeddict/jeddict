@@ -22,6 +22,7 @@ import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.BASIC;
 import static org.netbeans.jcode.jpa.JPAConstants.BASIC_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
+import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class BasicSnippet implements Snippet {
@@ -30,6 +31,9 @@ public class BasicSnippet implements Snippet {
     private boolean optional = true;
 
     public String getFetchType() {
+        if (fetchType != null) {
+            return "FetchType." + fetchType;
+        }
         return fetchType;
     }
 
@@ -47,11 +51,28 @@ public class BasicSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (fetchType == null) {
-            return "@" + BASIC;
+        
+        StringBuilder builder = new StringBuilder();
+       builder.append("@").append(BASIC);
+        if (!GeneratorUtil.isGenerateDefaultValue()) {
+            if (optional == true && getFetchType() == null){
+                return builder.toString();
+            }
+        }
+        
+        builder.append("(");
+
+        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+            builder.append("optional=").append(optional).append(",");
+        }
+        
+        if (getFetchType() != null) {
+            builder.append("fetch = ");
+            builder.append(getFetchType());
+            builder.append(ORMConverterUtil.COMMA);
         }
 
-        return "@"+ BASIC + "(fetch=FetchType." + fetchType + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override

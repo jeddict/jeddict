@@ -1,6 +1,6 @@
 #####################custom snippet - before package ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_PACKAGE") )
-    $snippet 
+$snippet 
 $n#end
 #####################Package Name definition ###########################
 #if ($classDef.getPackageName())
@@ -24,7 +24,7 @@ $classDef.getJavaDoc()
 
 #####################custom snippet - before class ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_CLASS") )
-    $snippet 
+$snippet 
 $n#end
 #####################jaxb annotations ###############################
 #if($classDef.isJaxbSupport())
@@ -210,13 +210,13 @@ $n#end
 #foreach( $varDef in $classDef.getVariableDefs() )
 #set($method = $varDef.getMethodName())
 #if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
-    public $varDef.type is$method() {
-        return this.$varDef.name;
+    public $varDef.returnType is$method() {
+        return $varDef.returnValue;
     }
 
 #else
-    public $varDef.type get$method() {
-        return this.$varDef.name;
+    public $varDef.returnType get$method() {
+        return $varDef.returnValue;
     }
 
 #end
@@ -265,5 +265,5 @@ $n#end
 }
 #####################custom snippet - after class ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_CLASS") )
-    $snippet 
+$snippet 
 $n#end

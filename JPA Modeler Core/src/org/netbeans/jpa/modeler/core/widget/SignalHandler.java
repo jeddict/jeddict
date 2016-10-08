@@ -48,13 +48,11 @@ public class SignalHandler {
     private final Map<String, String> signalList = new HashMap<>();
 
     public void throwSignal(String key) {
-        System.out.println(widget.getName() + " throwSignal key : " + key);
         signalList.put(key, bundleManager.get(key, widget.getName()));
         print();
     }
 
     public void clearSignal(String key) {
-        System.out.println(widget.getName() + " clearSignal key : " + key);
         signalList.remove(key);
         print();
     }

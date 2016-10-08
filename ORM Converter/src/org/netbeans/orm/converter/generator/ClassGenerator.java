@@ -272,14 +272,18 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
-        if (classMembers.getAttributes().isEmpty()) {
+        if (classMembers.getAttributes().isEmpty() && 
+                StringUtils.isBlank(classMembers.getPreCode()) &&
+                StringUtils.isBlank(classMembers.getPostCode())) {
             return null;
         }
         return new HashcodeMethodSnippet(className, classMembers);
     }
 
     protected EqualsMethodSnippet getEqualsMethodSnippet(String className, ClassMembers classMembers) {
-        if (classMembers.getAttributes().isEmpty()) {
+        if (classMembers.getAttributes().isEmpty() && 
+                StringUtils.isBlank(classMembers.getPreCode()) &&
+                StringUtils.isBlank(classMembers.getPostCode())) {
             return null;
         }
         return new EqualsMethodSnippet(className, classMembers);
@@ -399,6 +403,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setEnumerated(enumerated);
             variableDef.setTemporal(temporal);
             variableDef.setType(parsedBasic.getAttributeType());
+            if (parsedBasic.getFunctionalType() != null) {
+                variableDef.setFunctionalType(parsedBasic.getFunctionalType());
+            }
 
             if (parsedLob != null) {
                 variableDef.setLob(true);
@@ -471,6 +478,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(parsedTransient);
             variableDef.setType(parsedTransient.getAttributeType());
             variableDef.setTranzient(true);
+            if (parsedTransient.getFunctionalType() != null) {
+                variableDef.setFunctionalType(parsedTransient.getFunctionalType());
+            }
         }
     }
 
@@ -1079,6 +1089,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setEmbedded(true);
             variableDef.setType(parsedEmbeded.getConnectedClass().getPackage(rootPackageName) + ORMConverterUtil.DOT +
                     parsedEmbeded.getAttributeType());
+            if (parsedEmbeded.getFunctionalType() != null) {
+                variableDef.setFunctionalType(parsedEmbeded.getFunctionalType());
+            }
 
             processInternalAttributeOverride(variableDef, parsedEmbeded.getAttributeOverride());
             processInternalAssociationOverride(variableDef, parsedEmbeded.getAssociationOverride());
@@ -1166,7 +1179,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Id parsedId : parsedIds) {
             VariableDefSnippet variableDef = getVariableDef(parsedId);
             variableDef.setType(parsedId.getAttributeType());
-
+            if (parsedId.getFunctionalType() != null) {
+                variableDef.setFunctionalType(parsedId.getFunctionalType());
+            }
             variableDef.setPrimaryKey(true);
 
             Column parsedColumn = parsedId.getColumn();
@@ -1330,6 +1345,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setRelationDef(manyToOne);
             variableDef.setJoinTable(joinTable);
             variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne, false));
+            if (parsedManyToOne.getFunctionalType() != null) {
+                variableDef.setFunctionalType(parsedManyToOne.getFunctionalType());
+            }
         }
     }
 
@@ -1412,6 +1430,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setRelationDef(oneToOne);
             variableDef.setJoinTable(joinTable);
             variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
+            if (parsedOneToOne.getFunctionalType() != null) {
+                variableDef.setFunctionalType(parsedOneToOne.getFunctionalType());
+            }
         }
     }
 
@@ -1435,7 +1456,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             ColumnDefSnippet columnDef = getColumnDef(parsedVersion.getColumn());
             variableDef.setType(parsedVersion.getAttributeType());
-
+            if (parsedVersion.getFunctionalType() != null) {
+                variableDef.setFunctionalType(parsedVersion.getFunctionalType());
+            }
             variableDef.setVersion(true);
             variableDef.setColumnDef(columnDef);
 

@@ -247,6 +247,7 @@ public class JPAMSchemaManager {
 
         if ((!session.getPlatform().supportsForeignKeyConstraints()) || tableDefinition.getForeignKeyMap().isEmpty()) {
             return;
+            //TODO : issue #65
         }
 
         for (ForeignKeyConstraint foreignKey : tableDefinition.getForeignKeyMap().values()) {

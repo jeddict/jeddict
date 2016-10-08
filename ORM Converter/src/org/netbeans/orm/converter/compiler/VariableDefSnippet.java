@@ -19,8 +19,10 @@ import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnip
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
@@ -42,11 +44,13 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
+import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
     private List<AnnotationSnippet> annotation = new ArrayList<>();
     private List<ConstraintSnippet> constraints = new ArrayList<>();
+    private boolean functionalType;
 
     private JaxbVariableType jaxbVariableType;
     private JaxbXmlAttribute jaxbXmlAttribute;
@@ -119,11 +123,36 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getType() {//Modified : Collection => Collection<Entity>
+        String type;
         if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
-            return this.getTypeIdentifier().getVariableType();
+            type = this.getTypeIdentifier().getVariableType();
         } else {
-            return classHelper.getClassName();
+            type = classHelper.getClassName();
         }
+        
+        return type;
+    }
+    
+    public String getReturnType() {//Modified : Collection => Collection<Entity>
+        String type;
+        if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
+            type = this.getTypeIdentifier().getVariableType();
+        } else {
+            type = classHelper.getClassName();
+        }
+        
+        if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
+            type = "Optional<" + getWrapperType(type) + '>';
+        }
+        return type;
+    }
+    
+    public String getReturnValue() {
+        String value = "this."+getName();
+        if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
+            value = "Optional.ofNullable(" + value + ')';
+        }
+        return value;
     }
 
     public void setType(String type) {
@@ -287,6 +316,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(typeIdentifier.getImportSnippets());
         } else if (classHelper.getPackageName() != null) {
             importSnippets.add(classHelper.getFQClassName());
+            
+            if (functionalType) {
+                importSnippets.add(Optional.class.getCanonicalName());
+            }
+        } else {
+           if (functionalType) {
+                importSnippets.add(Optional.class.getCanonicalName());
+            } 
         }
 
         if (basic != null) {
@@ -700,6 +737,20 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setTemporal(TemporalSnippet temporal) {
         this.temporal = temporal;
+    }
+
+    /**
+     * @return the functionalType
+     */
+    public boolean isFunctionalType() {
+        return functionalType;
+    }
+
+    /**
+     * @param functionalType the functionalType to set
+     */
+    public void setFunctionalType(boolean functionalType) {
+        this.functionalType = functionalType;
     }
 
 }

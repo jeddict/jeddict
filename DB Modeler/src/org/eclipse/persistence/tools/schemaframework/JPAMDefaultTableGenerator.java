@@ -28,7 +28,6 @@
  *       - 388564: Generated DDL does not match annotation
  ***************************************************************************** */
 package org.eclipse.persistence.tools.schemaframework;
-import org.netbeans.db.modeler.exception.DBValidationException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -90,6 +89,7 @@ import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
@@ -199,7 +199,9 @@ public class JPAMDefaultTableGenerator {
     public JPAMTableCreator generateDefaultTableCreator() {
         JPAMTableCreator tblCreator = new JPAMTableCreator();
 
-        this.project.getOrderedDescriptors().stream().map(d -> (DBRelationalDescriptor) d).forEach((descriptor) -> {
+        this.project.getOrderedDescriptors().stream().map(d -> (DBRelationalDescriptor) d)
+                .sorted((d1, d2) -> Integer.compare(d1.getMappings().size(), d2.getMappings().size()))
+                .forEach((descriptor) -> {
             /**
              * Table per concrete class #Id : SUPERCLASS_ATTR_CLONE.
              * Description : Fix for If class have super class 
@@ -207,6 +209,9 @@ public class JPAMDefaultTableGenerator {
              * subclass, to share the attributes but in the cloning process,
              * Attribute Spec property is missed.
              */
+            //sorted reason : less mapping (root) is required first to copy its value to child. 
+            //issue : In the Concrete Class strategy(in worst case), mid node null value copied to leaf child first , then root value copied to mid node 
+            //solution : In mix inheritance, first copy all root node value to its child then copy all child's value to leaf(or child)
             List<DatabaseMapping> parentClassMapping = descriptor.getParentClassMapping();
             if (parentClassMapping != null) {
                 parentClassMapping.stream().forEach((parentMapping) -> {
@@ -230,28 +235,26 @@ public class JPAMDefaultTableGenerator {
                     }
                 }
             }
-
+ 
         });
         //go through each descriptor and build the table/field definitions out of mappings
         /**
-         * sorted use :
-         * method is used to create table definition first for parent entity 
+         * sorted use : method is used to create table definition first for parent entity 
          * problem : child has both parent & child table definition but only child entity object which is associated with parent table
          * solution : sort and create the table definition first for parent entity
          */
         this.project.getOrderedDescriptors().stream().sorted((d1, d2) -> Integer.compare(d1.getTables().size(), d2.getTables().size())).forEach(descriptor -> {
 //            if ((descriptor instanceof XMLDescriptor) || (descriptor instanceof EISDescriptor) || (descriptor instanceof ObjectRelationalDataTypeDescriptor)) {
 //                //default table generator does not support ox, eis and object-relational descriptor
-//                AbstractSessionLog.getLog().log(SessionLog.WARNING, SessionLog.DDL, "relational_descriptor_support_only", (Object[]) null, true);
 //                return tblCreator;
 //            }
             // Aggregate descriptors do not contain table/field data and are
             // processed through their owning entities. Aggregate descriptors
             // can not exist on their own.
             // Table per tenant descriptors will not be initialized.
-            System.out.println("descriptor size xxxxx : " + descriptor.getTables().size());
+            System.out.println(descriptor.getTableName() + " descriptor size : " + descriptor.getTables().size());
             if (!descriptor.isDescriptorTypeAggregate() && !(descriptor.hasTablePerMultitenantPolicy() && !project.allowTablePerMultitenantDDLGeneration())) {
-                initTableSchema(descriptor);
+                initTableSchema(descriptor); 
             }
         });
 
@@ -401,10 +404,10 @@ public class JPAMDefaultTableGenerator {
 
                 remainingDatabaseFields.remove(dbField);
 
-                //In JoinedStrategy, it contains parent mapping so skipped
-                if (!processTablesName.contains(dbField.getTable().getName())) {
-                    continue;
-                }
+//                //In JoinedStrategy, it contains parent mapping so skipped
+//                if (!processTablesName.contains(dbField.getTable().getName())) {
+//                    continue;
+//                }
 
                 intrinsicAttribute = new LinkedList<>();
                 Attribute managedAttribute = (Attribute) databaseMapping.getProperty(Attribute.class);
@@ -419,7 +422,7 @@ public class JPAMDefaultTableGenerator {
                 }
 
                 if (dbField.isCreatable()) {
-                    boolean isPKField = false;
+                    boolean isPKField;
                     boolean isFKField = false;
                     boolean isInverse = false;
 
@@ -494,7 +497,7 @@ public class JPAMDefaultTableGenerator {
 
             if ((tableDefintion != null) && !tableDefintion.getFields().contains(fieldDef)) {
                 tableDefintion.addField(fieldDef);
-            }
+            }       
         }
 
     }
@@ -950,12 +953,12 @@ public class JPAMDefaultTableGenerator {
     protected void addForeignMappingFkConstraint(ManagedClass managedClass, Attribute managedAttribute, LinkedList<Entity> intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, boolean isInherited, final Map<DatabaseField, DatabaseField> srcFields, boolean cascadeOnDelete) {
         // srcFields map from the foreign key field to the target key field
 
-        if (srcFields.size() == 0) {
+        if (srcFields.isEmpty()) {
             return;
         }
 
-        List<DatabaseField> fkFields = new ArrayList<DatabaseField>();
-        List<DatabaseField> targetFields = new ArrayList<DatabaseField>();
+        List<DatabaseField> fkFields = new ArrayList<>();
+        List<DatabaseField> targetFields = new ArrayList<>();
 
         for (DatabaseField fkField : srcFields.keySet()) {
             fkFields.add(fkField);
@@ -1063,14 +1066,14 @@ public class JPAMDefaultTableGenerator {
     /**
      * Build a field definition object from a database field.
      */
-    protected FieldDefinition getFieldDefFromDBField(Entity intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable, boolean inherited, boolean dtype, boolean primarykeyjoincolumn, boolean mapKey, DatabaseField dbField) {
+    protected FieldDefinition getFieldDefFromDBField(Entity intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable, boolean inherited, boolean dtype, boolean primaryKeyJoinColumn, boolean mapKey, DatabaseField dbField) {
         FieldDefinition fieldDef = this.fieldMap.get(dbField);
         if (fieldDef == null) {
             if (inherited) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity, managedAttribute, inverse, foriegnKey, relationTable);
             } else if (dtype) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity);
-            } else if (primarykeyjoincolumn) {
+            } else if (primaryKeyJoinColumn) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity, true, true);
             } else if(mapKey) {
                 fieldDef = new JPAMFieldDefinition(intrinsicAttribute, managedAttribute, mapKey);
@@ -1191,7 +1194,7 @@ public class JPAMDefaultTableGenerator {
             return;
         }
 
-        DatabaseField fkField = null;
+        DatabaseField fkField;
         DatabaseField targetField = null;
         List<String> fkFieldNames = new ArrayList();
         List<String> targetFieldNames = new ArrayList();
@@ -1211,7 +1214,9 @@ public class JPAMDefaultTableGenerator {
                     intrinsicAttribute.add(managedAttribute);
                     managedClass = ((EntitySpecAccessor) descriptor.getAccessor()).getEntity();
                     intrinsicEntity = new LinkedList<>();
-                    intrinsicEntity.add((Entity) managedAttribute.getJavaClass());
+                    if(managedAttribute.getJavaClass() instanceof Entity){ //Todo MappedSuperClass ?
+                        intrinsicEntity.add((Entity) managedAttribute.getJavaClass());
+                    }
                 } else {
                      DBValidationException exception = new DBValidationException(targetField.getName() + " column not found");
                      exception.setJavaClass(intrinsicEntity.get(0));
@@ -1228,11 +1233,12 @@ public class JPAMDefaultTableGenerator {
             if (targetFieldDef != null) {
                 // UnidirectionalOneToOneMapping case
                 if (fkFieldDef == null) {
-                    fkFieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, true, true, false, isInherited, false, false, false, fkField);//TODO confirm boolean
+                    boolean primaryKeyJoinColumn = intrinsicAttribute.size() == 1 && intrinsicAttribute.peek() instanceof Id;
+                    fkFieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, true, true, false, isInherited, false, primaryKeyJoinColumn, false, fkField);//TODO confirm boolean
                     if (!sourceTableDef.getFields().contains(fkFieldDef)) {
                         sourceTableDef.addField(fkFieldDef);
                     }
-                }
+                }//
 
                 // Set the fkFieldDef type definition to the that of the target if one is not set.
                 if (fkFieldDef.getTypeDefinition() == null || fkFieldDef.getTypeDefinition().trim().equals("")) {
@@ -1282,7 +1288,7 @@ public class JPAMDefaultTableGenerator {
             boolean resolved = false;
             boolean error = false;
 
-            Map<String, String> targetToFkField = new LinkedHashMap<String, String>();
+            Map<String, String> targetToFkField = new LinkedHashMap<>();
             for (int index = 0; index < fkFields.size(); index++) {
                 String targetField = targetFields.get(index);
                 if (targetToFkField.containsKey(targetField)) {
@@ -1293,8 +1299,8 @@ public class JPAMDefaultTableGenerator {
                 targetToFkField.put(targetField, fkFields.get(index));
             }
 
-            List<String> orderedFkFields = new ArrayList<String>(fkFields.size());
-            List<String> orderedTargetFields = new ArrayList<String>(targetFields.size());
+            List<String> orderedFkFields = new ArrayList<>(fkFields.size());
+            List<String> orderedTargetFields = new ArrayList<>(targetFields.size());
 
             if (!error) {
                 // if target fields are primary keys

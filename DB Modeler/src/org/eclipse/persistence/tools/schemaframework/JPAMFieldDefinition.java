@@ -106,17 +106,9 @@ public class JPAMFieldDefinition extends FieldDefinition {
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
-//        if(intrinsicAttribute!=null){
         this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
-//        }else {
-//           this.intrinsicClass = null;
-//       }
-//        if(managedAttribute!=null){
         this.managedAttribute = managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
-//        } else {
-//           this.managedAttribute = null;
-//       }
-        this.inverse = inverse;
+        this.inverse = inverse; 
         this.foriegnKey = foriegnKey;
         this.relationTable = relationTable;
         this.inherited = true;

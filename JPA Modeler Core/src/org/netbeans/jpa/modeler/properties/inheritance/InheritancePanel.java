@@ -19,6 +19,7 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.widget.properties.customattr.Property;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 /**
  * Copyright [2014] Gaurav Gupta
@@ -44,7 +45,7 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
     private final ModelerFile modelerFile;
     private final EntityWidget entityWidget;
     private InheritanceStateType type;
-    private InheritanceHandler classSpec;
+    private InheritanceHandler inheritanceHandler;
     
     private static final Map<InheritanceType, String> ADVANTAGES = new HashMap<>();
     private static final Map<InheritanceType, String> DISADVANTAGES = new HashMap<>();
@@ -106,78 +107,71 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
     public InheritanceHandler getValue() {
         InheritanceType inheritanceType = (InheritanceType) ((Property) strategy_ComboBox.getSelectedItem()).getKey();
         if (type == ROOT || type == BRANCH) {
-            if (classSpec.getInheritance() == null) {
-                classSpec.setInheritance(new Inheritance());
+            if (inheritanceHandler.getInheritance() == null) {
+                inheritanceHandler.setInheritance(new Inheritance());
             }
-            classSpec.getInheritance().setStrategy(inheritanceType);
+            inheritanceHandler.getInheritance().setStrategy(inheritanceType);
             DiscriminatorType discriminatorType = (DiscriminatorType) ((Property) column_type_ComboBox.getSelectedItem()).getKey();
 
             if (column_name_TextField.getText().isEmpty() && column_length_Spinner.getValue().equals(30)
                     && column_def_TextArea.getText().isEmpty() && discriminatorType == DiscriminatorType.STRING) {
-                classSpec.setDiscriminatorColumn(null);
+                inheritanceHandler.setDiscriminatorColumn(null);
             } else {
-                classSpec.setDiscriminatorColumn(new DiscriminatorColumn());
-                classSpec.getDiscriminatorColumn().setDiscriminatorType(discriminatorType);
-                classSpec.getDiscriminatorColumn().setName(column_name_TextField.getText());
-                classSpec.getDiscriminatorColumn().setLength((Integer) column_length_Spinner.getValue());
-                classSpec.getDiscriminatorColumn().setColumnDefinition(column_def_TextArea.getText());
+                inheritanceHandler.setDiscriminatorColumn(new DiscriminatorColumn());
+                inheritanceHandler.getDiscriminatorColumn().setDiscriminatorType(discriminatorType);
+                inheritanceHandler.getDiscriminatorColumn().setName(column_name_TextField.getText());
+                inheritanceHandler.getDiscriminatorColumn().setLength((Integer) column_length_Spinner.getValue());
+                inheritanceHandler.getDiscriminatorColumn().setColumnDefinition(column_def_TextArea.getText());
 
             }
 
         } else {
-            classSpec.setInheritance(null);
-            classSpec.setDiscriminatorColumn(null);
+            inheritanceHandler.setInheritance(null);
+            inheritanceHandler.setDiscriminatorColumn(null);
         }
         if (type == LEAF || type == BRANCH) {
-            classSpec.setDiscriminatorValue(value_TextField.getText());
+            inheritanceHandler.setDiscriminatorValue(value_TextField.getText());
         } else {
-            classSpec.setDiscriminatorValue(null);
+            inheritanceHandler.setDiscriminatorValue(null);
         }
+        
+//    
 
-        return classSpec;
+        return inheritanceHandler;
     }
 
     @Override
-    public void setValue(InheritanceHandler classSpec) {
-        this.classSpec = classSpec;
+    public void setValue(InheritanceHandler inheritanceHandler) {
+        this.inheritanceHandler = inheritanceHandler;
+        type = entityWidget.getInheritanceState();
 
-        GeneralizationFlowWidget outgoingGeneralizationFlowWidget = entityWidget.getOutgoingGeneralizationFlowWidget();
-        List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = entityWidget.getIncomingGeneralizationFlowWidgets();
-
-        if (outgoingGeneralizationFlowWidget != null && !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
-            outgoingGeneralizationFlowWidget = null;
+         switch (type) {
+            case SINGLETON:
+                setEnablePanel(strategy_LayeredPane, false);
+                setEnablePanel(value_LayeredPane, false);
+                break;
+            case LEAF:
+                setEnablePanel(strategy_LayeredPane, false);
+                setEnablePanel(value_LayeredPane, true);
+                break;
+            case ROOT:
+                setEnablePanel(strategy_LayeredPane, true);
+                setEnablePanel(value_LayeredPane, false);
+                break;
+            case BRANCH:
+                setEnablePanel(strategy_LayeredPane, true);
+                setEnablePanel(value_LayeredPane, true);
+                break;
         }
 
-        if (outgoingGeneralizationFlowWidget == null && incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = SINGLETON;
-            setEnablePanel(strategy_LayeredPane, false);
-            setEnablePanel(value_LayeredPane, false);
-        } else if (outgoingGeneralizationFlowWidget != null && incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = LEAF;
-            setEnablePanel(strategy_LayeredPane, false);
-            setEnablePanel(value_LayeredPane, true);
-        } else if (outgoingGeneralizationFlowWidget == null && !incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = ROOT;
-            setEnablePanel(strategy_LayeredPane, true);
-            setEnablePanel(value_LayeredPane, false);
-        } else if (outgoingGeneralizationFlowWidget != null && !incomingGeneralizationFlowWidgets.isEmpty()) {
-            type = BRANCH;
-            setEnablePanel(strategy_LayeredPane, true);
-            setEnablePanel(value_LayeredPane, true);
-        } else {
-            type = null;
-            setEnablePanel(strategy_LayeredPane, false);
-            setEnablePanel(value_LayeredPane, false);
-        }
-
-        value_TextField.setText(classSpec.getDiscriminatorValue());
+        value_TextField.setText(inheritanceHandler.getDiscriminatorValue());
 
         if (type != null && type == LEAF) {
             EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
             InheritanceHandler superClassSpec = (InheritanceHandler) superEntityWidget.getBaseElementSpec();
             setUIValue(superClassSpec);
         } else {
-            setUIValue(classSpec);
+            setUIValue(inheritanceHandler);
         }
 
     }

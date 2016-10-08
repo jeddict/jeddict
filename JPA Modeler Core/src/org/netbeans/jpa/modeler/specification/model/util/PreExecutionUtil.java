@@ -16,14 +16,13 @@
 package org.netbeans.jpa.modeler.specification.model.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
+import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.BRANCH;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
@@ -92,6 +91,8 @@ public class PreExecutionUtil {
 
         executeCompositePrimaryKeyEvaluation(scene.getBaseElements(), entityMappings);
 //        addDefaultJoinColumnForCompositePK(scene.getBaseElements(), entityMappings);
+
+        clearInheritanceData(file);
 
     }
 
@@ -258,4 +259,21 @@ public class PreExecutionUtil {
 //        }
 //    }
 
+    
+    public static void clearInheritanceData(ModelerFile file) {
+        JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
+        scene.getBaseElements().stream().filter((baseElementWidget) -> (baseElementWidget instanceof EntityWidget)).map((baseElementWidget) -> (EntityWidget)baseElementWidget).forEach((entityWidget) -> {
+            Entity entity = entityWidget.getBaseElementSpec();
+            InheritanceStateType type = entityWidget.getInheritanceState();
+            //clear @Table and @PrimaryKeyJoinColumn
+            if ((type == ROOT || type == BRANCH) && (entity.getInheritance()==null || entity.getInheritance().getStrategy() == InheritanceType.SINGLE_TABLE)) {
+                entity.getSubclassList().stream().filter(subclass -> subclass instanceof Entity).forEach(subclass -> {
+                    Entity subEntity = (Entity)subclass;
+                    subEntity.setTable(null);
+                    subEntity.setPrimaryKeyForeignKey(null);
+                    subEntity.setPrimaryKeyJoinColumn(null);
+                });
+            }
+        });
+    }
 }

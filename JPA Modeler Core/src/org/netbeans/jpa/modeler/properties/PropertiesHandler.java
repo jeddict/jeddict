@@ -3212,7 +3212,9 @@ public class PropertiesHandler {
 
             @Override
             public String getDisplay() {
-                return String.format("hashcode{%s} equals{%s}",javaClass.getHashCodeMethod().getAttributes().size(), javaClass.getEqualsMethod().getAttributes().size());
+                int hashcode = javaClass.getHashCodeMethod().getAttributes().size();
+                int equals = javaClass.getEqualsMethod().getAttributes().size();
+                return String.format("equals{%s} hashcode{%s}", hashcode, equals);
             }
 
         });

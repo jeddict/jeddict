@@ -1044,7 +1044,10 @@ public class MetadataDescriptor {
      * Method to return the primary key field name this descriptor metadata. 
      * It assumes there is one.
      */
-    public DatabaseField getPrimaryKeyField() {
+    public DatabaseField getPrimaryKeyField() { 
+        if(!hasPrimaryKeyFields()){
+            return null;
+        }
         return getPrimaryKeyFields().iterator().next();
     }
     

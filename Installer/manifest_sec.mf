@@ -3,5 +3,5 @@ AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.netbeans.jpa.modeler.installer
 OpenIDE-Module-Layer: org/netbeans/jpa/modeler/installer/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/netbeans/jpa/modeler/installer/Bundle.properties
-OpenIDE-Module-Specification-Version: 2.6
+OpenIDE-Module-Specification-Version: 2.6.2
 

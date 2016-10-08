@@ -31,7 +31,6 @@ import org.eclipse.persistence.internal.jpa.metadata.converters.MixedConverterMe
 import org.netbeans.jpa.modeler.db.accessor.DefaultClassSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
-import org.netbeans.jpa.modeler.db.accessor.MappedSuperclassSpecAccessor;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 
 /**

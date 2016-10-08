@@ -42,7 +42,9 @@ public class HashcodeMethodSnippet implements Snippet {
         int startNumber = generatePrimeNumber(2, 10);
         int multiplyNumber = generatePrimeNumber(10, 100);
 
-        builder.append(String.format("int hash = %s;",startNumber)).append(NEW_LINE);
+        if(!classMembers.getAttributes().isEmpty()){
+            builder.append(String.format("int hash = %s;",startNumber)).append(NEW_LINE);
+        }
         
         if (StringUtils.isNotBlank(classMembers.getPreCode())) {
             builder.append(classMembers.getPreCode()).append(NEW_LINE);
@@ -56,14 +58,16 @@ public class HashcodeMethodSnippet implements Snippet {
             } else {
                 expression = getHashcodeExpression(attribute.getName());
             }
-            builder.append(String.format("hash = %s * hash + %s;\n", multiplyNumber, expression));
+            builder.append(String.format("hash = %s * hash + %s;", multiplyNumber, expression)).append(NEW_LINE);
         }
         
         if (StringUtils.isNotBlank(classMembers.getPostCode())) {
             builder.append(classMembers.getPostCode()).append(NEW_LINE);
         }
         
-        builder.append("return hash;");
+        if(!classMembers.getAttributes().isEmpty()){
+            builder.append("return hash;");
+        }
         return builder.toString();
     }
 

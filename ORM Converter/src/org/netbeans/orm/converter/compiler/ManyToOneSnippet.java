@@ -28,19 +28,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class ManyToOneSnippet extends AbstractRelationDefSnippet {
-
-    private boolean optional = false;
-    private String mapsId;
-    private boolean primaryKey;
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
+public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
@@ -121,31 +109,4 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet {
         return importSnippets;
     }
 
-    /**
-     * @return the primaryKey
-     */
-    public boolean isPrimaryKey() {
-        return primaryKey;
-    }
-
-    /**
-     * @param primaryKey the primaryKey to set
-     */
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
-
-    /**
-     * @return the mapsId
-     */
-    public String getMapsId() {
-        return mapsId;
-    }
-
-    /**
-     * @param mapsId the mapsId to set
-     */
-    public void setMapsId(String mapsId) {
-        this.mapsId = mapsId;
-    }
 }

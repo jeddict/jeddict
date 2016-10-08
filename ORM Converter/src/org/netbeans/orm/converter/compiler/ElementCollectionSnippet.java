@@ -36,6 +36,9 @@ public class ElementCollectionSnippet implements Snippet {
 //    private String accessType = null;
 
     public String getFetchType() {
+        if (fetchType != null) {
+            return "FetchType." + fetchType;
+        }
         return fetchType;
     }
 
@@ -48,7 +51,7 @@ public class ElementCollectionSnippet implements Snippet {
         StringBuilder builder = new StringBuilder();
         builder.append("@").append(ELEMENT_COLLECTION);
         if (fetchType != null) {
-            builder.append("(fetch=").append(FETCH_TYPE).append(".").append(fetchType).append(ORMConverterUtil.CLOSE_PARANTHESES);
+            builder.append("(fetch=").append(getFetchType()).append(ORMConverterUtil.CLOSE_PARANTHESES);
         }
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             builder.append(mapKeySnippet.getSnippet()).append(TAB);

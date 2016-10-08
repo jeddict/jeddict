@@ -15,12 +15,10 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember;
 
-import java.awt.event.ItemEvent;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
-import org.netbeans.jpa.modeler.properties.classmember.ClassMemberPanel;
 
 public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
