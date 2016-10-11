@@ -60,6 +60,7 @@ import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.AccessType;
 import static org.netbeans.jpa.modeler.spec.AccessType.FIELD;
 import static org.netbeans.jpa.modeler.spec.AccessType.PROPERTY;
+import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.CascadeType;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -541,6 +542,68 @@ public class PropertiesHandler {
                 data.stream().forEach((row) -> {
                     AttributeOverride attributeOverride = (AttributeOverride) row[0];
                     attributeOverridesSpec.add(attributeOverride);
+                });
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+    
+    public static PropertySupport getAssociationOverridesProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Set<AssociationOverride> associationOverridesSpec) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        attributeEntity.setCountDisplay(new String[]{"No AssociationOverrides exist", "One AssociationOverride exist", "AssociationOverrides exist"});
+
+        attributeEntity.setColumns(Arrays.asList(
+                new Column("OBJECT", false, true, Object.class),
+                new Column("Association Name", false, String.class),
+                new Column("JoinTable Name", false, String.class),
+                new Column("JoinColumn Size", false, Integer.class)
+        ));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = associationOverridesSpec.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                Set<AssociationOverride> associationOverrides = associationOverridesSpec;
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<? extends AssociationOverride> itr = associationOverrides.iterator();
+                while (itr.hasNext()) {
+                    AssociationOverride attributeOverride = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = attributeOverride;
+                    row[1] = attributeOverride.getName();
+                    row[2] = attributeOverride.getJoinTable().getName();
+                    row[3] = attributeOverride.getJoinColumn().size();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                associationOverridesSpec.clear();
+                data.stream().forEach((row) -> {
+                    AssociationOverride associationOverride = (AssociationOverride) row[0];
+                    associationOverridesSpec.add(associationOverride);
                 });
                 this.data = data;
             }

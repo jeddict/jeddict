@@ -17,9 +17,12 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
+import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -35,6 +38,18 @@ public abstract class EmbeddedAttributeWidget<E extends CompositionAttribute> ex
         super(scene, nodeWidget, pinWidgetInfo);
 //        this.setImage(JPAModelerUtil.EMBEDDED_ATTRIBUTE);
     }
+    
+        @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        CompositionAttribute attribute = (CompositionAttribute)this.getBaseElementSpec();
+
+        set.put("BASIC_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), attribute.getAttributeOverride()));
+        if(attribute instanceof AssociationOverrideHandler){
+            set.put("BASIC_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), ((AssociationOverrideHandler)attribute).getAssociationOverride()));
+        }
+    }
+
 
     /**
      * @return the embeddableFlowWidget

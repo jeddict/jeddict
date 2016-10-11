@@ -103,6 +103,7 @@ public class DeploymentExceptionManager {
                                                 joinColumns.add(joinColumn);
                                                } else {
                                                   //same join column name exist in table
+                                                  //if basic column name is same as join column
                                                   joinColumns.clear();
                                                   break;
                                                }
@@ -118,15 +119,17 @@ public class DeploymentExceptionManager {
                                                 String newColumnName = getNext(columnName, nextColumnName -> allFields.contains(nextColumnName));
                                                 persistenceBaseAttribute.getColumn().setName(newColumnName);
                                             } else {
-                                                System.out.println("");
+                                                fixError = false;
+                                                break;
                                             }
                                         } else {
-                                            System.out.println("");
+                                                fixError = false;
+                                                break;
                                         }
-                                        for (DatabaseField databaseField : de.getMapping().getFields()) {
-                                            long count = relationalDescriptor.getAllFields().stream().map(field -> field.getName()).filter(fieldName -> fieldName.equals(databaseField.getName())).count();
-                                            System.out.println("count : " + count);
-                                        }
+//                                        for (DatabaseField databaseField : de.getMapping().getFields()) {
+//                                            long count = relationalDescriptor.getAllFields().stream().map(field -> field.getName()).filter(fieldName -> fieldName.equals(databaseField.getName())).count();
+//                                            System.out.println("count : " + count);
+//                                        }
                                     }
 
                                     file.getModelerUtil().loadModelerFile(file);

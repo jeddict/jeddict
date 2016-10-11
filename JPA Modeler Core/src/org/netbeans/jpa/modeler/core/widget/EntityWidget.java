@@ -39,6 +39,7 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
+import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
@@ -48,6 +49,12 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
         this.addPropertyChangeListener("abstract", (input) -> setImage(getIcon()));
+        PropertyVisibilityHandler<String> overridePropertyHandler = (PropertyVisibilityHandler<String>) () -> {
+            InheritanceStateType inheritanceState = this.getInheritanceState(true);
+            return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF;
+        };
+        this.addPropertyVisibilityHandler("AttributeOverrides", overridePropertyHandler);
+        this.addPropertyVisibilityHandler("AssociationOverrides", overridePropertyHandler);
     }
 
     @Override
@@ -101,6 +108,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         
         set.put("BASIC_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
         set.put("BASIC_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), entity.getAttributeOverride()));
+        set.put("BASIC_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), entity.getAssociationOverride()));
         
         
         
@@ -113,13 +121,16 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         set.put("QUERY", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));        
     }
 
-
     @Override
     public InheritanceStateType getInheritanceState() {
+        return getInheritanceState(false);   
+    }
+    @Override
+    public InheritanceStateType getInheritanceState(boolean includeAllClass) {
         GeneralizationFlowWidget outgoingGeneralizationFlowWidget = this.getOutgoingGeneralizationFlowWidget();
         List<GeneralizationFlowWidget> incomingGeneralizationFlowWidgets = this.getIncomingGeneralizationFlowWidgets();
         if (outgoingGeneralizationFlowWidget != null && outgoingGeneralizationFlowWidget.getSuperclassWidget() != null &&
-                !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
+          !includeAllClass && !(outgoingGeneralizationFlowWidget.getSuperclassWidget() instanceof EntityWidget)) {
             outgoingGeneralizationFlowWidget = null;
         }
         InheritanceStateType type;

@@ -53,6 +53,10 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
     public InheritanceStateType getInheritanceState() {
         return InheritanceStateType.NONE;
     }
+    @Override
+    public InheritanceStateType getInheritanceState(boolean includeAllClass) {
+        return InheritanceStateType.NONE;
+    }
     
     @Override
     public String getIconPath() {
