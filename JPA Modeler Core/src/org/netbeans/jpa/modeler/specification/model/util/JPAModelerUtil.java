@@ -42,6 +42,7 @@ import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
+import static org.netbeans.jcode.core.util.StringHelper.getNext;
 import org.netbeans.jpa.modeler._import.javaclass.JCREProcessor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
@@ -713,7 +714,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     relationAttribute.getJoinColumn().clear();
      }
     }
-    public static void addDefaultJoinColumnForCompositePK(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, String attributeName, List<JoinColumn> joinColumns) {
+    
+    //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/8 #Same Column name in CompositePK
+    public static void addDefaultJoinColumnForCompositePK(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
+            String attributeName, Set<String> allFields, List<JoinColumn> joinColumns)  {
                 //Get all @Id @Relation owner attribute 
                 for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
                     SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
@@ -726,8 +730,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     
                     //check is it composite key
                     EntityWidget targetEntityWidget = attributeWidget.getRelationFlowWidget().getTargetEntityWidget();
-                    Entity entity = targetEntityWidget.getBaseElementSpec();
-                    if(entity.getCompositePrimaryKeyType() != null){
+                    Entity targetEntity = targetEntityWidget.getBaseElementSpec();
+//                    if(targetEntity.getCompositePrimaryKeyType() != null){
 //                        boolean proceed = false;
 //                        DefaultClass defaultClass = entityMappings.findDefaultClass(entity.getCompositePrimaryKeyClass());
                         
@@ -739,16 +743,18 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //                            // TODO compare column nane
 //                        }
                       relationAttribute.getJoinColumn().clear();
-                        if(joinColumns == null){
+                        if(joinColumns == null || joinColumns.isEmpty()){
                             for(AttributeWidget attributeWidget_Tmp : targetEntityWidget.getPrimaryKeyAttributeWidgets()){
                                 Attribute attribute = (Attribute)attributeWidget_Tmp.getBaseElementSpec();
                                 JoinColumn joinColumn = new JoinColumn();
-                                joinColumn.setName(entity.getClazz() + '_' + attribute.getName());
+                                String joinColumnName = (targetEntity.getClazz() + '_' + attribute.getName()).toUpperCase();
+                                joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName), false);
+                                joinColumn.setName(joinColumnName);
                                 if(attribute instanceof RelationAttribute){
                                      Entity connectedEntity = ((RelationAttribute)attribute).getConnectedEntity();
                                      if(connectedEntity.getCompositePrimaryKeyType()!=null){
-                                         //TODO
-                                     } else {
+                                         //TODO  
+                                      } else {
                                          Id id = connectedEntity.getAttributes().getId().get(0);
                                          String refColumnName = null;
 //                                         if(entity.getCompositePrimaryKeyType()==CompositePrimaryKeyType.EMBEDDEDID){
@@ -767,7 +773,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             relationAttribute.getJoinColumn().addAll(joinColumns);
                         }
                     }
-                }
+//                }
     }
     
     

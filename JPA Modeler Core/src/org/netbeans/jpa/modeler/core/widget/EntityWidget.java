@@ -100,6 +100,10 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         }
         
         set.put("BASIC_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
+        set.put("BASIC_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), entity.getAttributeOverride()));
+        
+        
+        
         set.put("UI_PROP", getEntityDisplayProperty(EntityWidget.this));
 
         set.put("QUERY", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));

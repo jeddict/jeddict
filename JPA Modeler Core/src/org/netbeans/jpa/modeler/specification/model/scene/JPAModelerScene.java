@@ -27,6 +27,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import org.netbeans.api.project.Project;
+import org.netbeans.jcode.core.util.StringHelper;
+import static org.netbeans.jcode.core.util.StringHelper.getNext;
 import org.netbeans.jpa.modeler.collaborate.enhancement.EnhancementRequestHandler;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -434,25 +436,15 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     }
 
     public String getNextClassName(String className) {
-        int index = 0;
         if (className == null || className.trim().isEmpty()) {
             className = "class";
         }
-        className = Character.toUpperCase(className.charAt(0)) + (className.length() > 1 ? className.substring(1) : "");
-        String nextClassName = className + ++index;
+        className = StringHelper.firstUpper(className);
         EntityMappings entityMappings = this.getBaseElementSpec();
-
-        boolean isExist = true;
-        while (isExist) {
-            if (entityMappings.isClassExist(nextClassName)) {
-                isExist = true;
-                nextClassName = className + ++index;
-            } else {
-                return nextClassName;
-            }
-        }
-        return nextClassName;
+        return getNext(className, nextClassName -> entityMappings.isClassExist(nextClassName));
     }
+    
+
 
     @Override
     public IColorScheme getColorScheme() {

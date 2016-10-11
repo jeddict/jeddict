@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.StringHelper;
-import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
+import static org.netbeans.jcode.core.util.StringHelper.getNext;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -788,30 +788,18 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public String getNextAttributeName(String attrName, boolean multi) {
-        int index = 0;
         if (attrName == null || attrName.trim().isEmpty()) {
             attrName = "attribute";
         }
-        attrName = Character.toLowerCase(attrName.charAt(0)) + (attrName.length() > 1 ? attrName.substring(1) : "");
+        attrName = StringHelper.firstLower(attrName);
         if (multi) {
             attrName = English.plural(attrName);
         }
-        String nextAttrName = attrName;
-
         ManagedClass javaClass = this.getBaseElementSpec();
         if (javaClass.getAttributes() == null) {
-            return nextAttrName;
+            return attrName;
         }
-        boolean isExist = true;
-        while (isExist) {
-            if (javaClass.getAttributes().isAttributeExist(nextAttrName)) {
-                isExist = true;
-                nextAttrName = attrName + ++index;
-            } else {
-                return nextAttrName;
-            }
-        }
-        return nextAttrName;
+        return getNext(attrName, nextAttrName -> javaClass.getAttributes().isAttributeExist(nextAttrName));
     }
 
     @Override    // method should be called only onec in case of loadDocument
