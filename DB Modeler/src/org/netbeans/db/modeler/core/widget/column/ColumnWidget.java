@@ -58,12 +58,18 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
         DBColumn column = this.getBaseElementSpec();
         
         String dataType = column.getDataType();
-        if (viewAs == AttributeViewAs.CLASS_FQN || viewAs == AttributeViewAs.SIMPLE_CLASS_NAME) {
-            dataType = dataType + "(" + column.getSize()+ ")";
-        } else if (viewAs == AttributeViewAs.SHORT_CLASS_NAME) {
-            //skip
-        } else if (viewAs == AttributeViewAs.NONE) {
-            return;
+        if (null != viewAs) switch (viewAs) {
+            case CLASS_FQN:
+            case SIMPLE_CLASS_NAME:
+                dataType = dataType + "(" + column.getSize()+ ")";
+                break;
+        //skip
+            case SHORT_CLASS_NAME:
+                break;
+            case NONE:
+                return;
+            default:
+                break;
         }
         
         visualizeDataType(dataType);

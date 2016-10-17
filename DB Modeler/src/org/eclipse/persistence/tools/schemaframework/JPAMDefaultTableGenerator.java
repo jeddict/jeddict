@@ -589,6 +589,11 @@ public class JPAMDefaultTableGenerator {
                 }
             } else if (mapping.isAggregateCollectionMapping()) {
                 //need to figure out the target foreign key field and add it into the aggregate target table
+//               if(managedAttribute instanceof ElementCollection || ((ElementCollection)managedAttribute).getConnectedClass()!=null){
+//                   ClassDescriptor refDescriptor = mapping.getReferenceDescriptor();
+//                                    Attribute attribute = getManagedAttribute(refDescriptor, dbField, intrinsicAttribute);//TODO intrinsicAttribute nested path/attribute not set
+//
+//               }
                 createAggregateTargetTable(managedClass, managedAttribute, intrinsicEntity, intrinsicAttribute, isInherited, (AggregateCollectionMapping) mapping);
             } else if (mapping.isForeignReferenceMapping()) {
                 if (mapping.isOneToOneMapping()) {
@@ -852,7 +857,9 @@ public class JPAMDefaultTableGenerator {
             LinkedList<Attribute> intrinsicAttribute_Local = new LinkedList<>(intrinsicAttribute);
             
             Attribute managedAttribute_Local = managedAttribute;
-            if(managedAttribute instanceof MapKeyHandler && ((MapKeyHandler)managedAttribute).getMapKeyEmbeddable()!=null){
+            if(managedAttribute instanceof MapKeyHandler && ((MapKeyHandler)managedAttribute).getMapKeyEmbeddable()!=null){ //@ElementCollection Map<Embeddeb,>
+                managedAttribute_Local = getManagedAttribute(mapping.getReferenceDescriptor(), dbField,  intrinsicAttribute_Local);
+            } else  if(managedAttribute instanceof ElementCollection && ((ElementCollection)managedAttribute).getConnectedClass()!=null){ // @ElementCollection List<Embeddeb>
                 managedAttribute_Local = getManagedAttribute(mapping.getReferenceDescriptor(), dbField,  intrinsicAttribute_Local);
             }
             FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute_Local, managedAttribute_Local, false, false, false, false, false, false, false, dbField);
