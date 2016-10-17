@@ -36,6 +36,7 @@ import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ColumnResult;
 import org.netbeans.jpa.modeler.spec.ConstructorResult;
+import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
@@ -198,15 +199,30 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setVariableDefs(new ArrayList<>(variables.values()));
 
         classDef.setConstructors(getConstructorSnippets(javaClass));
-        classDef.setHashcodeMethod(getHashcodeMethodSnippet(javaClass.getClazz(), javaClass.getHashCodeMethod()));
-        classDef.setEqualsMethod(getEqualsMethodSnippet(javaClass.getClazz(), javaClass.getEqualsMethod()));
-        classDef.setToStringMethod(getToStringMethodSnippet(javaClass.getClazz(), javaClass.getToStringMethod()));
+        classDef.setHashcodeMethod(getHashcodeMethodSnippet(javaClass, getClassMembers(javaClass, javaClass.getHashCodeMethod())));
+        classDef.setEqualsMethod(getEqualsMethodSnippet(javaClass, getClassMembers(javaClass, javaClass.getEqualsMethod())));
+        classDef.setToStringMethod(getToStringMethodSnippet(javaClass, getClassMembers(javaClass, javaClass.getToStringMethod())));
+        
+        
         if (javaClass.getSuperclass() != null) {
             ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
             superClassHelper.setPackageName(javaClass.getSuperclass().getPackage(rootPackageName));
             classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
         return classDef;
+    }
+    
+    
+    private ClassMembers getClassMembers(JavaClass javaClass, ClassMembers classMembers){
+        if (javaClass instanceof DefaultClass) {
+            classMembers = new ClassMembers();
+            for (VariableDefSnippet variableDefSnippet : variables.values()) {
+                if (variableDefSnippet.getAttribute() != null) {
+                    classMembers.addAttribute(variableDefSnippet.getAttribute());
+                }
+            }
+        }
+        return classMembers;
     }
 
     protected ColumnDefSnippet getColumnDef(Column column) {
@@ -271,29 +287,29 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippetsMap;
     }
 
-    protected HashcodeMethodSnippet getHashcodeMethodSnippet(String className, ClassMembers classMembers) {
+    protected HashcodeMethodSnippet getHashcodeMethodSnippet(JavaClass javaClass, ClassMembers classMembers) {
         if (classMembers.getAttributes().isEmpty() && 
                 StringUtils.isBlank(classMembers.getPreCode()) &&
                 StringUtils.isBlank(classMembers.getPostCode())) {
             return null;
         }
-        return new HashcodeMethodSnippet(className, classMembers);
+        return new HashcodeMethodSnippet(javaClass.getClazz(), classMembers);
     }
 
-    protected EqualsMethodSnippet getEqualsMethodSnippet(String className, ClassMembers classMembers) {
+    protected EqualsMethodSnippet getEqualsMethodSnippet(JavaClass javaClass, ClassMembers classMembers) {
         if (classMembers.getAttributes().isEmpty() && 
                 StringUtils.isBlank(classMembers.getPreCode()) &&
                 StringUtils.isBlank(classMembers.getPostCode())) {
             return null;
         }
-        return new EqualsMethodSnippet(className, classMembers);
+        return new EqualsMethodSnippet(javaClass.getClazz(), classMembers);
     }
 
-    protected ToStringMethodSnippet getToStringMethodSnippet(String className, ClassMembers classMembers) {
+    protected ToStringMethodSnippet getToStringMethodSnippet(JavaClass javaClass, ClassMembers classMembers) {
         if (classMembers.getAttributes().isEmpty()) {
             return null;
         }
-        ToStringMethodSnippet snippet = new ToStringMethodSnippet(className);
+        ToStringMethodSnippet snippet = new ToStringMethodSnippet(javaClass.getClazz());
         snippet.setAttributes(classMembers.getAttributeNames());
         return snippet;
     }
@@ -301,25 +317,30 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected List<ConstructorSnippet> getConstructorSnippets(JavaClass javaClass) {
         List<ConstructorSnippet> constructorSnippets = new ArrayList<>();
         Function<Attribute, VariableDefSnippet> buildVarDef = attr -> {
-                            VariableDefSnippet variableDefSnippet = new VariableDefSnippet();
+                            VariableDefSnippet variableDefSnippet = new VariableDefSnippet(attr);
                             variableDefSnippet.setName(attr.getName());
                             variableDefSnippet.setType(attr.getDataTypeLabel());
                             return variableDefSnippet;
                         };
-        for (Constructor constructor : javaClass.getConstructors()) {
-            if (constructor.isEnable()) {
-                String className = javaClass.getClazz();
-              
-                List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes().stream()
-                        .filter(attr -> attr.getJavaClass() != javaClass).map(buildVarDef).collect(toList());
-                
-                List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes().stream()
-                        .filter(attr -> attr.getJavaClass() == javaClass).map(buildVarDef).collect(toList());
-                
-                ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, parentVariableSnippets, localVariableSnippets);
-                constructorSnippets.add(snippet);
-            }
+        List<Constructor> constructors = javaClass.getConstructors();
+        if(javaClass instanceof DefaultClass && constructors.isEmpty()){ //for EmbeddedId and IdClass
+            constructors.add(Constructor.getNoArgsInstance());
+            Constructor constructor = new Constructor();
+            constructor.setAttributes(getClassMembers(javaClass, null).getAttributes());
+            constructors.add(constructor);
         }
+        
+        constructors.stream().filter((constructor) -> (constructor.isEnable())).map((constructor) -> {
+            String className = javaClass.getClazz();
+            List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes().stream()
+                    .filter(attr -> attr.getJavaClass() != javaClass).map(buildVarDef).collect(toList());
+            List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes().stream()
+                    .filter(attr -> attr.getJavaClass() == javaClass).map(buildVarDef).collect(toList());
+            ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, parentVariableSnippets, localVariableSnippets);
+            return snippet;
+        }).forEachOrdered((snippet) -> {
+            constructorSnippets.add(snippet);
+        });
         return constructorSnippets;
     }
 
@@ -340,7 +361,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected VariableDefSnippet getVariableDef(Attribute attr) {
         VariableDefSnippet variableDef = variables.get(attr.getName());
         if (variableDef == null) {
-            variableDef = new VariableDefSnippet();
+            variableDef = new VariableDefSnippet(attr);
             variableDef.setName(attr.getName());
             variableDef.setDescription(attr.getDescription());
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));

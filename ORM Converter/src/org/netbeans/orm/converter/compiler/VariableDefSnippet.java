@@ -44,7 +44,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
-import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -90,6 +90,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     private TypeIdentifierSnippet typeIdentifier = null;
 
+    private Attribute attribute;
+
+    public VariableDefSnippet() {
+    }
+    
+    public VariableDefSnippet(Attribute attribute) {
+        this.attribute = attribute;
+    }
+    
     public BasicSnippet getBasic() {
         return basic;
     }
@@ -753,4 +762,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.functionalType = functionalType;
     }
 
+    /**
+     * @return the attribute
+     */
+    public Attribute getAttribute() {
+        return attribute;
+    }
 }

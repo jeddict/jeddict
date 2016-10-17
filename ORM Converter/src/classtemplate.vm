@@ -8,7 +8,6 @@ package $classDef.getPackageName();
 
 #####################import statements #################################
 import java.io.Serializable;
-import java.util.Objects;
 #foreach ( $importStatement in $classDef.getImportSnippets() )
 $importStatement
 #end
@@ -28,10 +27,10 @@ public class $classDef.getClassName() implements Serializable {
     private $varDef.type $varDef.name;
 #end
 
-#####################Constructor #################################
-    public $classDef.getClassName()() {
+#foreach($constructor in $classDef.getConstructors())
+    $constructor.getSnippet()
 
-    }
+#end
 
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
@@ -53,56 +52,19 @@ public class $classDef.getClassName() implements Serializable {
     }
 #end
 
-#####################hash code ###############################
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        #foreach( $varDef in $classDef.getVariableDefs() ) #if($varDef.type == "boolean")
-hash = 59 * hash + (this.$varDef.name ? 1 : 0);
-#elseif($varDef.type == "byte" || $varDef.type == "short" || $varDef.type == "char" ||  $varDef.type == "int")
-hash = 59 * hash + this.$varDef.name;
-#elseif($varDef.type == "long")
-hash = 59 * hash + (int) (this.$varDef.name ^ (this.$varDef.name >>> 32));
-#elseif($varDef.type == "float")
-hash = 59 * hash + Float.floatToIntBits(this.$varDef.name);
-#elseif($varDef.type == "double")
-hash = 59 * hash + (int) (Double.doubleToLongBits(this.$varDef.name) ^ (Double.doubleToLongBits(this.$varDef.name) >>> 32));
-#else
-hash = 59 * hash + Objects.hashCode(this.$varDef.name);
-#end
-        #end
-     return hash;
-   }
-
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final $classDef.getClassName() other = ($classDef.getClassName()) obj;
-        #foreach( $varDef in $classDef.getVariableDefs() )
-#if($varDef.type == "boolean" || $varDef.type == "byte" || $varDef.type == "short" || $varDef.type == "char" ||  $varDef.type == "int" || $varDef.type == "long")
-if (this.$varDef.name != other.$varDef.name) {
-            return false;
-        }
-#elseif($varDef.type == "float")
-if (Float.floatToIntBits(this.$varDef.name) != Float.floatToIntBits(other.$varDef.name)) {
-            return false;
-        }
-#elseif($varDef.type == "double")
-if (Double.doubleToLongBits(this.$varDef.name) != Double.doubleToLongBits(other.$varDef.name)) {
-            return false;
-        }
-#else
-if (!Objects.equals(this.$varDef.name, other.$varDef.name)) {
-            return false;
-        }
-#end
-        #end
-    return true;
+        $classDef.getEqualsMethod().getSnippet()
+    }
+
+    @Override
+    public int hashCode() {
+        $classDef.getHashcodeMethod().getSnippet()
+    }
+
+    @Override
+    public String toString() {
+        return $classDef.getToStringMethod().getSnippet();
     }
 
 }

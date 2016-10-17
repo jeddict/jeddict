@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.network.social.linkedin;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import javax.swing.Icon;
@@ -64,9 +65,7 @@ public class LinkedInSocialNetwork {
 
     public JMenuItem getComponent() {
         JMenuItem twitterShare = new JMenuItem("Linked In", LINKEDIN);
-        twitterShare.addActionListener((ActionEvent e) -> {
-            SharingHelper.openWebpage(LINK);
-        });
+        twitterShare.addActionListener( e -> SharingHelper.openWebpage(LINK));
         return twitterShare;
     }
 
