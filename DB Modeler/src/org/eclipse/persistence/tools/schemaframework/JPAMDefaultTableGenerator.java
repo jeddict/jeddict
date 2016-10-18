@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DBRelationalDescriptor;
@@ -198,10 +199,17 @@ public class JPAMDefaultTableGenerator {
      */
     public JPAMTableCreator generateDefaultTableCreator() {
         JPAMTableCreator tblCreator = new JPAMTableCreator();
-
-        this.project.getOrderedDescriptors().stream().map(d -> (DBRelationalDescriptor) d)
-                .sorted((d1, d2) -> Integer.compare(d1.getMappings().size(), d2.getMappings().size()))
-                .forEach((descriptor) -> {
+        List<DBRelationalDescriptor> descriptors =  this.project.getOrderedDescriptors().stream()
+                .sorted((d1, d2) -> {
+                    if (d1.isChildDescriptor() == d2.isChildDescriptor()) {
+                        return Integer.compare(d1.getMappings().size(), d2.getMappings().size());
+                    } else {
+                        return d1.isChildDescriptor()? 1 : -1;
+                    }
+                }).map(d -> (DBRelationalDescriptor) d).collect(toList());
+//        this.project.getOrderedDescriptors().stream().map(d -> (DBRelationalDescriptor) d)
+//                .sorted((d1, d2) -> Integer.compare(d1.getMappings().size(), d2.getMappings().size()))
+        for(DBRelationalDescriptor descriptor : descriptors) {
             /**
              * Table per concrete class #Id : SUPERCLASS_ATTR_CLONE.
              * Description : Fix for If class have super class 
@@ -236,14 +244,15 @@ public class JPAMDefaultTableGenerator {
                 }
             }
  
-        });
+        }
         //go through each descriptor and build the table/field definitions out of mappings
         /**
          * sorted use : method is used to create table definition first for parent entity 
          * problem : child has both parent & child table definition but only child entity object which is associated with parent table
+         * problem : DTYPE column is connected with child entity
          * solution : sort and create the table definition first for parent entity
          */
-        this.project.getOrderedDescriptors().stream().sorted((d1, d2) -> Integer.compare(d1.getTables().size(), d2.getTables().size())).forEach(descriptor -> {
+        for(DBRelationalDescriptor descriptor : descriptors) { //Integer.compare(d1.getTables().size(), d2.getTables().size());
 //            if ((descriptor instanceof XMLDescriptor) || (descriptor instanceof EISDescriptor) || (descriptor instanceof ObjectRelationalDataTypeDescriptor)) {
 //                //default table generator does not support ox, eis and object-relational descriptor
 //                return tblCreator;
@@ -252,11 +261,11 @@ public class JPAMDefaultTableGenerator {
             // processed through their owning entities. Aggregate descriptors
             // can not exist on their own.
             // Table per tenant descriptors will not be initialized.
-            System.out.println(descriptor.getTableName() + " descriptor size : " + descriptor.getTables().size());
+//            System.out.println(descriptor.getTableName() + " descriptor size : " + descriptor.getTables().size());
             if (!descriptor.isDescriptorTypeAggregate() && !(descriptor.hasTablePerMultitenantPolicy() && !project.allowTablePerMultitenantDDLGeneration())) {
-                initTableSchema(descriptor); 
+                initTableSchema(descriptor);
             }
-        });
+        }
 
         //Post init the schema for relation table and direct collection/map tables, and several special mapping handlings.
         for (ClassDescriptor descriptor : this.project.getOrderedDescriptors()) {
