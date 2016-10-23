@@ -86,9 +86,7 @@ public class PinContextModel {
         upModel.setTooltip("Move Up");
         upModel.setPaletteModel(contextPaletteModel);
         upModel.setMouseListener(getMoveUpWidgetAction(pinWidget, -1));
-        upModel.checkVisibility(() -> {
-            return checkMoveWidgetVisibility(pinWidget, -1);
-        });
+        upModel.checkVisibility(() -> checkMoveWidgetVisibility(pinWidget, -1));
         contextPaletteModel.getChildren().add(upModel);
 
         ContextPaletteButtonModel downModel = new DefaultPaletteButtonModel();
@@ -96,9 +94,7 @@ public class PinContextModel {
         downModel.setTooltip("Move Down");
         downModel.setPaletteModel(contextPaletteModel);
         downModel.setMouseListener(getMoveUpWidgetAction(pinWidget, 1));
-        downModel.checkVisibility(() -> {
-            return checkMoveWidgetVisibility(pinWidget, 1);
-        });
+        downModel.checkVisibility(() -> checkMoveWidgetVisibility(pinWidget, 1));
         contextPaletteModel.getChildren().add(downModel);
     }
 

@@ -97,7 +97,7 @@ public class DeploymentExceptionManager {
                                                 //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/45 #Same Column name in table
                                               if(!databaseField.getName().startsWith( attributeName.toUpperCase() + "_")){
                                                 String joinColumnName = (attributeName.toUpperCase() + "_" + databaseField.getName()).toUpperCase();
-                                                joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName), false);
+                                                joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName));
                                                 joinColumn.setName(joinColumnName);
                                                 joinColumn.setReferencedColumnName(databaseField.getName());
                                                 joinColumns.add(joinColumn);

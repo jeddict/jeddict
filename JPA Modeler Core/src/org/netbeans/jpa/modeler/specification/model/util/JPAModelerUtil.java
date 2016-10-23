@@ -748,7 +748,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                                 Attribute attribute = (Attribute)attributeWidget_Tmp.getBaseElementSpec();
                                 JoinColumn joinColumn = new JoinColumn();
                                 String joinColumnName = (targetEntity.getClazz() + '_' + attribute.getName()).toUpperCase();
-                                joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName), false);
+                                joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName));
                                 joinColumn.setName(joinColumnName);
                                 if(attribute instanceof RelationAttribute){
                                      Entity connectedEntity = ((RelationAttribute)attribute).getConnectedEntity();

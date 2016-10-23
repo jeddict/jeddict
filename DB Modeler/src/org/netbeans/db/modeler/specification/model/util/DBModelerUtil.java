@@ -308,6 +308,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             }
             if (flowElement instanceof DBTable) {
                 DBTable table = (DBTable) flowElement;
+                table.sortColumns();
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
                     table.getColumns().stream().forEach((column) -> {

@@ -441,7 +441,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         }
         className = StringHelper.firstUpper(className);
         EntityMappings entityMappings = this.getBaseElementSpec();
-        return getNext(className, nextClassName -> entityMappings.isClassExist(nextClassName));
+        return getNext(className, nextClassName -> entityMappings.isClassExist(nextClassName), true);
     }
     
 
