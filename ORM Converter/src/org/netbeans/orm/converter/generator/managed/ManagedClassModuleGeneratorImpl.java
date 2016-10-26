@@ -77,7 +77,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateDefaultClasses() throws InvalidDataException, IOException {
-        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getDefaultClass().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
+        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getDefaultClass().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
         if(!parsedDefaultClasses.isEmpty()){
             task.log(Console.wrap("Generating IdClass/PrimaryKey Class : " , FG_RED, BOLD), true);
         }
@@ -91,7 +91,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         }
     }
     private void generateEmbededClasses() throws InvalidDataException, IOException {
-        List<Embeddable> parsedEmbeddables = parsedEntityMappings.getEmbeddable().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
+        List<Embeddable> parsedEmbeddables = parsedEntityMappings.getEmbeddable().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
         if(!parsedEmbeddables.isEmpty()){
             task.log(Console.wrap("Generating Embeddable Class : " , FG_RED, BOLD), true);
         }
@@ -106,7 +106,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateEntityClasses() throws InvalidDataException, IOException {
-        List<Entity> parsedEntities = parsedEntityMappings.getEntity().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
+        List<Entity> parsedEntities = parsedEntityMappings.getEntity().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
         if(!parsedEntities.isEmpty()){
             task.log(Console.wrap("Generating Entity Class : " , FG_RED, BOLD), true);
         }
@@ -121,7 +121,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateMappedSuperClasses() throws InvalidDataException, IOException {
-        List<MappedSuperclass> parsedMappedSuperclasses = parsedEntityMappings.getMappedSuperclass().stream().filter(e -> e.getGeneratesourceCode()).collect(toList());
+        List<MappedSuperclass> parsedMappedSuperclasses = parsedEntityMappings.getMappedSuperclass().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
         if(!parsedMappedSuperclasses.isEmpty()){
         task.log(Console.wrap("Generating MappedSuperclass Class : " , FG_RED, BOLD), true);
         }
