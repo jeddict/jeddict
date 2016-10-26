@@ -196,7 +196,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
                     getMessage(this.getClass(), "SRC_FILE_NOT_FOUND_IN_CURRENT_PROECT.title"), NotifyDescriptor.OK_CANCEL_OPTION,  NotifyDescriptor.QUESTION_MESSAGE);
               }
             if (NotifyDescriptor.YES_OPTION.equals(DialogDisplayer.getDefault().notify(msg))) {
-                this.getBaseElementSpec().setGeneratesourceCode(true);
+                this.getBaseElementSpec().setGenerateSourceCode(true);
                 JPAModelerUtil.generateSourceCode(this.getModelerScene().getModelerFile(), () -> {openSourceCode(false);});
             }
         } else {

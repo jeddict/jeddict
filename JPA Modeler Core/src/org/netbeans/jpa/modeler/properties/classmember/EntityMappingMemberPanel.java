@@ -100,7 +100,7 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
             for (TreeNode childNode : ((TreeParentNode<EntityMappings>) parentNode).getChildList()) {
                 if (childNode instanceof TreeChildNode && childNode.getCheckableNode() != null) {
                     JavaClass javaClass = ((JavaClass) (((RMLeafNode) childNode).getLeafWidget().getBaseElementSpec()));
-                    javaClass.setGeneratesourceCode(childNode.getCheckableNode().isSelected());
+                    javaClass.setGenerateSourceCode(childNode.getCheckableNode().isSelected());
                 }
             }
         }

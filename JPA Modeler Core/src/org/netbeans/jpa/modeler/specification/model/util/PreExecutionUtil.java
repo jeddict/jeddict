@@ -146,7 +146,7 @@ public class PreExecutionUtil {
                         //another Enity E2 class use EmbeddedId is also IC1
                         //then register IdClass name here to append @Embeddable annotation
                         DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getPackage(), targetPKConatinerSpec.getCompositePrimaryKeyClass());
-                        _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
+                        _class.setGenerateSourceCode(persistenceClassWidget.getBaseElementSpec().getGenerateSourceCode());
                         if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                             _class.setEmbeddable(true);
                             persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
@@ -171,7 +171,7 @@ public class PreExecutionUtil {
                         pkContainerSpec.setCompositePrimaryKeyClass(persistenceClassWidget.getName() + "PK");
                     }
                     DefaultClass _class = entityMappings.addDefaultClass(managedClass.getPackage(), pkContainerSpec.getCompositePrimaryKeyClass());
-                    _class.setGeneratesourceCode(persistenceClassWidget.getBaseElementSpec().getGeneratesourceCode());
+                    _class.setGenerateSourceCode(persistenceClassWidget.getBaseElementSpec().getGenerateSourceCode());
                     if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                         idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
                         _class.setEmbeddable(true);

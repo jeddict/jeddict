@@ -612,7 +612,7 @@ public class GenerateCodeDialog extends GenericDialog
     }//GEN-LAST:event_entitySettingActionPerformed
 
     private void manageGenerateButtonStatus() {
-        List<JavaClass> javaClassList = entityMappings.getAllJavaClass().stream().filter(c -> c.getGeneratesourceCode()).collect(toList());
+        List<JavaClass> javaClassList = entityMappings.getAllJavaClass().stream().filter(c -> c.getGenerateSourceCode()).collect(toList());
         if (javaClassList.isEmpty()) {
             generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(ERROR_ICON_PATH)));
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N

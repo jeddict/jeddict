@@ -45,7 +45,7 @@ public class EntityManagerChildFactory extends TreeChildFactory<EntityMappings ,
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
         JavaClass javaClass = (JavaClass) javaClassWidget.getBaseElementSpec();
 
-        checkableNode.setSelected(javaClass.getGeneratesourceCode());
+        checkableNode.setSelected(javaClass.getGenerateSourceCode());
 
         childNode = new RMLeafNode(javaClassWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode);
         childNode.setParent(parentNode);
