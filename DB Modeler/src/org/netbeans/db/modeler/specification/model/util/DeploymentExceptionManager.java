@@ -47,7 +47,7 @@ import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
-import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -234,9 +234,15 @@ public class DeploymentExceptionManager {
                     if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "entity " + javaClass.getClazz() + " for attribute " + attributeName
                             + '\n' + " Would like to reconstruct the column name automatically using @JoinColumn ?",
                             "Error : ----", YES_NO_OPTION) == YES_NO_OPTION) {
-                        if (attribute instanceof JoinColumnHandler) {
-                            JoinColumnHandler columnHandler = (JoinColumnHandler) attribute;
-                            columnHandler.getJoinColumn().clear();
+                        if(attribute instanceof RelationAttribute) {
+                            if (attribute instanceof JoinColumnHandler) {
+                                JoinColumnHandler columnHandler = (JoinColumnHandler) attribute;
+                                columnHandler.getJoinColumn().clear();
+                            }
+                            
+                            JoinTable joinTable = ((RelationAttribute)attribute).getJoinTable();
+                            joinTable.getJoinColumn().clear();
+                            joinTable.getInverseJoinColumn().clear();
                             file.getModelerUtil().loadModelerFile(file);
                             fixError = true;
                         } else {
