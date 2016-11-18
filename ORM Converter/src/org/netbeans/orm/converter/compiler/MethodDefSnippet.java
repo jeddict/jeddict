@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import org.netbeans.orm.converter.util.ImportSet;
 
 public class MethodDefSnippet implements Snippet {
 
@@ -71,7 +71,7 @@ public class MethodDefSnippet implements Snippet {
             return Collections.EMPTY_LIST;
         }
 
-        Collection<String> importSnippets = new TreeSet<String>();
+        ImportSet importSnippets = new ImportSet();
 
         for (CallbackSnippet callback : callbacks) {
             importSnippets.add(IMPORT_PREFIX + callback.getCallbackType());

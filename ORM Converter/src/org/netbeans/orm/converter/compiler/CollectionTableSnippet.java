@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.COLLECTION_TABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.COLLECTION_TABLE_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class CollectionTableSnippet implements Snippet {
@@ -164,7 +165,7 @@ public class CollectionTableSnippet implements Snippet {
             return Collections.singletonList(COLLECTION_TABLE_FQN);
         }
 
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
 
         importSnippets.add(COLLECTION_TABLE_FQN);
 

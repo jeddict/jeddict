@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES;
 import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class AttributeOverridesSnippet implements Snippet {
@@ -84,7 +85,7 @@ public class AttributeOverridesSnippet implements Snippet {
             return attributeOverrides.get(0).getImportSnippets();
         }
 
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
 
         importSnippets.add(ATTRIBUTE_OVERRIDES_FQN);
 

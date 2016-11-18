@@ -15,12 +15,12 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.TABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.TABLE_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TableDefSnippet implements Snippet {
@@ -137,7 +137,7 @@ public class TableDefSnippet implements Snippet {
             return Collections.singletonList(TABLE_FQN);
         }
 
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
 
         importSnippets.add(TABLE_FQN);
          if (!uniqueConstraints.isEmpty()) {

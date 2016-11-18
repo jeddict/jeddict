@@ -266,7 +266,7 @@ public class ColumnResultPanel extends EntityComponent<ColumnResult> {
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
     private void class_SearchActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_class_SearchActionActionPerformed
-        String dataType = NBModelerUtil.browseClass(modelerFile);
+        String dataType = NBModelerUtil.browseClass(modelerFile, (String)class_ComboBox.getSelectedItem());
         if (((DefaultComboBoxModel) class_ComboBox.getModel()).getIndexOf(dataType) == -1) {
             ((DefaultComboBoxModel) class_ComboBox.getModel()).addElement(dataType);
         }

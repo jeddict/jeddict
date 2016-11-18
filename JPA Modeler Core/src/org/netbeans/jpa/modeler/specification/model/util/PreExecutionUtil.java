@@ -121,10 +121,7 @@ public class PreExecutionUtil {
             if (compositePKProperty == CompositePKProperty.NONE) {
                 pkContainerSpec.clearCompositePrimaryKey();
             } else {
-
-                if (pkContainerSpec.getCompositePrimaryKeyType() == null) {
-                    pkContainerSpec.setCompositePrimaryKeyType(CompositePrimaryKeyType.IDCLASS);
-                }
+                persistenceClassWidget.onCompositePrimaryKeyTypeChange(pkContainerSpec.getCompositePrimaryKeyType());//if global config change [Default(IdClass) -> Default(EmbeddedId)]
                 if (compositePKProperty == CompositePKProperty.AUTO_CLASS) {
                     RelationAttributeWidget relationAttributeWidget = persistenceClassWidget.getDerivedRelationAttributeWidgets().get(0);
                     RelationAttribute relationAttribute = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
@@ -140,14 +137,13 @@ public class PreExecutionUtil {
                     if (StringUtils.isBlank(targetPKConatinerSpec.getCompositePrimaryKeyClass())) {
                         return false;//send to next execution, its parents are required to evalaute first
                     }
-                    if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID
-                            && (targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS || targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID)) {
+                    if (pkContainerSpec.isEmbeddedIdType() && (targetPKConatinerSpec.isIdClassType() || targetPKConatinerSpec.isEmbeddedIdType())) {
                         // when Enity E1 class use IdClass IC1 and
                         //another Enity E2 class use EmbeddedId is also IC1
                         //then register IdClass name here to append @Embeddable annotation
                         DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getPackage(), targetPKConatinerSpec.getCompositePrimaryKeyClass());
                         _class.setGenerateSourceCode(persistenceClassWidget.getBaseElementSpec().getGenerateSourceCode());
-                        if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                        if (pkContainerSpec.isEmbeddedIdType()) {
                             _class.setEmbeddable(true);
                             persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
                             persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedAttribute(relationAttribute);// Ex.5.b derived identity
@@ -156,8 +152,7 @@ public class PreExecutionUtil {
                         if (relationAttribute instanceof SingleRelationAttribute) {
                             ((SingleRelationAttribute) relationAttribute).setMapsId("");
                         }
-                    } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS
-                            && targetPKConatinerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                    } else if (pkContainerSpec.isIdClassType() && targetPKConatinerSpec.isEmbeddedIdType()) {
                         if (relationAttribute instanceof SingleRelationAttribute) {
                             ((SingleRelationAttribute) relationAttribute).setMapsId(null);
                         }
@@ -172,11 +167,11 @@ public class PreExecutionUtil {
                     }
                     DefaultClass _class = entityMappings.addDefaultClass(managedClass.getPackage(), pkContainerSpec.getCompositePrimaryKeyClass());
                     _class.setGenerateSourceCode(persistenceClassWidget.getBaseElementSpec().getGenerateSourceCode());
-                    if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                    if (pkContainerSpec.isEmbeddedIdType()) {
                         idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
                         _class.setEmbeddable(true);
                         persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
-                    } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                    } else if (pkContainerSpec.isIdClassType()) {
                         idAttributeWidgets = persistenceClassWidget.getAllIdAttributeWidgets();
                     }
 
@@ -217,13 +212,13 @@ public class PreExecutionUtil {
                         }
                         _class.addAttribute(attribute);
                         //Start : if dependent class is Embedded that add @MapsId to Derived PK
-                        if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
+                        if (pkContainerSpec.isIdClassType()) {
                             if (relationAttributeSpec instanceof OneToOne) {
                                 ((OneToOne) relationAttributeSpec).setMapsId(null);
                             } else if (relationAttributeSpec instanceof ManyToOne) {
                                 ((ManyToOne) relationAttributeSpec).setMapsId(null);
                             }
-                        } else if (pkContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
+                        } else if (pkContainerSpec.isEmbeddedIdType()) {
                             if (relationAttributeSpec instanceof OneToOne) {
                                 ((OneToOne) relationAttributeSpec).setMapsId(attribute.getName());
                             } else if (relationAttributeSpec instanceof ManyToOne) {

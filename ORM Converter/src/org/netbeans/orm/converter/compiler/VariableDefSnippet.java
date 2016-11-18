@@ -45,6 +45,7 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.orm.converter.util.ImportSet;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -317,7 +318,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
 
         if (classHelper.getClassName() == null) {
             typeIdentifier = new TypeIdentifierSnippet(this);

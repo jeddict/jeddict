@@ -22,10 +22,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
@@ -45,6 +47,7 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
@@ -369,7 +372,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public Collection<String> getImports() throws InvalidDataException {
 
         //Sort and eliminate duplicates
-        Collection<String> importSnippets = new TreeSet<>();
+        ImportSet importSnippets = new ImportSet();
 
         if (mappedSuperClass) {
             importSnippets.add(MAPPED_SUPERCLASS_FQN);
@@ -470,6 +473,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         for (AnnotationSnippet snippet : this.getAnnotation()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
+            
+        importSnippets.addAll(this.getInterfaces().stream().collect(toList()));
 
         return importSnippets;
     }
@@ -515,6 +520,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      * @return the annotation
      */
     public List<AnnotationSnippet> getAnnotation() {
+        if(annotation == null){
+            annotation = new ArrayList<>();
+        }
         return annotation;
     }
 
@@ -543,6 +551,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      * @return the interfaces
      */
     public List<String> getInterfaces() {
+        if(interfaces == null){
+            interfaces = new ArrayList<>();
+        }
         return interfaces;
     }
 
@@ -551,6 +562,14 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setInterfaces(List<String> interfaces) {
         this.interfaces = interfaces;
+    }
+    
+    public boolean isInterfaceExist(){
+        return interfaces != null && !interfaces.isEmpty();
+    }
+    
+    public String getUnqualifiedInterfaceList(){
+        return interfaces.stream().map(JavaIdentifiers::unqualify).collect(Collectors.joining(", "));
     }
 
     /**

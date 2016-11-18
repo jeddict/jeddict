@@ -608,7 +608,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     }//GEN-LAST:event_type_ComboBoxActionPerformed
 
     private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
-        String dataType = NBModelerUtil.browseClass(modelerFile);
+        String dataType = NBModelerUtil.browseClass(modelerFile, (String)dataType_ComboBox.getSelectedItem());
         if (((DefaultComboBoxModel) dataType_ComboBox.getModel()).getIndexOf(dataType) == -1) {
             ((DefaultComboBoxModel) dataType_ComboBox.getModel()).addElement(dataType);
         }

@@ -50,69 +50,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
@@ -155,6 +92,8 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         JavaClass javaClass = this.getBaseElementSpec();
        
         set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomAnnoation(this.getModelerScene(), javaClass.getAnnotation()));
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomParentClass(this));
+        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomInterface(this.getModelerScene(), javaClass.getInterfaces()));
         set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomSnippet(this.getModelerScene(), javaClass.getSnippets()));
     }
 

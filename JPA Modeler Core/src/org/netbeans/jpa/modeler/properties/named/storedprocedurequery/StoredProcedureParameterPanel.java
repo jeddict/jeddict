@@ -271,7 +271,7 @@ public class StoredProcedureParameterPanel extends EntityComponent<StoredProcedu
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
     private void type_SearchActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type_SearchActionActionPerformed
-        String dataType = NBModelerUtil.browseClass(modelerFile);
+        String dataType = NBModelerUtil.browseClass(modelerFile, (String)type_jComboBox.getSelectedItem());
         if (((DefaultComboBoxModel) type_jComboBox.getModel()).getIndexOf(dataType) == -1) {
             ((DefaultComboBoxModel) type_jComboBox.getModel()).addElement(dataType);
         }

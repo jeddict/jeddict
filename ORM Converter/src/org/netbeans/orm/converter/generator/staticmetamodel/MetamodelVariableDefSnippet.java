@@ -15,12 +15,12 @@
  */
 package org.netbeans.orm.converter.generator.staticmetamodel;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_METAMODEL_PACKAGE;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
+import org.netbeans.orm.converter.util.ImportSet;
 
 public class MetamodelVariableDefSnippet extends VariableDefSnippet {
 
@@ -42,7 +42,7 @@ public class MetamodelVariableDefSnippet extends VariableDefSnippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
         importSnippets.addAll(super.getImportSnippets());
         importSnippets.add(PERSISTENCE_METAMODEL_PACKAGE + attributeType.getType());
         return importSnippets;

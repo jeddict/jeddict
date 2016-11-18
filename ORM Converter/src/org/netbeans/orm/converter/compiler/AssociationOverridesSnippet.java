@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES;
 import static org.netbeans.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class AssociationOverridesSnippet implements Snippet {
@@ -86,7 +87,7 @@ public class AssociationOverridesSnippet implements Snippet {
             return associationOverrides.get(0).getImportSnippets();
         }
 
-        Collection<String> importSnippets = new ArrayList<String>();
+        ImportSet importSnippets = new ImportSet();
 
         importSnippets.add(ASSOCIATION_OVERRIDES_FQN);
         importSnippets.addAll(associationOverrides.get(0).getImportSnippets());

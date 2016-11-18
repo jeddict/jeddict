@@ -27,9 +27,11 @@ import static java.util.stream.Collectors.toList;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.apache.velocity.util.StringUtils;
+import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
@@ -47,8 +49,10 @@ import org.netbeans.jpa.modeler.properties.classmember.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.properties.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
 import org.netbeans.jpa.modeler.properties.custom.source.CustomSnippetPanel;
+import org.netbeans.jpa.modeler.properties.extend.ClassExtendPanel;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
+import org.netbeans.jpa.modeler.properties.implement.InterfaceImplementPanel;
 import org.netbeans.jpa.modeler.properties.inheritance.InheritancePanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
@@ -118,6 +122,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.openide.nodes.PropertySupport;
 import org.openide.windows.WindowManager;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
+import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
@@ -870,7 +875,7 @@ public class PropertiesHandler {
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
-    
+
     public static PropertySupport getCustomAnnoation(JPAModelerScene modelerScene, List<Annotation> annotations) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("Annotations", "Annotations", "");
         attributeEntity.setCountDisplay(new String[]{"No Annotations exist", "One Annotation exist", "Annotations exist"});
@@ -930,6 +935,108 @@ public class PropertiesHandler {
         });
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+    
+    public static PropertySupport getCustomInterface(JPAModelerScene modelerScene, Set<ReferenceClass> referenceClasses) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("Interface", "Interface", "");
+        attributeEntity.setCountDisplay(new String[]{"No Interface exist", "One Interface exist", "Interface exist"});
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("Interface", false, String.class));
+        attributeEntity.setColumns(columns);
+        attributeEntity.setCustomDialog(new InterfaceImplementPanel(modelerScene.getModelerFile()));
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = referenceClasses.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<ReferenceClass> itr = referenceClasses.iterator();
+                while (itr.hasNext()) {
+                    ReferenceClass referenceClass = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = referenceClass;
+                    row[1] = referenceClass.isEnable();
+                    row[2] = referenceClass.getName();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+            
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                referenceClasses.clear();
+                data.stream().forEach((row) -> {
+                    ReferenceClass referenceClass = (ReferenceClass) row[0];
+                    referenceClass.setEnable((boolean)row[1]);
+                    referenceClasses.add(referenceClass);
+                });
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+    }
+
+    public static EmbeddedPropertySupport getCustomParentClass(JavaClassWidget<? extends JavaClass> javaClassWidget) {
+
+        GenericEmbedded entity = new GenericEmbedded("extends", "Extends", "");
+        entity.setEntityEditor(new ClassExtendPanel(javaClassWidget.getModelerScene().getModelerFile()));
+
+        entity.setDataListener(new EmbeddedDataListener<ReferenceClass>() {
+            private JavaClass javaClass;
+
+            @Override
+            public void init() {
+                javaClass = javaClassWidget.getBaseElementSpec();
+            }
+
+            @Override
+            public ReferenceClass getData() {
+                return javaClass.getSuperclassRef();
+            }
+
+            @Override
+            public void setData(ReferenceClass referenceClass) {
+                javaClass.setSuperclassRef(referenceClass);
+            }
+
+            @Override
+            public String getDisplay() {
+                ReferenceClass referenceClass = javaClass.getSuperclassRef();
+                if (referenceClass == null) {
+                   return "";
+                } else {
+                   return JavaIdentifiers.unqualify(referenceClass.getName());
+                }
+            }
+
+        });
+        javaClassWidget.addPropertyVisibilityHandler("extends", (PropertyVisibilityHandler<String>) () -> {
+            InheritanceStateType inheritanceStateType = javaClassWidget.getInheritanceState();
+            return inheritanceStateType != InheritanceStateType.BRANCH && inheritanceStateType != InheritanceStateType.LEAF;
+        });
+        return new EmbeddedPropertySupport(javaClassWidget.getModelerScene().getModelerFile(), entity);
     }
 
       public static PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<Snippet> snippets) {

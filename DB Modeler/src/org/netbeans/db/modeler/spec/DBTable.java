@@ -53,12 +53,13 @@ public abstract class DBTable extends FlowNode {
 //        columns.values().forEach(column -> {
 //            Attribute attribute = column.getAttribute();
 //            JavaClass javaClass = attribute.getJavaClass();
-//
+
 //        });
     }
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -66,6 +67,7 @@ public abstract class DBTable extends FlowNode {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -110,5 +112,6 @@ public abstract class DBTable extends FlowNode {
     }
 
     public abstract Set<UniqueConstraint> getUniqueConstraints();
+    
     public abstract List<Index> getIndexes();
 }

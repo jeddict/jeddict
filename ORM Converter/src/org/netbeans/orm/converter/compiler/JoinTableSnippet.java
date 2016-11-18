@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.JOIN_TABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.JOIN_TABLE_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class JoinTableSnippet implements Snippet {
@@ -215,8 +216,8 @@ public class JoinTableSnippet implements Snippet {
             return Collections.singletonList(JOIN_TABLE_FQN);
         }
 
-        Collection<String> importSnippets = new ArrayList<>();
-
+        ImportSet importSnippets = new ImportSet();
+        
         importSnippets.add(JOIN_TABLE_FQN);
 
         if (!joinColumns.isEmpty()) {

@@ -87,7 +87,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
         if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(entity, parsedAttributes.getEmbeddedId());
-            if (entity.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
+            if (!entity.isEmbeddedIdType()) {
                 processId(parsedAttributes.getId());
             }
             processBasic(parsedAttributes.getBasic());

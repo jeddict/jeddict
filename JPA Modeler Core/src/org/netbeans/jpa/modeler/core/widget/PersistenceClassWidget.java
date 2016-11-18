@@ -308,6 +308,17 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         set.put("CLASS_STRUCTURE", getToStringProperty(this));
     }
 
+    public void onCompositePrimaryKeyTypeChange(CompositePrimaryKeyType compositePrimaryKeyType) {
+        if ((compositePrimaryKeyType == CompositePrimaryKeyType.EMBEDDEDID
+                || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && CodePanel.isEmbeddedIdDefaultType()))) {
+            if(embeddedIdAttributeWidget == null){
+                PersistenceClassWidget.this.addNewEmbeddedIdAttribute(getNextAttributeName(PersistenceClassWidget.this.getName() + "EmbeddedId"));
+            }
+        } else if (embeddedIdAttributeWidget != null) {
+            embeddedIdAttributeWidget.remove();
+        }
+    }
+    
     private ComboBoxPropertySupport getCompositePrimaryKeyProperty() {
         final JavaClassWidget javaClassWidget = this;
         final PrimaryKeyContainer primaryKeyContainerSpec = (PrimaryKeyContainer) javaClassWidget.getBaseElementSpec();
@@ -315,11 +326,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             @Override
             public void setItem(ComboBoxValue<CompositePrimaryKeyType> value) {
                 CompositePrimaryKeyType compositePrimaryKeyType = value.getValue();
-                if (compositePrimaryKeyType == CompositePrimaryKeyType.EMBEDDEDID) {
-                    PersistenceClassWidget.this.addNewEmbeddedIdAttribute(getNextAttributeName(PersistenceClassWidget.this.getName() + "EmbeddedId"));
-                } else if (embeddedIdAttributeWidget != null) {
-                    embeddedIdAttributeWidget.remove();
-                }
+                onCompositePrimaryKeyTypeChange(compositePrimaryKeyType);
                 primaryKeyContainerSpec.setCompositePrimaryKeyType(compositePrimaryKeyType);
             }
 
@@ -327,14 +334,17 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             public ComboBoxValue<CompositePrimaryKeyType> getItem() {
                 if (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID) {
                     return new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id");
-                } else {
+                } else if (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
                     return new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class");
+                } else {
+                    return new ComboBoxValue(CompositePrimaryKeyType.DEFAULT, String.format("Default (%s)", CodePanel.getDefaultCompositePrimaryKeyType()));
                 }
             }
 
             @Override
             public List<ComboBoxValue<CompositePrimaryKeyType>> getItemList() {
                 List<ComboBoxValue<CompositePrimaryKeyType>> values = new ArrayList<>();
+                values.add(new ComboBoxValue(CompositePrimaryKeyType.DEFAULT, String.format("Default (%s)", CodePanel.getDefaultCompositePrimaryKeyType())));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class"));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id"));
                 return values;

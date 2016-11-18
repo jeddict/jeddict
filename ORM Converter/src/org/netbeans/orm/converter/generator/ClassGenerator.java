@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -89,6 +90,7 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
+import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
@@ -167,7 +169,7 @@ import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
-
+import org.netbeans.jcode.core.util.JavaIdentifiers;
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
@@ -189,7 +191,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setClassName(classHelper.getFQClassName());
 //        classDef.setPackageName(classHelper.getPackageName());
         classDef.setAbstractClass(javaClass.getAbstract());
-        classDef.setInterfaces(javaClass.getInterfaces());
+        
+        if(!(javaClass instanceof DefaultClass)){ // custom interface support skiped for IdClass/EmbeddedId
+            Set<ReferenceClass> interfaces = new LinkedHashSet<>(javaClass.getRootElement().getInterfaces());
+            interfaces.addAll(javaClass.getInterfaces());
+            classDef.setInterfaces(interfaces.stream().filter(ReferenceClass::isEnable).map(ReferenceClass::getName).collect(toList()));
+        }
+        
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
         
         List<Snippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
@@ -207,6 +215,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (javaClass.getSuperclass() != null) {
             ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
             superClassHelper.setPackageName(javaClass.getSuperclass().getPackage(rootPackageName));
+            classDef.setSuperClassName(superClassHelper.getFQClassName());
+        } else if(javaClass.getSuperclassRef()!=null){
+            ClassHelper superClassHelper = new ClassHelper(JavaIdentifiers.unqualify(javaClass.getSuperclassRef().getName()));
+            superClassHelper.setPackageName(JavaIdentifiers.getPackageName(javaClass.getSuperclassRef().getName()));
             classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
         return classDef;
@@ -1170,8 +1182,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
-        if (parsedEmbeddedId == null
-                || identifiableClass.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
+        if (parsedEmbeddedId == null || !identifiableClass.isEmbeddedIdType()){
             return;
         }
 
@@ -1181,7 +1192,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
          * Filter if Embeddable class is used in case of derived entities. Refer
          * : JPA Spec 2.4.1.3 Example 5(b)
          */
-        if (identifiableClass.getCompositePrimaryKeyType() == CompositePrimaryKeyType.EMBEDDEDID && parsedEmbeddedId.getConnectedClass() == null) {
+        if (identifiableClass.isEmbeddedIdType() && parsedEmbeddedId.getConnectedClass() == null) {
             variableDef.setType(identifiableClass.getCompositePrimaryKeyClass());
         } else {
             variableDef.setType(parsedEmbeddedId.getAttributeType());

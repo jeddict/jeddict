@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class LifecycleListenerSnippet implements WritableSnippet {
@@ -107,7 +107,7 @@ public class LifecycleListenerSnippet implements WritableSnippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         //Sort and eliminate duplicates
-        Collection<String> importSnippets = new TreeSet<String>();
+        ImportSet importSnippets = new ImportSet();
 
         for (MethodDefSnippet methodDef : methodDefs) {
             importSnippets.addAll(methodDef.getImportSnippets());

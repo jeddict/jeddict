@@ -15,12 +15,12 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.SECONDARY_TABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.SECONDARY_TABLE_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class SecondaryTableSnippet implements Snippet {
@@ -163,7 +163,7 @@ public class SecondaryTableSnippet implements Snippet {
             return Collections.EMPTY_LIST;
         }
 
-        Collection<String> importSnippets = new ArrayList<String>();
+        ImportSet importSnippets = new ImportSet();
 
         importSnippets.add(SECONDARY_TABLE_FQN);
 

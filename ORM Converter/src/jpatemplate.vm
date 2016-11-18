@@ -8,7 +8,6 @@ package $classDef.getPackageName();
 #end
 
 #####################import statements #################################
-import java.io.Serializable;
 #foreach ( $importStatement in $classDef.getImportSnippets() )
 $importStatement
 #end
@@ -96,7 +95,7 @@ $classDef.getNamedStoredProcedureQueries().getSnippet()
 #foreach($annotation in $classDef.getAnnotation() )
     $annotation.getSnippet()
 #end
-public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end implements#foreach($interface in $classDef.getInterfaces()) $interface,#end Serializable {
+public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end #if($classDef.isInterfaceExist()) implements $classDef.getUnqualifiedInterfaceList()#end { 
 
 #####################custom snippet - before field ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_FIELD") )

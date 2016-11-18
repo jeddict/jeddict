@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 import static org.netbeans.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPINGS;
 import static org.netbeans.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPINGS_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class SQLResultSetMappingsSnippet implements Snippet {
@@ -82,7 +82,7 @@ public class SQLResultSetMappingsSnippet implements Snippet {
         }
 
         //Sort and eliminate duplicates
-        Collection<String> importSnippets = new TreeSet<>();
+        ImportSet importSnippets = new ImportSet();
 
         importSnippets.add(SQL_RESULTSET_MAPPINGS_FQN);
         for (SQLResultSetMappingSnippet sqlResultSetMapping : sqlResultSetMappings) {
