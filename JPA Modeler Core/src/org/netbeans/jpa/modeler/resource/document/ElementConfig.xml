@@ -14,6 +14,7 @@
         <group id="JAXB_ELE_PROP" name="JAXB Element Properties"/>
         <group id="CONSTRAINTS" name="Bean Validation Properties"/>
         <group id="CLASS_STRUCTURE" name="Class Properties"/>
+        <group id="GLOBAL_CONFIG" name="Global Config"/>
         <group id="PACKAGE" name="Package"/>
         <group id="QUERY" name="Query"/>
         <group id="UI_PROP" name="UI Properties"/>
@@ -54,6 +55,9 @@
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
                 </attribute>  
+                 <attribute id="functionalType" groupId="GLOBAL_CONFIG" class="java.lang.Boolean" name="functionalType">
+                    <display-name>Optional return type</display-name>
+                </attribute>
             </attributes>
         </element>
         <element id="JavaClass" class="org.netbeans.jpa.modeler.spec.extend.JavaClass">

@@ -170,6 +170,7 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
+
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     private static final Logger logger = ORMConvLogger.getLogger(ClassGenerator.class);
@@ -191,41 +192,39 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setClassName(classHelper.getFQClassName());
 //        classDef.setPackageName(classHelper.getPackageName());
         classDef.setAbstractClass(javaClass.getAbstract());
-        
-        if(!(javaClass instanceof DefaultClass)){ // custom interface support skiped for IdClass/EmbeddedId
+
+        if (!(javaClass instanceof DefaultClass)) { // custom interface support skiped for IdClass/EmbeddedId
             Set<ReferenceClass> interfaces = new LinkedHashSet<>(javaClass.getRootElement().getInterfaces());
             interfaces.addAll(javaClass.getInterfaces());
             classDef.setInterfaces(interfaces.stream().filter(ReferenceClass::isEnable).map(ReferenceClass::getName).collect(toList()));
         }
-        
+
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
-        
+
         List<Snippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
         snippets.addAll(javaClass.getSnippets());
         classDef.setCustomSnippet(getCustomSnippet(snippets));
-        
+
         classDef.setVariableDefs(new ArrayList<>(variables.values()));
 
         classDef.setConstructors(getConstructorSnippets(javaClass));
         classDef.setHashcodeMethod(getHashcodeMethodSnippet(javaClass, getClassMembers(javaClass, javaClass.getHashCodeMethod())));
         classDef.setEqualsMethod(getEqualsMethodSnippet(javaClass, getClassMembers(javaClass, javaClass.getEqualsMethod())));
         classDef.setToStringMethod(getToStringMethodSnippet(javaClass, getClassMembers(javaClass, javaClass.getToStringMethod())));
-        
-        
+
         if (javaClass.getSuperclass() != null) {
             ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
             superClassHelper.setPackageName(javaClass.getSuperclass().getPackage(rootPackageName));
             classDef.setSuperClassName(superClassHelper.getFQClassName());
-        } else if(javaClass.getSuperclassRef()!=null){
+        } else if (javaClass.getSuperclassRef() != null) {
             ClassHelper superClassHelper = new ClassHelper(JavaIdentifiers.unqualify(javaClass.getSuperclassRef().getName()));
             superClassHelper.setPackageName(JavaIdentifiers.getPackageName(javaClass.getSuperclassRef().getName()));
             classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
         return classDef;
     }
-    
-    
-    private ClassMembers getClassMembers(JavaClass javaClass, ClassMembers classMembers){
+
+    private ClassMembers getClassMembers(JavaClass javaClass, ClassMembers classMembers) {
         if (javaClass instanceof DefaultClass) {
             classMembers = new ClassMembers();
             for (VariableDefSnippet variableDefSnippet : variables.values()) {
@@ -278,7 +277,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected List<AnnotationSnippet> getAnnotationSnippet(List<Annotation> annotations) {
         List<AnnotationSnippet> snippets = new ArrayList<>();
         for (Annotation annotation : annotations) {
-            if(annotation.isEnable()){
+            if (annotation.isEnable()) {
                 AnnotationSnippet snippet = new AnnotationSnippet();
                 snippet.setName(annotation.getName());
                 snippets.add(snippet);
@@ -286,12 +285,13 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
         return snippets;
     }
-    protected Map<SnippetLocationType,List<String>> getCustomSnippet(List<Snippet> snippets) {
-        Map<SnippetLocationType,List<String>> snippetsMap = new HashMap<>();
+
+    protected Map<SnippetLocationType, List<String>> getCustomSnippet(List<Snippet> snippets) {
+        Map<SnippetLocationType, List<String>> snippetsMap = new HashMap<>();
         for (Snippet snippet : snippets) {
-            if(snippet.isEnable()){
-                if(snippetsMap.get(snippet.getLocationType())==null){
-                   snippetsMap.put(snippet.getLocationType(), new ArrayList<>());
+            if (snippet.isEnable()) {
+                if (snippetsMap.get(snippet.getLocationType()) == null) {
+                    snippetsMap.put(snippet.getLocationType(), new ArrayList<>());
                 }
                 snippetsMap.get(snippet.getLocationType()).add(snippet.getValue());
             }
@@ -300,18 +300,18 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected HashcodeMethodSnippet getHashcodeMethodSnippet(JavaClass javaClass, ClassMembers classMembers) {
-        if (classMembers.getAttributes().isEmpty() && 
-                StringUtils.isBlank(classMembers.getPreCode()) &&
-                StringUtils.isBlank(classMembers.getPostCode())) {
+        if (classMembers.getAttributes().isEmpty()
+                && StringUtils.isBlank(classMembers.getPreCode())
+                && StringUtils.isBlank(classMembers.getPostCode())) {
             return null;
         }
         return new HashcodeMethodSnippet(javaClass.getClazz(), classMembers);
     }
 
     protected EqualsMethodSnippet getEqualsMethodSnippet(JavaClass javaClass, ClassMembers classMembers) {
-        if (classMembers.getAttributes().isEmpty() && 
-                StringUtils.isBlank(classMembers.getPreCode()) &&
-                StringUtils.isBlank(classMembers.getPostCode())) {
+        if (classMembers.getAttributes().isEmpty()
+                && StringUtils.isBlank(classMembers.getPreCode())
+                && StringUtils.isBlank(classMembers.getPostCode())) {
             return null;
         }
         return new EqualsMethodSnippet(javaClass.getClazz(), classMembers);
@@ -329,19 +329,19 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected List<ConstructorSnippet> getConstructorSnippets(JavaClass javaClass) {
         List<ConstructorSnippet> constructorSnippets = new ArrayList<>();
         Function<Attribute, VariableDefSnippet> buildVarDef = attr -> {
-                            VariableDefSnippet variableDefSnippet = new VariableDefSnippet(attr);
-                            variableDefSnippet.setName(attr.getName());
-                            variableDefSnippet.setType(attr.getDataTypeLabel());
-                            return variableDefSnippet;
-                        };
+            VariableDefSnippet variableDefSnippet = new VariableDefSnippet(attr);
+            variableDefSnippet.setName(attr.getName());
+            variableDefSnippet.setType(attr.getDataTypeLabel());
+            return variableDefSnippet;
+        };
         List<Constructor> constructors = javaClass.getConstructors();
-        if(javaClass instanceof DefaultClass && constructors.isEmpty()){ //for EmbeddedId and IdClass
+        if (javaClass instanceof DefaultClass && constructors.isEmpty()) { //for EmbeddedId and IdClass
             constructors.add(Constructor.getNoArgsInstance());
             Constructor constructor = new Constructor();
             constructor.setAttributes(getClassMembers(javaClass, null).getAttributes());
             constructors.add(constructor);
         }
-        
+
         constructors.stream().filter((constructor) -> (constructor.isEnable())).map((constructor) -> {
             String className = javaClass.getClazz();
             List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes().stream()
@@ -436,9 +436,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setEnumerated(enumerated);
             variableDef.setTemporal(temporal);
             variableDef.setType(parsedBasic.getAttributeType());
-            if (parsedBasic.getFunctionalType() != null) {
-                variableDef.setFunctionalType(parsedBasic.getFunctionalType());
-            }
+            variableDef.setFunctionalType(parsedBasic.isOptionalReturnType());
 
             if (parsedLob != null) {
                 variableDef.setLob(true);
@@ -459,10 +457,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
             elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
             elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
-            if(parsedElementCollection.getConnectedClass()!=null){
+            if (parsedElementCollection.getConnectedClass() != null) {
                 elementCollection.setTargetClassPackage(parsedElementCollection.getConnectedClass().getPackage(rootPackageName));
             }
-            
+
             if (parsedFetchType != null) {
                 elementCollection.setFetchType(parsedFetchType.value());
             }
@@ -511,9 +509,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(parsedTransient);
             variableDef.setType(parsedTransient.getAttributeType());
             variableDef.setTranzient(true);
-            if (parsedTransient.getFunctionalType() != null) {
-                variableDef.setFunctionalType(parsedTransient.getFunctionalType());
-            }
+            variableDef.setFunctionalType(parsedTransient.isOptionalReturnType());
         }
     }
 
@@ -1120,11 +1116,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(parsedEmbeded);
 
             variableDef.setEmbedded(true);
-            variableDef.setType(parsedEmbeded.getConnectedClass().getPackage(rootPackageName) + ORMConverterUtil.DOT +
-                    parsedEmbeded.getAttributeType());
-            if (parsedEmbeded.getFunctionalType() != null) {
-                variableDef.setFunctionalType(parsedEmbeded.getFunctionalType());
-            }
+            variableDef.setType(parsedEmbeded.getConnectedClass().getPackage(rootPackageName) + ORMConverterUtil.DOT
+                    + parsedEmbeded.getAttributeType());
+            variableDef.setFunctionalType(parsedEmbeded.isOptionalReturnType());
 
             processInternalAttributeOverride(variableDef, parsedEmbeded.getAttributeOverride());
             processInternalAssociationOverride(variableDef, parsedEmbeded.getAssociationOverride());
@@ -1182,7 +1176,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected void processEmbeddedId(IdentifiableClass identifiableClass, EmbeddedId parsedEmbeddedId) {
-        if (parsedEmbeddedId == null || !identifiableClass.isEmbeddedIdType()){
+        if (parsedEmbeddedId == null || !identifiableClass.isEmbeddedIdType()) {
             return;
         }
 
@@ -1211,9 +1205,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Id parsedId : parsedIds) {
             VariableDefSnippet variableDef = getVariableDef(parsedId);
             variableDef.setType(parsedId.getAttributeType());
-            if (parsedId.getFunctionalType() != null) {
-                variableDef.setFunctionalType(parsedId.getFunctionalType());
-            }
+            variableDef.setFunctionalType(parsedId.isOptionalReturnType());
             variableDef.setPrimaryKey(true);
 
             Column parsedColumn = parsedId.getColumn();
@@ -1279,7 +1271,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
             manyToMany.setTargetEntityPackage(parsedManyToMany.getConnectedEntity().getPackage(rootPackageName));
-            
+
             manyToMany.setCascadeTypes(cascadeTypes);
 
             if (parsedManyToMany.getFetch() != null) {
@@ -1359,7 +1351,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             manyToOne.setTargetEntity(parsedManyToOne.getTargetEntity());
             manyToOne.setTargetEntityPackage(parsedManyToOne.getConnectedEntity().getPackage(rootPackageName));
-            
+
             manyToOne.setCascadeTypes(cascadeTypes);
 
             if (parsedManyToOne.getOptional() != null) {
@@ -1377,9 +1369,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setRelationDef(manyToOne);
             variableDef.setJoinTable(joinTable);
             variableDef.setJoinColumns(getJoinColumnsSnippet(parsedManyToOne, false));
-            if (parsedManyToOne.getFunctionalType() != null) {
-                variableDef.setFunctionalType(parsedManyToOne.getFunctionalType());
-            }
+            variableDef.setFunctionalType(parsedManyToOne.isOptionalReturnType());
         }
     }
 
@@ -1401,7 +1391,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             oneToMany.setCascadeTypes(cascadeTypes);
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
             oneToMany.setTargetEntityPackage(parsedOneToMany.getConnectedEntity().getPackage(rootPackageName));
-            
+
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
             oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
@@ -1443,7 +1433,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             oneToOne.setCascadeTypes(cascadeTypes);
             oneToOne.setTargetEntity(parsedOneToOne.getTargetEntity());
             oneToOne.setTargetEntityPackage(parsedOneToOne.getConnectedEntity().getPackage(rootPackageName));
-            
+
             oneToOne.setMappedBy(parsedOneToOne.getMappedBy());
             if (parsedOneToOne.getOptional() != null) {
                 oneToOne.setOptional(parsedOneToOne.getOptional());
@@ -1462,9 +1452,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setRelationDef(oneToOne);
             variableDef.setJoinTable(joinTable);
             variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToOne, false));
-            if (parsedOneToOne.getFunctionalType() != null) {
-                variableDef.setFunctionalType(parsedOneToOne.getFunctionalType());
-            }
+            variableDef.setFunctionalType(parsedOneToOne.isOptionalReturnType());
         }
     }
 
@@ -1488,9 +1476,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             ColumnDefSnippet columnDef = getColumnDef(parsedVersion.getColumn());
             variableDef.setType(parsedVersion.getAttributeType());
-            if (parsedVersion.getFunctionalType() != null) {
-                variableDef.setFunctionalType(parsedVersion.getFunctionalType());
-            }
+            variableDef.setFunctionalType(parsedVersion.isOptionalReturnType());
             variableDef.setVersion(true);
             variableDef.setColumnDef(columnDef);
 

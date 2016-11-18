@@ -95,8 +95,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         EntityMappings entityMappings = this.getBaseElementSpec();
-        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomSnippet(this, entityMappings.getSnippets()));
-        set.put("CLASS_STRUCTURE", PropertiesHandler.getCustomInterface(this, entityMappings.getInterfaces()));
+        set.put("GLOBAL_CONFIG", PropertiesHandler.getCustomSnippet(this, entityMappings.getSnippets()));
+        set.put("GLOBAL_CONFIG", PropertiesHandler.getCustomInterface(this, entityMappings.getInterfaces()));
         
     }
     
