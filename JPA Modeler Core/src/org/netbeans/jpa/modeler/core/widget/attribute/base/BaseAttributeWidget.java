@@ -34,8 +34,11 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
 
     public BaseAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("attributeType", (PropertyChangeListener<String>) (String attributeType) -> {
+        this.addPropertyChangeListener("attributeType", (PropertyChangeListener<String>) attributeType -> {
             setAttributeTooltip();
+        });
+        this.addPropertyChangeListener("nullable", (PropertyChangeListener<Boolean>) nullable -> {
+            this.getBaseElementSpec().setFunctionalType(nullable);
         });
     }
 
@@ -45,17 +48,9 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
 
         if (this.getBaseElementSpec() instanceof PersistenceBaseAttribute) {
             PersistenceBaseAttribute persistenceBaseAttribute = (PersistenceBaseAttribute) this.getBaseElementSpec();
-            if (persistenceBaseAttribute.getColumn() == null) {
-                persistenceBaseAttribute.setColumn(new Column());
-            }
-
             set.createPropertySet(this, persistenceBaseAttribute.getColumn(), getPropertyChangeListeners(), getPropertyVisibilityHandlers());
         } else if (this instanceof BasicCollectionAttributeWidget) {
             ElementCollection elementCollection = (ElementCollection) this.getBaseElementSpec();
-            if (elementCollection.getColumn() == null) {
-                elementCollection.setColumn(new Column());
-            }
-
             set.createPropertySet(this, elementCollection.getColumn(), getPropertyChangeListeners(), getPropertyVisibilityHandlers());
         }
 //        BasicCollectionAttributeWidget => ElementCollection [Column allowed]
