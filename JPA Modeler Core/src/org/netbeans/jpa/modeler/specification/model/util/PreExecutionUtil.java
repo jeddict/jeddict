@@ -112,8 +112,8 @@ public class PreExecutionUtil {
     }
 
     private static boolean manageCompositePrimaryKey(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, EntityMappings entityMappings) {
-           //Start : IDCLASS,EMBEDDEDID //((Entity) persistenceClassWidget.getBaseElementSpec()).getClazz()
-     if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
+        //Start : IDCLASS,EMBEDDEDID //((Entity) persistenceClassWidget.getBaseElementSpec()).getClazz()
+        if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
             ManagedClass managedClass = persistenceClassWidget.getBaseElementSpec();
             PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) managedClass;
             CompositePKProperty compositePKProperty = persistenceClassWidget.isCompositePKPropertyAllow();
@@ -121,7 +121,11 @@ public class PreExecutionUtil {
             if (compositePKProperty == CompositePKProperty.NONE) {
                 pkContainerSpec.clearCompositePrimaryKey();
             } else {
+                if (pkContainerSpec.getCompositePrimaryKeyType() == null) {
+                    pkContainerSpec.setCompositePrimaryKeyType(CompositePrimaryKeyType.DEFAULT);
+                }
                 persistenceClassWidget.onCompositePrimaryKeyTypeChange(pkContainerSpec.getCompositePrimaryKeyType());//if global config change [Default(IdClass) -> Default(EmbeddedId)]
+
                 if (compositePKProperty == CompositePKProperty.AUTO_CLASS) {
                     RelationAttributeWidget relationAttributeWidget = persistenceClassWidget.getDerivedRelationAttributeWidgets().get(0);
                     RelationAttribute relationAttribute = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
@@ -237,7 +241,7 @@ public class PreExecutionUtil {
         return true;
 //End : IDCLASS,EMBEDDEDID
     }
-    
+
 //    private static void manageConstructor(JavaClass javaClass){
 //        for(Constructor constructor : javaClass.getConstructors()){
 //            Map<JavaClass, List<Attribute>> transientConstructors = new HashMap<>();
@@ -253,17 +257,15 @@ public class PreExecutionUtil {
 //            
 //        }
 //    }
-
-    
     public static void clearInheritanceData(ModelerFile file) {
         JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
-        scene.getBaseElements().stream().filter((baseElementWidget) -> (baseElementWidget instanceof EntityWidget)).map((baseElementWidget) -> (EntityWidget)baseElementWidget).forEach((entityWidget) -> {
+        scene.getBaseElements().stream().filter((baseElementWidget) -> (baseElementWidget instanceof EntityWidget)).map((baseElementWidget) -> (EntityWidget) baseElementWidget).forEach((entityWidget) -> {
             Entity entity = entityWidget.getBaseElementSpec();
             InheritanceStateType type = entityWidget.getInheritanceState();
             //clear @Table and @PrimaryKeyJoinColumn
-            if ((type == ROOT || type == BRANCH) && (entity.getInheritance()==null || entity.getInheritance().getStrategy() == InheritanceType.SINGLE_TABLE)) {
+            if ((type == ROOT || type == BRANCH) && (entity.getInheritance() == null || entity.getInheritance().getStrategy() == InheritanceType.SINGLE_TABLE)) {
                 entity.getSubclassList().stream().filter(subclass -> subclass instanceof Entity).forEach(subclass -> {
-                    Entity subEntity = (Entity)subclass;
+                    Entity subEntity = (Entity) subclass;
                     subEntity.setTable(null);
                     subEntity.setPrimaryKeyForeignKey(null);
                     subEntity.setPrimaryKeyJoinColumn(null);

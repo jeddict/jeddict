@@ -1,5 +1,12 @@
 # JPA Modeler Releases #
 
+### Version 2.6 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.6.5) ###
+
+*  DB Modeler data type visualizer
+*  @PrimaryKeyJoinColumn support
+*  Java 8 Optional return type
+*  Custom class and interface
+
 ### Version 2.5 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.5.5) ###
 
 *  Angular JS 1 client generator

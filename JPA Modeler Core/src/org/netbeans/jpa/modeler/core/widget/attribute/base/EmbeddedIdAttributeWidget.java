@@ -44,16 +44,6 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
         return menuList;
     }
 
-    public boolean remove(boolean notification) {
-        // Issue Fix #5855 Start
-        if (super.remove(notification)) {
-            ((IdentifiableClass) getClassWidget().getBaseElementSpec()).setCompositePrimaryKeyType(null);
-            return true;
-        }
-        // Issue Fix #5855 End
-        return false;
-    }
-
     @Override
     public String getIconPath() {
         return EMBEDDED_ID_ATTRIBUTE_ICON_PATH;

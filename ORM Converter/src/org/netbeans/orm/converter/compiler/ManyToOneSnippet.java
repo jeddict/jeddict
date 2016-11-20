@@ -40,7 +40,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
             } else if (mapsId.trim().isEmpty()) {
                 builder.append(MAPS_ID);
             } else {
-                builder.append(MAPS_ID).append("\"").append(mapsId).append("\")");
+                builder.append(MAPS_ID).append("(\"").append(mapsId).append("\")");
             }
         }
         builder.append("@").append(MANY_TO_ONE);

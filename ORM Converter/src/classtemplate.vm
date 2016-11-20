@@ -12,10 +12,11 @@ import java.io.Serializable;
 $importStatement
 #end
 
-/**
- *
- * @author $author
- */
+#####################java doc ###############################
+#if ($classDef.isJavaDocExist())
+$classDef.getJavaDoc()
+#end
+
 #if($classDef.getEntityString())
 $classDef.getEntityString()
 #end

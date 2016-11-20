@@ -316,7 +316,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
             }
         } else if (embeddedIdAttributeWidget != null) {
             embeddedIdAttributeWidget.remove();
-        }
+        } 
     }
     
     private ComboBoxPropertySupport getCompositePrimaryKeyProperty() {
