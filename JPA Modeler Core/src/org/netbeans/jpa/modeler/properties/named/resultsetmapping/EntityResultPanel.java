@@ -70,11 +70,8 @@ public class EntityResultPanel extends EntityComponent<EntityResult> {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             entityResult = (EntityResult) row[0];
-
-            org.netbeans.jpa.modeler.spec.Entity entity = (org.netbeans.jpa.modeler.spec.Entity) entityMappings.findEntity(entityResult.getEntityClass());
-            if (entity != null) {
-                entityClass_ComboBox.setSelectedItem(new ComboBoxValue(entity, entity.getClazz()));
-            }
+            entityMappings.findEntity(entityResult.getEntityClass())
+                    .ifPresent(e -> entityClass_ComboBox.setSelectedItem(new ComboBoxValue(e, e.getClazz())));
         }
         initColumnResultNAttributeEditor();
         fieldResultEntity = ResultMappingUtil.getFieldResult(entityResult.getFieldResult(), modelerFile);

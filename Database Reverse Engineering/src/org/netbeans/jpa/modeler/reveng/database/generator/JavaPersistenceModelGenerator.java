@@ -361,7 +361,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
             public void run() throws IOException {
                 initialize();
                 org.netbeans.jpa.modeler.spec.Attributes attributes = new org.netbeans.jpa.modeler.spec.Attributes();
-                this.getEntityMappings().findEntity(entityClass.getClassName()).setAttributes(attributes);
+                this.getEntityMappings().findEntity(entityClass.getClassName()).ifPresent(e -> e.setAttributes(attributes));
                 for (Object object : entityClass.getFields()) {
                     generateMember(attributes, (EntityMember) object);
                 }
@@ -438,7 +438,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
                         tableSpec.getUniqueConstraint().add(uniqueConstraint);
                     }
                 }
-                this.getEntityMappings().findEntity(entityClassName).setTable(tableSpec);
+                this.getEntityMappings().findEntity(entityClassName).ifPresent(e -> e.setTable(tableSpec));
                 /*--------JPA Modeler End--------*/
             }
 

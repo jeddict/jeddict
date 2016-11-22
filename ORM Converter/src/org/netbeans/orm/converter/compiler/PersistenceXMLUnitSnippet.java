@@ -61,8 +61,7 @@ public class PersistenceXMLUnitSnippet implements Snippet {
 
             ByteArrayOutputStream generatedXML = new ByteArrayOutputStream();
 
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(generatedXML));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedXML));
 
             if (template != null) {
                 template.merge(context, writer);
