@@ -95,7 +95,7 @@ $classDef.getNamedStoredProcedureQueries().getSnippet()
 #foreach($annotation in $classDef.getAnnotation() )
     $annotation.getSnippet()
 #end
-public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end #if($classDef.isInterfaceExist()) implements $classDef.getUnqualifiedInterfaceList()#end { 
+public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end#if($classDef.isInterfaceExist()) implements $classDef.getUnqualifiedInterfaceList()#end { 
 
 #####################custom snippet - before field ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_FIELD") )

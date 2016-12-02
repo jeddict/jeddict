@@ -84,7 +84,6 @@ import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
@@ -170,6 +169,8 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.getGenericType;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.unqualifyGeneric;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
@@ -213,13 +214,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classDef.setToStringMethod(getToStringMethodSnippet(javaClass, getClassMembers(javaClass, javaClass.getToStringMethod())));
 
         if (javaClass.getSuperclass() != null) {
-            ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
-            superClassHelper.setPackageName(javaClass.getSuperclass().getAbsolutePackage(rootPackageName));
-            classDef.setSuperClassName(superClassHelper.getFQClassName());
+            classDef.setSuperClassName(javaClass.getSuperclass().getFQN());
         } else if (javaClass.getSuperclassRef() != null) {
-            ClassHelper superClassHelper = new ClassHelper(JavaIdentifiers.unqualify(javaClass.getSuperclassRef().getName()));
-            superClassHelper.setPackageName(JavaIdentifiers.getPackageName(javaClass.getSuperclassRef().getName()));
-            classDef.setSuperClassName(superClassHelper.getFQClassName());
+            classDef.setSuperClassName(javaClass.getSuperclassRef().getName());
         }
         return classDef;
     }

@@ -21,6 +21,8 @@ import static java.util.stream.Collectors.toSet;
 import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jcode.core.util.Constants.LANG_PACKAGE;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.getGenericType;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.unqualifyGeneric;
 
 public class ImportSet extends TreeSet<String> {
     
@@ -39,8 +41,7 @@ public class ImportSet extends TreeSet<String> {
     
     private boolean valid(String fqn){
         if(StringUtils.isNotEmpty(fqn)){
-            String uqn = JavaIdentifiers.unqualify(fqn);
-            return !(LANG_PACKAGE + '.' + uqn).equals(fqn);
+            return !fqn.startsWith(LANG_PACKAGE);
         }
         return false;
     }

@@ -1025,9 +1025,9 @@ public class PropertiesHandler {
             public String getDisplay() {
                 ReferenceClass referenceClass = javaClass.getSuperclassRef();
                 if (referenceClass == null) {
-                   return "";
+                   return EMPTY;
                 } else {
-                   return JavaIdentifiers.unqualify(referenceClass.getName());
+                   return JavaIdentifiers.unqualifyGeneric(referenceClass.getName());
                 }
             }
 

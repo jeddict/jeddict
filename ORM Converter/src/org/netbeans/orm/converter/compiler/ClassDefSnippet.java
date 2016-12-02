@@ -23,11 +23,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.getGenericType;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.unqualifyGeneric;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
@@ -172,7 +176,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     }
 
     public String getSuperClassName() {
-        return superClassHelper.getClassName();
+        return superClassHelper.getClassDeclarationWithFQGeneric();
     }
 
     public void setSuperClassName(String className) {
@@ -568,8 +572,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         return interfaces != null && !interfaces.isEmpty();
     }
     
-    public String getUnqualifiedInterfaceList(){
-        return interfaces.stream().map(JavaIdentifiers::unqualify).collect(Collectors.joining(", "));
+    public String getUnqualifiedInterfaceList() {
+        return interfaces.stream().map(fqn -> unqualifyGeneric(fqn) + getGenericType(fqn)).collect(joining(", "));
     }
 
     /**

@@ -51,9 +51,9 @@ public class ClassExtendPanel extends GenericEmbeddedEditor<ReferenceClass> {
         this.referenceClass = referenceClass;
         if (referenceClass != null && StringUtils.isNotEmpty(referenceClass.getName())) {
             class_TextField.setText(referenceClass.getName());
-        } 
+        } else {
         dataType_ActionActionPerformed(null);
-
+        }
     }
 
     public ClassExtendPanel(ModelerFile modelerFile) {

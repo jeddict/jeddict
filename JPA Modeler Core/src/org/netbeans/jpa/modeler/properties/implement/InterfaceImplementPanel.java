@@ -64,7 +64,6 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
             Object[] row = ((RowValue) entityValue).getRow();
             referenceClass = (ReferenceClass) row[0];
             interface_TextField.setText(referenceClass.getName());
-            dataType_ActionActionPerformed(null);
         }
 
     }
@@ -181,10 +180,12 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean validateField() {
-        if (this.interface_TextField.getText().trim().length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
+        String _class = this.interface_TextField.getText().trim();
+        int genericIndex = _class.indexOf('<');//generic type
+        if (_class.length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
             JOptionPane.showMessageDialog(this, "Interface can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
-        } else if(!JavaIdentifiers.isValidPackageName(this.interface_TextField.getText().trim())){
+        } else if(genericIndex>1 ? !JavaIdentifiers.isValidPackageName(_class.substring(0, genericIndex)): !JavaIdentifiers.isValidPackageName(_class)){
             JOptionPane.showMessageDialog(this, "Invalid Interface type", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -205,7 +206,7 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
             }
         }
 
-        referenceClass.setName(interface_TextField.getText());
+        referenceClass.setName(interface_TextField.getText().trim());
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();

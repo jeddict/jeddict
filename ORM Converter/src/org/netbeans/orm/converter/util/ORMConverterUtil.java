@@ -115,10 +115,9 @@ public class ORMConverterUtil {
         return file;
     }
 
-    public static Collection<String> eliminateSamePkgImports(
-            String classPackage, Collection<String> importSnippets) {
+    public static Collection<String> eliminateSamePkgImports(String classPackage, Collection<String> importSnippets) {
 
-        List<String> uniqueImports = new ArrayList<String>();
+        List<String> uniqueImports = new ArrayList<>();
 
         for (String importSnippet : importSnippets) {
 
