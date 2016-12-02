@@ -2,6 +2,7 @@
 
 ### Version 2.6 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.6.5) ###
 
+*  Arquillian test generator support
 *  DB Modeler data type visualizer
 *  @PrimaryKeyJoinColumn support
 *  Java 8 Optional return type

@@ -19,8 +19,8 @@ import java.util.Collection;
 import java.util.TreeSet;
 import static java.util.stream.Collectors.toSet;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.core.util.Constants.LANG_PACKAGE;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
-import static org.netbeans.jpa.source.Package.LANG_PACKAGE;
 
 public class ImportSet extends TreeSet<String> {
     

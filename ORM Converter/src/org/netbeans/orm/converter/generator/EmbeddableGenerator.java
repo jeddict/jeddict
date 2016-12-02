@@ -28,7 +28,7 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         super(new ManagedClassDefSnippet());
         this.embeddable = parsedEmbeddable;
         this.rootPackageName = packageName;
-        this.packageName = embeddable.getPackage(rootPackageName);
+        this.packageName = embeddable.getAbsolutePackage(rootPackageName);
     }
 
     @Override

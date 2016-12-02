@@ -42,7 +42,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         super(new ManagedClassDefSnippet());
         this.entity = parsedEntity;
         this.rootPackageName = packageName;
-        this.packageName = entity.getPackage(rootPackageName);
+        this.packageName = entity.getAbsolutePackage(rootPackageName);
     }
 
     @Override

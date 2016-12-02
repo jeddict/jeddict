@@ -30,11 +30,11 @@ import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceGeneratorProvider;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modeler.component.Wizards;
-import org.netbeans.modules.j2ee.core.api.support.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.api.PersistenceLocation;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
@@ -148,7 +148,7 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
         }
 
         return Collections.<DataObject>singleton(DataFolder.findFolder(
-                SourceGroups.getFolderForPackage(helper.getLocation(), helper.getPackageName())));
+                SourceGroupSupport.getFolderForPackage(helper.getLocation(), helper.getPackageName())));
 //        return Collections.emptySet();
     }
 

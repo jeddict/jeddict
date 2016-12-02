@@ -41,7 +41,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         super(new StaticMetamodelClassDefSnippet());
         this.managedClass = managedClass;
         this.rootPackageName = packageName;
-        this.packageName = managedClass.getPackage(rootPackageName);
+        this.packageName = managedClass.getAbsolutePackage(rootPackageName);
         this.entityPackageName=entityPackageName;
     }
 

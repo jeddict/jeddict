@@ -214,7 +214,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         if (javaClass.getSuperclass() != null) {
             ClassHelper superClassHelper = new ClassHelper(javaClass.getSuperclass().getClazz());
-            superClassHelper.setPackageName(javaClass.getSuperclass().getPackage(rootPackageName));
+            superClassHelper.setPackageName(javaClass.getSuperclass().getAbsolutePackage(rootPackageName));
             classDef.setSuperClassName(superClassHelper.getFQClassName());
         } else if (javaClass.getSuperclassRef() != null) {
             ClassHelper superClassHelper = new ClassHelper(JavaIdentifiers.unqualify(javaClass.getSuperclassRef().getName()));
@@ -458,7 +458,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
             elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
             if (parsedElementCollection.getConnectedClass() != null) {
-                elementCollection.setTargetClassPackage(parsedElementCollection.getConnectedClass().getPackage(rootPackageName));
+                elementCollection.setTargetClassPackage(parsedElementCollection.getConnectedClass().getAbsolutePackage(rootPackageName));
             }
 
             if (parsedFetchType != null) {
@@ -1116,7 +1116,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             VariableDefSnippet variableDef = getVariableDef(parsedEmbeded);
 
             variableDef.setEmbedded(true);
-            variableDef.setType(parsedEmbeded.getConnectedClass().getPackage(rootPackageName) + ORMConverterUtil.DOT
+            variableDef.setType(parsedEmbeded.getConnectedClass().getAbsolutePackage(rootPackageName) + ORMConverterUtil.DOT
                     + parsedEmbeded.getAttributeType());
             variableDef.setFunctionalType(parsedEmbeded.isOptionalReturnType());
 
@@ -1270,7 +1270,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             manyToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedManyToMany));
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
-            manyToMany.setTargetEntityPackage(parsedManyToMany.getConnectedEntity().getPackage(rootPackageName));
+            manyToMany.setTargetEntityPackage(parsedManyToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
 
             manyToMany.setCascadeTypes(cascadeTypes);
 
@@ -1350,7 +1350,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             ManyToOneSnippet manyToOne = new ManyToOneSnippet();
 
             manyToOne.setTargetEntity(parsedManyToOne.getTargetEntity());
-            manyToOne.setTargetEntityPackage(parsedManyToOne.getConnectedEntity().getPackage(rootPackageName));
+            manyToOne.setTargetEntityPackage(parsedManyToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
 
             manyToOne.setCascadeTypes(cascadeTypes);
 
@@ -1390,7 +1390,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             oneToMany.setCascadeTypes(cascadeTypes);
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
-            oneToMany.setTargetEntityPackage(parsedOneToMany.getConnectedEntity().getPackage(rootPackageName));
+            oneToMany.setTargetEntityPackage(parsedOneToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
 
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
@@ -1432,7 +1432,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             oneToOne.setCascadeTypes(cascadeTypes);
             oneToOne.setTargetEntity(parsedOneToOne.getTargetEntity());
-            oneToOne.setTargetEntityPackage(parsedOneToOne.getConnectedEntity().getPackage(rootPackageName));
+            oneToOne.setTargetEntityPackage(parsedOneToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
 
             oneToOne.setMappedBy(parsedOneToOne.getMappedBy());
             if (parsedOneToOne.getOptional() != null) {

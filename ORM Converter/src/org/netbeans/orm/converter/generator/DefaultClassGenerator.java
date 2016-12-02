@@ -27,7 +27,7 @@ public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
         super(new ClassDefSnippet());
         this.defaultClass = parsedDefaultClass;
         this.rootPackageName = packageName;
-        this.packageName = defaultClass.getPackage(rootPackageName);
+        this.packageName = defaultClass.getAbsolutePackage(rootPackageName);
     }
 
     @Override

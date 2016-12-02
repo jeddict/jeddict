@@ -37,7 +37,7 @@ import org.netbeans.api.project.Sources;
 import org.netbeans.jcode.core.util.ProjectHelper;
 import static org.netbeans.jcode.core.util.ProjectHelper.getJavaProjects;
 import org.netbeans.jcode.core.util.ProjectType;
-import static org.netbeans.jcode.core.util.SourceGroups.getPackageForFolder;
+import static org.netbeans.jcode.core.util.SourceGroupSupport.getPackageForFolder;
 import org.netbeans.jcode.layer.DefaultBusinessLayer;
 import org.netbeans.jcode.layer.DefaultControllerLayer;
 import org.netbeans.jcode.layer.DefaultViewerLayer;

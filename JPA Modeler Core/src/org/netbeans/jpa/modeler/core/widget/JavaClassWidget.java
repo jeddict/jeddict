@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.jcode.core.util.SourceGroups;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -117,7 +117,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         } else {
             EntityMappings mappings = this.getModelerScene().getBaseElementSpec();
             ModelerFile modelerFile = this.getModelerScene().getModelerFile();
-            fileObject = SourceGroups.getJavaFileObject(modelerFile.getSourceGroup(), StringUtils.isBlank(mappings.getPackage()) ? "" : (mappings.getPackage() + ".") + javaClass.getClazz());
+            fileObject = SourceGroupSupport.getJavaFileObject(modelerFile.getSourceGroup(), javaClass.getFQN());
             javaClass.setFileObject(fileObject);
         }
         return fileObject;

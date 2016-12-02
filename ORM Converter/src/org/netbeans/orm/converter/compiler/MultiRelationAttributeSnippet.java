@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE;
-import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -102,7 +102,7 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(PERSISTENCE_PACKAGE + getType());
+        importSnippets.add(PERSISTENCE_PACKAGE_PREFIX + getType());
         if (getFetchType() != null) {
             importSnippets.add(FETCH_TYPE);
         }

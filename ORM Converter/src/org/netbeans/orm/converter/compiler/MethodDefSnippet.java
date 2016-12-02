@@ -19,12 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
 import org.netbeans.orm.converter.util.ImportSet;
 
 public class MethodDefSnippet implements Snippet {
-
-    private static final String IMPORT_PREFIX = PERSISTENCE_PACKAGE;
 
     private String methodName = null;
 
@@ -74,7 +72,7 @@ public class MethodDefSnippet implements Snippet {
         ImportSet importSnippets = new ImportSet();
 
         for (CallbackSnippet callback : callbacks) {
-            importSnippets.add(IMPORT_PREFIX + callback.getCallbackType());
+            importSnippets.add(PERSISTENCE_PACKAGE_PREFIX + callback.getCallbackType());
         }
 
         return importSnippets;
