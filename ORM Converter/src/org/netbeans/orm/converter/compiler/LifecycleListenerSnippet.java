@@ -15,15 +15,11 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import static java.util.Collections.singletonMap;
 import java.util.List;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
@@ -79,25 +75,7 @@ public class LifecycleListenerSnippet implements WritableSnippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         try {
-
-            Template template = ORMConverterUtil.getTemplate(TEMPLATE_FILENAME);
-
-            VelocityContext velocityContext = new VelocityContext();
-            velocityContext.put("lifeCycleListener", this);
-
-            ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
-
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(generatedClass));
-
-            if (template != null) {
-                template.merge(velocityContext, writer);
-            }
-
-            writer.flush();
-            writer.close();
-
-            return generatedClass.toString();
+            return ORMConverterUtil.writeToTemplate(TEMPLATE_FILENAME,singletonMap("lifeCycleListener", this));
 
         } catch (Exception e) {
             throw new InvalidDataException(e);

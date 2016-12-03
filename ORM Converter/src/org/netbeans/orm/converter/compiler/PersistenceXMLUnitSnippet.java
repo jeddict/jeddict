@@ -15,14 +15,10 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import static java.util.Collections.singletonMap;
 import java.util.List;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class PersistenceXMLUnitSnippet implements Snippet {
@@ -53,25 +49,7 @@ public class PersistenceXMLUnitSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         try {
-
-            Template template = ORMConverterUtil.getTemplate(TEMPLATE_FILENAME);
-
-            VelocityContext context = new VelocityContext();
-            context.put("pu", this);
-
-            ByteArrayOutputStream generatedXML = new ByteArrayOutputStream();
-
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedXML));
-
-            if (template != null) {
-                template.merge(context, writer);
-            }
-
-            writer.flush();
-            writer.close();
-
-            return generatedXML.toString();
-
+            return ORMConverterUtil.writeToTemplate(TEMPLATE_FILENAME,singletonMap("pu", this));
         } catch (Exception e) {
             throw new InvalidDataException(e);
         }

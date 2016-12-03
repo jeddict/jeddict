@@ -15,21 +15,14 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.netbeans.jcode.core.util.JavaIdentifiers;
 import static org.netbeans.jcode.core.util.JavaIdentifiers.getGenericType;
 import static org.netbeans.jcode.core.util.JavaIdentifiers.unqualifyGeneric;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
@@ -348,25 +341,13 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     @Override
     public String getSnippet() throws InvalidDataException {
         try {
-            Template template = ORMConverterUtil.getTemplate(getTemplateName());
 
-            VelocityContext velocityContext = new VelocityContext();
+            Map velocityContext = new HashMap();
             velocityContext.put("classDef", this);
             velocityContext.put("n", NEW_LINE);
             velocityContext.put("fluentAPI", CodePanel.isGenerateFluentAPI());
-            
 
-            ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
-
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass))) {
-                if (template != null) {
-                    template.merge(velocityContext, writer);
-                }
-
-                writer.flush();
-            }
-
-            return generatedClass.toString();
+            return ORMConverterUtil.writeToTemplate(getTemplateName(),velocityContext);
 
         } catch (Exception e) {
             throw new InvalidDataException("Class name : " + classHelper.getFQClassName(), e);

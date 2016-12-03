@@ -15,12 +15,14 @@
  */
 package org.netbeans.orm.converter.util;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStreamWriter;
 
 import java.nio.charset.Charset;
 
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.text.BadLocationException;
@@ -35,6 +38,7 @@ import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.netbeans.editor.GuardedDocument;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
@@ -47,6 +51,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.text.NbDocument;
+import org.openide.util.Exceptions;
 import org.openide.util.UserQuestionException;
 
 public class ORMConverterUtil {
@@ -190,28 +195,32 @@ public class ORMConverterUtil {
         return new String(getBytes(file), charsetName);
     }
 
-    public static Template getTemplate(String templateName) throws Exception {
-
-        ClassLoader classLoader = ORMConverterUtil.class.getClassLoader();
-
-        InputStream inputStream = classLoader.getResourceAsStream(
-                "velocity.properties");
-
-        Properties properties = new Properties();
-        properties.load(inputStream);
-
-        Velocity.init(properties);
-
+    static {
+        try {
+            Properties properties = new Properties();
+            properties.load(ORMConverterUtil.class.getClassLoader().getResourceAsStream("velocity.properties"));
+            Velocity.init(properties);
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
+    public static String writeToTemplate(String templateName, Map context) throws Exception {
         Template template = Velocity.getTemplate(templateName);
-
-        return template;
+        ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass, "UTF-8"))) {
+            if (template != null) {
+                template.merge(new VelocityContext(context), writer);
+            }
+            writer.flush();
+        }
+        return generatedClass.toString();
     }
 
     public static Collection<String> processedImportStatements(
             Collection<String> importSnippets) {
 
-        Collection<String> processedStatements = new ArrayList<String>();
-
+        Collection<String> processedStatements = new ArrayList<>();
         for (String element : importSnippets) {
             processedStatements.add(IMPORT + element + SEMICOLON);
         }
