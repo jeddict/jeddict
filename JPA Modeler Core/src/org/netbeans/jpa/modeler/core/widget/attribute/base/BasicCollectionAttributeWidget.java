@@ -47,10 +47,8 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
-
         ElementCollection elementCollectionSpec = this.getBaseElementSpec();
-
+        set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
