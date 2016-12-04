@@ -339,7 +339,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             constructors.add(constructor);
         }
 
-        constructors.stream().filter((constructor) -> (constructor.isEnable())).map((constructor) -> {
+        constructors.stream().filter(Constructor::isEnable).map(constructor -> {
             String className = javaClass.getClazz();
             List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes().stream()
                     .filter(attr -> attr.getJavaClass() != javaClass).map(buildVarDef).collect(toList());
@@ -347,9 +347,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     .filter(attr -> attr.getJavaClass() == javaClass).map(buildVarDef).collect(toList());
             ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, parentVariableSnippets, localVariableSnippets);
             return snippet;
-        }).forEachOrdered((snippet) -> {
-            constructorSnippets.add(snippet);
-        });
+        }).forEach(constructorSnippets::add);
         return constructorSnippets;
     }
 
@@ -372,6 +370,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (variableDef == null) {
             variableDef = new VariableDefSnippet(attr);
             variableDef.setName(attr.getName());
+            variableDef.setDefaultValue(attr.getDefaultValue());
             variableDef.setDescription(attr.getDescription());
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
             if (attr instanceof BaseAttribute) {

@@ -67,6 +67,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private boolean version = false;
 
     private String name;
+    private String defaultValue;
+
     private String description;
     private final ClassHelper classHelper = new ClassHelper();
     //TODO: See if these 2 can be as a class
@@ -769,4 +771,13 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public Attribute getAttribute() {
         return attribute;
     }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
 }

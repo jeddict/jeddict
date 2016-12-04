@@ -75,6 +75,9 @@
                 <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description" after="name">
                     <display-name>Description</display-name>
                 </attribute>
+                <attribute id="defaultValue" groupId="BASIC_PROP" class="java.lang.String" name="defaultValue"  after="fieldType">
+                    <display-name>Default Value</display-name>
+                </attribute>
                 <attribute id="includeInUI" groupId="UI_PROP" class="java.lang.Boolean" name="includeInUI">
                     <display-name>Include in UI</display-name>
                     <description>

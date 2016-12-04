@@ -16,16 +16,15 @@
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
 import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
-import org.netbeans.api.visual.widget.LabelWidget;
+import static org.netbeans.jcode.core.util.AttributeType.STRING;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -68,8 +67,6 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public AttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
     }
-   
-    
     
     public void visualizeDataType() {
         AttributeViewAs viewAs = ViewPanel.getDataType();
@@ -106,7 +103,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         set.put("BASIC_PROP", PropertiesHandler.getCustomAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
 
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
-            if (value == null || value.trim().isEmpty()) {
+            if (StringUtils.isBlank(value)) {
                 JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
                 setName(AttributeWidget.this.getLabel());//rollback
             } else {
