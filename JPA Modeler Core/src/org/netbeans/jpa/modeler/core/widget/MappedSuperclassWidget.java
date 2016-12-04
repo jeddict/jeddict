@@ -48,16 +48,18 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
         validateName(null, this.getName());
 
     }
-
+    
     @Override
     public InheritanceStateType getInheritanceState() {
-        return InheritanceStateType.NONE;
+        return getInheritanceState(false);
     }
+    
     @Override
-    public InheritanceStateType getInheritanceState(boolean includeAllClass) {
+    public InheritanceStateType getInheritanceState(boolean includeAllClass){
         return InheritanceStateType.NONE;
     }
     
+
     @Override
     public String getIconPath() {
         return JPAModelerUtil.MAPPED_SUPER_CLASS_ICON_PATH;

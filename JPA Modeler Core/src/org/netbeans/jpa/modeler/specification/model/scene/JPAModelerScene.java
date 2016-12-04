@@ -457,8 +457,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             return PFactory.getColorScheme(PFactory.getMetroScheme());
        } else if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getTheme())) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
-//        } else if (PFactory.getWoodScheme().getSimpleName().equals(entityMappings.getTheme())) {
-//            return PFactory.getColorScheme(PFactory.getWoodScheme());
         } else {
             return PFactory.getColorScheme(PFactory.getMacScheme());
         }

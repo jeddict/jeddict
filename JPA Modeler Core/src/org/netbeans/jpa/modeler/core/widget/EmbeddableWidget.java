@@ -75,15 +75,17 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
     public void removeIncomingEmbeddableFlowWidget(EmbeddableFlowWidget incomingEmbeddableFlowWidget) {
         this.incomingEmbeddableFlowWidgets.remove(incomingEmbeddableFlowWidget);
     }
-
+    
     @Override
     public InheritanceStateType getInheritanceState() {
-        return InheritanceStateType.NONE;
+        return getInheritanceState(false);
     }
+    
     @Override
     public InheritanceStateType getInheritanceState(boolean includeAllClass){
         return InheritanceStateType.NONE;
     }
+    
 
 //    An embeddable class (including an embeddable class within another embeddable class) that is contained within an element collection must not contain an element collection, nor may it contain a relationship to an entity other than a many-to-one or one-to-one relationship
     @Override

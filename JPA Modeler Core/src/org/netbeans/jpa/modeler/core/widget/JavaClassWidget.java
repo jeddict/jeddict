@@ -283,6 +283,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
     public abstract InheritanceStateType getInheritanceState();
     public abstract InheritanceStateType getInheritanceState(boolean includeAllClass);
+    
 ////    private static final Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25) ,2, new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25));
     public void showInheritancePath() {
         IColorScheme colorScheme = this.getModelerScene().getColorScheme();
