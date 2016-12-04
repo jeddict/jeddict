@@ -81,7 +81,7 @@ public class GenerateCodeDialog extends GenericDialog
 
     private static final Preferences technologyLayerPref = NbPreferences.forModule(Generator.class);//ProjectUtils.getPreferences(prj, ProjectUtils.class, true);
     private FileObject modelerFileObject;
-    private final String modelerFilePackage;
+    private String modelerFilePackage;
     private final EntityMappings entityMappings;
     private final ApplicationConfigData configData;
     private final JPAModelerScene scene;
@@ -96,17 +96,18 @@ public class GenerateCodeDialog extends GenericDialog
         this.configData = new ApplicationConfigData();
         this.modelerFileObject = modelerFile.getFileObject();
         this.entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
+        propertyChangeSupport = new PropertyChangeSupport(this);
+        propertyChangeSupport.addPropertyChangeListener(this);
         initComponents();
         manageGenerateButtonStatus();
-        propertyChangeSupport = new PropertyChangeSupport(this);
         populateExistingProjectElementGroup();
         setPackage(entityMappings.getPackage());
-        propertyChangeSupport.addPropertyChangeListener(this);
         this.setTitle(NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.title"));
         getRootPane().setDefaultButton(generateSourceCode);
 
-        modelerFilePackage = getPackageForFolder(sourceGroup, modelerFileObject.getParent());
-
+        if(sourceGroup!=null){
+            modelerFilePackage = getPackageForFolder(sourceGroup, modelerFileObject.getParent());
+        }
         initLayer();
     }
 
@@ -114,8 +115,8 @@ public class GenerateCodeDialog extends GenericDialog
         configPane.removeAll();
         configPane.setVisible(false);
         
-        ProjectType projectType = ProjectHelper.getProjectType(getTargetPoject());
-        if (projectType == ProjectType.JAR) {
+        ProjectType projectType = getTargetPoject()!=null?ProjectHelper.getProjectType(getTargetPoject()):null;
+        if (projectType == null || projectType == ProjectType.JAR) {
             businessLayerCombo.setEnabled(false);
             controllerLayerCombo.setEnabled(false);
             viewerLayerCombo.setEnabled(false);
