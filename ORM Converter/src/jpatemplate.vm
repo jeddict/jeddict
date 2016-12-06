@@ -6,6 +6,10 @@ $n#end
 #if ($classDef.getPackageName())
 package $classDef.getPackageName();
 #end
+#####################custom snippet - after package ###############################
+#foreach($snippet in $classDef.getCustomSnippet("AFTER_PACKAGE") )
+$snippet 
+$n#end
 
 #####################import statements #################################
 #foreach ( $importStatement in $classDef.getImportSnippets() )
@@ -15,6 +19,10 @@ $importStatement
 #if($classDef.isJaxbSupport())
 import javax.xml.bind.annotation.*;
 #end
+#####################custom snippet - import ###############################
+#foreach($snippet in $classDef.getCustomSnippet("IMPORT") )
+$snippet 
+$n#end
 
 #####################java doc ###############################
 #if ($classDef.isJavaDocExist())
