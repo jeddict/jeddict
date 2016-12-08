@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.rules.entity;
 public class EntityValidator {
 
     public final static String NO_PRIMARYKEY_EXIST = "MSG_NoIdDefinedInHierarchy";
+    public final static String MANY_PRIMARYKEY_GEN_EXIST = "MSG_ManyIdGenDefined";
     public final static String EMPTY_CLASS_NAME = "MSG_EmptyClassName";
     public final static String INVALID_CLASS_NAME = "MSG_InvalidClassName";
     public final static String CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD = "MSG_ClassNamedWithReservedSQLKeyword";

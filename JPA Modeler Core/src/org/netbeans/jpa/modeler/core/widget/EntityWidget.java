@@ -20,11 +20,13 @@ import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.BRANCH;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.LEAF;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
@@ -73,7 +75,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         setName(entity.getClazz());
         setLabel(entity.getClazz());
         this.setImage(getIcon());
-        scanKeyError();
+        scanKeyError();//todo atm parent class not connected
         validateName(null, this.getName());
     }
     
@@ -159,13 +161,20 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             // Issue Fix #6041 Start
             boolean relationKey = this.getOneToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey()) ? true
                     : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
-
+            
             if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
                 getErrorHandler().throwSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
                 getErrorHandler().clearSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
             }
             // Issue Fix #6041 End
+          List<String> idGenList = this.getAllIdAttributeWidgets().stream().filter(idAttrWid -> idAttrWid.getBaseElementSpec().getGeneratedValue()!=null &&
+                    idAttrWid.getBaseElementSpec().getGeneratedValue().getStrategy()!=null).map(IdAttributeWidget::getName).collect(toList());
+            if(idGenList.size()> 1){
+               getErrorHandler().throwSignal(EntityValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
+            } else {
+                getErrorHandler().clearSignal(EntityValidator.MANY_PRIMARYKEY_GEN_EXIST);
+            }
         } else {
             getErrorHandler().clearSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
         }

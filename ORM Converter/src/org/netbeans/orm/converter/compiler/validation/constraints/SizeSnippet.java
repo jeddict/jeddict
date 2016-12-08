@@ -36,7 +36,7 @@ public class SizeSnippet extends ConstraintSnippet<Size> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && constraint.getMax() == null && constraint.getMessage() == null) {
+        if (constraint.getMessage() == null && constraint.getMin() == null && constraint.getMax() == null) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();

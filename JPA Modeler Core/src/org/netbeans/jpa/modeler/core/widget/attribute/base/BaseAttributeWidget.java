@@ -56,15 +56,10 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
 //        BasicCollectionAttributeWidget => ElementCollection [Column allowed]
 //        MultiValueEmbeddedAttributeWidget => ElementCollection [Column not allowed]
 //        set.put("BASIC_PROP", getValidationProperty());
-        
-        createBeanValidationPropertySet(set);
+
+        this.getBaseElementSpec().getConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet(this, constraint, getPropertyChangeListeners(), getPropertyVisibilityHandlers());
+        });        
     }
     
-    public void createBeanValidationPropertySet(ElementPropertySet set){
-        set.deleteGroup("CONSTRAINTS");
-        this.getBaseElementSpec().getNewConstraints().stream().forEach((constraint) -> {
-            set.createPropertySet(this, constraint, getPropertyChangeListeners(), getPropertyVisibilityHandlers());
-        });
-    }
-
 }

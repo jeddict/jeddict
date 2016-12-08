@@ -1533,7 +1533,14 @@ public class PropertiesHandler {
 
             @Override
             public void setData(Id classSpec) {
-                attributeWidget.setBaseElementSpec(classSpec);
+                if (attributeWidget.getClassWidget() instanceof EntityWidget) {
+                    ((EntityWidget) attributeWidget.getClassWidget()).scanKeyError();
+                } else {
+                    attributeWidget.getClassWidget().getAllSubclassWidgets().stream()
+                            .filter(cw -> cw instanceof EntityWidget).findFirst().ifPresent(ew -> ((EntityWidget) ew).scanKeyError());
+                }
+  
+//                attributeWidget.setBaseElementSpec(classSpec);
             }
 
             @Override
@@ -1590,9 +1597,9 @@ public class PropertiesHandler {
 
             @Override
             public void setData(Attribute baseAttribute) {
-                if (attributeWidget instanceof BaseAttributeWidget) {
-                    ((BaseAttributeWidget)attributeWidget).createBeanValidationPropertySet(attributeWidget.getPropertyManager().getElementPropertySet());
-                }
+//                if (attributeWidget instanceof BaseAttributeWidget) {
+//                    ((BaseAttributeWidget)attributeWidget).createBeanValidationPropertySet(attributeWidget.getPropertyManager().getElementPropertySet());
+//                }
                 if (mapKey) {
                     AttributeValidator.scanMapKeyHandlerError(attributeWidget);
                 }

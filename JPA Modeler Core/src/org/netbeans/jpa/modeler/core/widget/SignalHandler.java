@@ -47,6 +47,11 @@ public class SignalHandler {
 
     private final Map<String, String> signalList = new HashMap<>();
 
+    public void throwSignal(String key, Object... param) {
+        signalList.put(key, bundleManager.get(key, param));
+        print();
+    }
+    
     public void throwSignal(String key) {
         signalList.put(key, bundleManager.get(key, widget.getName()));
         print();

@@ -326,18 +326,20 @@
         </element>-->
         <element id="NotNull" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.NotNull">
             <attributes>
-                <attribute id="notnull.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                <attribute id="notnull.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
                     <display-name>@NotNull</display-name>
                     <description>
                         The value of the field or property must not be null.
                     </description>
                 </attribute>
                 <attribute id="notnull.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[(node.getConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getConstraintsMap().get("Null").selected==false]]></visible>
+            <!--<visible><![CDATA[(node.getConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getConstraintsMap().get("Null").selected==false]]></visible>-->
+            <visible><![CDATA[node.getConstraintsMap().get("NotNull") != null &&
+                    ((node.getConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getConstraintsMap().get("Null").selected==false)]]></visible>
         </element>
         <element id="Null" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Null">
             <attributes>
@@ -348,11 +350,12 @@
                     </description>
                 </attribute>
                 <attribute id="null.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[(node.getConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getConstraintsMap().get("NotNull").selected==false]]></visible>
+            <visible><![CDATA[node.getConstraintsMap().get("Null") != null && 
+                        ((node.getConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getConstraintsMap().get("NotNull").selected==false)]]></visible>
         </element>
         <element id="AssertFalse" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse">
             <attributes>
@@ -363,11 +366,12 @@
                     </description>
                 </attribute>
                 <attribute id="assertFalse.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[(node.getConstraintsMap().get("AssertTrue").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertTrue").selected==false]]></visible>
+            <visible><![CDATA[node.getConstraintsMap().get("AssertFalse") != null &&
+                        ((node.getConstraintsMap().get("AssertTrue").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertTrue").selected==false)]]></visible>
         </element>
         <element id="AssertTrue" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertTrue">
             <attributes>
@@ -378,11 +382,12 @@
                     </description>
                 </attribute>
                 <attribute id="assertTrue.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[(node.getConstraintsMap().get("AssertFalse").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertFalse").selected==false]]></visible>
+            <visible><![CDATA[node.getConstraintsMap().get("AssertTrue") != null &&
+                        ((node.getConstraintsMap().get("AssertFalse").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertFalse").selected==false)]]></visible>
         </element>
         <element id="Past" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Past">
             <attributes>
@@ -393,11 +398,12 @@
                     </description>
                 </attribute>
                 <attribute id="past.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[(node.getConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getConstraintsMap().get("Future").selected==false]]></visible>
+            <visible><![CDATA[node.getConstraintsMap().get("Past") != null &&
+                        ((node.getConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getConstraintsMap().get("Future").selected==false)]]></visible>
         </element>
         <element id="Future" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Future">
             <attributes>
@@ -408,11 +414,12 @@
                     </description>
                 </attribute>
                 <attribute id="future.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[(node.getConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getConstraintsMap().get("Past").selected==false]]></visible>
+            <visible><![CDATA[node.getConstraintsMap().get("Future") != null &&
+                        ((node.getConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getConstraintsMap().get("Past").selected==false)]]></visible>
         </element>
         <element id="Size" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Size">
             <attributes>
@@ -422,19 +429,20 @@
                         The size of the field or property is evaluated and must match the specified boundaries. 
                     </description>
                 </attribute>
-                <attribute id="size.max" groupId="CONSTRAINTS" class="java.lang.Integer" name="max">
-                    <display-name>Max size</display-name>
+                <attribute id="size.min" groupId="CONSTRAINTS" class="java.lang.Integer" name="min">
+                    <display-name>      Min size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
-                <attribute id="size.min" groupId="CONSTRAINTS" class="java.lang.Integer" name="min">
-                    <display-name>Min size</display-name>
+                <attribute id="size.max" groupId="CONSTRAINTS" class="java.lang.Integer" name="max">
+                    <display-name>      Max size</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="size.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("Size") != null]]></visible>
         </element>
         <element id="Pattern" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Pattern">
             <attributes>
@@ -445,14 +453,15 @@
                     </description>
                 </attribute>
                 <attribute id="pattern.regexp" groupId="CONSTRAINTS" class="java.lang.String" name="regexp">
-                    <display-name>regexp</display-name>
+                    <display-name>      regexp</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="pattern.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("Pattern") != null]]></visible>
         </element>
         <element id="Digits" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Digits">
             <attributes>
@@ -463,18 +472,19 @@
                     </description>
                 </attribute>
                 <attribute id="digits.fraction" groupId="CONSTRAINTS" class="java.lang.Integer" name="fraction">
-                    <display-name>Fraction</display-name>
+                    <display-name>      Fraction</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="digits.integer" groupId="CONSTRAINTS" class="java.lang.Integer" name="integer">
-                    <display-name>Integer</display-name>
+                    <display-name>      Integer</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="digits.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("Digits") != null]]></visible>
         </element>
         <element id="Min" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Min">
             <attributes>
@@ -485,14 +495,15 @@
                     </description>
                 </attribute>
                 <attribute id="min.value" groupId="CONSTRAINTS" class="java.lang.Long" name="value">
-                    <display-name>value</display-name>
+                    <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="min.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("Min") != null]]></visible>
         </element>
         <element id="Max" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Max">
             <attributes>
@@ -503,14 +514,15 @@
                     </description>
                 </attribute>
                 <attribute id="max.value" groupId="CONSTRAINTS" class="java.lang.Long" name="value">
-                    <display-name>value</display-name>
+                    <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="max.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+            <visible><![CDATA[node.getConstraintsMap().get("Max") != null]]></visible>
         </element>
         <element id="DecimalMin" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin">
             <attributes>
@@ -521,32 +533,34 @@
                     </description>
                 </attribute>
                 <attribute id="decimalMin.value" groupId="CONSTRAINTS" class="java.lang.String" name="value">
-                    <display-name>value</display-name>
+                    <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="decimalMin.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+                        <visible><![CDATA[node.getConstraintsMap().get("DecimalMin") != null]]></visible>
         </element>
         <element id="DecimalMax" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMax">
             <attributes>
-                <attribute id="decimalMax.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                <attribute id="decimalMax.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
                     <display-name>@DecimalMax</display-name>
                     <description>
                         The value of the field or property must be a decimal value lower than or equal to the number in the value element.
                     </description>
                 </attribute>
                 <attribute id="decimalMax.value" groupId="CONSTRAINTS" class="java.lang.String" name="value">
-                    <display-name>value</display-name>
+                    <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="decimalMax.message" groupId="CONSTRAINTS" class="java.lang.String" name="message">
-                    <display-name>Message</display-name>
+                    <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
+                        <visible><![CDATA[node.getConstraintsMap().get("DecimalMax") != null]]></visible>
         </element>
         <element id="JaxbXmlAttribute" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute">
             <attributes>

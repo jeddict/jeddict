@@ -354,7 +354,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected List<ConstraintSnippet> getConstraintSnippet(Set<Constraint> constraints) {
         List<ConstraintSnippet> snippets = new ArrayList<>();
         for (Constraint constraint : constraints) {
-            if (!constraint.getSelected()) {
+            if (!constraint.getSelected() || constraint.isEmpty()) {
                 continue;
             }
             ConstraintSnippet snippet = ConstraintSnippetFactory.getInstance(constraint);
@@ -374,7 +374,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setDescription(attr.getDescription());
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
             if (attr instanceof BaseAttribute) {
-                variableDef.setConstraints(getConstraintSnippet(((BaseAttribute) attr).getConstraints()));
+                variableDef.setConstraints(getConstraintSnippet(attr.getConstraints()));
             }
 
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
