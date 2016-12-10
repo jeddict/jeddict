@@ -28,6 +28,7 @@ import javax.lang.model.SourceVersion;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.text.JTextComponent;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
@@ -86,6 +87,7 @@ public class GenerateCodeDialog extends GenericDialog
     private final EntityMappings entityMappings;
     private final ApplicationConfigData configData;
     private final JPAModelerScene scene;
+    private final ModelerFile modelerFile;
 
     /**
      * Creates new form GenerateCodeDialog
@@ -93,12 +95,14 @@ public class GenerateCodeDialog extends GenericDialog
      * @param modelerFile
      */
     public GenerateCodeDialog(ModelerFile modelerFile) {
+        this.modelerFile = modelerFile;
         this.scene = (JPAModelerScene) modelerFile.getModelerScene();
         this.configData = new ApplicationConfigData();
         this.modelerFileObject = modelerFile.getFileObject();
         this.entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-        technologyPref = modelerFile.getProject() == null ? NbPreferences.forModule(Generator.class)
-                : ProjectUtils.getPreferences(modelerFile.getProject(), ProjectUtils.class, true);
+        technologyPref = NbPreferences.forModule(Generator.class);
+//                modelerFile.getProject() == null ? NbPreferences.forModule(Generator.class)
+//                : ProjectUtils.getPreferences(modelerFile.getProject(), ProjectUtils.class, true);
         propertyChangeSupport = new PropertyChangeSupport(this);
         propertyChangeSupport.addPropertyChangeListener(this);
         initComponents();
@@ -149,31 +153,32 @@ public class GenerateCodeDialog extends GenericDialog
         this.pack();
     }
 
-    private final LayerConfigPanel[] layerConfigPanels = new LayerConfigPanel[3];
-
    private void setTechPanel(TechContext techContext) {
             techContext.createPanel(targetPoject, sourceGroup, modelerFilePackage);
             configPane.removeAll();
             configPane.setVisible(false);
-//          layerConfigPanels[index] = techPanel;
+            boolean nonePanel = techContext.getTechnology().panel() == LayerConfigPanel.class;
             switch (techContext.getTechnology().type()) {
                 case BUSINESS:
                     getConfigData().setBussinesTechContext(techContext);
                     addLayerTab(getConfigData().getBussinesTechContext());
                     getConfigData().setControllerTechContext(null);
                     getConfigData().setViewerTechContext(null);
+                    if(nonePanel){getConfigData().setBussinesTechContext(null);}
                     break;
                 case CONTROLLER:
                     getConfigData().setControllerTechContext(techContext);
                     addLayerTab(getConfigData().getBussinesTechContext());
                     addLayerTab(getConfigData().getControllerTechContext());
-                  getConfigData().setViewerTechContext(null);
+                    getConfigData().setViewerTechContext(null);
+                    if(nonePanel){getConfigData().setControllerTechContext(null);}
                     break;
                 case VIEWER:
                     getConfigData().setViewerTechContext(techContext);
                     addLayerTab(getConfigData().getBussinesTechContext());
                     addLayerTab(getConfigData().getControllerTechContext());
                     addLayerTab(getConfigData().getViewerTechContext());
+                    if(nonePanel){getConfigData().setViewerTechContext(null);}
                     break;
                 default:
                     break;
@@ -549,6 +554,9 @@ public class GenerateCodeDialog extends GenericDialog
     }
 
     private void store() {
+        if(!StringUtils.equals(entityMappings.getPackage(), getPackage())){
+            modelerFile.getModelerPanelTopComponent().changePersistenceState(false);
+        }
         entityMappings.setPackage(getPackage());
         if (getBusinessLayer() != null) {
             technologyPref.put(BUSINESS.name(), getBusinessLayer().getGenerator().getClass().getSimpleName());
