@@ -48,10 +48,11 @@ public class EqualsMethodSnippet implements Snippet {
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
             String expression;
+            boolean optionalType = attribute.isOptionalReturnType();
             if (attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)) {
-                expression = JavaHashcodeEqualsUtil.getEqualExpression(((BaseAttribute) attribute).getAttributeType(), attribute.getName());
+                expression = JavaHashcodeEqualsUtil.getEqualExpression(((BaseAttribute) attribute).getAttributeType(), attribute.getName(), optionalType);
             } else {
-                expression = JavaHashcodeEqualsUtil.getEqualExpression(attribute.getName());
+                expression = JavaHashcodeEqualsUtil.getEqualExpression(attribute.getName(), optionalType);
             }
             builder.append(String.format("if (%s) {", expression));
             builder.append("return false;");

@@ -154,7 +154,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         
         if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
-            type = "Optional<" + getWrapperType(type) + '>';
+            if(isArray(type)){
+                type = "Optional<" + type + '>';
+            } else {
+                type = "Optional<" + getWrapperType(type) + '>';
+            }
         }
         return type;
     }
@@ -328,15 +332,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(typeIdentifier.getImportSnippets());
         } else if (classHelper.getPackageName() != null) {
             importSnippets.add(classHelper.getFQClassName());
-            
-            if (functionalType) {
-                importSnippets.add(Optional.class.getCanonicalName());
-            }
-        } else {
-           if (functionalType) {
-                importSnippets.add(Optional.class.getCanonicalName());
-            } 
         }
+        if (functionalType) {
+            importSnippets.add(Optional.class.getCanonicalName());
+        } 
 
         if (basic != null) {
             importSnippets.addAll(basic.getImportSnippets());
