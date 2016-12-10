@@ -99,7 +99,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         definiton.setModelerFile(modelerFile);
         sourceGenerator.generate(this, appicationConfigData.getProject(), appicationConfigData.getSourceGroup(), definiton);
 
-        if (appicationConfigData.getBussinesLayerConfig() != null) {
+        if (appicationConfigData.getBussinesTechContext()!= null) {
             EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
             appicationConfigData.setEntityMappings(entityMappings);
             ProgressHandler handler = new ProgressConsoleHandler(this);

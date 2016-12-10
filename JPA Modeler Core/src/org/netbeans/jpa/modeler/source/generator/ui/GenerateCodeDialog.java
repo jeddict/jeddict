@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.source.generator.ui;
 
+import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -26,9 +27,7 @@ import static java.util.stream.Collectors.toList;
 import javax.lang.model.SourceVersion;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JPanel;
 import javax.swing.text.JTextComponent;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
@@ -43,12 +42,10 @@ import org.netbeans.jcode.layer.DefaultControllerLayer;
 import org.netbeans.jcode.layer.DefaultViewerLayer;
 import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.TechContext;
-import static org.netbeans.jcode.layer.Technology.NONE_LABEL;
 import static org.netbeans.jcode.layer.Technology.Type.BUSINESS;
 import static org.netbeans.jcode.layer.Technology.Type.CONTROLLER;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
-import org.netbeans.jcode.stack.config.panel.DefaultConfigPanel;
 import org.netbeans.jcode.stack.config.panel.LayerConfigPanel;
 import org.netbeans.jcode.ui.source.ProjectCellRenderer;
 import org.netbeans.jcode.ui.source.SourceRootCellRenderer;
@@ -63,11 +60,8 @@ import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.spi.java.project.support.ui.PackageView;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import static org.openide.awt.Mnemonics.setLocalizedText;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
-import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.NbPreferences;
 import static org.openide.awt.Mnemonics.setLocalizedText;
 import static org.openide.util.NbBundle.getMessage;
@@ -79,9 +73,16 @@ import static org.openide.util.NbBundle.getMessage;
 public class GenerateCodeDialog extends GenericDialog
         implements PropertyChangeListener {
 
-    private static final Preferences technologyLayerPref = NbPreferences.forModule(Generator.class);//ProjectUtils.getPreferences(prj, ProjectUtils.class, true);
-    private FileObject modelerFileObject;
-    private String modelerFilePackage;
+    /**
+     * Java package root sources type.
+     *
+     * @see org.netbeans.api.project.Sources
+     */
+    private static final String SOURCES_TYPE_JAVA = "java"; // NOI18N
+
+    private final Preferences technologyPref;
+    private final FileObject modelerFileObject;
+    private final String modelerFilePackage;
     private final EntityMappings entityMappings;
     private final ApplicationConfigData configData;
     private final JPAModelerScene scene;
@@ -96,26 +97,25 @@ public class GenerateCodeDialog extends GenericDialog
         this.configData = new ApplicationConfigData();
         this.modelerFileObject = modelerFile.getFileObject();
         this.entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
+        technologyPref = modelerFile.getProject() == null ? NbPreferences.forModule(Generator.class)
+                : ProjectUtils.getPreferences(modelerFile.getProject(), ProjectUtils.class, true);
         propertyChangeSupport = new PropertyChangeSupport(this);
         propertyChangeSupport.addPropertyChangeListener(this);
         initComponents();
         manageGenerateButtonStatus();
-        populateExistingProjectElementGroup();
+        populateProjectCombo();
         setPackage(entityMappings.getPackage());
         this.setTitle(NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.title"));
         getRootPane().setDefaultButton(generateSourceCode);
-
-        if(sourceGroup!=null){
-            modelerFilePackage = getPackageForFolder(sourceGroup, modelerFileObject.getParent());
-        }
+        modelerFilePackage = sourceGroup != null ? getPackageForFolder(sourceGroup, modelerFileObject.getParent()) : null;
         initLayer();
     }
 
-    void initLayer() {
+    private void initLayer() {
         configPane.removeAll();
         configPane.setVisible(false);
-        
-        ProjectType projectType = getTargetPoject()!=null?ProjectHelper.getProjectType(getTargetPoject()):null;
+
+        ProjectType projectType = getTargetPoject() != null ? ProjectHelper.getProjectType(getTargetPoject()) : null;
         if (projectType == null || projectType == ProjectType.JAR) {
             businessLayerCombo.setEnabled(false);
             controllerLayerCombo.setEnabled(false);
@@ -125,18 +125,18 @@ public class GenerateCodeDialog extends GenericDialog
         } else {
             businessLayerCombo.setEnabled(true);
         }
-     
+
         businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
         if (projectType == ProjectType.WEB) {
             controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultControllerLayer())}));
             viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
         }
-            controllerLayerCombo.setEnabled(false);
-            viewerLayerCombo.setEnabled(false);
-        
-        TechContext businessContext = Generator.get(technologyLayerPref.get(BUSINESS.name(), DefaultBusinessLayer.class.getSimpleName()));
-        TechContext controllerContext = Generator.get(technologyLayerPref.get(CONTROLLER.name(), DefaultControllerLayer.class.getSimpleName()));
-        TechContext viewerContext = Generator.get(technologyLayerPref.get(VIEWER.name(), DefaultViewerLayer.class.getSimpleName()));
+        controllerLayerCombo.setEnabled(false);
+        viewerLayerCombo.setEnabled(false);
+
+        TechContext businessContext = Generator.get(technologyPref.get(BUSINESS.name(), DefaultBusinessLayer.class.getSimpleName()));
+        TechContext controllerContext = Generator.get(technologyPref.get(CONTROLLER.name(), DefaultControllerLayer.class.getSimpleName()));
+        TechContext viewerContext = Generator.get(technologyPref.get(VIEWER.name(), DefaultViewerLayer.class.getSimpleName()));
         if (businessContext != null) {
             businessLayerCombo.setSelectedItem(businessContext);
             if (businessContext.isValid() && controllerContext != null && projectType == ProjectType.WEB) {
@@ -149,73 +149,85 @@ public class GenerateCodeDialog extends GenericDialog
         this.pack();
     }
 
-    private final static int BUSINESS_PANEL_INDEX = 0, CONTROLLER_PANEL_INDEX = 1, VIEWER_PANEL_INDEX = 2;
     private final LayerConfigPanel[] layerConfigPanels = new LayerConfigPanel[3];
 
-    private void setTechPanel(int index, JPanel techLayerPanel, TechContext technologyLayer) {
-        try {
-            LayerConfigPanel techPanel;
-            if (technologyLayer.isValid()) {
-                techPanel = technologyLayer.getTechnology().panel().newInstance();
-            } else {
-                techPanel = new DefaultConfigPanel();
-            }
-
-            techPanel.init(modelerFilePackage, targetPoject, sourceGroup);
-            techPanel.read();
-            techLayerPanel.removeAll();
-            techLayerPanel.add(techPanel);
-
+   private void setTechPanel(TechContext techContext) {
+            techContext.createPanel(targetPoject, sourceGroup, modelerFilePackage);
             configPane.removeAll();
             configPane.setVisible(false);
-            layerConfigPanels[index] = techPanel;
-            switch (index) {
-                case BUSINESS_PANEL_INDEX:
-                    getConfigData().setBussinesLayerConfig(techPanel.getConfigData());
-                    getConfigData().setBussinesLayerGenerator(technologyLayer.getGenerator());
-                    addLayerTab(getBusinessLayer().toString(), businessPanel);
-                    getConfigData().setControllerLayerConfig(null);
-                    getConfigData().setViewerLayerConfig(null);
+//          layerConfigPanels[index] = techPanel;
+            switch (techContext.getTechnology().type()) {
+                case BUSINESS:
+                    getConfigData().setBussinesTechContext(techContext);
+                    addLayerTab(getConfigData().getBussinesTechContext());
+                    getConfigData().setControllerTechContext(null);
+                    getConfigData().setViewerTechContext(null);
                     break;
-                case CONTROLLER_PANEL_INDEX:
-                    getConfigData().setControllerLayerConfig(techPanel.getConfigData());
-                    getConfigData().setControllerLayerGenerator(technologyLayer.getGenerator());
-                    addLayerTab(getBusinessLayer().toString(), businessPanel);
-                    addLayerTab(getControllerLayer().toString(), controllerPanel);
-                    getConfigData().setViewerLayerConfig(null);
+                case CONTROLLER:
+                    getConfigData().setControllerTechContext(techContext);
+                    addLayerTab(getConfigData().getBussinesTechContext());
+                    addLayerTab(getConfigData().getControllerTechContext());
+                  getConfigData().setViewerTechContext(null);
                     break;
-                case VIEWER_PANEL_INDEX:
-                    getConfigData().setViewerLayerConfig(techPanel.getConfigData());
-                    getConfigData().setViewerLayerGenerator(technologyLayer.getGenerator());
-                    addLayerTab(getBusinessLayer().toString(), businessPanel);
-                    addLayerTab(getControllerLayer().toString(), controllerPanel);
-                    addLayerTab(getViewerLayer().toString(), viewerPanel);
+                case VIEWER:
+                    getConfigData().setViewerTechContext(techContext);
+                    addLayerTab(getConfigData().getBussinesTechContext());
+                    addLayerTab(getConfigData().getControllerTechContext());
+                    addLayerTab(getConfigData().getViewerTechContext());
                     break;
                 default:
                     break;
             }
 
-            if (configPane.getComponentCount() > index) {
-                configPane.setSelectedIndex(index);
-            }
-
             if (configPane.getComponentCount() >= 1) {
+                configPane.setSelectedComponent(techContext.getPanel());
                 configPane.setVisible(true);
             }
             this.pack();
+    }
 
-        } catch (InstantiationException | IllegalAccessException ex) {
-            Exceptions.printStackTrace(ex);
+    private void addLayerTab(TechContext techContext) {
+        if (techContext.getTechnology().panel() != LayerConfigPanel.class) {//StringUtils.isBlank(title) || title.equalsIgnoreCase(NONE_LABEL)
+            String title = techContext.getTechnology().label();
+            configPane.addTab(title, techContext.getPanel());
+            techContext.getSiblingTechContext().forEach(context -> this.addLayerTab(context));
         }
     }
 
-    private void addLayerTab(String title, JPanel panel) {
-        if (StringUtils.isBlank(title) || title.equalsIgnoreCase(NONE_LABEL)) {
-            return;
+    
+    private void changeBusinessLayer(TechContext businessLayer) {
+        ProjectType projectType = ProjectHelper.getProjectType(getTargetPoject());
+        if (projectType == ProjectType.WEB) {
+            controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
+            controllerLayerCombo.setEnabled(businessLayer.isValid());
+            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
+            viewerLayerCombo.setEnabled(false);
         }
-        configPane.addTab(title, panel);
+        setTechPanel(businessLayer);
     }
 
+    private void changeControllerLayer(TechContext controllerLayer) {
+        viewerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getViewer(controllerLayer).toArray()));
+        viewerLayerCombo.setEnabled(controllerLayer.isValid());
+        setTechPanel(controllerLayer);
+    }
+
+    private void changeViewerLayer(TechContext viewerLayer) {
+        setTechPanel(viewerLayer);
+    }
+
+    private TechContext getBusinessLayer() {
+        return (TechContext) businessLayerCombo.getModel().getSelectedItem();
+    }
+
+    private TechContext getViewerLayer() {
+        return (TechContext) viewerLayerCombo.getModel().getSelectedItem();
+    }
+
+    private TechContext getControllerLayer() {
+        return (TechContext) controllerLayerCombo.getModel().getSelectedItem();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -239,9 +251,6 @@ public class GenerateCodeDialog extends GenericDialog
         controllerLayerCombo = new javax.swing.JComboBox();
         controllerLayerLabel = new javax.swing.JLabel();
         configPane = new javax.swing.JTabbedPane();
-        businessPanel = new javax.swing.JPanel();
-        controllerPanel = new javax.swing.JPanel();
-        viewerPanel = new javax.swing.JPanel();
         actionPane = new javax.swing.JLayeredPane();
         actionLayeredPane = new javax.swing.JLayeredPane();
         generateSourceCode = new javax.swing.JButton();
@@ -255,16 +264,6 @@ public class GenerateCodeDialog extends GenericDialog
 
         resourcePackageCombo.setEditable(true);
         resourcePackageCombo.setEditable(true);
-        resourcePackageCombo.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                resourcePackageComboItemStateChanged(evt);
-            }
-        });
-        resourcePackageCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resourcePackageComboActionPerformed(evt);
-            }
-        });
 
         resourcePackageCombo.setEditable(true);
         businessLayerCombo.addItemListener(new java.awt.event.ItemListener() {
@@ -311,15 +310,6 @@ public class GenerateCodeDialog extends GenericDialog
 
         org.openide.awt.Mnemonics.setLocalizedText(controllerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.controllerLayerLabel.text")); // NOI18N
 
-        businessPanel.setLayout(new javax.swing.BoxLayout(businessPanel, javax.swing.BoxLayout.LINE_AXIS));
-        configPane.addTab(org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.businessPanel.TabConstraints.tabTitle"), businessPanel); // NOI18N
-
-        controllerPanel.setLayout(new javax.swing.BoxLayout(controllerPanel, javax.swing.BoxLayout.LINE_AXIS));
-        configPane.addTab(org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.controllerPanel.TabConstraints.tabTitle"), controllerPanel); // NOI18N
-
-        viewerPanel.setLayout(new javax.swing.BoxLayout(viewerPanel, javax.swing.BoxLayout.LINE_AXIS));
-        configPane.addTab(org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.viewerPanel.TabConstraints.tabTitle"), viewerPanel); // NOI18N
-
         optionPane.setLayer(packageLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(resourcePackageCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(businessLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -360,7 +350,7 @@ public class GenerateCodeDialog extends GenericDialog
                                     .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(controllerLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(packageLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                                        .addComponent(businessLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)))
+                                        .addComponent(businessLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, Short.MAX_VALUE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(controllerLayerCombo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -510,21 +500,15 @@ public class GenerateCodeDialog extends GenericDialog
     private boolean noOpenTargets = false;
 
     private void targetProjectComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_targetProjectComboItemStateChanged
-        // TODO add your handling code here:
         setTargetPoject((Project) targetProjectCombo.getSelectedItem());
         populateSourceFolderCombo();
-
-        String prop = getTargetPoject() == null ? PROP_NO_TARGET_PROJECT : PROP_TARGET_PROJECT;
-
-        getPropertyChangeSupport().firePropertyChange(prop, null, evt);
-
         initLayer();
+        String prop = getTargetPoject() == null ? PROP_NO_TARGET_PROJECT : PROP_TARGET_PROJECT;
+        getPropertyChangeSupport().firePropertyChange(prop, null, evt);
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
     private void sourceFolderComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sourceFolderComboItemStateChanged
-        // TODO add your handling code here:
         setSourceGroup((SourceGroup) sourceFolderCombo.getSelectedItem());
-
         populatePackageCombo();
     }//GEN-LAST:event_sourceFolderComboItemStateChanged
 
@@ -550,13 +534,15 @@ public class GenerateCodeDialog extends GenericDialog
             DialogDisplayer.getDefault().notify(d);
             return true;
         }
-
-        for (int i = 0; i < configPane.getComponentCount(); i++) {
-            if (layerConfigPanels[i].hasError()) {
-                configPane.setSelectedIndex(i);
-                return true;
-            } else {
-                layerConfigPanels[i].store();
+        for (Component component : configPane.getComponents()) {
+            if (component instanceof LayerConfigPanel) {
+                LayerConfigPanel panel = (LayerConfigPanel) component;
+                if (panel.hasError()) {
+                    configPane.setSelectedComponent(component);
+                    return true;
+                } else {
+                    panel.store();
+                }
             }
         }
         return false;
@@ -565,28 +551,23 @@ public class GenerateCodeDialog extends GenericDialog
     private void store() {
         entityMappings.setPackage(getPackage());
         if (getBusinessLayer() != null) {
-            technologyLayerPref.put(BUSINESS.name(), getBusinessLayer().getGenerator().getClass().getSimpleName());
+            technologyPref.put(BUSINESS.name(), getBusinessLayer().getGenerator().getClass().getSimpleName());
             if (getControllerLayer() != null) {
-                technologyLayerPref.put(CONTROLLER.name(), getControllerLayer().getGenerator().getClass().getSimpleName());
+                technologyPref.put(CONTROLLER.name(), getControllerLayer().getGenerator().getClass().getSimpleName());
                 if (getViewerLayer() != null) {
-                    technologyLayerPref.put(VIEWER.name(), getViewerLayer().getGenerator().getClass().getSimpleName());
+                    technologyPref.put(VIEWER.name(), getViewerLayer().getGenerator().getClass().getSimpleName());
                 }
             }
         }
     }
 
-
     private void cencelGenerateCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cencelGenerateCodeActionPerformed
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cencelGenerateCodeActionPerformed
 
-    private void resourcePackageComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_resourcePackageComboItemStateChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_resourcePackageComboItemStateChanged
-
     private void businessLayerComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_businessLayerComboItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            changebusinessLayer(getBusinessLayer());
+            changeBusinessLayer(getBusinessLayer());
         }
     }//GEN-LAST:event_businessLayerComboItemStateChanged
 
@@ -601,10 +582,6 @@ public class GenerateCodeDialog extends GenericDialog
             changeControllerLayer(getControllerLayer());
         }
     }//GEN-LAST:event_controllerLayerComboItemStateChanged
-
-    private void resourcePackageComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resourcePackageComboActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_resourcePackageComboActionPerformed
 
     private void entitySettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entitySettingActionPerformed
         EntityGenerationSettingDialog dialog = new EntityGenerationSettingDialog(scene, entityMappings);
@@ -628,66 +605,30 @@ public class GenerateCodeDialog extends GenericDialog
             generateSourceCode.setEnabled(true);
         }
     }
-
-    private void changebusinessLayer(TechContext businessLayer) {
-        ProjectType projectType = ProjectHelper.getProjectType(getTargetPoject());
-        if (projectType == ProjectType.WEB) {
-            controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
-            controllerLayerCombo.setEnabled(businessLayer.isValid());
-            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
-            viewerLayerCombo.setEnabled(false);
-        }
-        setTechPanel(BUSINESS_PANEL_INDEX, businessPanel, businessLayer);
-//        if (!businessLayer.isValid()) {
-//            viewerLayerCombo.setEnabled(false);
-//        }
-    }
-
-    private void changeControllerLayer(TechContext controllerLayer) {
-        viewerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getViewer(controllerLayer).toArray()));
-        viewerLayerCombo.setEnabled(controllerLayer.isValid());
-        setTechPanel(CONTROLLER_PANEL_INDEX, controllerPanel, controllerLayer);
-    }
-
-    private void changeViewerLayer(TechContext viewerLayer) {
-        setTechPanel(VIEWER_PANEL_INDEX, viewerPanel, viewerLayer);
-    }
-
-    public TechContext getBusinessLayer() {
-        return (TechContext) businessLayerCombo.getModel().getSelectedItem();
-    }
-
-    public TechContext getViewerLayer() {
-        return (TechContext) viewerLayerCombo.getModel().getSelectedItem();
-    }
-
-    public TechContext getControllerLayer() {
-        return (TechContext) controllerLayerCombo.getModel().getSelectedItem();
-    }
-
+    
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-        String propName = "";
+//        String propName = "";
+//
+//        if (event != null) {
+//            propName = event.getPropertyName();
+//        }
+//
+//        if (propName.equals(PROP_TARGET_PROJECT)) {
+//            noTargetProject = false;
+//        } else if (propName.equals(PROP_NO_TARGET_PROJECT)) {
+//            noTargetProject = true;
+//        }
 
-        if (event != null) {
-            propName = event.getPropertyName();
-        }
-
-        if (propName.equals(PROP_TARGET_PROJECT)) {
-            noTargetProject = false;
-        } else if (propName.equals(PROP_NO_TARGET_PROJECT)) {
-            noTargetProject = true;
-        }
-
-        String msg;
-
-        if (noOpenTargets) {
-            msg = NbBundle.getMessage(
-                    GenerateCodeDialog.class, "MSG_NoOpenTargets"); // NIO18N
-        } else if (noTargetProject) {
-            msg = NbBundle.getMessage(
-                    GenerateCodeDialog.class, "MSG_NoTargetJavaProject"); // NIO18N
-        }
+//        String msg;
+//
+//        if (noOpenTargets) {
+//            msg = NbBundle.getMessage(
+//                    GenerateCodeDialog.class, "MSG_NoOpenTargets"); // NIO18N
+//        } else if (noTargetProject) {
+//            msg = NbBundle.getMessage(
+//                    GenerateCodeDialog.class, "MSG_NoTargetJavaProject"); // NIO18N
+//        }
 
     }
 
@@ -699,7 +640,7 @@ public class GenerateCodeDialog extends GenericDialog
         sourceFolderCombo.setEnabled(enable);
     }
 
-    private void populateExistingProjectElementGroup() {
+    private void populateProjectCombo() {
         ProjectCellRenderer projectCellRenderer = new ProjectCellRenderer(targetProjectCombo.getRenderer());
         targetProjectCombo.setRenderer(projectCellRenderer);
         List<Project> list = getJavaProjects();
@@ -712,19 +653,16 @@ public class GenerateCodeDialog extends GenericDialog
             noOpenTargets = true;
             enableExistingProjectElementGroup(false);
         } else {
-            //list.add(0, null);
-
             DefaultComboBoxModel projectsModel = new DefaultComboBoxModel(list.toArray());
             targetProjectCombo.setModel(projectsModel);
 
-            // Issue Fix #5850 Start
+            // Issue Fix #5850 
             Project project = FileOwnerQuery.getOwner(modelerFileObject);
             if (project != null) {
                 targetProjectCombo.setSelectedItem(project);
             } else {
                 targetProjectCombo.setSelectedIndex(-1);
             }
-            // Issue Fix #5850 End
 
             // When the selected index was set to -1 it reset the targetPrj
             // value.  Since the targetPrj was simply initialized with the
@@ -758,29 +696,20 @@ public class GenerateCodeDialog extends GenericDialog
     }
 
     private void populateSourceFolderCombo() {
-        SourceRootCellRenderer srcCellRenderer
-                = new SourceRootCellRenderer(sourceFolderCombo.getRenderer());
+        SourceRootCellRenderer srcCellRenderer = new SourceRootCellRenderer(sourceFolderCombo.getRenderer());
         sourceFolderCombo.setRenderer(srcCellRenderer);
         ArrayList<SourceGroup> srcRoots = new ArrayList<>();
         int index = 0;
-        FileObject sfo = null;
-
-        if (getSourceGroup() != null) {
-            sfo = getSourceGroup().getRootFolder();
-        }
+        FileObject sfo = getSourceGroup() != null? getSourceGroup().getRootFolder() : null;
         if (targetPoject != null) {
             Sources sources = ProjectUtils.getSources(targetPoject);
             if (sources != null) {
-                SourceGroup[] srcGrps = sources.getSourceGroups(
-                        JavaProjectConstants.SOURCES_TYPE_JAVA);
-
+                SourceGroup[] srcGrps = sources.getSourceGroups(SOURCES_TYPE_JAVA);
                 if (srcGrps != null) {
                     for (SourceGroup g : srcGrps) {
                         if (g != null) {
                             srcRoots.add(g);
-
-                            if (g.getRootFolder() != null
-                                    && g.getRootFolder().equals(sfo)) {
+                            if (g.getRootFolder() != null && g.getRootFolder().equals(sfo)) {
                                 index = srcRoots.size() - 1;
                             }
                         }
@@ -789,11 +718,8 @@ public class GenerateCodeDialog extends GenericDialog
             }
         }
 
-        DefaultComboBoxModel rootsModel
-                = new DefaultComboBoxModel(srcRoots.toArray());
-
+        DefaultComboBoxModel rootsModel  = new DefaultComboBoxModel(srcRoots.toArray());
         sourceFolderCombo.setModel(rootsModel);
-
         if (srcRoots.size() > 0) {
             sourceFolderCombo.setSelectedIndex(index);
             setSourceGroup(srcRoots.get(index));
@@ -837,13 +763,6 @@ public class GenerateCodeDialog extends GenericDialog
     }
 
     /**
-     * @param modelerFileObject the modelerFileObject to set
-     */
-    public void setModelerFileObject(FileObject modelerFileObject) {
-        this.modelerFileObject = modelerFileObject;
-    }
-
-    /**
      * @return the targetPoject
      */
     public Project getTargetPoject() {
@@ -871,8 +790,6 @@ public class GenerateCodeDialog extends GenericDialog
         }
         ((JTextComponent) resourcePackageCombo.getEditor().getEditorComponent()).setText(_package);
     }
-    
-
 
     private PropertyChangeSupport propertyChangeSupport = null;
 
@@ -884,12 +801,10 @@ public class GenerateCodeDialog extends GenericDialog
     private javax.swing.JLayeredPane actionPane;
     private javax.swing.JComboBox businessLayerCombo;
     private javax.swing.JLabel businessLayerLabel;
-    private javax.swing.JPanel businessPanel;
     private javax.swing.JButton cencelGenerateCode;
     private javax.swing.JTabbedPane configPane;
     private javax.swing.JComboBox controllerLayerCombo;
     private javax.swing.JLabel controllerLayerLabel;
-    private javax.swing.JPanel controllerPanel;
     private javax.swing.JButton entitySetting;
     private javax.swing.JButton generateSourceCode;
     private javax.swing.JLayeredPane optionPane;
@@ -901,7 +816,6 @@ public class GenerateCodeDialog extends GenericDialog
     private javax.swing.JLabel targetProjectLabel;
     private javax.swing.JComboBox viewerLayerCombo;
     private javax.swing.JLabel viewerLayerLabel;
-    private javax.swing.JPanel viewerPanel;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -913,77 +827,4 @@ public class GenerateCodeDialog extends GenericDialog
         return configData;
     }
 
-}
-
-class JavaProjectConstants {
-
-    private JavaProjectConstants() {
-    }
-
-    /**
-     * Java package root sources type.
-     *
-     * @see org.netbeans.api.project.Sources
-     */
-    public static final String SOURCES_TYPE_JAVA = "java"; // NOI18N
-
-    /**
-     * Package root sources type for resources, if these are not put together
-     * with Java sources.
-     *
-     * @see org.netbeans.api.project.Sources
-     * @since org.netbeans.modules.java.project/1 1.11
-     */
-    public static final String SOURCES_TYPE_RESOURCES = "resources"; // NOI18N
-
-    /**
-     * Hint for <code>SourceGroupModifier</code> to create a
-     * <code>SourceGroup</code> for main project codebase.
-     *
-     * @see org.netbeans.api.project.SourceGroupModifier
-     * @since org.netbeans.modules.java.project/1 1.24
-     */
-    public static final String SOURCES_HINT_MAIN = "main"; //NOI18N
-
-    /**
-     * Hint for <code>SourceGroupModifier</code> to create a
-     * <code>SourceGroup</code> for project's tests.
-     *
-     * @see org.netbeans.api.project.SourceGroupModifier
-     * @since org.netbeans.modules.java.project/1 1.24
-     */
-    public static final String SOURCES_HINT_TEST = "test"; //NOI18N
-
-    /**
-     * Standard artifact type representing a JAR file, presumably used as a Java
-     * library of some kind.
-     *
-     * @see org.netbeans.api.project.ant.AntArtifact
-     */
-    public static final String ARTIFACT_TYPE_JAR = "jar"; // NOI18N
-
-    /**
-     * Standard artifact type representing a folder containing classes,
-     * presumably used as a Java library of some kind.
-     *
-     * @see org.netbeans.api.project.ant.AntArtifact
-     * @since org.netbeans.modules.java.project/1 1.4
-     */
-    public static final String ARTIFACT_TYPE_FOLDER = "folder"; //NOI18N
-
-    /**
-     * Standard command for running Javadoc on a project.
-     *
-     * @see org.netbeans.spi.project.ActionProvider
-     */
-    public static final String COMMAND_JAVADOC = "javadoc"; // NOI18N
-
-    /**
-     * Standard command for reloading a class in a foreign VM and continuing
-     * debugging.
-     *
-     * @see org.netbeans.spi.project.ActionProvider
-     */
-    public static final String COMMAND_DEBUG_FIX = "debug.fix"; // NOI18N
-  
 }
