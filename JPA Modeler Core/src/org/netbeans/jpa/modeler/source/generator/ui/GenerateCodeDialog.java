@@ -43,6 +43,7 @@ import org.netbeans.jcode.layer.DefaultControllerLayer;
 import org.netbeans.jcode.layer.DefaultViewerLayer;
 import org.netbeans.jcode.layer.Generator;
 import org.netbeans.jcode.layer.TechContext;
+import org.netbeans.jcode.layer.Technology;
 import static org.netbeans.jcode.layer.Technology.Type.BUSINESS;
 import static org.netbeans.jcode.layer.Technology.Type.CONTROLLER;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
@@ -71,14 +72,8 @@ import static org.openide.util.NbBundle.getMessage;
  *
  * @author Gaurav_Gupta
  */
-public class GenerateCodeDialog extends GenericDialog
-        implements PropertyChangeListener {
+public class GenerateCodeDialog extends GenericDialog implements PropertyChangeListener {
 
-    /**
-     * Java package root sources type.
-     *
-     * @see org.netbeans.api.project.Sources
-     */
     private static final String SOURCES_TYPE_JAVA = "java"; // NOI18N
 
     private final Preferences technologyPref;
@@ -185,16 +180,24 @@ public class GenerateCodeDialog extends GenericDialog
             }
 
             if (configPane.getComponentCount() >= 1) {
+                if(!nonePanel){
                 configPane.setSelectedComponent(techContext.getPanel());
+                }
                 configPane.setVisible(true);
             }
             this.pack();
     }
 
     private void addLayerTab(TechContext techContext) {
-        if (techContext.getTechnology().panel() != LayerConfigPanel.class) {//StringUtils.isBlank(title) || title.equalsIgnoreCase(NONE_LABEL)
-            String title = techContext.getTechnology().label();
-            configPane.addTab(title, techContext.getPanel());
+        Technology tech = techContext.getTechnology();
+        if (tech.panel() != LayerConfigPanel.class) {//StringUtils.isBlank(title) || title.equalsIgnoreCase(NONE_LABEL)
+            String title = tech.label();
+            int index = tech.index() - 1;
+            if(index < 0){
+                configPane.addTab(title, null, techContext.getPanel(), tech.description());
+            } else {
+                 configPane.insertTab(title, null, techContext.getPanel(), tech.description(), index);
+            }
             techContext.getSiblingTechContext().forEach(context -> this.addLayerTab(context));
         }
     }
