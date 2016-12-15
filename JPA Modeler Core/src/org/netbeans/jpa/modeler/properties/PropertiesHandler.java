@@ -1397,7 +1397,7 @@ public class PropertiesHandler {
             public String getDisplay() {
                 int hashcode = javaClass.getHashCodeMethod().getAttributes().size();
                 int equals = javaClass.getEqualsMethod().getAttributes().size();
-                return String.format("equals{%s} hashcode{%s}", hashcode, equals);
+                return String.format("equals{%s} hashcode{%s}", equals, hashcode);
             }
 
         });
