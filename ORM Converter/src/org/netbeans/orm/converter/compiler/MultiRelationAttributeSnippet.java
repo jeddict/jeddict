@@ -17,8 +17,8 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
-import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE;
-import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE;
+import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
@@ -104,10 +104,10 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         List<String> importSnippets = new ArrayList<>();
         importSnippets.add(PERSISTENCE_PACKAGE_PREFIX + getType());
         if (getFetchType() != null) {
-            importSnippets.add(FETCH_TYPE);
+            importSnippets.add(FETCH_TYPE_FQN);
         }
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add(CASCADE_TYPE);
+            importSnippets.add(CASCADE_TYPE_FQN);
         }
         if(mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             importSnippets.addAll(mapKeySnippet.getImportSnippets());

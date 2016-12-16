@@ -22,9 +22,7 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
 
     private boolean orphanRemoval = false;
     
-
-    
-        @Override
+    @Override
     public String getSnippet() throws InvalidDataException {
 
         if (!GeneratorUtil.isGenerateDefaultValue()) {
