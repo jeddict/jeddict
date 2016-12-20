@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import static org.netbeans.jcode.jpa.util.PersistenceHelper.JTA_VALUE;
+import static org.netbeans.jcode.jpa.util.PersistenceHelper.RESOURCE_LOCAL_VALUE;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.dd.common.Properties;
@@ -88,25 +90,10 @@ public class PersistenceXMLGenerator {
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_1_0.PersistenceUnit();
                 }
                 if (Util.isContainerManaged(project)) {
-//                    punit.setTransactionType("RESOURCE_LOCAL");
-                    punit.setJtaDataSource("jdbc/sample"); // custom gui will be added in future release for DataSource , JTA
-
-//            if (descriptor.getDatasource() != null && !"".equals(descriptor.getDatasource())){
-//                if (descriptor.isJTA()) {
-//                    punit.setJtaDataSource(descriptor.getDatasource());
-//                } else {
-//                    punit.setNonJtaDataSource(descriptor.getDatasource());
-//                    punit.setTransactionType("RESOURCE_LOCAL");
-//                }
-//            }
-//            if (descriptor.isNonDefaultProviderEnabled()) {
-//                String providerClass = descriptor.getNonDefaultProvider();
-//                punit.setProvider(providerClass);
-//            }
+                    punit.setTransactionType(JTA_VALUE);
+//                    punit.setJtaDataSource("jdbc/sample"); // custom gui will be added in future release for DataSource , JTA
                 } else {
-//                    punit = ProviderUtil.buildPersistenceUnit(descriptor.getPersistenceUnitName(),
-//                            descriptor.getSelectedProvider(), descriptor.getPersistenceConnection(), version);
-                    punit.setTransactionType("RESOURCE_LOCAL");
+                    punit.setTransactionType(RESOURCE_LOCAL_VALUE);
                     Properties properties = punit.newProperties();
                     punit.setProperties(properties);
 // custom gui will be added in future release for DataSource , JTA

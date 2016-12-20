@@ -204,7 +204,7 @@ public class ORMConverterUtil {
             Exceptions.printStackTrace(ex);
         }
     }
-    
+
     public static String writeToTemplate(String templateName, Map context) throws Exception {
         Template template = Velocity.getTemplate(templateName);
         ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
@@ -267,43 +267,45 @@ public class ORMConverterUtil {
     }
 
     public static void formatFile(FileObject fo) {
-        try {
-            DataObject dobj = DataObject.find(fo);
-            EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
-            ec.close();
-            StyledDocument sd;
+        if (fo.isLocked()) {
             try {
-                sd = ec.openDocument();
-            } catch (UserQuestionException uqe) {
-                uqe.confirmed();
-                sd = ec.openDocument();
+                DataObject dobj = DataObject.find(fo);
+                EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
+                ec.close();
+                StyledDocument sd;
+                try {
+                    sd = ec.openDocument();
+                } catch (UserQuestionException uqe) {
+                    uqe.confirmed();
+                    sd = ec.openDocument();
+                }
+                final StyledDocument doc = sd;
+                final Reformat reformat = Reformat.get(doc);
+
+                reformat.lock();
+
+                try {
+                    NbDocument.runAtomic(doc, () -> {
+                        try {
+                            reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
+                        } catch (BadLocationException ex) {
+                            ExceptionUtils.printStackTrace(ex);
+                        }
+                    });
+                } finally {
+                    reformat.unlock();
+                }
+
+                ec.saveDocument();
+
+            } catch (IOException ex) {
+                ExceptionUtils.printStackTrace(ex);
             }
-            final StyledDocument doc = sd;
-            final Reformat reformat = Reformat.get(doc);
-
-            reformat.lock();
-
-            try {
-                NbDocument.runAtomic(doc, () -> {
-                    try {
-                        reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
-                    } catch (BadLocationException ex) {
-                        ExceptionUtils.printStackTrace(ex);
-                    }
-                });
-            } finally {
-                reformat.unlock();
-            }
-
-            ec.saveDocument();
-
-        } catch (IOException ex) {
-            ExceptionUtils.printStackTrace(ex);
         }
     }
 
-    //TODO: copied from org.netbeans.editor.ActionFactory:
-    static void reformat(Reformat formatter, Document doc, int startPos, int endPos, AtomicBoolean canceled) throws BadLocationException {
+    //TODO: ref from org.netbeans.editor.ActionFactory:
+    private static void reformat(Reformat formatter, Document doc, int startPos, int endPos, AtomicBoolean canceled) throws BadLocationException {
         final GuardedDocument gdoc = (doc instanceof GuardedDocument)
                 ? (GuardedDocument) doc : null;
 
@@ -312,7 +314,7 @@ public class ORMConverterUtil {
             pos = gdoc.getGuardedBlockChain().adjustToBlockEnd(pos);
         }
 
-        LinkedList<PositionRegion> regions = new LinkedList<PositionRegion>();
+        LinkedList<PositionRegion> regions = new LinkedList<>();
         while (pos < endPos) {
             int stopPos = endPos;
             if (gdoc != null) { // adjust to start of the next guarded block
@@ -341,8 +343,8 @@ public class ORMConverterUtil {
 
         for (PositionRegion region : regions) {
             try {
-            formatter.reformat(region.getStartOffset(), region.getEndOffset());
-            } catch(Exception ex){
+                formatter.reformat(region.getStartOffset(), region.getEndOffset());
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
