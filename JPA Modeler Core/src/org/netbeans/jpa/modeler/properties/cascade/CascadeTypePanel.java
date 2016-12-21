@@ -1,10 +1,3 @@
-package org.netbeans.jpa.modeler.properties.cascade;
-
-import org.netbeans.jpa.modeler.spec.CascadeType;
-import org.netbeans.jpa.modeler.spec.EmptyType;
-import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
-
 /**
  * Copyright [2014] Gaurav Gupta
  *
@@ -20,6 +13,13 @@ import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package org.netbeans.jpa.modeler.properties.cascade;
+
+import org.netbeans.jpa.modeler.spec.CascadeType;
+import org.netbeans.jpa.modeler.spec.EmptyType;
+import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
+
 /**
  *
  * @author Gaurav Gupta
@@ -202,13 +202,11 @@ public class CascadeTypePanel extends GenericEmbeddedEditor<CascadeType> {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(main_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(main_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(main_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
