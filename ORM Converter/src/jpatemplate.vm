@@ -19,17 +19,23 @@ $importStatement
 #if($classDef.isJaxbSupport())
 import javax.xml.bind.annotation.*;
 #end
-#####################custom snippet - import ###############################
+#####################custom class snippet - import ###############################
 #foreach($snippet in $classDef.getCustomSnippet("IMPORT") )
 $snippet 
-$n#end
+#end
+#####################custom attribute snippet - import ###############################
+#foreach( $varDef in $classDef.getVariableDefs() )
+#foreach($snippet in $varDef.getCustomSnippet("IMPORT") )
+$snippet 
+#end
+#end
 
 #####################java doc ###############################
 #if ($classDef.isJavaDocExist())
 $classDef.getJavaDoc()
 #end
 
-#####################custom snippet - before class ###############################
+#####################custom class snippet - before class ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_CLASS") )
 $snippet 
 $n#end
@@ -105,12 +111,16 @@ $classDef.getNamedStoredProcedureQueries().getSnippet()
 #end
 public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end#if($classDef.isInterfaceExist()) implements $classDef.getUnqualifiedInterfaceList()#end { 
 
-#####################custom snippet - before field ###############################
+#####################custom class snippet - before field ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_FIELD") )
     $snippet 
 $n#end
 #####################member variables ###############################
 #foreach( $varDef in $classDef.getVariableDefs() )
+#####################custom attribute snippet - before field ###############################
+#foreach($snippet in $varDef.getCustomSnippet("BEFORE_FIELD") )
+    $snippet 
+$n#end
 #if ($varDef.isJavaDocExist())
 $varDef.getJavaDoc()
 #end
@@ -199,8 +209,12 @@ $varDef.getAttributeOverrides().getSnippet()
 ## $varDef.type => $varDef.getTypeIdentifier().getVariableType() ## to resolve problem Collection => Collection<Entity>
     private $varDef.type $varDef.name#if($varDef.getDefaultValue()) = $varDef.getDefaultValue()#end;
 
+#####################custom attribute snippet - after field ###############################
+#foreach($snippet in $varDef.getCustomSnippet("AFTER_FIELD") )
+    $snippet 
+$n#end
 #end
-#####################custom snippet - after field ###############################
+#####################custom class snippet - after field ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_FIELD") )
     $snippet
 $n#end
@@ -209,37 +223,70 @@ $n#end
     $constructor.getSnippet()
 
 #end
-#####################custom snippet - before method ###############################
+#####################custom class snippet - before method ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_METHOD") )
     $snippet
 $n#end
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
+#####################custom attribute snippet - before method ###############################
+#foreach($snippet in $varDef.getCustomSnippet("BEFORE_METHOD") )
+    $snippet
+$n#end
 #set($method = $varDef.getMethodName())
+##################### getter ###############################
 #if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
     public $varDef.returnType is$method() {
-        return $varDef.returnValue;
-    }
-
 #else
     public $varDef.returnType get$method() {
-        return $varDef.returnValue;
-    }
-
 #end
-    public void set$method($varDef.type $varDef.name) {
-        this.$varDef.name = $varDef.name;
+#####################custom attribute snippet - pre getter ###############################
+#foreach($snippet in $varDef.getCustomSnippet("PRE_GETTER") )
+        $snippet
+#end
+#####################custom attribute snippet - getter ###############################
+#if($varDef.getCustomSnippet("GETTER").isEmpty() == false)
+#foreach($snippet in $varDef.getCustomSnippet("GETTER") )
+        $snippet
+#end
+#else
+        return $varDef.returnValue;
+#end
     }
 
-    #if($fluentAPI)
-    #set($fluentMethod = $varDef.name)
+##################### setter ###############################
+    public void set$method($varDef.type $varDef.name) {
+#####################custom attribute snippet - pre setter ###############################
+#foreach($snippet in $varDef.getCustomSnippet("PRE_SETTER") )
+        $snippet
+#end
+#####################custom attribute snippet - setter ###############################
+#if($varDef.getCustomSnippet("SETTER").isEmpty() == false)
+#foreach($snippet in $varDef.getCustomSnippet("SETTER") )
+        $snippet
+#end
+#else
+        this.$varDef.name = $varDef.name;
+#end
+#####################custom attribute snippet - post setter ###############################
+#foreach($snippet in $varDef.getCustomSnippet("POST_SETTER") )
+        $snippet
+#end
+    }
+
+#if($fluentAPI)
+#set($fluentMethod = $varDef.name)
     public $classDef.getClassName() $fluentMethod($varDef.type $varDef.name) {
         this.$varDef.name = $varDef.name;
         return this;
     }
-    #end
 #end
-#####################custom snippet - after method ###############################
+#####################custom attribute snippet - after method ###############################
+#foreach($snippet in $varDef.getCustomSnippet("AFTER_METHOD") )
+    $snippet
+$n#end
+#end
+#####################custom class snippet - after method ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_METHOD") )
     $snippet
 $n#end
@@ -265,12 +312,12 @@ $n#end
     }
 
 #end
-#####################custom snippet - default ###############################
+#####################custom class snippet - default ###############################
 #foreach($snippet in $classDef.getCustomSnippet("DEFAULT") )
     $snippet
 $n#end
 }
-#####################custom snippet - after class ###############################
+#####################custom class snippet - after class ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_CLASS") )
 $snippet 
 $n#end

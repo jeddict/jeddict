@@ -82,8 +82,10 @@ import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeSnippet;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippet;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
@@ -91,7 +93,6 @@ import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import org.netbeans.jpa.modeler.spec.extend.Snippet;
-import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
@@ -168,9 +169,7 @@ import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
-import org.netbeans.jcode.core.util.JavaIdentifiers;
-import static org.netbeans.jcode.core.util.JavaIdentifiers.getGenericType;
-import static org.netbeans.jcode.core.util.JavaIdentifiers.unqualifyGeneric;
+import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
@@ -202,7 +201,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
 
-        List<Snippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
+        List<ClassSnippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
         snippets.addAll(javaClass.getSnippets());
         classDef.setCustomSnippet(getCustomSnippet(snippets));
 
@@ -283,9 +282,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippets;
     }
 
-    protected Map<SnippetLocationType, List<String>> getCustomSnippet(List<Snippet> snippets) {
-        Map<SnippetLocationType, List<String>> snippetsMap = new HashMap<>();
-        for (Snippet snippet : snippets) {
+    protected <T extends SnippetLocation> Map<T, List<String>> getCustomSnippet(List<? extends Snippet<T>> snippets) {
+        Map<T, List<String>> snippetsMap = new HashMap<>();
+        for (Snippet<T> snippet : snippets) {
             if (snippet.isEnable()) {
                 if (snippetsMap.get(snippet.getLocationType()) == null) {
                     snippetsMap.put(snippet.getLocationType(), new ArrayList<>());
@@ -376,6 +375,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (attr instanceof BaseAttribute) {
                 variableDef.setConstraints(getConstraintSnippet(attr.getConstraints()));
             }
+            
+            List<AttributeSnippet> snippets = new ArrayList<>();//todo global attribute snippet at class level ; javaClass.getAttrSnippets());
+            snippets.addAll(attr.getSnippets());
+            variableDef.setCustomSnippet(getCustomSnippet(snippets));
 
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
             if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {

@@ -18,21 +18,28 @@ package org.netbeans.jpa.modeler.properties.custom.source;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
+import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.Snippet;
-import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
+import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.openide.util.Exceptions;
 
-public class CustomSnippetPanel extends EntityComponent<Snippet> implements ModelerPanel {
+public class CustomSnippetPanel<T extends Snippet> extends EntityComponent<Snippet> implements ModelerPanel {
 
     private Snippet snippet;
     private final ModelerFile modelerFile;
+    private Class<? extends SnippetLocation> type;
+    private Class<Snippet> snippetType;
 
-    public CustomSnippetPanel(ModelerFile modelerFile) {
+    public CustomSnippetPanel(ModelerFile modelerFile, Class<Snippet> snippetType, Class<? extends SnippetLocation> type) {
         this.modelerFile = modelerFile;
+        this.type = type;
+        this.snippetType=snippetType;
     }
 
     @Override
@@ -71,17 +78,17 @@ public class CustomSnippetPanel extends EntityComponent<Snippet> implements Mode
 
     private void snippetLocationTypeInit() {
         scopeComboBox.removeAllItems();
-        for (SnippetLocationType locationType : SnippetLocationType.values()) {
+        for (SnippetLocation locationType : (type==ClassSnippetLocationType.class?ClassSnippetLocationType.values():AttributeSnippetLocationType.values())) {
             scopeComboBox.addItem(new ComboBoxValue(locationType, locationType.getTitle()));
         }
     }
 
-    private void setSnippetLocationType(SnippetLocationType locationType) {
+    private void setSnippetLocationType(SnippetLocation locationType) {
         if (locationType == null) {
             scopeComboBox.setSelectedIndex(0);
         } else {
             for (int i = 0; i < scopeComboBox.getItemCount(); i++) {
-                if (((ComboBoxValue<SnippetLocationType>) scopeComboBox.getItemAt(i)).getValue() == locationType) {
+                if (((ComboBoxValue<SnippetLocation>) scopeComboBox.getItemAt(i)).getValue() == locationType) {
                     scopeComboBox.setSelectedIndex(i);
                 }
             }
@@ -213,14 +220,14 @@ public class CustomSnippetPanel extends EntityComponent<Snippet> implements Mode
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             if (row[0] == null) {
-                snippet = new Snippet();
+                snippet = newSnippet();
             } else {
                 snippet = (Snippet) row[0];
             }
         }
 
         snippet.setValue(customCodeEditorPane.getText());
-        snippet.setLocationType(((ComboBoxValue<SnippetLocationType>) scopeComboBox.getSelectedItem()).getValue());
+        snippet.setLocationType(((ComboBoxValue<SnippetLocation>) scopeComboBox.getSelectedItem()).getValue());
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -233,6 +240,17 @@ public class CustomSnippetPanel extends EntityComponent<Snippet> implements Mode
         saveActionPerformed(evt);
     }//GEN-LAST:event_saveButtonActionPerformed
 
+    
+    private Snippet newSnippet()
+    {
+        try {
+            return snippetType.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new IllegalStateException(ex);
+        }
+        
+    }
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancelButtonActionPerformed

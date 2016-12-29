@@ -34,7 +34,6 @@ import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.BaseAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
@@ -87,8 +86,12 @@ import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeSnippet;
+import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippet;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
@@ -123,6 +126,7 @@ import org.openide.nodes.PropertySupport;
 import org.openide.windows.WindowManager;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
+import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
@@ -1039,7 +1043,14 @@ public class PropertiesHandler {
         return new EmbeddedPropertySupport(javaClassWidget.getModelerScene().getModelerFile(), entity);
     }
 
-      public static PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<Snippet> snippets) {
+    public static PropertySupport getClassSnippet(JPAModelerScene modelerScene, List<ClassSnippet> snippets) {
+        return getCustomSnippet(modelerScene, snippets, ClassSnippet.class, ClassSnippetLocationType.class);
+    }
+    public static PropertySupport getAttributeSnippet(JPAModelerScene modelerScene, List<AttributeSnippet> snippets) {
+         return getCustomSnippet(modelerScene, snippets, AttributeSnippet.class, AttributeSnippetLocationType.class);   
+    }
+    
+    public static <T extends Snippet> PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<T> snippets, Class<T> snippetType, Class<? extends SnippetLocation> snippetLocationType) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("Snippets", "Snippets", "");
         attributeEntity.setCountDisplay(new String[]{"No Snippets exist", "One Snippet exist", "Snippets exist"});
 
@@ -1049,7 +1060,7 @@ public class PropertiesHandler {
         columns.add(new Column("Snippet", false, String.class));
         columns.add(new Column("Location", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new CustomSnippetPanel(modelerScene.getModelerFile()));
+        attributeEntity.setCustomDialog(new CustomSnippetPanel(modelerScene.getModelerFile(), snippetType, snippetLocationType));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
@@ -1068,9 +1079,9 @@ public class PropertiesHandler {
             @Override
             public void initData() {
                 List<Object[]> data_local = new LinkedList<>();
-                Iterator<Snippet> itr = snippets.iterator();
+                Iterator<T> itr = snippets.iterator();
                 while (itr.hasNext()) {
-                    Snippet snippet = itr.next();
+                    T snippet = itr.next();
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = snippet;
                     row[1] = snippet.isEnable();
@@ -1090,7 +1101,7 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 snippets.clear();
                 data.stream().forEach((row) -> {
-                    Snippet snippet = (Snippet) row[0];
+                    T snippet = (T) row[0];
                     snippet.setEnable((boolean)row[1]);
                     snippets.add(snippet);
                 });

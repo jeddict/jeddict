@@ -48,7 +48,8 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
-import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomInterface;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -95,8 +96,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         EntityMappings entityMappings = this.getBaseElementSpec();
-        set.put("GLOBAL_CONFIG", PropertiesHandler.getCustomSnippet(this, entityMappings.getSnippets()));
-        set.put("GLOBAL_CONFIG", PropertiesHandler.getCustomInterface(this, entityMappings.getInterfaces()));
+        set.put("GLOBAL_CONFIG", getClassSnippet(this, entityMappings.getSnippets()));
+        set.put("GLOBAL_CONFIG", getCustomInterface(this, entityMappings.getInterfaces()));
         
     }
     

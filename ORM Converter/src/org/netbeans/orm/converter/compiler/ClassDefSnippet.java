@@ -37,13 +37,13 @@ import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
-import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.orm.converter.util.ImportSet;
 
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
@@ -58,7 +58,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private ToStringMethodSnippet toStringMethodSnippet;
 
     private List<AnnotationSnippet> annotation;
-    private Map<SnippetLocationType,List<String>> customSnippet;
+    private Map<ClassSnippetLocationType,List<String>> customSnippet;
 
     static {
         AUTO_GENERATE.setName("id");
@@ -702,18 +702,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the customSnippet
      */
-    public Map<SnippetLocationType,List<String>> getCustomSnippet() {
+    public Map<ClassSnippetLocationType,List<String>> getCustomSnippet() {
         return customSnippet;
     }
     
     public List<String> getCustomSnippet(String type) {
-        return customSnippet.get(SnippetLocationType.valueOf(type));
+        return customSnippet.get(ClassSnippetLocationType.valueOf(type));
     }
 
     /**
      * @param customSnippet the customSnippet to set
      */
-    public void setCustomSnippet(Map<SnippetLocationType,List<String>> customSnippet) {
+    public void setCustomSnippet(Map<ClassSnippetLocationType,List<String>> customSnippet) {
         this.customSnippet = customSnippet;
     }
 

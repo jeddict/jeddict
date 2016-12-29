@@ -24,12 +24,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
-import static org.netbeans.jcode.core.util.AttributeType.STRING;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getAttributeSnippet;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomAnnoation;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomSnippet;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getJaxbVarTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
@@ -99,8 +102,9 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 this.getModelerScene().getModelerFile().handleException(ex);;
             }
         }
-        PropertiesHandler.getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
-        set.put("BASIC_PROP", PropertiesHandler.getCustomAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
+        getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
+        set.put("BASIC_PROP", getCustomAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
+        set.put("BASIC_PROP", getAttributeSnippet(this.getModelerScene(), this.getBaseElementSpec().getSnippets()));
 
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             if (StringUtils.isBlank(value)) {

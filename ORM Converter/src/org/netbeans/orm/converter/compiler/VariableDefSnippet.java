@@ -19,6 +19,7 @@ import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnip
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +46,7 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.orm.converter.util.ImportSet;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
@@ -94,6 +96,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private TypeIdentifierSnippet typeIdentifier = null;
 
     private Attribute attribute;
+    
+    private Map<AttributeSnippetLocationType,List<String>> customSnippet;
 
     public VariableDefSnippet() {
     }
@@ -779,4 +783,21 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.defaultValue = defaultValue;
     }
 
+        /**
+     * @return the customSnippet
+     */
+    public Map<AttributeSnippetLocationType,List<String>> getCustomSnippet() {
+        return customSnippet;
+    }
+    
+    public List<String> getCustomSnippet(String type) {
+        return customSnippet.get(AttributeSnippetLocationType.valueOf(type));
+    }
+
+    /**
+     * @param customSnippet the customSnippet to set
+     */
+    public void setCustomSnippet(Map<AttributeSnippetLocationType,List<String>> customSnippet) {
+        this.customSnippet = customSnippet;
+    }
 }
