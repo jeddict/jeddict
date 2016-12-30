@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import org.netbeans.jcode.core.util.AttributeType;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.EnumType;
@@ -60,6 +61,7 @@ import static org.netbeans.jcode.core.util.AttributeType.SQL_DATE;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_TIME;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_TIMESTAMP;
 import static org.netbeans.jcode.core.util.AttributeType.STRING;
+import static org.netbeans.jcode.core.util.AttributeType.isArray;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -104,12 +106,19 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         initComponents();
     }
     
+    private String getDataType() {
+        String dataType = dataType_ComboBox.getSelectedItem().toString().trim();
+        dataType = isArray(dataType) ? AttributeType.getArrayType(dataType) + " []" : dataType;
+        dataType_ComboBox.setSelectedItem(dataType);
+        return dataType;
+    }
+    
     @Override
     public Attribute getValue() {
         String type = (String) type_ComboBox.getSelectedItem();
         String dataType = null;
         if(!ENTITY.equals(type) && !EMBEDDABLE.equals(type)){
-            dataType = dataType_ComboBox.getSelectedItem().toString();
+            dataType = getDataType();
             if(BCLOB_DATATYPE_FILTER.contains(dataType)){//jpa provider issue , set lob if datatype is blob clob
                type = LOB; 
             }

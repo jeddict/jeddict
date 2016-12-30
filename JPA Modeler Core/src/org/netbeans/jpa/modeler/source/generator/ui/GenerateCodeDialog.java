@@ -108,6 +108,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         getRootPane().setDefaultButton(generateSourceCode);
         modelerFilePackage = sourceGroup != null ? getPackageForFolder(sourceGroup, modelerFileObject.getParent()) : null;
         initLayer();
+        setCaptureWindowSize(false);
     }
 
     private void initLayer() {
