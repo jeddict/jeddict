@@ -29,9 +29,13 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
         this.persistenceClassWidget = persistenceClassWidget;
     }
 
+    public void postConstruct() {
+        initComponents();
+        ((ClassMemberPanel) equalsMethodPanel).postConstruct();
+        ((ClassMemberPanel) hashcodeMethodPanel).postConstruct();
+    }
     @Override
     public void init() {
-        initComponents();
         ((ClassMemberPanel) equalsMethodPanel).init();
         ((ClassMemberPanel) hashcodeMethodPanel).init();
     }

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.properties.custom.source;
+package org.netbeans.jpa.modeler.properties.custom.snippet;
 
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;

@@ -17,7 +17,6 @@ package org.netbeans.jpa.modeler.properties.classmember;
 
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.OK_OPTION;
 import javax.swing.JScrollPane;
 import org.netbeans.jpa.modeler.properties.classmember.nodes.ClassMemberChildFactory;
@@ -34,6 +33,7 @@ import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
+import org.netbeans.modeler.properties.window.OptionDialog;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
 
@@ -63,10 +63,12 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
         this.title = title;
     }
     
+    public void postConstruct(){
+        initComponents(); 
+    }
     @Override
     public void init() {
         manager = new ExplorerManager();
-        initComponents();
         displayCustomCode(customCode);
     }
     
@@ -179,15 +181,13 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     }//GEN-LAST:event_postCodeButtonActionPerformed
     
     private String getCode(String code, String title) {
-        JScrollPane scrollPane = new JScrollPane();
         JEditorPane editorPane = new JEditorPane();
         editorPane.setContentType("text/x-java");
         editorPane.setPreferredSize(new java.awt.Dimension(600, 400));
         editorPane.setText(code);
-        scrollPane.setViewportView(editorPane);
-        scrollPane.setAutoscrolls(true);
-        int result = JOptionPane.showConfirmDialog(null, scrollPane, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (OK_OPTION == result) {
+        OptionDialog dialog = new OptionDialog(editorPane, title);
+        dialog.setVisible(true);
+        if (OK_OPTION == dialog.getDialogResult()) {
             return editorPane.getText();
         } else {
             return code;

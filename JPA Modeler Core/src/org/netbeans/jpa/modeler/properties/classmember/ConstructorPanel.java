@@ -42,6 +42,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
     @Override
     public void postConstruct() {
         initComponents();
+        ((ClassMemberPanel) classMemberPanel).postConstruct();
     }
 
     @Override

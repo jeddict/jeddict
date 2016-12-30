@@ -47,7 +47,7 @@ import org.netbeans.jpa.modeler.properties.classmember.ConstructorPanel;
 import org.netbeans.jpa.modeler.properties.classmember.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.properties.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
-import org.netbeans.jpa.modeler.properties.custom.source.CustomSnippetPanel;
+import org.netbeans.jpa.modeler.properties.custom.snippet.CustomSnippetPanel;
 import org.netbeans.jpa.modeler.properties.extend.ClassExtendPanel;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
@@ -1385,7 +1385,9 @@ public class PropertiesHandler {
         GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "equals() & hashcode()", "Define equals & hashcode implementation for the Entity");
 
         final JavaClass javaClassObj = persistenceClassWidget.getBaseElementSpec();
-        entity.setEntityEditor(new HashcodeEqualsPanel(persistenceClassWidget));
+        HashcodeEqualsPanel panel = new HashcodeEqualsPanel(persistenceClassWidget);
+        panel.postConstruct();
+        entity.setEntityEditor(panel);
         entity.setDataListener(new EmbeddedDataListener<JavaClass>() {
             private JavaClass javaClass;
 
@@ -1419,6 +1421,7 @@ public class PropertiesHandler {
         GenericEmbedded entity = new GenericEmbedded("toString", "toString()",getMessage(ClassMemberPanel.class, "LBL_tostring_select"));
         final ClassMembers classMembersObj = persistenceClassWidget.getBaseElementSpec().getToStringMethod();
         ClassMemberPanel classMemberPanel = new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget,false);
+        classMemberPanel.postConstruct();
         entity.setEntityEditor(classMemberPanel);
         entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
             private ClassMembers classMembers;

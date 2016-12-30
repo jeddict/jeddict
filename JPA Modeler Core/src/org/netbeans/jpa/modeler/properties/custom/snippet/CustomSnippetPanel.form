@@ -94,10 +94,10 @@
             <Component class="javax.swing.JButton" name="saveButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/source/Bundle.properties" key="CustomSnippetPanel.saveButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/snippet/Bundle.properties" key="CustomSnippetPanel.saveButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/source/Bundle.properties" key="CustomSnippetPanel.saveButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/snippet/Bundle.properties" key="CustomSnippetPanel.saveButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
               </Properties>
@@ -108,10 +108,10 @@
             <Component class="javax.swing.JButton" name="cancelButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/source/Bundle.properties" key="CustomSnippetPanel.cancelButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/snippet/Bundle.properties" key="CustomSnippetPanel.cancelButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/source/Bundle.properties" key="CustomSnippetPanel.cancelButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/snippet/Bundle.properties" key="CustomSnippetPanel.cancelButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[60, 23]"/>
@@ -149,7 +149,7 @@
         <Component class="javax.swing.JComboBox" name="scopeComboBox">
           <Properties>
             <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/source/Bundle.properties" key="CustomSnippetPanel.scopeComboBox.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/netbeans/jpa/modeler/properties/custom/snippet/Bundle.properties" key="CustomSnippetPanel.scopeComboBox.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
