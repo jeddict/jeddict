@@ -121,10 +121,10 @@ public final class SelectedTables {
             this.location = location;
             this.packageName = packageName;
 
-            if (location != null && packageName != null) {
+            if (packageName != null && !packageName.isEmpty()) {
                 targetFolder = SourceGroupSupport.getFolderForPackage(location, packageName, false);
             } else {
-                targetFolder = null;
+                targetFolder = location.getRootFolder();
             }
             return true;
         }

@@ -1201,7 +1201,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         for (Id parsedId : parsedIds) {
             VariableDefSnippet variableDef = getVariableDef(parsedId);
             variableDef.setType(parsedId.getAttributeType());
-//            variableDef.setFunctionalType(parsedId.isOptionalReturnType());
+            variableDef.setFunctionalType(parsedId.isOptionalReturnType());
             variableDef.setPrimaryKey(true);
 
             Column parsedColumn = parsedId.getColumn();
@@ -1472,7 +1472,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             ColumnDefSnippet columnDef = getColumnDef(parsedVersion.getColumn());
             variableDef.setType(parsedVersion.getAttributeType());
-//            variableDef.setFunctionalType(parsedVersion.isOptionalReturnType());
+            variableDef.setFunctionalType(parsedVersion.isOptionalReturnType());
             variableDef.setVersion(true);
             variableDef.setColumnDef(columnDef);
 

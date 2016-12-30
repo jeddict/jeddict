@@ -148,8 +148,7 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
         }
 
         return Collections.<DataObject>singleton(DataFolder.findFolder(
-                SourceGroupSupport.getFolderForPackage(helper.getLocation(), helper.getPackageName())));
-//        return Collections.emptySet();
+                SourceGroupSupport.getFolderForPackage(helper.getLocation(), helper.getPackageName(), true)));
     }
 
     private void createModel(WizardDescriptor wiz, ProgressContributor handle) throws IOException {
