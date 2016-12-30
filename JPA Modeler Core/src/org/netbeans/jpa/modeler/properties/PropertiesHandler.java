@@ -51,7 +51,7 @@ import org.netbeans.jpa.modeler.properties.custom.source.CustomSnippetPanel;
 import org.netbeans.jpa.modeler.properties.extend.ClassExtendPanel;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
-import org.netbeans.jpa.modeler.properties.implement.InterfaceImplementPanel;
+import org.netbeans.jpa.modeler.properties.implement.JavaClassArtifactPanel;
 import org.netbeans.jpa.modeler.properties.inheritance.InheritancePanel;
 import org.netbeans.jpa.modeler.properties.joincolumn.JoinColumnPanel;
 import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPanel;
@@ -941,16 +941,16 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
     
-    public static PropertySupport getCustomInterface(JPAModelerScene modelerScene, Set<ReferenceClass> referenceClasses) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity("Interface", "Interface", "");
-        attributeEntity.setCountDisplay(new String[]{"No Interface exist", "One Interface exist", "Interface exist"});
+    public static PropertySupport getCustomArtifact(JPAModelerScene modelerScene, Set<ReferenceClass> referenceClasses, String artifactType) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(artifactType, artifactType, "");
+        attributeEntity.setCountDisplay(new String[]{String.format("No %s exist",artifactType), String.format("One %s exist",artifactType), String.format("%s exist",artifactType)});
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
-        columns.add(new Column("Interface", false, String.class));
+        columns.add(new Column(artifactType, false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new InterfaceImplementPanel(modelerScene.getModelerFile()));
+        attributeEntity.setCustomDialog(new JavaClassArtifactPanel(modelerScene.getModelerFile(),artifactType));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;

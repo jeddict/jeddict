@@ -25,7 +25,7 @@ public class EntityListenerSnippet {
 
     private ClassHelper classHelper = new ClassHelper();
 
-    private List<CallbackSnippet> callbacks = Collections.EMPTY_LIST;
+//    private List<CallbackSnippet> callbacks = Collections.EMPTY_LIST;
 
     public String getClassName() {
         return classHelper.getClassName();
@@ -35,24 +35,24 @@ public class EntityListenerSnippet {
         classHelper.setClassName(className);
     }
 
-    public void addCallback(CallbackSnippet callback) {
-
-        if (callbacks.isEmpty()) {
-            callbacks = new ArrayList<CallbackSnippet>();
-        }
-
-        callbacks.add(callback);
-    }
-
-    public List<CallbackSnippet> getCallbacks() {
-        return callbacks;
-    }
-
-    public void setCallbacks(List<CallbackSnippet> listeners) {
-        if (callbacks != null) {
-            this.callbacks = listeners;
-        }
-    }
+//    public void addCallback(CallbackSnippet callback) {
+//
+//        if (callbacks.isEmpty()) {
+//            callbacks = new ArrayList<CallbackSnippet>();
+//        }
+//
+//        callbacks.add(callback);
+//    }
+//
+//    public List<CallbackSnippet> getCallbacks() {
+//        return callbacks;
+//    }
+//
+//    public void setCallbacks(List<CallbackSnippet> listeners) {
+//        if (callbacks != null) {
+//            this.callbacks = listeners;
+//        }
+//    }
 
     public void setPackageName(String packageName) {
         classHelper.setPackageName(packageName);

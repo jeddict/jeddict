@@ -2,6 +2,7 @@
 <element-config>
     <groups>
         <group id="BASIC_PROP" name="Basic Properties"/>
+        <group id="ENTITY_PROP" name="Entity Properties"/>
         <group id="COLUMN_PROP" name="Column Properties"/>
         <group id="TABLE_PROP" name="Table Properties"/>
         <group id="COLUMN_PROP" name="Column Properties"/>
@@ -179,15 +180,15 @@
                  </attributes>
         </element>
                
-        <element id="Entity" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Entity">
+        <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
             <attributes>
-                <attribute id="entity_name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                <attribute id="entity_name" groupId="ENTITY_PROP" class="java.lang.String" name="name">
                     <display-name>Entity Name</display-name>
                 </attribute>
                <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
                 </attribute>
-                <attribute id="cacheable" groupId="BASIC_PROP" class="java.lang.Boolean" name="cacheable">
+                <attribute id="cacheable" groupId="ENTITY_PROP" class="java.lang.Boolean" name="cacheable">
                     <display-name>Is Cacheable</display-name>
                 </attribute>
                  <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">

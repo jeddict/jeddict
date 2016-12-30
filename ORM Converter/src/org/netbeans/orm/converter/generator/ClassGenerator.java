@@ -910,12 +910,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return;
         }
 
-        List<EntityListener> parsedEntityListenersList
-                = parsedEntityListeners.getEntityListener();
+        Set<ReferenceClass> parsedEntityListenersList = parsedEntityListeners.getEntityListener();
 
-        List<EntityListenerSnippet> entityListeners
-                = GeneratorUtil.processEntityListeners(
-                        parsedEntityListenersList, packageName);
+        List<EntityListenerSnippet> entityListeners = GeneratorUtil.processEntityListeners(parsedEntityListenersList, packageName);
 
         if (entityListeners.isEmpty()) {
             return;

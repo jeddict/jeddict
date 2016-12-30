@@ -49,7 +49,6 @@ import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomInterface;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -89,6 +88,7 @@ import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -97,7 +97,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         super.createPropertySet(set);
         EntityMappings entityMappings = this.getBaseElementSpec();
         set.put("GLOBAL_CONFIG", getClassSnippet(this, entityMappings.getSnippets()));
-        set.put("GLOBAL_CONFIG", getCustomInterface(this, entityMappings.getInterfaces()));
+        set.put("GLOBAL_CONFIG", getCustomArtifact(this, entityMappings.getInterfaces(),"Interface"));
         
     }
     

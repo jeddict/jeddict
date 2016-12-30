@@ -20,12 +20,21 @@ import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 
 public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> extends PersistenceClassWidget<E> {
 
     public PrimaryKeyContainerWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
+    }
+    
+    @Override
+    public void createPropertySet(ElementPropertySet set) {
+        super.createPropertySet(set);
+        IdentifiableClass javaClass = this.getBaseElementSpec();
+        set.put("ENTITY_PROP", getCustomArtifact(this.getModelerScene(), javaClass.getEntityListeners().getEntityListener(), "Listener"));
     }
 
     @Override

@@ -41,7 +41,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="interface_TextField" max="32767" attributes="0"/>
+                      <Component id="artifactTextField" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Component id="dataType_Action" min="-2" pref="28" max="-2" attributes="0"/>
                           <EmptySpace pref="186" max="32767" attributes="0"/>
@@ -56,7 +56,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace pref="24" max="32767" attributes="0"/>
-                  <Component id="interface_TextField" min="-2" max="-2" attributes="0"/>
+                  <Component id="artifactTextField" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="action_jLayeredPane" min="-2" max="-2" attributes="0"/>
@@ -94,10 +94,10 @@
             <Component class="javax.swing.JButton" name="save_Button">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="InterfaceImplementPanel.save_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="JavaClassArtifactPanel.save_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="InterfaceImplementPanel.save_Button.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="JavaClassArtifactPanel.save_Button.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
               </Properties>
@@ -108,10 +108,10 @@
             <Component class="javax.swing.JButton" name="cancel_Button">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="InterfaceImplementPanel.cancel_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="JavaClassArtifactPanel.cancel_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="InterfaceImplementPanel.cancel_Button.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="JavaClassArtifactPanel.cancel_Button.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[60, 23]"/>
@@ -136,10 +136,10 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dataType_ActionActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="interface_TextField">
+        <Component class="javax.swing.JTextField" name="artifactTextField">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/properties/implement/Bundle.properties" key="InterfaceImplementPanel.interface_TextField.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="org/netbeans/jpa/modeler/properties/implement/Bundle.properties" key="JavaClassArtifactPanel.artifactTextField.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>

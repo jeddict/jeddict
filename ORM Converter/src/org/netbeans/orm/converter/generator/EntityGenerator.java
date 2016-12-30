@@ -15,7 +15,6 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
@@ -26,12 +25,10 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.JOINED;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.TABLE_PER_CLASS;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.orm.converter.compiler.DiscriminatorColumnSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorValueSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet.Type;
-import org.netbeans.orm.converter.compiler.PrimaryKeyJoinColumnSnippet;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 
 public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {

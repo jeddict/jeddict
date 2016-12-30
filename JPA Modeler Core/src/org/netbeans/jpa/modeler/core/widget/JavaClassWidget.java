@@ -32,7 +32,6 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomAnnoation;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomInterface;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomParentClass;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
@@ -53,6 +52,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 import static org.openide.util.NbBundle.getMessage;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
@@ -96,7 +96,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
        
         set.put("CLASS_STRUCTURE", getCustomAnnoation(this.getModelerScene(), javaClass.getAnnotation()));
         set.put("CLASS_STRUCTURE", getCustomParentClass(this));
-        set.put("CLASS_STRUCTURE", getCustomInterface(this.getModelerScene(), javaClass.getInterfaces()));
+        set.put("CLASS_STRUCTURE", getCustomArtifact(this.getModelerScene(), javaClass.getInterfaces(), "Interface"));
         set.put("CLASS_STRUCTURE", getClassSnippet(this.getModelerScene(), javaClass.getSnippets()));
     }
 

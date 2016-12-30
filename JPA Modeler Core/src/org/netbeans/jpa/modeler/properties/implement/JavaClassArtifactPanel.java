@@ -27,13 +27,15 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.enti
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
 
-public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> implements ModelerPanel {
+public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> implements ModelerPanel {
 
     private ReferenceClass referenceClass;
     private final ModelerFile modelerFile;
+    private final String artifactType;
     
-    public InterfaceImplementPanel(ModelerFile modelerFile) {
+    public JavaClassArtifactPanel(ModelerFile modelerFile, String artifactType) {
         this.modelerFile=modelerFile;
+        this.artifactType=artifactType;
     }
     
     @Override
@@ -47,23 +49,23 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
 
     @Override
     public void createEntity(Class<? extends Entity> entityWrapperType) {
-        this.setTitle("Add new Interface");
+        this.setTitle(String.format("Add new %s ",artifactType));
         if (entityWrapperType == RowValue.class) {
             this.setEntity(new RowValue(new Object[5]));
         }
         referenceClass = null;
-        interface_TextField.setText(EMPTY);
+        artifactTextField.setText(EMPTY);
         dataType_ActionActionPerformed(null);
     }
 
     @Override
     public void updateEntity(Entity<ReferenceClass> entityValue) {
-        this.setTitle("Update Interface");
+        this.setTitle(String.format("Update %s ",artifactType));
         if (entityValue.getClass() == RowValue.class) {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             referenceClass = (ReferenceClass) row[0];
-            interface_TextField.setText(referenceClass.getName());
+            artifactTextField.setText(referenceClass.getName());
         }
 
     }
@@ -83,12 +85,12 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
         dataType_Action = new javax.swing.JButton();
-        interface_TextField = new javax.swing.JTextField();
+        artifactTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(InterfaceImplementPanel.class, "InterfaceImplementPanel.save_Button.text")); // NOI18N
-        save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(InterfaceImplementPanel.class, "InterfaceImplementPanel.save_Button.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(JavaClassArtifactPanel.class, "JavaClassArtifactPanel.save_Button.text")); // NOI18N
+        save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(JavaClassArtifactPanel.class, "JavaClassArtifactPanel.save_Button.toolTipText")); // NOI18N
         save_Button.setSelected(true);
         save_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,8 +98,8 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(InterfaceImplementPanel.class, "InterfaceImplementPanel.cancel_Button.text")); // NOI18N
-        cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(InterfaceImplementPanel.class, "InterfaceImplementPanel.cancel_Button.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(JavaClassArtifactPanel.class, "JavaClassArtifactPanel.cancel_Button.text")); // NOI18N
+        cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(JavaClassArtifactPanel.class, "JavaClassArtifactPanel.cancel_Button.toolTipText")); // NOI18N
         cancel_Button.setPreferredSize(new java.awt.Dimension(60, 23));
         cancel_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -133,11 +135,11 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
             }
         });
 
-        interface_TextField.setText(org.openide.util.NbBundle.getMessage(InterfaceImplementPanel.class, "InterfaceImplementPanel.interface_TextField.text")); // NOI18N
+        artifactTextField.setText(org.openide.util.NbBundle.getMessage(JavaClassArtifactPanel.class, "JavaClassArtifactPanel.artifactTextField.text")); // NOI18N
 
         root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(dataType_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(interface_TextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(artifactTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -146,7 +148,7 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(interface_TextField)
+                    .addComponent(artifactTextField)
                     .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                         .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 186, Short.MAX_VALUE)
@@ -157,7 +159,7 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap(24, Short.MAX_VALUE)
-                .addComponent(interface_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(artifactTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -180,13 +182,13 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean validateField() {
-        String _class = this.interface_TextField.getText().trim();
+        String _class = this.artifactTextField.getText().trim();
         int genericIndex = _class.indexOf('<');//generic type
         if (_class.length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, "Interface can't be empty", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, String.format("%s can't be empty",artifactType), "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         } else if(genericIndex>1 ? !JavaIdentifiers.isValidPackageName(_class.substring(0, genericIndex)): !JavaIdentifiers.isValidPackageName(_class)){
-            JOptionPane.showMessageDialog(this, "Invalid Interface type", "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, String.format("Invalid %s type",artifactType), "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }
         
@@ -206,7 +208,7 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
             }
         }
 
-        referenceClass.setName(interface_TextField.getText().trim());
+        referenceClass.setName(artifactTextField.getText().trim());
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -222,17 +224,17 @@ public class InterfaceImplementPanel extends EntityComponent<ReferenceClass> imp
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
     private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
-        String dataType = NBModelerUtil.browseClass(modelerFile, interface_TextField.getText());
+        String dataType = NBModelerUtil.browseClass(modelerFile, artifactTextField.getText());
         if(StringUtils.isNotEmpty(dataType)){
-         interface_TextField.setText(dataType);
+         artifactTextField.setText(dataType);
         }
     }//GEN-LAST:event_dataType_ActionActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
+    private javax.swing.JTextField artifactTextField;
     private javax.swing.JButton cancel_Button;
     private javax.swing.JButton dataType_Action;
-    private javax.swing.JTextField interface_TextField;
     private javax.swing.JLayeredPane root_jLayeredPane;
     private javax.swing.JButton save_Button;
     // End of variables declaration//GEN-END:variables

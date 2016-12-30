@@ -35,13 +35,11 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
-import org.netbeans.orm.converter.compiler.LifecycleListenerSnippet;
 import org.netbeans.orm.converter.compiler.WritableSnippet;
 import org.netbeans.orm.converter.generator.DefaultClassGenerator;
 import org.netbeans.orm.converter.generator.EmbeddableGenerator;
 import org.netbeans.orm.converter.generator.EmbeddableIdClassGenerator;
 import org.netbeans.orm.converter.generator.EntityGenerator;
-import org.netbeans.orm.converter.generator.LifecycleCallbackGenerator;
 import org.netbeans.orm.converter.generator.MappedSuperClassGenerator;
 import org.netbeans.orm.converter.spec.ModuleGenerator;
 import org.netbeans.orm.converter.util.ClassType;
@@ -70,7 +68,6 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
             generateEntityClasses();
             generateEmbededClasses();
             generateDefaultClasses();
-            // generateLifeCycleClasses(); // TODO
         } catch (InvalidDataException | IOException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
@@ -132,17 +129,6 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
 
             classesRepository.addWritableSnippet(ClassType.SUPER_CLASS, classDef);
             parsedMappedSuperclass.setFileObject(ORMConverterUtil.writeSnippet(classDef, destDir));
-        }
-    }
-
-    private void generateLifeCycleClasses() throws InvalidDataException, IOException {
-        List<ClassDefSnippet> classDefs = getPUXMLEntries();
-        //Generate lifecycle events processors
-        LifecycleCallbackGenerator callbackGenerator = new LifecycleCallbackGenerator(parsedEntityMappings, classDefs, packageName);
-        Collection<LifecycleListenerSnippet> lifecycleListeners = callbackGenerator.getLifecycleListeners();
-        for (LifecycleListenerSnippet lifecycleListener : lifecycleListeners) {
-            classesRepository.addWritableSnippet(ClassType.LISTENER_CLASS, lifecycleListener);
-            ORMConverterUtil.writeSnippet(lifecycleListener, destDir);
         }
     }
 
