@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 OpenIDE-Module: org.netbeans.jpa.modeler.jcre
 OpenIDE-Module-Localizing-Bundle: org/netbeans/jpa/modeler/jcre/Bundle.properties
-OpenIDE-Module-Specification-Version: 2.8
+OpenIDE-Module-Specification-Version: 3.0
 
