@@ -77,6 +77,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         if (StringUtils.isNotBlank(mappedSuperclass.getDescription())) {
             classDef.setDescription(mappedSuperclass.getDescription());
         }
+        classDef.setAuthor(mappedSuperclass.getAuthor());
         classDef.setMappedSuperClass(true);
         classDef.setXmlRootElement(mappedSuperclass.getXmlRootElement());
         return classDef;

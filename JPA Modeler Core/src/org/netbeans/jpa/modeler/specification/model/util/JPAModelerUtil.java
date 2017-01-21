@@ -45,14 +45,8 @@ import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import static org.netbeans.jcode.core.util.StringHelper.getNext;
 import org.netbeans.jpa.modeler._import.javaclass.JCREProcessor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
-import org.netbeans.jpa.modeler.core.widget.CompositePKProperty;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
-import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
-import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.LEAF;
-import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
-import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -94,8 +88,6 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirection
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
 import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import org.netbeans.jpa.modeler.spec.Attributes;
-import org.netbeans.jpa.modeler.spec.DefaultAttribute;
-import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -117,12 +109,10 @@ import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
@@ -147,7 +137,6 @@ import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
 import org.netbeans.modeler.specification.version.SoftwareVersion;
@@ -174,22 +163,6 @@ import org.openide.util.RequestProcessor;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
-import static org.openide.util.NbBundle.getMessage;
 import static org.openide.util.NbBundle.getMessage;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
@@ -779,20 +752,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     
     public static void saveFile(EntityMappings entityMappings, File file) {
        
-        
         try {
             if (MODELER_MARSHALLER == null) {
-//                 NamespacePrefixMapper mapper = new NamespacePrefixMapper() {
-//    public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
-//        return "";
-//    }
-//};
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
                 MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
-//                MODELER_MARSHALLER.setProperty("com.sun.xml.bind.namespacePrefixMapper", mapper);
-
             }
             MODELER_MARSHALLER.marshal(entityMappings, file);
         } catch (JAXBException ex) {

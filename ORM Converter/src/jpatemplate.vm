@@ -29,7 +29,6 @@ $snippet
 $snippet 
 #end
 #end
-
 #####################java doc ###############################
 #if ($classDef.isJavaDocExist())
 $classDef.getJavaDoc()

@@ -27,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import org.netbeans.api.project.Project;
+import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.getNext;
 import org.netbeans.jpa.modeler.collaborate.enhancement.EnhancementRequestHandler;
@@ -309,6 +310,9 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             if (baseElement != null) {
                 baseElementWidget.setBaseElementSpec(baseElement);
                 baseElement.setId(baseElementId);
+                if(baseElement instanceof JavaClass){
+                    ((JavaClass)baseElement).setAuthor(JavaSourceHelper.getAuthor());
+                }
                 rootElement.addBaseElement(baseElement);
                 ElementConfigFactory elementConfigFactory = this.getModelerFile().getModelerDiagramModel().getElementConfigFactory();
                 elementConfigFactory.initializeObjectValue(baseElement);

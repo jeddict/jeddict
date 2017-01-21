@@ -80,6 +80,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private final ClassHelper classHelper = new ClassHelper();
     private final ClassHelper superClassHelper = new ClassHelper();
     private String description;
+    private String author;
     private String entityName;
 
     private TableDefSnippet tableDef;
@@ -615,16 +616,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     public String getJavaDoc() {
         StringBuilder doc = new StringBuilder();
-        doc.append("/**").append(NEW_LINE);
-        if (StringUtils.isNotBlank(description)) {
-            for (String line : description.split("\\r\\n|\\n|\\r")) {
-                doc.append(" * ").append(line).append(NEW_LINE);
+        if (StringUtils.isNotBlank(description) || StringUtils.isNotBlank(author)) {
+            doc.append(NEW_LINE).append("/**").append(NEW_LINE);
+            if (StringUtils.isNotBlank(description)) {
+                for (String line : description.split("\\r\\n|\\n|\\r")) {
+                    doc.append(" * ").append(line).append(NEW_LINE);
+                }
             }
+            if (StringUtils.isNotBlank(author)) {
+                doc.append(" * @author ").append(author).append(NEW_LINE);
+            }
+            doc.append(" */");
         }
-        if (StringUtils.isNotBlank(JavaSourceHelper.getAuthor())) {
-            doc.append(" * @author  ").append(JavaSourceHelper.getAuthor()).append(NEW_LINE);
-        }
-        doc.append(" */");
         return doc.toString();
     }
 
@@ -715,6 +718,20 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setCustomSnippet(Map<ClassSnippetLocationType,List<String>> customSnippet) {
         this.customSnippet = customSnippet;
+    }
+
+    /**
+     * @return the author
+     */
+    public String getAuthor() {
+        return author;
+    }
+
+    /**
+     * @param author the author to set
+     */
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
 }

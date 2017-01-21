@@ -66,6 +66,12 @@
                 <attribute id="class" groupId="CLASS_STRUCTURE" class="java.lang.String" name="clazz">
                     <display-name>Class</display-name>
                 </attribute>
+                <attribute id="author" groupId="CLASS_STRUCTURE" class="java.lang.String" name="author">
+                    <display-name>Author</display-name>
+                </attribute> 
+                <attribute id="description" groupId="CLASS_STRUCTURE" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>
             </attributes>
         </element>
         <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
@@ -161,13 +167,6 @@
             <attributes>
                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>
-                </attribute>
-            </attributes>
-        </element>
-          <element id="ManagedClass" class="org.netbeans.jpa.modeler.spec.ManagedClass">
-            <attributes>
-                <attribute id="description" groupId="CLASS_STRUCTURE" class="java.lang.String" name="description">
-                    <display-name>Description</display-name>
                 </attribute>
             </attributes>
         </element>
