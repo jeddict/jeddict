@@ -28,6 +28,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 
 public class AttributeValidator {
 
@@ -65,9 +66,9 @@ public class AttributeValidator {
                         }
                     }
                     if (errorExist) {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().throwSignal(AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().fire(ERROR, AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
                     } else {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().clearSignal(AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().clear(ERROR, AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
                     }
 
                 }
@@ -83,9 +84,9 @@ public class AttributeValidator {
                 PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) javaClassWidget;
                 if (persistenceClassWidget.getEmbeddedIdAttributeWidget() != null) {
                     if (persistenceClassWidget.getAllEmbeddedIdAttributeWidgets().size() > 1) {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().throwSignal(AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().fire(ERROR, AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
                     } else {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getErrorHandler().clearSignal(AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
+                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().clear(ERROR, AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
                     }
                 }
             }
@@ -94,13 +95,13 @@ public class AttributeValidator {
 
     public static void scanInheritanceError(EntityWidget entityWidget) {
         if (entityWidget.getInheritanceState() == SINGLETON || entityWidget.getInheritanceState() == ROOT) {
-            for (IdAttributeWidget attributeWidget : entityWidget.getIdAttributeWidgets()) {
-                attributeWidget.getErrorHandler().clearSignal(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
-            }
+            entityWidget.getIdAttributeWidgets().forEach((attributeWidget) -> {
+                attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
+            });
         } else {
-            for (IdAttributeWidget attributeWidget : entityWidget.getIdAttributeWidgets()) {
-                attributeWidget.getErrorHandler().throwSignal(AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
-            }
+            entityWidget.getIdAttributeWidgets().forEach((attributeWidget) -> {
+                attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
+            });
         }
 
     }
@@ -110,12 +111,12 @@ public class AttributeValidator {
             if (JavaUtil.isMap(((CollectionTypeHandler) attributeWidget.getBaseElementSpec()).getCollectionType())) {
                 MapKeyHandler mapKeyHandler = (MapKeyHandler) attributeWidget.getBaseElementSpec();
                 if (mapKeyHandler.getMapKeyType() == MapKeyType.EXT && mapKeyHandler.getMapKeyAttribute() == null) {
-                    attributeWidget.getErrorHandler().throwSignal(AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
+                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
                 } else if (mapKeyHandler.getMapKeyType() == MapKeyType.NEW && mapKeyHandler.getMapKeyEntity() == null
                         && mapKeyHandler.getMapKeyEmbeddable() == null && StringUtils.isEmpty(mapKeyHandler.getMapKeyAttributeType())) {
-                    attributeWidget.getErrorHandler().throwSignal(AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
+                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
                 } else {
-                    attributeWidget.getErrorHandler().clearSignal(AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
+                    attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.INVALID_MAPKEY_ATTRIBUTE);
                 }
             }
         }

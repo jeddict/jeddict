@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import org.netbeans.jpa.modeler.core.signal.SignalManager;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,24 +27,20 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
-import org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene> extends PNodeWidget<S> implements IFlowNodeWidget<E> {
 
-    private final SignalHandler errorHandler;
-    protected final SignalHandler warningHandler;
-
+    private final SignalManager signalManager;
     public FlowNodeWidget(S scene, NodeWidgetInfo node) {
         super(scene, node);
-        errorHandler = new SignalHandler(this,StateType.ERROR);
-        warningHandler = new SignalHandler(this,StateType.WARNING);
-        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
-            setName(value);
-            setLabel(value);
-        });
+        signalManager = new SignalManager(this);
+//        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+//            setName(value);
+//            setLabel(value);
+//        });
         setAnchorGap(4);
     }
     
@@ -166,17 +163,10 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     }
 
     /**
-     * @return the errorHandler
+     * @return the signalManager
      */
-    public SignalHandler getErrorHandler() {
-        return errorHandler;
-    }
-    
-    /**
-     * @return the warningHandler
-     */
-    public SignalHandler getWarningHandler() {
-        return warningHandler;
+    public SignalManager getSignalManager() {
+        return signalManager;
     }
     
     public abstract String getIconPath();

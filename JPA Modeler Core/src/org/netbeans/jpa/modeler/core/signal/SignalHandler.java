@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.core.widget;
+package org.netbeans.jpa.modeler.core.signal;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,25 +39,27 @@ public class SignalHandler {
     private final IFlowElementWidget widget;
     private final ResourceBundleManager bundleManager = new ResourceBundleManager();
     private final StateType stateType;
+    private final SignalManager manager;
 
-    public SignalHandler(IFlowElementWidget widget, StateType stateType) {
+    public SignalHandler(IFlowElementWidget widget, StateType stateType, SignalManager manager) {
         this.stateType = stateType;
         this.widget = widget;
+        this.manager= manager;
     }
 
     private final Map<String, String> signalList = new HashMap<>();
 
-    public void throwSignal(String key, Object... param) {
+    public void fire(String key, Object... param) {
         signalList.put(key, bundleManager.get(key, param));
         print();
     }
     
-    public void throwSignal(String key) {
+    public void fire(String key) {
         signalList.put(key, bundleManager.get(key, widget.getName()));
         print();
     }
 
-    public void clearSignal(String key) {
+    public void clear(String key) {
         signalList.remove(key);
         print();
     }
@@ -79,16 +81,24 @@ public class SignalHandler {
                 imageWidget.setToolTipText(message.toString());
             }
             if (handler != null) {
-                handler.applyState(stateType);
+                handler.applyState(getStateType());
             }
         } else {
-            if (imageWidget != null) {
-                imageWidget.setToolTipText(null);
-            }
-            if (handler != null) {
-                handler.clearState(stateType);
-            }
+                if (imageWidget != null) {
+                    imageWidget.setToolTipText(null);
+                }
+                if (handler != null) {
+                    handler.clearState(getStateType());
+                }
+            manager.signalNext();
         }
+    }
+
+    /**
+     * @return the stateType
+     */
+    public StateType getStateType() {
+        return stateType;
     }
 
     private class ResourceBundleManager {

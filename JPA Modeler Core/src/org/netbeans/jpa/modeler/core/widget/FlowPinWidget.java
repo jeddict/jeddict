@@ -15,11 +15,13 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
+import org.netbeans.jpa.modeler.core.signal.SignalHandler;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.jpa.modeler.core.signal.SignalManager;
 import org.netbeans.jpa.modeler.core.widget.context.PinContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 import org.netbeans.modeler.specification.model.document.IPModelerScene;
@@ -27,23 +29,18 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.specification.model.document.widget.IFlowPinWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
-import org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType;
 import org.netbeans.modeler.widget.pin.PinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene> extends PinWidget<S> implements IFlowPinWidget<E> {
 
-    protected final SignalHandler errorHandler;
-    protected final SignalHandler warningHandler;
-
+    private final SignalManager signalManager;
     protected LabelWidget dataTypeWidget;
-    
     public FlowPinWidget(S scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.name = pinWidgetInfo.getName();
-        errorHandler = new SignalHandler(this,StateType.ERROR);
-        warningHandler = new SignalHandler(this,StateType.WARNING);
+        signalManager = new SignalManager(this);
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             setName(value);
 
@@ -157,24 +154,14 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
         }
         return contextPaletteModel;
     }
-
-    /**
-     * @return the errorHandler
-     */
-    public SignalHandler getErrorHandler() {
-        return errorHandler;
-    }
     
     /**
-     * @return the warningHandler
+     * @return the signalManager
      */
-    public SignalHandler getWarningHandler() {
-        return warningHandler;
+    public SignalManager getSignalManager() {
+        return signalManager;
     }
     
-    
-    
-
     public abstract String getIconPath();
     public abstract Image getIcon();
 

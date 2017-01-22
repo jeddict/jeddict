@@ -90,6 +90,7 @@ import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -129,17 +130,17 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             boolean failure = false;
             if (e instanceof PersistenceClassWidget) {
                 PersistenceClassWidget<ManagedClass> p = ((PersistenceClassWidget<ManagedClass>) e);
-                if (!p.getErrorHandler().getSignalList().isEmpty()) {
+                if (!p.getSignalManager().getSignalList(ERROR).isEmpty()) {
                     errorMessage.append(p.getName()).append(':').append('\n');
-                    p.getErrorHandler().getSignalList().values().forEach(v -> {
+                    p.getSignalManager().getSignalList(ERROR).values().forEach(v -> {
                         errorMessage.append('\t').append(v).append('\n');
                     });
                     failure = true;
                 }
                 for (AttributeWidget attributeWidget : p.getAllAttributeWidgets()) {
-                    if (!attributeWidget.getErrorHandler().getSignalList().isEmpty()) {
+                    if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
                         errorMessage.append('\t').append(p.getName()).append('.').append(attributeWidget.getName()).append(':').append('\n');
-                        attributeWidget.getErrorHandler().getSignalList().values().forEach(v -> {
+                        attributeWidget.getSignalManager().getSignalList(ERROR).values().forEach(v -> {
                             errorMessage.append('\t').append('\t').append(v).append('\n');
                         });
                         failure = true;

@@ -24,9 +24,7 @@ import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBBaseTable;
 import org.netbeans.db.modeler.spec.DBMapping;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE_ICON_PATH;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
@@ -34,10 +32,10 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
-import org.netbeans.jpa.modeler.spec.Table;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
@@ -72,16 +70,16 @@ public class BaseTableWidget extends TableWidget<DBBaseTable> {
         }
 
         if (SQLKeywords.isSQL99ReservedKeyword(BaseTableWidget.this.getName())) {
-            this.getErrorHandler().throwSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().fire(ERROR, EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().clear(ERROR, EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBMapping mapping = BaseTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(BaseTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().fire(ERROR, EntityValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().clear(ERROR, EntityValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

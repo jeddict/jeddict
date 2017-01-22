@@ -536,9 +536,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             if (flowElement.getName() != null) {
                 nodeWidget.setLabel(flowElement.getName());
             }
-            if (flowNode.isMinimized()) {
-                ((PNodeWidget) nodeWidget).setMinimized(true);
-            }
+            ((PNodeWidget) nodeWidget).setMinimized(flowNode.isMinimized());
 
 //            nodeWidget.i
             //clear incomming & outgoing it will added on sequenceflow auto connection

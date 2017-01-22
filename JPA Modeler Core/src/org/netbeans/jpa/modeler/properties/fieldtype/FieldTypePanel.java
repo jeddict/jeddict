@@ -108,7 +108,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     
     private String getDataType() {
         String dataType = dataType_ComboBox.getSelectedItem().toString().trim();
-        dataType = isArray(dataType) ? AttributeType.getArrayType(dataType) + " []" : dataType;
+        dataType = isArray(dataType) ? AttributeType.getArrayType(dataType) + "[]" : dataType;
         dataType_ComboBox.setSelectedItem(dataType);
         return dataType;
     }

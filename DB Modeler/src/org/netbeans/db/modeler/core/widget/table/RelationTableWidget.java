@@ -39,6 +39,7 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
@@ -73,16 +74,16 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
             setDefaultName();
         }
         if (SQLKeywords.isSQL99ReservedKeyword(RelationTableWidget.this.getName())) {
-            this.getErrorHandler().throwSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().fire(ERROR, EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().clear(ERROR, EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBMapping mapping = RelationTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(RelationTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().fire(ERROR, EntityValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().clear(ERROR, EntityValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

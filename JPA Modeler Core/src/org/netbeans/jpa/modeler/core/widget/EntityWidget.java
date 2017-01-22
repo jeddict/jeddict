@@ -41,6 +41,7 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
@@ -163,20 +164,20 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
                     : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
             
             if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
-                getErrorHandler().throwSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
+                getSignalManager().fire(ERROR, EntityValidator.NO_PRIMARYKEY_EXIST);
             } else {
-                getErrorHandler().clearSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
+                getSignalManager().clear(ERROR, EntityValidator.NO_PRIMARYKEY_EXIST);
             }
             // Issue Fix #6041 End
           List<String> idGenList = this.getAllIdAttributeWidgets().stream().filter(idAttrWid -> idAttrWid.getBaseElementSpec().getGeneratedValue()!=null &&
                     idAttrWid.getBaseElementSpec().getGeneratedValue().getStrategy()!=null).map(IdAttributeWidget::getName).collect(toList());
             if(idGenList.size()> 1){
-               getErrorHandler().throwSignal(EntityValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
+               getSignalManager().fire(ERROR, EntityValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
             } else {
-                getErrorHandler().clearSignal(EntityValidator.MANY_PRIMARYKEY_GEN_EXIST);
+                getSignalManager().clear(ERROR, EntityValidator.MANY_PRIMARYKEY_GEN_EXIST);
             }
         } else {
-            getErrorHandler().clearSignal(EntityValidator.NO_PRIMARYKEY_EXIST);
+            getSignalManager().clear(ERROR, EntityValidator.NO_PRIMARYKEY_EXIST);
         }
     }
 

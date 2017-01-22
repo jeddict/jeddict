@@ -541,6 +541,7 @@
                 <friend>org.netbeans.db.modeler</friend>
                 <friend>org.netbeans.jpa.modeler.dbre</friend>
                 <friend>org.netbeans.jpa.modeler.jcre</friend>
+                <package>org.netbeans.jpa.modeler.core.signal</package>
                 <package>org.netbeans.jpa.modeler.core.widget</package>
                 <package>org.netbeans.jpa.modeler.core.widget.attribute</package>
                 <package>org.netbeans.jpa.modeler.core.widget.attribute.base</package>

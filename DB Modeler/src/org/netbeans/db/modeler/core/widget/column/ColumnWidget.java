@@ -15,13 +15,10 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -35,9 +32,9 @@ import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 /**
@@ -190,28 +187,28 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
     protected void validateName(String name) {
         if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-            this.getErrorHandler().throwSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+            getSignalManager().fire(ERROR, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+            getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
         if (tableSpec.findColumns(name).size() > 1) {
-            getErrorHandler().throwSignal(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
+            getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         } else {
-            getErrorHandler().clearSignal(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
+            getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         }
     }
 
     protected void validateTableName(String name) {
         if (name != null && !name.trim().isEmpty()) {
             if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-                getErrorHandler().throwSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().fire(ERROR, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             } else {
-                getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         } else {
-            getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
     }
 

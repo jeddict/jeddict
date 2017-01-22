@@ -30,7 +30,6 @@ import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getAttributeSnippet;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomAnnoation;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomSnippet;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getJaxbVarTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
@@ -51,6 +50,8 @@ import org.netbeans.modeler.resource.toolbar.ImageUtil;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.generic.ElementCustomPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
@@ -119,23 +120,23 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    warningHandler.throwSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().fire(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
         this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String columnName) -> {
             if (columnName != null && !columnName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(columnName)) {
-                    warningHandler.throwSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().fire(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 } else {
-                    warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                    getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
                 }
             } else {
-                warningHandler.clearSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
         
@@ -179,14 +180,14 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     }
     private void validateName(String previousName,String name){
         if (JavaPersistenceQLKeywords.isKeyword(name)) {
-            errorHandler.throwSignal(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            getSignalManager().fire(ERROR, AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         } else {
-            errorHandler.clearSignal(AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
+            getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         }
         if(SourceVersion.isName(name)){
-            errorHandler.clearSignal(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+            getSignalManager().clear(ERROR, AttributeValidator.INVALID_ATTRIBUTE_NAME);
         } else {
-            errorHandler.throwSignal(AttributeValidator.INVALID_ATTRIBUTE_NAME);
+            getSignalManager().fire(ERROR, AttributeValidator.INVALID_ATTRIBUTE_NAME);
         }
         this.getClassWidget().scanDuplicateAttributes(previousName, name);
 

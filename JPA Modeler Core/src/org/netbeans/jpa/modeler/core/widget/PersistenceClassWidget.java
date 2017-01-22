@@ -89,6 +89,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.list
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.listener.ComboBoxListener;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.openide.util.RequestProcessor;
@@ -189,17 +190,17 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
             if (attribute.getName().equals(previousName)) {
                 if (++previousNameCount > 1) {
-                    attributeWidget.getErrorHandler().throwSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                } else if (!attributeWidget.getErrorHandler().getSignalList().isEmpty()) {
-                    attributeWidget.getErrorHandler().clearSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+                    attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
                 }
             }
 
             if (attribute.getName().equals(newName)) {
                 if (++newNameCount > 1) {
-                    attributeWidget.getErrorHandler().throwSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                } else if (!attributeWidget.getErrorHandler().getSignalList().isEmpty()) {
-                    attributeWidget.getErrorHandler().clearSignal(AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+                    attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
                 }
             }
         }

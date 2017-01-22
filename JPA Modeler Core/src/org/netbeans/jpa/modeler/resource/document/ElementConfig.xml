@@ -181,7 +181,7 @@
                
         <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
             <attributes>
-                <attribute id="entity_name" groupId="ENTITY_PROP" class="java.lang.String" name="name">
+                <attribute id="entityName" groupId="ENTITY_PROP" class="java.lang.String" name="entityName">
                     <display-name>Entity Name</display-name>
                 </attribute>
                <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">

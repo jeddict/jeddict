@@ -111,8 +111,8 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         if (StringUtils.isNotBlank(entity.getDescription())) {
             classDef.setDescription(entity.getDescription());
         }
-        if (entity.getTable() != null) {
-            classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()
+        if (StringUtils.isNotBlank(entity.getEntityName())) {
+            classDef.setEntityName(entity.getEntityName()); 
         }
         classDef.setAuthor(entity.getAuthor());
         classDef.setEntity(true);
