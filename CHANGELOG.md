@@ -1,5 +1,35 @@
 # JPA Modeler Releases #
 
+### Version 3.1 [#](https://github.com/jGauravGupta/jpamodeler/releases/3.1) ###
+
+*  Issue fix : #112 , #102 , #109 , #110 , #105 , #91
+
+### Version 3.0 [#](https://github.com/jGauravGupta/jpamodeler/releases/3.0) ###
+
+*  Angular 2.x generator (Beta)
+
+### Version 2.8 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.8) ###
+
+*  Issue fix : #112 , #102 , #109 , #110 , #105 , #91
+
+### Version 2.7.2 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.7.2) ###
+
+*  Docker support
+
+### Version 2.6.7 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.6.7) ###
+
+*  Issue fix : #87 , #84 , #83
+
+### Version 2.6.6 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.6.6) ###
+
+*  Issue fix : #86, #85
+
+### Version 2.6.5 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.6.5) ###
+
+*  Interface and custom class inheritance support
+*  Global Config for - Java8 Optional and Composite Primary key default value
+*  Minor issue fix
+
 ### Version 2.6 [#](https://github.com/jGauravGupta/jpamodeler/releases/2.6.5) ###
 
 *  Arquillian test generator support
@@ -123,8 +153,5 @@
 
 
 ### Development started ### [Feb 2013]
-
-
-### Idea Born ### [May 2011]
 
 

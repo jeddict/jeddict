@@ -43,7 +43,6 @@ import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.EmptyType;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.EntityListener;
 import org.netbeans.jpa.modeler.spec.EntityListeners;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.EntityResult;
@@ -170,6 +169,7 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
+import org.netbeans.orm.converter.compiler.OrderColumnSnippet;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
@@ -471,14 +471,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedElementCollection.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
-            }
+            } else if (parsedElementCollection.getOrderColumn()!= null) {
+                variableDef.setOrderColumn(new OrderColumnSnippet(parsedElementCollection.getOrderColumn()));
+            } 
 
             if (parsedLob != null) {
                 variableDef.setLob(true);
             }
 
             if (parsedElementCollection.getConnectedClass() == null) {//if not embeddable
-
                 EnumType parsedEnumType = parsedElementCollection.getEnumerated();
                 EnumeratedSnippet enumerated = null;
                 if (parsedEnumType != null) {
@@ -1283,7 +1284,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setJoinTable(joinTable);
             if (parsedManyToMany.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedManyToMany.getOrderBy()));
-            }
+            } else if (parsedManyToMany.getOrderColumn()!= null) {
+                variableDef.setOrderColumn(new OrderColumnSnippet(parsedManyToMany.getOrderColumn()));
+            } 
+            
+            
 //            variableDef.setType(parsedManyToMany.getAttributeType());
 
             if (parsedManyToMany.getMapKey() != null) {
@@ -1403,7 +1408,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToMany, false));
             if (parsedOneToMany.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
-            }
+            } else if (parsedOneToMany.getOrderColumn()!= null) {
+                variableDef.setOrderColumn(new OrderColumnSnippet(parsedOneToMany.getOrderColumn()));
+            } 
 
             if (parsedOneToMany.getMapKey() != null) {
                 variableDef.setMapKey(parsedOneToMany.getMapKey().getName());
@@ -1633,10 +1640,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected void processCacheable(Boolean cacheable) {
 
-        if (cacheable == null || Objects.equals(cacheable, Boolean.FALSE)) {
+        if (cacheable == null) { //Implicit Disable (!Force Disable)
             return;
         }
-        CacheableDefSnippet snippet = new CacheableDefSnippet();
+        CacheableDefSnippet snippet = new CacheableDefSnippet(cacheable);
         classDef.setCacheableDef(snippet);
     }
 

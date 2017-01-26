@@ -55,9 +55,9 @@ public class IndexSnippet implements Snippet {
         
         builder.append("columnList=\"");
         for (OrderbyItem orderbyItem : index.getColumnList()) {
-            String columnName = orderbyItem.getColumn();
+            String property = orderbyItem.getProperty();
             OrderType orderType = orderbyItem.getOrderType();
-            builder.append(columnName);
+            builder.append(property);
             if(orderType!=null){
                 builder.append(" ").append(orderType.name());
             }

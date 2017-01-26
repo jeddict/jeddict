@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.source.generator.ui;
 
-import org.netbeans.jpa.modeler.properties.classmember.ClassMemberPanel;
 import org.netbeans.jpa.modeler.properties.classmember.EntityMappingMemberPanel;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;

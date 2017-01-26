@@ -34,7 +34,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         IdentifiableClass javaClass = this.getBaseElementSpec();
-        set.put("ENTITY_PROP", getCustomArtifact(this.getModelerScene(), javaClass.getEntityListeners().getEntityListener(), "Listener"));
+        set.put("ENTITY_PROP", getCustomArtifact(this.getModelerScene(), javaClass.getEntityListeners().getEntityListener(), "Listeners"));
     }
 
     @Override

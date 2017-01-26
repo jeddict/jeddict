@@ -31,13 +31,13 @@ public class EGLeafNode extends LeafNode<NamedEntityGraph> {
 
     private final AttributeWidget leafAttributeWidget;
 
-    public EGLeafNode(AttributeWidget leafAttributeWidget, NamedEntityGraph namedEntityGraph, Children children, CheckableAttributeNode checkableNode) {
-        super(leafAttributeWidget.getModelerScene(), namedEntityGraph, children, checkableNode);
+    public EGLeafNode(AttributeWidget leafAttributeWidget, NamedEntityGraph namedEntityGraph, CheckableAttributeNode checkableNode) {
+        super(leafAttributeWidget.getModelerScene(), namedEntityGraph, checkableNode);
         this.leafAttributeWidget = leafAttributeWidget;
     }
 
-    public EGLeafNode(AttributeWidget leafAttributeWidget, NamedEntityGraph namedEntityGraph, Children children) {
-        this(leafAttributeWidget, namedEntityGraph, children, null);
+    public EGLeafNode(AttributeWidget leafAttributeWidget, NamedEntityGraph namedEntityGraph) {
+        this(leafAttributeWidget, namedEntityGraph, null);
     }
 
     public void init() {

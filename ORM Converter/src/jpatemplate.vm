@@ -166,6 +166,9 @@ $varDef.getJavaDoc()
 #if($varDef.getOrderBy())
     $varDef.getOrderBy().getSnippet()
 #end
+#if($varDef.getOrderColumn())
+    $varDef.getOrderColumn().getSnippet()
+#end
 #if($varDef.getMapKey())
     $varDef.getMapKeyString()
 #end

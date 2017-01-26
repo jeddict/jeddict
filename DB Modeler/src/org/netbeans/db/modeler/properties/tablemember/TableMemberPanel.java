@@ -22,7 +22,6 @@ import org.netbeans.db.modeler.properties.tablemember.nodes.TableMemberChildFact
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.SwingUtilities;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.properties.order.OrderColumn;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TMLeafNode;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TMRootNode;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -34,6 +33,7 @@ import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
+import org.netbeans.jpa.modeler.properties.order.type.OrderTypeColumn;
 
 public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implements ExplorerManager.Provider {
 
@@ -134,17 +134,15 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
     }
 
     private void loadColumnNode(TableMembers tableMembers, TreeNode childNode) {
-        if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
+        if (childNode.getCheckableNode() == null || !childNode.getCheckableNode().isSelected() || !childNode.getCheckableNode().isCheckEnabled()) {
             return;
         }
         if (childNode instanceof TreeChildNode) {
             String column = (String) (((TMLeafNode) childNode).getLeafColumnWidget().getBaseElementSpec()).getName();
-            if (childNode.getCheckableNode().isCheckEnabled()) {
-                if (childNode instanceof OrderColumn) {
-                    tableMembers.addColumn(column, ((OrderColumn) childNode).getOrder());
-                } else {
-                    tableMembers.addColumn(column);
-                }
+            if (childNode instanceof OrderTypeColumn) {
+                tableMembers.addColumn(column, ((OrderTypeColumn) childNode).getOrder());
+            } else {
+                tableMembers.addColumn(column);
             }
         }
     }

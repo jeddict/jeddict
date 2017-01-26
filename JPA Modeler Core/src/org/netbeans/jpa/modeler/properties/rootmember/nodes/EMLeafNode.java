@@ -1,5 +1,5 @@
 /**
- * Copyright [2016] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,12 +22,12 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.openide.nodes.Children;
 
-public class RMLeafNode extends LeafNode<EntityMappings> {
+public class EMLeafNode extends LeafNode<EntityMappings> {
 
     private final JavaClassWidget leafClassWidget;
 
-    public RMLeafNode(JavaClassWidget leafClassWidget, EntityMappings entityMappings, Children children, CheckableAttributeNode checkableNode) {
-        super(leafClassWidget.getModelerScene(), entityMappings, children, checkableNode);
+    public EMLeafNode(JavaClassWidget leafClassWidget, EntityMappings entityMappings, CheckableAttributeNode checkableNode) {
+        super(leafClassWidget.getModelerScene(), entityMappings, checkableNode);
         this.leafClassWidget = leafClassWidget;
     }
 

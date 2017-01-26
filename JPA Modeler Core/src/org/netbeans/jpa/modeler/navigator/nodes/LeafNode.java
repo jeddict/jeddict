@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.navigator.nodes;
 
+import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +35,8 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
     private List<Class<? extends LeafNodeAction>> actions;
     private List<LeafNodeAction> actionInstances;
 
-    public LeafNode(IModelerScene modelerScene, T baseElementSpec, Children children, CheckableAttributeNode checkableNode,List<Class<? extends LeafNodeAction>> actions) {
-        super(modelerScene, children, checkableNode==null?null:Lookups.singleton(checkableNode));
+    public LeafNode(IModelerScene modelerScene, T baseElementSpec, CheckableAttributeNode checkableNode,List<Class<? extends LeafNodeAction>> actions) {
+        super(modelerScene, Children.LEAF, checkableNode==null?null:Lookups.singleton(checkableNode));
         this.baseElementSpec = baseElementSpec;
         this.checkableNode = checkableNode;
         if (checkableNode != null) {
@@ -44,8 +45,8 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
         this.actions=actions;
     }
     
-    public LeafNode(IModelerScene modelerScene, T baseElementSpec, Children children, CheckableAttributeNode checkableNode) {
-        this(modelerScene,baseElementSpec,children,checkableNode, Collections.EMPTY_LIST);
+    public LeafNode(IModelerScene modelerScene, T baseElementSpec, CheckableAttributeNode checkableNode) {
+        this(modelerScene,baseElementSpec,checkableNode, Collections.EMPTY_LIST);
     }
 
 

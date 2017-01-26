@@ -21,8 +21,8 @@ import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeParentNode;
 import org.netbeans.jpa.modeler.properties.rootmember.nodes.EntityManagerChildFactory;
-import org.netbeans.jpa.modeler.properties.rootmember.nodes.RMLeafNode;
-import org.netbeans.jpa.modeler.properties.rootmember.nodes.RMRootNode;
+import org.netbeans.jpa.modeler.properties.rootmember.nodes.EMLeafNode;
+import org.netbeans.jpa.modeler.properties.rootmember.nodes.EMRootNode;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -37,7 +37,7 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
 
     private EntityMappings entityMappings;
     private JPAModelerScene scene;
-    private RMRootNode node;
+    private EMRootNode node;
 
     public EntityMappingMemberPanel(String title, JPAModelerScene scene) {
         this.scene = scene;
@@ -54,7 +54,7 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
     public void setValue(EntityMappings entityMappings) {
         this.entityMappings = entityMappings;
         SwingUtilities.invokeLater(() -> {
-            node = new RMRootNode(scene, entityMappings, new EntityManagerChildFactory(), new CheckableAttributeNode());
+            node = new EMRootNode(scene, entityMappings, new EntityManagerChildFactory(), new CheckableAttributeNode());
             manager.setRootContext(node);
             node.init();
         });
@@ -99,7 +99,7 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
         if (parentNode instanceof TreeParentNode) {
             for (TreeNode childNode : ((TreeParentNode<EntityMappings>) parentNode).getChildList()) {
                 if (childNode instanceof TreeChildNode && childNode.getCheckableNode() != null) {
-                    JavaClass javaClass = ((JavaClass) (((RMLeafNode) childNode).getLeafWidget().getBaseElementSpec()));
+                    JavaClass javaClass = ((JavaClass) (((EMLeafNode) childNode).getLeafWidget().getBaseElementSpec()));
                     javaClass.setGenerateSourceCode(childNode.getCheckableNode().isSelected());
                 }
             }

@@ -23,11 +23,20 @@ import org.netbeans.orm.converter.generator.GeneratorUtil;
 
 public class CacheableDefSnippet implements Snippet {
 
+    private Boolean status;
+
+    public CacheableDefSnippet(Boolean status) {
+        this.status = status;
+    }
+    
+    
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         builder.append("@").append(CACHEABLE);
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if(status!=null && !status){
+            builder.append("(false)");
+        } else if (GeneratorUtil.isGenerateDefaultValue()) {
             builder.append("(true)");
         }
         return builder.toString();

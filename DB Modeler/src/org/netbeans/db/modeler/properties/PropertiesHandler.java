@@ -36,7 +36,7 @@ public class PropertiesHandler {
 
     public static PropertySupport getIndexProperties(TableWidget<? extends DBTable> tableWidget) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("Index", "Index", "Index of Database Table");
-        attributeEntity.setCountDisplay(new String[]{"No Indexs exist", "One Index exist", "Indexs exist"});
+        attributeEntity.setCountDisplay(new String[]{"No Index exist", "One Index exist", "Indexes exist"});
         List<Index> indices = tableWidget.getBaseElementSpec().getIndexes();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));

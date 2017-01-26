@@ -22,7 +22,6 @@ import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.properties.tablemember.TableMembers;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 public class TableMemberChildFactory extends TreeChildFactory<TableMembers, ColumnWidget> {
@@ -49,7 +48,7 @@ public class TableMemberChildFactory extends TreeChildFactory<TableMembers, Colu
             }
         }
 
-        childNode = new TMLeafNode(columnWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode, null);
+        childNode = new TMLeafNode(columnWidget, parentNode.getBaseElementSpec(), checkableNode, null);
 
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);

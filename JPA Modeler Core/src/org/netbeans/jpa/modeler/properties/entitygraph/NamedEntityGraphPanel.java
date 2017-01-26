@@ -17,7 +17,7 @@ package org.netbeans.jpa.modeler.properties.entitygraph;
 
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import static javax.swing.SwingUtilities.invokeLater;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGInternalNode;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGLeafNode;
@@ -53,8 +53,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
 
     @Override
     public void init() {
-
-        SwingUtilities.invokeLater(() -> {
+        invokeLater(() -> {
             node = new EGRootNode(entityWidget, namedEntityGraph, new NamedEGChildFactory(), new CheckableAttributeNode(namedEntityGraph != null));
             manager.setRootContext(node);
             node.init();
@@ -239,21 +238,14 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         return true;
     }
 
-    void loadEntityGraph(NamedEntityGraph namedEntityGraph, TreeNode parentNode) {
-        if (parentNode instanceof EGRootNode) {
-            for (TreeNode childNode : ((EGRootNode) parentNode).getChildList()) {
-                loadSubGraph(namedEntityGraph, childNode);
-            }
-        } else if (parentNode instanceof EGInternalNode) {
-            for (TreeNode childNode : ((EGInternalNode) parentNode).getChildList()) {
-                loadSubGraph(namedEntityGraph, childNode);
-            }
+    void loadEntityGraph(NamedEntityGraph namedEntityGraph) {
+        for (TreeNode childNode : node.getChildList()) {
+            loadSubGraph(namedEntityGraph, childNode);
         }
-
     }
 
     void loadSubGraph(NamedEntityGraph namedEntityGraph, TreeNode childNode) {
-        if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
+        if (childNode.getCheckableNode() == null || !childNode.getCheckableNode().isSelected()) {
             return;
         }
 
@@ -279,7 +271,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
     }
 
     void loadSubGraph(NamedEntityGraph namedEntityGraph, NamedSubgraph subGraph, TreeNode childNode) {
-        if (childNode.getCheckableNode() != null && !childNode.getCheckableNode().isSelected()) {
+        if (childNode.getCheckableNode() == null || !childNode.getCheckableNode().isSelected()) {
             return;
         }
         if (childNode instanceof EGInternalNode) {
@@ -319,7 +311,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
         }
 
         namedEntityGraph.setName(name_TextField.getText());
-        loadEntityGraph(namedEntityGraph, node);
+        loadEntityGraph(namedEntityGraph);
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -336,7 +328,7 @@ public class NamedEntityGraphPanel extends EntityComponent<NamedEntityGraph> imp
 
     private void finalGraph_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finalGraph_ButtonActionPerformed
         NamedEntityGraph namedEntityGraph = new NamedEntityGraph();
-        loadEntityGraph(namedEntityGraph, node);
+        loadEntityGraph(namedEntityGraph);
         ExecutionGraphPanel dialog = new ExecutionGraphPanel(entityWidget, namedEntityGraph);
         dialog.setVisible(true);
         if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {

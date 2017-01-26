@@ -21,15 +21,14 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
 import org.netbeans.db.modeler.properties.tablemember.TableMembers;
-import org.netbeans.jpa.modeler.navigator.nodes.LeafNodeAction;
-import org.openide.nodes.Children;
+import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 
 public class TMLeafNode extends LeafNode<TableMembers> {
 
     private final ColumnWidget leafColumnWidget;
 
-    public TMLeafNode(ColumnWidget leafAttributeWidget, TableMembers tableMembers, Children children, CheckableAttributeNode checkableNode, List<Class<? extends LeafNodeAction>> actions) {
-        super(leafAttributeWidget.getModelerScene(), tableMembers, children, checkableNode, actions);
+    public TMLeafNode(ColumnWidget leafAttributeWidget, TableMembers tableMembers, CheckableAttributeNode checkableNode, List<Class<? extends LeafNodeAction>> actions) {
+        super(leafAttributeWidget.getModelerScene(), tableMembers, checkableNode, actions);
         this.leafColumnWidget = leafAttributeWidget;
     }
 

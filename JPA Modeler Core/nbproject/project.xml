@@ -553,6 +553,7 @@
                 <package>org.netbeans.jpa.modeler.core.widget.ui</package>
                 <package>org.netbeans.jpa.modeler.navigator.dbview</package>
                 <package>org.netbeans.jpa.modeler.navigator.nodes</package>
+                <package>org.netbeans.jpa.modeler.navigator.nodes.actions</package>
                 <package>org.netbeans.jpa.modeler.navigator.overrideview</package>
                 <package>org.netbeans.jpa.modeler.properties</package>
                 <package>org.netbeans.jpa.modeler.properties.cascade</package>
@@ -564,6 +565,7 @@
                 <package>org.netbeans.jpa.modeler.properties.named.query</package>
                 <package>org.netbeans.jpa.modeler.properties.named.resultsetmapping</package>
                 <package>org.netbeans.jpa.modeler.properties.named.storedprocedurequery</package>
+                <package>org.netbeans.jpa.modeler.properties.order.type</package>
                 <package>org.netbeans.jpa.modeler.properties.validation</package>
                 <package>org.netbeans.jpa.modeler.rules.attribute</package>
                 <package>org.netbeans.jpa.modeler.rules.entity</package>

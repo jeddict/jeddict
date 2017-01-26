@@ -15,12 +15,11 @@
  */
 package org.netbeans.db.modeler.properties.index;
 
-import org.netbeans.db.modeler.properties.order.OrderAction;
+import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import java.util.Collections;
 import org.netbeans.db.modeler.properties.tablemember.nodes.*;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 public class IndexChildFactory extends TableMemberChildFactory {
@@ -36,7 +35,7 @@ public class IndexChildFactory extends TableMemberChildFactory {
             }
         }
 
-        childNode = new IndexNode(columnWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode ,Collections.singletonList(OrderAction.class));
+        childNode = new IndexNode(columnWidget, parentNode.getBaseElementSpec(), checkableNode ,Collections.singletonList(OrderAction.class));
         if(checkableNode.isSelected()){
             childNode.setOrder(parentNode.getBaseElementSpec().findColumn(columnWidget.getName()).get().getOrderType());
         }

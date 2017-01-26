@@ -52,8 +52,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
         nullable_CheckBox.setSelected(true);
         insertable_CheckBox.setSelected(true);
         updatable_CheckBox.setSelected(true);
-//        JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, null);
-
+//      JPAModelerUtil.initReferencedColumnModel(referencedColumnName_ComboBox, entity, null);
     }
 
     @Override

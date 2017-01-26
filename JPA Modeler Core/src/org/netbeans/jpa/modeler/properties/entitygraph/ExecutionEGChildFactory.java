@@ -139,7 +139,7 @@ public class ExecutionEGChildFactory extends TreeChildFactory<NamedEntityGraph, 
             ExecutionEGChildFactory childFactory = new ExecutionEGChildFactory(loadGraph);//parentWidget, relationAttributeWidget, targetEntityWidget);
             childNode = new EGInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory);
         } else {
-            childNode = new EGLeafNode(attributeWidget, parentNode.getBaseElementSpec(), Children.LEAF);
+            childNode = new EGLeafNode(attributeWidget, parentNode.getBaseElementSpec());
         }
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);

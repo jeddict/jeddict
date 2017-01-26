@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,44 +13,40 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.properties.entitygraph;
+package org.netbeans.jpa.modeler.properties.order.by;
 
+import java.util.Arrays;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import java.util.List;
+import java.util.Optional;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
-import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGInternalNode;
-import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGLeafNode;
-import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGRootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
+import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
-import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
-import org.netbeans.jpa.modeler.spec.NamedSubgraph;
+import org.netbeans.jpa.modeler.spec.OrderBy;
+import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class NamedEGChildFactory extends TreeChildFactory<NamedEntityGraph, AttributeWidget> {
+public class OrderByChildFactory extends TreeChildFactory<OrderBy,AttributeWidget> {
 
     @Override
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
         PersistenceClassWidget<? extends ManagedClass> classWidget = null;
-        if (parentNode instanceof EGRootNode) {
-            classWidget = ((EGRootNode) parentNode).getRootWidget();
-        } else if (parentNode instanceof EGInternalNode) {
-            classWidget = ((EGInternalNode) parentNode).getParentWidget();
+        if (parentNode instanceof OBRootNode) {
+            classWidget = ((OBRootNode) parentNode).getRootWidget();
+        } else if (parentNode instanceof OBInternalNode) {
+            classWidget = ((OBInternalNode) parentNode).getParentWidget();
         }
         if (classWidget != null) {
             for (AttributeWidget attributeWidget : classWidget.getAllAttributeWidgets()) {
@@ -61,7 +57,6 @@ public class NamedEGChildFactory extends TreeChildFactory<NamedEntityGraph, Attr
                 }
             }
         }
-
         return true;
     }
 
@@ -69,33 +64,25 @@ public class NamedEGChildFactory extends TreeChildFactory<NamedEntityGraph, Attr
     protected Node createNodeForKey(final AttributeWidget attributeWidget) {
         TreeChildNode childNode;
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
-        NamedSubgraph subgraph = null;
-
-        boolean isPK = attributeWidget instanceof IdAttributeWidget || attributeWidget instanceof EmbeddedIdAttributeWidget || attributeWidget instanceof VersionAttributeWidget;
-
-        if (parentNode.getBaseElementSpec() != null && !isPK) {
-            Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
-            NamedAttributeNode namedAttributeNode = null;
-            if (parentNode instanceof EGRootNode) {
-                namedAttributeNode = parentNode.getBaseElementSpec().findNamedAttributeNode(attribute.getName());
-            } else if (parentNode instanceof EGInternalNode && ((EGInternalNode) parentNode).getSubgraph() != null) {
-                namedAttributeNode = ((EGInternalNode) parentNode).getSubgraph().findNamedAttributeNode(attribute.getName());
+        Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
+        String propertyPath = null;
+        if (parentNode.getBaseElementSpec() != null) {
+            if (parentNode instanceof OBRootNode) {
+                propertyPath = attribute.getName();
+            } else if (parentNode instanceof OBInternalNode && ((OBInternalNode) parentNode).getPropertyPath() != null) {
+                propertyPath = ((OBInternalNode) parentNode).getPropertyPath() + '.' + attribute.getName();
             }
-
-            if (namedAttributeNode != null) {
-                checkableNode.setSelected(Boolean.TRUE);
-                if (namedAttributeNode.getSubgraph() != null && !namedAttributeNode.getSubgraph().isEmpty()) {
-                    subgraph = parentNode.getBaseElementSpec().findSubgraph(namedAttributeNode.getSubgraph());
-                }
+            if (propertyPath != null) {
+                checkableNode.setSelected(parentNode.getBaseElementSpec().isExist(propertyPath));
             }
         }
-
+        
         if (attributeWidget instanceof EmbeddedAttributeWidget) {
             EmbeddedAttributeWidget embeddedAttributeWidget = (EmbeddedAttributeWidget) attributeWidget;
             EmbeddableWidget embeddableWidget = embeddedAttributeWidget.getEmbeddableFlowWidget().getTargetEmbeddableWidget();
 
-            NamedEGChildFactory childFactory = new NamedEGChildFactory();//parentWidget, embeddedAttributeWidget, embeddableWidget );
-            childNode = new EGInternalNode(embeddableWidget, embeddedAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory, checkableNode);
+            OrderByChildFactory childFactory = new OrderByChildFactory();
+            childNode = new OBInternalNode(embeddableWidget, embeddedAttributeWidget, parentNode.getBaseElementSpec(), propertyPath, childFactory, checkableNode);
         } else if (attributeWidget instanceof RelationAttributeWidget) {
             RelationAttributeWidget relationAttributeWidget = (RelationAttributeWidget) attributeWidget;
             IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
@@ -107,20 +94,16 @@ public class NamedEGChildFactory extends TreeChildFactory<NamedEntityGraph, Attr
                 targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
             }
 
-            NamedEGChildFactory childFactory = new NamedEGChildFactory();//parentWidget, relationAttributeWidget, targetEntityWidget);
-            childNode = new EGInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory, checkableNode);
+            OrderByChildFactory childFactory = new OrderByChildFactory();//parentWidget, relationAttributeWidget, targetEntityWidget);
+            childNode = new OBInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getBaseElementSpec(), propertyPath, childFactory, checkableNode);
         } else {
-            childNode = new EGLeafNode(attributeWidget, parentNode.getBaseElementSpec(), checkableNode);
+            childNode = new OBLeafNode(attributeWidget, parentNode.getBaseElementSpec(), checkableNode, Arrays.asList(OrderAction.class));
+            parentNode.getBaseElementSpec().getOrderType(propertyPath).ifPresent(ot -> ((OBLeafNode)childNode).setOrder(ot));
         }
+
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
         childNode.init();
-
-        if (isPK) {
-            checkableNode.setCheckEnabled(Boolean.FALSE);
-            checkableNode.setEnableWithParent(Boolean.TRUE);
-        }
-
         return (Node) childNode;
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright [2016] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,12 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.navigator.nodes;
+package org.netbeans.jpa.modeler.properties.order.type;
 
-public interface LeafNodeAction {
-    
-    void setNode(LeafNode node);
-    
-    LeafNode getNode();
-    
+import org.netbeans.jpa.modeler.spec.OrderType;
+
+public interface OrderTypeColumn {
+
+    /**
+     * @return the order
+     */
+    public OrderType getOrder();
+
+    /**
+     * @param order the order to set
+     */
+    public void setOrder(OrderType order);
 }

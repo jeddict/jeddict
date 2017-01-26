@@ -18,7 +18,6 @@ package org.netbeans.db.modeler.properties.uniqueconstraint;
 import java.util.ArrayList;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -184,7 +183,11 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
         if (!validateField()) {
             return;
         }
-        uniqueConstraint.setColumnName(new ArrayList<>(((TableMemberPanel) classMemberPanel).getValue().getColumns().stream().map(c -> c.getColumn()).collect(toList())));
+        uniqueConstraint.setColumnName(new ArrayList<>(
+                ((TableMemberPanel) classMemberPanel).getValue().getColumns().stream()
+                .map(c -> c.getProperty())
+                .collect(toList())
+        ));
         uniqueConstraint.setName(nameTextField.getText());
 
         if (this.getEntity().getClass() == RowValue.class) {

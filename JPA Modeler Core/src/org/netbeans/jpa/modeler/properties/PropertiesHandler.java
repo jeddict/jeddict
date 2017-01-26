@@ -58,6 +58,9 @@ import org.netbeans.jpa.modeler.properties.named.nativequery.NamedNativeQueryPan
 import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
+import org.netbeans.jpa.modeler.properties.order.OrderPanel;
+import static org.netbeans.jpa.modeler.properties.order.OrderPanel.ORDER_BY;
+import static org.netbeans.jpa.modeler.properties.order.OrderPanel.ORDER_COLUMN;
 import org.netbeans.jpa.modeler.properties.pkjoincolumn.PrimaryKeyJoinColumnPanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.AccessType;
@@ -127,6 +130,7 @@ import org.openide.windows.WindowManager;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
+import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
 import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
@@ -1691,6 +1695,76 @@ public class PropertiesHandler {
 
         });
         return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
+    }
+ 
+    public static EmbeddedPropertySupport getOrderProperty(AttributeWidget attributeWidget) {
+
+        GenericEmbedded entity = new GenericEmbedded("order", "Order", "");
+        OrderPanel orderPanel = new OrderPanel(attributeWidget);
+        entity.setEntityEditor(orderPanel);
+
+        entity.setDataListener(new EmbeddedDataListener<SortableAttribute>() {
+            private SortableAttribute sortableAttribute;
+
+            @Override
+            public void init() {
+                sortableAttribute = (SortableAttribute)attributeWidget.getBaseElementSpec();
+            }
+
+            @Override
+            public SortableAttribute getData() {
+                return sortableAttribute;
+            }
+
+            @Override
+            public void setData(SortableAttribute attribute) {
+            }
+
+            @Override
+            public String getDisplay() {
+                return OrderPanel.getStateDisplay(sortableAttribute);
+            }
+
+        });
+        return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
+    }
+
+    
+    public static ComboBoxPropertySupport getCacheableProperty(EntityWidget entityWidget) {
+        Entity entity = entityWidget.getBaseElementSpec();
+        ComboBoxListener<Boolean> comboBoxListener = new ComboBoxListener<Boolean>() {
+            @Override
+            public void setItem(ComboBoxValue<Boolean> value) {
+                entity.setCacheable(value.getValue());
+            }
+
+            @Override
+            public ComboBoxValue<Boolean> getItem() {
+                if (entity.getCacheable() != null) {
+                    return new ComboBoxValue<>(entity.getCacheable(), entity.getCacheable()
+                            ?getMessage(PropertiesHandler.class, "LBL_ENABLE")
+                            :getMessage(PropertiesHandler.class, "LBL_FORCE_DISABLE"));
+                } else {
+                    return new ComboBoxValue<>(null, getMessage(PropertiesHandler.class, "LBL_DISABLE"));
+                }
+            }
+
+            @Override
+            public List<ComboBoxValue<Boolean>> getItemList() {
+                ComboBoxValue<Boolean>[] values;
+                values = new ComboBoxValue[]{
+                    new ComboBoxValue<>(null, getMessage(PropertiesHandler.class, "LBL_DISABLE")),
+                    new ComboBoxValue<>(true, getMessage(PropertiesHandler.class, "LBL_ENABLE")),
+                    new ComboBoxValue<>(false, getMessage(PropertiesHandler.class, "LBL_FORCE_DISABLE"))};
+                return Arrays.asList(values);
+            }
+
+            @Override
+            public String getDefaultText() {
+                return getMessage(PropertiesHandler.class, "LBL_DISABLE");
+            }
+        };
+        return new ComboBoxPropertySupport(entityWidget.getModelerScene().getModelerFile(), "cacheable", "Cacheable", "", comboBoxListener);
     }
 
 }

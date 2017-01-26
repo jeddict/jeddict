@@ -60,43 +60,37 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private JaxbXmlElement jaxbXmlElement;
     private List<JaxbXmlElement> jaxbXmlElementList;
 
-    private boolean autoGenerate = false;
-    private boolean embedded = false;
-    private boolean embeddedId = false;
-    private boolean lob = false;
-    private boolean primaryKey = false;
-    private boolean tranzient = false;
-    private boolean version = false;
+    private boolean autoGenerate;
+    private boolean embedded;
+    private boolean embeddedId;
+    private boolean lob;
+    private boolean primaryKey;
+    private boolean tranzient;
+    private boolean version;
 
     private String name;
     private String defaultValue;
-
     private String description;
     private final ClassHelper classHelper = new ClassHelper();
-    //TODO: See if these 2 can be as a class
-    private String mapKey = null;
-
-    private BasicSnippet basic = null;
-    private ElementCollectionSnippet elementCollection = null;
-
-    private ColumnDefSnippet columnDef = null;
-    private RelationDefSnippet relationDef = null;
-    private OrderBySnippet orderBy = null;
-    private JoinColumnsSnippet joinColumns = null;
-    private JoinTableSnippet joinTable = null;
-    private CollectionTableSnippet collectionTable = null;
-    private GeneratedValueSnippet generatedValue = null;
-    private TableGeneratorSnippet tableGenerator = null;
-    private SequenceGeneratorSnippet sequenceGenerator = null;
-    private EnumeratedSnippet enumerated = null;
-    private TemporalSnippet temporal = null;
-    private AssociationOverridesSnippet associationOverrides = null;
-    private AttributeOverridesSnippet attributeOverrides = null;
-
-    private TypeIdentifierSnippet typeIdentifier = null;
-
+    private String mapKey;
+    private BasicSnippet basic;
+    private ElementCollectionSnippet elementCollection;
+    private ColumnDefSnippet columnDef;
+    private RelationDefSnippet relationDef;
+    private OrderBySnippet orderBy;
+    private OrderColumnSnippet orderColumn;
+    private JoinColumnsSnippet joinColumns;
+    private JoinTableSnippet joinTable;
+    private CollectionTableSnippet collectionTable;
+    private GeneratedValueSnippet generatedValue;
+    private TableGeneratorSnippet tableGenerator;
+    private SequenceGeneratorSnippet sequenceGenerator;
+    private EnumeratedSnippet enumerated;
+    private TemporalSnippet temporal;
+    private AssociationOverridesSnippet associationOverrides;
+    private AttributeOverridesSnippet attributeOverrides;
+    private TypeIdentifierSnippet typeIdentifier;
     private Attribute attribute;
-    
     private Map<AttributeSnippetLocationType,List<String>> customSnippet;
 
     public VariableDefSnippet() {
@@ -358,6 +352,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
         if (orderBy != null) {
             importSnippets.addAll(orderBy.getImportSnippets());
+        }
+        
+        if (orderColumn != null) {
+            importSnippets.addAll(orderColumn.getImportSnippets());
         }
 
         if (joinColumns != null) {
@@ -799,5 +797,19 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setCustomSnippet(Map<AttributeSnippetLocationType,List<String>> customSnippet) {
         this.customSnippet = customSnippet;
+    }
+
+    /**
+     * @return the orderColumn
+     */
+    public OrderColumnSnippet getOrderColumn() {
+        return orderColumn;
+    }
+
+    /**
+     * @param orderColumn the orderColumn to set
+     */
+    public void setOrderColumn(OrderColumnSnippet orderColumn) {
+        this.orderColumn = orderColumn;
     }
 }

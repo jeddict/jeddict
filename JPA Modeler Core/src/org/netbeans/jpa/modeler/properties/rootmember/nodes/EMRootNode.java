@@ -1,5 +1,5 @@
 /**
- * Copyright [2016] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,11 +22,11 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 
-public class RMRootNode extends RootNode<EntityMappings> {
+public class EMRootNode extends RootNode<EntityMappings> {
 
     private final JPAModelerScene scene;
 
-    public RMRootNode(JPAModelerScene scene, EntityMappings entityMappings, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
+    public EMRootNode(JPAModelerScene scene, EntityMappings entityMappings, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
         super(entityMappings, childFactory, checkableNode);
         this.scene = scene;
     }

@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import java.awt.Image;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getOrderProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
@@ -48,6 +49,7 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         ElementCollection elementCollectionSpec = this.getBaseElementSpec();
+        set.put("BASIC_PROP", getOrderProperty(this));
         set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());

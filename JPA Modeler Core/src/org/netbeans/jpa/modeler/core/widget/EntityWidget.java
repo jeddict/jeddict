@@ -30,6 +30,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCacheableProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEntityDisplayProperty;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -106,16 +107,15 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         set.createPropertySet(this, entity.getTable(), getPropertyChangeListeners());
 
         if (entity instanceof InheritanceHandler) {
-            set.put("BASIC_PROP", getInheritanceProperty(EntityWidget.this));
+            set.put("ENTITY_PROP", getInheritanceProperty(this));
         }
+        set.put("ENTITY_PROP", getCacheableProperty(this));
         
-        set.put("BASIC_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
-        set.put("BASIC_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), entity.getAttributeOverride()));
-        set.put("BASIC_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), entity.getAssociationOverride()));
-        
-        
-        
-        set.put("UI_PROP", getEntityDisplayProperty(EntityWidget.this));
+        set.put("ENTITY_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
+        set.put("ENTITY_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), entity.getAttributeOverride()));
+        set.put("ENTITY_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), entity.getAssociationOverride()));
+                
+        set.put("UI_PROP", getEntityDisplayProperty(this));
 
         set.put("QUERY", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));
         set.put("QUERY", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));

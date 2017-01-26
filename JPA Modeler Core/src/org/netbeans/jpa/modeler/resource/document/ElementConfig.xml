@@ -140,19 +140,19 @@
                    <attribute id="updatable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="updatable">
                     <display-name>Updatable</display-name>
                 </attribute>
-                <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length">
+                <attribute id="length" groupId="COLUMN_PROP" class="java.lang.Integer" name="length">
                     <display-name>Length</display-name>
                     <visible><![CDATA[
                                   node.isTextAttributeType()
                                 ]]></visible>
                 </attribute>
-                <attribute id="precision" groupId="BASIC_PROP" class="java.lang.Integer" name="precision">
+                <attribute id="precision" groupId="COLUMN_PROP" class="java.lang.Integer" name="precision">
                     <display-name>Precision</display-name>
                     <visible><![CDATA[
                                   node.isPrecisionAttributeType()
                                 ]]></visible>
                 </attribute>
-                <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Integer" name="scale">
+                <attribute id="scale" groupId="COLUMN_PROP" class="java.lang.Integer" name="scale">
                     <display-name>Scale</display-name>
                     <visible><![CDATA[
                                   node.isScaleAttributeType()
@@ -186,9 +186,6 @@
                 </attribute>
                <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
-                </attribute>
-                <attribute id="cacheable" groupId="ENTITY_PROP" class="java.lang.Boolean" name="cacheable">
-                    <display-name>Is Cacheable</display-name>
                 </attribute>
                  <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>

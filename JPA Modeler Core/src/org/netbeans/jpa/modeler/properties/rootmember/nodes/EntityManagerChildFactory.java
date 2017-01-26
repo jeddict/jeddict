@@ -30,8 +30,8 @@ public class EntityManagerChildFactory extends TreeChildFactory<EntityMappings ,
     @Override
     protected boolean createKeys(List<JavaClassWidget> javaClassWidgets) {
         JPAModelerScene scene = null;
-        if (parentNode instanceof RMRootNode) {
-            scene = ((RMRootNode) parentNode).getRootWidget();
+        if (parentNode instanceof EMRootNode) {
+            scene = ((EMRootNode) parentNode).getRootWidget();
         }
         if (scene != null) {
             javaClassWidgets.addAll(scene.getJavaClassWidges());
@@ -41,13 +41,13 @@ public class EntityManagerChildFactory extends TreeChildFactory<EntityMappings ,
 
     @Override
     protected Node createNodeForKey(final JavaClassWidget javaClassWidget) {
-        RMLeafNode childNode;
+        EMLeafNode childNode;
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
         JavaClass javaClass = (JavaClass) javaClassWidget.getBaseElementSpec();
 
         checkableNode.setSelected(javaClass.getGenerateSourceCode());
 
-        childNode = new RMLeafNode(javaClassWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode);
+        childNode = new EMLeafNode(javaClassWidget, parentNode.getBaseElementSpec(), checkableNode);
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
         childNode.init();

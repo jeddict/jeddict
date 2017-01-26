@@ -50,7 +50,7 @@ public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers,Attri
             checkableNode.setSelected(parentNode.getBaseElementSpec().isExist(attribute));
         }
 
-        childNode = new CMLeafNode(attributeWidget, parentNode.getBaseElementSpec(), Children.LEAF, checkableNode);
+        childNode = new CMLeafNode(attributeWidget, parentNode.getBaseElementSpec(), checkableNode);
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
         childNode.init();

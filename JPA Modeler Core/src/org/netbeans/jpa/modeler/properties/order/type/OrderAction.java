@@ -1,5 +1,5 @@
 /**
- * Copyright [2016] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,15 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.db.modeler.properties.order;
+package org.netbeans.jpa.modeler.properties.order.type;
 
 import java.awt.event.ActionEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-
 import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
-import org.netbeans.jpa.modeler.navigator.nodes.LeafNodeAction;
+import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 import org.netbeans.jpa.modeler.spec.OrderType;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
@@ -62,22 +61,22 @@ public class OrderAction extends NodeAction implements Presenter.Popup, LeafNode
         JMenu submenu = new JMenu(this);
         JRadioButtonMenuItem ASC_item = new JRadioButtonMenuItem(Bundle.Order_ASC());
         ASC_item.addActionListener((ActionEvent e) -> {
-            if (getNode() instanceof OrderColumn) {
-                ((OrderColumn) getNode()).setOrder(OrderType.ASC);
+            if (getNode() instanceof OrderTypeColumn) {
+                ((OrderTypeColumn) getNode()).setOrder(OrderType.ASC);
                 ASC_item.setSelected(true);
             }
         });
         JRadioButtonMenuItem DESC_item = new JRadioButtonMenuItem(Bundle.Order_DESC());
         DESC_item.addActionListener((ActionEvent e) -> {
-            if (getNode() instanceof OrderColumn) {
-                ((OrderColumn) getNode()).setOrder(OrderType.DESC);
+            if (getNode() instanceof OrderTypeColumn) {
+                ((OrderTypeColumn) getNode()).setOrder(OrderType.DESC);
                 DESC_item.setSelected(true);
             }
         });
         submenu.add(ASC_item);
         submenu.add(DESC_item);
-        if (getNode() instanceof OrderColumn) {
-            if(((OrderColumn) getNode()).getOrder() == OrderType.DESC){
+        if (getNode() instanceof OrderTypeColumn) {
+            if(((OrderTypeColumn) getNode()).getOrder() == OrderType.DESC){
                 DESC_item.setSelected(true);
             } else {
                 ASC_item.setSelected(true);
