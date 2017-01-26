@@ -33,7 +33,7 @@ public abstract class MultiRelationAttributeWidget<E extends MultiRelationAttrib
         super(scene, nodeWidget, pinWidgetInfo);
     }
     
-        @Override
+    @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         MultiRelationAttribute relationAttributeSpec = this.getBaseElementSpec();
