@@ -2,7 +2,7 @@
 
 ### Version 3.1 [#](https://github.com/jGauravGupta/jpamodeler/releases/3.1) ###
 
-*  Issue fix : #117 , #121 , #123 , #125
+*  Issue fix : #117 , #121 , #123 , #125 , #127
 
 ### Version 3.0 [#](https://github.com/jGauravGupta/jpamodeler/releases/3.0) ###
 

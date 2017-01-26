@@ -225,7 +225,6 @@
             <attributes>
                 <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
-                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isOptionalReturnType()==true]]></visible>
                 </attribute>
             </attributes>
         </element>
@@ -233,7 +232,6 @@
             <attributes>
                 <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
-                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isOptionalReturnType()==true]]></visible>
                 </attribute>
             </attributes>
         </element>
@@ -241,7 +239,6 @@
             <attributes>
                 <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
-                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isOptionalReturnType()==true]]></visible>
                 </attribute>
             </attributes>
         </element>
@@ -254,7 +251,6 @@
                 
                 <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
-                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isOptionalReturnType()==true]]></visible>
                 </attribute>
                 <attribute id="orphanRemoval" groupId="BASIC_PROP" class="java.lang.Boolean" name="orphanRemoval">
                     <display-name>Orphan Removal</display-name>
@@ -281,10 +277,8 @@
                 <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
                 </attribute>
-                
                 <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
-                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isOptionalReturnType()==true]]></visible>
                 </attribute>
             </attributes>
         </element>
