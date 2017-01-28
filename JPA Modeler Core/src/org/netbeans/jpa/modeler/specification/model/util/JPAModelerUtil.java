@@ -1407,6 +1407,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     public static void generateSourceCode(ModelerFile modelerFile, Runnable afterExecution) {
+        if (!((JPAModelerScene) modelerFile.getModelerScene()).compile()) {
+            return;
+        }
         GenerateCodeDialog dialog = new GenerateCodeDialog(modelerFile);
         dialog.setVisible(true);
         if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {

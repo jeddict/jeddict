@@ -67,6 +67,7 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.modeler.core.ModelerFile;
@@ -188,6 +189,15 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
             }
         }
 
+        if (attribute instanceof ColumnHandler) { //Issue : #130
+            ColumnHandler columnHandler = (ColumnHandler) attribute;
+            Integer length = columnHandler.getColumn().getLength();
+            Integer precision = columnHandler.getColumn().getPrecision();
+            Integer scale = columnHandler.getColumn().getScale();
+            columnHandler.getColumn().setLength(!attribute.isTextAttributeType(dataType) ? null : (length==null?255:length));
+            columnHandler.getColumn().setPrecision(!attribute.isPrecisionAttributeType(dataType) ? null : (precision==null?0:precision));
+            columnHandler.getColumn().setScale(!attribute.isScaleAttributeType(dataType) ? null : (scale==null?0:scale));
+        }
         return attribute;
     }
 
