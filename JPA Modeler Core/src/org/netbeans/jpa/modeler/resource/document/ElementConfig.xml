@@ -91,6 +91,16 @@
                         If unselected, attribute will not be available in frontend.
                     </description>
                 </attribute>
+                <attribute id="propertyChangeSupport" groupId="BASIC_PROP" class="java.lang.Boolean" name="propertyChangeSupport">
+                    <display-name>Property Change Support</display-name>
+                    <description>Property Change Support</description>
+                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
+                </attribute>
+                <attribute id="vetoableChangeSupport" groupId="BASIC_PROP" class="java.lang.Boolean" name="vetoableChangeSupport">
+                    <display-name>Vetoable Change Support</display-name>
+                    <description>Vetoable Change Support</description>
+                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
+                </attribute>
             </attributes>
         </element>
         <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">

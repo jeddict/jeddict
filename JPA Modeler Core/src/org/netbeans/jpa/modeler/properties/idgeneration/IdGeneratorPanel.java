@@ -32,7 +32,6 @@ import org.openide.windows.WindowManager;
  */
 public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
 
-    private ModelerFile modelerFile;
     private Id idAttributeSpec;
 
     @Override
@@ -179,10 +178,6 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
             tabgen_valuecol_initialValue_Spinner.setValue(0);
             tabgen_valuecol_allocationSize_Spinner.setValue(50);
         }
-    }
-
-    public IdGeneratorPanel(ModelerFile modelerFile) {
-        this.modelerFile = modelerFile;
     }
 
     /**

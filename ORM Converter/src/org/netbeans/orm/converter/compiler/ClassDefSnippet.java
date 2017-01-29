@@ -58,7 +58,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private ToStringMethodSnippet toStringMethodSnippet;
 
     private List<AnnotationSnippet> annotation;
-    private Map<ClassSnippetLocationType,List<String>> customSnippet;
+    private Map<ClassSnippetLocationType, List<String>> customSnippet;
 
     static {
         AUTO_GENERATE.setName("id");
@@ -82,6 +82,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private String description;
     private String author;
     private String entityName;
+
+    private boolean propertyChangeSupport;
+    private boolean vetoableChangeSupport;
 
     private TableDefSnippet tableDef;
     private CacheableDefSnippet cacheableDef;
@@ -348,7 +351,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             velocityContext.put("n", NEW_LINE);
             velocityContext.put("fluentAPI", CodePanel.isGenerateFluentAPI());
 
-            return ORMConverterUtil.writeToTemplate(getTemplateName(),velocityContext);
+            return ORMConverterUtil.writeToTemplate(getTemplateName(), velocityContext);
 
         } catch (Exception e) {
             throw new InvalidDataException("Class name : " + classHelper.getFQClassName(), e);
@@ -459,7 +462,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         for (AnnotationSnippet snippet : this.getAnnotation()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
-            
+
         importSnippets.addAll(this.getInterfaces().stream().collect(toList()));
 
         return importSnippets;
@@ -506,7 +509,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      * @return the annotation
      */
     public List<AnnotationSnippet> getAnnotation() {
-        if(annotation == null){
+        if (annotation == null) {
             annotation = new ArrayList<>();
         }
         return annotation;
@@ -537,7 +540,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      * @return the interfaces
      */
     public List<String> getInterfaces() {
-        if(interfaces == null){
+        if (interfaces == null) {
             interfaces = new ArrayList<>();
         }
         return interfaces;
@@ -549,11 +552,11 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public void setInterfaces(List<String> interfaces) {
         this.interfaces = interfaces;
     }
-    
-    public boolean isInterfaceExist(){
+
+    public boolean isInterfaceExist() {
         return interfaces != null && !interfaces.isEmpty();
     }
-    
+
     public String getUnqualifiedInterfaceList() {
         return interfaces.stream().map(fqn -> unqualifyGeneric(fqn) + getGenericType(fqn)).collect(joining(", "));
     }
@@ -705,10 +708,10 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the customSnippet
      */
-    public Map<ClassSnippetLocationType,List<String>> getCustomSnippet() {
+    public Map<ClassSnippetLocationType, List<String>> getCustomSnippet() {
         return customSnippet;
     }
-    
+
     public List<String> getCustomSnippet(String type) {
         return customSnippet.get(ClassSnippetLocationType.valueOf(type));
     }
@@ -716,7 +719,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @param customSnippet the customSnippet to set
      */
-    public void setCustomSnippet(Map<ClassSnippetLocationType,List<String>> customSnippet) {
+    public void setCustomSnippet(Map<ClassSnippetLocationType, List<String>> customSnippet) {
         this.customSnippet = customSnippet;
     }
 
@@ -734,4 +737,31 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         this.author = author;
     }
 
+    /**
+     * @return the propertyChangeSupport
+     */
+    public boolean isPropertyChangeSupport() {
+        return propertyChangeSupport;
+    }
+
+    /**
+     * @param propertyChangeSupport the propertyChangeSupport to set
+     */
+    public void setPropertyChangeSupport(boolean propertyChangeSupport) {
+        this.propertyChangeSupport = propertyChangeSupport;
+    }
+
+    /**
+     * @return the vetoableChangeSupport
+     */
+    public boolean isVetoableChangeSupport() {
+        return vetoableChangeSupport;
+    }
+
+    /**
+     * @param vetoableChangeSupport the vetoableChangeSupport to set
+     */
+    public void setVetoableChangeSupport(boolean vetoableChangeSupport) {
+        this.vetoableChangeSupport = vetoableChangeSupport;
+    }
 }

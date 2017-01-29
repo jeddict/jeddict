@@ -15,6 +15,7 @@
  */
 package org.netbeans.orm.converter.generator;
 
+import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,13 +23,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Basic;
@@ -371,6 +372,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setName(attr.getName());
             variableDef.setDefaultValue(attr.getDefaultValue());
             variableDef.setDescription(attr.getDescription());
+            if (CodePanel.isJavaSESupportEnable()) {
+                variableDef.setPropertyChangeSupport(TRUE.equals(attr.getPropertyChangeSupport()));
+                variableDef.setVetoableChangeSupport(TRUE.equals(attr.getVetoableChangeSupport()));
+                if (TRUE.equals(attr.getPropertyChangeSupport())) {
+                    classDef.setPropertyChangeSupport(true);
+                }
+                if (TRUE.equals(attr.getVetoableChangeSupport())) {
+                    classDef.setVetoableChangeSupport(true);
+                }
+            }
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
             if (attr instanceof BaseAttribute) {
                 variableDef.setConstraints(getConstraintSnippet(attr.getConstraints()));
@@ -1211,10 +1222,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 ColumnDefSnippet columnDef = getColumnDef(parsedColumn);
                 variableDef.setColumnDef(columnDef);
             }
-
-            GeneratedValue parsedGeneratedValue
-                    = parsedId.getGeneratedValue();
-
+            GeneratedValue parsedGeneratedValue = parsedId.getGeneratedValue();
             if (parsedGeneratedValue != null && parsedGeneratedValue.getStrategy() != null) {
                 GeneratedValueSnippet generatedValue = new GeneratedValueSnippet();
 

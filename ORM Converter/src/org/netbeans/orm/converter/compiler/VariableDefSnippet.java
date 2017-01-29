@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
@@ -71,6 +72,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private String name;
     private String defaultValue;
     private String description;
+    private boolean propertyChangeSupport;
+    private boolean vetoableChangeSupport;
     private final ClassHelper classHelper = new ClassHelper();
     private String mapKey;
     private BasicSnippet basic;
@@ -219,6 +222,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public String getMethodName() {
             return StringHelper.getMethodName(name);
+    }
+    
+    public String getPropName() {
+            return "PROP_"+name.toUpperCase();
     }
 
     public RelationDefSnippet getRelationDef() {
@@ -811,5 +818,33 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setOrderColumn(OrderColumnSnippet orderColumn) {
         this.orderColumn = orderColumn;
+    }
+
+    /**
+     * @return the propertyChangeSupport
+     */
+    public boolean isPropertyChangeSupport() {
+        return propertyChangeSupport;
+    }
+
+    /**
+     * @param propertyChangeSupport the propertyChangeSupport to set
+     */
+    public void setPropertyChangeSupport(boolean propertyChangeSupport) {
+        this.propertyChangeSupport = propertyChangeSupport;
+    }
+
+    /**
+     * @return the vetoableChangeSupport
+     */
+    public boolean isVetoableChangeSupport() {
+        return vetoableChangeSupport;
+    }
+
+    /**
+     * @param vetoableChangeSupport the vetoableChangeSupport to set
+     */
+    public void setVetoableChangeSupport(boolean vetoableChangeSupport) {
+        this.vetoableChangeSupport = vetoableChangeSupport;
     }
 }
