@@ -56,7 +56,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="annotation_ScrollPane" pref="116" max="32767" attributes="0"/>
+                  <Component id="annotation_ScrollPane" pref="165" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="action_jLayeredPane" min="-2" max="-2" attributes="0"/>

@@ -15,7 +15,7 @@
  */
 package org.netbeans.jpa.modeler.properties.annotation;
 
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
@@ -161,7 +161,7 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

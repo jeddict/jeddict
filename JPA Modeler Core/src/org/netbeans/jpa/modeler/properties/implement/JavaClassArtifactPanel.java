@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.properties.implement;
 
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -32,15 +33,17 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
     private ReferenceClass referenceClass;
     private final ModelerFile modelerFile;
     private final String artifactType;
-    
+
     public JavaClassArtifactPanel(ModelerFile modelerFile, String artifactType) {
-        this.modelerFile=modelerFile;
-        this.artifactType=artifactType;
+        this.modelerFile = modelerFile;
+        this.artifactType = artifactType;
     }
-    
+
     @Override
     public void postConstruct() {
         initComponents();
+        class_EditorPane = NBModelerUtil.getJavaSingleLineEditor(class_wrapperPanel, null, null).second();
+
     }
 
     @Override
@@ -49,27 +52,26 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
 
     @Override
     public void createEntity(Class<? extends Entity> entityWrapperType) {
-        this.setTitle(String.format("Add new %s ",artifactType));
+        this.setTitle(String.format("Add new %s ", artifactType));
         if (entityWrapperType == RowValue.class) {
             this.setEntity(new RowValue(new Object[5]));
         }
         referenceClass = null;
-        artifactTextField.setText(EMPTY);
+        class_EditorPane.setText(EMPTY);
         dataType_ActionActionPerformed(null);
     }
 
     @Override
     public void updateEntity(Entity<ReferenceClass> entityValue) {
-        this.setTitle(String.format("Update %s ",artifactType));
+        this.setTitle(String.format("Update %s ", artifactType));
         if (entityValue.getClass() == RowValue.class) {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             referenceClass = (ReferenceClass) row[0];
-            artifactTextField.setText(referenceClass.getName());
+            class_EditorPane.setText(referenceClass.getName());
         }
 
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -85,7 +87,7 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
         dataType_Action = new javax.swing.JButton();
-        artifactTextField = new javax.swing.JTextField();
+        class_wrapperPanel = new javax.swing.JLayeredPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -135,11 +137,20 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
             }
         });
 
-        artifactTextField.setText(org.openide.util.NbBundle.getMessage(JavaClassArtifactPanel.class, "JavaClassArtifactPanel.artifactTextField.text")); // NOI18N
+        javax.swing.GroupLayout class_wrapperPanelLayout = new javax.swing.GroupLayout(class_wrapperPanel);
+        class_wrapperPanel.setLayout(class_wrapperPanelLayout);
+        class_wrapperPanelLayout.setHorizontalGroup(
+            class_wrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        class_wrapperPanelLayout.setVerticalGroup(
+            class_wrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 18, Short.MAX_VALUE)
+        );
 
         root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(dataType_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_jLayeredPane.setLayer(artifactTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(class_wrapperPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -148,7 +159,7 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(artifactTextField)
+                    .addComponent(class_wrapperPanel)
                     .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                         .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 186, Short.MAX_VALUE)
@@ -158,8 +169,8 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
         root_jLayeredPaneLayout.setVerticalGroup(
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap(24, Short.MAX_VALUE)
-                .addComponent(artifactTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(class_wrapperPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -182,16 +193,16 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean validateField() {
-        String _class = this.artifactTextField.getText().trim();
+        String _class = this.class_EditorPane.getText().trim();
         int genericIndex = _class.indexOf('<');//generic type
         if (_class.length() <= 0 /*|| Pattern.compile("[^\\w-]").matcher(this.id_TextField.getText().trim()).find()*/) {
-            JOptionPane.showMessageDialog(this, String.format("%s can't be empty",artifactType), "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, String.format("%s can't be empty", artifactType), "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
-        } else if(genericIndex>1 ? !JavaIdentifiers.isValidPackageName(_class.substring(0, genericIndex)): !JavaIdentifiers.isValidPackageName(_class)){
-            JOptionPane.showMessageDialog(this, String.format("Invalid %s type",artifactType), "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
+        } else if (genericIndex > 1 ? !JavaIdentifiers.isValidPackageName(_class.substring(0, genericIndex)) : !JavaIdentifiers.isValidPackageName(_class)) {
+            JOptionPane.showMessageDialog(this, String.format("Invalid %s type", artifactType), "Invalid Value", javax.swing.JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        
+
         return true;
     }
 
@@ -208,7 +219,7 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
             }
         }
 
-        referenceClass.setName(artifactTextField.getText().trim());
+        referenceClass.setName(class_EditorPane.getText().trim());
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -224,16 +235,16 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
     private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
-        String dataType = NBModelerUtil.browseClass(modelerFile, artifactTextField.getText());
-        if(StringUtils.isNotEmpty(dataType)){
-         artifactTextField.setText(dataType);
+        String dataType = NBModelerUtil.browseClass(modelerFile, class_EditorPane.getText());
+        if (StringUtils.isNotEmpty(dataType)) {
+            class_EditorPane.setText(dataType);
         }
     }//GEN-LAST:event_dataType_ActionActionPerformed
-
+    private JEditorPane class_EditorPane;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
-    private javax.swing.JTextField artifactTextField;
     private javax.swing.JButton cancel_Button;
+    private javax.swing.JLayeredPane class_wrapperPanel;
     private javax.swing.JButton dataType_Action;
     private javax.swing.JLayeredPane root_jLayeredPane;
     private javax.swing.JButton save_Button;
