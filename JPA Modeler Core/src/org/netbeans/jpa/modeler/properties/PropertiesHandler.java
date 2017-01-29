@@ -1284,7 +1284,7 @@ public class PropertiesHandler {
             public ComboBoxValue<JaxbVariableType> getItem() {
                 if (varHandlerSpec.getJaxbVariableType() == null) {
                     if (jaxbVariableList != null) {
-                        return new ComboBoxValue<>(XML_ELEMENT, "Default(Element)");
+                        return new ComboBoxValue<>(null, NONE_TYPE);
                     } else {
                         return new ComboBoxValue<>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText());
                     }

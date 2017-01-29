@@ -94,15 +94,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private AttributeOverridesSnippet attributeOverrides;
     private TypeIdentifierSnippet typeIdentifier;
     private Attribute attribute;
-    private Map<AttributeSnippetLocationType,List<String>> customSnippet;
+    private Map<AttributeSnippetLocationType, List<String>> customSnippet;
 
     public VariableDefSnippet() {
     }
-    
+
     public VariableDefSnippet(Attribute attribute) {
         this.attribute = attribute;
     }
-    
+
     public BasicSnippet getBasic() {
         return basic;
     }
@@ -142,10 +142,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         } else {
             type = classHelper.getClassName();
         }
-        
+
         return type;
     }
-    
+
     public String getReturnType() {//Modified : Collection => Collection<Entity>
         String type;
         if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
@@ -153,9 +153,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         } else {
             type = classHelper.getClassName();
         }
-        
+
         if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
-            if(isArray(type)){
+            if (isArray(type)) {
                 type = "Optional<" + type + '>';
             } else {
                 type = "Optional<" + getWrapperType(type) + '>';
@@ -163,9 +163,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         return type;
     }
-    
+
     public String getReturnValue() {
-        String value = "this."+getName();
+        String value = "this." + getName();
         if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
             value = "Optional.ofNullable(" + value + ')';
         }
@@ -221,11 +221,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      * getNickname()
      */
     public String getMethodName() {
-            return StringHelper.getMethodName(name);
+        return StringHelper.getMethodName(name);
     }
-    
+
     public String getPropName() {
-            return "PROP_"+name.toUpperCase();
+        return "PROP_" + name.toUpperCase();
     }
 
     public RelationDefSnippet getRelationDef() {
@@ -314,7 +314,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             return "@" + MAP_KEY;
         }
 
-        return "@"+ MAP_KEY + "(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
+        return "@" + MAP_KEY + "(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     public TypeIdentifierSnippet getTypeIdentifier() {
@@ -340,7 +340,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         if (functionalType) {
             importSnippets.add(Optional.class.getCanonicalName());
-        } 
+        }
 
         if (basic != null) {
             importSnippets.addAll(basic.getImportSnippets());
@@ -360,7 +360,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (orderBy != null) {
             importSnippets.addAll(orderBy.getImportSnippets());
         }
-        
+
         if (orderColumn != null) {
             importSnippets.addAll(orderColumn.getImportSnippets());
         }
@@ -392,7 +392,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (enumerated != null) {
             importSnippets.addAll(enumerated.getImportSnippets());
         }
-        
+
         if (temporal != null) {
             importSnippets.addAll(temporal.getImportSnippets());
         }
@@ -443,7 +443,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         for (AnnotationSnippet snippet : this.getAnnotation()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
-        
+
         for (ConstraintSnippet snippet : this.getConstraints()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
@@ -635,34 +635,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getJaxbAnnotationSnippet() {
 
         StringBuilder snippet = new StringBuilder();
-        if (isPrimaryKey()) {
-//            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-        } else if (getRelationDef() != null) {
-            if (getRelationDef() instanceof OneToOneSnippet) {
-                OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelationDef();
-                if (otoSnippet.getMappedBy() != null && !otoSnippet.getMappedBy().trim().isEmpty()) {
-                    snippet.append("@XmlTransient");
-                } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                }
-            } else if (getRelationDef() instanceof OneToManySnippet) {
-                OneToManySnippet otmSnippet = (OneToManySnippet) getRelationDef();
-                if (otmSnippet.getMappedBy() != null && !otmSnippet.getMappedBy().trim().isEmpty()) {
-                    snippet.append("@XmlTransient");
-                } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                }
-            } else if (getRelationDef() instanceof ManyToOneSnippet) {
-//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-            } else if (getRelationDef() instanceof ManyToManySnippet) {
-                ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelationDef();
-                if (mtmSnippet.getMappedBy() != null && !mtmSnippet.getMappedBy().trim().isEmpty()) {
-                    snippet.append("@XmlTransient");
-                } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                }
-            }
-        }
 
         if (getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
             if (getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
@@ -705,8 +677,50 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
             }
             snippet.append("@XmlValue");
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT && getRelationDef() == null) {
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT) {
             snippet.append("@XmlTransient");
+        }  else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
+            String mappedBy = null;
+            if(getRelationDef() instanceof MultiRelationAttributeSnippet){
+                mappedBy = ((MultiRelationAttributeSnippet)getRelationDef()).getMappedBy();
+            }
+            if(getRelationDef() instanceof OneToOneSnippet){
+                mappedBy = ((OneToOneSnippet)getRelationDef()).getMappedBy();
+            }
+            if (mappedBy != null) {
+                snippet.append(String.format("@XmlInverseReference(mappedBy=\"%s\")", mappedBy));
+            } else {
+                snippet.append("@XmlInverseReference");
+            }
+        } else {
+            if (isPrimaryKey()) {
+//            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+            } else if (getRelationDef() != null) {
+                if (getRelationDef() instanceof OneToOneSnippet) {
+                    OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelationDef();
+                    if (otoSnippet.getMappedBy() != null && !otoSnippet.getMappedBy().trim().isEmpty()) {
+                        snippet.append("@XmlTransient");
+                    } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                    }
+                } else if (getRelationDef() instanceof OneToManySnippet) {
+                    OneToManySnippet otmSnippet = (OneToManySnippet) getRelationDef();
+                    if (otmSnippet.getMappedBy() != null && !otmSnippet.getMappedBy().trim().isEmpty()) {
+                        snippet.append("@XmlTransient");
+                    } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                    }
+                } else if (getRelationDef() instanceof ManyToOneSnippet) {
+//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                } else if (getRelationDef() instanceof ManyToManySnippet) {
+                    ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelationDef();
+                    if (mtmSnippet.getMappedBy() != null && !mtmSnippet.getMappedBy().trim().isEmpty()) {
+                        snippet.append("@XmlTransient");
+                    } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                    }
+                }
+            }
         }
         int snippetLength = snippet.length(); //Remove NEW_LINE and TAB
         if (snippetLength > 6 && snippet.charAt(snippetLength - 5) == '\n') {
@@ -728,20 +742,20 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public String getJavaDoc() {
         StringBuilder doc = new StringBuilder();
         doc.append(TAB).append("/**").append(NEW_LINE);
 //        if (StringUtils.isNotBlank(description)) {
-            for (String line : description.split("\\r\\n|\\n|\\r")) {
-                doc.append(" * ").append(line).append(NEW_LINE);
-            }
+        for (String line : description.split("\\r\\n|\\n|\\r")) {
+            doc.append(" * ").append(line).append(NEW_LINE);
+        }
 //        }
         doc.append(" */");
         return doc.toString();
     }
-    
-    public boolean isJavaDocExist(){
+
+    public boolean isJavaDocExist() {
         return StringUtils.isNotBlank(description);
     }
 
@@ -788,13 +802,13 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.defaultValue = defaultValue;
     }
 
-        /**
+    /**
      * @return the customSnippet
      */
-    public Map<AttributeSnippetLocationType,List<String>> getCustomSnippet() {
+    public Map<AttributeSnippetLocationType, List<String>> getCustomSnippet() {
         return customSnippet;
     }
-    
+
     public List<String> getCustomSnippet(String type) {
         return customSnippet.get(AttributeSnippetLocationType.valueOf(type));
     }
@@ -802,7 +816,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @param customSnippet the customSnippet to set
      */
-    public void setCustomSnippet(Map<AttributeSnippetLocationType,List<String>> customSnippet) {
+    public void setCustomSnippet(Map<AttributeSnippetLocationType, List<String>> customSnippet) {
         this.customSnippet = customSnippet;
     }
 
