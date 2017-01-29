@@ -134,6 +134,8 @@ import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
 import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
+    
+    public static final String NONE_TYPE = "< none >";
 
     public static ComboBoxPropertySupport getAccessTypeProperty(JPAModelerScene modelerScene, final AccessTypeHandler accessTypeHandlerSpec) {
         ComboBoxListener<AccessType> comboBoxListener = new ComboBoxListener<AccessType>() {
@@ -1532,7 +1534,7 @@ public class PropertiesHandler {
     public static EmbeddedPropertySupport getGeneratorProperty(IdAttributeWidget attributeWidget) {
 
         GenericEmbedded entity = new GenericEmbedded("generator", "Id Generator", "");
-        entity.setEntityEditor(new IdGeneratorPanel(attributeWidget.getModelerScene().getModelerFile()));
+        entity.setEntityEditor(new IdGeneratorPanel());
 
         entity.setDataListener(new EmbeddedDataListener<Id>() {
             private Id idAttribute;
@@ -1566,7 +1568,7 @@ public class PropertiesHandler {
                 if (idAttribute.getGeneratedValue() != null && idAttribute.getGeneratedValue().getStrategy() != null) {
                     return StringUtils.firstLetterCaps(idAttribute.getGeneratedValue().getStrategy().toString());
                 } else if (idAttribute.getGeneratedValue() == null || idAttribute.getGeneratedValue().getStrategy() == null) {
-                    return "None";
+                    return NONE_TYPE;
                 } else {
                     return "";
                 }
@@ -1666,7 +1668,7 @@ public class PropertiesHandler {
                 StringBuilder display = new StringBuilder();
                 CascadeType cascadeType = relationAttribute.getCascade();
                 if (cascadeType == null) {
-                    display.append("None");
+                    display.append(NONE_TYPE);
                 } else if (cascadeType.getCascadeAll() != null) {
                     display.append("All");
                 } else {

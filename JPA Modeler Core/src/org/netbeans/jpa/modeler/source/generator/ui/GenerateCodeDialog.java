@@ -191,7 +191,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
 
     private void addLayerTab(TechContext techContext) {
         Technology tech = techContext.getTechnology();
-        if (tech.panel() != LayerConfigPanel.class) {//StringUtils.isBlank(title) || title.equalsIgnoreCase(NONE_LABEL)
+        if (tech.panel() != LayerConfigPanel.class) {
             String title = tech.label();
             int index = tech.index() - 1;
             if(index < 0){

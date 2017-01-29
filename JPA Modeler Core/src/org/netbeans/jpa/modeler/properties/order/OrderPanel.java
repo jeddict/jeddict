@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.properties.order;
 
 import java.awt.CardLayout;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.NONE_TYPE;
 import org.netbeans.jpa.modeler.properties.order.by.OrderByPanel;
 import org.netbeans.jpa.modeler.properties.order.column.OrderColumnPanel;
 import org.netbeans.jpa.modeler.spec.OrderBy;
@@ -32,7 +33,7 @@ public class OrderPanel extends GenericEmbeddedEditor<SortableAttribute> {
 
     private final AttributeWidget rootAttributeWidget;
     private SortableAttribute sortableAttribute;
-    public final static String ORDER_BY = "OrderBy", ORDER_COLUMN = "OrderColumn", NONE = "< None >";
+    public final static String ORDER_BY = "OrderBy", ORDER_COLUMN = "OrderColumn";
     private OrderColumn orderColumn;
     private OrderBy orderBy;
 
@@ -76,13 +77,13 @@ public class OrderPanel extends GenericEmbeddedEditor<SortableAttribute> {
     }
 
     public static String getState(SortableAttribute sortableAttribute) {
-        return sortableAttribute.getOrderBy() != null ? ORDER_BY : (sortableAttribute.getOrderColumn() != null ? ORDER_COLUMN : NONE);
+        return sortableAttribute.getOrderBy() != null ? ORDER_BY : (sortableAttribute.getOrderColumn() != null ? ORDER_COLUMN : NONE_TYPE);
     }
     
     public static String getStateDisplay(SortableAttribute sortableAttribute) {
         return sortableAttribute.getOrderBy() != null ? ORDER_BY + String.format("[%s]",sortableAttribute.getOrderBy().getAttributes().size()) : 
                 (sortableAttribute.getOrderColumn() != null ? ORDER_COLUMN + String.format("[%s]",sortableAttribute.getOrderColumn().getName()) :
-                NONE);
+                NONE_TYPE);
     }
 
     /**
