@@ -39,8 +39,10 @@ public class EqualsMethodSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         builder.append("if (obj == null) {return false;}\n");
-        builder.append("if (!java.util.Objects.equals(getClass(), obj.getClass())) {return false;}\n");
-        builder.append(String.format("final %s other = (%s) obj;\n", className, className));
+        builder.append("        ")
+                .append("if (!java.util.Objects.equals(getClass(), obj.getClass())) {return false;}\n");
+        builder.append("        ")
+                .append(String.format("final %s other = (%s) obj;\n", className, className));
 
         if (StringUtils.isNotBlank(classMembers.getPreCode())) {
             builder.append(classMembers.getPreCode()).append(NEW_LINE);
@@ -54,15 +56,19 @@ public class EqualsMethodSnippet implements Snippet {
             } else {
                 expression = JavaHashcodeEqualsUtil.getEqualExpression(attribute.getName(), optionalType);
             }
-            builder.append(String.format("if (%s) {", expression));
-            builder.append("return false;");
-            builder.append(CLOSE_BRACES).append(NEW_LINE);
+            builder.append("        ")
+                   .append(String.format("if (%s) {", expression));
+            builder.append("        ")
+                   .append("return false;");
+            builder.append("        ")
+                   .append(CLOSE_BRACES).append(NEW_LINE);
 
         }
         if (StringUtils.isNotBlank(classMembers.getPostCode())) {
             builder.append(classMembers.getPostCode()).append(NEW_LINE);
         }
-        builder.append("return true;");
+        builder.append("        ")
+                   .append("return true;");
         return builder.toString();
     }
 

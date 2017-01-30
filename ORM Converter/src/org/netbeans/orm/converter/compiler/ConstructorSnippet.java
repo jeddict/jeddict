@@ -66,7 +66,8 @@ public class ConstructorSnippet implements Snippet {
 
         StringBuilder varAssign = new StringBuilder();
         if (!parentVariableSnippets.isEmpty()) {
-            varAssign.append("super(");
+            varAssign.append("        ")
+                   .append("super(");
             for (VariableDefSnippet parentVariableSnippet : parentVariableSnippets) {
                 varAssign.append(parentVariableSnippet.getName()).append(", ");
             }
@@ -76,7 +77,8 @@ public class ConstructorSnippet implements Snippet {
 
         if (!localVariableSnippets.isEmpty()) {
             for (VariableDefSnippet localVariableSnippet : localVariableSnippets) {
-                varAssign.append(String.format("this.%s=%s;", localVariableSnippet.getName(), localVariableSnippet.getName())).append(NEW_LINE);
+                varAssign.append("        ")
+                   .append(String.format("this.%s=%s;", localVariableSnippet.getName(), localVariableSnippet.getName())).append(NEW_LINE);
             }
         }
 
@@ -88,7 +90,7 @@ public class ConstructorSnippet implements Snippet {
         if (StringUtils.isNotBlank(constructor.getPostCode())) {
             builder.append(constructor.getPostCode()).append(NEW_LINE);
         }
-        builder.append(CLOSE_BRACES);
+        builder.append("    ").append(CLOSE_BRACES);
 
         return builder.toString();
     }

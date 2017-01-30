@@ -508,6 +508,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
         }
         sortAttributes();
         scanDuplicateAttributes(attributeWidget.getBaseElementSpec().getName(), null);
+        javaClass.updateArtifact((Attribute)attributeWidget.getBaseElementSpec());
     }
 
     public EmbeddedIdAttributeWidget addNewEmbeddedIdAttribute(String name) {

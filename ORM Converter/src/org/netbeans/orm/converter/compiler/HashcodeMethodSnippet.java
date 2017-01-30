@@ -64,7 +64,8 @@ public class HashcodeMethodSnippet implements Snippet {
             } else {
                 expression = getHashcodeExpression(attribute.getName(), optionalType);
             }
-            builder.append(String.format("hash = %s * hash + %s;", multiplyNumber, expression)).append(NEW_LINE);
+            builder.append("        ")
+                   .append(String.format("hash = %s * hash + %s;", multiplyNumber, expression)).append(NEW_LINE);
         }
         
         if (StringUtils.isNotBlank(classMembers.getPostCode())) {
@@ -72,7 +73,8 @@ public class HashcodeMethodSnippet implements Snippet {
         }
         
         if(!classMembers.getAttributes().isEmpty()){
-            builder.append("return hash;");
+            builder.append("        ")
+                   .append("return hash;");
         }
         return builder.toString();
     }
