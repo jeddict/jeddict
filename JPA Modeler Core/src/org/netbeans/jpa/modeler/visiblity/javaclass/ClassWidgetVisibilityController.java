@@ -34,13 +34,13 @@ import org.netbeans.modeler.properties.window.GenericDialog;
 
 public class ClassWidgetVisibilityController extends GenericDialog {
 
-    private JavaClassListModel classListModel;
-    private EntityMappings entityMappings;
+    private final JavaClassListModel classListModel;
+    private final EntityMappings entityMappings;
 
     /**
      * Creates new form NewJDialog
      */
-    public ClassWidgetVisibilityController(EntityMappings entityMappings) {
+    public ClassWidgetVisibilityController(final EntityMappings entityMappings) {
         this.entityMappings = entityMappings;
         initComponents();
         this.setTitle("Java Class Visibility Explorer");
@@ -245,7 +245,12 @@ public class ClassWidgetVisibilityController extends GenericDialog {
         class_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(ClassWidgetVisibilityController.class, "ClassWidgetVisibilityController.class_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 10), new java.awt.Color(102, 102, 102))); // NOI18N
         class_LayeredPane.setForeground(new java.awt.Color(51, 51, 51));
 
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        class_List.setVisibleRowCount(500);
         jScrollPane1.setViewportView(class_List);
+
+        class_LayeredPane.setLayer(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout class_LayeredPaneLayout = new javax.swing.GroupLayout(class_LayeredPane);
         class_LayeredPane.setLayout(class_LayeredPaneLayout);
@@ -257,7 +262,6 @@ public class ClassWidgetVisibilityController extends GenericDialog {
             class_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
         );
-        class_LayeredPane.setLayer(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(ClassWidgetVisibilityController.class, "ClassWidgetVisibilityController.save_Button.text")); // NOI18N
         save_Button.addActionListener(new java.awt.event.ActionListener() {
@@ -272,6 +276,9 @@ public class ClassWidgetVisibilityController extends GenericDialog {
                 cancel_ButtonActionPerformed(evt);
             }
         });
+
+        action_LayeredPane.setLayer(save_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        action_LayeredPane.setLayer(cancel_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout action_LayeredPaneLayout = new javax.swing.GroupLayout(action_LayeredPane);
         action_LayeredPane.setLayout(action_LayeredPaneLayout);
@@ -292,12 +299,14 @@ public class ClassWidgetVisibilityController extends GenericDialog {
                     .addComponent(cancel_Button))
                 .addGap(0, 11, Short.MAX_VALUE))
         );
-        action_LayeredPane.setLayer(save_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        action_LayeredPane.setLayer(cancel_Button, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 102, 102));
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(ClassWidgetVisibilityController.class, "ClassWidgetVisibilityController.jLabel1.text")); // NOI18N
+
+        root_LayeredPane.setLayer(class_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_LayeredPane.setLayer(action_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_LayeredPane.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_LayeredPaneLayout = new javax.swing.GroupLayout(root_LayeredPane);
         root_LayeredPane.setLayout(root_LayeredPaneLayout);
@@ -326,9 +335,6 @@ public class ClassWidgetVisibilityController extends GenericDialog {
                     .addComponent(action_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)))
         );
-        root_LayeredPane.setLayer(class_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_LayeredPane.setLayer(action_LayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root_LayeredPane.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

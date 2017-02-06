@@ -64,6 +64,9 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
                 entity.getExcludeDefaultListeners());
         processExcludeSuperclassListeners(
                 entity.getExcludeSuperclassListeners());
+        
+        classDef.setConverts(processConverts(entity.getConverts()));
+        
         //Table
         processTable(entity.getTable());
         

@@ -15,83 +15,18 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES;
 import static org.netbeans.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
-import org.netbeans.orm.converter.util.ImportSet;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class AssociationOverridesSnippet implements Snippet {
+public class AssociationOverridesSnippet extends SnippetContainer<AssociationOverrideSnippet> {
 
-    private List<AssociationOverrideSnippet> associationOverrides
-            = Collections.EMPTY_LIST;
-
-    public void addAssociationOverride(
-            AssociationOverrideSnippet associationOverride) {
-
-        if (associationOverrides.isEmpty()) {
-            associationOverrides = new ArrayList<AssociationOverrideSnippet>();
-        }
-
-        associationOverrides.add(associationOverride);
-    }
-
-    public List<AssociationOverrideSnippet> getAssociationOverrides() {
-        return associationOverrides;
-    }
-
-    public void setAssociationOverrides(
-            List<AssociationOverrideSnippet> associationOverrides) {
-
-        if (associationOverrides != null) {
-            this.associationOverrides = associationOverrides;
-        }
+    @Override
+    public String getContianerName() {
+        return ASSOCIATION_OVERRIDES;
     }
 
     @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (associationOverrides.isEmpty()) {
-            throw new InvalidDataException("Missing AssociationOverrides");
-        }
-
-        if (associationOverrides.size() == 1) {
-            return associationOverrides.get(0).getSnippet();
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(ASSOCIATION_OVERRIDES).append("({");
-
-        for (AssociationOverrideSnippet associationOverride : associationOverrides) {
-            builder.append(associationOverride.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_BRACES
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (associationOverrides.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-
-        if (associationOverrides.size() == 1) {
-            return associationOverrides.get(0).getImportSnippets();
-        }
-
-        ImportSet importSnippets = new ImportSet();
-
-        importSnippets.add(ASSOCIATION_OVERRIDES_FQN);
-        importSnippets.addAll(associationOverrides.get(0).getImportSnippets());
-
-        return importSnippets;
+    public String getContianerFQN() {
+        return ASSOCIATION_OVERRIDES_FQN;
     }
 }

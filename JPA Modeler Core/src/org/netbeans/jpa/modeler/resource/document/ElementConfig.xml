@@ -2,8 +2,11 @@
 <element-config>
     <groups>
         <group id="BASIC_PROP" name="Basic Properties"/>
-        <group id="ENTITY_PROP" name="Entity Properties"/>
-        <group id="COLUMN_PROP" name="Column Properties"/>
+        <group id="ENTITY_PROP" name="Entity Properties" position="2" />
+        <group id="CLASS_STRUCTURE" name="Class Properties" position="1" />
+        <group id="ATTR_PROP" name="Attribute Properties" position="1" />
+        <group id="JPA_PROP" name="JPA Metadata" position="2" />
+        
         <group id="TABLE_PROP" name="Table Properties"/>
         <group id="COLUMN_PROP" name="Column Properties"/>
         <group id="JOIN_COLUMN_PROP" name="Join Column Properties"/>
@@ -14,7 +17,6 @@
         <group id="JAXB_ATTR_PROP" name="JAXB Attribute Properties"/>
         <group id="JAXB_ELE_PROP" name="JAXB Element Properties"/>
         <group id="CONSTRAINTS" name="Bean Validation Properties"/>
-        <group id="CLASS_STRUCTURE" name="Class Properties"/>
         <group id="GLOBAL_CONFIG" name="Global Config"/>
         <group id="PACKAGE" name="Package"/>
         <group id="QUERY" name="Query"/>
@@ -76,13 +78,13 @@
         </element>
         <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
             <attributes>
-                <attribute id="name" groupId="BASIC_PROP" class="java.lang.String" name="name">
+                <attribute id="name" groupId="ATTR_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
-                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description" after="name">
+                <attribute id="description" groupId="ATTR_PROP" class="java.lang.String" name="description" after="name">
                     <display-name>Description</display-name>
                 </attribute>
-                <attribute id="defaultValue" groupId="BASIC_PROP" class="java.lang.String" name="defaultValue"  after="fieldType">
+                <attribute id="defaultValue" groupId="ATTR_PROP" class="java.lang.String" name="defaultValue"  after="fieldType">
                     <display-name>Default Value</display-name>
                 </attribute>
                 <attribute id="includeInUI" groupId="UI_PROP" class="java.lang.Boolean" name="includeInUI">
@@ -91,12 +93,12 @@
                         If unselected, attribute will not be available in frontend.
                     </description>
                 </attribute>
-                <attribute id="propertyChangeSupport" groupId="BASIC_PROP" class="java.lang.Boolean" name="propertyChangeSupport">
+                <attribute id="propertyChangeSupport" groupId="ATTR_PROP" class="java.lang.Boolean" name="propertyChangeSupport">
                     <display-name>Property Change Support</display-name>
                     <description>Property Change Support</description>
                     <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
                 </attribute>
-                <attribute id="vetoableChangeSupport" groupId="BASIC_PROP" class="java.lang.Boolean" name="vetoableChangeSupport">
+                <attribute id="vetoableChangeSupport" groupId="ATTR_PROP" class="java.lang.Boolean" name="vetoableChangeSupport">
                     <display-name>Vetoable Change Support</display-name>
                     <description>Vetoable Change Support</description>
                     <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
@@ -105,14 +107,14 @@
         </element>
         <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">
             <attributes>
-                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
                     <display-name>MapKey Type</display-name>
                 </attribute>  
             </attributes>
         </element>
         <element id="ElementCollection" class="org.netbeans.jpa.modeler.spec.ElementCollection">
             <attributes>
-                <attribute id="mapKeyType" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
                     <display-name>MapKey Type</display-name>
                 </attribute>  
             </attributes>
@@ -175,12 +177,12 @@
         </element>
         <element id="MappedSuperclass" class="org.netbeans.jpa.modeler.spec.MappedSuperclass">
             <attributes>
-                <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
             </attributes>
         </element>
-        <element id="IdentifiableClass" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.IdentifiableClass">
+        <element id="IdentifiableClass" class="org.netbeans.jpa.modeler.spec.IdentifiableClass">
             <attributes>
                 <attribute id="xmlRootElement" groupId="JAXB_PROP" class="java.lang.Boolean" name="xmlRootElement" >
                     <display-name>Root Element</display-name>
@@ -197,7 +199,7 @@
                <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
                 </attribute>
-                 <attribute id="compositePrimaryKeyClass" groupId="BASIC_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                 <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
             </attributes>
@@ -223,46 +225,46 @@
             </attributes>
         </element>-->
 
-        <element id="Basic" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Basic">
+        <element id="Basic" class="org.netbeans.jpa.modeler.spec.Basic">
             <attributes>
-                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
                 </attribute>
             </attributes>
         </element> 
         
-        <element id="Transient" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Transient">
+        <element id="Transient" class="org.netbeans.jpa.modeler.spec.Transient">
             <attributes>
-                <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
                 </attribute>
             </attributes>
         </element>
-        <element id="Embedded" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.Embedded">
+        <element id="Embedded" class="org.netbeans.jpa.modeler.spec.Embedded">
             <attributes>
-                <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
                 </attribute>
             </attributes>
         </element>
-        <element id="PersistenceBaseAttribute" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute">
+        <element id="PersistenceBaseAttribute" class="org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute">
             <attributes>
-                <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
                 </attribute>
             </attributes>
         </element>
         
-        <element id="OneToOne" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.OneToOne">
+        <element id="OneToOne" class="org.netbeans.jpa.modeler.spec.OneToOne">
             <attributes>
-                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
                 </attribute>
                 
-                <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
                 </attribute>
-                <attribute id="orphanRemoval" groupId="BASIC_PROP" class="java.lang.Boolean" name="orphanRemoval">
+                <attribute id="orphanRemoval" groupId="JPA_PROP" class="java.lang.Boolean" name="orphanRemoval">
                     <display-name>Orphan Removal</display-name>
                     <description>
                         The orphanRemoval functionality is intended for entities that are privately "owned" by their parent entity 
@@ -271,9 +273,9 @@
                 </attribute>
             </attributes>
         </element>
-        <element id="OneToMany" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.OneToMany">
+        <element id="OneToMany" class="org.netbeans.jpa.modeler.spec.OneToMany">
             <attributes>
-                <attribute id="orphanRemoval" groupId="BASIC_PROP" class="java.lang.Boolean" name="orphanRemoval">
+                <attribute id="orphanRemoval" groupId="JPA_PROP" class="java.lang.Boolean" name="orphanRemoval">
                     <display-name>Orphan Removal</display-name>
                     <description>
                         The orphanRemoval functionality is intended for entities that are privately "owned" by their parent entity 
@@ -282,12 +284,12 @@
                 </attribute>                
             </attributes>
         </element>
-        <element id="ManyToOne" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.ManyToOne">
+        <element id="ManyToOne" class="org.netbeans.jpa.modeler.spec.ManyToOne">
             <attributes>
-                <attribute id="optional" groupId="BASIC_PROP" class="java.lang.Boolean" name="optional">
+                <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
                 </attribute>
-                <attribute id="functionalType" groupId="BASIC_PROP" class="java.lang.Boolean" name="functionalType">
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
                     <display-name>Optional return type</display-name>
                 </attribute>
             </attributes>

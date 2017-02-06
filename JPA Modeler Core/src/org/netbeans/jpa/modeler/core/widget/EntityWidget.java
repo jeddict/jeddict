@@ -31,6 +31,7 @@ import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCacheableProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConvertProperties;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEntityDisplayProperty;
 import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -42,6 +43,7 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
+import org.netbeans.jpa.modeler.spec.ManagedClass;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
@@ -53,7 +55,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
         this.addPropertyChangeListener("abstract", (input) -> setImage(getIcon()));
-        PropertyVisibilityHandler<String> overridePropertyHandler = (PropertyVisibilityHandler<String>) () -> {
+        PropertyVisibilityHandler overridePropertyHandler = () -> {
             InheritanceStateType inheritanceState = this.getInheritanceState(true);
             return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF;
         };
@@ -110,6 +112,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             set.put("ENTITY_PROP", getInheritanceProperty(this));
         }
         set.put("ENTITY_PROP", getCacheableProperty(this));
+        set.put("ENTITY_PROP", getConvertProperties(this.getModelerScene(), entity));
         
         set.put("ENTITY_PROP", PropertiesHandler.getPrimaryKeyJoinColumnsProperty("PrimaryKeyJoinColumns", "PrimaryKey Join Columns", "", this, entity));
         set.put("ENTITY_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), entity.getAttributeOverride()));

@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,18 +15,19 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES;
-import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.CONVERTS;
+import static org.netbeans.jcode.jpa.JPAConstants.CONVERTS_FQN;
 
-public class AttributeOverridesSnippet extends SnippetContainer<AttributeOverrideSnippet> {
+public class ConvertsSnippet extends SnippetContainer<ConvertSnippet> {
 
     @Override
     public String getContianerName() {
-        return ATTRIBUTE_OVERRIDES;
+        return CONVERTS;
     }
 
     @Override
     public String getContianerFQN() {
-        return ATTRIBUTE_OVERRIDES_FQN;
+        return CONVERTS_FQN;
     }
+
 }

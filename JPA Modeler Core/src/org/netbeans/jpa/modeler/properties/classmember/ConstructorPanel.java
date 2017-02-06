@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember;
 
-import java.awt.event.ItemEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;

@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.properties.annotation;
 
-import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;

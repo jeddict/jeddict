@@ -65,9 +65,9 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         ElementCollection elementCollectionSpec = this.getBaseElementSpec();
-        set.put("BASIC_PROP", getOrderProperty(this));
-        set.put("BASIC_PROP", getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
-        set.put("BASIC_PROP", getCollectionTypeProperty(this, elementCollectionSpec));
+        set.put("JPA_PROP", getOrderProperty(this));
+        set.put("JPA_PROP", getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
+        set.put("ATTR_PROP", getCollectionTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
         createMapKeyPropertySet(set);

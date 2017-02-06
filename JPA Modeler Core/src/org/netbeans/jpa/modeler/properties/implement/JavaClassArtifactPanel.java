@@ -15,18 +15,35 @@
  */
 package org.netbeans.jpa.modeler.properties.implement;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import org.netbeans.api.java.source.ClasspathInfo;
+import org.netbeans.api.java.source.CompilationController;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
+import org.netbeans.jpa.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
+import org.openide.windows.WindowManager;
 
 public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> implements ModelerPanel {
 
@@ -71,6 +88,39 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
             class_EditorPane.setText(referenceClass.getName());
         }
 
+    }
+
+    private void importFields(ElementHandle<TypeElement> classHandle) {
+        FileObject pkg = SourceGroupSupport.findSourceGroupForFile(modelerFile.getFileObject()).getRootFolder();
+        try {
+            JavaSource javaSource = JavaSource.create(ClasspathInfo.create(pkg));
+            javaSource.runUserActionTask((CompilationController controller) -> {
+                try {
+                    controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);//classHandle.resolve(controller);//
+                    TypeElement jc = controller.getElements().getTypeElement(classHandle.getQualifiedName());
+                    if (jc != null) {
+                        Map<String, String> elements = new LinkedHashMap<>();
+                        for (ExecutableElement method : JavaSourceParserUtil.getMethods(jc)) {
+                            try {
+                                String methodName = method.getSimpleName().toString();
+                                if (methodName.startsWith("get") || methodName.startsWith("is")) {
+//                                    elements.put
+                                }
+                            } catch (TypeNotPresentException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+
+                    } else {
+                        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(JavaClassArtifactPanel.class, "MSG_ARTIFACT_NOT_FOUND"));
+                    }
+                } catch (IOException t) {
+                    ExceptionUtils.printStackTrace(t);
+                }
+            }, true);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     /**
@@ -227,6 +277,7 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
             row[1] = referenceClass.isEnable();
             row[2] = referenceClass.getName();
         }
+
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
 
@@ -235,9 +286,11 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
     private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
-        String dataType = NBModelerUtil.browseClass(modelerFile, class_EditorPane.getText());
-        if (StringUtils.isNotEmpty(dataType)) {
-            class_EditorPane.setText(dataType);
+        Optional<ElementHandle<TypeElement>> dataTypeHandler = NBModelerUtil.browseElement(modelerFile, class_EditorPane.getText());
+//        if (StringUtils.isNotEmpty(dataType)) {
+        if (dataTypeHandler.isPresent()) {
+//            importFields(dataTypeHandler.get());
+            class_EditorPane.setText(dataTypeHandler.get().getQualifiedName());
         }
     }//GEN-LAST:event_dataType_ActionActionPerformed
     private JEditorPane class_EditorPane;

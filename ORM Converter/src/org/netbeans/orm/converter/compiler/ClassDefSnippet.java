@@ -97,6 +97,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private DiscriminatorValueSnippet discriminatorValue;
 
     private EntityListenersSnippet entityListeners;
+    private ConvertsSnippet converts;
     private InheritanceSnippet inheritance;
     private NamedQueriesSnippet namedQueries;
     private NamedNativeQueriesSnippet namedNativeQueries;
@@ -425,6 +426,10 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
         if (entityListeners != null) {
             importSnippets.addAll(entityListeners.getImportSnippets());
+        }
+
+        if (converts != null) {
+            importSnippets.addAll(converts.getImportSnippets());
         }
 
         if (discriminatorColumn != null) {
@@ -763,5 +768,19 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setVetoableChangeSupport(boolean vetoableChangeSupport) {
         this.vetoableChangeSupport = vetoableChangeSupport;
+    }
+
+    /**
+     * @return the converts
+     */
+    public ConvertsSnippet getConverts() {
+        return converts;
+    }
+
+    /**
+     * @param converts the converts to set
+     */
+    public void setConverts(ConvertsSnippet converts) {
+        this.converts = converts;
     }
 }

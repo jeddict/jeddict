@@ -16,7 +16,12 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperties;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getOrderProperty;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertContainerHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertHandler;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -32,16 +37,27 @@ public abstract class MultiRelationAttributeWidget<E extends MultiRelationAttrib
     public MultiRelationAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
     }
+
+    @Override
+    public void init() {
+        super.init();
+        AttributeValidator.scanMapKeyHandlerError(this);
+    }
     
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        MultiRelationAttribute relationAttributeSpec = this.getBaseElementSpec();
-        if (relationAttributeSpec.isOwner()) {
-            set.put("BASIC_PROP", getOrderProperty(this));
-        }
         MultiRelationAttribute relationAttribute = this.getBaseElementSpec();
-        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, relationAttribute));
+        if (relationAttribute.isOwner()) {
+            set.put("JPA_PROP", getOrderProperty(this));
+        }
+        if (relationAttribute instanceof MapKeyConvertContainerHandler) {//Relation<Embedded, Y>
+            set.put("JPA_PROP", getMapKeyConvertProperties(this, this.getModelerScene(), (MapKeyConvertContainerHandler) relationAttribute));
+        }
+        if (relationAttribute instanceof MapKeyConvertHandler) {//Relation<X, Y>
+            set.put("JPA_PROP", getMapKeyConvertProperty(this, this.getModelerScene(), (MapKeyConvertHandler) relationAttribute));
+        }
+        set.put("ATTR_PROP", PropertiesHandler.getCollectionTypeProperty(this, relationAttribute));
         createMapKeyPropertySet(set);
     }
 

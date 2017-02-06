@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,10 +23,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import org.apache.velocity.util.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.velocity.util.StringUtils.firstLetterCaps;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -47,6 +49,9 @@ import org.netbeans.jpa.modeler.properties.classmember.ConstructorPanel;
 import org.netbeans.jpa.modeler.properties.classmember.HashcodeEqualsPanel;
 import org.netbeans.jpa.modeler.properties.entitygraph.NamedEntityGraphPanel;
 import org.netbeans.jpa.modeler.properties.cascade.CascadeTypePanel;
+import org.netbeans.jpa.modeler.properties.convert.ConvertPanel;
+import org.netbeans.jpa.modeler.properties.convert.ConverterPanel;
+import org.netbeans.jpa.modeler.properties.convert.OverrideConvertPanel;
 import org.netbeans.jpa.modeler.properties.custom.snippet.CustomSnippetPanel;
 import org.netbeans.jpa.modeler.properties.extend.ClassExtendPanel;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
@@ -59,8 +64,6 @@ import org.netbeans.jpa.modeler.properties.named.query.NamedQueryPanel;
 import org.netbeans.jpa.modeler.properties.named.resultsetmapping.ResultSetMappingsPanel;
 import org.netbeans.jpa.modeler.properties.named.storedprocedurequery.NamedStoredProcedureQueryPanel;
 import org.netbeans.jpa.modeler.properties.order.OrderPanel;
-import static org.netbeans.jpa.modeler.properties.order.OrderPanel.ORDER_BY;
-import static org.netbeans.jpa.modeler.properties.order.OrderPanel.ORDER_COLUMN;
 import org.netbeans.jpa.modeler.properties.pkjoincolumn.PrimaryKeyJoinColumnPanel;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.AccessType;
@@ -69,6 +72,8 @@ import static org.netbeans.jpa.modeler.spec.AccessType.PROPERTY;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.CascadeType;
+import org.netbeans.jpa.modeler.spec.Convert;
+import org.netbeans.jpa.modeler.spec.Converter;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -97,6 +102,9 @@ import org.netbeans.jpa.modeler.spec.extend.ClassSnippet;
 import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
+import org.netbeans.jpa.modeler.spec.extend.ConvertContainerHandler;
+import org.netbeans.jpa.modeler.spec.extend.ConvertHandler;
+import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
@@ -128,13 +136,18 @@ import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.openide.nodes.PropertySupport;
 import org.openide.windows.WindowManager;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertContainerHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
+import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
+import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
 import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
-    
+
     public static final String NONE_TYPE = "< none >";
 
     public static ComboBoxPropertySupport getAccessTypeProperty(JPAModelerScene modelerScene, final AccessTypeHandler accessTypeHandlerSpec) {
@@ -192,8 +205,8 @@ public class PropertiesHandler {
                 boolean valid = false;
                 try {
                     if (collectionType != null && !collectionType.trim().isEmpty()) {
-                        if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim())) ||
-                                java.util.Map.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
+                        if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))
+                                || java.util.Map.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
                             valid = true;
                         }
                     }
@@ -209,7 +222,6 @@ public class PropertiesHandler {
             }
 
             void manageMapType(String prevType, String newType) {
-              
 
                 Class prevClass = null;
                 try {
@@ -288,6 +300,7 @@ public class PropertiesHandler {
                 mapKeyHandler.setMapKeyAttribute(newType);
                 AttributeValidator.scanMapKeyHandlerError(attributeWidget);
                 attributeWidget.visualizeDataType();
+                attributeWidget.refreshProperties();
             }
 
             @Override
@@ -295,13 +308,13 @@ public class PropertiesHandler {
                 Attribute attribute = null;
                 if (mapKeyHandler.getMapKeyAttribute() != null) {
                     attribute = mapKeyHandler.getMapKeyAttribute();
-                }else { //select any attribute if not found //TODO ensure PK
-                      List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(); 
-                      if(!attributeWidgets.isEmpty()){
-                         attribute = attributeWidgets.get(0).getBaseElementSpec();
-                         mapKeyHandler.setMapKeyAttribute(attribute);
-                         AttributeValidator.scanMapKeyHandlerError(attributeWidget);
-                      }
+                } else { //select any attribute if not found //TODO ensure PK
+                    List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets();
+                    if (!attributeWidgets.isEmpty()) {
+                        attribute = attributeWidgets.get(0).getBaseElementSpec();
+                        mapKeyHandler.setMapKeyAttribute(attribute);
+                        AttributeValidator.scanMapKeyHandlerError(attributeWidget);
+                    }
                 }
                 if (attribute != null) {
                     return new ComboBoxValue(attribute, attribute.getName() + " : " + JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel()));
@@ -313,14 +326,14 @@ public class PropertiesHandler {
             @Override
             public List<ComboBoxValue<Attribute>> getItemList() {
                 List<ComboBoxValue<Attribute>> comboBoxValues = new ArrayList<>();
-                        getAllAttributeWidgets().forEach(classAttributeWidget -> {
-                            Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
-                            comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName() + " : " + JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel())));
-                        });
+                getAllAttributeWidgets().forEach(classAttributeWidget -> {
+                    Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
+                    comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName() + " : " + JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel())));
+                });
                 return comboBoxValues;
             }
-            
-            List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(){
+
+            private List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
                 PersistenceClassWidget classWidget;
                 if (attributeWidget instanceof MultiRelationAttributeWidget) {
                     classWidget = ((MultiRelationAttributeWidget) attributeWidget).getRelationFlowWidget().getTargetEntityWidget();
@@ -329,9 +342,12 @@ public class PropertiesHandler {
                 } else {
                     classWidget = attributeWidget.getClassWidget();
                 }
-               return (List<AttributeWidget<? extends Attribute>>)classWidget.getAllAttributeWidgets().stream().filter(a -> !(a instanceof MultiValueEmbeddedAttributeWidget)
+                return (List<AttributeWidget<? extends Attribute>>) classWidget.getAllAttributeWidgets()
+                        .stream()
+                        .filter(a -> !(a instanceof MultiValueEmbeddedAttributeWidget)
                         && !(a instanceof TransientAttributeWidget) && !(a instanceof MultiRelationAttributeWidget)
-                        && !(a instanceof BasicCollectionAttributeWidget)).collect(toList());
+                        && !(a instanceof BasicCollectionAttributeWidget))
+                        .collect(toList());
             }
 
             @Override
@@ -359,14 +375,14 @@ public class PropertiesHandler {
             @Override
             public ComboBoxValue<Attribute> getItem() {
                 Attribute attribute = null;
-                if (entity.getLabelAttribute()!= null) {
+                if (entity.getLabelAttribute() != null) {
                     attribute = entity.getLabelAttribute();
-                }else { //select any attribute if not found 
-                      List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(); 
-                      if(!attributeWidgets.isEmpty()){
-                         attribute = attributeWidgets.get(0).getBaseElementSpec();
-                         entity.setLabelAttribute(attribute);
-                      }
+                } else { //select any attribute if not found 
+                    List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets();
+                    if (!attributeWidgets.isEmpty()) {
+                        attribute = attributeWidgets.get(0).getBaseElementSpec();
+                        entity.setLabelAttribute(attribute);
+                    }
                 }
                 if (attribute != null) {
                     return new ComboBoxValue(attribute, attribute.getName());
@@ -378,15 +394,15 @@ public class PropertiesHandler {
             @Override
             public List<ComboBoxValue<Attribute>> getItemList() {
                 List<ComboBoxValue<Attribute>> comboBoxValues = new ArrayList<>();
-                        getAllAttributeWidgets().forEach(classAttributeWidget -> {
-                            Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
-                            comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName()));
-                        });
+                getAllAttributeWidgets().forEach(classAttributeWidget -> {
+                    Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
+                    comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName()));
+                });
                 return comboBoxValues;
             }
-            
-            private List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(){
-               return (List<AttributeWidget<? extends Attribute>>)classWidget.getAllAttributeWidgets().stream().filter(a -> !(a instanceof EmbeddedAttributeWidget)
+
+            private List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
+                return (List<AttributeWidget<? extends Attribute>>) classWidget.getAllAttributeWidgets().stream().filter(a -> !(a instanceof EmbeddedAttributeWidget)
                         && !(a instanceof TransientAttributeWidget) && !(a instanceof RelationAttributeWidget)
                         && !(a instanceof BasicCollectionAttributeWidget)).collect(toList());
             }
@@ -495,7 +511,7 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 joinColumnsSpec.clear();
                 data.stream().forEach((row) -> {
-                    ((List<JoinColumn>)joinColumnsSpec).add((JoinColumn) row[0]);
+                    ((List<JoinColumn>) joinColumnsSpec).add((JoinColumn) row[0]);
                 });
                 this.data = data;
             }
@@ -504,8 +520,7 @@ public class PropertiesHandler {
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
-    
-    
+
     public static PropertySupport getAttributeOverridesProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Set<AttributeOverride> attributeOverridesSpec) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No AttributeOverrides exist", "One AttributeOverride exist", "AttributeOverrides exist"});
@@ -540,7 +555,7 @@ public class PropertiesHandler {
                     Object[] row = new Object[attributeEntity.getColumns().size()];
                     row[0] = attributeOverride;
                     row[1] = attributeOverride.getName();
-                    row[2] = attributeOverride.getColumn()!=null?attributeOverride.getColumn().getName():EMPTY;//for representation
+                    row[2] = attributeOverride.getColumn() != null ? attributeOverride.getColumn().getName() : EMPTY;//for representation
                     data_local.add(row);
                 }
                 this.data = data_local;
@@ -565,7 +580,7 @@ public class PropertiesHandler {
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
-    
+
     public static PropertySupport getAssociationOverridesProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Set<AssociationOverride> associationOverridesSpec) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
         attributeEntity.setCountDisplay(new String[]{"No AssociationOverrides exist", "One AssociationOverride exist", "AssociationOverrides exist"});
@@ -627,7 +642,7 @@ public class PropertiesHandler {
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
-    
+
     public static PropertySupport getPrimaryKeyJoinColumnsProperty(String id, String name, String desc, EntityWidget entityWidget, Entity entity) {
         JPAModelerScene modelerScene = entityWidget.getModelerScene();
         final List<? extends PrimaryKeyJoinColumn> primaryKeyJoinColumnsSpec = entity.getPrimaryKeyJoinColumn();
@@ -680,16 +695,16 @@ public class PropertiesHandler {
             public void setData(List<Object[]> data) {
                 primaryKeyJoinColumnsSpec.clear();
                 data.stream().forEach((row) -> {
-                    ((List<PrimaryKeyJoinColumn>)primaryKeyJoinColumnsSpec).add((PrimaryKeyJoinColumn) row[0]);
+                    ((List<PrimaryKeyJoinColumn>) primaryKeyJoinColumnsSpec).add((PrimaryKeyJoinColumn) row[0]);
                 });
                 this.data = data;
             }
 
         });
 
-        entityWidget.addPropertyVisibilityHandler("PrimaryKeyJoinColumns", (PropertyVisibilityHandler<String>) () -> {
+        entityWidget.addPropertyVisibilityHandler("PrimaryKeyJoinColumns", () -> {
             InheritanceStateType inheritanceState = entityWidget.getInheritanceState();
-            return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF ;
+            return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF;
         });
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
@@ -808,7 +823,7 @@ public class PropertiesHandler {
                 namedStoredProcedureQueriesSpec.clear();
                 data.stream().forEach((row) -> {
                     NamedStoredProcedureQuery procedureQuery = (NamedStoredProcedureQuery) row[0];
-                    procedureQuery.setEnable((boolean)row[1]);
+                    procedureQuery.setEnable((boolean) row[1]);
                     namedStoredProcedureQueriesSpec.add(procedureQuery);
                 });
                 this.data = data;
@@ -864,7 +879,7 @@ public class PropertiesHandler {
                 }
                 this.data = data_local;
             }
-            
+
             @Override
             public List<Object[]> getData() {
                 return data;
@@ -875,7 +890,7 @@ public class PropertiesHandler {
                 namedQueriesSpec.clear();
                 data.stream().forEach((row) -> {
                     NamedQuery namedQuery = (NamedQuery) row[0];
-                    namedQuery.setEnable((boolean)row[1]);
+                    namedQuery.setEnable((boolean) row[1]);
                     namedQueriesSpec.add(namedQuery);
                 });
                 this.data = data;
@@ -925,7 +940,7 @@ public class PropertiesHandler {
                 }
                 this.data = data_local;
             }
-            
+
             @Override
             public List<Object[]> getData() {
                 return data;
@@ -936,7 +951,7 @@ public class PropertiesHandler {
                 annotations.clear();
                 data.stream().forEach((row) -> {
                     Annotation annotationElement = (Annotation) row[0];
-                    annotationElement.setEnable((boolean)row[1]);
+                    annotationElement.setEnable((boolean) row[1]);
                     annotations.add(annotationElement);
                 });
                 this.data = data;
@@ -946,17 +961,17 @@ public class PropertiesHandler {
 
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
-    
+
     public static PropertySupport getCustomArtifact(JPAModelerScene modelerScene, Set<ReferenceClass> referenceClasses, String artifactType) {
         final NAttributeEntity attributeEntity = new NAttributeEntity(artifactType, artifactType, "");
-        attributeEntity.setCountDisplay(new String[]{String.format("No %s exist",artifactType), String.format("One %s exist",artifactType), String.format("%s exist",artifactType)});
+        attributeEntity.setCountDisplay(new String[]{String.format("No %s exist", artifactType), String.format("One %s exist", artifactType), String.format("%s exist", artifactType)});
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column(artifactType, false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new JavaClassArtifactPanel(modelerScene.getModelerFile(),artifactType));
+        attributeEntity.setCustomDialog(new JavaClassArtifactPanel(modelerScene.getModelerFile(), artifactType));
 
         attributeEntity.setTableDataListener(new NEntityDataListener() {
             List<Object[]> data;
@@ -986,7 +1001,7 @@ public class PropertiesHandler {
                 }
                 this.data = data_local;
             }
-            
+
             @Override
             public List<Object[]> getData() {
                 return data;
@@ -997,7 +1012,7 @@ public class PropertiesHandler {
                 referenceClasses.clear();
                 data.stream().forEach((row) -> {
                     ReferenceClass referenceClass = (ReferenceClass) row[0];
-                    referenceClass.setEnable((boolean)row[1]);
+                    referenceClass.setEnable((boolean) row[1]);
                     referenceClasses.add(referenceClass);
                 });
                 this.data = data;
@@ -1009,10 +1024,8 @@ public class PropertiesHandler {
     }
 
     public static EmbeddedPropertySupport getCustomParentClass(JavaClassWidget<? extends JavaClass> javaClassWidget) {
-
         GenericEmbedded entity = new GenericEmbedded("extends", "Extends", "");
         entity.setEntityEditor(new ClassExtendPanel(javaClassWidget.getModelerScene().getModelerFile()));
-
         entity.setDataListener(new EmbeddedDataListener<ReferenceClass>() {
             private JavaClass javaClass;
 
@@ -1035,14 +1048,14 @@ public class PropertiesHandler {
             public String getDisplay() {
                 ReferenceClass referenceClass = javaClass.getSuperclassRef();
                 if (referenceClass == null) {
-                   return EMPTY;
+                    return EMPTY;
                 } else {
-                   return JavaIdentifiers.unqualifyGeneric(referenceClass.getName());
+                    return JavaIdentifiers.unqualifyGeneric(referenceClass.getName());
                 }
             }
 
         });
-        javaClassWidget.addPropertyVisibilityHandler("extends", (PropertyVisibilityHandler<String>) () -> {
+        javaClassWidget.addPropertyVisibilityHandler("extends", () -> {
             InheritanceStateType inheritanceStateType = javaClassWidget.getInheritanceState();
             return inheritanceStateType != InheritanceStateType.BRANCH && inheritanceStateType != InheritanceStateType.LEAF;
         });
@@ -1052,10 +1065,11 @@ public class PropertiesHandler {
     public static PropertySupport getClassSnippet(JPAModelerScene modelerScene, List<ClassSnippet> snippets) {
         return getCustomSnippet(modelerScene, snippets, ClassSnippet.class, ClassSnippetLocationType.class);
     }
+
     public static PropertySupport getAttributeSnippet(JPAModelerScene modelerScene, List<AttributeSnippet> snippets) {
-         return getCustomSnippet(modelerScene, snippets, AttributeSnippet.class, AttributeSnippetLocationType.class);   
+        return getCustomSnippet(modelerScene, snippets, AttributeSnippet.class, AttributeSnippetLocationType.class);
     }
-    
+
     public static <T extends Snippet> PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<T> snippets, Class<T> snippetType, Class<? extends SnippetLocation> snippetLocationType) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("Snippets", "Snippets", "");
         attributeEntity.setCountDisplay(new String[]{"No Snippets exist", "One Snippet exist", "Snippets exist"});
@@ -1097,7 +1111,7 @@ public class PropertiesHandler {
                 }
                 this.data = data_local;
             }
-            
+
             @Override
             public List<Object[]> getData() {
                 return data;
@@ -1108,7 +1122,7 @@ public class PropertiesHandler {
                 snippets.clear();
                 data.stream().forEach((row) -> {
                     T snippet = (T) row[0];
-                    snippet.setEnable((boolean)row[1]);
+                    snippet.setEnable((boolean) row[1]);
                     snippets.add(snippet);
                 });
                 this.data = data;
@@ -1181,7 +1195,7 @@ public class PropertiesHandler {
                 entityGraphsSpec.clear();
                 data.stream().forEach((row) -> {
                     NamedEntityGraph entityGraph = (NamedEntityGraph) row[0];
-                    entityGraph.setEnable((boolean)row[1]);
+                    entityGraph.setEnable((boolean) row[1]);
                     entityGraphsSpec.add(entityGraph);
                 });
                 this.data = data;
@@ -1245,7 +1259,7 @@ public class PropertiesHandler {
                 namedNativeQueriesSpec.clear();
                 data.stream().forEach((row) -> {
                     NamedNativeQuery nativeQuery = (NamedNativeQuery) row[0];
-                    nativeQuery.setEnable((boolean)row[1]);
+                    nativeQuery.setEnable((boolean) row[1]);
                     namedNativeQueriesSpec.add(nativeQuery);
                 });
                 this.data = data;
@@ -1284,7 +1298,7 @@ public class PropertiesHandler {
             public ComboBoxValue<JaxbVariableType> getItem() {
                 if (varHandlerSpec.getJaxbVariableType() == null) {
                     if (jaxbVariableList != null) {
-                        return new ComboBoxValue<>(null, NONE_TYPE);
+                        return new ComboBoxValue<>(XML_ELEMENT, "Default(Element)");
                     } else {
                         return new ComboBoxValue<>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText());
                     }
@@ -1359,29 +1373,31 @@ public class PropertiesHandler {
             @Override
             public String getDisplay() {
                 InheritanceStateType inheritencaState = entityWidget.getInheritanceState();
-                if (null != inheritencaState) switch (inheritencaState) {
-                    case LEAF:
-                        EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
-                        InheritanceHandler superClassSpec = (InheritanceHandler) superEntityWidget.getBaseElementSpec();
-                        if (superClassSpec.getInheritance() != null && superClassSpec.getInheritance().getStrategy() != null) {
-                            return superClassSpec.getInheritance().getStrategy().toString();
-                        } else {
-                            return InheritanceType.SINGLE_TABLE.toString();
-                        }
-                    case ROOT:
-                    case BRANCH:
-                        if (classSpec.getInheritance() != null && classSpec.getInheritance().getStrategy() != null) {
-                            return classSpec.getInheritance().getStrategy().toString();
-                        } else {
-                            return InheritanceType.SINGLE_TABLE.toString();
-                        }
+                if (null != inheritencaState) {
+                    switch (inheritencaState) {
+                        case LEAF:
+                            EntityWidget superEntityWidget = (EntityWidget) entityWidget.getOutgoingGeneralizationFlowWidget().getSuperclassWidget();
+                            InheritanceHandler superClassSpec = (InheritanceHandler) superEntityWidget.getBaseElementSpec();
+                            if (superClassSpec.getInheritance() != null && superClassSpec.getInheritance().getStrategy() != null) {
+                                return superClassSpec.getInheritance().getStrategy().toString();
+                            } else {
+                                return InheritanceType.SINGLE_TABLE.toString();
+                            }
+                        case ROOT:
+                        case BRANCH:
+                            if (classSpec.getInheritance() != null && classSpec.getInheritance().getStrategy() != null) {
+                                return classSpec.getInheritance().getStrategy().toString();
+                            } else {
+                                return InheritanceType.SINGLE_TABLE.toString();
+                            }
+                    }
                 }
                 return EMPTY;
             }
 
         });
-        
-        entityWidget.addPropertyVisibilityHandler("inheritance", (PropertyVisibilityHandler<String>) () -> {
+
+        entityWidget.addPropertyVisibilityHandler("inheritance", () -> {
             return entityWidget.getInheritanceState() != InheritanceStateType.SINGLETON;
         });
         return new EmbeddedPropertySupport(entityWidget.getModelerScene().getModelerFile(), entity);
@@ -1424,9 +1440,9 @@ public class PropertiesHandler {
     }
 
     public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("toString", "toString()",getMessage(ClassMemberPanel.class, "LBL_tostring_select"));
+        GenericEmbedded entity = new GenericEmbedded("toString", "toString()", getMessage(ClassMemberPanel.class, "LBL_tostring_select"));
         final ClassMembers classMembersObj = persistenceClassWidget.getBaseElementSpec().getToStringMethod();
-        ClassMemberPanel classMemberPanel = new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget,false);
+        ClassMemberPanel classMemberPanel = new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget, false);
         classMemberPanel.postConstruct();
         entity.setEntityEditor(classMemberPanel);
         entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
@@ -1462,7 +1478,7 @@ public class PropertiesHandler {
         List<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("OBJECT", false, true, Object.class));
-         columns.add(new Column("#", true, Boolean.class));
+        columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Constructor List", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ConstructorPanel(persistenceClassWidget));
@@ -1504,25 +1520,25 @@ public class PropertiesHandler {
             @Override
             public void setData(List<Object[]> data) {
                 constructors.clear();
-                
+
                 data.stream().forEach((row) -> {
                     Constructor constructorElement = (Constructor) row[0];
-                    constructorElement.setEnable((boolean)row[1]);
+                    constructorElement.setEnable((boolean) row[1]);
                     constructors.add(constructorElement);
                 });
                 //add no-arg constructor, if no-arg constructor not exist and other constructor exist
-                if(!constructors.isEmpty() && !constructors.stream().anyMatch(con -> con.getAttributes().isEmpty())){
+                if (!constructors.isEmpty() && !constructors.stream().anyMatch(con -> con.getAttributes().isEmpty())) {
                     constructors.add(Constructor.getNoArgsInstance());
                 }
-                
+
                 //Enable no-args constructor and disable other no-args constructor , if more then one are available 
-                if(!constructors.isEmpty()){
-                   List<Constructor> noArgsConstructors = constructors.stream().filter(con -> con.isNoArgs()).collect(toList());
-                   noArgsConstructors.stream().forEach(con -> con.setEnable(false));
-                   noArgsConstructors.get(0).setEnable(true);
-                   noArgsConstructors.get(0).setAccessModifier(AccessModifierType.PUBLIC);
+                if (!constructors.isEmpty()) {
+                    List<Constructor> noArgsConstructors = constructors.stream().filter(con -> con.isNoArgs()).collect(toList());
+                    noArgsConstructors.stream().forEach(con -> con.setEnable(false));
+                    noArgsConstructors.get(0).setEnable(true);
+                    noArgsConstructors.get(0).setAccessModifier(AccessModifierType.PUBLIC);
                 }
-                
+
                 this.data = data;
             }
 
@@ -1538,6 +1554,7 @@ public class PropertiesHandler {
 
         entity.setDataListener(new EmbeddedDataListener<Id>() {
             private Id idAttribute;
+
             @Override
             public void init() {
                 idAttribute = attributeWidget.getBaseElementSpec();
@@ -1559,14 +1576,14 @@ public class PropertiesHandler {
                     attributeWidget.getClassWidget().getAllSubclassWidgets().stream()
                             .filter(cw -> cw instanceof EntityWidget).findFirst().ifPresent(ew -> ((EntityWidget) ew).scanKeyError());
                 }
-  
+
 //                attributeWidget.setBaseElementSpec(classSpec);
             }
 
             @Override
             public String getDisplay() {
                 if (idAttribute.getGeneratedValue() != null && idAttribute.getGeneratedValue().getStrategy() != null) {
-                    return StringUtils.firstLetterCaps(idAttribute.getGeneratedValue().getStrategy().toString());
+                    return firstLetterCaps(idAttribute.getGeneratedValue().getStrategy().toString());
                 } else if (idAttribute.getGeneratedValue() == null || idAttribute.getGeneratedValue().getStrategy() == null) {
                     return NONE_TYPE;
                 } else {
@@ -1582,9 +1599,9 @@ public class PropertiesHandler {
             AttributeWidget attributeWidget) {
 
         GenericEmbedded property = new GenericEmbedded(id, name, description);
-        
+
         if (mapKey) {
-            property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),true));
+            property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(), true));
             property.setAfter("mapKeyType");
         } else {
             if (attributeWidget.getBaseElementSpec() instanceof BaseAttribute) {
@@ -1593,7 +1610,7 @@ public class PropertiesHandler {
                 } else if (attributeWidget.getBaseElementSpec() instanceof Embedded) {//to Disable it
                     property.setEntityEditor(null);
                 } else {
-                    property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(),false));
+                    property.setEntityEditor(new FieldTypePanel(attributeWidget.getModelerScene().getModelerFile(), false));
                     property.setBefore("collectionType");
                 }
 
@@ -1630,7 +1647,7 @@ public class PropertiesHandler {
             @Override
             public String getDisplay() {
                 if (mapKey) {
-                    return JavaSourceHelper.getSimpleClassName(((MapKeyHandler)attribute).getMapKeyDataTypeLabel());
+                    return JavaSourceHelper.getSimpleClassName(((MapKeyHandler) attribute).getMapKeyDataTypeLabel());
                 } else {
                     return JavaSourceHelper.getSimpleClassName(attribute.getDataTypeLabel());
                 }
@@ -1639,7 +1656,7 @@ public class PropertiesHandler {
         });
         return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), property);
     }
- 
+
     public static EmbeddedPropertySupport getCascadeProperty(RelationAttributeWidget attributeWidget) {
 
         GenericEmbedded entity = new GenericEmbedded("cascadeType", "Cascade Type", "");
@@ -1650,7 +1667,7 @@ public class PropertiesHandler {
 
             @Override
             public void init() {
-                relationAttribute = (RelationAttribute)attributeWidget.getBaseElementSpec();
+                relationAttribute = (RelationAttribute) attributeWidget.getBaseElementSpec();
             }
 
             @Override
@@ -1698,7 +1715,7 @@ public class PropertiesHandler {
         });
         return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
     }
- 
+
     public static EmbeddedPropertySupport getOrderProperty(AttributeWidget attributeWidget) {
 
         GenericEmbedded entity = new GenericEmbedded("order", "Order", "");
@@ -1710,7 +1727,7 @@ public class PropertiesHandler {
 
             @Override
             public void init() {
-                sortableAttribute = (SortableAttribute)attributeWidget.getBaseElementSpec();
+                sortableAttribute = (SortableAttribute) attributeWidget.getBaseElementSpec();
             }
 
             @Override
@@ -1731,7 +1748,6 @@ public class PropertiesHandler {
         return new EmbeddedPropertySupport(attributeWidget.getModelerScene().getModelerFile(), entity);
     }
 
-    
     public static ComboBoxPropertySupport getCacheableProperty(EntityWidget entityWidget) {
         Entity entity = entityWidget.getBaseElementSpec();
         ComboBoxListener<Boolean> comboBoxListener = new ComboBoxListener<Boolean>() {
@@ -1744,8 +1760,8 @@ public class PropertiesHandler {
             public ComboBoxValue<Boolean> getItem() {
                 if (entity.getCacheable() != null) {
                     return new ComboBoxValue<>(entity.getCacheable(), entity.getCacheable()
-                            ?getMessage(PropertiesHandler.class, "LBL_ENABLE")
-                            :getMessage(PropertiesHandler.class, "LBL_FORCE_DISABLE"));
+                            ? getMessage(PropertiesHandler.class, "LBL_ENABLE")
+                            : getMessage(PropertiesHandler.class, "LBL_FORCE_DISABLE"));
                 } else {
                     return new ComboBoxValue<>(null, getMessage(PropertiesHandler.class, "LBL_DISABLE"));
                 }
@@ -1767,6 +1783,211 @@ public class PropertiesHandler {
             }
         };
         return new ComboBoxPropertySupport(entityWidget.getModelerScene().getModelerFile(), "cacheable", "Cacheable", "", comboBoxListener);
+    }
+
+    public static PropertySupport getConverterProperties(JPAModelerScene scene, List<Converter> converters) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("converters", "Converters", "Converters");
+        attributeEntity.setCountDisplay(new String[]{"No Converter exist", "One Converter exist", "Converters exist"});
+        attributeEntity.setCustomDialog(new ConverterPanel(scene.getModelerFile()));
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Converter Class", false, String.class));
+        columns.add(new Column("Attribute Type", false, String.class));
+        columns.add(new Column("DB Field Type", false, String.class));
+        columns.add(new Column("Auto Apply", true, Boolean.class));
+        attributeEntity.setColumns(columns);
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = converters.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<Converter> itr = converters.iterator();
+                while (itr.hasNext()) {
+                    Converter converter = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = converter;
+                    row[1] = converter.getClazz();
+                    row[2] = converter.getAttributeType();
+                    row[3] = converter.getFieldType();
+                    row[4] = converter.isAutoApply();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                converters.clear();
+                converters.addAll(data.stream().map((row) -> {
+                    Converter converter = (Converter) row[0];
+                    converter.setAutoApply((boolean) row[4]);
+                    return converter;
+                }).collect(toList()));
+                this.data = data;
+            }
+
+        });
+
+        return new NEntityPropertySupport(scene.getModelerFile(), attributeEntity);
+    }
+    
+    public static PropertySupport getConvertProperties(JPAModelerScene scene, ConvertContainerHandler convertContainer) {
+        final List<Convert> converts = convertContainer.getConverts();
+        final NAttributeEntity attributeEntity = getConvertPropertiesEntity("converts", "Converts", "Converts", converts);
+        attributeEntity.setCustomDialog(new OverrideConvertPanel(scene.getModelerFile(), convertContainer, false));
+        return new NEntityPropertySupport(scene.getModelerFile(), attributeEntity);
+    }
+
+    private static PropertyVisibilityHandler getMapKeyConvertVisibilityHandler(AttributeWidget<? extends Attribute> attributeWidget, Predicate<MapKeyHandler> filter){
+         PropertyVisibilityHandler mapKeyVisibility = AttributeWidget.getMapKeyVisibilityHandler(attributeWidget.getBaseElementSpec());
+        return () -> {
+            if(mapKeyVisibility.isVisible()){
+                MapKeyHandler handler = (MapKeyHandler)attributeWidget.getBaseElementSpec();
+                return handler.getValidatedMapKeyType() == MapKeyType.NEW && filter.test(handler);
+            }
+            return false;
+        };
+    }
+    public static PropertySupport getMapKeyConvertProperties(AttributeWidget<? extends Attribute> attributeWidget, JPAModelerScene scene, MapKeyConvertContainerHandler convertContainer) {
+        attributeWidget.addPropertyVisibilityHandler("mapKeyConverts", getMapKeyConvertVisibilityHandler(attributeWidget, handler -> handler.getMapKeyEmbeddable()!=null));
+        final List<Convert> converts = convertContainer.getMapKeyConverts();
+        final NAttributeEntity attributeEntity = getConvertPropertiesEntity("mapKeyConverts", "MapKey Converts", "MapKey Converts", converts);
+        attributeEntity.setCustomDialog(new OverrideConvertPanel(scene.getModelerFile(), convertContainer, true));
+        return new NEntityPropertySupport(scene.getModelerFile(), attributeEntity);
+    }
+
+    private static NAttributeEntity getConvertPropertiesEntity(String id, String name, String description, final List<Convert> converts) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, description);
+        attributeEntity.setCountDisplay(new String[]{"No Convert exist", "One Convert exist", "Converts exist"});
+
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column("OBJECT", false, true, Object.class));
+        columns.add(new Column("Converter Class", false, String.class));
+        columns.add(new Column("AttributeName", false, String.class));
+        columns.add(new Column("Disable Global Conversion", true, Boolean.class));
+        attributeEntity.setColumns(columns);
+
+        attributeEntity.setTableDataListener(new NEntityDataListener() {
+            List<Object[]> data;
+            int count;
+
+            @Override
+            public void initCount() {
+                count = converts.size();
+            }
+
+            @Override
+            public int getCount() {
+                return count;
+            }
+
+            @Override
+            public void initData() {
+                List<Object[]> data_local = new LinkedList<>();
+                Iterator<Convert> itr = converts.iterator();
+                while (itr.hasNext()) {
+                    Convert convert = itr.next();
+                    Object[] row = new Object[attributeEntity.getColumns().size()];
+                    row[0] = convert;
+                    row[1] = convert.getConverter();
+                    row[2] = convert.getAttributeName();
+                    row[3] = convert.isDisableConversion();
+                    data_local.add(row);
+                }
+                this.data = data_local;
+            }
+
+            @Override
+            public List<Object[]> getData() {
+                return data;
+            }
+
+            @Override
+            public void setData(List<Object[]> data) {
+                converts.clear();
+                converts.addAll(data.stream().map((row) -> {
+                    Convert convert = (Convert) row[0];
+                    convert.setDisableConversion((boolean) row[3]);
+                    return convert;
+                }).collect(toList()));
+                this.data = data;
+            }
+
+        });
+
+        return attributeEntity;
+    }
+
+    public static EmbeddedPropertySupport getConvertProperty(AttributeWidget<? extends Attribute> attributeWidget, JPAModelerScene scene, final ConvertHandler convertHandler) {
+        TemporalTypeHandler temporalType = (TemporalTypeHandler) attributeWidget.getBaseElementSpec();
+        EnumTypeHandler enumType = (EnumTypeHandler) attributeWidget.getBaseElementSpec();
+        attributeWidget.addPropertyVisibilityHandler("convert", () -> temporalType.getTemporal() == null && enumType.getEnumerated()==null);
+        return getConvertPropertySupport("convert", "Convert", "Convert", null, scene, () -> convertHandler.getConvert());
+    }
+
+    public static EmbeddedPropertySupport getMapKeyConvertProperty(AttributeWidget<? extends Attribute> attributeWidget, JPAModelerScene scene, final MapKeyConvertHandler convertHandler) {
+        attributeWidget.addPropertyVisibilityHandler("mapKeyConvert", getMapKeyConvertVisibilityHandler(attributeWidget, handler -> 
+                handler.getMapKeyAttributeType() != null && handler.getMapKeyTemporal() == null && handler.getMapKeyEnumerated()==null));
+        //reset/clear unused in list with convertHandler.getMapKeyConvert()
+        return getConvertPropertySupport("mapKeyConvert", "MapKey Convert", "MapKey Convert", "key", scene, () -> convertHandler.getMapKeyConvert());
+    }
+
+    private static EmbeddedPropertySupport getConvertPropertySupport(String id, String name, String description,
+            String keyAttribute, JPAModelerScene scene, final java.util.function.Supplier<Convert> convertProucer) { //Producer is used to get Convert and call getConvert/getMapKeyConvert everytime to clear unused converter list  
+        GenericEmbedded entity = new GenericEmbedded(id, name, description);
+        entity.setEntityEditor(new ConvertPanel(scene.getModelerFile()));
+        entity.setDataListener(new EmbeddedDataListener<Convert>() {
+            private Convert convert;
+            
+            @Override
+            public void init() {
+                convert = convertProucer.get();
+            }
+
+            @Override
+            public Convert getData() {
+                return convert;
+            }
+
+            @Override
+            public void setData(Convert convert) {
+                if (keyAttribute != null) {
+                    convert.setAttributeName(keyAttribute);
+                }
+                convertProucer.get();//remove all unused converter item from list except at index 0
+                //skip
+            }
+
+            @Override
+            public String getDisplay() {
+                if (ConvertValidator.isEmpty(convert)) {
+                    return NONE_TYPE;
+                } else {
+                    return isNotBlank(convert.getConverter()) ? convert.getConverter() : "Disable Conversion";
+                }
+            }
+
+        });
+        return new EmbeddedPropertySupport(scene.getModelerFile(), entity);
     }
 
 }

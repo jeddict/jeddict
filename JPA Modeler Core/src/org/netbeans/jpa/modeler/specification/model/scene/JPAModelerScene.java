@@ -50,6 +50,7 @@ import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConverterProperties;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -98,6 +99,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         EntityMappings entityMappings = this.getBaseElementSpec();
+        set.put("BASIC_PROP", getConverterProperties(this, entityMappings.getConverter()));
         set.put("GLOBAL_CONFIG", getClassSnippet(this, entityMappings.getSnippets()));
         set.put("GLOBAL_CONFIG", getCustomArtifact(this, entityMappings.getInterfaces(),"Interface"));
         

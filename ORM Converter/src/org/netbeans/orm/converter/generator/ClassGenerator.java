@@ -1,5 +1,5 @@
 /**
- * Copyright [2016] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -38,6 +38,7 @@ import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.Column;
 import org.netbeans.jpa.modeler.spec.ColumnResult;
 import org.netbeans.jpa.modeler.spec.ConstructorResult;
+import org.netbeans.jpa.modeler.spec.Convert;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Embedded;
@@ -170,6 +171,9 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
+import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
+import org.netbeans.orm.converter.compiler.ConvertSnippet;
+import org.netbeans.orm.converter.compiler.ConvertsSnippet;
 import org.netbeans.orm.converter.compiler.OrderColumnSnippet;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
@@ -386,7 +390,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (attr instanceof BaseAttribute) {
                 variableDef.setConstraints(getConstraintSnippet(attr.getConstraints()));
             }
-            
+
             List<AttributeSnippet> snippets = new ArrayList<>();//todo global attribute snippet at class level ; javaClass.getAttrSnippets());
             snippets.addAll(attr.getSnippets());
             variableDef.setCustomSnippet(getCustomSnippet(snippets));
@@ -447,10 +451,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setTemporal(temporal);
             variableDef.setType(parsedBasic.getAttributeType());
             variableDef.setFunctionalType(parsedBasic.isOptionalReturnType());
-
-            if (parsedLob != null) {
-                variableDef.setLob(true);
-            }
+            variableDef.setConverts(processConverts(Collections.singletonList(parsedBasic.getConvert())));
+            variableDef.setLob(parsedLob != null);
         }
     }
 
@@ -482,9 +484,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedElementCollection.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedElementCollection.getOrderBy()));
-            } else if (parsedElementCollection.getOrderColumn()!= null) {
+            } else if (parsedElementCollection.getOrderColumn() != null) {
                 variableDef.setOrderColumn(new OrderColumnSnippet(parsedElementCollection.getOrderColumn()));
-            } 
+            }
 
             if (parsedLob != null) {
                 variableDef.setLob(true);
@@ -511,6 +513,11 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 processInternalAttributeOverride(variableDef, parsedElementCollection.getAttributeOverride());
                 processInternalAssociationOverride(variableDef, parsedElementCollection.getAssociationOverride());
             }
+
+            List<Convert> converts = new ArrayList<>();
+            converts.addAll(parsedElementCollection.getMapKeyConverts());
+            converts.addAll(parsedElementCollection.getConverts());
+            variableDef.setConverts(processConverts(converts));
         }
     }
 
@@ -879,10 +886,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             associationOverride.setJoinColumns(joinColumnsList);
             associationOverride.setJoinTable(joinTable);
 
-            classDef.getAssociationOverrides().addAssociationOverride(
-                    associationOverride);
+            classDef.getAssociationOverrides().add(associationOverride);
         }
-        if (classDef.getAssociationOverrides() != null && classDef.getAssociationOverrides().getAssociationOverrides().isEmpty()) {
+        if (classDef.getAssociationOverrides() != null && classDef.getAssociationOverrides().get().isEmpty()) {
             classDef.setAssociationOverrides(null);
         }
     }
@@ -906,10 +912,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             attributeOverride.setColumnDef(columnDef);
             attributeOverride.setName(parsedAttributeOverride.getName());
 
-            attributeOverridesSnippet.addAttributeOverrides(attributeOverride);
+            attributeOverridesSnippet.add(attributeOverride);
         }
 
-        if (attributeOverridesSnippet.getAttributeOverrides().isEmpty()) {
+        if (attributeOverridesSnippet.get().isEmpty()) {
             return null;
         }
 
@@ -932,6 +938,28 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         classDef.setEntityListeners(new EntityListenersSnippet());
         classDef.getEntityListeners().setEntityListeners(entityListeners);
+    }
+
+    protected ConvertsSnippet processConverts(List<Convert> parsedConverts) {
+
+        if (parsedConverts == null || parsedConverts.isEmpty()) {
+            return null;
+        }
+
+        ConvertsSnippet convertsSnippet = new ConvertsSnippet();
+
+        for (Convert parsedConvert : parsedConverts) {
+            if (parsedConvert != null && ConvertValidator.isNotEmpty(parsedConvert)) {
+                ConvertSnippet convertSnippet = new ConvertSnippet(parsedConvert);
+                convertsSnippet.add(convertSnippet);
+            }
+
+        }
+        if (!convertsSnippet.get().isEmpty()) {
+            return convertsSnippet;
+        }
+
+        return null;
     }
 
     protected void processDefaultExcludeListeners(
@@ -1127,7 +1155,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setType(parsedEmbeded.getConnectedClass().getAbsolutePackage(rootPackageName) + ORMConverterUtil.DOT
                     + parsedEmbeded.getAttributeType());
             variableDef.setFunctionalType(parsedEmbeded.isOptionalReturnType());
-
+            variableDef.setConverts(processConverts(parsedEmbeded.getConverts()));
             processInternalAttributeOverride(variableDef, parsedEmbeded.getAttributeOverride());
             processInternalAssociationOverride(variableDef, parsedEmbeded.getAssociationOverride());
         }
@@ -1146,9 +1174,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             }
             attributeOverride.setColumnDef(columnDef);
             attributeOverride.setName(parsedAttributeOverride.getName());
-            attrHandler.getAttributeOverrides().addAttributeOverrides(attributeOverride);
+            attrHandler.getAttributeOverrides().add(attributeOverride);
         }
-        if (attrHandler.getAttributeOverrides() != null && attrHandler.getAttributeOverrides().getAttributeOverrides().isEmpty()) {
+        if (attrHandler.getAttributeOverrides() != null && attrHandler.getAttributeOverrides().get().isEmpty()) {
             attrHandler.setAttributeOverrides(null);
         }
     }
@@ -1175,10 +1203,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             associationOverride.setForeignKey(getForeignKey(parsedAssociationOverride.getForeignKey()));
 
-            assoHandler.getAssociationOverrides().addAssociationOverride(
-                    associationOverride);
+            assoHandler.getAssociationOverrides().add(associationOverride);
         }
-        if (assoHandler.getAssociationOverrides() != null && assoHandler.getAssociationOverrides().getAssociationOverrides().isEmpty()) {
+        if (assoHandler.getAssociationOverrides() != null && assoHandler.getAssociationOverrides().get().isEmpty()) {
             assoHandler.setAssociationOverrides(null);
         }
     }
@@ -1292,16 +1319,15 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setJoinTable(joinTable);
             if (parsedManyToMany.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedManyToMany.getOrderBy()));
-            } else if (parsedManyToMany.getOrderColumn()!= null) {
+            } else if (parsedManyToMany.getOrderColumn() != null) {
                 variableDef.setOrderColumn(new OrderColumnSnippet(parsedManyToMany.getOrderColumn()));
-            } 
-            
-            
-//            variableDef.setType(parsedManyToMany.getAttributeType());
+            }
 
+//            variableDef.setType(parsedManyToMany.getAttributeType());
             if (parsedManyToMany.getMapKey() != null) {
                 variableDef.setMapKey(parsedManyToMany.getMapKey().getName());
             }
+            variableDef.setConverts(processConverts(parsedManyToMany.getMapKeyConverts()));
         }
     }
 
@@ -1416,13 +1442,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setJoinColumns(getJoinColumnsSnippet(parsedOneToMany, false));
             if (parsedOneToMany.getOrderBy() != null) {
                 variableDef.setOrderBy(new OrderBySnippet(parsedOneToMany.getOrderBy()));
-            } else if (parsedOneToMany.getOrderColumn()!= null) {
+            } else if (parsedOneToMany.getOrderColumn() != null) {
                 variableDef.setOrderColumn(new OrderColumnSnippet(parsedOneToMany.getOrderColumn()));
-            } 
+            }
 
             if (parsedOneToMany.getMapKey() != null) {
                 variableDef.setMapKey(parsedOneToMany.getMapKey().getName());
             }
+            variableDef.setConverts(processConverts(parsedOneToMany.getMapKeyConverts()));
         }
     }
 

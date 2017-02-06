@@ -98,6 +98,9 @@ $classDef.getDiscriminatorColumn().getSnippet()
 #if ($classDef.getCacheableDef())
 $classDef.getCacheableDef().getSnippet()
 #end
+#if ($classDef.getConverts())
+$classDef.getConverts().getSnippet()
+#end
 ##################### named queries ###############################
 #if ($classDef.getNamedQueries() )
 $classDef.getNamedQueries().getSnippet()
@@ -138,6 +141,9 @@ $varDef.getJavaDoc()
 #if($jaxbAnnotationSnippet != "")
     $jaxbAnnotationSnippet
 #end
+#end
+#if ($varDef.getConverts())
+    $varDef.getConverts().getSnippet()
 #end
 #if($varDef.getColumnDef())
     $varDef.getColumnDef().getSnippet()

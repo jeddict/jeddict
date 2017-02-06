@@ -17,6 +17,9 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import java.awt.Image;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConvertProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperties;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getOrderProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -49,9 +52,12 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         ElementCollection elementCollectionSpec = this.getBaseElementSpec();
-        set.put("BASIC_PROP", getOrderProperty(this));
-        set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
-        set.put("BASIC_PROP", PropertiesHandler.getCollectionTypeProperty(this, elementCollectionSpec));
+        set.put("JPA_PROP", getConvertProperty(this, this.getModelerScene(), elementCollectionSpec));
+        set.put("JPA_PROP", getMapKeyConvertProperties(this, this.getModelerScene(), elementCollectionSpec));
+        set.put("JPA_PROP", getMapKeyConvertProperty(this, this.getModelerScene(), elementCollectionSpec));
+        set.put("JPA_PROP", getOrderProperty(this));
+        set.put("JPA_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
+        set.put("ATTR_PROP", PropertiesHandler.getCollectionTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
         createMapKeyPropertySet(set);

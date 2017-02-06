@@ -47,6 +47,7 @@ import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.WritableSnippet;
 import org.openide.cookies.EditorCookie;
+import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
@@ -68,6 +69,7 @@ public class ORMConverterUtil {
     public static final String LESS_THAN = "<";
     public static final String NEW_LINE = "\n";
     public static final String NEW_TAB = "\t";
+    public static final String HALF_TAB = "  ";
     public static final String TAB = "    ";
     public static final String OPEN_BRACES = "{";
     public static final String OPEN_PARANTHESES = "(";
@@ -267,8 +269,11 @@ public class ORMConverterUtil {
     }
 
     public static void formatFile(FileObject fo) {
-        if (fo.isLocked()) {
+        if (!fo.isLocked()) {
+            FileLock lock = null;
             try {
+                lock = fo.lock();
+            
                 DataObject dobj = DataObject.find(fo);
                 EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
                 ec.close();
@@ -300,14 +305,18 @@ public class ORMConverterUtil {
 
             } catch (IOException ex) {
                 ExceptionUtils.printStackTrace(ex);
+            } finally {
+                if(lock!=null){
+                    lock.releaseLock();
+                }
             }
+            
         }
     }
 
     //TODO: ref from org.netbeans.editor.ActionFactory:
     private static void reformat(Reformat formatter, Document doc, int startPos, int endPos, AtomicBoolean canceled) throws BadLocationException {
-        final GuardedDocument gdoc = (doc instanceof GuardedDocument)
-                ? (GuardedDocument) doc : null;
+        final GuardedDocument gdoc = (doc instanceof GuardedDocument) ? (GuardedDocument) doc : null;
 
         int pos = startPos;
         if (gdoc != null) {

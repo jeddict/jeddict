@@ -15,11 +15,21 @@
  */
 package org.netbeans.db.modeler.specification.model.util;
 
+import java.awt.Color;
 import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import java.awt.Image;
 import java.awt.Point;
+import java.util.Collections;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.FixedValue;
+import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
@@ -29,7 +39,6 @@ import org.eclipse.persistence.tools.schemaframework.JPAMSchemaManager;
 import org.netbeans.api.db.explorer.DatabaseException;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
 import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
@@ -82,11 +91,6 @@ import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.design.Bounds;
-import org.netbeans.jpa.modeler.spec.design.Diagram;
-import org.netbeans.jpa.modeler.spec.design.DiagramElement;
-import org.netbeans.jpa.modeler.spec.design.Edge;
-import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
@@ -236,13 +240,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                         break;
                     }
                 }
-//                }
                 try {
                     dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
 
                 } catch (NullPointerException ex) {
                     throw new DBConnectionNotFound();
-                }
+                }           
                 Thread.currentThread().setContextClassLoader(dynamicClassLoader);
                 databaseLogin.setDatabaseURL(connection.getUrl());
                 databaseLogin.setUserName(connection.getUserName());
@@ -251,7 +254,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             }
             session = new DatabaseSessionImpl(databaseLogin);
             JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
-            XMLEntityMappings mapping = new DBEntityMappings(entityMapping);
+            XMLEntityMappings mapping = new DBEntityMappings(entityMapping, dynamicClassLoader);
             JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
 
             processor.setClassLoader(dynamicClassLoader);

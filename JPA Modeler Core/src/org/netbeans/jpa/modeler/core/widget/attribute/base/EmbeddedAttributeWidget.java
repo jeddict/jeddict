@@ -18,8 +18,14 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConvertProperties;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperties;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getMapKeyConvertProperty;
 import org.netbeans.jpa.modeler.spec.extend.AssociationOverrideHandler;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.modeler.spec.extend.ConvertContainerHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertContainerHandler;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -39,14 +45,23 @@ public abstract class EmbeddedAttributeWidget<E extends CompositionAttribute> ex
 //        this.setImage(JPAModelerUtil.EMBEDDED_ATTRIBUTE);
     }
     
-        @Override
+    @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        CompositionAttribute attribute = (CompositionAttribute)this.getBaseElementSpec();
+        CompositionAttribute attribute = (CompositionAttribute) this.getBaseElementSpec();
 
-        set.put("BASIC_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), attribute.getAttributeOverride()));
-        if(attribute instanceof AssociationOverrideHandler){
-            set.put("BASIC_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), ((AssociationOverrideHandler)attribute).getAssociationOverride()));
+        if (attribute instanceof ConvertContainerHandler) {//means ElementCollectio<Embedded>, Embedded or represent value in map
+            set.put("JPA_PROP", getConvertProperties(this.getModelerScene(), (ConvertContainerHandler) attribute));
+        }
+        if (attribute instanceof MapKeyConvertContainerHandler) {//ElementCollectio<Embedded, Y>
+            set.put("JPA_PROP", getMapKeyConvertProperties(this, this.getModelerScene(), (MapKeyConvertContainerHandler) attribute));
+        }
+        if (attribute instanceof MapKeyConvertHandler) {//ElementCollectio<X, Y>
+            set.put("JPA_PROP", getMapKeyConvertProperty(this, this.getModelerScene(), (MapKeyConvertHandler) attribute));
+        }
+        set.put("JPA_PROP", PropertiesHandler.getAttributeOverridesProperty("AttributeOverrides", "Attribute Overrides", "", this.getModelerScene(), attribute.getAttributeOverride()));
+        if (attribute instanceof AssociationOverrideHandler) {
+            set.put("JPA_PROP", PropertiesHandler.getAssociationOverridesProperty("AssociationOverrides", "Association Overrides", "", this.getModelerScene(), ((AssociationOverrideHandler) attribute).getAssociationOverride()));
         }
     }
 

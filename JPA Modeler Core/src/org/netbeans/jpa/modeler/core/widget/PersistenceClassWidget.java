@@ -162,11 +162,11 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     public PersistenceClassWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
-        this.addPropertyVisibilityHandler("compositePrimaryKeyType", (PropertyVisibilityHandler<String>) () -> {
+        this.addPropertyVisibilityHandler("compositePrimaryKeyType", () -> {
             CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
             return property == CompositePKProperty.ALL || property == CompositePKProperty.TYPE || property == CompositePKProperty.AUTO_CLASS;
         });
-        this.addPropertyVisibilityHandler("compositePrimaryKeyClass", (PropertyVisibilityHandler<String>) () -> {
+        this.addPropertyVisibilityHandler("compositePrimaryKeyClass", () -> {
             CompositePKProperty property = PersistenceClassWidget.this.isCompositePKPropertyAllow();
             return property == CompositePKProperty.ALL || property == CompositePKProperty.CLASS;
         });

@@ -95,6 +95,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private TypeIdentifierSnippet typeIdentifier;
     private Attribute attribute;
     private Map<AttributeSnippetLocationType, List<String>> customSnippet;
+    private ConvertsSnippet converts;
 
     public VariableDefSnippet() {
     }
@@ -433,11 +434,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.add(VERSION_FQN);
         }
 
-        if (this.getAttributeOverrides() != null) {
-            importSnippets.addAll(this.getAttributeOverrides().getImportSnippets());
+        if (converts != null) {
+            importSnippets.addAll(converts.getImportSnippets());
         }
-        if (this.getAssociationOverrides() != null) {
-            importSnippets.addAll(this.getAssociationOverrides().getImportSnippets());
+        
+        if (attributeOverrides != null) {
+            importSnippets.addAll(attributeOverrides.getImportSnippets());
+        }
+        if (associationOverrides != null) {
+            importSnippets.addAll(associationOverrides.getImportSnippets());
         }
 
         for (AnnotationSnippet snippet : this.getAnnotation()) {
@@ -860,5 +865,19 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setVetoableChangeSupport(boolean vetoableChangeSupport) {
         this.vetoableChangeSupport = vetoableChangeSupport;
+    }
+
+    /**
+     * @return the convertsSnippet
+     */
+    public ConvertsSnippet getConverts() {
+        return converts;
+    }
+
+    /**
+     * @param convertsSnippet the convertsSnippet to set
+     */
+    public void setConverts(ConvertsSnippet convertsSnippet) {
+        this.converts = convertsSnippet;
     }
 }

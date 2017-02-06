@@ -24,6 +24,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.BASIC_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
 import org.netbeans.orm.converter.generator.GeneratorUtil;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
 
 public class BasicSnippet implements Snippet {
 
@@ -63,13 +64,13 @@ public class BasicSnippet implements Snippet {
         builder.append("(");
 
         if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
-            builder.append("optional=").append(optional).append(",");
+            builder.append("optional=").append(optional).append(COMMA);
         }
         
         if (getFetchType() != null) {
             builder.append("fetch = ");
             builder.append(getFetchType());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
         return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;

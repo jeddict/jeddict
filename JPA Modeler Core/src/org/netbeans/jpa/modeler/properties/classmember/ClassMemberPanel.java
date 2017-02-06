@@ -18,7 +18,6 @@ package org.netbeans.jpa.modeler.properties.classmember;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import static javax.swing.JOptionPane.OK_OPTION;
-import javax.swing.JScrollPane;
 import org.netbeans.jpa.modeler.properties.classmember.nodes.ClassMemberChildFactory;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.SwingUtilities;

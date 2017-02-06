@@ -94,18 +94,18 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
-            set.put("BASIC_PROP", getFieldTypeProperty("fieldType", "Field Type", "", false, this));
+            set.put("ATTR_PROP", getFieldTypeProperty("fieldType", "Field Type", "", false, this));
         } else {
             try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
-                set.put("BASIC_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
+                set.put("JPA_PROP", new ElementCustomPropertySupport(set.getModelerFile(), this.getClassWidget().getBaseElementSpec(), String.class,
                        "compositePrimaryKeyClass", "compositePrimaryKeyClass", "Field Type", "", null));
             } catch (NoSuchMethodException | NoSuchFieldException ex) {
                 this.getModelerScene().getModelerFile().handleException(ex);;
             }
         }
         getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
-        set.put("BASIC_PROP", getCustomAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
-        set.put("BASIC_PROP", getAttributeSnippet(this.getModelerScene(), this.getBaseElementSpec().getSnippets()));
+        set.put("ATTR_PROP", getCustomAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
+        set.put("ATTR_PROP", getAttributeSnippet(this.getModelerScene(), this.getBaseElementSpec().getSnippets()));
 
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
             if (StringUtils.isBlank(value)) {
@@ -267,14 +267,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         return (PersistenceClassWidget) this.getPNodeWidget();
     }
 
-    
-    protected void createMapKeyPropertySet(ElementPropertySet set){
-        Attribute attribute = this.getBaseElementSpec();
-        if(!(attribute instanceof MapKeyHandler)){
-            throw new IllegalStateException("BaseElementSpec does not implements MapKeyHandler");
-        }
-        MapKeyHandler mapKeyHandler = (MapKeyHandler)attribute;
-         PropertyVisibilityHandler mapKeyVisibilityHandler = () -> {
+    public static PropertyVisibilityHandler getMapKeyVisibilityHandler(Attribute attribute){
+        return () -> {
             if(attribute instanceof CollectionTypeHandler){
                 String classname = ((CollectionTypeHandler)attribute).getCollectionType();
                     try {
@@ -282,10 +276,17 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                     } catch (ClassNotFoundException ex) { }
             }
             return false;
-        };      
-        
-        set.put("BASIC_PROP", PropertiesHandler.getMapKeyProperty(this, mapKeyHandler, mapKeyVisibilityHandler));
-        set.put("BASIC_PROP", PropertiesHandler.getFieldTypeProperty("mapKeyFieldType", "Map Key", "", true, this));
+        };
+    }
+    protected void createMapKeyPropertySet(ElementPropertySet set){
+        Attribute attribute = this.getBaseElementSpec();
+        if(!(attribute instanceof MapKeyHandler)){
+            throw new IllegalStateException("BaseElementSpec does not implements MapKeyHandler");
+        }
+        MapKeyHandler mapKeyHandler = (MapKeyHandler)attribute;
+        PropertyVisibilityHandler mapKeyVisibilityHandler = getMapKeyVisibilityHandler(attribute);
+        set.put("ATTR_PROP", PropertiesHandler.getMapKeyProperty(this, mapKeyHandler, mapKeyVisibilityHandler));
+        set.put("ATTR_PROP", PropertiesHandler.getFieldTypeProperty("mapKeyFieldType", "Map Key", "", true, this));
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("mapKeyJoinColumns", "MapKey Join Columns", "", this.getModelerScene(), mapKeyHandler.getMapKeyJoinColumn()));
         
         

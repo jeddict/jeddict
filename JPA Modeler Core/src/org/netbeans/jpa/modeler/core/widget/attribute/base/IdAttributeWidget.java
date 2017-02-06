@@ -39,7 +39,7 @@ public class IdAttributeWidget extends BaseAttributeWidget<Id> {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", getGeneratorProperty(this));
+        set.put("JPA_PROP", getGeneratorProperty(this));
 
     }
 

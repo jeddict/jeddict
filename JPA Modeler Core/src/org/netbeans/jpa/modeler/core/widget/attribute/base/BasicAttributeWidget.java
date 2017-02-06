@@ -16,11 +16,11 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import java.awt.Image;
-import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConvertProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFetchTypeProperty;
 import org.netbeans.jpa.modeler.spec.Basic;
-import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
+import org.netbeans.jpa.modeler.spec.extend.ConvertHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -63,8 +63,8 @@ public class BasicAttributeWidget extends BaseAttributeWidget<Basic> {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
-
+        set.put("JPA_PROP", getConvertProperty(this, this.getModelerScene(), this.getBaseElementSpec()));
+        set.put("JPA_PROP", getFetchTypeProperty(this.getModelerScene(), this.getBaseElementSpec()));
     }
 
     @Override

@@ -49,9 +49,9 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.put("BASIC_PROP", getCascadeProperty(this));        
+        set.put("JPA_PROP", getCascadeProperty(this));        
         // Issue Fix #6153 Start
-        set.put("BASIC_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
+        set.put("JPA_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         // Issue Fix #6153 End
         RelationAttribute relationAttributeSpec = (RelationAttribute) this.getBaseElementSpec();
 

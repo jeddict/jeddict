@@ -38,12 +38,6 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
         super(scene, nodeWidget, pinWidgetInfo);
     }
     
-    @Override
-    public void init() {
-        super.init();
-        AttributeValidator.scanMapKeyHandlerError(this);
-    }
-
     /**
      * @return the manyToManyRelationFlowWidget
      */

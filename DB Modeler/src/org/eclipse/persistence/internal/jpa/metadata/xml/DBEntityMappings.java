@@ -15,10 +15,16 @@
  */
 package org.eclipse.persistence.internal.jpa.metadata.xml;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
+import javax.persistence.AttributeConverter;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ConverterAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.EmbeddableAccessor;
@@ -31,6 +37,7 @@ import org.eclipse.persistence.internal.jpa.metadata.converters.MixedConverterMe
 import org.netbeans.jpa.modeler.db.accessor.DefaultClassSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
+import org.netbeans.jpa.modeler.spec.Converter;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 
 /**
@@ -41,21 +48,23 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
  */
 public class DBEntityMappings extends XMLEntityMappings {
 
-    public DBEntityMappings(EntityMappings mappings) {
+    private final EntityMappings mappings;
+    private final ClassLoader classLoader;
+
+    public DBEntityMappings(EntityMappings mappings, ClassLoader classLoader) {
+        this.mappings = mappings;
+        this.classLoader = classLoader;
 
         setPackage(mappings.getPackage());
         setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
-//        setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
+//      setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
         setMappedSuperclasses(new ArrayList<>());
-        
+
         List<EmbeddableAccessor> embeddableAccessors = new ArrayList<>();
         embeddableAccessors.addAll(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
         embeddableAccessors.addAll(mappings.getDefaultClass().stream().map(DefaultClassSpecAccessor::getInstance).collect(toList()));
-        
         setEmbeddables(embeddableAccessors);
-
-        setMixedConverters(new ArrayList<>());
-
+        setMixedConverters(mappings.getConverter().stream().map(Converter::getAccessor).collect(toList()));
         setConverters(new ArrayList<>());
         setTypeConverters(new ArrayList<>());
         setObjectTypeConverters(new ArrayList<>());
@@ -83,6 +92,28 @@ public class DBEntityMappings extends XMLEntityMappings {
         setPLSQLTables(new ArrayList<>());
         setPLSQLRecords(new ArrayList<>());
         setTenantDiscriminatorColumns(new ArrayList<>());
+    }
+
+    private void createConverterClass(Converter convert, ClassLoader classLoader) {
+        //create Java Class
+        new ByteBuddy()
+                .subclass(AttributeConverter.class)
+                .name(convert.getClazz())
+                .annotateType(AnnotationDescription.Builder.ofType(javax.persistence.Converter.class).build())
+                .make()
+                .load(classLoader, ClassLoadingStrategy.Default.INJECTION)
+                .getLoaded();
+
+        //create MetadataClass
+        MetadataClass metadataClass = new MetadataClass(getMetadataFactory(), convert.getClazz());
+        metadataClass.addInterface(AttributeConverter.class.getName());
+        metadataClass.addGenericType("");
+        metadataClass.addGenericType("");
+        metadataClass.addGenericType(convert.getAttributeType());
+        metadataClass.addGenericType("");
+        metadataClass.addGenericType(convert.getFieldType());
+        getMetadataFactory().addMetadataClass(metadataClass);
+
     }
 
     /**
@@ -153,6 +184,8 @@ public class DBEntityMappings extends XMLEntityMappings {
                 getProject().addMappedSuperclass(mappedSuperclass);
             }
         }
+
+        mappings.getConverter().stream().forEach(convert -> createConverterClass(convert, classLoader));
 
         // Process the JPA converter classes.
         for (ConverterAccessor converterAccessor : getConverterAccessors()) {

@@ -361,7 +361,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
 
         });
 
-//        menuItemList.add(drive);
+        menuItemList.add(drive);
         menuItemList.add(getPropertyMenu());
 
         return menuItemList;
