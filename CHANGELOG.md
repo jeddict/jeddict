@@ -1,5 +1,9 @@
 # JPA Modeler Releases #
 
+### Version 3.2 [#](https://github.com/jGauravGupta/jpamodeler/releases/3.2) ###
+
+*  Issue fix :  #99 , #100 , #106 , #119 , #130 , #134
+
 ### Version 3.1 [#](https://github.com/jGauravGupta/jpamodeler/releases/3.1) ###
 
 *  Issue fix : #117 , #121 , #123 , #125 , #127
