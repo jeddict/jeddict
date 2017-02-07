@@ -70,6 +70,7 @@
                 </attribute>
                 <attribute id="author" groupId="CLASS_STRUCTURE" class="java.lang.String" name="author">
                     <display-name>Author</display-name>
+                    <description>Describes an author.</description>
                 </attribute> 
                 <attribute id="description" groupId="CLASS_STRUCTURE" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
@@ -195,9 +196,11 @@
             <attributes>
                 <attribute id="entityName" groupId="ENTITY_PROP" class="java.lang.String" name="entityName">
                     <display-name>Entity Name</display-name>
+                    <description>Entity name will be used to identify the domain for JPQL queries ( default value is the entity class name )</description>
                 </attribute>
                <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
+                    <description>Abstract entities cannot be instantiated but it can be queried just like concrete entities. If an abstract entity is the target of a query, the query operates on all the concrete subclasses of the abstract entity.</description>
                 </attribute>
                  <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>

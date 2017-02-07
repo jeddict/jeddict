@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
@@ -556,6 +555,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      * @return the annotation
      */
     public List<AnnotationSnippet> getAnnotation() {
+        if(annotation == null){
+            annotation = new ArrayList<>();
+        }
         return annotation;
     }
 

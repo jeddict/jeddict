@@ -353,6 +353,8 @@ public class ORMConverterUtil {
         for (PositionRegion region : regions) {
             try {
                 formatter.reformat(region.getStartOffset(), region.getEndOffset());
+            } catch(BadLocationException ex) {
+              ex.printStackTrace();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

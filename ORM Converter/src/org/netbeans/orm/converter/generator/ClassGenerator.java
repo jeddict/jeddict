@@ -204,10 +204,12 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             classDef.setInterfaces(interfaces.stream().filter(ReferenceClass::isEnable).map(ReferenceClass::getName).collect(toList()));
         }
 
-        classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
-
+        classDef.getAnnotation().addAll(getAnnotationSnippet(javaClass.getAnnotation()));
+        classDef.getAnnotation().addAll(getAnnotationSnippet(javaClass.getRuntimeAnnotation()));
+        
         List<ClassSnippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
         snippets.addAll(javaClass.getSnippets());
+        snippets.addAll(javaClass.getRuntimeSnippets());
         classDef.setCustomSnippet(getCustomSnippet(snippets));
 
         classDef.setVariableDefs(new ArrayList<>(variables.values()));
@@ -386,13 +388,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     classDef.setVetoableChangeSupport(true);
                 }
             }
-            variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
+            variableDef.getAnnotation().addAll(getAnnotationSnippet(attr.getAnnotation()));
+            variableDef.getAnnotation().addAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
+            
             if (attr instanceof BaseAttribute) {
                 variableDef.setConstraints(getConstraintSnippet(attr.getConstraints()));
             }
 
             List<AttributeSnippet> snippets = new ArrayList<>();//todo global attribute snippet at class level ; javaClass.getAttrSnippets());
             snippets.addAll(attr.getSnippets());
+            snippets.addAll(attr.getRuntimeSnippets());
             variableDef.setCustomSnippet(getCustomSnippet(snippets));
 
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());

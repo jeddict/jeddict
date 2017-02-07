@@ -97,14 +97,23 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
         InputDefinition definiton = new ORMInputDefiniton();
         definiton.setModelerFile(modelerFile);
-        sourceGenerator.generate(this, appicationConfigData.getProject(), appicationConfigData.getSourceGroup(), definiton);
-
+        EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
+        JEEApplicationGenerator applicationGenerator = null;
+        
+        entityMappings.cleanRuntimeArtifact();
         if (appicationConfigData.getBussinesTechContext()!= null) {
-            EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
             appicationConfigData.setEntityMappings(entityMappings);
-            ProgressHandler handler = new ProgressConsoleHandler(this);
-            JEEApplicationGenerator.generate(handler, appicationConfigData);
+            applicationGenerator = new JEEApplicationGenerator(appicationConfigData, new ProgressConsoleHandler(this));
+            applicationGenerator.preGeneration();
         }
+        
+        sourceGenerator.generate(this, appicationConfigData.getProject(), appicationConfigData.getSourceGroup(), definiton);
+        
+        if (appicationConfigData.getBussinesTechContext()!= null) {
+            applicationGenerator.generate();
+            applicationGenerator.postGeneration();
+        }
+
     }
 
     private static String getBundleMessage(String key) {

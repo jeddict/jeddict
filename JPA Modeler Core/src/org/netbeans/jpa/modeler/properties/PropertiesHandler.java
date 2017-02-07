@@ -709,9 +709,9 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getResultSetMappingsProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Entity entity) {
+    public static PropertySupport getResultSetMappingsProperty(JPAModelerScene modelerScene, final Entity entity) {
         final Set<SqlResultSetMapping> sqlResultSetMappingSpec = entity.getSqlResultSetMapping();
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        final NAttributeEntity attributeEntity = new NAttributeEntity("ResultSetMappings", "ResultSet Mappings", getMessage(PropertiesHandler.class, "INFO_RESULTSET_MAPPING"));
 
         attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});
         List<Column> columns = new ArrayList<>();
@@ -767,9 +767,9 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getNamedStoredProcedureQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, Entity entity) {
+    public static PropertySupport getNamedStoredProcedureQueryProperty(JPAModelerScene modelerScene, Entity entity) {
         final List<NamedStoredProcedureQuery> namedStoredProcedureQueriesSpec = entity.getNamedStoredProcedureQuery();
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        final NAttributeEntity attributeEntity = new NAttributeEntity("NamedStoredProcedureQueries", "Named StoredProcedure Queries", getMessage(PropertiesHandler.class, "INFO_STORED_PROCEDURE_QUERY") );
         attributeEntity.setCountDisplay(new String[]{"No NamedStoredProcedureQueries exist", "One NamedStoredProcedureQuery exist", "NamedStoredProcedureQueries exist"});
 
         List<Column> columns = new ArrayList<>();
@@ -834,8 +834,8 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getNamedQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, IdentifiableClass identifiableClass) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+    public static PropertySupport getNamedQueryProperty(JPAModelerScene modelerScene, IdentifiableClass identifiableClass) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("NamedQueries", "Named Queries", getMessage(PropertiesHandler.class, "INFO_JPQL_QUERY"));
         attributeEntity.setCountDisplay(new String[]{"No NamedQueries exist", "One NamedQuery exist", "NamedQueries exist"});
         final List<NamedQuery> namedQueriesSpec = identifiableClass.getNamedQuery();
 
@@ -1024,7 +1024,7 @@ public class PropertiesHandler {
     }
 
     public static EmbeddedPropertySupport getCustomParentClass(JavaClassWidget<? extends JavaClass> javaClassWidget) {
-        GenericEmbedded entity = new GenericEmbedded("extends", "Extends", "");
+        GenericEmbedded entity = new GenericEmbedded("extends", "Extends", getMessage(PropertiesHandler.class, "INFO_EXTENDS_CLASS"));
         entity.setEntityEditor(new ClassExtendPanel(javaClassWidget.getModelerScene().getModelerFile()));
         entity.setDataListener(new EmbeddedDataListener<ReferenceClass>() {
             private JavaClass javaClass;
@@ -1142,10 +1142,10 @@ public class PropertiesHandler {
         }
     }
 
-    public static PropertySupport getNamedEntityGraphProperty(String id, String name, String desc, final EntityWidget entityWidget) {
+    public static PropertySupport getNamedEntityGraphProperty(final EntityWidget entityWidget) {
         JPAModelerScene modelerScene = entityWidget.getModelerScene();
         final List<NamedEntityGraph> entityGraphsSpec = entityWidget.getBaseElementSpec().getNamedEntityGraph();
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+        final NAttributeEntity attributeEntity = new NAttributeEntity("NamedEntityGraphs", "Named Entity Graphs", getMessage(PropertiesHandler.class, "INFO_ENTITY_GRAPH"));
         attributeEntity.setCountDisplay(new String[]{"No EntityGraphs exist", "One EntityGraph exist", "EntityGraphs exist"});
 
         List<Column> columns = new ArrayList<>();
@@ -1206,8 +1206,8 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
-    public static PropertySupport getNamedNativeQueryProperty(String id, String name, String desc, JPAModelerScene modelerScene, final Entity entity) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity(id, name, desc);
+    public static PropertySupport getNamedNativeQueryProperty(JPAModelerScene modelerScene, final Entity entity) {
+        final NAttributeEntity attributeEntity = new NAttributeEntity("NamedNativeQueries", "Named Native Queries", getMessage(PropertiesHandler.class, "INFO_NATIVE_QUERY"));
         attributeEntity.setCountDisplay(new String[]{"No Named Native Queries exist", "One Named Native Query exist", "Named Native Queries exist"});
         List<NamedNativeQuery> namedNativeQueriesSpec = entity.getNamedNativeQuery();
         List<Column> columns = new ArrayList<>();
@@ -1782,11 +1782,11 @@ public class PropertiesHandler {
                 return getMessage(PropertiesHandler.class, "LBL_DISABLE");
             }
         };
-        return new ComboBoxPropertySupport(entityWidget.getModelerScene().getModelerFile(), "cacheable", "Cacheable", "", comboBoxListener);
+        return new ComboBoxPropertySupport(entityWidget.getModelerScene().getModelerFile(), "cacheable", "Cacheable", getMessage(PropertiesHandler.class, "INFO_CACHEABLE"), comboBoxListener);
     }
 
     public static PropertySupport getConverterProperties(JPAModelerScene scene, List<Converter> converters) {
-        final NAttributeEntity attributeEntity = new NAttributeEntity("converters", "Converters", "Converters");
+        final NAttributeEntity attributeEntity = new NAttributeEntity("converters", "Converters", getMessage(PropertiesHandler.class, "INFO_COVERTER"));
         attributeEntity.setCountDisplay(new String[]{"No Converter exist", "One Converter exist", "Converters exist"});
         attributeEntity.setCustomDialog(new ConverterPanel(scene.getModelerFile()));
 

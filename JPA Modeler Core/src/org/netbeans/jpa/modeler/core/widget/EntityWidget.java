@@ -120,11 +120,11 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
                 
         set.put("UI_PROP", getEntityDisplayProperty(this));
 
-        set.put("QUERY", PropertiesHandler.getNamedQueryProperty("NamedQueries", "Named Queries", "", this.getModelerScene(), entity));
-        set.put("QUERY", PropertiesHandler.getNamedNativeQueryProperty("NamedNativeQueries", "Named Native Queries", "", this.getModelerScene(), entity));
-        set.put("QUERY", PropertiesHandler.getNamedStoredProcedureQueryProperty("NamedStoredProcedureQueries", "Named StoredProcedure Queries", "", this.getModelerScene(), entity));
-        set.put("QUERY", PropertiesHandler.getNamedEntityGraphProperty("NamedEntityGraphs", "Named Entity Graphs", "", this));
-        set.put("QUERY", PropertiesHandler.getResultSetMappingsProperty("ResultSetMappings", "ResultSet Mappings", "", this.getModelerScene(), entity));        
+        set.put("QUERY", PropertiesHandler.getNamedQueryProperty(this.getModelerScene(), entity));
+        set.put("QUERY", PropertiesHandler.getNamedNativeQueryProperty(this.getModelerScene(), entity));
+        set.put("QUERY", PropertiesHandler.getNamedStoredProcedureQueryProperty(this.getModelerScene(), entity));
+        set.put("QUERY", PropertiesHandler.getNamedEntityGraphProperty(this));
+        set.put("QUERY", PropertiesHandler.getResultSetMappingsProperty(this.getModelerScene(), entity));        
     }
 
     @Override
