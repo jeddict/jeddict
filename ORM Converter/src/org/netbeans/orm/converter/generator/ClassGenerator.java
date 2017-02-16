@@ -1292,9 +1292,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (parsedManyToManys == null) {
             return;
         }
-//
-//        List<ParsedManyToMany> parsedManyToManys
-//                = parsedAttributes.getManyToMany();
         for (ManyToMany parsedManyToMany : parsedManyToManys) {
             List<String> cascadeTypes = getCascadeTypes(
                     parsedManyToMany.getCascade());

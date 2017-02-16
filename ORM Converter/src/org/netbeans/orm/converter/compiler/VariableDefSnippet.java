@@ -452,16 +452,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
-//        if (importSnippets.contains("java.lang.Integer")) {  //BUG : remove String
-//            importSnippets.remove("java.lang.Integer");
-//        }
-//        if(getJaxbVariableType().equals("Attribute")){
-//             importSnippets.add("javax.xml.bind.annotation.XmlAttribute");
-//        } else if(getJaxbVariableType().equals("Element")){
-//             importSnippets.add("javax.xml.bind.annotation.XmlElement");
-//        } else if(getJaxbVariableType().equals("Value")){
-//             importSnippets.add("javax.xml.bind.annotation.XmlValue");
-//        }
+        if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null){
+             importSnippets.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
+        } 
         return importSnippets;
     }
 
@@ -696,9 +689,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             }
             if (mappedBy != null) {
                 snippet.append(String.format("@XmlInverseReference(mappedBy=\"%s\")", mappedBy));
-            } else {
-                snippet.append("@XmlInverseReference");
-            }
+            } 
+//            else {
+//                snippet.append("@XmlInverseReference");
+//            }
         } else {
             if (isPrimaryKey()) {
 //            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
