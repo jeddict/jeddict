@@ -18,7 +18,7 @@ package org.netbeans.orm.converter.compiler.validation.constraints;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
+import org.netbeans.bean.validation.constraints.Constraint;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.Snippet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;

@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
@@ -181,7 +182,24 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
     public void scanDuplicateClass(String previousName, String newName) {
         int previousNameCount = 0, newNameCount = 0;
-        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();
+        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();        
+        EntityMappings entityMappings = this.getModelerScene().getBaseElementSpec();
+        
+        List<JavaClass> hiddenJavaClasses = new ArrayList<>(entityMappings.getJavaClass());
+        hiddenJavaClasses.removeAll(
+                javaClassList.stream()
+                .map(jcw -> (JavaClass)jcw.getBaseElementSpec())
+                .collect(toList())
+        );
+        for (JavaClass javaClass : hiddenJavaClasses) {
+            if (javaClass.getClazz().equals(previousName)) {
+                ++previousNameCount;
+            }
+            if (javaClass.getClazz().equals(newName)) {
+                ++newNameCount;
+            }
+        }
+        
         for (JavaClassWidget<JavaClass> javaClassWidget : javaClassList) {
             JavaClass javaClass = javaClassWidget.getBaseElementSpec();
 
@@ -233,9 +251,9 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
             exist = true;
         }
         while (exist) {
-            JavaClassWidget superclassWidget_Nest = generalizationFlowWidget_TMP.getSuperclassWidget();
-            superclassWidgetList.add(superclassWidget_Nest);
-            generalizationFlowWidget_TMP = superclassWidget_Nest.getOutgoingGeneralizationFlowWidget();
+            JavaClassWidget superclassWidget_Next = generalizationFlowWidget_TMP.getSuperclassWidget();
+            superclassWidgetList.add(superclassWidget_Next);
+            generalizationFlowWidget_TMP = superclassWidget_Next.getOutgoingGeneralizationFlowWidget();
             if (generalizationFlowWidget_TMP == null) {
                 exist = false;
             }

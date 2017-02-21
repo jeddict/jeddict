@@ -55,7 +55,7 @@ public class DBViewerActionListener extends ModelerFileActionListener implements
     public void init(ModelerFile file, EntityMappings mappings) {
         this.mappings = mappings;
         context = null;
-        openModelerFile("DB", null, null, file);
+        openModelerFile("DB", null, null, file, null);
     }
 
 }

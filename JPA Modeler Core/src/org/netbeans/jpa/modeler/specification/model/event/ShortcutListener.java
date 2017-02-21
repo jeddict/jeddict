@@ -13,11 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.listener;
+package org.netbeans.jpa.modeler.specification.model.event;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.DBUtil.isolateEntityMapping;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 
@@ -40,7 +43,14 @@ public class ShortcutListener extends KeyAdapter {
             if (e.getKeyCode() == KeyEvent.VK_G) {
                 JPAModelerUtil.generateSourceCode(file);
             } else if (e.getKeyCode() == KeyEvent.VK_D) {
-                JPAModelerUtil.openDBViewer(file, (EntityMappings) file.getModelerScene().getBaseElementSpec());
+                JPAModelerScene scene = (JPAModelerScene)file.getModelerScene();
+                EntityMappings entityMapping = scene.getBaseElementSpec();
+                if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
+                    DBUtil.openDBViewer(file, entityMapping);
+                } else {
+                    scene.getWorkSpaceManager().syncWorkSpaceItemLocation();
+                    DBUtil.openDBViewer(file, isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
+                }
             }
         }
 

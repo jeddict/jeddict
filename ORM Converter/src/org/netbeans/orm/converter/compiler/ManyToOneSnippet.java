@@ -25,7 +25,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.MANY_TO_ONE;
 import static org.netbeans.jcode.jpa.JPAConstants.MANY_TO_ONE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
@@ -45,7 +45,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
         }
         builder.append("@").append(MANY_TO_ONE);
 
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (optional == true
                     && getTargetEntity() == null
                     && getFetchType() == null
@@ -56,7 +56,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
         builder.append("(");
 
-        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+        if (CodePanel.isGenerateDefaultValue() || optional == false) {
             builder.append("optional=").append(optional).append(",");
         }
 

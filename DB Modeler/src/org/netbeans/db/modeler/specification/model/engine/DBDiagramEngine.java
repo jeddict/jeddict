@@ -25,7 +25,7 @@ import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELOAD_ICON;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.engine.ModelerDiagramEngine;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
@@ -59,7 +59,7 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
         bar.add(reloadButton);
         reloadButton.addActionListener((ActionEvent e) -> {
             ModelerFile parentFile = file.getParentFile();
-            JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+            DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
         });
     }
 

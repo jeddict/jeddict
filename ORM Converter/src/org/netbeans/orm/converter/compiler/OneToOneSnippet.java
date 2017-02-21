@@ -26,7 +26,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.ONE_TO_ONE;
 import static org.netbeans.jcode.jpa.JPAConstants.ONE_TO_ONE_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class OneToOneSnippet extends SingleRelationAttributeSnippet {
@@ -56,7 +56,7 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
             }
         }
         builder.append("@").append(ONE_TO_ONE);
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (mappedBy == null
                     && optional == true
                     && getTargetEntity() == null
@@ -68,11 +68,11 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
         builder.append("(");
 
-        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+        if (CodePanel.isGenerateDefaultValue() || optional == false) {
             builder.append("optional=").append(optional).append(",");
         }
         
-        if (GeneratorUtil.isGenerateDefaultValue() || orphanRemoval == true) {
+        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
             builder.append("orphanRemoval=").append(orphanRemoval).append(",");
         }
 

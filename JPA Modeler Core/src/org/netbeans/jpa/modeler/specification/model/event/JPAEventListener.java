@@ -20,9 +20,12 @@ import java.awt.event.InputEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.DBUtil.isolateEntityMapping;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.actions.EventListener;
-import org.netbeans.modeler.core.IZoomManager;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -31,20 +34,27 @@ import org.netbeans.modeler.core.ModelerFile;
 public class JPAEventListener extends EventListener {
 
     @Override
-    public void registerEvent(JComponent component, ModelerFile modelerFile) {
-        super.registerEvent(component, modelerFile);
+    public void registerEvent(JComponent component, ModelerFile file) {
+        super.registerEvent(component, file);
         component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, InputEvent.CTRL_MASK), "GEN_SRC");
         component.getActionMap().put("GEN_SRC", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JPAModelerUtil.generateSourceCode(modelerFile);
+                JPAModelerUtil.generateSourceCode(file);
             }
         });
         component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, InputEvent.CTRL_MASK), "DB_VIEWER");
         component.getActionMap().put("DB_VIEWER", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JPAModelerUtil.openDBViewer(modelerFile);
+                JPAModelerScene scene = (JPAModelerScene)file.getModelerScene();
+                EntityMappings entityMapping = scene.getBaseElementSpec();
+                if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
+                    DBUtil.openDBViewer(file, entityMapping);
+                } else {
+                    scene.getWorkSpaceManager().syncWorkSpaceItemLocation();
+                    DBUtil.openDBViewer(file, isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
+                }
             }
         });
         

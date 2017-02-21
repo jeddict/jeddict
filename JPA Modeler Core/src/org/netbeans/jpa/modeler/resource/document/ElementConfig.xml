@@ -330,7 +330,7 @@
                 </attribute>
             </attributes>
         </element>-->
-        <element id="NotNull" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.NotNull">
+        <element id="NotNull" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotNull">
             <attributes>
                 <attribute id="notnull.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
                     <display-name>@NotNull</display-name>
@@ -347,7 +347,7 @@
             <visible><![CDATA[node.getConstraintsMap().get("NotNull") != null &&
                     ((node.getConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getConstraintsMap().get("Null").selected==false)]]></visible>
         </element>
-        <element id="Null" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Null">
+        <element id="Null" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Null">
             <attributes>
                 <attribute id="null.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Null</display-name>
@@ -363,7 +363,7 @@
             <visible><![CDATA[node.getConstraintsMap().get("Null") != null && 
                         ((node.getConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getConstraintsMap().get("NotNull").selected==false)]]></visible>
         </element>
-        <element id="AssertFalse" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse">
+        <element id="AssertFalse" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertFalse">
             <attributes>
                 <attribute id="assertFalse.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@AssertFalse</display-name>
@@ -379,7 +379,7 @@
             <visible><![CDATA[node.getConstraintsMap().get("AssertFalse") != null &&
                         ((node.getConstraintsMap().get("AssertTrue").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertTrue").selected==false)]]></visible>
         </element>
-        <element id="AssertTrue" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.AssertTrue">
+        <element id="AssertTrue" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertTrue">
             <attributes>
                 <attribute id="assertTrue.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@AssertTrue</display-name>
@@ -395,7 +395,7 @@
             <visible><![CDATA[node.getConstraintsMap().get("AssertTrue") != null &&
                         ((node.getConstraintsMap().get("AssertFalse").selected==true && this.selected==true ) || node.getConstraintsMap().get("AssertFalse").selected==false)]]></visible>
         </element>
-        <element id="Past" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Past">
+        <element id="Past" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Past">
             <attributes>
                 <attribute id="past.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Past</display-name>
@@ -411,7 +411,7 @@
             <visible><![CDATA[node.getConstraintsMap().get("Past") != null &&
                         ((node.getConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getConstraintsMap().get("Future").selected==false)]]></visible>
         </element>
-        <element id="Future" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Future">
+        <element id="Future" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Future">
             <attributes>
                 <attribute id="future.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Future</display-name>
@@ -427,7 +427,7 @@
             <visible><![CDATA[node.getConstraintsMap().get("Future") != null &&
                         ((node.getConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getConstraintsMap().get("Past").selected==false)]]></visible>
         </element>
-        <element id="Size" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Size">
+        <element id="Size" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Size">
             <attributes>
                 <attribute id="size.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Size</display-name>
@@ -450,7 +450,7 @@
             </attributes>
             <visible><![CDATA[node.getConstraintsMap().get("Size") != null]]></visible>
         </element>
-        <element id="Pattern" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Pattern">
+        <element id="Pattern" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Pattern">
             <attributes>
                 <attribute id="pattern.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Pattern</display-name>
@@ -469,7 +469,7 @@
             </attributes>
             <visible><![CDATA[node.getConstraintsMap().get("Pattern") != null]]></visible>
         </element>
-        <element id="Digits" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Digits">
+        <element id="Digits" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Digits">
             <attributes>
                 <attribute id="digits.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Digits</display-name>
@@ -492,7 +492,7 @@
             </attributes>
             <visible><![CDATA[node.getConstraintsMap().get("Digits") != null]]></visible>
         </element>
-        <element id="Min" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Min">
+        <element id="Min" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Min">
             <attributes>
                 <attribute id="min.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Min</display-name>
@@ -511,7 +511,7 @@
             </attributes>
             <visible><![CDATA[node.getConstraintsMap().get("Min") != null]]></visible>
         </element>
-        <element id="Max" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.Max">
+        <element id="Max" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Max">
             <attributes>
                 <attribute id="max.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Max</display-name>
@@ -530,7 +530,7 @@
             </attributes>
             <visible><![CDATA[node.getConstraintsMap().get("Max") != null]]></visible>
         </element>
-        <element id="DecimalMin" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin">
+        <element id="DecimalMin" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMin">
             <attributes>
                 <attribute id="decimalMin.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@DecimalMin</display-name>
@@ -549,7 +549,7 @@
             </attributes>
                         <visible><![CDATA[node.getConstraintsMap().get("DecimalMin") != null]]></visible>
         </element>
-        <element id="DecimalMax" groupId="CONSTRAINTS" class="org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMax">
+        <element id="DecimalMax" groupId="CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMax">
             <attributes>
                 <attribute id="decimalMax.selected" groupId="CONSTRAINTS" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
                     <display-name>@DecimalMax</display-name>

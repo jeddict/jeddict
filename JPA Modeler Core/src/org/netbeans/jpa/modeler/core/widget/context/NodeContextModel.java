@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.context;
 
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -25,7 +26,25 @@ import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BI_DIRECTIONAL;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.COMPOSITION_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.CREATE_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ID_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTMR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTOR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTMR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTOR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PK_BI_DIRECTIONAL;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PK_UNI_DIRECTIONAL;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.TRANSIENT_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.UNI_DIRECTIONAL;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VERSION_ATTRIBUTE;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextActionType;
@@ -38,8 +57,6 @@ import org.netbeans.modeler.widget.context.base.DefaultContextPaletteModel;
 import org.netbeans.modeler.widget.context.base.DefaultGroupButtonModel;
 import org.netbeans.modeler.widget.context.base.DefaultPaletteButtonModel;
 import org.netbeans.modeler.widget.node.INodeWidget;
-import org.openide.util.ImageUtilities;
-import org.openide.util.Utilities;
 
 public class NodeContextModel {
 
@@ -54,18 +71,18 @@ public class NodeContextModel {
         };
     }
 
-    private static ContextPaletteButtonModel getContextPaletteGroupButtonModel(String tooltip, String imagePath, ContextPaletteModel contextPaletteModel) {
+    private static ContextPaletteButtonModel getContextPaletteGroupButtonModel(String tooltip, Image image, ContextPaletteModel contextPaletteModel) {
         ContextPaletteButtonModel contextPaletteButtonModel = new DefaultGroupButtonModel();
-        contextPaletteButtonModel.setImage(ImageUtilities.loadImage(imagePath));
+        contextPaletteButtonModel.setImage(image);
         contextPaletteButtonModel.setTooltip(tooltip);
         contextPaletteButtonModel.setPaletteModel(contextPaletteModel);
         return contextPaletteButtonModel;
     }
 
-    private static ContextPaletteButtonModel getContextPaletteButtonModel(String id, String tooltip, String imagePath, ContextPaletteModel contextPaletteModel) {
+    private static ContextPaletteButtonModel getContextPaletteButtonModel(String id, String tooltip, Image image, ContextPaletteModel contextPaletteModel) {
         ContextPaletteButtonModel contextPaletteButtonModel = new DefaultGroupButtonModel();
         contextPaletteButtonModel.setId(id);
-        contextPaletteButtonModel.setImage(ImageUtilities.loadImage(imagePath));
+        contextPaletteButtonModel.setImage(image);
         contextPaletteButtonModel.setTooltip(tooltip);
         contextPaletteButtonModel.setPaletteModel(contextPaletteModel);
         return contextPaletteButtonModel;
@@ -103,23 +120,23 @@ public class NodeContextModel {
         contextPaletteModel.getChildren().add(generalizationConnectionModel);
 
         ContextPaletteButtonModel addAttributeModel = getContextPaletteGroupButtonModel("Add attributes",
-                "org/netbeans/jpa/modeler/resource/image/add-element.png", contextPaletteModel);
+                CREATE_ICON.getImage(), contextPaletteModel);
         contextPaletteModel.getChildren().add(addAttributeModel);
 
         ContextPaletteButtonModel addIdAttributeModel = getContextPaletteButtonModel("ID_ATTRIBUTE", "Id Attribute",
-                "org/netbeans/jpa/modeler/resource/image/id-attribute.png", contextPaletteModel);
+                ID_ATTRIBUTE, contextPaletteModel);
         addIdAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addIdAttributeModel));
         ContextPaletteButtonModel addBasicAttributeModel = getContextPaletteButtonModel("BASIC_ATTRIBUTE", "Basic Attribute",
-                "org/netbeans/jpa/modeler/resource/image/basic-attribute.png", contextPaletteModel);
+                BASIC_ATTRIBUTE, contextPaletteModel);
         addBasicAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addBasicAttributeModel));
         ContextPaletteButtonModel addBasicCollectionAttributeModel = getContextPaletteButtonModel("BASIC_COLLECTION_ATTRIBUTE", "Basic ElementCollection Attribute",
-                "org/netbeans/jpa/modeler/resource/image/basic-collection-attribute.png", contextPaletteModel);
+               BASIC_COLLECTION_ATTRIBUTE, contextPaletteModel);
         addBasicCollectionAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addBasicCollectionAttributeModel));
         ContextPaletteButtonModel addTransientAttributeModel = getContextPaletteButtonModel("TRANSIENT_ATTRIBUTE", "Transient Attribute",
-                "org/netbeans/jpa/modeler/resource/image/transient-attribute.png", contextPaletteModel);
+               TRANSIENT_ATTRIBUTE, contextPaletteModel);
         addTransientAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addTransientAttributeModel));
         ContextPaletteButtonModel addVersionAttributeModel = getContextPaletteButtonModel("VERSION_ATTRIBUTE", "Version Attribute",
-                "org/netbeans/jpa/modeler/resource/image/version-attribute.png", contextPaletteModel);
+                VERSION_ATTRIBUTE, contextPaletteModel);
         addVersionAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addVersionAttributeModel));
 
         ContextPaletteButtonModel[] addAttributeSubModelList = null;
@@ -141,17 +158,17 @@ public class NodeContextModel {
         }
 
         ContextPaletteButtonModel compositionConnectionModel = getContextPaletteGroupButtonModel("Embedded (Drag to Embeddable)",
-                "org/netbeans/jpa/modeler/resource/image/composition.png", contextPaletteModel);
+                COMPOSITION_ATTRIBUTE, contextPaletteModel);
         contextPaletteModel.getChildren().add(compositionConnectionModel);
 
         ContextPaletteButtonModel singleValueEmbeddedConnectionModal = getContextPaletteButtonModel("SINGLE_EMBEDDABLE_RELATION", "Single Value Embeddable Connection (Drag to Embeddable)",
-                "org/netbeans/jpa/modeler/resource/image/single-value-embedded.gif", contextPaletteModel);
+                SINGLE_VALUE_EMBEDDED_ATTRIBUTE, contextPaletteModel);
         singleValueEmbeddedConnectionModal.setContextActionType(ContextActionType.CONNECT);
         singleValueEmbeddedConnectionModal.setWidgetActions(getConnectActions(nodeWidget.getModelerScene(), singleValueEmbeddedConnectionModal.getId()));
         compositionConnectionModel.getChildren().add(singleValueEmbeddedConnectionModal);
 
         ContextPaletteButtonModel collectionValueEmbeddedConnectionModal = getContextPaletteButtonModel("MULTI_EMBEDDABLE_RELATION", "Multi Value Embeddable Connection (Drag to Embeddable)",
-                "org/netbeans/jpa/modeler/resource/image/multi-value-embedded.gif", contextPaletteModel);
+                MULTI_VALUE_EMBEDDED_ATTRIBUTE, contextPaletteModel);
         collectionValueEmbeddedConnectionModal.setContextActionType(ContextActionType.CONNECT);
         collectionValueEmbeddedConnectionModal.setWidgetActions(getConnectActions(nodeWidget.getModelerScene(), collectionValueEmbeddedConnectionModal.getId()));
         compositionConnectionModel.getChildren().add(collectionValueEmbeddedConnectionModal);
@@ -160,14 +177,14 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionOTOModel = new DefaultGroupButtonModel();
             connectionOTOModel.setId("OTO_RELATION");
-            connectionOTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one.gif"));
+            connectionOTOModel.setImage(OTOR_SOURCE_ANCHOR_SHAPE);
             connectionOTOModel.setTooltip("One To One Relation");
             connectionOTOModel.setPaletteModel(contextPaletteModel);
             contextPaletteModel.getChildren().add(connectionOTOModel);
 
             ContextPaletteButtonModel connectionUOTOModel = new DefaultPaletteButtonModel();
             connectionUOTOModel.setId("UOTO_RELATION");
-            connectionUOTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/uni.png"));
+            connectionUOTOModel.setImage(UNI_DIRECTIONAL);
             connectionUOTOModel.setTooltip("Unidirectional One To One Relation");
             connectionUOTOModel.setPaletteModel(contextPaletteModel);
             connectionUOTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -176,7 +193,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionBOTOModel = new DefaultPaletteButtonModel();
             connectionBOTOModel.setId("BOTO_RELATION");
-            connectionBOTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/bi.png"));
+            connectionBOTOModel.setImage(BI_DIRECTIONAL);
             connectionBOTOModel.setTooltip("Bidirectional One To One Relation");
             connectionBOTOModel.setPaletteModel(contextPaletteModel);
             connectionBOTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -185,7 +202,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionPKUOTOModel = new DefaultPaletteButtonModel();
             connectionPKUOTOModel.setId("PKUOTO_RELATION");
-            connectionPKUOTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/pk-uni.png"));
+            connectionPKUOTOModel.setImage(PK_UNI_DIRECTIONAL);
             connectionPKUOTOModel.setTooltip("Unidirectional One To One Primary Key Relation");
             connectionPKUOTOModel.setPaletteModel(contextPaletteModel);
             connectionPKUOTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -194,7 +211,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionPKBOTOModel = new DefaultPaletteButtonModel();
             connectionPKBOTOModel.setId("PKBOTO_RELATION");
-            connectionPKBOTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/pk-bi.png"));
+            connectionPKBOTOModel.setImage(PK_BI_DIRECTIONAL);
             connectionPKBOTOModel.setTooltip("Bidirectional One To One Primary Key Relation");
             connectionPKBOTOModel.setPaletteModel(contextPaletteModel);
             connectionPKBOTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -203,7 +220,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionOTMModel = new DefaultPaletteButtonModel();
             connectionOTMModel.setId("UOTM_RELATION");
-            connectionOTMModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-many.gif"));
+            connectionOTMModel.setImage(OTMR_SOURCE_ANCHOR_SHAPE);
             connectionOTMModel.setTooltip("Unidirectional One To Many Relation");
             connectionOTMModel.setPaletteModel(contextPaletteModel);
             connectionOTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -212,14 +229,14 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionMTOModel = new DefaultGroupButtonModel();
             connectionMTOModel.setId("MTO_RELATION");
-            connectionMTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-one.gif"));
+            connectionMTOModel.setImage(MTOR_SOURCE_ANCHOR_SHAPE);
             connectionMTOModel.setTooltip("Many To One Relation");
             connectionMTOModel.setPaletteModel(contextPaletteModel);
             contextPaletteModel.getChildren().add(connectionMTOModel);
 
             ContextPaletteButtonModel connectionUMTOModel = new DefaultPaletteButtonModel();
             connectionUMTOModel.setId("UMTO_RELATION");
-            connectionUMTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/uni.png"));
+            connectionUMTOModel.setImage(UNI_DIRECTIONAL);
             connectionUMTOModel.setTooltip("Unidirectional Many To One Relation");
             connectionUMTOModel.setPaletteModel(contextPaletteModel);
             connectionUMTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -228,7 +245,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionBMTOModel = new DefaultPaletteButtonModel();
             connectionBMTOModel.setId("BMTO_RELATION");
-            connectionBMTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/bi.png"));
+            connectionBMTOModel.setImage(BI_DIRECTIONAL);
             connectionBMTOModel.setTooltip("Bidirectional Many To One Relation");
             connectionBMTOModel.setPaletteModel(contextPaletteModel);
             connectionBMTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -237,7 +254,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionPKUMTOModel = new DefaultPaletteButtonModel();
             connectionPKUMTOModel.setId("PKUMTO_RELATION");
-            connectionPKUMTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/pk-uni.png"));
+            connectionPKUMTOModel.setImage(PK_UNI_DIRECTIONAL);
             connectionPKUMTOModel.setTooltip("Unidirectional Many To One Primary Key Relation");
             connectionPKUMTOModel.setPaletteModel(contextPaletteModel);
             connectionPKUMTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -246,7 +263,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionPKBMTOModel = new DefaultPaletteButtonModel();
             connectionPKBMTOModel.setId("PKBMTO_RELATION");
-            connectionPKBMTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/pk-bi.png"));
+            connectionPKBMTOModel.setImage(PK_BI_DIRECTIONAL);
             connectionPKBMTOModel.setTooltip("Bidirectional Many To One Primary Key Relation");
             connectionPKBMTOModel.setPaletteModel(contextPaletteModel);
             connectionPKBMTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -255,14 +272,14 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionMTMModel = new DefaultGroupButtonModel();
             connectionMTMModel.setId("MTM_RELATION");
-            connectionMTMModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many.gif"));
+            connectionMTMModel.setImage(MTMR_SOURCE_ANCHOR_SHAPE);
             connectionMTMModel.setTooltip("Many To Many Relation");
             connectionMTMModel.setPaletteModel(contextPaletteModel);
             contextPaletteModel.getChildren().add(connectionMTMModel);
 
             ContextPaletteButtonModel connectionUMTMModel = new DefaultPaletteButtonModel();
             connectionUMTMModel.setId("UMTM_RELATION");
-            connectionUMTMModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/uni.png"));
+            connectionUMTMModel.setImage(UNI_DIRECTIONAL);
             connectionUMTMModel.setTooltip("Unidirectional Many To Many Relation");
             connectionUMTMModel.setPaletteModel(contextPaletteModel);
             connectionUMTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -271,7 +288,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionBMTMModel = new DefaultPaletteButtonModel();
             connectionBMTMModel.setId("BMTM_RELATION");
-            connectionBMTMModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/bi.png"));
+            connectionBMTMModel.setImage(BI_DIRECTIONAL);
             connectionBMTMModel.setTooltip("Bidirectional Many To Many Relation");
             connectionBMTMModel.setPaletteModel(contextPaletteModel);
             connectionBMTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -282,7 +299,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionUOTOModel = new DefaultPaletteButtonModel();
             connectionUOTOModel.setId("UOTO_RELATION");
-            connectionUOTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-one.gif"));
+            connectionUOTOModel.setImage(OTOR_SOURCE_ANCHOR_SHAPE);
             connectionUOTOModel.setTooltip("Unidirectional One To One Relation");
             connectionUOTOModel.setPaletteModel(contextPaletteModel);
             connectionUOTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -291,7 +308,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionOTMModel = new DefaultPaletteButtonModel();
             connectionOTMModel.setId("UOTM_RELATION");
-            connectionOTMModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/one-to-many.gif"));
+            connectionOTMModel.setImage(OTMR_SOURCE_ANCHOR_SHAPE);
             connectionOTMModel.setTooltip("Unidirectional One To Many Relation");
             connectionOTMModel.setPaletteModel(contextPaletteModel);
             connectionOTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -300,7 +317,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionUMTOModel = new DefaultPaletteButtonModel();
             connectionUMTOModel.setId("UMTO_RELATION");
-            connectionUMTOModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-one.gif"));
+            connectionUMTOModel.setImage(MTOR_SOURCE_ANCHOR_SHAPE);
             connectionUMTOModel.setTooltip("Unidirectional Many To One Relation");
             connectionUMTOModel.setPaletteModel(contextPaletteModel);
             connectionUMTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -309,7 +326,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionUMTMModel = new DefaultPaletteButtonModel();
             connectionUMTMModel.setId("UMTM_RELATION");
-            connectionUMTMModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/many-to-many.gif"));
+            connectionUMTMModel.setImage(MTMR_SOURCE_ANCHOR_SHAPE);
             connectionUMTMModel.setTooltip("Unidirectional Many To Many Relation");
             connectionUMTMModel.setPaletteModel(contextPaletteModel);
             connectionUMTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -320,7 +337,7 @@ public class NodeContextModel {
 
         ContextPaletteButtonModel deleteModel = new DefaultPaletteButtonModel();
         contextPaletteModel.getChildren().add(deleteModel);
-        deleteModel.setImage(Utilities.loadImage("org/netbeans/jpa/modeler/resource/image/delete.png"));
+        deleteModel.setImage(DELETE_ICON.getImage());
         deleteModel.setTooltip("Delete");
         deleteModel.setPaletteModel(contextPaletteModel);
         deleteModel.setMouseListener(getRemoveWidgetAction(nodeWidget));
@@ -328,11 +345,10 @@ public class NodeContextModel {
     }
 
     private static WidgetAction[] getConnectActions(IModelerScene scene, String connectionContextToolId) {
-        WidgetAction[] retVal = new WidgetAction[0];
         SceneConnectProvider connector = new SceneConnectProvider(connectionContextToolId);
         LayerWidget layer = scene.getInterractionLayer();
         WidgetAction action = new ConnectAction(new ContextPaletteConnectDecorator(), layer, connector);
-        retVal = new WidgetAction[]{action};
+        WidgetAction[] retVal = new WidgetAction[]{action};
         return retVal;
     }
 

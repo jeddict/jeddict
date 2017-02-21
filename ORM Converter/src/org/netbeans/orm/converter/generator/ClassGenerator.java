@@ -96,7 +96,7 @@ import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
-import org.netbeans.jpa.modeler.spec.validation.constraints.Constraint;
+import org.netbeans.bean.validation.constraints.Constraint;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;

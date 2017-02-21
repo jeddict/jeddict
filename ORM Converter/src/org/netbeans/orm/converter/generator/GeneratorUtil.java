@@ -24,8 +24,6 @@ import org.netbeans.orm.converter.compiler.EntityListenerSnippet;
 
 public class GeneratorUtil {
 
-    private static boolean generateDefaultValue = false;
-
     public static List<EntityListenerSnippet> processEntityListeners(Set<ReferenceClass> parsedEntityListeners, String packageName) {
         if (parsedEntityListeners == null || parsedEntityListeners.isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -40,17 +38,4 @@ public class GeneratorUtil {
         return entityListeners;
     }
 
-    /**
-     * @return the generateDefaultValue
-     */
-    public static boolean isGenerateDefaultValue() {
-        return generateDefaultValue;
-    }
-
-    /**
-     * @param aGenerateDefaultValue the generateDefaultValue to set
-     */
-    public static void setGenerateDefaultValue(boolean aGenerateDefaultValue) {
-        generateDefaultValue = aGenerateDefaultValue;
-    }
 }

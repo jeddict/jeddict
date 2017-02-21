@@ -43,7 +43,7 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
@@ -194,7 +194,8 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         JMenuItem visDB = new JMenuItem("Micro DB", MICRO_DB);
         visDB.addActionListener((ActionEvent e) -> {
             ModelerFile file = this.getModelerScene().getModelerFile();
-            JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), this.getBaseElementSpec()));
+            Entity entity = this.getBaseElementSpec();
+            DBUtil.openDBViewer(file, DBUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), entity));
         });
 
         menuList.add(0, visDB);

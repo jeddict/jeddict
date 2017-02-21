@@ -15,36 +15,37 @@
  */
 package org.netbeans.jpa.modeler.properties.rootmember.nodes;
 
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.openide.nodes.Children;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 
 public class EMLeafNode extends LeafNode<EntityMappings> {
 
-    private final JavaClassWidget leafClassWidget;
+    private final JavaClass javaClass;
 
-    public EMLeafNode(JavaClassWidget leafClassWidget, EntityMappings entityMappings, CheckableAttributeNode checkableNode) {
-        super(leafClassWidget.getModelerScene(), entityMappings, checkableNode);
-        this.leafClassWidget = leafClassWidget;
+    public EMLeafNode(JavaClass javaClass, IModelerScene scene, EntityMappings entityMappings, CheckableAttributeNode checkableNode) {
+        super(scene, entityMappings, checkableNode);
+        this.javaClass = javaClass;
     }
 
     @Override
     public void init() {
         getCheckableNode().setEnableWithParent(true);
-        this.setIconBaseWithExtension(leafClassWidget.getIconPath());
-        JavaClass javaClass = (JavaClass) leafClassWidget.getBaseElementSpec();
-        this.setShortDescription(javaClass.getClazz());
+        
+        this.setIconBaseWithExtension(JPAModelerUtil.getBaseElementIcon(getJavaClass().getClass()));
+//        JavaClass javaClass = (JavaClass) leafClass.getBaseElementSpec();
+        this.setShortDescription(getJavaClass().getClazz());
     }
 
     private String htmlDisplayName;
     @Override
     public String getHtmlDisplayName() {
         if (htmlDisplayName == null) {
-            JavaClass javaClass = (JavaClass) leafClassWidget.getBaseElementSpec();
-            htmlDisplayName = javaClass.getClazz();
+//            JavaClass javaClass = (JavaClass) leafClass.getBaseElementSpec();
+            htmlDisplayName = getJavaClass().getClazz();
         }
         if (getCheckableNode() != null && !getCheckableNode().isSelected()) {
             return String.format("<font color=\"#969696\">%s</font>", htmlDisplayName); //NOI18N
@@ -54,10 +55,10 @@ public class EMLeafNode extends LeafNode<EntityMappings> {
     }
 
     /**
-     * @return the leafClassWidget
+     * @return the javaClass
      */
-    public JavaClassWidget getLeafWidget() {
-        return leafClassWidget;
+    public JavaClass getJavaClass() {
+        return javaClass;
     }
-
+    
 }

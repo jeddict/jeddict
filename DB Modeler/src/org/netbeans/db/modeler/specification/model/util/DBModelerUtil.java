@@ -15,21 +15,11 @@
  */
 package org.netbeans.db.modeler.specification.model.util;
 
-import java.awt.Color;
 import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import java.awt.Image;
 import java.awt.Point;
-import java.util.Collections;
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.implementation.FixedValue;
-import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
@@ -158,20 +148,19 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             SECONDARY_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/SECONDARY_TABLE.gif";
             COLLECTION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/COLLECTION_TABLE.gif";
             RELATION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/JOIN_TABLE.png";
+            COLUMN_ICON_PATH = "org/netbeans/db/modeler/resource/image/COLUMN.gif";
+            FOREIGNKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/FOREIGN_KEY.gif";
+            PRIMARYKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/PRIMARY_KEY.gif";
+            TAB_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/TAB_ICON.png")).getImage();
+            RELOAD_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/RELOAD.png"));
             BASE_TABLE = new ImageIcon(cl.getResource(BASE_TABLE_ICON_PATH)).getImage();
             SECONDARY_TABLE = new ImageIcon(cl.getResource(SECONDARY_TABLE_ICON_PATH)).getImage();
             COLLECTION_TABLE = new ImageIcon(cl.getResource(COLLECTION_TABLE_ICON_PATH)).getImage();
             RELATION_TABLE = new ImageIcon(cl.getResource(RELATION_TABLE_ICON_PATH)).getImage();
-
-            COLUMN_ICON_PATH = "org/netbeans/db/modeler/resource/image/COLUMN.gif";
-            FOREIGNKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/FOREIGN_KEY.gif";
-            PRIMARYKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/PRIMARY_KEY.gif";
-
             COLUMN = new ImageIcon(cl.getResource(COLUMN_ICON_PATH)).getImage();
             FOREIGNKEY = new ImageIcon(cl.getResource(FOREIGNKEY_ICON_PATH)).getImage();
             PRIMARYKEY = new ImageIcon(cl.getResource(PRIMARYKEY_ICON_PATH)).getImage();
-            TAB_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/TAB_ICON.png")).getImage();
-            RELOAD_ICON = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/RELOAD.png"));
+ 
         }
 
     }

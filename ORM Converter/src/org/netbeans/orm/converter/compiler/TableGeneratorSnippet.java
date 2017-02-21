@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.TABLE_GENERATOR;
 import static org.netbeans.jcode.jpa.JPAConstants.TABLE_GENERATOR_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TableGeneratorSnippet implements Snippet {
@@ -177,13 +177,13 @@ public class TableGeneratorSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || allocationSize != 50) {
+        if (CodePanel.isGenerateDefaultValue() || allocationSize != 50) {
             builder.append("allocationSize=");
             builder.append(allocationSize);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
+        if (CodePanel.isGenerateDefaultValue() || initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
             builder.append("initialValue=");
             builder.append(initialValue);
             builder.append(ORMConverterUtil.COMMA);

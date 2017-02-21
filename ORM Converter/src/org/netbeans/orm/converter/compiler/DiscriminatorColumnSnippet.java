@@ -22,7 +22,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_TYPE_FQN;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class DiscriminatorColumnSnippet implements Snippet {
@@ -70,7 +70,7 @@ public class DiscriminatorColumnSnippet implements Snippet {
 
         stringBuilder.append("@").append(DISCRIMINATOR_COLUMN).append("(");
 
-        if (GeneratorUtil.isGenerateDefaultValue() || length != 30) {
+        if (CodePanel.isGenerateDefaultValue() || length != 30) {
             stringBuilder.append("length=");
             stringBuilder.append(length);
             stringBuilder.append(ORMConverterUtil.COMMA);

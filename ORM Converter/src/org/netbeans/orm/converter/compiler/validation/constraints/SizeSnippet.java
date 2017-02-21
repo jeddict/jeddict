@@ -15,7 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.jpa.modeler.spec.validation.constraints.Size;
+import org.netbeans.bean.validation.constraints.Size;
 import org.netbeans.orm.converter.compiler.*;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 

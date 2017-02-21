@@ -15,7 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.jpa.modeler.spec.validation.constraints.AssertFalse;
+import org.netbeans.bean.validation.constraints.AssertFalse;
 import org.netbeans.orm.converter.compiler.*;
 
 /**

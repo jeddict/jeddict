@@ -16,7 +16,7 @@
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin;
+import org.netbeans.bean.validation.constraints.DecimalMin;
 import org.netbeans.orm.converter.compiler.*;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 

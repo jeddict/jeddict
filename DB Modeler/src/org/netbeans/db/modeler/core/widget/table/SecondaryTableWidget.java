@@ -31,7 +31,7 @@ import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
@@ -106,7 +106,7 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
                     .forEach(a -> ((PersistenceBaseAttribute)a).getColumn().setTable(null));
                 entity.removeSecondaryTable(table);
                 ModelerFile parentFile = SecondaryTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
         });
         menuList.add(0, joinTable);
         return menuList;

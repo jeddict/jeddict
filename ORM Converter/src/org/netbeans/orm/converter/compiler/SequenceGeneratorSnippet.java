@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import static org.netbeans.jcode.jpa.JPAConstants.SEQUENCE_GENERATOR;
 import static org.netbeans.jcode.jpa.JPAConstants.SEQUENCE_GENERATOR_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class SequenceGeneratorSnippet implements Snippet {
@@ -78,7 +78,7 @@ public class SequenceGeneratorSnippet implements Snippet {
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
 
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (sequenceName == null && allocationSize == 50 && initialValue == 1) {
                 return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
             }
@@ -91,13 +91,13 @@ public class SequenceGeneratorSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || allocationSize != 50) {
+        if (CodePanel.isGenerateDefaultValue() || allocationSize != 50) {
             builder.append("allocationSize=");
             builder.append(allocationSize);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || initialValue != 1) {
+        if (CodePanel.isGenerateDefaultValue() || initialValue != 1) {
             builder.append("initialValue=");
             builder.append(initialValue);
             builder.append(ORMConverterUtil.COMMA);

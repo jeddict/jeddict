@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import static org.netbeans.jcode.jpa.JPAConstants.CACHEABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.CACHEABLE_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 
 public class CacheableDefSnippet implements Snippet {
 
@@ -36,7 +36,7 @@ public class CacheableDefSnippet implements Snippet {
         builder.append("@").append(CACHEABLE);
         if(status!=null && !status){
             builder.append("(false)");
-        } else if (GeneratorUtil.isGenerateDefaultValue()) {
+        } else if (CodePanel.isGenerateDefaultValue()) {
             builder.append("(true)");
         }
         return builder.toString();

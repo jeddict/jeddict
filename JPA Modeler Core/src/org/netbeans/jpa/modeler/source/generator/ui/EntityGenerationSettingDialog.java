@@ -17,9 +17,12 @@ package org.netbeans.jpa.modeler.source.generator.ui;
 
 import org.netbeans.jpa.modeler.properties.classmember.EntityMappingMemberPanel;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.JAVA_CLASS;
+import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.window.GenericDialog;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
 
 /**
  *
@@ -27,18 +30,38 @@ import org.netbeans.orm.converter.generator.GeneratorUtil;
  */
 public class EntityGenerationSettingDialog extends GenericDialog {
 
-    private JPAModelerScene scene;
+    private final JPAModelerScene scene;
+    private final EntityMappings entityMappings;
+
     /**
      * Creates new form EntityGenerationSettingDialog
+     *
      * @param scene
-     * @param entityMappings
      */
-    public EntityGenerationSettingDialog(JPAModelerScene scene, EntityMappings entityMappings) {
-        this.scene=scene;
+    public EntityGenerationSettingDialog(JPAModelerScene scene) {
+        this.scene = scene;
+        entityMappings = scene.getBaseElementSpec();
         initComponents();
-        ((EntityMappingMemberPanel) classGenerationPanel).init();
-        ((EntityMappingMemberPanel) classGenerationPanel).setValue(entityMappings);
-        generateDefaultValue.setSelected(GeneratorUtil.isGenerateDefaultValue());
+        entityMappingPanel = (EntityMappingMemberPanel) classGenerationPanel;
+        entityMappingPanel.init();
+        entityMappingPanel.setClassCheckable(jc -> entityMappings.getCurrentWorkSpace().hasItem(jc));
+        entityMappingPanel.setValue(entityMappings);
+        loadWorkSpaceType();
+        setWorkSpaceType(entityMappings.getCurrentWorkSpace());
+    }
+
+    private void loadWorkSpaceType() {
+        for (WorkSpace workSpace : scene.getBaseElementSpec().getWorkSpaces()) {
+            workSpace_ComboBox.addItem(new ComboBoxValue(workSpace, workSpace.getName()));
+        }
+    }
+
+    private void setWorkSpaceType(WorkSpace workSpace) {
+        for (int i = 0; i < workSpace_ComboBox.getItemCount(); i++) {
+            if (((ComboBoxValue<WorkSpace>) workSpace_ComboBox.getItemAt(i)).getValue() == workSpace) {
+                workSpace_ComboBox.setSelectedIndex(i);
+            }
+        }
     }
 
     /**
@@ -51,12 +74,18 @@ public class EntityGenerationSettingDialog extends GenericDialog {
     private void initComponents() {
 
         classGenerationPanel = new EntityMappingMemberPanel("Generate Entities", scene);
-        generateDefaultValue = new javax.swing.JCheckBox();
         action_LayeredPane = new javax.swing.JLayeredPane();
         save_Button = new javax.swing.JButton();
         cancel_Button = new javax.swing.JButton();
+        jLayeredPane2 = new javax.swing.JLayeredPane();
+        workSpace_Label = new javax.swing.JLabel();
+        workSpace_ComboBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(org.openide.util.NbBundle.getMessage(EntityGenerationSettingDialog.class, "EntityGenerationSettingDialog.title")); // NOI18N
+        setIconImage(JAVA_CLASS);
+
+        classGenerationPanel.setPreferredSize(new java.awt.Dimension(0, 200));
 
         javax.swing.GroupLayout classGenerationPanelLayout = new javax.swing.GroupLayout(classGenerationPanel);
         classGenerationPanel.setLayout(classGenerationPanelLayout);
@@ -66,11 +95,8 @@ public class EntityGenerationSettingDialog extends GenericDialog {
         );
         classGenerationPanelLayout.setVerticalGroup(
             classGenerationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 315, Short.MAX_VALUE)
+            .addGap(0, 385, Short.MAX_VALUE)
         );
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/netbeans/jpa/modeler/source/generator/ui/Bundle"); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(generateDefaultValue, bundle.getString("EntityGenerationSettingDialog.generateDefaultValue.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(EntityGenerationSettingDialog.class, "EntityGenerationSettingDialog.save_Button.text")); // NOI18N
         save_Button.addActionListener(new java.awt.event.ActionListener() {
@@ -105,7 +131,37 @@ public class EntityGenerationSettingDialog extends GenericDialog {
                 .addGroup(action_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(save_Button)
                     .addComponent(cancel_Button))
-                .addGap(0, 8, Short.MAX_VALUE))
+                .addGap(0, 13, Short.MAX_VALUE))
+        );
+
+        org.openide.awt.Mnemonics.setLocalizedText(workSpace_Label, org.openide.util.NbBundle.getMessage(EntityGenerationSettingDialog.class, "EntityGenerationSettingDialog.workSpace_Label.text")); // NOI18N
+
+        workSpace_ComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                workSpace_ComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLayeredPane2.setLayer(workSpace_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(workSpace_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout jLayeredPane2Layout = new javax.swing.GroupLayout(jLayeredPane2);
+        jLayeredPane2.setLayout(jLayeredPane2Layout);
+        jLayeredPane2Layout.setHorizontalGroup(
+            jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLayeredPane2Layout.createSequentialGroup()
+                .addComponent(workSpace_Label)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(workSpace_ComboBox, 0, 151, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jLayeredPane2Layout.setVerticalGroup(
+            jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLayeredPane2Layout.createSequentialGroup()
+                .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(workSpace_Label)
+                    .addComponent(workSpace_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -115,10 +171,10 @@ public class EntityGenerationSettingDialog extends GenericDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(classGenerationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(classGenerationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(generateDefaultValue)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                        .addComponent(jLayeredPane2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(action_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -126,21 +182,23 @@ public class EntityGenerationSettingDialog extends GenericDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(classGenerationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(classGenerationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(action_LayeredPane)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(generateDefaultValue)
-                        .addContainerGap())
-                    .addComponent(action_LayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLayeredPane2)
+                        .addContainerGap())))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
-        ((EntityMappingMemberPanel) classGenerationPanel).getValue();
-        GeneratorUtil.setGenerateDefaultValue(generateDefaultValue.isSelected());
+        entityMappings.getJavaClass()
+                .forEach(javaClass -> javaClass.setGenerateSourceCode(false));
+        entityMappingPanel.getSelectedJavaClass()
+                .forEach(javaClass -> javaClass.setGenerateSourceCode(true));
         scene.getModelerPanelTopComponent().changePersistenceState(false);
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
@@ -149,11 +207,21 @@ public class EntityGenerationSettingDialog extends GenericDialog {
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancel_ButtonActionPerformed
 
+    private void workSpace_ComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_workSpace_ComboBoxActionPerformed
+        WorkSpace workSpace = ((ComboBoxValue<WorkSpace>) workSpace_ComboBox.getSelectedItem()).getValue();
+        entityMappingPanel.setClassCheckable(jc -> workSpace.hasItem(jc));
+        entityMappingPanel.setValue(entityMappings);
+    }//GEN-LAST:event_workSpace_ComboBoxActionPerformed
+
+    private final EntityMappingMemberPanel entityMappingPanel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_LayeredPane;
     private javax.swing.JButton cancel_Button;
     private javax.swing.JPanel classGenerationPanel;
-    private javax.swing.JCheckBox generateDefaultValue;
+    private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JLayeredPane jLayeredPane2;
     private javax.swing.JButton save_Button;
+    private javax.swing.JComboBox<ComboBoxValue> workSpace_ComboBox;
+    private javax.swing.JLabel workSpace_Label;
     // End of variables declaration//GEN-END:variables
 }

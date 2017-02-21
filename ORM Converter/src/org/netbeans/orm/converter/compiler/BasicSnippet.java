@@ -22,7 +22,7 @@ import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.BASIC;
 import static org.netbeans.jcode.jpa.JPAConstants.BASIC_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
 
@@ -55,7 +55,7 @@ public class BasicSnippet implements Snippet {
         
         StringBuilder builder = new StringBuilder();
        builder.append("@").append(BASIC);
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (optional == true && getFetchType() == null){
                 return builder.toString();
             }
@@ -63,7 +63,7 @@ public class BasicSnippet implements Snippet {
         
         builder.append("(");
 
-        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+        if (CodePanel.isGenerateDefaultValue() || optional == false) {
             builder.append("optional=").append(optional).append(COMMA);
         }
         

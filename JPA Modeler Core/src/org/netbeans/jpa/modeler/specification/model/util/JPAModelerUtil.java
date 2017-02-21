@@ -17,21 +17,19 @@ package org.netbeans.jpa.modeler.specification.model.util;
 
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
-import static java.util.stream.Collectors.toSet;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -41,7 +39,6 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import static org.netbeans.jcode.core.util.StringHelper.getNext;
 import org.netbeans.jpa.modeler._import.javaclass.JCREProcessor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
@@ -87,37 +84,32 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
 import org.netbeans.jpa.modeler.source.generator.ui.GenerateCodeDialog;
-import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.Embeddable;
-import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
-import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.ManyToMany;
-import org.netbeans.jpa.modeler.spec.ManyToOne;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
-import org.netbeans.jpa.modeler.spec.OneToMany;
-import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.design.Bounds;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.design.DiagramElement;
-import org.netbeans.jpa.modeler.spec.design.Plane;
 import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
+import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceItem;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import static org.netbeans.jpa.modeler.specification.model.workspace.WorkSpaceManager.WORK_SPACE;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -133,7 +125,6 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.enti
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.annotaton.DiagramModel;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
@@ -141,7 +132,6 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
 import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.modeler.validation.jaxb.ValidateJAXB;
-import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.edge.IEdgeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.netbeans.modeler.widget.node.INodeWidget;
@@ -151,7 +141,6 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
-import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -168,9 +157,7 @@ import static org.openide.util.NbBundle.getMessage;
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     public static String PACKAGE_ICON_PATH;
-    public static String SUCCESS_ICON_PATH;
-    public static String WARNING_ICON_PATH;
-    public static String ERROR_ICON_PATH;
+    public static String JAVA_CLASS_ICON_PATH;
     public static String ENTITY_ICON_PATH;
     public static String MAPPED_SUPER_CLASS_ICON_PATH;
     public static String EMBEDDABLE_ICON_PATH;
@@ -196,14 +183,17 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static String BOTO_ATTRIBUTE_ICON_PATH;
     public static String PK_UOTO_ATTRIBUTE_ICON_PATH;
     public static String PK_BOTO_ATTRIBUTE_ICON_PATH;
-    public static String GENERALIZATION_ICON_PATH;
     public static Image ID_ATTRIBUTE;
     public static Image BASIC_ATTRIBUTE;
     public static Image BASIC_COLLECTION_ATTRIBUTE;
     public static Image EMBEDDED_ATTRIBUTE;
     public static Image EMBEDDED_ID_ATTRIBUTE;
-    public static Image MULTI_VALUE_EMBEDDED_ATTRIBUTE;
+    public static Image COMPOSITION_ATTRIBUTE;
     public static Image SINGLE_VALUE_EMBEDDED_ATTRIBUTE;
+    public static Image MULTI_VALUE_EMBEDDED_ATTRIBUTE;
+    public static final Image COMPOSITION_ANCHOR;
+    public static final Image SINGLE_VALUE_ANCHOR_SHAPE;
+    public static final Image MULTI_VALUE_ANCHOR_SHAPE;
     public static Image TRANSIENT_ATTRIBUTE;
     public static Image VERSION_ATTRIBUTE;
     public static Image MULTIVALUE_EMBEDDED_ATTRIBUTE;
@@ -220,6 +210,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image PK_UOTO_ATTRIBUTE;
     public static Image PK_BOTO_ATTRIBUTE;
     public static Image GENERALIZATION;
+    public static Image GENERALIZATION_ANCHOR;
     public static Image OTOR_SOURCE_ANCHOR_SHAPE;
     public static Image OTOR_TARGET_ANCHOR_SHAPE;
     public static Image OTMR_SOURCE_ANCHOR_SHAPE;
@@ -228,20 +219,39 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image MTOR_TARGET_ANCHOR_SHAPE;
     public static Image MTMR_SOURCE_ANCHOR_SHAPE;
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
+    public static Image UNI_DIRECTIONAL;
+    public static Image BI_DIRECTIONAL;
+    public static Image PK_UNI_DIRECTIONAL;
+    public static Image PK_BI_DIRECTIONAL;
     public static Image ABSTRACT_ENTITY;
     public static Image ENTITY;
+    public static Image JAVA_CLASS;
     public static Image MAPPED_SUPER_CLASS;
     public static Image EMBEDDABLE;
-   
-
-    public static Icon GENERATE_SRC;
-    public static Icon ENTITY_VISIBILITY;
-    public static Icon SOCIAL_NETWORK_SHARING;
-    public static Icon VIEW_DB;
-    public static Icon MICRO_DB;
-    public static Icon NANO_DB;
-    public static Icon PERSISTENCE_UNIT;
-
+    
+    public static ImageIcon CREATE_ICON;
+    public static ImageIcon EDIT_ICON;
+    public static ImageIcon DELETE_ICON;
+    public static ImageIcon DELETE_ALL_ICON;
+    public static ImageIcon SUCCESS_ICON;
+    public static ImageIcon WARNING_ICON;
+    public static ImageIcon ERROR_ICON;
+    public static ImageIcon GENERATE_SRC;
+    public static ImageIcon ENTITY_VISIBILITY;
+    public static ImageIcon SOCIAL_NETWORK_SHARING;
+    public static ImageIcon VIEW_DB;
+    public static ImageIcon MICRO_DB;
+    public static ImageIcon NANO_DB;
+    public static ImageIcon PERSISTENCE_UNIT;
+    public static ImageIcon RUN_JPQL_ICON;
+    public static ImageIcon HOME_ICON;
+    public static ImageIcon WORKSPACE_ICON;
+    
+    public static Image UP_ICON;
+    public static Image DOWN_ICON;
+    
+    private final static Map<Class<? extends BaseElement>, String> BASE_ELEMENT_ICONS = new HashMap<>();
+    
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
     public static Marshaller MODELER_MARSHALLER;
@@ -257,13 +267,19 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
 
         ClassLoader cl = JPAModelerUtil.class.getClassLoader();//Eager Initialization
-        GENERATE_SRC = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/generate-src.png"));
-        ENTITY_VISIBILITY = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/entity-visibility.png"));
-        VIEW_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/db.png"));
-        MICRO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/micro-db.png"));
-        NANO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/nano-db.png"));
-        SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/popup/share.png"));
-        PERSISTENCE_UNIT  = new ImageIcon(PUDataObject.class.getClassLoader().getResource(PUDataObject.ICON));
+        GENERATE_SRC = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/generate-src.png"));
+        RUN_JPQL_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/run-jpql.png"));
+        ENTITY_VISIBILITY = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/entity-visibility.png"));
+        VIEW_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/db.png"));
+        MICRO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/micro-db.png"));
+        NANO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/nano-db.png"));
+        SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/share.png"));
+        PERSISTENCE_UNIT = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/persistence-unit.png"));
+        WORKSPACE_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/workspace.png"));
+            COMPOSITION_ANCHOR = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/composition-anchor.png")).getImage();
+            SINGLE_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/single-value-anchor-shape.png")).getImage();
+            MULTI_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/multi-value-anchor-shape.png")).getImage();
+            
         IO = IOProvider.getDefault().getIO("JPA Modeler", false);
     }
 
@@ -271,12 +287,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public void init() {
         if (ENTITY_ICON_PATH == null) {
             PACKAGE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/PACKAGE.png";
-            SUCCESS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/success_16.png";
-            WARNING_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/warning_16.png";
-            ERROR_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/error_16.png";
+            JAVA_CLASS_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/JAVA_CLASS.png";
             ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/ENTITY.png";
-            MAPPED_SUPER_CLASS_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/MAPPED_SUPER_CLASS.png";
-            EMBEDDABLE_ICON_PATH = "/org/netbeans/jpa/modeler/resource/image/java/EMBEDDABLE.png";
+            MAPPED_SUPER_CLASS_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/MAPPED_SUPER_CLASS.png";
+            EMBEDDABLE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/EMBEDDABLE.png";
             ABSTRACT_ENTITY_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/java/ABSTRACT_ENTITY.png";
             ID_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/id-attribute.png";
             BASIC_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/basic-attribute.png";
@@ -299,8 +313,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/boto-attribute.png";
             PK_UOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-uoto-attribute.png";
             PK_BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-boto-attribute.png";
-            GENERALIZATION_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/generalization.png";
-
+                        
+            BASE_ELEMENT_ICONS.put(JavaClass.class, JAVA_CLASS_ICON_PATH);
+            BASE_ELEMENT_ICONS.put(Entity.class, ENTITY_ICON_PATH);
+            BASE_ELEMENT_ICONS.put(MappedSuperclass.class, MAPPED_SUPER_CLASS_ICON_PATH);
+            BASE_ELEMENT_ICONS.put(Embeddable.class, EMBEDDABLE_ICON_PATH);
+            
             ClassLoader cl = JPAModelerUtil.class.getClassLoader();
 
             UMTM_ATTRIBUTE = new ImageIcon(cl.getResource(UMTM_ATTRIBUTE_ICON_PATH)).getImage();
@@ -315,16 +333,25 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             BOTO_ATTRIBUTE = new ImageIcon(cl.getResource(BOTO_ATTRIBUTE_ICON_PATH)).getImage();
             PK_UOTO_ATTRIBUTE = new ImageIcon(cl.getResource(PK_UOTO_ATTRIBUTE_ICON_PATH)).getImage();
             PK_BOTO_ATTRIBUTE = new ImageIcon(cl.getResource(PK_BOTO_ATTRIBUTE_ICON_PATH)).getImage();
-            GENERALIZATION = new ImageIcon(cl.getResource(GENERALIZATION_ICON_PATH)).getImage();
+            GENERALIZATION = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/generalization.png")).getImage();
+            GENERALIZATION_ANCHOR = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/generalization-anchor.png")).getImage();
             OTOR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one.gif")).getImage();
             OTOR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png")).getImage();
-            OTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one.gif")).getImage();
+            OTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-many.gif")).getImage();
             OTMR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-many-arrow.png")).getImage();
             MTOR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-one.gif")).getImage();
             MTOR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png")).getImage();
             MTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many.gif")).getImage();
             MTMR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png")).getImage();
+            
+            
+            UNI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/uni.png")).getImage();
+            BI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/bi.png")).getImage();
+            PK_UNI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/pk-uni.png")).getImage();
+            PK_BI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/pk-bi.png")).getImage();
+            COMPOSITION_ATTRIBUTE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/composition.png")).getImage();
 
+            JAVA_CLASS = new ImageIcon(cl.getResource(JPAModelerUtil.JAVA_CLASS_ICON_PATH)).getImage();
             ABSTRACT_ENTITY = new ImageIcon(cl.getResource(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH)).getImage();
             ENTITY = new ImageIcon(cl.getResource(JPAModelerUtil.ENTITY_ICON_PATH)).getImage();
             MAPPED_SUPER_CLASS = new ImageIcon(cl.getResource(JPAModelerUtil.MAPPED_SUPER_CLASS_ICON_PATH)).getImage();
@@ -338,18 +365,36 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             SINGLE_VALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
             TRANSIENT_ATTRIBUTE = new ImageIcon(cl.getResource(TRANSIENT_ATTRIBUTE_ICON_PATH)).getImage();
             VERSION_ATTRIBUTE = new ImageIcon(cl.getResource(VERSION_ATTRIBUTE_ICON_PATH)).getImage();
-            MULTIVALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
+            
+            
+            
 
+            CREATE_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/add-element.png"));
+            EDIT_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/edit-element.png"));
+            DELETE_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/delete-element.png"));
+            DELETE_ALL_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/delete-all-element.png"));
+            SUCCESS_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/success_16.png"));
+            WARNING_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/warning_16.png"));
+            ERROR_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/error_16.png"));
+            HOME_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/home.png"));
+            
+            UP_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/anchor_up.png")).getImage();
+            DOWN_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/anchor_down.png")).getImage();
         }
     }
 
+    public static String getBaseElementIcon(Class<? extends BaseElement> baseElement){
+        String icon = BASE_ELEMENT_ICONS.get(baseElement);
+        return icon == null ? JAVA_CLASS_ICON_PATH : icon;
+    }
+    
     public static EntityMappings getEntityMapping(File file) throws JAXBException {
-        EntityMappings definition_Load = null;
+        EntityMappings definition_Load;
         if (MODELER_UNMARSHALLER == null) {
             MODELER_UNMARSHALLER = MODELER_CONTEXT.createUnmarshaller();
             MODELER_UNMARSHALLER.setEventHandler(new ValidateJAXB());
         }
-        
+
 //        try {
 //            content = FileUtils.readFileToString(file);
 //        } catch (IOException ex) {
@@ -357,17 +402,16 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 //        }
 //        content = content.replaceAll("jpa:", "");
 //        
-        
         definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(file), EntityMappings.class).getValue();
         MODELER_UNMARSHALLER = null;//GC issue
 //        cleanUnMarshaller();
         return definition_Load;
     }
-    
-    private static void cleanUnMarshaller(){
+
+    private static void cleanUnMarshaller() {
         try {
             String xmlStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><entity-mappings/>";
-            MODELER_UNMARSHALLER.unmarshal( new StreamSource( new StringReader( xmlStr ) ) );
+            MODELER_UNMARSHALLER.unmarshal(new StreamSource(new StringReader(xmlStr)));
         } catch (JAXBException ex) {
 //            Exceptions.printStackTrace(ex);
             System.out.println(ex);
@@ -384,10 +428,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             try {
                 entityMappings = getEntityMapping(savedFile);
             } catch (JAXBException ex) {
-                if(StringUtils.isBlank(file.getContent())){
+                if (StringUtils.isBlank(file.getContent())) {
                     entityMappings = null;
                 } else {
-                   throw ex; 
+                    throw ex;
                 }
             }
             if (entityMappings == null) {
@@ -396,10 +440,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 elementConfigFactory.initializeObjectValue(entityMappings);
             } else {
                 if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getArchitectureVersion()) < 0) {
-                    int reply = javax.swing.JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
+                    int reply = showConfirmDialog(WindowManager.getDefault().getMainWindow(),
                             getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.text", file.getCurrentVersion()),
-                            getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.title"), JOptionPane.YES_NO_OPTION);
-                    if (reply == JOptionPane.YES_OPTION) {
+                            getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.title"), YES_NO_OPTION);
+                    if (reply == YES_OPTION) {
                         file.getModelerPanelTopComponent().close();
                         JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
                         file.getModelerDiagramModel().setDefinitionElement(entityMappings);
@@ -414,101 +458,133 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     }
 
                 }
-                 
-            }
-            
-            
 
-            Diagram diagram = entityMappings.getJPADiagram();
+            }
+                       
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMappings);
             scene.setBaseElementSpec(entityMappings);
             scene.startSceneGeneration();
             entityMappings.repairDefinition(IO);
-            entityMappings.getAllManagedClass().stream().
-                    forEach(node -> loadFlowNode(scene, (Widget) scene, node));
-            scene.getJavaClassWidges().stream().forEach(javaClassWidget -> loadAttribute(javaClassWidget));
             
+            scene.getWorkSpaceManager().reloadMainWorkSpace();
+            Diagram diagram = entityMappings.getJPADiagram();
+            WorkSpace workSpace;
+            if (diagram != null) {
+                entityMappings.getJavaClass()
+                        .forEach(node -> loadFlowNode(scene, (Widget) scene, node));
+            } else {
+                workSpace = (WorkSpace)file.getAttribute(WORK_SPACE);
+                if(workSpace != null){
+                    entityMappings.setCurrentWorkSpace(workSpace.getId());
+                }
+                entityMappings.getCurrentWorkSpace().getItems()
+                        .stream()
+                        .map(item -> item.getJavaClass())
+                        .forEach(node -> loadFlowNode(scene, (Widget) scene, node));
+            }
+            scene.getJavaClassWidges().forEach(javaClassWidget -> loadAttribute(javaClassWidget));
             entityMappings.initJavaInheritanceMapping();
             loadFlowEdge(scene);
-            diagram.getJPAPlane().getDiagramElement().stream().
-                    forEach((diagramElement_Tmp) -> loadDiagram(scene, diagram, diagramElement_Tmp));
 
-            if (entityMappings.isGenerated() || (entityMappings.getEntity().size() + entityMappings.getMappedSuperclass().size()
-                    + entityMappings.getEmbeddable().size() != entityMappings.getJPADiagram().getJPAPlane().getDiagramElement().size())) {
+            int itemSize;
+            long drawItemSize;
+            
+            if (diagram != null) {
+                diagram.getJPAPlane().getDiagramElement()
+                        .forEach(diagramElement -> loadDiagram(scene, diagramElement));
+                itemSize = entityMappings.getJPADiagram().getJPAPlane().getDiagramElement().size();
+                drawItemSize = itemSize;
+            } else {
+                drawItemSize = entityMappings.getCurrentWorkSpace().getItems()
+                        .stream() 
+                        .filter(item -> item.getLocation()!=null)
+                        .peek(item -> loadDiagram(scene, item))
+                        .count();
+                itemSize = entityMappings.getCurrentWorkSpace().getItems().size();
+            }
+            if (entityMappings.isGenerated() || drawItemSize != itemSize) {
                 scene.autoLayout();
                 entityMappings.setStatus(null);
             }
-
+            
+            updateWindowTitle(file, entityMappings);
             scene.commitSceneGeneration();
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }
-
     }
-
     
-    private void loadAttribute(JavaClassWidget nodeWidget){
-            if (nodeWidget.getBaseElementSpec() instanceof ManagedClass) {
-                ManagedClass _class = (ManagedClass) nodeWidget.getBaseElementSpec();
-                PersistenceClassWidget entityWidget = (PersistenceClassWidget) nodeWidget;
-                if (_class.getAttributes() != null) {
-                    if (_class.getAttributes() instanceof IPersistenceAttributes) {
-                        ((IPersistenceAttributes) _class.getAttributes()).getId().stream().
-                                forEach((id) -> entityWidget.addNewIdAttribute(id.getName(), id));
-                        EmbeddedId embeddedId = ((IPersistenceAttributes) _class.getAttributes()).getEmbeddedId();
-                        if (embeddedId != null && embeddedId.isVisibile()) {
-                            entityWidget.addNewEmbeddedIdAttribute(embeddedId.getName(), embeddedId);
-                        }
-
-                        ((IPersistenceAttributes) _class.getAttributes()).getVersion().stream().
-                                forEach((version) -> entityWidget.addNewVersionAttribute(version.getName(), version));
+    private void updateWindowTitle(ModelerFile file, EntityMappings entityMappings){
+        if (!entityMappings.isRootWorkSpace()) {
+                String windowName = file.getModelerFileDataObject().getPrimaryFile().getName() + " > " + entityMappings.getCurrentWorkSpace().getName();
+                file.setName(windowName);
+                file.getModelerPanelTopComponent().setName(windowName);
+                file.getModelerPanelTopComponent().setToolTipText(windowName);
+         }
+    }
+    
+    private void loadAttribute(JavaClassWidget nodeWidget) {
+        if (nodeWidget.getBaseElementSpec() instanceof ManagedClass) {
+            ManagedClass classSpec = (ManagedClass) nodeWidget.getBaseElementSpec();
+            PersistenceClassWidget classWidget = (PersistenceClassWidget) nodeWidget;
+            WorkSpace workSpace = classSpec.getRootElement().getCurrentWorkSpace();
+            if (classSpec.getAttributes() != null) {
+                if (classSpec.getAttributes() instanceof IPersistenceAttributes) {
+                    IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) classSpec.getAttributes();
+                    persistenceAttributes.getId()
+                            .stream()
+                            .forEach((id) -> classWidget.addNewIdAttribute(id.getName(), id));
+                    EmbeddedId embeddedId = persistenceAttributes.getEmbeddedId();
+                    if (embeddedId != null && workSpace.hasItem(embeddedId.getConnectedClass())) {
+                        classWidget.addNewEmbeddedIdAttribute(embeddedId.getName(), embeddedId);
                     }
-                    _class.getAttributes().getBasic().stream().forEach((basic) -> {
-                        entityWidget.addNewBasicAttribute(basic.getName(), basic);
-                    });
-                    _class.getAttributes().getTransient().stream().forEach((_transient) -> {
-                        entityWidget.addNewTransientAttribute(_transient.getName(), _transient);
-                    });
-
-                    _class.getAttributes().getEmbedded().stream().filter(Embedded::isVisibile).forEach((embedded) -> {
-                        entityWidget.addNewSingleValueEmbeddedAttribute(embedded.getName(), embedded);
-                    });
-                    _class.getAttributes().getElementCollection().stream().forEach((elementCollection) -> {
-                        if (elementCollection.getConnectedClass() != null) {
-                            if (elementCollection.isVisibile()) {
-                                entityWidget.addNewMultiValueEmbeddedAttribute(elementCollection.getName(), elementCollection);
-                            }
-                        } else {
-                            entityWidget.addNewBasicCollectionAttribute(elementCollection.getName(), elementCollection);
-                        }
-                    });
-                    _class.getAttributes().getOneToOne().stream().filter(OneToOne::isVisibile).forEach((oneToOne) -> {
-                        OTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToOneRelationAttribute(oneToOne.getName(), oneToOne.isPrimaryKey(), oneToOne);
-//                        if (oneToOne.getMappedBy() == null) {
-//                            oneToOne.setOwner(true);
-//                        }
-                    });
-                    _class.getAttributes().getOneToMany().stream().filter(OneToMany::isVisibile).forEach((oneToMany) -> {
-                        OTMRelationAttributeWidget relationAttributeWidget = entityWidget.addNewOneToManyRelationAttribute(oneToMany.getName(), oneToMany);
-//                        if (oneToMany.getMappedBy() == null) {
-//                            oneToMany.setOwner(true);
-//                        }
-                    });
-                    _class.getAttributes().getManyToOne().stream().filter(ManyToOne::isVisibile).forEach((manyToOne) -> {
-                        MTORelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToOneRelationAttribute(manyToOne.getName(), manyToOne.isPrimaryKey(), manyToOne);
-//                        manyToOne.setOwner(true);//always
-                    });
-                    _class.getAttributes().getManyToMany().stream().filter(ManyToMany::isVisibile).forEach((manyToMany) -> {
-                        MTMRelationAttributeWidget relationAttributeWidget = entityWidget.addNewManyToManyRelationAttribute(manyToMany.getName(), manyToMany);
-//                        if (manyToMany.getMappedBy() == null) {
-//                            manyToMany.setOwner(true);
-//                        }
-                    });
-                    entityWidget.sortAttributes();
+                    persistenceAttributes.getVersion()
+                            .stream()
+                            .forEach(version -> classWidget.addNewVersionAttribute(version.getName(), version));
                 }
-
+                classSpec.getAttributes().getBasic()
+                        .stream()
+                        .forEach(basic -> classWidget.addNewBasicAttribute(basic.getName(), basic));
+                classSpec.getAttributes().getTransient()
+                        .stream()
+                        .forEach(_transient -> classWidget.addNewTransientAttribute(_transient.getName(), _transient));
+                classSpec.getAttributes().getEmbedded()
+                        .stream()
+                        .filter(embedded -> workSpace.hasItem(embedded.getConnectedClass()))
+                        .forEach((embedded) -> {
+                            classWidget.addNewSingleValueEmbeddedAttribute(embedded.getName(), embedded);
+                        });
+                classSpec.getAttributes().getElementCollection()
+                        .stream()
+                        .forEach((elementCollection) -> {
+                            if (elementCollection.getConnectedClass() != null) {
+                                if (workSpace.hasItem(elementCollection.getConnectedClass())) {
+                                    classWidget.addNewMultiValueEmbeddedAttribute(elementCollection.getName(), elementCollection);
+                                }
+                            } else {
+                                classWidget.addNewBasicCollectionAttribute(elementCollection.getName(), elementCollection);
+                            }
+                        });
+                classSpec.getAttributes().getOneToOne()
+                        .stream()
+                        .filter(oto -> workSpace.hasItem(oto.getConnectedEntity()))
+                        .forEach(oto -> classWidget.addNewOneToOneRelationAttribute(oto.getName(), oto.isPrimaryKey(), oto));
+                classSpec.getAttributes().getOneToMany()
+                        .stream()
+                        .filter(otm -> workSpace.hasItem(otm.getConnectedEntity()))
+                        .forEach(otm -> classWidget.addNewOneToManyRelationAttribute(otm.getName(), otm));
+                classSpec.getAttributes().getManyToOne()
+                        .stream()
+                        .filter(mto -> workSpace.hasItem(mto.getConnectedEntity()))
+                        .forEach(mto -> classWidget.addNewManyToOneRelationAttribute(mto.getName(), mto.isPrimaryKey(), mto));
+                classSpec.getAttributes().getManyToMany()
+                        .stream()
+                        .filter(mtm -> workSpace.hasItem(mtm.getConnectedEntity()))
+                        .forEach(mtm -> classWidget.addNewManyToManyRelationAttribute(mtm.getName(), mtm));
+                classWidget.sortAttributes();
             }
+        }
     }
 
     private void loadFlowNode(JPAModelerScene scene, Widget parentWidget, IFlowNode flowElement) {
@@ -516,12 +592,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         ModelerDocumentFactory modelerDocumentFactory = scene.getModelerFile().getModelerDiagramModel().getModelerDocumentFactory();
         if (flowElement instanceof FlowNode) {
             FlowNode flowNode = (FlowNode) flowElement;
-            if (flowElement instanceof JavaClass) { //skip class creation in case of hidden visibility
-                JavaClass _class = (JavaClass) flowElement;
-                if (!_class.isVisibile()) {
-                    return;
-                }
-            }
             try {
                 document = modelerDocumentFactory.getModelerDocument(flowElement);
             } catch (ModelerException ex) {
@@ -530,19 +600,16 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getModelerDiagramModel().getPaletteConfig().findSubCategoryNodeConfig(document);
             NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), subCategoryNodeConfig, new Point(0, 0));
             nodeWidgetInfo.setName(flowElement.getName());
-            nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
-            nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
+            nodeWidgetInfo.setExist(Boolean.TRUE);
+            nodeWidgetInfo.setBaseElementSpec(flowElement);
             INodeWidget nodeWidget = scene.createNodeWidget(nodeWidgetInfo);
             if (flowElement.getName() != null) {
                 nodeWidget.setLabel(flowElement.getName());
             }
             ((PNodeWidget) nodeWidget).setMinimized(flowNode.isMinimized());
-
-//            nodeWidget.i
             //clear incomming & outgoing it will added on sequenceflow auto connection
 //            ((FlowNode) flowElement).getIncoming().clear();
 //            ((FlowNode) flowElement).getOutgoing().clear();
-
         }
     }
 
@@ -606,22 +673,21 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         edgeInfo.setSource(sourcePersistenceClassWidget.getNodeWidgetInfo().getId());
         edgeInfo.setTarget(targetEntityWidget.getNodeWidgetInfo().getId());
         String contextToolId;
-        boolean primaryKey = sourceRelationAttributeWidget.getBaseElementSpec() instanceof SingleRelationAttribute && ((SingleRelationAttribute)sourceRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey();
+        boolean primaryKey = sourceRelationAttributeWidget.getBaseElementSpec() instanceof SingleRelationAttribute && ((SingleRelationAttribute) sourceRelationAttributeWidget.getBaseElementSpec()).isPrimaryKey();
         if (sourceRelationAttribute.getConnectedAttribute() != null) {
             targetRelationAttributeWidget = targetEntityWidget.findRelationAttributeWidget(sourceRelationAttribute.getConnectedAttribute().getId(), targetRelationAttributeWidgetClass);
             contextToolId = "B" + abstractTool;//OTM_RELATION";
         } else {
             contextToolId = "U" + abstractTool;
         }
-        edgeInfo.setType(NBModelerUtil.getEdgeType(sourcePersistenceClassWidget, targetEntityWidget, primaryKey?"PK"+contextToolId : contextToolId));
+        edgeInfo.setType(NBModelerUtil.getEdgeType(sourcePersistenceClassWidget, targetEntityWidget, primaryKey ? "PK" + contextToolId : contextToolId));
         IEdgeWidget edgeWidget = scene.createEdgeWidget(edgeInfo);
 
         scene.setEdgeWidgetSource(edgeInfo, getEdgeSourcePinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, sourceRelationAttributeWidget));
         scene.setEdgeWidgetTarget(edgeInfo, getEdgeTargetPinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, targetRelationAttributeWidget));
-        ((IBaseElementWidget)edgeWidget.getSourceAnchor().getRelatedWidget()).onConnection();
-        ((IBaseElementWidget)edgeWidget.getTargetAnchor().getRelatedWidget()).onConnection();
-        ((IBaseElementWidget)edgeWidget).onConnection();
-    
+        ((IBaseElementWidget) edgeWidget.getSourceAnchor().getRelatedWidget()).onConnection();
+        ((IBaseElementWidget) edgeWidget.getTargetAnchor().getRelatedWidget()).onConnection();
+        ((IBaseElementWidget) edgeWidget).onConnection();
 
     }
 
@@ -641,12 +707,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
             scene.setEdgeWidgetSource(edgeInfo, getEdgeSourcePinWidget(subJavaClassWidget, superJavaClassWidget, edgeWidget, null));
             scene.setEdgeWidgetTarget(edgeInfo, getEdgeTargetPinWidget(subJavaClassWidget, superJavaClassWidget, edgeWidget, null));
-
         }
-
     }
 
-    private void loadDiagram(JPAModelerScene scene, Diagram diagram, DiagramElement diagramElement) {
+    @Deprecated
+    private void loadDiagram(JPAModelerScene scene, DiagramElement diagramElement) {
         if (diagramElement instanceof Shape) {
             Shape shape = (Shape) diagramElement;
             Bounds bounds = shape.getBounds();
@@ -656,7 +721,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     INodeWidget nodeWidget = (INodeWidget) widget;
                     Point location = new Point((int) bounds.getX(), (int) bounds.getY());
                     nodeWidget.setPreferredLocation(location);
-//                    nodeWidget.setActiveStatus(true);
                 } else {
                     throw new InvalidElmentException("Invalid JPA Element : " + widget);
                 }
@@ -664,92 +728,84 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
     }
 
+    private void loadDiagram(JPAModelerScene scene, WorkSpaceItem workSpaceItem) {
+        Widget widget = (Widget) scene.getBaseElement(workSpaceItem.getJavaClass().getId());
+        if (widget != null && widget instanceof INodeWidget) {
+            INodeWidget nodeWidget = (INodeWidget) widget;
+            nodeWidget.setPreferredLocation(workSpaceItem.getLocation());
+        } else {
+            throw new InvalidElmentException("Invalid JPA Element : " + widget);
+        }
+    }
+
     @Override
     public void saveModelerFile(ModelerFile file) {
         EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
         JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
-        updateJPADiagram(scene, entityMappings.getJPADiagram());
+        scene.getWorkSpaceManager().updateWorkSpace();
         PreExecutionUtil.preExecution(file);
         saveFile(entityMappings, file.getFile());
     }
-    
+
     public static void removeDefaultJoinColumn(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, String attributeName) {
-     for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
-                    SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
-                    if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
-                        continue;
-                    }
-                    if(!attributeWidget.getName().equals(attributeName)){
-                         continue;
-                    }
-                    relationAttribute.getJoinColumn().clear();
-     }
+        for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
+            SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
+            if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
+                continue;
+            }
+            if (!attributeWidget.getName().equals(attributeName)) {
+                continue;
+            }
+            relationAttribute.getJoinColumn().clear();
+        }
     }
-    
+
     //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/8 #Same Column name in CompositePK
     public static void addDefaultJoinColumnForCompositePK(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
-            String attributeName, Set<String> allFields, List<JoinColumn> joinColumns)  {
-                //Get all @Id @Relation owner attribute 
-                for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
-                    SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
-                    if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
-                        continue;
-                    }
-                    if(!attributeWidget.getName().equals(attributeName)){
-                         continue;
-                    }
-                    
-                    //check is it composite key
-                    EntityWidget targetEntityWidget = attributeWidget.getRelationFlowWidget().getTargetEntityWidget();
-                    Entity targetEntity = targetEntityWidget.getBaseElementSpec();
-//                    if(targetEntity.getCompositePrimaryKeyType() != null){
-//                        boolean proceed = false;
-//                        DefaultClass defaultClass = entityMappings.findDefaultClass(entity.getCompositePrimaryKeyClass());
-                        
-//                        if(defaultClass.getAttributes().size() != relationAttribute.getJoinColumn().size()){
-//                            proceed = true;
-//                        }
-                        
-//                        if(!proceed){
-//                            // TODO compare column nane
-//                        }
-                      relationAttribute.getJoinColumn().clear();
-                        if(joinColumns == null || joinColumns.isEmpty()){
-                            for(AttributeWidget attributeWidget_Tmp : targetEntityWidget.getPrimaryKeyAttributeWidgets()){
-                                Attribute attribute = (Attribute)attributeWidget_Tmp.getBaseElementSpec();
-                                JoinColumn joinColumn = new JoinColumn();
-                                String joinColumnName = (targetEntity.getClazz() + '_' + attribute.getName()).toUpperCase();
-                                joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName));
-                                joinColumn.setName(joinColumnName);
-                                if(attribute instanceof RelationAttribute){
-                                     Entity connectedEntity = ((RelationAttribute)attribute).getConnectedEntity();
-                                     if(connectedEntity.getCompositePrimaryKeyType()!=null){
-                                         //TODO  
-                                      } else {
-                                         Id id = connectedEntity.getAttributes().getId().get(0);
-                                         String refColumnName = null;
-//                                         if(entity.getCompositePrimaryKeyType()==CompositePrimaryKeyType.EMBEDDEDID){
-                                         refColumnName = attribute.getName()+ "_"+ id.getDefaultColumnName();
-//                                         } else {
-//                                             refColumnName = attribute.getName();
-//                                         }
-                                         joinColumn.setReferencedColumnName(refColumnName);
-                                     }
-                                } else {
-                                    joinColumn.setReferencedColumnName(attribute.getName());
-                                }
-                                relationAttribute.getJoinColumn().add(joinColumn);
-                            }
+            String attributeName, Set<String> allFields, List<JoinColumn> joinColumns) {
+        //Get all @Id @Relation owner attribute 
+        for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
+            SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
+            if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
+                continue;
+            }
+            if (!attributeWidget.getName().equals(attributeName)) {
+                continue;
+            }
+
+            //check is it composite key
+            EntityWidget targetEntityWidget = attributeWidget.getRelationFlowWidget().getTargetEntityWidget();
+            Entity targetEntity = targetEntityWidget.getBaseElementSpec();
+            relationAttribute.getJoinColumn().clear();
+            if (joinColumns == null || joinColumns.isEmpty()) {
+                for (AttributeWidget attributeWidget_Tmp : targetEntityWidget.getPrimaryKeyAttributeWidgets()) {
+                    Attribute attribute = (Attribute) attributeWidget_Tmp.getBaseElementSpec();
+                    JoinColumn joinColumn = new JoinColumn();
+                    String joinColumnName = (targetEntity.getClazz() + '_' + attribute.getName()).toUpperCase();
+                    joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName));
+                    joinColumn.setName(joinColumnName);
+                    if (attribute instanceof RelationAttribute) {
+                        Entity connectedEntity = ((RelationAttribute) attribute).getConnectedEntity();
+                        if (connectedEntity.getCompositePrimaryKeyType() != null) {
+                            //TODO  
                         } else {
-                            relationAttribute.getJoinColumn().addAll(joinColumns);
+                            Id id = connectedEntity.getAttributes().getId().get(0);
+                            joinColumn.setReferencedColumnName(attribute.getName() + "_" + id.getDefaultColumnName());
                         }
+                    } else {
+                        joinColumn.setReferencedColumnName(attribute.getName());
                     }
+                    relationAttribute.getJoinColumn().add(joinColumn);
+                }
+            } else {
+                relationAttribute.getJoinColumn().addAll(joinColumns);
+            }
+        }
 //                }
     }
-    
-    
+
     public static void saveFile(EntityMappings entityMappings, File file) {
-       
+
         try {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
@@ -823,72 +879,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     @Override
     public INodeWidget updateNodeWidgetDesign(ShapeDesign shapeDesign, INodeWidget inodeWidget) {
-        PNodeWidget nodeWidget = (PNodeWidget) inodeWidget;
-        //ELEMENT_UPGRADE
-//        if (shapeDesign != null) {
-//            if (shapeDesign.getOuterShapeContext() != null) {
-//                if (shapeDesign.getOuterShapeContext().getBackground() != null) {
-//                    nodeWidget.setOuterElementStartBackgroundColor(shapeDesign.getOuterShapeContext().getBackground().getStartColor());
-//                    nodeWidget.setOuterElementEndBackgroundColor(shapeDesign.getOuterShapeContext().getBackground().getEndColor());
-//                }
-//                if (shapeDesign.getOuterShapeContext().getBorder() != null) {
-//                    nodeWidget.setOuterElementBorderColor(shapeDesign.getOuterShapeContext().getBorder().getColor());
-//                    nodeWidget.setOuterElementBorderWidth(shapeDesign.getOuterShapeContext().getBorder().getWidth());
-//                }
-//            }
-//            if (shapeDesign.getInnerShapeContext() != null) {
-//                if (shapeDesign.getInnerShapeContext().getBackground() != null) {
-//                    nodeWidget.setInnerElementStartBackgroundColor(shapeDesign.getInnerShapeContext().getBackground().getStartColor());
-//                    nodeWidget.setInnerElementEndBackgroundColor(shapeDesign.getInnerShapeContext().getBackground().getEndColor());
-//                }
-//                if (shapeDesign.getInnerShapeContext().getBorder() != null) {
-//                    nodeWidget.setInnerElementBorderColor(shapeDesign.getInnerShapeContext().getBorder().getColor());
-//                    nodeWidget.setInnerElementBorderWidth(shapeDesign.getInnerShapeContext().getBorder().getWidth());
-//                }
-//            }
-//        }
-
-        return (INodeWidget) nodeWidget;
+        return inodeWidget;
     }
 
-    public static void updateDiagramFlowElement(Plane plane, Widget widget) {
-        //Diagram Model
-        if (widget instanceof INodeWidget) { 
-            INodeWidget nodeWidget = (INodeWidget) widget;
-
-            Rectangle rec = nodeWidget.getSceneViewBound();
-
-            Shape shape = new Shape();
-            shape.setBounds(new Bounds(rec));//(new Bounds(flowNodeWidget.getBounds()));
-            shape.setElementRef(((IBaseElementWidget) nodeWidget).getId());
-//            shape.setId(((IBaseElementWidget) nodeWidget).getId() + "_gui");
-            plane.addDiagramElement(shape);
-
-        } else {
-            if (widget instanceof EdgeWidget) {
-
-            } else {
-                throw new InvalidElmentException("Invalid JPA Element");
-            }
-        }
-
-    }
-
-    public static void updateJPADiagram(JPAModelerScene scene, Diagram diagram) {
-        Plane plane = diagram.getJPAPlane();
-        plane.getDiagramElement().clear();
-//        JPAModelerScene processScene = (JPAModelerScene)file.getModelerScene();
-        scene.getBaseElements().stream().forEach((flowElementWidget) -> {
-            updateDiagramFlowElement(plane, (Widget) flowElementWidget);
-        });
-    }
-
-    /*---------------------------------Save File End---------------------------------*/
     @Override
     public Anchor getAnchor(INodeWidget inodeWidget) {
         INodeWidget nodeWidget = inodeWidget;
         Anchor sourceAnchor;
-//        NodeWidgetInfo nodeWidgetInfo = nodeWidget.getNodeWidgetInfo();
         if (nodeWidget instanceof IFlowNodeWidget) {
             sourceAnchor = new CustomRectangularAnchor(nodeWidget, 0, true);
         } else {
@@ -907,54 +904,31 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         IPinWidget widget = null;
         if (widgetInfo.getDocumentId().equals(IdAttributeWidget.class.getSimpleName())) {
             widget = new IdAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(EmbeddedIdAttributeWidget.class.getSimpleName())) {
+            widget = new EmbeddedIdAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(BasicAttributeWidget.class.getSimpleName())) {
+            widget = new BasicAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(BasicCollectionAttributeWidget.class.getSimpleName())) {
+            widget = new BasicCollectionAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(TransientAttributeWidget.class.getSimpleName())) {
+            widget = new TransientAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(VersionAttributeWidget.class.getSimpleName())) {
+            widget = new VersionAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(OTORelationAttributeWidget.class.getSimpleName())) {
+            widget = new OTORelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(OTMRelationAttributeWidget.class.getSimpleName())) {
+            widget = new OTMRelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(MTORelationAttributeWidget.class.getSimpleName())) {
+            widget = new MTORelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(MTMRelationAttributeWidget.class.getSimpleName())) {
+            widget = new MTMRelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(SingleValueEmbeddedAttributeWidget.class.getSimpleName())) {
+            widget = new SingleValueEmbeddedAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
+        } else if (widgetInfo.getDocumentId().equals(MultiValueEmbeddedAttributeWidget.class.getSimpleName())) {
+            widget = new MultiValueEmbeddedAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
         } else {
-            if (widgetInfo.getDocumentId().equals(EmbeddedIdAttributeWidget.class.getSimpleName())) {
-                widget = new EmbeddedIdAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-            } else {
-                if (widgetInfo.getDocumentId().equals(BasicAttributeWidget.class.getSimpleName())) {
-                    widget = new BasicAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                } else {
-                    if (widgetInfo.getDocumentId().equals(BasicCollectionAttributeWidget.class.getSimpleName())) {
-                        widget = new BasicCollectionAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                    } else {
-                        if (widgetInfo.getDocumentId().equals(TransientAttributeWidget.class.getSimpleName())) {
-                            widget = new TransientAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                        } else {
-                            if (widgetInfo.getDocumentId().equals(VersionAttributeWidget.class.getSimpleName())) {
-                                widget = new VersionAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                            } else {
-                                if (widgetInfo.getDocumentId().equals(OTORelationAttributeWidget.class.getSimpleName())) {
-                                    widget = new OTORelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                                } else {
-                                    if (widgetInfo.getDocumentId().equals(OTMRelationAttributeWidget.class.getSimpleName())) {
-                                        widget = new OTMRelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                                    } else {
-                                        if (widgetInfo.getDocumentId().equals(MTORelationAttributeWidget.class.getSimpleName())) {
-                                            widget = new MTORelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                                        } else {
-                                            if (widgetInfo.getDocumentId().equals(MTMRelationAttributeWidget.class.getSimpleName())) {
-                                                widget = new MTMRelationAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                                            } else {
-                                                if (widgetInfo.getDocumentId().equals(SingleValueEmbeddedAttributeWidget.class.getSimpleName())) {
-                                                    widget = new SingleValueEmbeddedAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                                                } else {
-                                                    if (widgetInfo.getDocumentId().equals(MultiValueEmbeddedAttributeWidget.class.getSimpleName())) {
-                                                        widget = new MultiValueEmbeddedAttributeWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-                                                    } else {
-                                                        throw new InvalidElmentException("Invalid JPA Pin Element");
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            throw new InvalidElmentException("Invalid JPA Pin Element");
         }
-//        ((PNodeWidget) scene.findWidget(nodeWidgetInfo)).attachPinWidget(widget);
         return widget;
     }
 
@@ -1113,11 +1087,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 OTORelationAttributeWidget otoRelationAttributeWidget;
                 boolean primaryKey = otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUOTO_RELATION") || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBOTO_RELATION");
                 if (sourceAttributeWidget == null) {
-                    otoRelationAttributeWidget = sourcePersistenceWidget.addNewOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()),primaryKey);
+                    otoRelationAttributeWidget = sourcePersistenceWidget.addNewOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()), primaryKey);
                 } else {
                     otoRelationAttributeWidget = (OTORelationAttributeWidget) sourceAttributeWidget;
                 }
-                
+
                 if (otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUOTO_RELATION") || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBOTO_RELATION")) {
                     otoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
                 }
@@ -1141,7 +1115,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 } else {
                     mtoRelationAttributeWidget = (MTORelationAttributeWidget) sourceAttributeWidget;
                 }
-                
+
                 if (mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKUMTO_RELATION") || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals("PKBMTO_RELATION")) {
                     mtoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
                 }
@@ -1160,7 +1134,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             } else {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
-                 
 
             relationFlowWidget.setSourceRelationAttributeWidget(relationAttributeWidget);
             relationAttributeWidget.getBaseElementSpec().setOwner(true);
@@ -1197,7 +1170,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                         if (edgeWidget instanceof MultiValueEmbeddableFlowWidget) {
                             MultiValueEmbeddedAttributeWidget multiValueEmbeddedAttributeWidget;
                             if (sourceAttributeWidget == null) {
-                                multiValueEmbeddedAttributeWidget = sourcePersistenceWidget.addNewMultiValueEmbeddedAttribute(sourcePersistenceWidget.getNextAttributeName(targetEmbeddableWidget.getName(),true));
+                                multiValueEmbeddedAttributeWidget = sourcePersistenceWidget.addNewMultiValueEmbeddedAttribute(sourcePersistenceWidget.getNextAttributeName(targetEmbeddableWidget.getName(), true));
                             } else {
                                 multiValueEmbeddedAttributeWidget = (MultiValueEmbeddedAttributeWidget) sourceAttributeWidget;
                             }
@@ -1258,7 +1231,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                             BMTORelationFlowWidget bmtoRelationFlowWidget = (BMTORelationFlowWidget) edgeWidget;
                             OTMRelationAttributeWidget targetMTORelationAttributeWidget;
                             if (targetRelationAttributeWidget == null) {
-                                targetMTORelationAttributeWidget = targetEntityWidget.addNewOneToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(),true));
+                                targetMTORelationAttributeWidget = targetEntityWidget.addNewOneToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(), true));
                                 RelationAttributeWidget sourceMTORelationAttributeWidget = bmtoRelationFlowWidget.getSourceRelationAttributeWidget();
                                 sourceMTORelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetMTORelationAttributeWidget);
                                 targetMTORelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceMTORelationAttributeWidget);
@@ -1273,7 +1246,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                                 BMTMRelationFlowWidget bmtmRelationFlowWidget = (BMTMRelationFlowWidget) edgeWidget;
                                 MTMRelationAttributeWidget targetMTMRelationAttributeWidget;
                                 if (targetRelationAttributeWidget == null) {
-                                    targetMTMRelationAttributeWidget = targetEntityWidget.addNewManyToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(),true));
+                                    targetMTMRelationAttributeWidget = targetEntityWidget.addNewManyToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(), true));
                                     RelationAttributeWidget sourceMTMRelationAttributeWidget = bmtmRelationFlowWidget.getSourceRelationAttributeWidget();
                                     sourceMTMRelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetMTMRelationAttributeWidget);
                                     targetMTMRelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceMTMRelationAttributeWidget);
@@ -1338,48 +1311,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
 
-
-    /**
-     * Micro DB filter
-     *
-     * @param mappings The graph
-     * @param entity The master node
-     * @return
-     */
-    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity entity) {
-
-        EntityMappings mappingClone = cloneObject(mappings);
-        Entity entityClone = mappingClone.getEntity(entity.getId());
-
-        Set<Entity> relationClasses = getRelationClass(entityClone.getAttributes());
-
-        mappingClone.getEntity().stream().filter(e -> e.getAttributes().getRelationAttributes().stream().anyMatch(r -> r.getConnectedEntity() == entityClone)).forEach(relationClasses::add);
-        relationClasses.remove(entityClone);
-        relationClasses.stream().map(e -> e.getAttributes()).forEach(attr -> {
-            attr.getManyToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
-            attr.getManyToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
-            attr.getOneToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
-            attr.getOneToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
-            attr.setEmbedded(null);
-        });
-        relationClasses.add(entityClone);
-        mappingClone.setEntity(new ArrayList<>());
-        relationClasses.stream().forEach(mappingClone::addEntity);
-        mapToOrignalObject(mappings, mappingClone);
-        return mappingClone;
-    }
-
-    private static Set<Entity> getRelationClass(BaseAttributes attributes) {
-        Set<Entity> relationAttributeconnected = attributes.getRelationAttributes().stream().map(RelationAttribute::getConnectedEntity).collect(toSet());
-        relationAttributeconnected.addAll(attributes.getEmbedded().stream().map(e -> e.getConnectedClass()).flatMap(c -> getRelationClass(c.getAttributes()).stream()).collect(toSet()));
-//      //Not Applicable for EmbeddedId
-//        if (attributes instanceof Attributes && ((Attributes) attributes).getEmbeddedId() != null) {
-//            relationAttributeconnected.addAll(getRelationClass(((Attributes) attributes).getEmbeddedId().getConnectedClass().getAttributes()));
-//        }
-        return relationAttributeconnected;
-    }
-
-    public static EntityMappings cloneObject(EntityMappings entityMappings) {
+    public static EntityMappings cloneEntityMapping(EntityMappings entityMappings) {
         EntityMappings definition_Load = null;
         try {
             if (MODELER_MARSHALLER == null) {
@@ -1396,12 +1328,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             }
             StringReader reader = new StringReader(sw.toString());
             definition_Load = MODELER_UNMARSHALLER.unmarshal(new StreamSource(reader), EntityMappings.class).getValue();
+            definition_Load.initJavaInheritanceMapping();
             MODELER_UNMARSHALLER = null;//GC issue
         } catch (JAXBException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
         return definition_Load;
     }
+
     public static void generateSourceCode(ModelerFile modelerFile) {
         generateSourceCode(modelerFile, null);
     }
@@ -1416,165 +1350,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             RequestProcessor processor = new RequestProcessor("jpa/ExportCode"); // NOI18N
             SourceCodeGeneratorTask task = new SourceCodeGeneratorTask(modelerFile, dialog.getConfigData(), afterExecution);
             processor.post(task);
-        }
-    }
-    
-
-    private static void makeSiblingOrphan(Entity entity, RelationAttribute relationAttribute, Entity siblingEntity, RelationAttribute siblingRelationAttribute) {
-        Attributes attr = entity.getAttributes();
-        if (relationAttribute != null) {
-            attr.getManyToMany().removeIf(r -> r != relationAttribute);
-            attr.getManyToOne().removeIf(r -> r != relationAttribute);
-            attr.getOneToMany().removeIf(r -> r != relationAttribute);
-            attr.getOneToOne().removeIf(r -> r != relationAttribute);
-        } else {
-            attr.getManyToMany().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
-            attr.getManyToOne().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
-            attr.getOneToMany().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
-            attr.getOneToOne().removeIf(r -> r.getConnectedAttribute() != siblingRelationAttribute);
-        }
-        attr.setElementCollection(null);
-    }
-
-    private static void makeSiblingOrphan(Embeddable embeddable) {
-        EmbeddableAttributes attr = embeddable.getAttributes();
-        attr.setManyToMany(null);
-        attr.setManyToOne(null);
-        attr.setOneToMany(null);
-        attr.setOneToOne(null);
-        attr.setEmbedded(null);
-        attr.setElementCollection(null);
-    }
-
-    private static void makeSiblingOrphan(MappedSuperclass mappedSuperclass) {
-        Attributes attr = mappedSuperclass.getAttributes();
-        attr.setManyToMany(null);
-        attr.setManyToOne(null);
-        attr.setOneToMany(null);
-        attr.setOneToOne(null);
-        attr.setEmbedded(null);
-        attr.setElementCollection(null);
-    }
-
-    private static void mapToOrignalObject(EntityMappings orignalMappings, EntityMappings clonedMappings) {
-        clonedMappings.getEntity().forEach(class_ -> {
-            Entity orignalEntity = orignalMappings.getEntity(class_.getId());
-            class_.setOrignalObject(orignalEntity);
-            mapToOrignalObject(orignalEntity.getAttributes(), class_.getAttributes());
-        });
-        clonedMappings.getEmbeddable().forEach(class_ -> {
-            Embeddable orignalEmbeddable = orignalMappings.getEmbeddable(class_.getId());
-            class_.setOrignalObject(orignalEmbeddable);
-            mapToOrignalObject(orignalEmbeddable.getAttributes(), class_.getAttributes());
-        });
-        clonedMappings.getMappedSuperclass().forEach(e -> {
-            MappedSuperclass orignalMappedSuperclass = orignalMappings.getMappedSuperclass(e.getId());
-            e.setOrignalObject(orignalMappedSuperclass);
-            mapToOrignalObject(orignalMappedSuperclass.getAttributes(), e.getAttributes());
-        });
-
-    }
-
-    private static void mapToOrignalObject(BaseAttributes orignalAttributes, BaseAttributes clonedAttributes) {
-
-        clonedAttributes.getBasic().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getBasic(a.getId()).get());
-        });
-        clonedAttributes.getElementCollection().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getElementCollection(a.getId()).get());
-        });
-        clonedAttributes.getEmbedded().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getEmbedded(a.getId()).get());
-        });
-
-        clonedAttributes.getManyToMany().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getManyToMany(a.getId()).get());
-        });
-        clonedAttributes.getManyToOne().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getManyToOne(a.getId()).get());
-        });
-        clonedAttributes.getOneToMany().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getOneToMany(a.getId()).get());
-        });
-        clonedAttributes.getOneToOne().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getOneToOne(a.getId()).get());
-        });
-        clonedAttributes.getTransient().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getTransient(a.getId()).get());
-        });
-        if (clonedAttributes instanceof Attributes) {
-            ((Attributes) clonedAttributes).getId().forEach(a -> {
-                a.setOrignalObject(((Attributes) orignalAttributes).getId(a.getId()).get());
-            });
-            ((Attributes) clonedAttributes).getVersion().forEach(a -> {
-                a.setOrignalObject(((Attributes) orignalAttributes).getVersion(a.getId()).get());
-            });
-        }
-
-    }
-
-    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity javaClass, RelationAttribute relationAttribute) {
-
-        EntityMappings mappingClone = cloneObject(mappings);
-        Entity entityClone = mappingClone.getEntity(javaClass.getId());
-        RelationAttribute relationAttributeClone = entityClone.getAttributes().getRelationAttribute(relationAttribute.getId()).get();
-
-        Entity mappedEntityClone = relationAttributeClone.getConnectedEntity();
-        RelationAttribute mappedRelationAttributeClone = relationAttributeClone.getConnectedAttribute();
-
-        makeSiblingOrphan(entityClone, relationAttributeClone, mappedEntityClone, mappedRelationAttributeClone);
-        makeSiblingOrphan(mappedEntityClone, mappedRelationAttributeClone, entityClone, relationAttributeClone);
-
-        mappingClone.getEmbeddable().stream().forEach((embeddable) -> makeSiblingOrphan(embeddable));
-        mappingClone.getMappedSuperclass().stream().forEach((mappedSuperclass) -> makeSiblingOrphan(mappedSuperclass));
-
-        Set<Entity> relationClasses = new HashSet<>();
-        relationClasses.add(entityClone);
-        relationClasses.add(mappedEntityClone);
-        mappingClone.setEntity(new ArrayList<>());
-        relationClasses.stream().forEach(mappingClone::addEntity);
-        mapToOrignalObject(mappings, mappingClone);
-        return mappingClone;
-    }
-
-    public static void openDBViewer(ModelerFile file) {
-        EntityMappings entityMappings = (EntityMappings) file.getModelerScene().getBaseElementSpec();
-        openDBViewer(file, entityMappings);
-    }
-
-    public static void openDBViewer(ModelerFile file, EntityMappings entityMappings) {
-        if (!((JPAModelerScene) file.getModelerScene()).compile()) {
-            return;
-        }
-        try {
-        PreExecutionUtil.preExecution(file);
-        DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
-        Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
-        dbModelerRequestManager.init(file, entityMappings);
-        IModelerScene scene;
-        if (dbChildModelerFile.isPresent()) {
-            ModelerFile childModelerFile = dbChildModelerFile.get();
-            scene = childModelerFile.getModelerScene();
-            scene.getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
-                ((INodeWidget) element).remove(false);
-            });
-            childModelerFile.unload();
-            try {
-                childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
-                scene.validate();
-            } catch (Exception ex) {
-                file.handleException(ex);
-            }
-            childModelerFile.loaded();
-        } else {
-            dbChildModelerFile = file.getChildrenFile("DB");
-            if(dbChildModelerFile.isPresent()){
-                scene = dbChildModelerFile.get().getModelerScene();
-                scene.validate();//TODO remove it// should be called from framework
-            }
-        }
-        } catch(Throwable t){
-            file.handleException(t);
         }
     }
 

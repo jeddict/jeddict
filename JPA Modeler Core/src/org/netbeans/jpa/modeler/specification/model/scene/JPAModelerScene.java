@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.specification.model.scene;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import org.netbeans.api.project.Project;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
@@ -58,14 +56,11 @@ import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.event.JPAEventListener;
-import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
-import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERATE_SRC;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PERSISTENCE_UNIT;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SOCIAL_NETWORK_SHARING;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_DB;
-import org.netbeans.jpa.modeler.visiblity.javaclass.ClassWidgetVisibilityController;
 import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
 import org.netbeans.modeler.core.ModelerFile;
@@ -89,22 +84,31 @@ import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
-import org.openide.windows.WindowManager;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.DBUtil.isolateEntityMapping;
+import org.netbeans.jpa.modeler.specification.model.workspace.WorkSpaceManager;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.RUN_JPQL_ICON;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
+    private final WorkSpaceManager workSpaceManager;
+
+    public JPAModelerScene() {
+        workSpaceManager = new WorkSpaceManager(this);
+    }
+    
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         EntityMappings entityMappings = this.getBaseElementSpec();
         set.put("BASIC_PROP", getConverterProperties(this, entityMappings.getConverter()));
         set.put("GLOBAL_CONFIG", getClassSnippet(this, entityMappings.getSnippets()));
-        set.put("GLOBAL_CONFIG", getCustomArtifact(this, entityMappings.getInterfaces(),"Interface"));
-        
+        set.put("GLOBAL_CONFIG", getCustomArtifact(this, entityMappings.getInterfaces(), "Interface"));
+
     }
-    
+
     public List<EntityWidget> getEntityWidgets() {
         List<EntityWidget> entityWidgets = new ArrayList<>();
         for (IBaseElementWidget baseElement : getBaseElements()) {
@@ -114,8 +118,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         }
         return entityWidgets;
     }
-    
-     public List<JavaClassWidget> getJavaClassWidges() {
+
+    public List<JavaClassWidget> getJavaClassWidges() {
         List<JavaClassWidget> classWidgets = new ArrayList<>();
         for (IBaseElementWidget baseElement : getBaseElements()) {
             if (baseElement instanceof JavaClassWidget) {
@@ -162,6 +166,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
         return compiled;
     }
+
     @Override
     public void deleteBaseElement(IBaseElementWidget baseElementWidget) {
         EntityMappings entityMappingsSpec = (EntityMappings) this.getModelerFile().getModelerScene().getBaseElementSpec();
@@ -313,8 +318,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             if (baseElement != null) {
                 baseElementWidget.setBaseElementSpec(baseElement);
                 baseElement.setId(baseElementId);
-                if(baseElement instanceof JavaClass){
-                    ((JavaClass)baseElement).setAuthor(JavaSourceHelper.getAuthor());
+                if (baseElement instanceof JavaClass) {
+                    ((JavaClass) baseElement).setAuthor(JavaSourceHelper.getAuthor());
                 }
                 rootElement.addBaseElement(baseElement);
                 ElementConfigFactory elementConfigFactory = this.getModelerFile().getModelerDiagramModel().getElementConfigFactory();
@@ -337,80 +342,73 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
-        //To check env
-//        PersistenceEnvironment pe = project!=null ? project.getLookup().lookup(PersistenceEnvironment.class) : null;
-//                    if( pe != null ) {
-//                        return true;//!Util.isSupportedJavaEEVersion(project);//so far support only non-container managed projects
-//                    }
-//        SwingUtilities.invokeLater(() -> { //Activiation of OverrideView window (Don't delete)
-//            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
-//            if (!window.isOpened()) {
-//                window.open();
-//            }
-//            window.requestActive();
-//        });
         
+
         //After installation of new version, auto save file 
         ModelerFile file = this.getModelerFile();
         EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
-        if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getCurrentVersion()) < 0) {
+        if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getArchitectureVersion()) < 0) {
             file.getModelerUtil().saveModelerFile(file);
         }
+        
+        getWorkSpaceManager().loadWorkspaceUI();
     }
 
     @Override
     public void destroy() {
-//        SwingUtilities.invokeLater(() -> {
-//            OverrideViewNavigatorComponent window = OverrideViewNavigatorComponent.getInstance();
-//            if (ModelerCore.getModelerFiles().size() == 1) {
-//                window.close();
-//            }
-//        });
     }
+
 
     @NbBundle.Messages({
         "GENERATE_SRC=Generate Source Code",
-        "ENTITY_VISIBILTY=Manage Entity Visibility",
         "VIS_DB=Visualize DB",
         "PERSISTENCE_UNIT=Persistence.xml",
-        "RYN_JPQL=Run JPQL Query",
+        "RUN_JPQL=Run JPQL Query",
         "SHARE=Share"
     })
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
+
         JMenuItem generateCode = new JMenuItem(Bundle.GENERATE_SRC(), GENERATE_SRC);
         generateCode.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('G'), InputEvent.CTRL_DOWN_MASK));
-        generateCode.addActionListener((ActionEvent e) -> {
+        generateCode.addActionListener(e -> {
             JPAModelerUtil.generateSourceCode(JPAModelerScene.this.getModelerFile());
-        });
-
-        JMenuItem manageVisibility = new JMenuItem(Bundle.ENTITY_VISIBILTY());
-        manageVisibility.addActionListener((ActionEvent e) -> {
-            fireEntityVisibilityAction(getModelerFile());
         });
 
         JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);
         visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
-        visDB.addActionListener((ActionEvent e) -> {
-            JPAModelerUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
+        visDB.addActionListener(e -> {
+            EntityMappings entityMapping = this.getBaseElementSpec();
+            if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
+                DBUtil.openDBViewer(this.getModelerFile(), entityMapping);
+            } else {
+                this.getWorkSpaceManager().syncWorkSpaceItemLocation();
+                DBUtil.openDBViewer(this.getModelerFile(), isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
+            }
         });
         
+//        JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);
+//        visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
+//        visDB.addActionListener(e -> {
+//            syncWorkSpaceItemLocation(this);
+////            DBUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
+//        });
+
         JMenuItem openPUXML = new JMenuItem(Bundle.PERSISTENCE_UNIT(), PERSISTENCE_UNIT);
-        openPUXML.addActionListener((ActionEvent e) -> {
-             Project project = JPAModelerScene.this.getModelerFile().getProject();
+        openPUXML.addActionListener(e -> {
+            Project project = JPAModelerScene.this.getModelerFile().getProject();
             try {
                 PUDataObject pud = ProviderUtil.getPUDataObject(project);
                 org.netbeans.modules.openfile.OpenFile.open(pud.getPrimaryFile(), -1);
             } catch (InvalidPersistenceXmlException ex) {
                 JPAModelerScene.this.getModelerFile().handleException(ex);
             }
-           
         });
-        
-       JMenuItem openJPQLPanel = new JMenuItem(Bundle.RYN_JPQL());//,ImageUtilities.loadImage(JPQL_ICON_PATH, true));
-        openJPQLPanel.addActionListener((ActionEvent e) -> {
-               new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile());
+
+        JMenuItem openJPQLPanel = new JMenuItem(Bundle.RUN_JPQL(), RUN_JPQL_ICON);
+        openJPQLPanel.addActionListener(e -> {
+            new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile());
         });
 
         JMenu shareModeler = new JMenu(Bundle.SHARE());
@@ -418,31 +416,18 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         shareModeler.add(TwitterSocialNetwork.getInstance().getComponent());
         shareModeler.add(LinkedInSocialNetwork.getInstance().getComponent());
 
-        menuList.add(0, generateCode);
-        menuList.add(1, visDB);
-        menuList.add(2, openPUXML);
-        menuList.add(3, openJPQLPanel);
-        menuList.add(4, null);
-        menuList.add(5, manageVisibility);
-        menuList.add(6, shareModeler);
-        menuList.add(7, EnhancementRequestHandler.getInstance().getComponent());
-        
-        return menuList;
-    }
+        int index = 0;
+        menuList.add(index++, getWorkSpaceManager().getWorkSpaceMenu());
+        menuList.add(index++, generateCode);
+        menuList.add(index++, visDB);
+        menuList.add(index++, openPUXML);
+        menuList.add(index++, openJPQLPanel);
+        menuList.add(index++, null);
+        menuList.add(index++, shareModeler);
+        menuList.add(index++, EnhancementRequestHandler.getInstance().getComponent());
 
-    public static void fireEntityVisibilityAction(ModelerFile file) {
-        ClassWidgetVisibilityController dialog = new ClassWidgetVisibilityController((EntityMappings) file.getDefinitionElement());
-        dialog.setVisible(true);
-        if (dialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
-            file.getModelerPanelTopComponent().changePersistenceState(false);
-            file.save();
-            int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you want to reload diagram now ?", "Reload Diagram", JOptionPane.YES_NO_OPTION);
-            if (option == javax.swing.JOptionPane.OK_OPTION) {
-                file.getModelerPanelTopComponent().close();
-                JPAFileActionListener fileListener = new JPAFileActionListener((JPAFileDataObject) file.getModelerFileDataObject());
-                fileListener.actionPerformed(null);
-            }
-        }
+
+        return menuList;
     }
 
     public String getNextClassName(String className) {
@@ -453,8 +438,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         EntityMappings entityMappings = this.getBaseElementSpec();
         return getNext(className, nextClassName -> entityMappings.isClassExist(nextClassName), true);
     }
-    
-
 
     @Override
     public IColorScheme getColorScheme() {
@@ -463,7 +446,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             return PFactory.getColorScheme(PFactory.getNetBeans60Scheme());
         } else if (PFactory.getMetroScheme().getSimpleName().equals(entityMappings.getTheme())) {
             return PFactory.getColorScheme(PFactory.getMetroScheme());
-       } else if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getTheme())) {
+        } else if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getTheme())) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
         } else {
             return PFactory.getColorScheme(PFactory.getMacScheme());
@@ -506,5 +489,12 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     protected IEventListener getEventListener() {
         return new JPAEventListener();
+    }
+
+    /**
+     * @return the workSpaceManager
+     */
+    public WorkSpaceManager getWorkSpaceManager() {
+        return workSpaceManager;
     }
 }

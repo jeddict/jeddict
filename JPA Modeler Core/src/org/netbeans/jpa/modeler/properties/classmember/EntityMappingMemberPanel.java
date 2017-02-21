@@ -15,8 +15,11 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import javax.swing.SwingUtilities;
+import static javax.swing.SwingUtilities.invokeLater;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeParentNode;
@@ -38,10 +41,11 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
     private EntityMappings entityMappings;
     private JPAModelerScene scene;
     private EMRootNode node;
+    private Predicate<JavaClass> classCheckable;
 
     public EntityMappingMemberPanel(String title, JPAModelerScene scene) {
         this.scene = scene;
-        this.title=title;
+        this.title = title;
     }
 
     @Override
@@ -53,8 +57,8 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
     @Override
     public void setValue(EntityMappings entityMappings) {
         this.entityMappings = entityMappings;
-        SwingUtilities.invokeLater(() -> {
-            node = new EMRootNode(scene, entityMappings, new EntityManagerChildFactory(), new CheckableAttributeNode());
+        invokeLater(() -> {
+            node = new EMRootNode(scene, entityMappings, new EntityManagerChildFactory(getClassCheckable()), new CheckableAttributeNode());
             manager.setRootContext(node);
             node.init();
         });
@@ -62,7 +66,6 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
 
     @Override
     public EntityMappings getValue() {
-        loadClassNode(node);
         return entityMappings;
     }
 
@@ -95,18 +98,20 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void loadClassNode(TreeNode parentNode) {
-        if (parentNode instanceof TreeParentNode) {
-            for (TreeNode childNode : ((TreeParentNode<EntityMappings>) parentNode).getChildList()) {
+    public List<JavaClass> getSelectedJavaClass() {
+        List<JavaClass> classes = new ArrayList<>();
+        if (node instanceof TreeParentNode) {
+            for (TreeNode childNode : ((TreeParentNode<EntityMappings>) node).getChildList()) {
                 if (childNode instanceof TreeChildNode && childNode.getCheckableNode() != null) {
-                    JavaClass javaClass = ((JavaClass) (((EMLeafNode) childNode).getLeafWidget().getBaseElementSpec()));
-                    javaClass.setGenerateSourceCode(childNode.getCheckableNode().isSelected());
+                    JavaClass javaClass = ((EMLeafNode) childNode).getJavaClass();
+                    if (childNode.getCheckableNode().isSelected()) {
+                        classes.add(javaClass);
+                    }
                 }
             }
         }
-
+        return classes;
     }
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -133,4 +138,17 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
         return title;
     }
 
+    /**
+     * @return the classCheckable
+     */
+    public Predicate<JavaClass> getClassCheckable() {
+        return classCheckable;
+    }
+
+    /**
+     * @param classCheckable the classCheckable to set
+     */
+    public void setClassCheckable(Predicate<JavaClass> classCheckable) {
+        this.classCheckable = classCheckable;
+    }
 }

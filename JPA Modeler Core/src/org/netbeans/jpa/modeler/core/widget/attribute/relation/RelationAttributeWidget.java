@@ -28,7 +28,7 @@ import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.NANO_DB;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -90,7 +90,7 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
             JMenuItem visDB = new JMenuItem("Nano DB", NANO_DB);
             visDB.addActionListener((ActionEvent e) -> {
                 ModelerFile file = this.getModelerScene().getModelerFile();
-                JPAModelerUtil.openDBViewer(file, JPAModelerUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), (Entity) this.getClassWidget().getBaseElementSpec(), (RelationAttribute) this.getBaseElementSpec()));
+                DBUtil.openDBViewer(file, DBUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), (Entity) this.getClassWidget().getBaseElementSpec(), (RelationAttribute) this.getBaseElementSpec()));
             });
 
             menuList.add(0, visDB);

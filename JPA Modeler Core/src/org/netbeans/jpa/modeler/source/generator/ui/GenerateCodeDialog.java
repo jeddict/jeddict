@@ -54,9 +54,9 @@ import org.netbeans.jcode.ui.source.SourceRootCellRenderer;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON_PATH;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SUCCESS_ICON_PATH;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.WARNING_ICON_PATH;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SUCCESS_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.WARNING_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.spi.java.project.support.ui.PackageView;
@@ -260,11 +260,11 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         controllerLayerCombo = new javax.swing.JComboBox();
         controllerLayerLabel = new javax.swing.JLabel();
         configPane = new javax.swing.JTabbedPane();
+        entitySetting = new javax.swing.JButton();
         actionPane = new javax.swing.JLayeredPane();
         actionLayeredPane = new javax.swing.JLayeredPane();
         generateSourceCode = new javax.swing.JButton();
         cencelGenerateCode = new javax.swing.JButton();
-        entitySetting = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -319,6 +319,16 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
 
         org.openide.awt.Mnemonics.setLocalizedText(controllerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.controllerLayerLabel.text")); // NOI18N
 
+        entitySetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/resource/image/java/JAVA_CLASS.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(entitySetting, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.entitySetting.text")); // NOI18N
+        entitySetting.setBorder(null);
+        entitySetting.setBorderPainted(false);
+        entitySetting.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                entitySettingActionPerformed(evt);
+            }
+        });
+
         optionPane.setLayer(packageLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(resourcePackageCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(businessLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -332,6 +342,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         optionPane.setLayer(controllerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(controllerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(configPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        optionPane.setLayer(entitySetting, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout optionPaneLayout = new javax.swing.GroupLayout(optionPane);
         optionPane.setLayout(optionPaneLayout);
@@ -359,13 +370,16 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                                     .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(controllerLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(packageLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                                        .addComponent(businessLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, Short.MAX_VALUE)))
+                                        .addComponent(businessLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(controllerLayerCombo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(businessLayerCombo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(viewerLayerCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(resourcePackageCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                    .addGroup(optionPaneLayout.createSequentialGroup()
+                                        .addComponent(resourcePackageCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(entitySetting)))))))
                 .addContainerGap())
         );
         optionPaneLayout.setVerticalGroup(
@@ -378,10 +392,12 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                         .addComponent(sourceFolderLabel)
                         .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10)
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(resourcePackageCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(entitySetting, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(resourcePackageCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(12, 12, 12)
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(optionPaneLayout.createSequentialGroup()
@@ -460,22 +476,12 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        entitySetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/settings.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(entitySetting, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.entitySetting.text")); // NOI18N
-        entitySetting.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                entitySettingActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(entitySetting)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(28, 482, Short.MAX_VALUE)
                 .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
             .addGroup(layout.createSequentialGroup()
@@ -489,9 +495,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                 .addGap(5, 5, 5)
                 .addComponent(optionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(entitySetting))
+                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -596,7 +600,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
     }//GEN-LAST:event_controllerLayerComboItemStateChanged
 
     private void entitySettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entitySettingActionPerformed
-        EntityGenerationSettingDialog dialog = new EntityGenerationSettingDialog(scene, entityMappings);
+        EntityGenerationSettingDialog dialog = new EntityGenerationSettingDialog(scene);
         dialog.setVisible(true);
         manageGenerateButtonStatus();
     }//GEN-LAST:event_entitySettingActionPerformed
@@ -604,15 +608,15 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
     private void manageGenerateButtonStatus() {
         List<JavaClass> javaClassList = entityMappings.getAllJavaClass().stream().filter(c -> c.getGenerateSourceCode()).collect(toList());
         if (javaClassList.isEmpty()) {
-            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(ERROR_ICON_PATH)));
+            generateSourceCode.setIcon(ERROR_ICON);
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N
             generateSourceCode.setEnabled(false);
         } else if (javaClassList.size() < entityMappings.getAllJavaClass().size()) {
-            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(WARNING_ICON_PATH)));
+            generateSourceCode.setIcon(WARNING_ICON);
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.warning.text")); // NOI18N
             generateSourceCode.setEnabled(true);
         } else {
-            generateSourceCode.setIcon(new javax.swing.ImageIcon(getClass().getResource(SUCCESS_ICON_PATH)));
+            generateSourceCode.setIcon(SUCCESS_ICON);
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N
             generateSourceCode.setEnabled(true);
         }

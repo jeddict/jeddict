@@ -45,8 +45,8 @@ import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.resource.toolbar.ImageUtil;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -156,7 +156,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
         JMenuItem delete;
         delete = new JMenuItem("Delete");
-        delete.setIcon(ImageUtil.getInstance().getIcon("delete.png"));
+        delete.setIcon(DELETE_ICON);
         delete.addActionListener((ActionEvent e) -> {
             AttributeWidget.this.remove(true);
         });

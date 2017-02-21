@@ -20,7 +20,7 @@ import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.ORDER_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.ORDER_COLUMN_FQN;
 import org.netbeans.jpa.modeler.spec.OrderColumn;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_PARANTHESES;
@@ -88,7 +88,7 @@ public class OrderColumnSnippet implements Snippet {
         StringBuilder builder = new StringBuilder("@");
         builder.append(ORDER_COLUMN);
         
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (insertable == true
                     && nullable == true
                     && updatable == true
@@ -107,7 +107,7 @@ public class OrderColumnSnippet implements Snippet {
             builder.append(COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             builder.append(" insertable=");
             builder.append(insertable);
             builder.append(COMMA);
@@ -117,7 +117,7 @@ public class OrderColumnSnippet implements Snippet {
             builder.append(COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             builder.append(" nullable=");
             builder.append(nullable);
             builder.append(COMMA);
@@ -127,7 +127,7 @@ public class OrderColumnSnippet implements Snippet {
             builder.append(COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             builder.append(" updatable=");
             builder.append(updatable);
             builder.append(COMMA);

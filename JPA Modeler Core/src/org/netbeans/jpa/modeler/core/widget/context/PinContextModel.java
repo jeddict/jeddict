@@ -19,7 +19,6 @@ import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -40,6 +39,9 @@ import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DOWN_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.UP_ICON;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextPaletteButtonModel;
@@ -48,8 +50,6 @@ import org.netbeans.modeler.widget.context.base.DefaultContextPaletteModel;
 import org.netbeans.modeler.widget.context.base.DefaultPaletteButtonModel;
 import org.netbeans.modeler.widget.node.IWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
-import org.openide.util.ImageUtilities;
-import org.openide.util.Utilities;
 
 public class PinContextModel {
 
@@ -73,7 +73,7 @@ public class PinContextModel {
 
     private static void addDeleteModel(ContextPaletteModel contextPaletteModel, IPinWidget pinWidget) {
         ContextPaletteButtonModel deleteModel = new DefaultPaletteButtonModel();
-        deleteModel.setImage(Utilities.loadImage("org/netbeans/jpa/modeler/resource/image/delete.png"));
+        deleteModel.setImage(DELETE_ICON.getImage());
         deleteModel.setTooltip("Delete");
         deleteModel.setPaletteModel(contextPaletteModel);
         deleteModel.setMouseListener(getRemoveWidgetAction(pinWidget));
@@ -82,7 +82,7 @@ public class PinContextModel {
 
     private static void addMoveModel(ContextPaletteModel contextPaletteModel, IPinWidget pinWidget) {
         ContextPaletteButtonModel upModel = new DefaultPaletteButtonModel();
-        upModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/context/anchor_up.png"));
+        upModel.setImage(UP_ICON);
         upModel.setTooltip("Move Up");
         upModel.setPaletteModel(contextPaletteModel);
         upModel.setMouseListener(getMoveUpWidgetAction(pinWidget, -1));
@@ -90,7 +90,7 @@ public class PinContextModel {
         contextPaletteModel.getChildren().add(upModel);
 
         ContextPaletteButtonModel downModel = new DefaultPaletteButtonModel();
-        downModel.setImage(ImageUtilities.loadImage("org/netbeans/jpa/modeler/resource/image/context/anchor_down.png"));
+        downModel.setImage(DOWN_ICON);
         downModel.setTooltip("Move Down");
         downModel.setPaletteModel(contextPaletteModel);
         downModel.setMouseListener(getMoveUpWidgetAction(pinWidget, 1));

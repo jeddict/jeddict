@@ -15,7 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class OneToManySnippet extends MultiRelationAttributeSnippet {
@@ -25,7 +25,7 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (mappedBy == null
                     && orphanRemoval == false
                     && getTargetEntity() == null
@@ -62,7 +62,7 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || orphanRemoval == true) {
+        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
             builder.append("orphanRemoval=").append(orphanRemoval).append(",");
         }
         

@@ -26,7 +26,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_STRING;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED_FQN;
 import org.netbeans.jpa.modeler.spec.EnumType;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class EnumeratedSnippet implements Snippet {
@@ -78,7 +78,7 @@ public class EnumeratedSnippet implements Snippet {
             builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_STRING).append(ORMConverterUtil.CLOSE_PARANTHESES);
         } else if (ENUM_TYPE_ORDINAL.equals(value)) {
             builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_ORDINAL).append(ORMConverterUtil.CLOSE_PARANTHESES);
-        } else if (GeneratorUtil.isGenerateDefaultValue()){
+        } else if (CodePanel.isGenerateDefaultValue()){
             builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_ORDINAL).append(ORMConverterUtil.CLOSE_PARANTHESES);  
         }
         return builder.toString();
@@ -94,7 +94,7 @@ public class EnumeratedSnippet implements Snippet {
             importSnippets.add(ENUMERATED_FQN);
         }
         
-        if(ENUM_TYPE_STRING.equals(value) || ENUM_TYPE_ORDINAL.equals(value) || GeneratorUtil.isGenerateDefaultValue()){
+        if(ENUM_TYPE_STRING.equals(value) || ENUM_TYPE_ORDINAL.equals(value) || CodePanel.isGenerateDefaultValue()){
             importSnippets.add(ENUM_TYPE_FQN);
         }
         return importSnippets;

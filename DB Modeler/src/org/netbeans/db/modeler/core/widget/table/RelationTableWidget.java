@@ -36,7 +36,7 @@ import org.netbeans.jpa.modeler.spec.JoinTable;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
@@ -117,7 +117,7 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
             joinTable.addActionListener((ActionEvent e) -> {
                 convertToJoinColumn();
                 ModelerFile parentFile = RelationTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
             });
             menuList.add(0, joinTable);
         }

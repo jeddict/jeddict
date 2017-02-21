@@ -23,7 +23,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.ORDER_BY_FQN;
 import org.netbeans.jpa.modeler.spec.OrderBy;
 import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.QUOTE;
@@ -59,7 +59,7 @@ public class OrderBySnippet implements Snippet {
                     builder.append(SPACE);
                 }
                 builder.append(order.getOrderType().name());
-            } else if (GeneratorUtil.isGenerateDefaultValue()) {
+            } else if (CodePanel.isGenerateDefaultValue()) {
                 if (propertyExist) {
                     builder.append(SPACE);
                 }

@@ -38,7 +38,6 @@ public class EMRootNode extends RootNode<EntityMappings> {
     @Override
     public void init() {
         EntityMappings entityMappings = scene.getBaseElementSpec();
-//        getCheckableNode().setSelected(true, NONE);
         setDisplayName(entityMappings.getPackage());
         setShortDescription(entityMappings.getPackage());
         setIconBaseWithExtension(JPAModelerUtil.PACKAGE_ICON_PATH);

@@ -32,7 +32,7 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
@@ -106,7 +106,7 @@ public class BaseTableWidget extends TableWidget<DBBaseTable> {
                 secondaryTable.setName(secondaryTableName);
                 entity.addSecondaryTable(secondaryTable);
                 ModelerFile parentFile = BaseTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
             } else {
                 JOptionPane.showMessageDialog((Component) BaseTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Table already exist");
             }

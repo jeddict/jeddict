@@ -144,6 +144,7 @@ import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
@@ -769,7 +770,7 @@ public class PropertiesHandler {
 
     public static PropertySupport getNamedStoredProcedureQueryProperty(JPAModelerScene modelerScene, Entity entity) {
         final List<NamedStoredProcedureQuery> namedStoredProcedureQueriesSpec = entity.getNamedStoredProcedureQuery();
-        final NAttributeEntity attributeEntity = new NAttributeEntity("NamedStoredProcedureQueries", "Named StoredProcedure Queries", getMessage(PropertiesHandler.class, "INFO_STORED_PROCEDURE_QUERY") );
+        final NAttributeEntity attributeEntity = new NAttributeEntity("NamedStoredProcedureQueries", "Named StoredProcedure Queries", getMessage(PropertiesHandler.class, "INFO_STORED_PROCEDURE_QUERY"));
         attributeEntity.setCountDisplay(new String[]{"No NamedStoredProcedureQueries exist", "One NamedStoredProcedureQuery exist", "NamedStoredProcedureQueries exist"});
 
         List<Column> columns = new ArrayList<>();
@@ -1849,7 +1850,7 @@ public class PropertiesHandler {
 
         return new NEntityPropertySupport(scene.getModelerFile(), attributeEntity);
     }
-    
+
     public static PropertySupport getConvertProperties(JPAModelerScene scene, ConvertContainerHandler convertContainer) {
         final List<Convert> converts = convertContainer.getConverts();
         final NAttributeEntity attributeEntity = getConvertPropertiesEntity("converts", "Converts", "Converts", converts);
@@ -1857,18 +1858,19 @@ public class PropertiesHandler {
         return new NEntityPropertySupport(scene.getModelerFile(), attributeEntity);
     }
 
-    private static PropertyVisibilityHandler getMapKeyConvertVisibilityHandler(AttributeWidget<? extends Attribute> attributeWidget, Predicate<MapKeyHandler> filter){
-         PropertyVisibilityHandler mapKeyVisibility = AttributeWidget.getMapKeyVisibilityHandler(attributeWidget.getBaseElementSpec());
+    private static PropertyVisibilityHandler getMapKeyConvertVisibilityHandler(AttributeWidget<? extends Attribute> attributeWidget, Predicate<MapKeyHandler> filter) {
+        PropertyVisibilityHandler mapKeyVisibility = AttributeWidget.getMapKeyVisibilityHandler(attributeWidget.getBaseElementSpec());
         return () -> {
-            if(mapKeyVisibility.isVisible()){
-                MapKeyHandler handler = (MapKeyHandler)attributeWidget.getBaseElementSpec();
+            if (mapKeyVisibility.isVisible()) {
+                MapKeyHandler handler = (MapKeyHandler) attributeWidget.getBaseElementSpec();
                 return handler.getValidatedMapKeyType() == MapKeyType.NEW && filter.test(handler);
             }
             return false;
         };
     }
+
     public static PropertySupport getMapKeyConvertProperties(AttributeWidget<? extends Attribute> attributeWidget, JPAModelerScene scene, MapKeyConvertContainerHandler convertContainer) {
-        attributeWidget.addPropertyVisibilityHandler("mapKeyConverts", getMapKeyConvertVisibilityHandler(attributeWidget, handler -> handler.getMapKeyEmbeddable()!=null));
+        attributeWidget.addPropertyVisibilityHandler("mapKeyConverts", getMapKeyConvertVisibilityHandler(attributeWidget, handler -> handler.getMapKeyEmbeddable() != null));
         final List<Convert> converts = convertContainer.getMapKeyConverts();
         final NAttributeEntity attributeEntity = getConvertPropertiesEntity("mapKeyConverts", "MapKey Converts", "MapKey Converts", converts);
         attributeEntity.setCustomDialog(new OverrideConvertPanel(scene.getModelerFile(), convertContainer, true));
@@ -1940,13 +1942,13 @@ public class PropertiesHandler {
     public static EmbeddedPropertySupport getConvertProperty(AttributeWidget<? extends Attribute> attributeWidget, JPAModelerScene scene, final ConvertHandler convertHandler) {
         TemporalTypeHandler temporalType = (TemporalTypeHandler) attributeWidget.getBaseElementSpec();
         EnumTypeHandler enumType = (EnumTypeHandler) attributeWidget.getBaseElementSpec();
-        attributeWidget.addPropertyVisibilityHandler("convert", () -> temporalType.getTemporal() == null && enumType.getEnumerated()==null);
+        attributeWidget.addPropertyVisibilityHandler("convert", () -> temporalType.getTemporal() == null && enumType.getEnumerated() == null);
         return getConvertPropertySupport("convert", "Convert", "Convert", null, scene, () -> convertHandler.getConvert());
     }
 
     public static EmbeddedPropertySupport getMapKeyConvertProperty(AttributeWidget<? extends Attribute> attributeWidget, JPAModelerScene scene, final MapKeyConvertHandler convertHandler) {
-        attributeWidget.addPropertyVisibilityHandler("mapKeyConvert", getMapKeyConvertVisibilityHandler(attributeWidget, handler -> 
-                handler.getMapKeyAttributeType() != null && handler.getMapKeyTemporal() == null && handler.getMapKeyEnumerated()==null));
+        attributeWidget.addPropertyVisibilityHandler("mapKeyConvert", getMapKeyConvertVisibilityHandler(attributeWidget, handler
+                -> handler.getMapKeyAttributeType() != null && handler.getMapKeyTemporal() == null && handler.getMapKeyEnumerated() == null));
         //reset/clear unused in list with convertHandler.getMapKeyConvert()
         return getConvertPropertySupport("mapKeyConvert", "MapKey Convert", "MapKey Convert", "key", scene, () -> convertHandler.getMapKeyConvert());
     }
@@ -1957,7 +1959,7 @@ public class PropertiesHandler {
         entity.setEntityEditor(new ConvertPanel(scene.getModelerFile()));
         entity.setDataListener(new EmbeddedDataListener<Convert>() {
             private Convert convert;
-            
+
             @Override
             public void init() {
                 convert = convertProucer.get();
@@ -1989,5 +1991,64 @@ public class PropertiesHandler {
         });
         return new EmbeddedPropertySupport(scene.getModelerFile(), entity);
     }
+
+//    public static PropertySupport getWorkSpaceProperty(final JPAModelerScene modelerScene) {
+//        final List<WorkSpace> workSpaces = modelerScene.getBaseElementSpec().getWorkSpaces();
+//        final NAttributeEntity attributeEntity = new NAttributeEntity("WorkSpaces", "WorkSpace", "");//getMessage(PropertiesHandler.class, "INFO_ENTITY_GRAPH"));
+//        attributeEntity.setCountDisplay(new String[]{"No WorkSpace exist", "One WorkSpace exist", "WorkSpace exist"});
+//
+//        List<Column> columns = new ArrayList<>();
+//        columns.add(new Column("OBJECT", false, true, Object.class));
+////        columns.add(new Column("#", true, Boolean.class));
+//        columns.add(new Column("Name", false, String.class));
+//        attributeEntity.setColumns(columns);
+//        attributeEntity.setCustomDialog(new NamedEntityGraphPanel(entityWidget));
+//
+//        attributeEntity.setTableDataListener(new NEntityDataListener() {
+//            List<Object[]> data;
+//            int count;
+//
+//            @Override
+//            public void initCount() {
+//                count = workSpaces.size();
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return count;
+//            }
+//
+//            @Override
+//            public void initData() {
+//                List<Object[]> data_local = new LinkedList<>();
+//                Iterator<WorkSpace> itr = workSpaces.iterator();
+//                while (itr.hasNext()) {
+//                    WorkSpace workSpace = itr.next();
+//                    Object[] row = new Object[attributeEntity.getColumns().size()];
+//                    row[0] = workSpace;
+//                    data_local.add(row);
+//                }
+//                this.data = data_local;
+//            }
+//
+//            @Override
+//            public List<Object[]> getData() {
+//                return data;
+//            }
+//
+//            @Override
+//            public void setData(List<Object[]> data) {
+//                workSpaces.clear();
+//                data.stream().forEach((row) -> {
+//                    WorkSpace workSpace = (WorkSpace) row[0];
+//                    workSpaces.add(workSpace);
+//                });
+//                this.data = data;
+//            }
+//
+//        });
+//
+//        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+//    }
 
 }

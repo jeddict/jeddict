@@ -16,38 +16,44 @@
 package org.netbeans.jpa.modeler.properties.rootmember.nodes;
 
 import java.util.List;
-import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
+import java.util.function.Predicate;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
-public class EntityManagerChildFactory extends TreeChildFactory<EntityMappings ,JavaClassWidget> {
+public class EntityManagerChildFactory extends TreeChildFactory<EntityMappings ,JavaClass> {
 
+    private final Predicate<JavaClass> filterSelectable;
+
+    public EntityManagerChildFactory(Predicate<JavaClass> filterSelectable) {
+        this.filterSelectable = filterSelectable;
+    }
+    
     @Override
-    protected boolean createKeys(List<JavaClassWidget> javaClassWidgets) {
+    protected boolean createKeys(List<JavaClass> javaClasses) {
         JPAModelerScene scene = null;
         if (parentNode instanceof EMRootNode) {
             scene = ((EMRootNode) parentNode).getRootWidget();
         }
         if (scene != null) {
-            javaClassWidgets.addAll(scene.getJavaClassWidges());
+            javaClasses.addAll(scene.getBaseElementSpec().getJavaClass());
         }
         return true;
     }
 
     @Override
-    protected Node createNodeForKey(final JavaClassWidget javaClassWidget) {
-        EMLeafNode childNode;
+    protected Node createNodeForKey(final JavaClass javaClass) {
+        JPAModelerScene scene = null;
+        if (parentNode instanceof EMRootNode) {
+            scene = ((EMRootNode) parentNode).getRootWidget();
+        }
         CheckableAttributeNode checkableNode = new CheckableAttributeNode();
-        JavaClass javaClass = (JavaClass) javaClassWidget.getBaseElementSpec();
+        checkableNode.setSelected(filterSelectable.test(javaClass));
 
-        checkableNode.setSelected(javaClass.getGenerateSourceCode());
-
-        childNode = new EMLeafNode(javaClassWidget, parentNode.getBaseElementSpec(), checkableNode);
+        EMLeafNode childNode = new EMLeafNode(javaClass, scene, parentNode.getBaseElementSpec(), checkableNode);
         childNode.setParent(parentNode);
         parentNode.addChild(childNode);
         childNode.init();

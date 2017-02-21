@@ -15,7 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.jpa.modeler.spec.validation.constraints.Future;
+import org.netbeans.bean.validation.constraints.Future;
 import org.netbeans.orm.converter.compiler.*;
 
 /**

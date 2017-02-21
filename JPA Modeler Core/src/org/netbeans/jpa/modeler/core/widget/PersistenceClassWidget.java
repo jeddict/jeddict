@@ -76,6 +76,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -91,7 +92,6 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.supp
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
-import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.openide.util.RequestProcessor;
 
 /**
@@ -185,6 +185,23 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     public void scanDuplicateAttributes(String previousName, String newName) {
         int previousNameCount = 0, newNameCount = 0;
         List<AttributeWidget<? extends Attribute>> attributeWidgets = this.getAllAttributeWidgets(true);
+        ManagedClass managedClass = this.getBaseElementSpec();
+        
+        List<Attribute> hiddenAttributes = new ArrayList<>(managedClass.getAttributes().getAllAttribute(true));
+        hiddenAttributes.removeAll(
+                attributeWidgets.stream()
+                .map(aw -> (Attribute)aw.getBaseElementSpec())
+                .collect(toList())
+        );
+        for (Attribute attribute : hiddenAttributes) {
+            if (attribute.getName().equals(previousName)) {
+                ++previousNameCount;
+            }
+            if (attribute.getName().equals(newName)) {
+                ++newNameCount;
+            }
+        }
+        
         for (AttributeWidget<? extends Attribute> attributeWidget : attributeWidgets) {
             Attribute attribute = attributeWidget.getBaseElementSpec();
 
