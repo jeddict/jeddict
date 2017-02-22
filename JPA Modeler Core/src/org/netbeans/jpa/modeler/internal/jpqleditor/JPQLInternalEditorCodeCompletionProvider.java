@@ -39,7 +39,7 @@
  *
  * Portions Copyrighted 2011 Sun Microsystems, Inc.
  */
-package org.netbeans.jpa.modeler.internal.jpqleditor.codecompletion;
+package org.netbeans.jpa.modeler.internal.jpqleditor;
 
 import org.netbeans.modules.j2ee.persistence.editor.completion.*;
 import java.io.IOException;

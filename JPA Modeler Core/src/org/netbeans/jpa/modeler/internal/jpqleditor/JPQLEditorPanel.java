@@ -1069,7 +1069,7 @@ NbBundle.getMessage(JPQLEditorPanel.class, "progressTaskname"));//GEN-LAST:event
         jpqlEditor.setText(query);
     }
     
-        @Override
+    @Override
     public ModelerFile getModelerFile() {
         return controller.getModelerFile();
     }
