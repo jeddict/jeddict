@@ -34,7 +34,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="classGenerationPanel" pref="376" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="jLayeredPane2" max="32767" attributes="0"/>
+                      <Component id="workSpace_LayeredPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="action_LayeredPane" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -52,7 +52,7 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="action_LayeredPane" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="jLayeredPane2" max="32767" attributes="0"/>
+                      <Component id="workSpace_LayeredPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -119,6 +119,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="save_ButtonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="setDefaultButton(save_Button);"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="cancel_Button">
           <Properties>
@@ -132,7 +135,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JLayeredPane" name="jLayeredPane2">
+    <Container class="javax.swing.JLayeredPane" name="workSpace_LayeredPane">
 
       <Layout>
         <DimensionLayout dim="0">
@@ -140,8 +143,8 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="workSpace_Label" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="workSpace_ComboBox" pref="151" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="workSpace_ComboBox" min="-2" pref="140" max="-2" attributes="0"/>
+                  <EmptySpace pref="21" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

@@ -17,13 +17,10 @@ package org.netbeans.jpa.modeler.source.generator.ui;
 
 import java.awt.Component;
 import java.awt.event.ItemEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.prefs.Preferences;
-import static java.util.stream.Collectors.toList;
 import javax.lang.model.SourceVersion;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -53,10 +50,12 @@ import org.netbeans.jcode.ui.source.ProjectCellRenderer;
 import org.netbeans.jcode.ui.source.SourceRootCellRenderer;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SUCCESS_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.WARNING_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.WORKSPACE_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.spi.java.project.support.ui.PackageView;
@@ -72,7 +71,7 @@ import static org.openide.util.NbBundle.getMessage;
  *
  * @author Gaurav_Gupta
  */
-public class GenerateCodeDialog extends GenericDialog implements PropertyChangeListener {
+public class GenerateCodeDialog extends GenericDialog {
 
     private static final String SOURCES_TYPE_JAVA = "java"; // NOI18N
 
@@ -83,6 +82,9 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
     private final ApplicationConfigData configData;
     private final JPAModelerScene scene;
     private final ModelerFile modelerFile;
+    private EntityGenerationSettingDialog entityGenerationSettingDialog;
+
+    private final static String COMPLETE_APPLICATION = "COMPLETE_APPLICATION";
 
     /**
      * Creates new form GenerateCodeDialog
@@ -95,20 +97,44 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         this.configData = new ApplicationConfigData();
         this.modelerFileObject = modelerFile.getFileObject();
         this.entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-        technologyPref = NbPreferences.forModule(Generator.class);
-//                modelerFile.getProject() == null ? NbPreferences.forModule(Generator.class)
-//                : ProjectUtils.getPreferences(modelerFile.getProject(), ProjectUtils.class, true);
-        propertyChangeSupport = new PropertyChangeSupport(this);
-        propertyChangeSupport.addPropertyChangeListener(this);
+        this.technologyPref = NbPreferences.forModule(Generator.class);
+        this.modelerFilePackage = sourceGroup != null ? getPackageForFolder(sourceGroup, modelerFileObject.getParent()) : null;
+        initUIComponents();
+    }
+
+    private void manageEntityGenerationSetting() {
+        Optional<WorkSpace> optionalWorkSpace = entityMappings.findGeneratedWorkSpace();
+        WorkSpace selectedWorkSpace = null;
+        if (optionalWorkSpace.isPresent()) {
+            selectedWorkSpace = optionalWorkSpace.get();
+            if (optionalWorkSpace.get() == entityMappings.getRootWorkSpace()
+                    || optionalWorkSpace.get() == entityMappings.getCurrentWorkSpace()) {
+                //skip
+            } else if (optionalWorkSpace.get() == entityMappings.getPreviousWorkSpace()) {
+                selectedWorkSpace = entityMappings.getCurrentWorkSpace();
+                entityMappings.setGenerateWorkSpaceClass(selectedWorkSpace);
+            }
+        } 
+//        else {
+//            selectedWorkSpace = entityMappings.getRootWorkSpace();
+//            entityMappings.setGenerateWorkSpaceClass(selectedWorkSpace);
+//        }
+        
+        this.entityGenerationSettingDialog = new EntityGenerationSettingDialog(scene, selectedWorkSpace);
+    }
+
+    private void initUIComponents() {
+        manageEntityGenerationSetting();//1st priority
+
         initComponents();
-        manageGenerateButtonStatus();
+        this.setTitle(NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.title"));
+        setCaptureWindowSize(false);
+        setDefaultButton(generateSourceCode);
+        setCompleteApplicationCompVisibility(false);
+
         populateProjectCombo();
         setPackage(entityMappings.getPackage());
-        this.setTitle(NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.title"));
-        getRootPane().setDefaultButton(generateSourceCode);
-        modelerFilePackage = sourceGroup != null ? getPackageForFolder(sourceGroup, modelerFileObject.getParent()) : null;
         initLayer();
-        setCaptureWindowSize(false);
     }
 
     private void initLayer() {
@@ -149,44 +175,50 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         this.pack();
     }
 
-   private void setTechPanel(TechContext techContext) {
-            techContext.createPanel(targetPoject, sourceGroup, modelerFilePackage);
-            configPane.removeAll();
-            configPane.setVisible(false);
-            boolean nonePanel = techContext.getTechnology().panel() == LayerConfigPanel.class;
-            switch (techContext.getTechnology().type()) {
-                case BUSINESS:
-                    getConfigData().setBussinesTechContext(techContext);
-                    addLayerTab(getConfigData().getBussinesTechContext());
-                    getConfigData().setControllerTechContext(null);
-                    getConfigData().setViewerTechContext(null);
-                    if(nonePanel){getConfigData().setBussinesTechContext(null);}
-                    break;
-                case CONTROLLER:
-                    getConfigData().setControllerTechContext(techContext);
-                    addLayerTab(getConfigData().getBussinesTechContext());
-                    addLayerTab(getConfigData().getControllerTechContext());
-                    getConfigData().setViewerTechContext(null);
-                    if(nonePanel){getConfigData().setControllerTechContext(null);}
-                    break;
-                case VIEWER:
-                    getConfigData().setViewerTechContext(techContext);
-                    addLayerTab(getConfigData().getBussinesTechContext());
-                    addLayerTab(getConfigData().getControllerTechContext());
-                    addLayerTab(getConfigData().getViewerTechContext());
-                    if(nonePanel){getConfigData().setViewerTechContext(null);}
-                    break;
-                default:
-                    break;
-            }
-
-            if (configPane.getComponentCount() >= 1) {
-                if(!nonePanel){
-                configPane.setSelectedComponent(techContext.getPanel());
+    private void setTechPanel(TechContext techContext) {
+        techContext.createPanel(targetPoject, sourceGroup, modelerFilePackage);
+        configPane.removeAll();
+        configPane.setVisible(false);
+        boolean nonePanel = techContext.getTechnology().panel() == LayerConfigPanel.class;
+        switch (techContext.getTechnology().type()) {
+            case BUSINESS:
+                getConfigData().setBussinesTechContext(techContext);
+                addLayerTab(getConfigData().getBussinesTechContext());
+                getConfigData().setControllerTechContext(null);
+                getConfigData().setViewerTechContext(null);
+                if (nonePanel) {
+                    getConfigData().setBussinesTechContext(null);
                 }
-                configPane.setVisible(true);
+                break;
+            case CONTROLLER:
+                getConfigData().setControllerTechContext(techContext);
+                addLayerTab(getConfigData().getBussinesTechContext());
+                addLayerTab(getConfigData().getControllerTechContext());
+                getConfigData().setViewerTechContext(null);
+                if (nonePanel) {
+                    getConfigData().setControllerTechContext(null);
+                }
+                break;
+            case VIEWER:
+                getConfigData().setViewerTechContext(techContext);
+                addLayerTab(getConfigData().getBussinesTechContext());
+                addLayerTab(getConfigData().getControllerTechContext());
+                addLayerTab(getConfigData().getViewerTechContext());
+                if (nonePanel) {
+                    getConfigData().setViewerTechContext(null);
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (configPane.getComponentCount() >= 1) {
+            if (!nonePanel) {
+                configPane.setSelectedComponent(techContext.getPanel());
             }
-            this.pack();
+            configPane.setVisible(true);
+        }
+        this.pack();
     }
 
     private void addLayerTab(TechContext techContext) {
@@ -194,16 +226,15 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         if (tech.panel() != LayerConfigPanel.class) {
             String title = tech.label();
             int index = tech.index() - 1;
-            if(index < 0){
+            if (index < 0) {
                 configPane.addTab(title, null, techContext.getPanel(), tech.description());
             } else {
-                 configPane.insertTab(title, null, techContext.getPanel(), tech.description(), index);
+                configPane.insertTab(title, null, techContext.getPanel(), tech.description(), index);
             }
             techContext.getSiblingTechContext().forEach(context -> this.addLayerTab(context));
         }
     }
 
-    
     private void changeBusinessLayer(TechContext businessLayer) {
         ProjectType projectType = ProjectHelper.getProjectType(getTargetPoject());
         if (projectType == ProjectType.WEB) {
@@ -236,7 +267,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
     private TechContext getControllerLayer() {
         return (TechContext) controllerLayerCombo.getModel().getSelectedItem();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -265,6 +296,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         actionLayeredPane = new javax.swing.JLayeredPane();
         generateSourceCode = new javax.swing.JButton();
         cencelGenerateCode = new javax.swing.JButton();
+        completeAppCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -363,7 +395,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                                 .addGap(25, 25, 25)
                                 .addComponent(sourceFolderLabel)
                                 .addGap(18, 18, 18)
-                                .addComponent(sourceFolderCombo, 0, 215, Short.MAX_VALUE))
+                                .addComponent(sourceFolderCombo, 0, 149, Short.MAX_VALUE))
                             .addGroup(optionPaneLayout.createSequentialGroup()
                                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(viewerLayerLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -378,8 +410,8 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                                     .addComponent(viewerLayerCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(optionPaneLayout.createSequentialGroup()
                                         .addComponent(resourcePackageCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(entitySetting)))))))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(entitySetting, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap())
         );
         optionPaneLayout.setVerticalGroup(
@@ -394,10 +426,10 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                         .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(14, 14, 14)
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(entitySetting, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(resourcePackageCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(entitySetting, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(optionPaneLayout.createSequentialGroup()
@@ -443,11 +475,11 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         actionLayeredPaneLayout.setHorizontalGroup(
             actionLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actionLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addComponent(generateSourceCode, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cencelGenerateCode)
-                .addContainerGap())
+                .addGap(14, 14, 14))
         );
         actionLayeredPaneLayout.setVerticalGroup(
             actionLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -465,7 +497,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         actionPaneLayout.setHorizontalGroup(
             actionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actionPaneLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(23, Short.MAX_VALUE)
                 .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2))
         );
@@ -476,17 +508,29 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        setCompleteApplication(technologyPref.getBoolean(COMPLETE_APPLICATION, true));
+        completeAppCheckBox.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(completeAppCheckBox, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.completeAppCheckBox.text")); // NOI18N
+        completeAppCheckBox.setToolTipText(org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.completeAppCheckBox.toolTipText")); // NOI18N
+        completeAppCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                completeAppCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 482, Short.MAX_VALUE)
-                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optionPane)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(completeAppCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(optionPane))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -495,29 +539,23 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
                 .addGap(5, 5, 5)
                 .addComponent(optionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(completeAppCheckBox))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    public final static String PROP_TARGET_PROJECT = "TARGET_PROJECT"; // NOI18N
-    public final static String PROP_NO_TARGET_PROJECT = "NO_TARGET_PROJECT"; // NOI18N
-    public final static String PROP_SOURCE_FOLDER = "SOURCE_FOLDER"; // NOI18N
-    public final static String PROP_NO_SOURCE_FOLDER = "NO_SOURCE_FOLDER"; // NOI18N
 
     private Project targetPoject = null;
     private final Project orignalProject = null;
     private SourceGroup sourceGroup = null;
-    private boolean noTargetProject = false;
-    private boolean noOpenTargets = false;
 
     private void targetProjectComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_targetProjectComboItemStateChanged
         setTargetPoject((Project) targetProjectCombo.getSelectedItem());
         populateSourceFolderCombo();
         initLayer();
-        String prop = getTargetPoject() == null ? PROP_NO_TARGET_PROJECT : PROP_TARGET_PROJECT;
-        getPropertyChangeSupport().firePropertyChange(prop, null, evt);
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
     private void sourceFolderComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sourceFolderComboItemStateChanged
@@ -562,7 +600,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
     }
 
     private void store() {
-        if(!StringUtils.equals(entityMappings.getPackage(), getPackage())){
+        if (!StringUtils.equals(entityMappings.getPackage(), getPackage())) {
             modelerFile.getModelerPanelTopComponent().changePersistenceState(false);
         }
         entityMappings.setPackage(getPackage());
@@ -584,6 +622,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
     private void businessLayerComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_businessLayerComboItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             changeBusinessLayer(getBusinessLayer());
+            setCompleteApplicationCompVisibility(getBusinessLayer().getTechnology().panel() != LayerConfigPanel.class);
         }
     }//GEN-LAST:event_businessLayerComboItemStateChanged
 
@@ -600,52 +639,38 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
     }//GEN-LAST:event_controllerLayerComboItemStateChanged
 
     private void entitySettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entitySettingActionPerformed
-        EntityGenerationSettingDialog dialog = new EntityGenerationSettingDialog(scene);
-        dialog.setVisible(true);
+        entityGenerationSettingDialog.setVisible(true);
         manageGenerateButtonStatus();
     }//GEN-LAST:event_entitySettingActionPerformed
 
+    private void completeAppCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_completeAppCheckBoxActionPerformed
+        technologyPref.putBoolean(COMPLETE_APPLICATION, isCompleteApplication());
+        manageGenerateButtonStatus();
+    }//GEN-LAST:event_completeAppCheckBoxActionPerformed
+
     private void manageGenerateButtonStatus() {
-        List<JavaClass> javaClassList = entityMappings.getAllJavaClass().stream().filter(c -> c.getGenerateSourceCode()).collect(toList());
+        List<JavaClass> javaClassList = entityMappings.findGeneratedClass();
+        Optional<WorkSpace> optionalWorkSpace = entityMappings.findGeneratedWorkSpace();
+        generateSourceCode.setEnabled(true);
         if (javaClassList.isEmpty()) {
-            generateSourceCode.setIcon(ERROR_ICON);
-            setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N
-            generateSourceCode.setEnabled(false);
+            if (isCompleteApplication()) {
+                generateSourceCode.setIcon(SUCCESS_ICON);
+                setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.baseApp.text")); // NOI18N
+            } else {
+                generateSourceCode.setIcon(ERROR_ICON);
+                setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N
+                generateSourceCode.setEnabled(false);
+            }
+        } else if (optionalWorkSpace.isPresent() && optionalWorkSpace.get() != entityMappings.getRootWorkSpace()) {
+            generateSourceCode.setIcon(WORKSPACE_ICON);
+            setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.workspace.text", optionalWorkSpace.get().getName())); // NOI18N
         } else if (javaClassList.size() < entityMappings.getAllJavaClass().size()) {
             generateSourceCode.setIcon(WARNING_ICON);
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.warning.text")); // NOI18N
-            generateSourceCode.setEnabled(true);
         } else {
             generateSourceCode.setIcon(SUCCESS_ICON);
             setLocalizedText(generateSourceCode, getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.generateSourceCode.text")); // NOI18N
-            generateSourceCode.setEnabled(true);
         }
-    }
-    
-    @Override
-    public void propertyChange(PropertyChangeEvent event) {
-//        String propName = "";
-//
-//        if (event != null) {
-//            propName = event.getPropertyName();
-//        }
-//
-//        if (propName.equals(PROP_TARGET_PROJECT)) {
-//            noTargetProject = false;
-//        } else if (propName.equals(PROP_NO_TARGET_PROJECT)) {
-//            noTargetProject = true;
-//        }
-
-//        String msg;
-//
-//        if (noOpenTargets) {
-//            msg = NbBundle.getMessage(
-//                    GenerateCodeDialog.class, "MSG_NoOpenTargets"); // NIO18N
-//        } else if (noTargetProject) {
-//            msg = NbBundle.getMessage(
-//                    GenerateCodeDialog.class, "MSG_NoTargetJavaProject"); // NIO18N
-//        }
-
     }
 
     //
@@ -666,7 +691,6 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         }
 
         if (list == null || list.isEmpty()) {
-            noOpenTargets = true;
             enableExistingProjectElementGroup(false);
         } else {
             DefaultComboBoxModel projectsModel = new DefaultComboBoxModel(list.toArray());
@@ -685,11 +709,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
             // origPrj value, just set it again.
             setTargetPoject(orignalProject);
             selectTargetProject();
-            noOpenTargets = false;
-            // enableExistingProjectElementGroup(true);
         }
-
-        propertyChange(null);
     }
 
     private void selectTargetProject() {
@@ -716,7 +736,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         sourceFolderCombo.setRenderer(srcCellRenderer);
         ArrayList<SourceGroup> srcRoots = new ArrayList<>();
         int index = 0;
-        FileObject sfo = getSourceGroup() != null? getSourceGroup().getRootFolder() : null;
+        FileObject sfo = getSourceGroup() != null ? getSourceGroup().getRootFolder() : null;
         if (targetPoject != null) {
             Sources sources = ProjectUtils.getSources(targetPoject);
             if (sources != null) {
@@ -734,7 +754,7 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
             }
         }
 
-        DefaultComboBoxModel rootsModel  = new DefaultComboBoxModel(srcRoots.toArray());
+        DefaultComboBoxModel rootsModel = new DefaultComboBoxModel(srcRoots.toArray());
         sourceFolderCombo.setModel(rootsModel);
         if (srcRoots.size() > 0) {
             sourceFolderCombo.setSelectedIndex(index);
@@ -807,17 +827,13 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
         ((JTextComponent) resourcePackageCombo.getEditor().getEditorComponent()).setText(_package);
     }
 
-    private PropertyChangeSupport propertyChangeSupport = null;
-
-    public PropertyChangeSupport getPropertyChangeSupport() {
-        return propertyChangeSupport;
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane actionLayeredPane;
     private javax.swing.JLayeredPane actionPane;
     private javax.swing.JComboBox businessLayerCombo;
     private javax.swing.JLabel businessLayerLabel;
     private javax.swing.JButton cencelGenerateCode;
+    private javax.swing.JCheckBox completeAppCheckBox;
     private javax.swing.JTabbedPane configPane;
     private javax.swing.JComboBox controllerLayerCombo;
     private javax.swing.JLabel controllerLayerLabel;
@@ -838,9 +854,25 @@ public class GenerateCodeDialog extends GenericDialog implements PropertyChangeL
      * @return the configData
      */
     public ApplicationConfigData getConfigData() {
+        configData.setCompleteApplication(isCompleteApplication());
         configData.setProject(getTargetPoject());
         configData.setSourceGroup(getSourceGroup());
         return configData;
     }
+
+    private boolean isCompleteApplication() {
+        return completeAppCheckBox.isSelected() && completeAppCheckBox.isVisible();
+    }
+
+    private void setCompleteApplication(boolean select) {
+        completeAppCheckBox.setSelected(select);
+    }
+    
+    private void setCompleteApplicationCompVisibility(boolean visible) {
+        completeAppCheckBox.setVisible(visible);
+        manageGenerateButtonStatus();
+    }
+    
+    
 
 }

@@ -228,7 +228,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image JAVA_CLASS;
     public static Image MAPPED_SUPER_CLASS;
     public static Image EMBEDDABLE;
-    
+
     public static ImageIcon CREATE_ICON;
     public static ImageIcon EDIT_ICON;
     public static ImageIcon DELETE_ICON;
@@ -246,12 +246,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static ImageIcon RUN_JPQL_ICON;
     public static ImageIcon HOME_ICON;
     public static ImageIcon WORKSPACE_ICON;
-    
+
     public static Image UP_ICON;
     public static Image DOWN_ICON;
-    
+
     private final static Map<Class<? extends BaseElement>, String> BASE_ELEMENT_ICONS = new HashMap<>();
-    
+
     private static JAXBContext MODELER_CONTEXT;
     public static Unmarshaller MODELER_UNMARSHALLER;
     public static Marshaller MODELER_MARSHALLER;
@@ -276,10 +276,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/share.png"));
         PERSISTENCE_UNIT = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/persistence-unit.png"));
         WORKSPACE_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/workspace.png"));
-            COMPOSITION_ANCHOR = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/composition-anchor.png")).getImage();
-            SINGLE_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/single-value-anchor-shape.png")).getImage();
-            MULTI_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/multi-value-anchor-shape.png")).getImage();
-            
+        COMPOSITION_ANCHOR = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/composition-anchor.png")).getImage();
+        SINGLE_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/single-value-anchor-shape.png")).getImage();
+        MULTI_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/multi-value-anchor-shape.png")).getImage();
+
         IO = IOProvider.getDefault().getIO("JPA Modeler", false);
     }
 
@@ -313,12 +313,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/boto-attribute.png";
             PK_UOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-uoto-attribute.png";
             PK_BOTO_ATTRIBUTE_ICON_PATH = "org/netbeans/jpa/modeler/resource/image/pk-boto-attribute.png";
-                        
+
             BASE_ELEMENT_ICONS.put(JavaClass.class, JAVA_CLASS_ICON_PATH);
             BASE_ELEMENT_ICONS.put(Entity.class, ENTITY_ICON_PATH);
             BASE_ELEMENT_ICONS.put(MappedSuperclass.class, MAPPED_SUPER_CLASS_ICON_PATH);
             BASE_ELEMENT_ICONS.put(Embeddable.class, EMBEDDABLE_ICON_PATH);
-            
+
             ClassLoader cl = JPAModelerUtil.class.getClassLoader();
 
             UMTM_ATTRIBUTE = new ImageIcon(cl.getResource(UMTM_ATTRIBUTE_ICON_PATH)).getImage();
@@ -343,8 +343,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             MTOR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png")).getImage();
             MTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many.gif")).getImage();
             MTMR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png")).getImage();
-            
-            
+
             UNI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/uni.png")).getImage();
             BI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/bi.png")).getImage();
             PK_UNI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/pk-uni.png")).getImage();
@@ -365,9 +364,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             SINGLE_VALUE_EMBEDDED_ATTRIBUTE = new ImageIcon(cl.getResource(SINGLE_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH)).getImage();
             TRANSIENT_ATTRIBUTE = new ImageIcon(cl.getResource(TRANSIENT_ATTRIBUTE_ICON_PATH)).getImage();
             VERSION_ATTRIBUTE = new ImageIcon(cl.getResource(VERSION_ATTRIBUTE_ICON_PATH)).getImage();
-            
-            
-            
 
             CREATE_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/add-element.png"));
             EDIT_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/edit-element.png"));
@@ -377,17 +373,17 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             WARNING_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/warning_16.png"));
             ERROR_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/error_16.png"));
             HOME_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/home.png"));
-            
+
             UP_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/anchor_up.png")).getImage();
             DOWN_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/anchor_down.png")).getImage();
         }
     }
 
-    public static String getBaseElementIcon(Class<? extends BaseElement> baseElement){
+    public static String getBaseElementIcon(Class<? extends BaseElement> baseElement) {
         String icon = BASE_ELEMENT_ICONS.get(baseElement);
         return icon == null ? JAVA_CLASS_ICON_PATH : icon;
     }
-    
+
     public static EntityMappings getEntityMapping(File file) throws JAXBException {
         EntityMappings definition_Load;
         if (MODELER_UNMARSHALLER == null) {
@@ -460,13 +456,13 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
 
             }
-                       
+
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMappings);
             scene.setBaseElementSpec(entityMappings);
             scene.startSceneGeneration();
             entityMappings.repairDefinition(IO);
-            
+
             scene.getWorkSpaceManager().reloadMainWorkSpace();
             Diagram diagram = entityMappings.getJPADiagram();
             WorkSpace workSpace;
@@ -474,8 +470,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 entityMappings.getJavaClass()
                         .forEach(node -> loadFlowNode(scene, (Widget) scene, node));
             } else {
-                workSpace = (WorkSpace)file.getAttribute(WORK_SPACE);
-                if(workSpace != null){
+                workSpace = (WorkSpace) file.getAttribute(WORK_SPACE);
+                if (workSpace != null) {
                     entityMappings.setCurrentWorkSpace(workSpace.getId());
                 }
                 entityMappings.getCurrentWorkSpace().getItems()
@@ -489,7 +485,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
             int itemSize;
             long drawItemSize;
-            
+
             if (diagram != null) {
                 diagram.getJPAPlane().getDiagramElement()
                         .forEach(diagramElement -> loadDiagram(scene, diagramElement));
@@ -497,8 +493,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 drawItemSize = itemSize;
             } else {
                 drawItemSize = entityMappings.getCurrentWorkSpace().getItems()
-                        .stream() 
-                        .filter(item -> item.getLocation()!=null)
+                        .stream()
+                        .filter(item -> item.getLocation() != null)
                         .peek(item -> loadDiagram(scene, item))
                         .count();
                 itemSize = entityMappings.getCurrentWorkSpace().getItems().size();
@@ -507,23 +503,23 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 scene.autoLayout();
                 entityMappings.setStatus(null);
             }
-            
+
             updateWindowTitle(file, entityMappings);
             scene.commitSceneGeneration();
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);
         }
     }
-    
-    private void updateWindowTitle(ModelerFile file, EntityMappings entityMappings){
+
+    private void updateWindowTitle(ModelerFile file, EntityMappings entityMappings) {
         if (!entityMappings.isRootWorkSpace()) {
-                String windowName = file.getModelerFileDataObject().getPrimaryFile().getName() + " > " + entityMappings.getCurrentWorkSpace().getName();
-                file.setName(windowName);
-                file.getModelerPanelTopComponent().setName(windowName);
-                file.getModelerPanelTopComponent().setToolTipText(windowName);
-         }
+            String windowName = file.getModelerFileDataObject().getPrimaryFile().getName() + " > " + entityMappings.getCurrentWorkSpace().getName();
+            file.setName(windowName);
+            file.getModelerPanelTopComponent().setName(windowName);
+            file.getModelerPanelTopComponent().setToolTipText(windowName);
+        }
     }
-    
+
     private void loadAttribute(JavaClassWidget nodeWidget) {
         if (nodeWidget.getBaseElementSpec() instanceof ManagedClass) {
             ManagedClass classSpec = (ManagedClass) nodeWidget.getBaseElementSpec();
@@ -1309,7 +1305,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             entityComboBox.addItem(new ComboBoxValue(entity, entity.getClazz()));
         });
     }
-
 
     public static EntityMappings cloneEntityMapping(EntityMappings entityMappings) {
         EntityMappings definition_Load = null;

@@ -112,6 +112,7 @@ public class WorkSpaceDialog extends GenericDialog {
                 save_ButtonActionPerformed(evt);
             }
         });
+        setDefaultButton(save_Button);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(WorkSpaceDialog.class, "WorkSpaceDialog.cancel_Button.text")); // NOI18N
         cancel_Button.addActionListener(new java.awt.event.ActionListener() {
@@ -154,10 +155,11 @@ public class WorkSpaceDialog extends GenericDialog {
         nameLayeredPaneLayout.setHorizontalGroup(
             nameLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(nameLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(2, 2, 2)
                 .addComponent(nameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addGap(14, 14, 14))
         );
         nameLayeredPaneLayout.setVerticalGroup(
             nameLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
