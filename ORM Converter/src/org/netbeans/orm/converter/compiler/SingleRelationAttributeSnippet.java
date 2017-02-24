@@ -9,8 +9,7 @@ package org.netbeans.orm.converter.compiler;
  *
  * @author jGauravGupta
  */
-public abstract class SingleRelationAttributeSnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet {
+public abstract class SingleRelationAttributeSnippet extends AbstractRelationDefSnippet {
 
     protected boolean optional = false;
     protected String mapsId;

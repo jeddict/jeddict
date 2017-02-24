@@ -1305,7 +1305,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
             manyToMany.setTargetEntityPackage(parsedManyToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
-
+            manyToMany.setTargetField(parsedManyToMany.getConnectedAttributeName());
             manyToMany.setCascadeTypes(cascadeTypes);
 
             if (parsedManyToMany.getFetch() != null) {
@@ -1388,7 +1388,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             manyToOne.setTargetEntity(parsedManyToOne.getTargetEntity());
             manyToOne.setTargetEntityPackage(parsedManyToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
-
+            manyToOne.setTargetField(parsedManyToOne.getConnectedAttributeName());
             manyToOne.setCascadeTypes(cascadeTypes);
 
             if (parsedManyToOne.getOptional() != null) {
@@ -1428,7 +1428,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             oneToMany.setCascadeTypes(cascadeTypes);
             oneToMany.setTargetEntity(parsedOneToMany.getTargetEntity());
             oneToMany.setTargetEntityPackage(parsedOneToMany.getConnectedEntity().getAbsolutePackage(rootPackageName));
-
+            oneToMany.setTargetField(parsedOneToMany.getConnectedAttributeName());
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
             oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
@@ -1473,7 +1473,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             oneToOne.setCascadeTypes(cascadeTypes);
             oneToOne.setTargetEntity(parsedOneToOne.getTargetEntity());
             oneToOne.setTargetEntityPackage(parsedOneToOne.getConnectedEntity().getAbsolutePackage(rootPackageName));
-
+            oneToOne.setTargetField(parsedOneToOne.getConnectedAttributeName());
             oneToOne.setMappedBy(parsedOneToOne.getMappedBy());
             if (parsedOneToOne.getOptional() != null) {
                 oneToOne.setOptional(parsedOneToOne.getOptional());

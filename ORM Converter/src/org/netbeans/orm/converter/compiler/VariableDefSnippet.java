@@ -680,19 +680,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT) {
             snippet.append("@XmlTransient");
         }  else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
-            String mappedBy = null;
-            if(getRelationDef() instanceof MultiRelationAttributeSnippet){
-                mappedBy = ((MultiRelationAttributeSnippet)getRelationDef()).getMappedBy();
-            }
-            if(getRelationDef() instanceof OneToOneSnippet){
-                mappedBy = ((OneToOneSnippet)getRelationDef()).getMappedBy();
-            }
+            String mappedBy = getRelationDef().getTargetField();//both side are applicable so targetField is used instead of mappedBy
             if (mappedBy != null) {
                 snippet.append(String.format("@XmlInverseReference(mappedBy=\"%s\")", mappedBy));
             } 
-//            else {
-//                snippet.append("@XmlInverseReference");
-//            }
         } else {
             if (isPrimaryKey()) {
 //            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);

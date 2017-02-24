@@ -27,6 +27,7 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
     private String fetchType;
     private String targetEntity;
     private String targetEntityPackage;
+    private String targetField;
 
     private List<String> cascadeTypes = Collections.EMPTY_LIST;
 
@@ -114,5 +115,19 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
     @Override
     public void setTargetEntityPackage(String targetEntityPackage) {
         this.targetEntityPackage = targetEntityPackage;
+    }
+
+    /**
+     * @return the targetField
+     */
+    public String getTargetField() {
+        return targetField;
+    }
+
+    /**
+     * @param targetField the targetField to set
+     */
+    public void setTargetField(String targetField) {
+        this.targetField = targetField;
     }
 }

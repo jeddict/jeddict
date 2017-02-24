@@ -45,4 +45,9 @@ public interface RelationDefSnippet extends Snippet {
     public String getTargetEntityPackage();
 
     public void setTargetEntityPackage(String targetEntityPackage);
+    
+    public String getTargetField();
+    
+    public void setTargetField(String targetField);
+
 }
