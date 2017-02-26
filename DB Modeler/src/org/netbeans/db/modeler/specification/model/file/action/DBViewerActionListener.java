@@ -20,6 +20,7 @@ import org.netbeans.db.modeler.specification.model.engine.DBDiagramEngine;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
+import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.core.ModelerFile;

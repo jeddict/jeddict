@@ -171,6 +171,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             loadModelerFileInternal(file);
         } catch (DBConnectionNotFound | ProcessInterruptedException ie) {
             DeploymentExceptionManager.handleException(file, ie);
+        } catch (java.lang.NoClassDefFoundError error) {
+            DeploymentExceptionManager.handleException(file, error);
         } catch (Exception ex) {
             ex.printStackTrace();
             DeploymentExceptionManager.handleException(file, ex);
@@ -210,7 +212,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         try {
 
             if (connection == null) {
-                dynamicClassLoader = new DynamicDriverClassLoader();
+                dynamicClassLoader = new DynamicDriverClassLoader(file);
                 databaseLogin.setDatabaseURL(DEFAULT_URL);
                 databaseLogin.setUserName("");
                 databaseLogin.setPassword("");
@@ -230,7 +232,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                     }
                 }
                 try {
-                    dynamicClassLoader = new DynamicDriverClassLoader(connection.getDriverClass());
+                    dynamicClassLoader = new DynamicDriverClassLoader(file, connection.getDriverClass());
 
                 } catch (NullPointerException ex) {
                     throw new DBConnectionNotFound();

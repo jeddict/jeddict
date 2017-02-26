@@ -15,8 +15,9 @@
  */
 package org.netbeans.db.modeler.classloader;
 
+import org.netbeans.api.java.classpath.ClassPath;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
-import org.eclipse.persistence.dynamic.DynamicClassWriter;
+import org.netbeans.modeler.core.ModelerFile;
 
 /**
  * This custom ClassLoader provides support for dynamically generating classes
@@ -27,16 +28,19 @@ import org.eclipse.persistence.dynamic.DynamicClassWriter;
  */
 public class DynamicDriverClassLoader extends DynamicClassLoader {
 
-    private ChildClassLoader childClassLoader;
+    private ChildClassLoader baseClassLoader;
     private ChildClassLoader driverClassLoader;
+    private ChildClassLoader projectClassLoader;
 
-    /**
-     * Create a DynamicClassLoader providing the delegate loader and leaving the
-     * defaultWriter as {@link DynamicClassWriter}
-     */
-    public DynamicDriverClassLoader(Class loadClass) {
+    public DynamicDriverClassLoader(ModelerFile file) {
         super(Thread.currentThread().getContextClassLoader());
-        childClassLoader = new ChildClassLoader(this.getClass().getClassLoader(), new DetectClass(this.getParent()));
+        ClassPath classPath = ClassPath.getClassPath(file.getFileObject(), ClassPath.EXECUTE);
+        projectClassLoader = classPath != null ? new ChildClassLoader(classPath.getClassLoader(true), new DetectClass(this.getParent())) : null;
+        baseClassLoader = new ChildClassLoader(this.getClass().getClassLoader(), new DetectClass(this.getParent()));
+    }
+
+    public DynamicDriverClassLoader(ModelerFile file, Class loadClass) {
+        this(file);
         driverClassLoader = new ChildClassLoader(loadClass.getClassLoader(), new DetectClass(this.getParent()));
     }
 
@@ -44,45 +48,56 @@ public class DynamicDriverClassLoader extends DynamicClassLoader {
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         Class<?> _class;
         try {
-            _class = childClassLoader.searchClass(name);// To load class Object,Long,String etc.
+            _class = baseClassLoader.searchClass(name);// To load class Object,Long,String etc.
         } catch (ClassNotFoundException e) {
-            if (driverClassLoader != null) {
-                try {
-                    _class = driverClassLoader.searchClass(name);// To load driver class e.g : Oracle, MySql etc
-                } catch (ClassNotFoundException e2) {
-                    _class = super.loadClass(name, resolve);
-                }
-            } else {
-                _class = super.loadClass(name, resolve);//To Load DynamicEntity e.g : Entity1, Entity2 etc
+                _class = checkDriverClassLoader(name, resolve);
+        }
+        return _class;
+    }
+    
+    //   BaseClassLoader > DriverClassLoader > DynamicClassLoader > ProjectClassLoader
+
+    private Class<?> checkDriverClassLoader(String name, boolean resolve) throws ClassNotFoundException {
+        Class<?> _class;
+        if (driverClassLoader != null) {
+            try {
+                _class = driverClassLoader.searchClass(name);// To load driver class e.g : Oracle, MySql etc
+            } catch (ClassNotFoundException ex) {
+                _class = checkDynamicClassLoader(name, resolve);
             }
+        } else {
+            _class = checkDynamicClassLoader(name, resolve);
         }
         return _class;
     }
 
-    public DynamicDriverClassLoader() {
-        super(Thread.currentThread().getContextClassLoader());
-        childClassLoader = new ChildClassLoader(this.getClass().getClassLoader(), new DetectClass(this.getParent()));
+    private Class<?> checkDynamicClassLoader(String name, boolean resolve) throws ClassNotFoundException {
+        Class<?> _class;
+        try {
+            _class = super.loadClass(name, resolve);//To Load DynamicEntity e.g : Entity1, Entity2 etc
+        } catch (ClassNotFoundException ex) {
+            _class = checkProjectClassLoader(name);
+        }
+        return _class;
     }
 
-    /**
-     * Create a DynamicClassLoader providing the delegate loader and a default
-     * {@link DynamicClassWriter}.
-     */
-    public DynamicDriverClassLoader(DynamicClassWriter writer) {
-        this();
-        this.defaultWriter = writer;
+    private Class<?> checkProjectClassLoader(String name) throws ClassNotFoundException {
+        Class<?> _class = null;
+        if (projectClassLoader != null) {
+            _class = projectClassLoader.searchClass(name);// To load client/user library
+        }
+        return _class;
     }
 
     private static class ChildClassLoader extends ClassLoader {
 
-        private DetectClass realParent;
+        private final DetectClass realParent;
 
         public ChildClassLoader(ClassLoader driverClassLoader, DetectClass realParent) {
             super(driverClassLoader);
             this.realParent = realParent;
         }
 
-//        @Override
         public Class<?> searchClass(String name) throws ClassNotFoundException {
             try {
                 Class<?> loaded = super.findLoadedClass(name);
