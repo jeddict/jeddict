@@ -138,6 +138,7 @@ public class DeploymentExceptionManager {
             Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == javaClass).findAny();
             if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
                 String attributeName = attribute.getName();
+                //e.g : https://github.com/jGauravGupta/JPAModeler/issues/67
                 if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "entity " + javaClass.getClazz() + " for attribute " + attributeName
                         + getMessage(DeploymentExceptionManager.class, "RECONSTRUCT_JOIN_COLUMN"),
                         "Error : ----", YES_NO_OPTION) == YES_NO_OPTION) {
