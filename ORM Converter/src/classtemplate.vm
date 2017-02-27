@@ -32,7 +32,6 @@ public class $classDef.getClassName() implements Serializable {
     $constructor.getSnippet()
 
 #end
-
 #####################getter/setter #################################
 #foreach( $varDef in $classDef.getVariableDefs() )
 #set($method = $varDef.getMethodName())

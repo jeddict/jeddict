@@ -28,7 +28,7 @@ public class DiscriminatorColumnWidget extends ColumnWidget<DBDiscriminatorColum
 
     public DiscriminatorColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> setPropertyName(value)); 
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value)); 
     }
 
     @Override

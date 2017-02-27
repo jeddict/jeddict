@@ -29,7 +29,6 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
-import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene> extends PNodeWidget<S> implements IFlowNodeWidget<E> {
 
@@ -37,10 +36,6 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     public FlowNodeWidget(S scene, NodeWidgetInfo node) {
         super(scene, node);
         signalManager = new SignalManager(this);
-//        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
-//            setName(value);
-//            setLabel(value);
-//        });
         setAnchorGap(4);
     }
     

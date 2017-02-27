@@ -176,20 +176,16 @@
                 </attribute>
             </attributes>
         </element>
-        <element id="MappedSuperclass" class="org.netbeans.jpa.modeler.spec.MappedSuperclass">
-            <attributes>
-                <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
-                    <display-name>Composite PrimaryKey Class</display-name>
-                </attribute>
-            </attributes>
-        </element>
         <element id="IdentifiableClass" class="org.netbeans.jpa.modeler.spec.IdentifiableClass">
             <attributes>
                 <attribute id="xmlRootElement" groupId="JAXB_PROP" class="java.lang.Boolean" name="xmlRootElement" >
                     <display-name>Root Element</display-name>
                     <visible><![CDATA[root.jaxbSupport==true]]></visible>
                 </attribute>
-                 </attributes>
+                <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                    <display-name>Composite PrimaryKey Class</display-name>
+                </attribute>
+            </attributes>
         </element>
                
         <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
@@ -201,9 +197,6 @@
                <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
                     <description>Abstract entities cannot be instantiated but it can be queried just like concrete entities. If an abstract entity is the target of a query, the query operates on all the concrete subclasses of the abstract entity.</description>
-                </attribute>
-                 <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
-                    <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
             </attributes>
         </element>

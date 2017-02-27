@@ -36,7 +36,7 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerSc
 
     public RelationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);
-        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> {
             setName(value);
             RelationFlowWidget.this.setLabel(name);
         });

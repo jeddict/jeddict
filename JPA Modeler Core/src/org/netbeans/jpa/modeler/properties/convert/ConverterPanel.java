@@ -50,7 +50,7 @@ public class ConverterPanel extends EntityComponent<Converter> {
     public void createEntity(Class<? extends Entity> entityWrapperType) {
         this.setTitle("Add new Converter");
         if (entityWrapperType == RowValue.class) {
-            this.setEntity(new RowValue(new Object[4]));
+            this.setEntity(new RowValue(new Object[5]));
         }
         converter_EditorPane.setText("");
         attribute_EditorPane.setText("");

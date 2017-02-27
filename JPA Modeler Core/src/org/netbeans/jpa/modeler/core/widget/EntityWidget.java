@@ -33,7 +33,7 @@ import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCacheableProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConvertProperties;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEntityDisplayProperty;
-import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
+import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -54,7 +54,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
     public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
-        this.addPropertyChangeListener("abstract", (input) -> setImage(getIcon()));
+        this.addPropertyChangeListener("abstract", (oldValue, value) -> setImage(getIcon()));
         PropertyVisibilityHandler overridePropertyHandler = () -> {
             InheritanceStateType inheritanceState = this.getInheritanceState(true);
             return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF;
@@ -167,20 +167,20 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
                     : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
             
             if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
-                getSignalManager().fire(ERROR, EntityValidator.NO_PRIMARYKEY_EXIST);
+                getSignalManager().fire(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
             } else {
-                getSignalManager().clear(ERROR, EntityValidator.NO_PRIMARYKEY_EXIST);
+                getSignalManager().clear(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
             }
             // Issue Fix #6041 End
           List<String> idGenList = this.getAllIdAttributeWidgets().stream().filter(idAttrWid -> idAttrWid.getBaseElementSpec().getGeneratedValue()!=null &&
                     idAttrWid.getBaseElementSpec().getGeneratedValue().getStrategy()!=null).map(IdAttributeWidget::getName).collect(toList());
             if(idGenList.size()> 1){
-               getSignalManager().fire(ERROR, EntityValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
+               getSignalManager().fire(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
             } else {
-                getSignalManager().clear(ERROR, EntityValidator.MANY_PRIMARYKEY_GEN_EXIST);
+                getSignalManager().clear(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST);
             }
         } else {
-            getSignalManager().clear(ERROR, EntityValidator.NO_PRIMARYKEY_EXIST);
+            getSignalManager().clear(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
         }
     }
 

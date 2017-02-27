@@ -23,8 +23,8 @@ import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
@@ -50,25 +50,25 @@ public class AttributeValidator {
         List<JavaClassWidget> javaClassWidgets = peristenceClassWidget_In.getAllSubclassWidgets();
         javaClassWidgets.add(peristenceClassWidget_In);
         for (JavaClassWidget javaClassWidget : javaClassWidgets) {
-            if (javaClassWidget instanceof PersistenceClassWidget) {
-                PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) javaClassWidget;
-                if (persistenceClassWidget.getEmbeddedIdAttributeWidget() != null) {
+            if (javaClassWidget instanceof PrimaryKeyContainerWidget) {
+                PrimaryKeyContainerWidget primaryKeyContainerWidget = (PrimaryKeyContainerWidget) javaClassWidget;
+                if (primaryKeyContainerWidget.getEmbeddedIdAttributeWidget() != null) {
 
-                    List<JavaClassWidget> superclassWidgets = persistenceClassWidget.getAllSuperclassWidget();
+                    List<JavaClassWidget> superclassWidgets = primaryKeyContainerWidget.getAllSuperclassWidget();
                     boolean errorExist = false;
                     for (JavaClassWidget superclassWidget : superclassWidgets) {
-                        if (superclassWidget instanceof PersistenceClassWidget) {
-                            PersistenceClassWidget persistenceSuperClassWidget = (PersistenceClassWidget) superclassWidget;
-                            if (persistenceSuperClassWidget.getEmbeddedIdAttributeWidget() == null && !persistenceSuperClassWidget.getIdAttributeWidgets().isEmpty()) {
+                        if (superclassWidget instanceof PrimaryKeyContainerWidget) {
+                            PrimaryKeyContainerWidget primaryKeySuperContainerWidget = (PrimaryKeyContainerWidget) superclassWidget;
+                            if (primaryKeySuperContainerWidget.getEmbeddedIdAttributeWidget() == null && !primaryKeySuperContainerWidget.getIdAttributeWidgets().isEmpty()) {
                                 errorExist = true;
                                 break;
                             }
                         }
                     }
                     if (errorExist) {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().fire(ERROR, AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
+                        primaryKeyContainerWidget.getEmbeddedIdAttributeWidget().getSignalManager().fire(ERROR, AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
                     } else {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().clear(ERROR, AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
+                        primaryKeyContainerWidget.getEmbeddedIdAttributeWidget().getSignalManager().clear(ERROR, AttributeValidator.EMBEDDEDID_AND_ID_FOUND);
                     }
 
                 }
@@ -80,13 +80,13 @@ public class AttributeValidator {
         List<JavaClassWidget> javaClassWidgets = peristenceClassWidget_In.getAllSubclassWidgets();
         javaClassWidgets.add(peristenceClassWidget_In);
         for (JavaClassWidget javaClassWidget : javaClassWidgets) {
-            if (javaClassWidget instanceof PersistenceClassWidget) {
-                PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) javaClassWidget;
-                if (persistenceClassWidget.getEmbeddedIdAttributeWidget() != null) {
-                    if (persistenceClassWidget.getAllEmbeddedIdAttributeWidgets().size() > 1) {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().fire(ERROR, AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
+            if (javaClassWidget instanceof PrimaryKeyContainerWidget) {
+                PrimaryKeyContainerWidget primaryKeyContainerWidget = (PrimaryKeyContainerWidget) javaClassWidget;
+                if (primaryKeyContainerWidget.getEmbeddedIdAttributeWidget() != null) {
+                    if (primaryKeyContainerWidget.getAllEmbeddedIdAttributeWidgets().size() > 1) {
+                        primaryKeyContainerWidget.getEmbeddedIdAttributeWidget().getSignalManager().fire(ERROR, AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
                     } else {
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getSignalManager().clear(ERROR, AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
+                        primaryKeyContainerWidget.getEmbeddedIdAttributeWidget().getSignalManager().clear(ERROR, AttributeValidator.MULTIPLE_EMBEDDEDID_FOUND);
                     }
                 }
             }

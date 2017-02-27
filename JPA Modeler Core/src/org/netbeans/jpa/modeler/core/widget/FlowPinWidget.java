@@ -41,7 +41,7 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
         super(scene, nodeWidget, pinWidgetInfo);
         this.name = pinWidgetInfo.getName();
         signalManager = new SignalManager(this);
-        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> {
             setName(value);
 
             if (value != null && !value.trim().isEmpty()) {

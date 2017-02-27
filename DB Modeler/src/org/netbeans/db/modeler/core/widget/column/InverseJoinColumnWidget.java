@@ -41,9 +41,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
 
     public InverseJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
+        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
     }
 
     @Override

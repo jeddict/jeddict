@@ -47,6 +47,7 @@ import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
@@ -89,6 +90,7 @@ import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
@@ -520,65 +522,67 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
     }
 
-    private void loadAttribute(JavaClassWidget nodeWidget) {
-        if (nodeWidget.getBaseElementSpec() instanceof ManagedClass) {
-            ManagedClass classSpec = (ManagedClass) nodeWidget.getBaseElementSpec();
-            PersistenceClassWidget classWidget = (PersistenceClassWidget) nodeWidget;
+    private void loadAttribute(JavaClassWidget classWidget) {
+        if (classWidget.getBaseElementSpec() instanceof ManagedClass) {
+            ManagedClass classSpec = (ManagedClass) classWidget.getBaseElementSpec();
+            PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) classWidget;
             WorkSpace workSpace = classSpec.getRootElement().getCurrentWorkSpace();
             if (classSpec.getAttributes() != null) {
-                if (classSpec.getAttributes() instanceof IPersistenceAttributes) {
+                if ((classSpec.getAttributes() instanceof IPersistenceAttributes)
+                        && (classWidget instanceof PrimaryKeyContainerWidget)) {
+                    PrimaryKeyContainerWidget primaryKeyContainerWidget = (PrimaryKeyContainerWidget) classWidget;
                     IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) classSpec.getAttributes();
                     persistenceAttributes.getId()
                             .stream()
-                            .forEach((id) -> classWidget.addNewIdAttribute(id.getName(), id));
+                            .forEach((id) -> primaryKeyContainerWidget.addNewIdAttribute(id.getName(), id));
                     EmbeddedId embeddedId = persistenceAttributes.getEmbeddedId();
-                    if (embeddedId != null && workSpace.hasItem(embeddedId.getConnectedClass())) {
-                        classWidget.addNewEmbeddedIdAttribute(embeddedId.getName(), embeddedId);
+                    if (embeddedId != null) {// && workSpace.hasItem(embeddedId.getConnectedClass())) {
+                        primaryKeyContainerWidget.addNewEmbeddedIdAttribute(embeddedId.getName(), embeddedId);
                     }
                     persistenceAttributes.getVersion()
                             .stream()
-                            .forEach(version -> classWidget.addNewVersionAttribute(version.getName(), version));
+                            .forEach(version -> primaryKeyContainerWidget.addNewVersionAttribute(version.getName(), version));
                 }
                 classSpec.getAttributes().getBasic()
                         .stream()
-                        .forEach(basic -> classWidget.addNewBasicAttribute(basic.getName(), basic));
+                        .forEach(basic -> persistenceClassWidget.addNewBasicAttribute(basic.getName(), basic));
                 classSpec.getAttributes().getTransient()
                         .stream()
-                        .forEach(_transient -> classWidget.addNewTransientAttribute(_transient.getName(), _transient));
+                        .forEach(_transient -> persistenceClassWidget.addNewTransientAttribute(_transient.getName(), _transient));
                 classSpec.getAttributes().getEmbedded()
                         .stream()
                         .filter(embedded -> workSpace.hasItem(embedded.getConnectedClass()))
                         .forEach((embedded) -> {
-                            classWidget.addNewSingleValueEmbeddedAttribute(embedded.getName(), embedded);
+                            persistenceClassWidget.addNewSingleValueEmbeddedAttribute(embedded.getName(), embedded);
                         });
                 classSpec.getAttributes().getElementCollection()
                         .stream()
                         .forEach((elementCollection) -> {
                             if (elementCollection.getConnectedClass() != null) {
                                 if (workSpace.hasItem(elementCollection.getConnectedClass())) {
-                                    classWidget.addNewMultiValueEmbeddedAttribute(elementCollection.getName(), elementCollection);
+                                    persistenceClassWidget.addNewMultiValueEmbeddedAttribute(elementCollection.getName(), elementCollection);
                                 }
                             } else {
-                                classWidget.addNewBasicCollectionAttribute(elementCollection.getName(), elementCollection);
+                                persistenceClassWidget.addNewBasicCollectionAttribute(elementCollection.getName(), elementCollection);
                             }
                         });
                 classSpec.getAttributes().getOneToOne()
                         .stream()
                         .filter(oto -> workSpace.hasItem(oto.getConnectedEntity()))
-                        .forEach(oto -> classWidget.addNewOneToOneRelationAttribute(oto.getName(), oto.isPrimaryKey(), oto));
+                        .forEach(oto -> persistenceClassWidget.addNewOneToOneRelationAttribute(oto.getName(), oto.isPrimaryKey(), oto));
                 classSpec.getAttributes().getOneToMany()
                         .stream()
                         .filter(otm -> workSpace.hasItem(otm.getConnectedEntity()))
-                        .forEach(otm -> classWidget.addNewOneToManyRelationAttribute(otm.getName(), otm));
+                        .forEach(otm -> persistenceClassWidget.addNewOneToManyRelationAttribute(otm.getName(), otm));
                 classSpec.getAttributes().getManyToOne()
                         .stream()
                         .filter(mto -> workSpace.hasItem(mto.getConnectedEntity()))
-                        .forEach(mto -> classWidget.addNewManyToOneRelationAttribute(mto.getName(), mto.isPrimaryKey(), mto));
+                        .forEach(mto -> persistenceClassWidget.addNewManyToOneRelationAttribute(mto.getName(), mto.isPrimaryKey(), mto));
                 classSpec.getAttributes().getManyToMany()
                         .stream()
                         .filter(mtm -> workSpace.hasItem(mtm.getConnectedEntity()))
-                        .forEach(mtm -> classWidget.addNewManyToManyRelationAttribute(mtm.getName(), mtm));
-                classWidget.sortAttributes();
+                        .forEach(mtm -> persistenceClassWidget.addNewManyToManyRelationAttribute(mtm.getName(), mtm));
+                persistenceClassWidget.sortAttributes();
             }
         }
     }
@@ -743,8 +747,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         saveFile(entityMappings, file.getFile());
     }
 
-    public static void removeDefaultJoinColumn(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, String attributeName) {
-        for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
+    public static void removeDefaultJoinColumn(PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget, String attributeName) {
+        for (SingleRelationAttributeWidget attributeWidget : primaryKeyContainerWidget.getIdRelationAttributeWidgets()) {
             SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
             if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
                 continue;
@@ -757,10 +761,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/8 #Same Column name in CompositePK
-    public static void addDefaultJoinColumnForCompositePK(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
+    public static void addDefaultJoinColumnForCompositePK(PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget,
             String attributeName, Set<String> allFields, List<JoinColumn> joinColumns) {
         //Get all @Id @Relation owner attribute 
-        for (SingleRelationAttributeWidget attributeWidget : persistenceClassWidget.getIdRelationAttributeWidgets()) {
+        for (SingleRelationAttributeWidget attributeWidget : primaryKeyContainerWidget.getIdRelationAttributeWidgets()) {
             SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
             if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
                 continue;

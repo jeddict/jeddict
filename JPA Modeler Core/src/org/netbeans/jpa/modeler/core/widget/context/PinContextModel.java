@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
@@ -109,9 +110,8 @@ public class PinContextModel {
                     List list = null;
                     List specList = null;
                     AttributeWidget attributeWidget = (AttributeWidget) widget;
-
-                    if (attributeWidget instanceof IdAttributeWidget) {
-                        list = classWidget.getIdAttributeWidgets();
+                    if ((attributeWidget instanceof IdAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
+                        list = ((PrimaryKeyContainerWidget) classWidget).getIdAttributeWidgets();
                         specList = ((IPersistenceAttributes) attributes).getId();
                     } else if (attributeWidget instanceof EmbeddedAttributeWidget) {
                         if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
@@ -141,8 +141,8 @@ public class PinContextModel {
                             list = classWidget.getManyToManyRelationAttributeWidgets();
                             specList = attributes.getManyToMany();
                         }
-                    } else if (attributeWidget instanceof VersionAttributeWidget) {
-                        list = classWidget.getVersionAttributeWidgets();
+                    } else if ((attributeWidget instanceof VersionAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
+                        list = ((PrimaryKeyContainerWidget) classWidget).getVersionAttributeWidgets();
                         specList = ((IPersistenceAttributes) attributes).getVersion();
                     } else if (attributeWidget instanceof TransientAttributeWidget) {
                         list = classWidget.getTransientAttributeWidgets();
@@ -152,7 +152,7 @@ public class PinContextModel {
                     if ((index == 0 && distance < 0) || (list.size() == index + 1 && distance > 0)) {
                         return;
                     }
-                    
+
                     if ((index == 1 && distance < 0) || (list.size() == index + 2 && distance > 0)) {  //if just before the last/first then hide context palette
                         NBModelerUtil.hideContextPalette(widget.getModelerScene());
                     }
@@ -178,8 +178,8 @@ public class PinContextModel {
             List list = null;
             AttributeWidget attributeWidget = (AttributeWidget) widget;
 
-            if (attributeWidget instanceof IdAttributeWidget) {
-                list = classWidget.getIdAttributeWidgets();
+            if ((attributeWidget instanceof IdAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
+                list = ((PrimaryKeyContainerWidget) classWidget).getIdAttributeWidgets();
             } else if (attributeWidget instanceof EmbeddedAttributeWidget) {
                 if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
                     list = classWidget.getSingleValueEmbeddedAttributeWidgets();
@@ -200,8 +200,8 @@ public class PinContextModel {
                 } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
                     list = classWidget.getManyToManyRelationAttributeWidgets();
                 }
-            } else if (attributeWidget instanceof VersionAttributeWidget) {
-                list = classWidget.getVersionAttributeWidgets();
+            } else if ((attributeWidget instanceof VersionAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
+                list = ((PrimaryKeyContainerWidget) classWidget).getVersionAttributeWidgets();
             } else if (attributeWidget instanceof TransientAttributeWidget) {
                 list = classWidget.getTransientAttributeWidgets();
             }

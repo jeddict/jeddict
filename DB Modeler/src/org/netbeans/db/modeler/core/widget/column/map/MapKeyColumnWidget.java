@@ -39,8 +39,8 @@ public class MapKeyColumnWidget extends BasicColumnWidget<DBMapKeyColumn<Attribu
             MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
             
             set.createPropertySet(this, mapKeyHandler.getMapKeyColumn(), getPropertyChangeListeners());
-            this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) this::setPropertyName);
-            this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
+            this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
+            this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
         }
     }
 

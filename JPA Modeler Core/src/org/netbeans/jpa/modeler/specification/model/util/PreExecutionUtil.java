@@ -27,6 +27,7 @@ import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
@@ -99,10 +100,10 @@ public class PreExecutionUtil {
     private static void executeCompositePrimaryKeyEvaluation(List<IBaseElementWidget> baseElements, EntityMappings entityMappings) {
         List<IBaseElementWidget> baseElementWidgetPending = new ArrayList<>();
         for (IBaseElementWidget baseElementWidget : baseElements) {
-            if (baseElementWidget instanceof PersistenceClassWidget) {
-                PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
-                if (!manageCompositePrimaryKey(persistenceClassWidget, entityMappings)) {
-                    baseElementWidgetPending.add(persistenceClassWidget);
+            if (baseElementWidget instanceof PrimaryKeyContainerWidget) {
+                PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget = (PrimaryKeyContainerWidget) baseElementWidget;
+                if (!manageCompositePrimaryKey(primaryKeyContainerWidget, entityMappings)) {
+                    baseElementWidgetPending.add(primaryKeyContainerWidget);
                 }
             }
         }
@@ -111,12 +112,12 @@ public class PreExecutionUtil {
         }
     }
 
-    private static boolean manageCompositePrimaryKey(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, EntityMappings entityMappings) {
+    private static boolean manageCompositePrimaryKey(PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget, EntityMappings entityMappings) {
         //Start : IDCLASS,EMBEDDEDID //((Entity) persistenceClassWidget.getBaseElementSpec()).getClazz()
-        if (persistenceClassWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
-            ManagedClass managedClass = persistenceClassWidget.getBaseElementSpec();
+        if (primaryKeyContainerWidget.getBaseElementSpec() instanceof PrimaryKeyContainer) {
+            ManagedClass managedClass = primaryKeyContainerWidget.getBaseElementSpec();
             PrimaryKeyContainer pkContainerSpec = (PrimaryKeyContainer) managedClass;
-            CompositePKProperty compositePKProperty = persistenceClassWidget.isCompositePKPropertyAllow();
+            CompositePKProperty compositePKProperty = primaryKeyContainerWidget.isCompositePKPropertyAllow();
 
             if (compositePKProperty == CompositePKProperty.NONE) {
                 pkContainerSpec.clearCompositePrimaryKey();
@@ -124,10 +125,10 @@ public class PreExecutionUtil {
                 if (pkContainerSpec.getCompositePrimaryKeyType() == null) {
                     pkContainerSpec.setCompositePrimaryKeyType(CompositePrimaryKeyType.DEFAULT);
                 }
-                persistenceClassWidget.onCompositePrimaryKeyTypeChange(pkContainerSpec.getCompositePrimaryKeyType());//if global config change [Default(IdClass) -> Default(EmbeddedId)]
+                primaryKeyContainerWidget.onCompositePrimaryKeyTypeChange(pkContainerSpec.getCompositePrimaryKeyType());//if global config change [Default(IdClass) -> Default(EmbeddedId)]
 
                 if (compositePKProperty == CompositePKProperty.AUTO_CLASS) {
-                    RelationAttributeWidget relationAttributeWidget = persistenceClassWidget.getDerivedRelationAttributeWidgets().get(0);
+                    RelationAttributeWidget relationAttributeWidget = primaryKeyContainerWidget.getDerivedRelationAttributeWidgets().get(0);
                     RelationAttribute relationAttribute = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
                     IFlowElementWidget targetElementWidget = (EntityWidget) relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
                     EntityWidget targetEntityWidget = null;
@@ -146,11 +147,11 @@ public class PreExecutionUtil {
                         //another Enity E2 class use EmbeddedId is also IC1
                         //then register IdClass name here to append @Embeddable annotation
                         DefaultClass _class = entityMappings.addDefaultClass(targetPKConatinerSpec.getPackage(), targetPKConatinerSpec.getCompositePrimaryKeyClass());
-                        _class.setGenerateSourceCode(persistenceClassWidget.getBaseElementSpec().getGenerateSourceCode());
+                        _class.setGenerateSourceCode(primaryKeyContainerWidget.getBaseElementSpec().getGenerateSourceCode());
                         if (pkContainerSpec.isEmbeddedIdType()) {
                             _class.setEmbeddable(true);
-                            persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
-                            persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedAttribute(relationAttribute);// Ex.5.b derived identity
+                            primaryKeyContainerWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
+                            primaryKeyContainerWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedAttribute(relationAttribute);// Ex.5.b derived identity
 //                                    _class.setAttributes(null);//attribute will be added in parent Entity DefaultClass creation process
                         }
                         if (relationAttribute instanceof SingleRelationAttribute) {
@@ -167,16 +168,16 @@ public class PreExecutionUtil {
                 } else { //not CompositePKProperty.NONE
                     List<IdAttributeWidget> idAttributeWidgets = null;
                     if (pkContainerSpec.getCompositePrimaryKeyClass() == null) {
-                        pkContainerSpec.setCompositePrimaryKeyClass(persistenceClassWidget.getName() + "PK");
+                        pkContainerSpec.setCompositePrimaryKeyClass(primaryKeyContainerWidget.getName() + "PK");
                     }
                     DefaultClass _class = entityMappings.addDefaultClass(managedClass.getPackage(), pkContainerSpec.getCompositePrimaryKeyClass());
-                    _class.setGenerateSourceCode(persistenceClassWidget.getBaseElementSpec().getGenerateSourceCode());
+                    _class.setGenerateSourceCode(primaryKeyContainerWidget.getBaseElementSpec().getGenerateSourceCode());
                     if (pkContainerSpec.isEmbeddedIdType()) {
-                        idAttributeWidgets = persistenceClassWidget.getIdAttributeWidgets();
+                        idAttributeWidgets = primaryKeyContainerWidget.getIdAttributeWidgets();
                         _class.setEmbeddable(true);
-                        persistenceClassWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
+                        primaryKeyContainerWidget.getEmbeddedIdAttributeWidget().getBaseElementSpec().setConnectedClass(_class);
                     } else if (pkContainerSpec.isIdClassType()) {
-                        idAttributeWidgets = persistenceClassWidget.getAllIdAttributeWidgets();
+                        idAttributeWidgets = primaryKeyContainerWidget.getAllIdAttributeWidgets();
                     }
 
                     for (IdAttributeWidget idAttributeWidget : idAttributeWidgets) {
@@ -186,7 +187,7 @@ public class PreExecutionUtil {
                         attribute.setName(idSpec.getName());
                         _class.addAttribute(attribute);
                     }
-                    for (SingleRelationAttributeWidget<SingleRelationAttribute> relationAttributeWidget : persistenceClassWidget.getDerivedRelationAttributeWidgets()) {
+                    for (SingleRelationAttributeWidget<SingleRelationAttribute> relationAttributeWidget : primaryKeyContainerWidget.getDerivedRelationAttributeWidgets()) {
                         SingleRelationAttribute relationAttributeSpec = relationAttributeWidget.getBaseElementSpec();
                         Entity targetEntitySpec;
                         IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();

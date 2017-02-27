@@ -107,7 +107,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         set.put("ATTR_PROP", getCustomAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
         set.put("ATTR_PROP", getAttributeSnippet(this.getModelerScene(), this.getBaseElementSpec().getSnippets()));
 
-        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> {
             if (StringUtils.isBlank(value)) {
                 JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(AttributeValidator.class, AttributeValidator.EMPTY_ATTRIBUTE_NAME));
                 setName(AttributeWidget.this.getLabel());//rollback
@@ -117,7 +117,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             }
         });
 
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String tableName) -> {
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, tableName) -> {
             if (tableName != null && !tableName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
                     getSignalManager().fire(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -128,7 +128,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
-        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String columnName) -> {
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (oldValue, columnName) -> {
             if (columnName != null && !columnName.trim().isEmpty()) {
                 if (SQLKeywords.isSQL99ReservedKeyword(columnName)) {
                     getSignalManager().fire(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
@@ -290,7 +290,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("mapKeyJoinColumns", "MapKey Join Columns", "", this.getModelerScene(), mapKeyHandler.getMapKeyJoinColumn()));
         
         
-        this.addPropertyChangeListener("mapKeyType",(val) -> {
+        this.addPropertyChangeListener("mapKeyType",(oldValue, value) -> {
             mapKeyHandler.resetMapAttribute(); 
             AttributeValidator.scanMapKeyHandlerError(this);
             visualizeDataType();

@@ -34,10 +34,10 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
 
     public BaseAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("attributeType", (PropertyChangeListener<String>) attributeType -> {
+        this.addPropertyChangeListener("attributeType", (PropertyChangeListener<String>) (oldValue,attributeType) -> {
             setAttributeTooltip();
         });
-        this.addPropertyChangeListener("nullable", (PropertyChangeListener<Boolean>) nullable -> {
+        this.addPropertyChangeListener("nullable", (PropertyChangeListener<Boolean>) (oldValue,nullable) -> {
             this.getBaseElementSpec().setFunctionalType(nullable);
         });
     }

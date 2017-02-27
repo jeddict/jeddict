@@ -22,6 +22,7 @@ import javax.swing.Action;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.spec.Column;
@@ -43,7 +44,7 @@ import org.openide.util.lookup.Lookups;
 
 public class AttributeChildFactory extends ChildFactory<ColumnDef> {
 
-    private EntityWidget entityWidget;
+    private final EntityWidget entityWidget;
 
     public AttributeChildFactory(EntityWidget entityWidget) {
         this.entityWidget = entityWidget;
@@ -56,8 +57,10 @@ public class AttributeChildFactory extends ChildFactory<ColumnDef> {
 
     private boolean createKeys(String flowPreFix, PersistenceClassWidget<? extends ManagedClass> classWidget, List<ColumnDef> columnDefList) {
         List<AttributeWidget> attributeWidgets = new ArrayList<>();
-        attributeWidgets.addAll(classWidget.getIdAttributeWidgets());
-        attributeWidgets.addAll(classWidget.getVersionAttributeWidgets());
+        if (classWidget instanceof PrimaryKeyContainerWidget) {
+            attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getIdAttributeWidgets());
+            attributeWidgets.addAll(((PrimaryKeyContainerWidget) classWidget).getVersionAttributeWidgets());
+        }
         attributeWidgets.addAll(classWidget.getBasicAttributeWidgets());
         for (AttributeWidget attributeWidget : attributeWidgets) {
             Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();

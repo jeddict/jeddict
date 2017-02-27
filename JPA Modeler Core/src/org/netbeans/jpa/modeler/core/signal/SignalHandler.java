@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
+import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -104,7 +104,7 @@ public class SignalHandler {
     private class ResourceBundleManager {
 
         private final Map<String, String> ERRORS = new HashMap<>();
-        private final Class[] VALIDATORS = {EntityValidator.class, AttributeValidator.class};
+        private final Class[] VALIDATORS = {ClassValidator.class, AttributeValidator.class};
 
         private String get(String key, Object... param) {
             String value = ERRORS.get(key);

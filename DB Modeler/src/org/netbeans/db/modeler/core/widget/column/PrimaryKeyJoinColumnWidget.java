@@ -29,9 +29,7 @@ public class PrimaryKeyJoinColumnWidget extends ForeignKeyWidget<DBPrimaryKeyJoi
 
     public PrimaryKeyJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("PrimaryKeyJoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
+        this.addPropertyChangeListener("PrimaryKeyJoinColumn_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
     }
 
     @Override

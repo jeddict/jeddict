@@ -46,6 +46,7 @@ import static org.netbeans.jcode.core.util.StringHelper.getNext;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.*;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -172,8 +173,11 @@ public class DeploymentExceptionManager {
                     if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
                         DBRelationalDescriptor relationalDescriptor = (DBRelationalDescriptor) de.getDescriptor();
                         Entity entity = ((EntitySpecAccessor) relationalDescriptor.getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                        Optional optional = file.getParentFile().getModelerScene().getBaseElements()
+                                .stream()
+                                .filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity)
+                                .findAny();
+                        if (optional.isPresent() && optional.get() instanceof PrimaryKeyContainerWidget) {
                             String attributeName = de.getMapping().getAttributeName();
                             if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Multiple Same column name exist in entity " + entity.getClazz() + " for attribute " + attributeName
                                     + getMessage(DeploymentExceptionManager.class, "OVERRIDE_JOIN_COLUMN"), "Error : Same column name exist in table", YES_NO_OPTION) == YES_NO_OPTION) {
@@ -201,7 +205,7 @@ public class DeploymentExceptionManager {
                                             }
                                         }
                                     }
-                                    JPAModelerUtil.addDefaultJoinColumnForCompositePK((PersistenceClassWidget) optional.get(), attributeName, allFields, joinColumns);
+                                    JPAModelerUtil.addDefaultJoinColumnForCompositePK((PrimaryKeyContainerWidget) optional.get(), attributeName, allFields, joinColumns);
                                 } else {
 
                                     if (de.getMapping().getFields().size() == 1) {
@@ -230,13 +234,16 @@ public class DeploymentExceptionManager {
                 case NO_TARGET_FOREIGN_KEYS_SPECIFIED:
                     if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
                         Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                        Optional optional = file.getParentFile().getModelerScene().getBaseElements()
+                                .stream()
+                                .filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity)
+                                .findAny();
+                        if (optional.isPresent() && optional.get() instanceof PrimaryKeyContainerWidget) {
                             String attributeName = de.getMapping().getAttributeName();
                             if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "No target foreign keys have been specified for this mapping. in entity " + entity.getClazz() + " for attribute " + attributeName
                                     + getMessage(DeploymentExceptionManager.class, "OVERRIDE_JOIN_COLUMN"),
                                     "Error : No target foreign keys have been specified", YES_NO_OPTION) == YES_NO_OPTION) {
-                                JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
+                                JPAModelerUtil.removeDefaultJoinColumn((PrimaryKeyContainerWidget) optional.get(), attributeName);
                                 file.getModelerUtil().loadModelerFile(file);
                                 fixError = true;
                             } else {
@@ -248,13 +255,16 @@ public class DeploymentExceptionManager {
                 case NO_FOREIGN_KEYS_ARE_SPECIFIED:
                     if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
                         Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-                        Optional optional = file.getParentFile().getModelerScene().getBaseElements().stream().filter(be -> ((IBaseElementWidget) be).getBaseElementSpec() == entity).findAny();
-                        if (optional.isPresent() && optional.get() instanceof PersistenceClassWidget) {
+                        Optional optional = file.getParentFile().getModelerScene().getBaseElements()
+                                .stream()
+                                .filter(be -> ((IBaseElementWidget)be).getBaseElementSpec() == entity)
+                                .findAny();//todo MappedSuperClass support
+                        if (optional.isPresent() && optional.get() instanceof PrimaryKeyContainerWidget) {
                             String attributeName = de.getMapping().getAttributeName();
                             if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "No foreign keys are specified for this mapping. in entity " + entity.getClazz() + " for attribute " + attributeName
                                     + getMessage(DeploymentExceptionManager.class, "OVERRIDE_JOIN_COLUMN"),
                                     "Error : No foreign keys are specified", YES_NO_OPTION) == YES_NO_OPTION) {
-                                JPAModelerUtil.removeDefaultJoinColumn((PersistenceClassWidget) optional.get(), attributeName);
+                                JPAModelerUtil.removeDefaultJoinColumn((PrimaryKeyContainerWidget) optional.get(), attributeName);
                                 file.getModelerUtil().loadModelerFile(file);
                                 fixError = true;
                             } else {

@@ -22,7 +22,7 @@ import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLLECTION_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLLECTION_TABLE_ICON_PATH;
-import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
+import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -36,7 +36,7 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
 
     public CollectionTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
-        this.addPropertyChangeListener("CollectionTable_name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("CollectionTable_name", (PropertyChangeListener<String>) (oldValue, value) -> {
             setName(value);
             setLabel(name);
         });
@@ -62,16 +62,16 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
         }
 
         if (SQLKeywords.isSQL99ReservedKeyword(CollectionTableWidget.this.getName())) {
-            this.getSignalManager().fire(ERROR, EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().fire(ERROR, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getSignalManager().clear(ERROR, EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().clear(ERROR, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBMapping mapping = CollectionTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(CollectionTableWidget.this.getName()).size() > 1) {
-            getSignalManager().fire(ERROR, EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().fire(ERROR, ClassValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getSignalManager().clear(ERROR, EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().clear(ERROR, ClassValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

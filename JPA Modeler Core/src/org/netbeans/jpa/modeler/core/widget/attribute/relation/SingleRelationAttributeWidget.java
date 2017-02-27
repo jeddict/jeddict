@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -45,11 +46,15 @@ public abstract class SingleRelationAttributeWidget<E extends SingleRelationAttr
             if (this.getClassWidget() instanceof EntityWidget) {
                 ((EntityWidget) this.getClassWidget()).scanKeyError();
             }
-            this.getClassWidget().getAllSubclassWidgets().stream().filter((classWidget) -> (classWidget instanceof EntityWidget)).forEach((classWidget) -> {
-                ((EntityWidget) classWidget).scanKeyError();
-            });
-            this.getClassWidget().isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+            this.getClassWidget().getAllSubclassWidgets()
+                    .stream()
+                    .filter((classWidget) -> (classWidget instanceof EntityWidget))
+                    .forEach((classWidget) -> {
+                        ((EntityWidget) classWidget).scanKeyError();
+                    });
+            if (this.getClassWidget() instanceof PrimaryKeyContainerWidget) {
+                ((PrimaryKeyContainerWidget) this.getClassWidget()).isCompositePKPropertyAllow();//to update default CompositePK class , type //for manual created attribute
+            }
         }
     }
-
 }

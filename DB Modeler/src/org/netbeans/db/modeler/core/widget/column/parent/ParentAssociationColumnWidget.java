@@ -29,16 +29,12 @@ public abstract class ParentAssociationColumnWidget<E extends DBParentAssociatio
 
     public ParentAssociationColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
-            setMultiPropertyName(value);
-        });
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (oldValue, value) -> setMultiPropertyName(value));
 
-        this.addPropertyChangeListener("ass_override_column_name", (PropertyChangeListener<String>) (String value) -> {
-            setMultiPropertyName(value);
-        });
+        this.addPropertyChangeListener("ass_override_column_name", (PropertyChangeListener<String>) (oldValue, value) -> setMultiPropertyName(value));
 
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
-        this.addPropertyChangeListener("ass_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
+        this.addPropertyChangeListener("ass_override_table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
     }
 
     @Override
