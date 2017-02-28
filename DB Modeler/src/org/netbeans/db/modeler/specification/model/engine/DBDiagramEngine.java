@@ -40,7 +40,6 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
 
     @Override
     public void buildToolBar(JToolBar bar) {
-
         buildReloadTool(bar);
         buildExportDocTool(bar);
         buildSatelliteTool(bar);
@@ -57,7 +56,7 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
         JButton reloadButton = new JButton(RELOAD_ICON);
         reloadButton.setToolTipText("Reload Diagram");
         bar.add(reloadButton);
-        reloadButton.addActionListener((ActionEvent e) -> {
+        reloadButton.addActionListener(e -> {
             ModelerFile parentFile = file.getParentFile();
             DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
         });
@@ -88,7 +87,7 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
                 } catch (Exception ex) {
                     file.handleException(ex);
                 }
-                file.loaded();
+                file.load();
                 DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);
                 dbModelerRequestManager.init(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
                 parentFile.addAttribute(DatabaseConnection.class.getName(), connection);

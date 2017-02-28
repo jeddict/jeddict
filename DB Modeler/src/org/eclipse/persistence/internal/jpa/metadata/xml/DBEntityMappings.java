@@ -15,7 +15,6 @@
  */
 package org.eclipse.persistence.internal.jpa.metadata.xml;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +54,7 @@ public class DBEntityMappings extends XMLEntityMappings {
         this.mappings = mappings;
         this.classLoader = classLoader;
 
-        setPackage(mappings.getPackage());
+//        setPackage(mappings.getPackage());//conflict with converter virtual class add the package prefix
         setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
 //      setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
         setMappedSuperclasses(new ArrayList<>());
@@ -96,7 +95,8 @@ public class DBEntityMappings extends XMLEntityMappings {
 
     private void createConverterClass(Converter convert, ClassLoader classLoader) {
         //create Java Class
-        new ByteBuddy()
+        Class<?> attributeConverter = new ByteBuddy()
+//                .subclass(TypeDescription.Generic.Builder.parameterizedType(AttributeConverter.class, String.class, Integer.class).build())
                 .subclass(AttributeConverter.class)
                 .name(convert.getClazz())
                 .annotateType(AnnotationDescription.Builder.ofType(javax.persistence.Converter.class).build())

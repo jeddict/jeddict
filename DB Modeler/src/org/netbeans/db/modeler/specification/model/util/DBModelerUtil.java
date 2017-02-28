@@ -20,13 +20,14 @@ import java.awt.Image;
 import java.awt.Point;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
 import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.tools.schemaframework.JPAMSchemaManager;
-import org.netbeans.api.db.explorer.DatabaseException;
+import org.eclipse.persistence.exceptions.DatabaseException;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
@@ -56,6 +57,7 @@ import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
 import org.netbeans.db.modeler.core.widget.table.SecondaryTableWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
+import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -169,13 +171,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public void loadModelerFile(ModelerFile file) throws org.netbeans.modeler.core.exception.ProcessInterruptedException {
         try {
             loadModelerFileInternal(file);
-        } catch (DBConnectionNotFound | ProcessInterruptedException ie) {
-            DeploymentExceptionManager.handleException(file, ie);
-        } catch (java.lang.NoClassDefFoundError error) {
-            DeploymentExceptionManager.handleException(file, error);
-        } catch (Exception ex) {
+        } catch (DatabaseException |  ValidationException | DBConnectionNotFound | NoClassDefFoundError ex) {
             ex.printStackTrace();
             DeploymentExceptionManager.handleException(file, ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new ProcessInterruptedException(ex.getMessage());
         }
     }
 
@@ -218,14 +219,13 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 databaseLogin.setPassword("");
                 databaseLogin.setDriverClass(Class.forName(DEFAULT_DRIVER));
             } else {
-//                if (connection.getDriverClass() == null) {
                 for (org.netbeans.modules.db.explorer.DatabaseConnection con : ConnectionList.getDefault().getConnections()) {
                     if (con.getDatabaseConnection().getDriverClass().equals(connection.getDriverClassName())) {
                         new ConnectAction.ConnectionDialogDisplayer().showDialog(con, false);
                         try {
                             connection.setDriverClass(con.getDatabaseConnection().getJDBCDriver().getDriver().getClass());
                             connection.setDatabaseConnection(con.getDatabaseConnection());
-                        } catch (DatabaseException ex) {
+                        } catch (org.netbeans.api.db.explorer.DatabaseException ex) {
                             file.handleException(ex);
                         }
                         break;
@@ -233,9 +233,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 }
                 try {
                     dynamicClassLoader = new DynamicDriverClassLoader(file, connection.getDriverClass());
-
                 } catch (NullPointerException ex) {
-                    throw new DBConnectionNotFound();
+                    throw new DBConnectionNotFound(ex.getMessage());
                 }           
                 Thread.currentThread().setContextClassLoader(dynamicClassLoader);
                 databaseLogin.setDatabaseURL(connection.getUrl());

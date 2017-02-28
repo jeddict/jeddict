@@ -38,6 +38,7 @@ import static org.eclipse.persistence.exceptions.DescriptorException.NO_TARGET_F
 import static org.eclipse.persistence.exceptions.DescriptorException.TABLE_NOT_PRESENT;
 import org.eclipse.persistence.exceptions.IntegrityException;
 import org.eclipse.persistence.exceptions.ValidationException;
+import static org.eclipse.persistence.exceptions.ValidationException.CONVERTER_CLASS_NOT_FOUND;
 import static org.eclipse.persistence.exceptions.ValidationException.INCOMPLETE_JOIN_COLUMNS_SPECIFIED;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.netbeans.db.modeler.exception.DBConnectionNotFound;
@@ -87,6 +88,10 @@ public class DeploymentExceptionManager {
             if (validationException.getErrorCode() == INCOMPLETE_JOIN_COLUMNS_SPECIFIED) {
                 showErrorMessage("Incomplete Join Column Specified", validationException.getMessage());
                 fixError = false;
+            }else if (validationException.getErrorCode() == CONVERTER_CLASS_NOT_FOUND) {
+                showErrorMessage("Register Converter", validationException.getMessage()
+                        .replace("persistence unit definition", "(Diagram > Properties > Converters)"));
+                fixError = false;
             }
         } else if (throwable instanceof NoClassDefFoundError) {
             NoClassDefFoundError error = (NoClassDefFoundError) throwable;
@@ -96,11 +101,9 @@ public class DeploymentExceptionManager {
         }
 
         if (fixError == null) {
-            throwable.printStackTrace();
             showException(throwable, file);
+            throw new ProcessInterruptedException(throwable.getMessage());
         } else if (!fixError) {
-            throwable.printStackTrace();
-            file.getModelerPanelTopComponent().close();
             throw new ProcessInterruptedException(throwable.getMessage());
         }
 
@@ -108,7 +111,6 @@ public class DeploymentExceptionManager {
 
     private static void showException(Throwable throwable, ModelerFile file) {
         String message = throwable.getLocalizedMessage();
-        file.getModelerPanelTopComponent().close();
         if (message == null) {
             ExceptionUtils.printStackTrace(throwable.getClass().getName(), throwable, file);
         } else {
