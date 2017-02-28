@@ -25,13 +25,11 @@ import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
-import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
-import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -99,12 +97,12 @@ public class DBUtil {
                 } catch (Exception ex) {
                     file.handleException(ex);
                 }
-                childModelerFile.loaded();
-            } else {
+                childModelerFile.load();
+            } 
+            else {
                 dbChildModelerFile = file.getChildrenFile("DB");
                 if (dbChildModelerFile.isPresent()) {
-                    scene = dbChildModelerFile.get().getModelerScene();
-                    scene.validate();//TODO remove it// should be called from framework
+                    dbChildModelerFile.get().getModelerScene().validate();//TODO remove it// should be called from framework
                 }
             }
         } catch (Throwable t) {

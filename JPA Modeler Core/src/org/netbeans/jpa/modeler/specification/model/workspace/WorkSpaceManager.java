@@ -146,7 +146,7 @@ public class WorkSpaceManager {
         }
 
         int count = 0;
-        final int MAX_LIMIT = 10;
+//        final int MAX_LIMIT = 10;
         for (WorkSpace ws : entityMappings.getWorkSpaces()) {
             JRadioButtonMenuItem workSpaceMenuItem;
             if (count == 0) {
@@ -154,12 +154,13 @@ public class WorkSpaceManager {
             } else {
                 workSpaceMenuItem = new JRadioButtonMenuItem(ws.getName());
             }
+            ++count;
             if (entityMappings.getCurrentWorkSpace() == ws) {
                 workSpaceMenuItem.setSelected(true);
             }
-            if (count < MAX_LIMIT) {
-                workSpaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(Character.forDigit(++count, 10), InputEvent.SHIFT_DOWN_MASK));
-            }
+//            if (count < MAX_LIMIT) {
+//                workSpaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(Character.forDigit(count, 10), InputEvent.SHIFT_DOWN_MASK));
+//            }
             workSpaceMenuItem.addActionListener(e -> {
                 openWorkSpace(true, ws);
             });
