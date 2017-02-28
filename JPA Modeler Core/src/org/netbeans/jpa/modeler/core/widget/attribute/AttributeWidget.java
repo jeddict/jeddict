@@ -17,11 +17,13 @@ package org.netbeans.jpa.modeler.core.widget.attribute;
 
 import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
@@ -57,6 +59,7 @@ import org.netbeans.modeler.widget.properties.generic.ElementCustomPropertySuppo
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.WindowManager;
@@ -74,18 +77,21 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     
     public void visualizeDataType() {
         AttributeViewAs viewAs = ViewPanel.getDataType();
-        
-        String dataType = ((Attribute) this.getBaseElementSpec()).getDataTypeLabel();
-        if (viewAs == AttributeViewAs.SIMPLE_CLASS_NAME) {
-            dataType = JavaSourceHelper.getSimpleClassName(dataType);
-        } else if (viewAs == AttributeViewAs.SHORT_CLASS_NAME) {
-            dataType = JavaSourceHelper.getSimpleClassName(dataType);
-            final int SHORT_LENGTH = 3;
-            if (dataType.length() > SHORT_LENGTH) {
-                dataType = dataType.substring(0, SHORT_LENGTH);
-            }
-        } else if (viewAs == AttributeViewAs.NONE) {
-            return;
+        String dataType = this.getBaseElementSpec().getDataTypeLabel();
+        if (null != viewAs) switch (viewAs) {
+            case SIMPLE_CLASS_NAME:
+                dataType = JavaSourceHelper.getSimpleClassName(dataType);
+                break;
+            case SHORT_CLASS_NAME:
+                dataType = JavaSourceHelper.getSimpleClassName(dataType);
+                final int SHORT_LENGTH = 3;
+                if (dataType.length() > SHORT_LENGTH) {
+                    dataType = dataType.substring(0, SHORT_LENGTH);
+                }   break;
+            case NONE:
+                return;
+            default:
+                break;
         }
         visualizeDataType(dataType);
     }
@@ -157,7 +163,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         JMenuItem delete;
         delete = new JMenuItem("Delete");
         delete.setIcon(DELETE_ICON);
-        delete.addActionListener((ActionEvent e) -> {
+        delete.addActionListener(e -> {
             AttributeWidget.this.remove(true);
         });
 
@@ -168,9 +174,9 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
 
     @Override
     public void init() {
-        setAttributeTooltip();
         this.getClassWidget().scanDuplicateAttributes(null, this.name);
         validateName(null, this.getName());
+        setAttributeTooltip();
         visualizeDataType();
     }
 
@@ -178,7 +184,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void destroy() {
         this.getClassWidget().scanDuplicateAttributes(this.name, null);
     }
-    private void validateName(String previousName,String name){
+    
+    public void validateName(String previousName,String name){
         if (JavaPersistenceQLKeywords.isKeyword(name)) {
             getSignalManager().fire(ERROR, AttributeValidator.ATTRIBUTE_NAME_WITH_JPQL_KEYWORD);
         } else {

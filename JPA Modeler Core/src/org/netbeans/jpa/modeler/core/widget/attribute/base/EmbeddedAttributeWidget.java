@@ -80,9 +80,18 @@ public abstract class EmbeddedAttributeWidget<E extends CompositionAttribute> ex
         this.embeddableFlowWidget = embeddableFlowWidget;
     }
 
+    @Override
+    public void init() {
+        this.getClassWidget().scanDuplicateAttributes(null, this.name);
+        validateName(null, this.getName());
+        //setAttributeTooltip, visualizeDataType moved to setConnectedSibling :: @init on new compo creation no target class connected 
+    }
+    
     public void setConnectedSibling(EmbeddableWidget embeddableWidget) {
         CompositionAttribute compositionAttribute = (CompositionAttribute) this.getBaseElementSpec();
         compositionAttribute.setConnectedClass(embeddableWidget.getBaseElementSpec());
+        setAttributeTooltip();
+        visualizeDataType();
     }
 
     public void showCompositionPath() {

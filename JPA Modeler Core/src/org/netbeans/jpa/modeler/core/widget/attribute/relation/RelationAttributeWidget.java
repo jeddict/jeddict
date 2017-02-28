@@ -68,10 +68,18 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
 
     }
 
+    @Override
+    public void init() {
+        this.getClassWidget().scanDuplicateAttributes(null, this.name);
+        validateName(null, this.getName());
+        //setAttributeTooltip, visualizeDataType moved to setConnectedSibling :: @init on new relationship creation no target class connected
+    }
 
     public void setConnectedSibling(EntityWidget classWidget) {
         RelationAttribute relationAttribute = this.getBaseElementSpec();
         relationAttribute.setConnectedEntity(classWidget.getBaseElementSpec());
+        setAttributeTooltip();
+        visualizeDataType();
     }
 
     public void setConnectedSibling(EntityWidget classWidget, RelationAttributeWidget<RelationAttribute> attributeWidget) {
