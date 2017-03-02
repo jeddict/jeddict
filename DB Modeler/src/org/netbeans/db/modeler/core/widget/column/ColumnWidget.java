@@ -41,7 +41,7 @@ import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
  *
  * @author Gaurav Gupta
  */
-public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, DBModelerScene> {
+public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, DBModelerScene> implements IColumnWidget {
 
     private final List<ReferenceFlowWidget> referenceFlowWidget = new ArrayList<>();
 

@@ -33,7 +33,9 @@ public class TableMemberChildFactory extends TreeChildFactory<TableMembers, Colu
             tableWidget = ((TMRootNode) parentNode).getRootWidget();
         } 
         if (tableWidget != null) {
+            attributeWidgets.addAll(tableWidget.getPrimaryKeyColumnWidgets());
             attributeWidgets.addAll(tableWidget.getColumnWidgets());
+            attributeWidgets.addAll(tableWidget.getForeignKeyWidgets());
         }
         return true;
     }

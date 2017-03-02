@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -71,7 +72,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                             ((ReferenceFlowWidget) w).remove();
                         });
                     }
-                    for (org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget primaryKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getPrimaryKeyWidgets())) {
+                    for (IPrimaryKeyWidget primaryKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getPrimaryKeyWidgets())) {
                         primaryKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
                             ((ReferenceFlowWidget) w).remove();
                         });

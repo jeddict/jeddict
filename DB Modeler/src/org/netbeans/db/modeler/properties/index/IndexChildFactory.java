@@ -17,13 +17,27 @@ package org.netbeans.db.modeler.properties.index;
 
 import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import java.util.Collections;
+import java.util.List;
 import org.netbeans.db.modeler.properties.tablemember.nodes.*;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.openide.nodes.Node;
 
 public class IndexChildFactory extends TableMemberChildFactory {
 
+    @Override
+    protected boolean createKeys(List<ColumnWidget> attributeWidgets) {
+        TableWidget<? extends DBTable> tableWidget = null;
+        if (parentNode instanceof TMRootNode) {
+            tableWidget = ((TMRootNode) parentNode).getRootWidget();
+        } 
+        if (tableWidget != null) {
+            attributeWidgets.addAll(tableWidget.getColumnWidgets());
+        }
+        return true;
+    }
 
     @Override
     protected Node createNodeForKey(final ColumnWidget columnWidget) {

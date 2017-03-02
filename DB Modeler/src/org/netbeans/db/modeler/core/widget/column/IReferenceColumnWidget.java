@@ -24,21 +24,17 @@ import org.netbeans.jpa.modeler.spec.extend.BaseElement;
  *
  * @author Gaurav Gupta
  */
-public interface IReferenceColumnWidget<E extends BaseElement> {
+public interface IReferenceColumnWidget<E extends BaseElement> extends IColumnWidget {
 
     boolean addReferenceFlowWidget(ReferenceFlowWidget flowWidget);
 
     boolean removeReferenceFlowWidget(ReferenceFlowWidget flowWidget);
 
-    String getId();
-    
-    String getName();
+    E getBaseElementSpec();
 
     TableWidget getTableWidget();
 
     List<ReferenceFlowWidget> getReferenceFlowWidget();
-
-    E getBaseElementSpec();
 
     void setAnchorGap(int anchorGap);
 }

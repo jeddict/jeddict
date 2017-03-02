@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Widget;
@@ -281,6 +282,12 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
      */
     public Collection<IPrimaryKeyWidget> getPrimaryKeyWidgets() {
         return primaryKeyWidgets.values();
+    }
+    
+    public Collection<ColumnWidget> getPrimaryKeyColumnWidgets() {
+        return getPrimaryKeyWidgets().stream()
+                    .map(pkw -> (ColumnWidget)pkw)
+                    .collect(toList());
     }
 
     @Override
