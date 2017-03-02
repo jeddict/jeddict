@@ -16,8 +16,8 @@
 package org.netbeans.orm.converter.generator;
 
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 
 public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> {
@@ -53,7 +53,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
                 mappedSuperclass.getExcludeSuperclassListeners());
 
         //Attributes -- Method level annotations
-        Attributes parsedAttributes = mappedSuperclass.getAttributes();
+        IPrimaryKeyAttributes parsedAttributes = mappedSuperclass.getAttributes();
 
         if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(mappedSuperclass, parsedAttributes.getEmbeddedId());

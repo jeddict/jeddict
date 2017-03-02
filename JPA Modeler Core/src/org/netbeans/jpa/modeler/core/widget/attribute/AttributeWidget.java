@@ -16,19 +16,16 @@
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
 import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
-import java.awt.event.ActionEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getAttributeSnippet;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomAnnoation;
@@ -59,7 +56,6 @@ import org.netbeans.modeler.widget.properties.generic.ElementCustomPropertySuppo
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.WindowManager;
@@ -270,8 +266,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     /**
      * @return the classWidget
      */
-    public PersistenceClassWidget getClassWidget() {
-        return (PersistenceClassWidget) this.getPNodeWidget();
+    public JavaClassWidget getClassWidget() {
+        return (JavaClassWidget) this.getPNodeWidget();
     }
 
     public static PropertyVisibilityHandler getMapKeyVisibilityHandler(Attribute attribute){

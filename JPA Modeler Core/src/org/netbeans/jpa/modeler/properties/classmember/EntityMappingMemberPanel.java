@@ -27,6 +27,7 @@ import org.netbeans.jpa.modeler.properties.rootmember.nodes.EntityManagerChildFa
 import org.netbeans.jpa.modeler.properties.rootmember.nodes.EMLeafNode;
 import org.netbeans.jpa.modeler.properties.rootmember.nodes.EMRootNode;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
@@ -98,12 +99,12 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public List<JavaClass> getSelectedJavaClass() {
-        List<JavaClass> classes = new ArrayList<>();
+    public List<JavaClass<IAttributes>> getSelectedJavaClass() {
+        List<JavaClass<IAttributes>> classes = new ArrayList<>();
         if (node instanceof TreeParentNode) {
             for (TreeNode childNode : ((TreeParentNode<EntityMappings>) node).getChildList()) {
                 if (childNode instanceof TreeChildNode && childNode.getCheckableNode() != null) {
-                    JavaClass javaClass = ((EMLeafNode) childNode).getJavaClass();
+                    JavaClass<IAttributes> javaClass = ((EMLeafNode) childNode).getJavaClass();
                     if (childNode.getCheckableNode().isSelected()) {
                         classes.add(javaClass);
                     }

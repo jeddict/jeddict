@@ -35,7 +35,7 @@ public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers,Attri
             classWidget = ((CMRootNode) parentNode).getRootWidget();
         }
         if (classWidget != null) {
-            attributeWidgets.addAll(classWidget.getAllAttributeWidgets());
+            attributeWidgets.addAll(classWidget.getAllSortedAttributeWidgets());
         }
         return true;
     }

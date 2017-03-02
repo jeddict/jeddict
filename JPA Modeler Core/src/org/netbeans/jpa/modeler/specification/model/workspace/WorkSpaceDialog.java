@@ -26,6 +26,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.properties.classmember.EntityMappingMemberPanel;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceItem;
@@ -198,13 +199,11 @@ public class WorkSpaceDialog extends GenericDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private Set<JavaClass> findDependents(Set<JavaClass> selectedClasses){
-        
-        Set<JavaClass> dependantClasses = selectedClasses.stream()
+    private Set<JavaClass<? extends IAttributes>> findDependents(Set<JavaClass<? extends IAttributes>> selectedClasses){
+        Set<JavaClass<? extends IAttributes>> dependantClasses = selectedClasses.stream()
                 .flatMap(_class -> _class.getAllSuperclass().stream())
                 .collect(toSet());
          dependantClasses.removeAll(selectedClasses);
-        
         return dependantClasses;
     }
     
@@ -213,8 +212,6 @@ public class WorkSpaceDialog extends GenericDialog {
             showMessageDialog(this, "Name can't be empty", "Invalid Value", WARNING_MESSAGE);
             return false;
         }
-             
-        
         return true;
     }
     private void save_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ButtonActionPerformed
@@ -223,10 +220,10 @@ public class WorkSpaceDialog extends GenericDialog {
         }
         
         //add dependantClasses
-        Set<JavaClass> selectedClasses = entityMappingPanel.getSelectedJavaClass()
+        Set<JavaClass<? extends IAttributes>> selectedClasses = entityMappingPanel.getSelectedJavaClass()
                         .stream()
                         .collect(toSet());
-        Set<JavaClass> dependantClasses = findDependents(selectedClasses);
+        Set<JavaClass<? extends IAttributes>> dependantClasses = findDependents(selectedClasses);
         String dependantClassesText = dependantClasses.stream().map(JavaClass::getClazz).collect(joining(","));
         if (dependantClasses.size() > 0) {
             int option = showConfirmDialog(WindowManager.getDefault().getMainWindow(), String.format("Workspace is dependent on [%s] classes, \n Are you sure you want to proceed by adding [%s]?", dependantClasses.size(), dependantClassesText), "Dependant class", YES_NO_OPTION);

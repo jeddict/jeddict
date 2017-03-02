@@ -185,7 +185,7 @@ public class PreExecutionUtil {
                         DefaultAttribute attribute = new DefaultAttribute(idSpec);
                         attribute.setAttributeType(idSpec.getAttributeType());
                         attribute.setName(idSpec.getName());
-                        _class.addAttribute(attribute);
+                        _class.getAttributes().addDefaultAttribute(attribute);
                     }
                     for (SingleRelationAttributeWidget<SingleRelationAttribute> relationAttributeWidget : primaryKeyContainerWidget.getDerivedRelationAttributeWidgets()) {
                         SingleRelationAttribute relationAttributeSpec = relationAttributeWidget.getBaseElementSpec();
@@ -215,7 +215,7 @@ public class PreExecutionUtil {
                             attribute.setName(relationAttributeSpec.getName());// matches name of @Id Relation attribute//PK
                             attribute.setDerived(true);
                         }
-                        _class.addAttribute(attribute);
+                        _class.getAttributes().addDefaultAttribute(attribute);
                         //Start : if dependent class is Embedded that add @MapsId to Derived PK
                         if (pkContainerSpec.isIdClassType()) {
                             if (relationAttributeSpec instanceof OneToOne) {

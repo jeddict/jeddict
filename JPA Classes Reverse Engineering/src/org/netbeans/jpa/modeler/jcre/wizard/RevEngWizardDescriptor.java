@@ -45,6 +45,7 @@ import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.jpa.modeler._import.javaclass.JCREProcessor;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.getModelerFileVersion;
@@ -209,7 +210,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
             classes.addAll(entityMappingsSpec.getMappedSuperclass());
             classes.addAll(entityMappingsSpec.getEmbeddable());
 
-            for (ManagedClass managedClass : classes) {
+            for (ManagedClass<IPersistenceAttributes> managedClass : classes) {
                 for (RelationAttribute attribute : new ArrayList<>(managedClass.getAttributes().getRelationAttributes())) {
                     String entityClass = StringUtils.isBlank(entityMappingsSpec.getPackage()) ? attribute.getTargetEntity() : entityMappingsSpec.getPackage() + '.' + attribute.getTargetEntity();
                     if (!entities.contains(entityClass)) {

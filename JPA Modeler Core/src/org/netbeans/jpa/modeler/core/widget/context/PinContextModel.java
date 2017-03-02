@@ -36,9 +36,11 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTORelationAttrib
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DOWN_ICON;
@@ -105,49 +107,58 @@ public class PinContextModel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
 
                 if (widget instanceof AttributeWidget) {
-                    PersistenceClassWidget<ManagedClass> classWidget = ((AttributeWidget) widget).getClassWidget();
+                    JavaClassWidget<JavaClass> classWidget = ((AttributeWidget) widget).getClassWidget();
                     IAttributes attributes = classWidget.getBaseElementSpec().getAttributes();
                     List list = null;
                     List specList = null;
                     AttributeWidget attributeWidget = (AttributeWidget) widget;
-                    if ((attributeWidget instanceof IdAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
-                        list = ((PrimaryKeyContainerWidget) classWidget).getIdAttributeWidgets();
-                        specList = ((IPersistenceAttributes) attributes).getId();
-                    } else if (attributeWidget instanceof EmbeddedAttributeWidget) {
+                    
+                    if(classWidget instanceof PrimaryKeyContainerWidget){
+                        PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget = (PrimaryKeyContainerWidget)classWidget;
+                        if (attributeWidget instanceof IdAttributeWidget) {
+                            list = primaryKeyContainerWidget.getIdAttributeWidgets();
+                            specList = primaryKeyContainerWidget.getBaseElementSpec().getAttributes().getId();
+                        } else if (attributeWidget instanceof VersionAttributeWidget) {
+                            list = primaryKeyContainerWidget.getVersionAttributeWidgets();
+                            specList = primaryKeyContainerWidget.getBaseElementSpec().getAttributes().getVersion();
+                        }
+                    } else if(classWidget instanceof PersistenceClassWidget){
+                       PersistenceClassWidget<? extends ManagedClass<? extends IPersistenceAttributes>> persistenceClassWidget = (PersistenceClassWidget)classWidget;
+                        if (attributeWidget instanceof EmbeddedAttributeWidget) {
                         if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
-                            list = classWidget.getSingleValueEmbeddedAttributeWidgets();
-                            specList = attributes.getEmbedded();
+                            list = persistenceClassWidget.getSingleValueEmbeddedAttributeWidgets();
+                            specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getEmbedded();
                         } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
-                            list = classWidget.getMultiValueEmbeddedAttributeWidgets();
-                            specList = attributes.getElementCollection();
+                            list = persistenceClassWidget.getMultiValueEmbeddedAttributeWidgets();
+                            specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getElementCollection();
                         }
                     } else if (attributeWidget instanceof BasicAttributeWidget) {
-                        list = classWidget.getBasicAttributeWidgets();
-                        specList = attributes.getBasic();
+                        list = persistenceClassWidget.getBasicAttributeWidgets();
+                        specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getBasic();
                     } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
-                        list = classWidget.getBasicCollectionAttributeWidgets();
-                        specList = attributes.getElementCollection();
+                        list = persistenceClassWidget.getBasicCollectionAttributeWidgets();
+                        specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getElementCollection();
                     } else if (attributeWidget instanceof RelationAttributeWidget) {
                         if (attributeWidget instanceof OTORelationAttributeWidget) {
-                            list = classWidget.getOneToOneRelationAttributeWidgets();
-                            specList = attributes.getOneToOne();
+                            list = persistenceClassWidget.getOneToOneRelationAttributeWidgets();
+                            specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getOneToOne();
                         } else if (attributeWidget instanceof OTMRelationAttributeWidget) {
-                            list = classWidget.getOneToManyRelationAttributeWidgets();
-                            specList = attributes.getOneToMany();
+                            list = persistenceClassWidget.getOneToManyRelationAttributeWidgets();
+                            specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getOneToMany();
                         } else if (attributeWidget instanceof MTORelationAttributeWidget) {
-                            list = classWidget.getManyToOneRelationAttributeWidgets();
-                            specList = attributes.getManyToOne();
+                            list = persistenceClassWidget.getManyToOneRelationAttributeWidgets();
+                            specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getManyToOne();
                         } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
-                            list = classWidget.getManyToManyRelationAttributeWidgets();
-                            specList = attributes.getManyToMany();
+                            list = persistenceClassWidget.getManyToManyRelationAttributeWidgets();
+                            specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getManyToMany();
                         }
-                    } else if ((attributeWidget instanceof VersionAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
-                        list = ((PrimaryKeyContainerWidget) classWidget).getVersionAttributeWidgets();
-                        specList = ((IPersistenceAttributes) attributes).getVersion();
-                    } else if (attributeWidget instanceof TransientAttributeWidget) {
-                        list = classWidget.getTransientAttributeWidgets();
-                        specList = attributes.getTransient();
+                    }  else if (attributeWidget instanceof TransientAttributeWidget) {
+                        list = persistenceClassWidget.getTransientAttributeWidgets();
+                        specList = persistenceClassWidget.getBaseElementSpec().getAttributes().getTransient();
+                    } 
                     }
+                    
+                            
                     int index = list.indexOf(attributeWidget);
                     if ((index == 0 && distance < 0) || (list.size() == index + 1 && distance > 0)) {
                         return;
@@ -174,38 +185,46 @@ public class PinContextModel {
 
     private static boolean checkMoveWidgetVisibility(final IPinWidget widget, final int distance) {
         if (widget instanceof AttributeWidget) {
-            PersistenceClassWidget<ManagedClass> classWidget = ((AttributeWidget) widget).getClassWidget();
+            JavaClassWidget<JavaClass> classWidget = ((AttributeWidget) widget).getClassWidget();
             List list = null;
             AttributeWidget attributeWidget = (AttributeWidget) widget;
 
-            if ((attributeWidget instanceof IdAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
-                list = ((PrimaryKeyContainerWidget) classWidget).getIdAttributeWidgets();
-            } else if (attributeWidget instanceof EmbeddedAttributeWidget) {
-                if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
-                    list = classWidget.getSingleValueEmbeddedAttributeWidgets();
-                } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
-                    list = classWidget.getMultiValueEmbeddedAttributeWidgets();
+            if (classWidget instanceof PrimaryKeyContainerWidget) {
+                PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget = (PrimaryKeyContainerWidget) classWidget;
+                if (attributeWidget instanceof IdAttributeWidget) {
+                    list = primaryKeyContainerWidget.getIdAttributeWidgets();
+                } else if (attributeWidget instanceof VersionAttributeWidget) {
+                    list = primaryKeyContainerWidget.getVersionAttributeWidgets();
                 }
-            } else if (attributeWidget instanceof BasicAttributeWidget) {
-                list = classWidget.getBasicAttributeWidgets();
-            } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
-                list = classWidget.getBasicCollectionAttributeWidgets();
-            } else if (attributeWidget instanceof RelationAttributeWidget) {
-                if (attributeWidget instanceof OTORelationAttributeWidget) {
-                    list = classWidget.getOneToOneRelationAttributeWidgets();
-                } else if (attributeWidget instanceof OTMRelationAttributeWidget) {
-                    list = classWidget.getOneToManyRelationAttributeWidgets();
-                } else if (attributeWidget instanceof MTORelationAttributeWidget) {
-                    list = classWidget.getManyToOneRelationAttributeWidgets();
-                } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
-                    list = classWidget.getManyToManyRelationAttributeWidgets();
+            } else if (classWidget instanceof PersistenceClassWidget) {
+                PersistenceClassWidget<? extends ManagedClass<? extends IPersistenceAttributes>> persistenceClassWidget = (PersistenceClassWidget)classWidget;
+                if (attributeWidget instanceof EmbeddedAttributeWidget) {
+                    if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
+                        list = persistenceClassWidget.getSingleValueEmbeddedAttributeWidgets();
+                    } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
+                        list = persistenceClassWidget.getMultiValueEmbeddedAttributeWidgets();
+                    }
+                } else if (attributeWidget instanceof BasicAttributeWidget) {
+                    list = persistenceClassWidget.getBasicAttributeWidgets();
+                } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
+                    list = persistenceClassWidget.getBasicCollectionAttributeWidgets();
+                } else if (attributeWidget instanceof RelationAttributeWidget) {
+                    if (attributeWidget instanceof OTORelationAttributeWidget) {
+                        list = persistenceClassWidget.getOneToOneRelationAttributeWidgets();
+                    } else if (attributeWidget instanceof OTMRelationAttributeWidget) {
+                        list = persistenceClassWidget.getOneToManyRelationAttributeWidgets();
+                    } else if (attributeWidget instanceof MTORelationAttributeWidget) {
+                        list = persistenceClassWidget.getManyToOneRelationAttributeWidgets();
+                    } else if (attributeWidget instanceof MTMRelationAttributeWidget) {
+                        list = persistenceClassWidget.getManyToManyRelationAttributeWidgets();
+                    }
+                } else if ((attributeWidget instanceof VersionAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
+                    list = ((PrimaryKeyContainerWidget) classWidget).getVersionAttributeWidgets();
+                } else if (attributeWidget instanceof TransientAttributeWidget) {
+                    list = persistenceClassWidget.getTransientAttributeWidgets();
                 }
-            } else if ((attributeWidget instanceof VersionAttributeWidget) && (classWidget instanceof PrimaryKeyContainerWidget)) {
-                list = ((PrimaryKeyContainerWidget) classWidget).getVersionAttributeWidgets();
-            } else if (attributeWidget instanceof TransientAttributeWidget) {
-                list = classWidget.getTransientAttributeWidgets();
             }
-
+            
             if (list == null) {
                 return false;
             }

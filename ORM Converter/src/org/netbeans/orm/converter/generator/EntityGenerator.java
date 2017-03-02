@@ -16,7 +16,6 @@
 package org.netbeans.orm.converter.generator;
 
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -25,6 +24,7 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.JOINED;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.TABLE_PER_CLASS;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.orm.converter.compiler.DiscriminatorColumnSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorValueSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet;
@@ -83,7 +83,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         processNamedStoredProcedureQueries((EntityMappings) entity.getRootElement(), entity.getNamedStoredProcedureQuery());
 
         //Attributes -- Method level annotations
-        Attributes parsedAttributes = entity.getAttributes();
+        IPrimaryKeyAttributes parsedAttributes = entity.getAttributes();
 
         if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(entity, parsedAttributes.getEmbeddedId());

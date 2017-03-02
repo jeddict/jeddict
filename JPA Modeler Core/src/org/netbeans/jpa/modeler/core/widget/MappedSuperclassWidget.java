@@ -16,7 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.awt.Image;
-import org.netbeans.jpa.modeler.spec.Attributes;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
@@ -37,7 +37,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
         super.init();
         MappedSuperclass mappedSuperclass = this.getBaseElementSpec();
         if (mappedSuperclass.getAttributes() == null) {
-            mappedSuperclass.setAttributes(new Attributes());
+            mappedSuperclass.setAttributes(new PrimaryKeyAttributes());
         }
         if (mappedSuperclass.getClazz() == null || mappedSuperclass.getClazz().isEmpty()) {
             mappedSuperclass.setClazz(this.getModelerScene().getNextClassName("MappedSuperclass_"));

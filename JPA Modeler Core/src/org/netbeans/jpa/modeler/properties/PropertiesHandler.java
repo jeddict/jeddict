@@ -335,7 +335,7 @@ public class PropertiesHandler {
             }
 
             private List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
-                PersistenceClassWidget classWidget;
+                JavaClassWidget classWidget;
                 if (attributeWidget instanceof MultiRelationAttributeWidget) {
                     classWidget = ((MultiRelationAttributeWidget) attributeWidget).getRelationFlowWidget().getTargetEntityWidget();
                 } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {

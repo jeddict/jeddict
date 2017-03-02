@@ -58,6 +58,7 @@ import org.openide.windows.WindowManager;
 import static org.openide.util.NbBundle.getMessage;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
 
@@ -397,5 +398,8 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         colorScheme.updateUI(this, this.getState(), this.getState());
     }
 
+    public abstract void scanDuplicateAttributes(String previousName, String newName);
+
+    public abstract List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets();
 
 }

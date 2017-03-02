@@ -46,9 +46,9 @@ public class AttributeValidator {
     public final static String MULTIPLE_EMBEDDEDID_FOUND = "MSG_MultipleEmbeddedIdFound";
     public final static String TABLE_NOT_PRESENT = "MSG_TableNotPresent";
 
-    public static void validateEmbeddedIdAndIdFound(PersistenceClassWidget peristenceClassWidget_In) {
-        List<JavaClassWidget> javaClassWidgets = peristenceClassWidget_In.getAllSubclassWidgets();
-        javaClassWidgets.add(peristenceClassWidget_In);
+    public static void validateEmbeddedIdAndIdFound(JavaClassWidget javaClassWidgetRoot) {
+        List<JavaClassWidget> javaClassWidgets = javaClassWidgetRoot.getAllSubclassWidgets();
+        javaClassWidgets.add(javaClassWidgetRoot);
         for (JavaClassWidget javaClassWidget : javaClassWidgets) {
             if (javaClassWidget instanceof PrimaryKeyContainerWidget) {
                 PrimaryKeyContainerWidget primaryKeyContainerWidget = (PrimaryKeyContainerWidget) javaClassWidget;

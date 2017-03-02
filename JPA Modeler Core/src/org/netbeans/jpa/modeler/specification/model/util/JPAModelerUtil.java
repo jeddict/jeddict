@@ -155,6 +155,7 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
 import static org.openide.util.NbBundle.getMessage;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
@@ -524,14 +525,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     private void loadAttribute(JavaClassWidget classWidget) {
         if (classWidget.getBaseElementSpec() instanceof ManagedClass) {
-            ManagedClass classSpec = (ManagedClass) classWidget.getBaseElementSpec();
+            ManagedClass<IPersistenceAttributes> classSpec = (ManagedClass) classWidget.getBaseElementSpec();
             PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) classWidget;
             WorkSpace workSpace = classSpec.getRootElement().getCurrentWorkSpace();
             if (classSpec.getAttributes() != null) {
-                if ((classSpec.getAttributes() instanceof IPersistenceAttributes)
+                if ((classSpec.getAttributes() instanceof IPrimaryKeyAttributes)
                         && (classWidget instanceof PrimaryKeyContainerWidget)) {
                     PrimaryKeyContainerWidget primaryKeyContainerWidget = (PrimaryKeyContainerWidget) classWidget;
-                    IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) classSpec.getAttributes();
+                    IPrimaryKeyAttributes persistenceAttributes = (IPrimaryKeyAttributes) classSpec.getAttributes();
                     persistenceAttributes.getId()
                             .stream()
                             .forEach((id) -> primaryKeyContainerWidget.addNewIdAttribute(id.getName(), id));

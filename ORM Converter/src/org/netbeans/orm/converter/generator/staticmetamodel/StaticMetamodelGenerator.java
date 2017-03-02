@@ -26,6 +26,7 @@ import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
@@ -111,21 +112,24 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         if (parsedAttributes != null) {
             if (parsedAttributes instanceof IPersistenceAttributes) {
                 IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) parsedAttributes;
-                if (persistenceAttributes.getEmbeddedId() == null) {
-                    processBase(persistenceAttributes.getId());
-                } else {
-                    processBase(persistenceAttributes.getEmbeddedId());
+                if (parsedAttributes instanceof IPrimaryKeyAttributes) {
+                    IPrimaryKeyAttributes primaryKeyAttributes = (IPrimaryKeyAttributes) parsedAttributes;
+                    if (primaryKeyAttributes.getEmbeddedId() == null) {
+                        processBase(primaryKeyAttributes.getId());
+                    } else {
+                        processBase(primaryKeyAttributes.getEmbeddedId());
+                    }
+                    processBase(primaryKeyAttributes.getVersion());
                 }
-                processBase(persistenceAttributes.getVersion());//todo move to last
-            }
 
-            processBase(parsedAttributes.getBasic());
-            processBase(parsedAttributes.getElementCollection());
-            processBase(parsedAttributes.getEmbedded());
-            processRelation(parsedAttributes.getOneToOne());
-            processRelation(parsedAttributes.getManyToOne());
-            processRelation(parsedAttributes.getOneToMany());
-            processRelation(parsedAttributes.getManyToMany());
+                processBase(persistenceAttributes.getBasic());
+                processBase(persistenceAttributes.getElementCollection());
+                processBase(persistenceAttributes.getEmbedded());
+                processRelation(persistenceAttributes.getOneToOne());
+                processRelation(persistenceAttributes.getManyToOne());
+                processRelation(persistenceAttributes.getOneToMany());
+                processRelation(persistenceAttributes.getManyToMany());
+            }
 }
 
         // Classlevel annotations

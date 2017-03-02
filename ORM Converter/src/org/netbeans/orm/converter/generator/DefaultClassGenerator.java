@@ -20,7 +20,7 @@ import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 
 public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
-    
+
     private DefaultClass defaultClass;
 
     public DefaultClassGenerator(DefaultClass parsedDefaultClass, String packageName) {
@@ -32,11 +32,13 @@ public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
 
     @Override
     public ClassDefSnippet getClassDef() {
-        defaultClass.getAttributes().stream().forEach((defaultAttribute) -> {
-            VariableDefSnippet variableDef = getVariableDef(defaultAttribute);
-            variableDef.setType(defaultAttribute.getAttributeType());
-        });
-        classDef = initClassDef(packageName,defaultClass);
+        defaultClass.getAttributes().getDefaultAttributes()
+                .stream()
+                .forEach((defaultAttribute) -> {
+                    VariableDefSnippet variableDef = getVariableDef(defaultAttribute);
+                    variableDef.setType(defaultAttribute.getAttributeType());
+                });
+        classDef = initClassDef(packageName, defaultClass);
         classDef.setDefaultClass(true);
 
         return classDef;

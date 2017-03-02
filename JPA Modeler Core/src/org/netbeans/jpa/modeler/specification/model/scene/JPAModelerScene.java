@@ -85,6 +85,7 @@ import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
+import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.DBUtil.isolateEntityMapping;
 import org.netbeans.jpa.modeler.specification.model.workspace.WorkSpaceManager;
@@ -135,7 +136,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         for (IBaseElementWidget e : getBaseElements()) {
             boolean failure = false;
             if (e instanceof PersistenceClassWidget) {
-                PersistenceClassWidget<ManagedClass> p = ((PersistenceClassWidget<ManagedClass>) e);
+                PersistenceClassWidget<ManagedClass<IPersistenceAttributes>> p = ((PersistenceClassWidget<ManagedClass<IPersistenceAttributes>>) e);
                 if (!p.getSignalManager().getSignalList(ERROR).isEmpty()) {
                     errorMessage.append(p.getName()).append(':').append('\n');
                     p.getSignalManager().getSignalList(ERROR).values().forEach(v -> {
@@ -184,7 +185,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     }
 
                     if (baseElementWidget instanceof PersistenceClassWidget) {
-                        PersistenceClassWidget<ManagedClass> persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
+                        PersistenceClassWidget<ManagedClass<IPersistenceAttributes>> persistenceClassWidget = (PersistenceClassWidget<ManagedClass<IPersistenceAttributes>>) baseElementWidget;
                         persistenceClassWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion prcedd each element locked
                         for (RelationFlowWidget relationFlowWidget : new CopyOnWriteArrayList<>(persistenceClassWidget.getInverseSideRelationFlowWidgets())) {
                             relationFlowWidget.remove();

@@ -31,12 +31,9 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedIdAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTMRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
@@ -66,10 +63,9 @@ import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.IAttributes;
+import org.netbeans.jpa.modeler.spec.extend.AttributeLocationComparator;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
-import org.netbeans.jpa.modeler.spec.extend.PrimaryKeyContainer;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
@@ -84,7 +80,7 @@ import org.openide.util.RequestProcessor;
  *
  * @author Gaurav_Gupta
  */
-public abstract class PersistenceClassWidget<E extends ManagedClass> extends JavaClassWidget<E> {
+public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IPersistenceAttributes>> extends JavaClassWidget<E> {
 
     private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<>();
     private final List<BasicAttributeWidget> basicAttributeWidgets = new ArrayList<>();
@@ -98,8 +94,14 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<>();
        
     public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
-
         return getAllAttributeWidgets(true);
+    }
+    
+    public List<AttributeWidget<? extends Attribute>> getAllSortedAttributeWidgets() {
+        List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(true);
+        AttributeLocationComparator attributeLocationComparator = new AttributeLocationComparator();
+        attributeWidgets.sort((a1, a2) -> attributeLocationComparator.compare(a1.getBaseElementSpec(), a2.getBaseElementSpec()));
+        return attributeWidgets;
     }
 
     public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute) {
@@ -235,8 +237,8 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
 
     @Override
     public void deleteAttribute(AttributeWidget attributeWidget) {
-        ManagedClass javaClass = this.getBaseElementSpec();
-        IAttributes attributes = javaClass.getAttributes();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
+        IPersistenceAttributes attributes = javaClass.getAttributes();
         if (attributeWidget == null) {
             return;
         }
@@ -333,7 +335,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public BasicAttributeWidget addNewBasicAttribute(String name, Basic basic) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 
         if (basic == null) {
             basic = new Basic();
@@ -355,7 +357,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public BasicCollectionAttributeWidget addNewBasicCollectionAttribute(String name, ElementCollection elementCollection) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 
         if (elementCollection == null) {
             elementCollection = new ElementCollection();
@@ -376,7 +378,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public TransientAttributeWidget addNewTransientAttribute(String name, Transient _transient) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (_transient == null) {
             _transient = new Transient();
             _transient.setId(NBModelerUtil.getAutoGeneratedStringId());
@@ -396,7 +398,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public OTORelationAttributeWidget addNewOneToOneRelationAttribute(String name,boolean primaryKey, OneToOne oneToOne) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (oneToOne == null) {
             oneToOne = new OneToOne();
             oneToOne.setPrimaryKey(primaryKey);
@@ -415,7 +417,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public OTMRelationAttributeWidget addNewOneToManyRelationAttribute(String name, OneToMany oneToMany) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (oneToMany == null) {
             oneToMany = new OneToMany();
             oneToMany.setId(NBModelerUtil.getAutoGeneratedStringId());
@@ -434,7 +436,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public MTORelationAttributeWidget addNewManyToOneRelationAttribute(String name, boolean primaryKey, ManyToOne manyToOne) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (manyToOne == null) {
             manyToOne = new ManyToOne();
             manyToOne.setPrimaryKey(primaryKey);
@@ -452,7 +454,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public MTMRelationAttributeWidget addNewManyToManyRelationAttribute(String name, ManyToMany manyToMany) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (manyToMany == null) {
             manyToMany = new ManyToMany();
             manyToMany.setId(NBModelerUtil.getAutoGeneratedStringId());
@@ -471,7 +473,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public SingleValueEmbeddedAttributeWidget addNewSingleValueEmbeddedAttribute(String name, Embedded embedded) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 //        if (javaClass.getAttributes() == null) {
 //            javaClass.setAttributes(new Attributes());
 //        }
@@ -493,7 +495,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass> extends Jav
     }
 
     public MultiValueEmbeddedAttributeWidget addNewMultiValueEmbeddedAttribute(String name, ElementCollection elementCollection) {
-        ManagedClass javaClass = this.getBaseElementSpec();
+        ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 
         if (elementCollection == null) {
             elementCollection = new ElementCollection();

@@ -22,14 +22,15 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
-import org.netbeans.jpa.modeler.spec.Attributes;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
-import org.netbeans.jpa.modeler.spec.extend.BaseAttributes;
+import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
@@ -129,7 +130,7 @@ public class DBUtil {
 
     }
 
-    private static void mapToOrignalObject(BaseAttributes orignalAttributes, BaseAttributes clonedAttributes) {
+    private static void mapToOrignalObject(IPersistenceAttributes orignalAttributes, IPersistenceAttributes clonedAttributes) {
 
         clonedAttributes.getBasic().forEach(a -> {
             a.setOrignalObject(orignalAttributes.getBasic(a.getId()).get());
@@ -156,19 +157,19 @@ public class DBUtil {
         clonedAttributes.getTransient().forEach(a -> {
             a.setOrignalObject(orignalAttributes.getTransient(a.getId()).get());
         });
-        if (clonedAttributes instanceof Attributes) {
-            ((Attributes) clonedAttributes).getId().forEach(a -> {
-                a.setOrignalObject(((Attributes) orignalAttributes).getId(a.getId()).get());
+        if (clonedAttributes instanceof PrimaryKeyAttributes) {
+            ((PrimaryKeyAttributes) clonedAttributes).getId().forEach(a -> {
+                a.setOrignalObject(((PrimaryKeyAttributes) orignalAttributes).getId(a.getId()).get());
             });
-            ((Attributes) clonedAttributes).getVersion().forEach(a -> {
-                a.setOrignalObject(((Attributes) orignalAttributes).getVersion(a.getId()).get());
+            ((PrimaryKeyAttributes) clonedAttributes).getVersion().forEach(a -> {
+                a.setOrignalObject(((PrimaryKeyAttributes) orignalAttributes).getVersion(a.getId()).get());
             });
         }
 
     }
 
     private static void makeSiblingOrphan(Entity entity, RelationAttribute relationAttribute, Entity siblingEntity, RelationAttribute siblingRelationAttribute) {
-        Attributes attr = entity.getAttributes();
+        IPrimaryKeyAttributes attr = entity.getAttributes();
         if (relationAttribute != null) {
             attr.getManyToMany().removeIf(r -> r != relationAttribute);
             attr.getManyToOne().removeIf(r -> r != relationAttribute);
@@ -194,7 +195,7 @@ public class DBUtil {
     }
 
     private static void makeSiblingOrphan(MappedSuperclass mappedSuperclass) {
-        Attributes attr = mappedSuperclass.getAttributes();
+        IPrimaryKeyAttributes attr = mappedSuperclass.getAttributes();
         attr.setManyToMany(null);
         attr.setManyToOne(null);
         attr.setOneToMany(null);
@@ -230,7 +231,7 @@ public class DBUtil {
         connectedEntities.addAll(connectedEntities
                 .stream()
                 .flatMap(ce -> ce.getAllSuperclass().stream().filter(sc -> sc instanceof Entity).map(sc -> (Entity) sc))
-                .collect(toList()));
+                .collect(toSet()));
 
         connectedEntities.remove(entityClone);
 
@@ -291,7 +292,7 @@ public class DBUtil {
         return mappingClone;
     }
     
-    private static void isolateClass(ManagedClass classSpec, WorkSpace workSpace){
+    private static void isolateClass(ManagedClass<IPersistenceAttributes> classSpec, WorkSpace workSpace){
 //        if (classSpec.getAttributes() instanceof IPersistenceAttributes) {
 //                    IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) classSpec.getAttributes();
 //                    EmbeddedId embeddedId = persistenceAttributes.getEmbeddedId();

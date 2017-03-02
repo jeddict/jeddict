@@ -49,7 +49,7 @@ public class OrderByChildFactory extends TreeChildFactory<OrderBy,AttributeWidge
             classWidget = ((OBInternalNode) parentNode).getParentWidget();
         }
         if (classWidget != null) {
-            for (AttributeWidget attributeWidget : classWidget.getAllAttributeWidgets()) {
+            for (AttributeWidget attributeWidget : classWidget.getAllSortedAttributeWidgets()) {
                 if (attributeWidget instanceof TransientAttributeWidget || (attributeWidget instanceof RelationAttributeWidget && !((RelationAttributeWidget<? extends RelationAttribute>) attributeWidget).getBaseElementSpec().isOwner())) {
                     // skip
                 } else {//check for all remaining
