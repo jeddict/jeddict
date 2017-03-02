@@ -41,9 +41,7 @@ import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 public class ExecutionEGChildFactory extends TreeChildFactory<NamedEntityGraph, AttributeWidget> {
@@ -69,7 +67,7 @@ public class ExecutionEGChildFactory extends TreeChildFactory<NamedEntityGraph, 
             for (AttributeWidget attributeWidget : classWidget.getAllAttributeWidgets()) {
                 if (attributeWidget instanceof IdAttributeWidget || attributeWidget instanceof EmbeddedIdAttributeWidget || attributeWidget instanceof EmbeddedAttributeWidget || attributeWidget instanceof VersionAttributeWidget) {
                     attributeWidgets.add(attributeWidget);
-                } else if (attributeWidget instanceof TransientAttributeWidget || (attributeWidget instanceof RelationAttributeWidget && !((RelationAttributeWidget<? extends RelationAttribute>) attributeWidget).getBaseElementSpec().isOwner())) {
+                } else if (attributeWidget instanceof TransientAttributeWidget) {
                     // skip
                 } else { //check for all remaining
                     Attribute attribute = (Attribute) attributeWidget.getBaseElementSpec();
