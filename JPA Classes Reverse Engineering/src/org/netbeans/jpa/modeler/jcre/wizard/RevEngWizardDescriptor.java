@@ -91,7 +91,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
 
     @Override
     public Set<?> instantiate() throws IOException {
-        final Set<String> entities = new HashSet<String>((List) wizard.getProperty(WizardProperties.ENTITY_CLASS));
+        final Set<String> entities = new HashSet<>((List) wizard.getProperty(WizardProperties.ENTITY_CLASS));
         if (getProject() == null) {
             setProject(Templates.getProject(wizard));
         }
@@ -117,31 +117,23 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
         final ProgressPanel progressPanel = new ProgressPanel();
         final JComponent progressComponent = AggregateProgressFactory.createProgressComponent(handle);
         final ProgressReporter reporter = new ProgressReporterDelegate(progressContributor, progressPanel);
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    handle.start();
-                    int progressStepCount = getProgressStepCount(entities.size());
-                    progressContributor.start(progressStepCount);
-                    generateJPAModel(reporter, entities, getProject(), packageFileObject, fileName, includeReference, softWrite, true);
-                    progressContributor.progress(progressStepCount);
-                } catch (IOException ioe) {
-                    Logger.getLogger(RevEngWizardDescriptor.class.getName()).log(Level.INFO, null, ioe);
-                    NotifyDescriptor nd = new NotifyDescriptor.Message(ioe.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
-                    DialogDisplayer.getDefault().notify(nd);
-                } catch (ProcessInterruptedException ce) {
-                    Logger.getLogger(RevEngWizardDescriptor.class.getName()).log(Level.INFO, null, ce);
-                } finally {
-                    progressContributor.finish();
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressPanel.close();
-                        }
-                    });
-                    handle.finish();
-                }
+        final Runnable r = () -> {
+            try {
+                handle.start();
+                int progressStepCount = getProgressStepCount(entities.size());
+                progressContributor.start(progressStepCount);
+                generateJPAModel(reporter, entities, getProject(), packageFileObject, fileName, includeReference, softWrite, true);
+                progressContributor.progress(progressStepCount);
+            } catch (IOException ioe) {
+                Logger.getLogger(RevEngWizardDescriptor.class.getName()).log(Level.INFO, null, ioe);
+                NotifyDescriptor nd = new NotifyDescriptor.Message(ioe.getLocalizedMessage(), NotifyDescriptor.ERROR_MESSAGE);
+                DialogDisplayer.getDefault().notify(nd);
+            } catch (ProcessInterruptedException ce) {
+                Logger.getLogger(RevEngWizardDescriptor.class.getName()).log(Level.INFO, null, ce);
+            } finally {
+                progressContributor.finish();
+                SwingUtilities.invokeLater(progressPanel::close);
+                handle.finish();
             }
         };
 

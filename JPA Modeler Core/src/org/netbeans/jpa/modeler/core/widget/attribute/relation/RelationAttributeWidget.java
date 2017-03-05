@@ -86,7 +86,8 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
         RelationAttribute relationAttribute = this.getBaseElementSpec();
         relationAttribute.setConnectedEntity(classWidget.getBaseElementSpec());
         relationAttribute.setConnectedAttribute(attributeWidget.getBaseElementSpec());
-
+        setAttributeTooltip();
+        visualizeDataType();
     }
 
     public abstract RelationFlowWidget getRelationFlowWidget();
