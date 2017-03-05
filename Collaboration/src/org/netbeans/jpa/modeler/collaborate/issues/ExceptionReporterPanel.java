@@ -19,17 +19,15 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import static org.netbeans.jpa.modeler.collaborate.enhancement.EnhancementRequestHandler.ENHANCEMENT_ICON;
 import static org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils.ISSUES_URL;
 import org.netbeans.jpa.modeler.network.social.SharingHelper;
-import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.window.GenericDialog;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.util.Exceptions;
-import org.openide.util.ImageUtilities;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
 
@@ -44,12 +42,12 @@ public class ExceptionReporterPanel extends GenericDialog {
 
     private final String bugDescription;
 
-    private final ModelerFile file;
+    private final String content;
     private final Throwable throwable;
 
-    public ExceptionReporterPanel(String bugDescription, Throwable throwable, ModelerFile file) {
+    public ExceptionReporterPanel(String bugDescription, Throwable throwable, String content) {
         super((Frame) WindowManager.getDefault().getMainWindow(), getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.title"),true);
-        this.file = file;
+        this.content = content;
         this.throwable = throwable;
         this.bugDescription = bugDescription;
         initComponents();
@@ -86,7 +84,7 @@ public class ExceptionReporterPanel extends GenericDialog {
         actionPane.setPreferredSize(new java.awt.Dimension(900, 50));
 
         submitButton.setBackground(javax.swing.UIManager.getDefaults().getColor("MenuItem.selectionBackground"));
-        org.openide.awt.Mnemonics.setLocalizedText(submitButton, file==null?buttonAttachText:buttonText);
+        org.openide.awt.Mnemonics.setLocalizedText(submitButton, content==null?buttonAttachText:buttonText);
         submitButton.setToolTipText(org.openide.util.NbBundle.getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.submitButton.toolTipText")); // NOI18N
         submitButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         submitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -104,6 +102,9 @@ public class ExceptionReporterPanel extends GenericDialog {
             }
         });
 
+        actionPane.setLayer(submitButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        actionPane.setLayer(cancelButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout actionPaneLayout = new javax.swing.GroupLayout(actionPane);
         actionPane.setLayout(actionPaneLayout);
         actionPaneLayout.setHorizontalGroup(
@@ -120,8 +121,6 @@ public class ExceptionReporterPanel extends GenericDialog {
             .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(submitButton, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
         );
-        actionPane.setLayer(submitButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        actionPane.setLayer(cancelButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         bugDescriptionTextPane.setForeground(new java.awt.Color(255, 255, 255));
         bugDescriptionTextPane.setText(bugDescription);
@@ -130,6 +129,11 @@ public class ExceptionReporterPanel extends GenericDialog {
         bugDescriptionPane.setViewportView(bugDescriptionTextPane);
 
         org.openide.awt.Mnemonics.setLocalizedText(bugDescriptionLabel, org.openide.util.NbBundle.getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.bugDescriptionLabel.text")); // NOI18N
+
+        root.setLayer(iconLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root.setLayer(actionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root.setLayer(bugDescriptionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root.setLayer(bugDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout rootLayout = new javax.swing.GroupLayout(root);
         root.setLayout(rootLayout);
@@ -162,10 +166,6 @@ public class ExceptionReporterPanel extends GenericDialog {
                 .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        root.setLayer(iconLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root.setLayer(actionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root.setLayer(bugDescriptionPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        root.setLayer(bugDescriptionLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -192,8 +192,8 @@ public class ExceptionReporterPanel extends GenericDialog {
             report.append("Message : ").append(bugDescription).append('\n').append('\n');
             throwable.printStackTrace(new PrintWriter(stringWriter));
             report.append("StackTrace : ").append('\n').append(stringWriter.toString()).append('\n').append('\n');
-            if (file != null) {
-                report.append("ModelerFile : ").append('\n').append("```xml").append('\n').append(file.getContent()).append("```");
+            if (content != null) {
+                report.append("ModelerFile : ").append('\n').append("```xml").append('\n').append(content).append("```");
             }
             Toolkit toolkit = Toolkit.getDefaultToolkit();
             Clipboard clipboard = toolkit.getSystemClipboard();
@@ -210,10 +210,9 @@ public class ExceptionReporterPanel extends GenericDialog {
 
         }
         NotificationDisplayer.getDefault().notify("Logs coppied",
-                ImageUtilities.image2Icon(file.getIcon()),
-                "Logs coppied to clipboard, please report the issue with these logs", (ActionEvent e) -> {
-
-                }, NotificationDisplayer.Priority.NORMAL, NotificationDisplayer.Category.INFO);
+                ENHANCEMENT_ICON,
+                "Logs coppied to clipboard, please report the issue with these logs", e -> { }, 
+                NotificationDisplayer.Priority.NORMAL, NotificationDisplayer.Category.INFO);
     }//GEN-LAST:event_submitButtonActionPerformed
 
 

@@ -65,8 +65,9 @@ public final class ExceptionUtils implements IExceptionHandler {
         }
         final String message = errorMessage;
         LOG.log(Level.ALL, errorMessage, t);
+        String content = file.getContent();
         SwingUtilities.invokeLater(() -> {
-            ExceptionReporterPanel exceptionReporterPanel = new ExceptionReporterPanel(message, t, file);
+            ExceptionReporterPanel exceptionReporterPanel = new ExceptionReporterPanel(message, t, content);
             exceptionReporterPanel.setVisible(true);
         });
       

@@ -405,6 +405,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public void saveModelerFile(ModelerFile file) {
         file.getParentFile().getModelerUtil().saveModelerFile(file.getParentFile());
     }
+    
+    @Override
+    public String getContent(ModelerFile file) {
+        return file.getParentFile().getModelerUtil().getContent(file.getParentFile());
+    }
 
     @Override
     public INodeWidget updateNodeWidgetDesign(ShapeDesign shapeDesign, INodeWidget inodeWidget) {

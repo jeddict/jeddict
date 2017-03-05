@@ -128,9 +128,9 @@ public class PreExecutionUtil {
                 primaryKeyContainerWidget.onCompositePrimaryKeyTypeChange(pkContainerSpec.getCompositePrimaryKeyType());//if global config change [Default(IdClass) -> Default(EmbeddedId)]
 
                 if (compositePKProperty == CompositePKProperty.AUTO_CLASS) {
-                    RelationAttributeWidget relationAttributeWidget = primaryKeyContainerWidget.getDerivedRelationAttributeWidgets().get(0);
-                    RelationAttribute relationAttribute = (RelationAttribute) relationAttributeWidget.getBaseElementSpec();
-                    IFlowElementWidget targetElementWidget = (EntityWidget) relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
+                    RelationAttributeWidget<RelationAttribute> relationAttributeWidget = primaryKeyContainerWidget.getDerivedRelationAttributeWidgets().get(0);
+                    RelationAttribute relationAttribute = relationAttributeWidget.getBaseElementSpec();
+                    IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
                     EntityWidget targetEntityWidget = null;
                     if (targetElementWidget instanceof EntityWidget) {
                         targetEntityWidget = (EntityWidget) targetElementWidget;

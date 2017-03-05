@@ -748,6 +748,15 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         saveFile(entityMappings, file.getFile());
     }
 
+    @Override
+    public String getContent(ModelerFile file) {
+        EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
+        JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
+        scene.getWorkSpaceManager().updateWorkSpace();
+        PreExecutionUtil.preExecution(file);
+        return getContent(entityMappings);
+    }
+
     public static void removeDefaultJoinColumn(PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget, String attributeName) {
         for (SingleRelationAttributeWidget attributeWidget : primaryKeyContainerWidget.getIdRelationAttributeWidgets()) {
             SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
@@ -802,11 +811,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 relationAttribute.getJoinColumn().addAll(joinColumns);
             }
         }
-//                }
     }
 
     public static void saveFile(EntityMappings entityMappings, File file) {
-
         try {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
@@ -818,6 +825,23 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         } catch (JAXBException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
+    }
+
+    public String getContent(EntityMappings entityMappings) {
+        StringWriter sw = new StringWriter();
+        try {
+            if (MODELER_MARSHALLER == null) {
+                MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
+                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                MODELER_MARSHALLER.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd");
+                MODELER_MARSHALLER.setEventHandler(new ValidateJAXB());
+            }
+            MODELER_MARSHALLER.marshal(entityMappings, sw);
+
+        } catch (JAXBException ex) {
+            ExceptionUtils.printStackTrace(ex);
+        }
+        return sw.toString();
     }
 
     public static void createNewModelerFile(EntityMappings entityMappingsSpec, FileObject parentFileObject, String fileName, boolean autoOpen) {

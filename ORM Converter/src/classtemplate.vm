@@ -10,13 +10,13 @@ package $classDef.getPackageName();
 import java.io.Serializable;
 #foreach ( $importStatement in $classDef.getImportSnippets() )
 $importStatement
-#end
 
+#end
 #####################java doc ###############################
 #if ($classDef.isJavaDocExist())
 $classDef.getJavaDoc()
-#end
 
+#end
 #if($classDef.getEntityString())
 $classDef.getEntityString()
 #end
