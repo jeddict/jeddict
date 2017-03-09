@@ -15,8 +15,9 @@
  */
 package org.netbeans.jpa.modeler.navigator.nodes;
 
-import static org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode.Direction.DOWN;
-import static org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode.Direction.UP;
+import static org.netbeans.jpa.modeler.navigator.nodes.Direction.DOWN;
+import static org.netbeans.jpa.modeler.navigator.nodes.Direction.UP;
+import static org.netbeans.jpa.modeler.navigator.nodes.Direction.NONE;
 import org.openide.explorer.view.CheckableNode;
 
 /**
@@ -82,10 +83,10 @@ public class CheckableAttributeNode<E> implements CheckableNode {
         setSelected(selected, null);
     }
     
-    private void setSelected(Boolean selected, Direction autoCheck) {
+    public void setSelected(Boolean selected, Direction autoCheck) {
         checked = selected;
 
-        if (selected) {     //For parent and child_pk
+        if (selected && autoCheck != NONE) {     //For parent and child_pk
             CheckableAttributeNode parentCheckableNode;
             if (node instanceof TreeChildNode && autoCheck != DOWN) {  //for parent
                 parentCheckableNode = ((TreeChildNode) node).getParent().getCheckableNode();
@@ -102,12 +103,11 @@ public class CheckableAttributeNode<E> implements CheckableNode {
                 }
             }
 
-        } else //if unselected
-        //For children : uncheck the child if parent unchecked
-        {
-            if (!selected && node instanceof TreeParentNode) {
+        } else if (!selected) { //For children : uncheck the child if parent unchecked
+            if (node instanceof TreeParentNode) {
                 for (TreeChildNode childNode : ((TreeParentNode<E>) node).getChildList()) {
-                    if (childNode.getCheckableNode().isSelected()) {
+                    if (childNode.getCheckableNode().isSelected() &&
+                           childNode.getCheckableNode().isEnableWithParent()) {
                         childNode.getCheckableNode().setSelected(false);
                     }
                 }
@@ -118,11 +118,7 @@ public class CheckableAttributeNode<E> implements CheckableNode {
             node.refreshView();
         }
     }
-    
-    enum Direction {
-//if on child selection all parent selected and on parent selection all child selected then it produce recursive selection bug so Direction introduced
-        UP, DOWN;
-    }
+ 
 
     /**
      * @return the node
