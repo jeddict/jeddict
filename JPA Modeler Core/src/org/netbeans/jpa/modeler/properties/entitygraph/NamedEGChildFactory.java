@@ -19,7 +19,6 @@ import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
@@ -37,7 +36,7 @@ import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.openide.nodes.Node;
 
 public class NamedEGChildFactory extends TreeChildFactory<NamedEntityGraph, AttributeWidget> {
@@ -95,18 +94,11 @@ public class NamedEGChildFactory extends TreeChildFactory<NamedEntityGraph, Attr
             NamedEGChildFactory childFactory = new NamedEGChildFactory();//parentWidget, embeddedAttributeWidget, embeddableWidget );
             childNode = new EGInternalNode(embeddableWidget, embeddedAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory, checkableNode);
         } else if (attributeWidget instanceof RelationAttributeWidget) {
-            RelationAttributeWidget relationAttributeWidget = (RelationAttributeWidget) attributeWidget;
-            IFlowElementWidget targetElementWidget = relationAttributeWidget.getRelationFlowWidget().getTargetWidget();
-            EntityWidget targetEntityWidget = null;
-            if (targetElementWidget instanceof EntityWidget) {
-                targetEntityWidget = (EntityWidget) targetElementWidget;
-            } else if (targetElementWidget instanceof RelationAttributeWidget) {
-                RelationAttributeWidget targetRelationAttributeWidget = (RelationAttributeWidget) targetElementWidget;
-                targetEntityWidget = (EntityWidget) targetRelationAttributeWidget.getClassWidget();//target can be only Entity
-            }
+            RelationAttributeWidget<RelationAttribute> relationAttributeWidget = (RelationAttributeWidget) attributeWidget;
+            PersistenceClassWidget connectedEntityWidget = relationAttributeWidget.getConnectedClassWidget();
 
             NamedEGChildFactory childFactory = new NamedEGChildFactory();//parentWidget, relationAttributeWidget, targetEntityWidget);
-            childNode = new EGInternalNode(targetEntityWidget, relationAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory, checkableNode);
+            childNode = new EGInternalNode(connectedEntityWidget, relationAttributeWidget, parentNode.getBaseElementSpec(), subgraph, childFactory, checkableNode);
         } else {
             childNode = new EGLeafNode(attributeWidget, parentNode.getBaseElementSpec(), checkableNode);
         }

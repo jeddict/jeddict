@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
@@ -32,6 +33,7 @@ import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.NANO_DB;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -105,6 +107,19 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
             menuList.add(0, visDB);
         }
         return menuList;
+    }
+    
+    public PersistenceClassWidget getConnectedClassWidget(){
+            IFlowElementWidget flowElementWidget = this.getBaseElementSpec().isOwner() ? 
+                    this.getRelationFlowWidget().getTargetWidget() : 
+                    this.getRelationFlowWidget().getSourceWidget();
+            PersistenceClassWidget connectedClassWidget = null;
+            if (flowElementWidget instanceof PersistenceClassWidget) {
+                connectedClassWidget = (PersistenceClassWidget) flowElementWidget;
+            } else if (flowElementWidget instanceof RelationAttributeWidget) {
+                connectedClassWidget = (PersistenceClassWidget) ((RelationAttributeWidget) flowElementWidget).getClassWidget();//target can be only Entity && source should be PersistenceClassWidget
+            }
+            return connectedClassWidget;
     }
 
 }
