@@ -427,7 +427,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             try {
                 entityMappings = getEntityMapping(savedFile);
             } catch (JAXBException ex) {
-                if (StringUtils.isBlank(file.getContent())) {
+                if (StringUtils.isBlank(file.getFileContent())) {
                     entityMappings = null;
                 } else {
                     throw ex;
@@ -751,6 +751,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     @Override
     public String getContent(ModelerFile file) {
         EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
+//        if(entityMappings==null){
+//            return "";
+//        }
         JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
         scene.getWorkSpaceManager().updateWorkSpace();
         PreExecutionUtil.preExecution(file);

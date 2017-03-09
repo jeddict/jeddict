@@ -15,14 +15,13 @@
  */
 package org.netbeans.jpa.modeler.specification.model.workspace;
 
-import java.awt.event.InputEvent;
 import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.KeyStroke;
 import static javax.swing.SwingUtilities.invokeLater;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -93,7 +92,6 @@ public class WorkSpaceManager {
     })
     public void loadWorkspaceUI() {
         EntityMappings entityMappings = scene.getBaseElementSpec();
-        ModelerFile file = scene.getModelerFile();
         workSpaceMenu.removeAll();
 
         JMenuItem createWPItem = new JMenuItem(Bundle.CREATE_WORK_SPACE(), CREATE_ICON);
@@ -108,17 +106,19 @@ public class WorkSpaceManager {
         });
         workSpaceMenu.add(createWPItem);
 
-        JMenuItem deleteAllWPItem = new JMenuItem(Bundle.DELETE_ALL_WORK_SPACE(), DELETE_ALL_ICON);
-        deleteAllWPItem.addActionListener(e -> {
-            int option = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), Bundle.DELETE_ALL_WORK_SPACE_CONTENT(), Bundle.DELETE_ALL_WORK_SPACE_TITLE(), JOptionPane.YES_NO_OPTION);
-            if (option == javax.swing.JOptionPane.OK_OPTION) {
-                entityMappings.removeAllWorkSpace();
-                file.getModelerPanelTopComponent().changePersistenceState(false);
-                openWorkSpace(true, entityMappings.getRootWorkSpace());
-            }
-        });
-        workSpaceMenu.add(deleteAllWPItem);
-
+        if (entityMappings.getWorkSpaces().size() > 1) {
+            JMenuItem deleteAllWPItem = new JMenuItem(Bundle.DELETE_ALL_WORK_SPACE(), DELETE_ALL_ICON);
+            deleteAllWPItem.addActionListener(e -> {
+                WorkSpaceTrashDialog workSpaceDialog = new WorkSpaceTrashDialog(scene);
+                workSpaceDialog.setVisible(true);
+                if (workSpaceDialog.isCurrentWorkSpaceDeleted()) {
+                    openWorkSpace(true, entityMappings.getRootWorkSpace());
+                } else {
+                    loadWorkspaceUI();
+                }
+            });
+            workSpaceMenu.add(deleteAllWPItem);
+        }
         workSpaceMenu.addSeparator();
 
         if (entityMappings.getCurrentWorkSpace() != entityMappings.getRootWorkSpace()) {
@@ -190,9 +190,9 @@ public class WorkSpaceManager {
 
     public void syncWorkSpaceItemLocation() {
         EntityMappings entityMappings = scene.getBaseElementSpec();
-        for(WorkSpaceItem item : entityMappings.getCurrentWorkSpace().getItems()){
+        for (WorkSpaceItem item : entityMappings.getCurrentWorkSpace().getItems()) {
             IBaseElementWidget widget = scene.getBaseElement(item.getJavaClass().getId());
-            if(widget!=null && widget instanceof JavaClassWidget){
+            if (widget != null && widget instanceof JavaClassWidget) {
                 JavaClassWidget<JavaClass> javaClassWidget = (JavaClassWidget<JavaClass>) widget;
                 item.setX(javaClassWidget.getSceneViewBound().x);
                 item.setY(javaClassWidget.getSceneViewBound().y);
