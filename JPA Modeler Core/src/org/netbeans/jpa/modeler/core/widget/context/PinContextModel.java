@@ -108,7 +108,6 @@ public class PinContextModel {
 
                 if (widget instanceof AttributeWidget) {
                     JavaClassWidget<JavaClass> classWidget = ((AttributeWidget) widget).getClassWidget();
-                    IAttributes attributes = classWidget.getBaseElementSpec().getAttributes();
                     List list = null;
                     List specList = null;
                     AttributeWidget attributeWidget = (AttributeWidget) widget;
@@ -157,7 +156,6 @@ public class PinContextModel {
                             }
                         }
                     }
-                    
                             
                     int index = list.indexOf(attributeWidget);
                     if ((index == 0 && distance < 0) || (list.size() == index + 1 && distance > 0)) {

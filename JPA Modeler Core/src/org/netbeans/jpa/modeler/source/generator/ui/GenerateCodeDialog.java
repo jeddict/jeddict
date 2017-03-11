@@ -284,8 +284,6 @@ public class GenerateCodeDialog extends GenericDialog {
         businessLayerLabel = new javax.swing.JLabel();
         targetProjectCombo = new javax.swing.JComboBox();
         targetProjectLabel = new javax.swing.JLabel();
-        sourceFolderCombo = new javax.swing.JComboBox();
-        sourceFolderLabel = new javax.swing.JLabel();
         viewerLayerLabel = new javax.swing.JLabel();
         viewerLayerCombo = new javax.swing.JComboBox();
         controllerLayerCombo = new javax.swing.JComboBox();
@@ -325,14 +323,6 @@ public class GenerateCodeDialog extends GenericDialog {
         org.openide.awt.Mnemonics.setLocalizedText(targetProjectLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetProjectLabel.text")); // NOI18N
         targetProjectLabel.setPreferredSize(new java.awt.Dimension(150, 17));
 
-        sourceFolderCombo.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                sourceFolderComboItemStateChanged(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(sourceFolderLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.sourceFolderLabel.text")); // NOI18N
-
         org.openide.awt.Mnemonics.setLocalizedText(viewerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.viewerLayerLabel.text")); // NOI18N
 
         resourcePackageCombo.setEditable(true);
@@ -367,8 +357,6 @@ public class GenerateCodeDialog extends GenericDialog {
         optionPane.setLayer(businessLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(targetProjectCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(targetProjectLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(sourceFolderCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(sourceFolderLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(viewerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(viewerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(controllerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -391,11 +379,7 @@ public class GenerateCodeDialog extends GenericDialog {
                             .addGroup(optionPaneLayout.createSequentialGroup()
                                 .addComponent(targetProjectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(25, 25, 25)
-                                .addComponent(sourceFolderLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(sourceFolderCombo, 0, 149, Short.MAX_VALUE))
+                                .addComponent(targetProjectCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(optionPaneLayout.createSequentialGroup()
                                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(viewerLayerLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -409,7 +393,7 @@ public class GenerateCodeDialog extends GenericDialog {
                                     .addComponent(businessLayerCombo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(viewerLayerCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(optionPaneLayout.createSequentialGroup()
-                                        .addComponent(resourcePackageCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(resourcePackageCombo, 0, 499, Short.MAX_VALUE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(entitySetting, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap())
@@ -420,10 +404,7 @@ public class GenerateCodeDialog extends GenericDialog {
                 .addGap(29, 29, 29)
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(targetProjectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(sourceFolderLabel)
-                        .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(sourceFolderCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -528,7 +509,7 @@ public class GenerateCodeDialog extends GenericDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(completeAppCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 245, Short.MAX_VALUE)
                         .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(optionPane))
                 .addContainerGap())
@@ -557,11 +538,6 @@ public class GenerateCodeDialog extends GenericDialog {
         populateSourceFolderCombo();
         initLayer();
     }//GEN-LAST:event_targetProjectComboItemStateChanged
-
-    private void sourceFolderComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sourceFolderComboItemStateChanged
-        setSourceGroup((SourceGroup) sourceFolderCombo.getSelectedItem());
-        populatePackageCombo();
-    }//GEN-LAST:event_sourceFolderComboItemStateChanged
 
     private void generateSourceCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSourceCodeActionPerformed
         if (!hasError()) {
@@ -678,7 +654,6 @@ public class GenerateCodeDialog extends GenericDialog {
     //
     private void enableExistingProjectElementGroup(boolean enable) {
         targetProjectCombo.setEnabled(enable);
-        sourceFolderCombo.setEnabled(enable);
     }
 
     private void populateProjectCombo() {
@@ -716,24 +691,25 @@ public class GenerateCodeDialog extends GenericDialog {
         if (getTargetPoject() == null) {
             if (targetProjectCombo.getSelectedItem() != null) {
                 setTargetPoject((Project) targetProjectCombo.getSelectedItem());
-                sourceFolderCombo.setEnabled(true);
-            } else {
-                sourceFolderCombo.setEnabled(false);
             }
+//                sourceFolderCombo.setEnabled(true);
+//            } else {
+//                sourceFolderCombo.setEnabled(false);
+//            }
         } else {
             targetProjectCombo.setSelectedItem(getTargetPoject());
-            sourceFolderCombo.setEnabled(true);
+//            sourceFolderCombo.setEnabled(true);
         }
 
         if (targetProjectCombo.getSelectedItem() != null) {
             populateSourceFolderCombo();
-            sourceFolderCombo.setEnabled(true);
+//            sourceFolderCombo.setEnabled(true);
         }
     }
 
     private void populateSourceFolderCombo() {
-        SourceRootCellRenderer srcCellRenderer = new SourceRootCellRenderer(sourceFolderCombo.getRenderer());
-        sourceFolderCombo.setRenderer(srcCellRenderer);
+//        SourceRootCellRenderer srcCellRenderer = new SourceRootCellRenderer(sourceFolderCombo.getRenderer());
+//        sourceFolderCombo.setRenderer(srcCellRenderer);
         ArrayList<SourceGroup> srcRoots = new ArrayList<>();
         int index = 0;
         FileObject sfo = getSourceGroup() != null ? getSourceGroup().getRootFolder() : null;
@@ -753,16 +729,20 @@ public class GenerateCodeDialog extends GenericDialog {
                 }
             }
         }
-
-        DefaultComboBoxModel rootsModel = new DefaultComboBoxModel(srcRoots.toArray());
-        sourceFolderCombo.setModel(rootsModel);
+        
         if (srcRoots.size() > 0) {
-            sourceFolderCombo.setSelectedIndex(index);
             setSourceGroup(srcRoots.get(index));
-            sourceFolderCombo.setEnabled(true);
-        } else {
-            sourceFolderCombo.setEnabled(false);
         }
+
+//        DefaultComboBoxModel rootsModel = new DefaultComboBoxModel(srcRoots.toArray());
+//        sourceFolderCombo.setModel(rootsModel);
+//        if (srcRoots.size() > 0) {
+//            sourceFolderCombo.setSelectedIndex(index);
+//            setSourceGroup(srcRoots.get(index));
+//            sourceFolderCombo.setEnabled(true);
+//        } else {
+//            sourceFolderCombo.setEnabled(false);
+//        }
         populatePackageCombo();
     }
 
@@ -842,8 +822,6 @@ public class GenerateCodeDialog extends GenericDialog {
     private javax.swing.JLayeredPane optionPane;
     private javax.swing.JLabel packageLabel;
     private javax.swing.JComboBox resourcePackageCombo;
-    private javax.swing.JComboBox sourceFolderCombo;
-    private javax.swing.JLabel sourceFolderLabel;
     private javax.swing.JComboBox targetProjectCombo;
     private javax.swing.JLabel targetProjectLabel;
     private javax.swing.JComboBox viewerLayerCombo;
