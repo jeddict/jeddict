@@ -15,8 +15,13 @@
  */
 package org.netbeans.jpa.modeler.source.generator.task;
 
+import java.io.IOException;
+import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
+import org.netbeans.jcode.console.Console;
+import static org.netbeans.jcode.console.Console.FG_MAGENTA;
 import org.netbeans.jcode.generator.JEEApplicationGenerator;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
 import org.netbeans.jcode.task.AbstractNBTask;
@@ -30,6 +35,7 @@ import org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm.ORMInput
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.util.PreExecutionUtil;
 import org.netbeans.modeler.core.ModelerFile;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
@@ -41,11 +47,19 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
     private final Runnable afterExecution;
 
     private final static int SUBTASK_TOT = 1;
+    private static String BANNER_TXT;
 
     public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appicationConfigData, Runnable afterExecution) {
         this.modelerFile = modelerFile;
         this.appicationConfigData = appicationConfigData;
         this.afterExecution=afterExecution;
+        if (BANNER_TXT == null) {
+            try (InputStream stream = getClass().getResourceAsStream("banner")) {
+                BANNER_TXT = Console.wrap(IOUtils.toString(stream), FG_MAGENTA);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
     }
 
     @Override
@@ -93,6 +107,9 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
      *
      */
     private void exportCode() {
+        ProgressHandler handler = new ProgressConsoleHandler(this);
+        handler.append(BANNER_TXT);
+        
         ISourceCodeGeneratorFactory sourceGeneratorFactory = Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);
         ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
         InputDefinition definiton = new ORMInputDefiniton();
@@ -103,7 +120,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         entityMappings.cleanRuntimeArtifact();
         if (appicationConfigData.getBussinesTechContext()!= null) {
             appicationConfigData.setEntityMappings(entityMappings);
-            applicationGenerator = new JEEApplicationGenerator(appicationConfigData, new ProgressConsoleHandler(this));
+            applicationGenerator = new JEEApplicationGenerator(appicationConfigData, handler);
             applicationGenerator.preGeneration();
         }
         
