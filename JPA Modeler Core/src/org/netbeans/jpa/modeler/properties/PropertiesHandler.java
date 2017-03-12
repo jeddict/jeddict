@@ -1369,6 +1369,7 @@ public class PropertiesHandler {
             @Override
             public void setData(InheritanceHandler classSpec) {
                 entityWidget.setBaseElementSpec((Entity) classSpec);
+                entityWidget.scanDiscriminatorValue();
             }
 
             @Override

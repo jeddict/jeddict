@@ -43,11 +43,15 @@ public final class SignalManager {
     }
 
     public void fire(IWidgetStateHandler.StateType stateType, String key, Object... param) {
-        handler.get(stateType).fire(key, param);
+        if (canOverride(stateType)) {
+            handler.get(stateType).fire(key, param);
+        }
     }
 
     public void fire(IWidgetStateHandler.StateType stateType, String key) {
-        handler.get(stateType).fire(key);
+        if (canOverride(stateType)) {
+            handler.get(stateType).fire(key);
+        }
     }
 
     public void clear(IWidgetStateHandler.StateType stateType, String key) {
@@ -56,6 +60,15 @@ public final class SignalManager {
 
     public Map<String, String> getSignalList(IWidgetStateHandler.StateType stateType) {
         return handler.get(stateType).getSignalList();
+    }
+    
+    private boolean canOverride(IWidgetStateHandler.StateType stateType){
+        return handler.keySet().stream()
+                .filter(st -> stateType != st || st.getPriority() < stateType.getPriority())
+                .map(handler::get)
+                .map(SignalHandler::getSignalList)
+                .mapToInt(Map::size)
+                .sum() == 0;
     }
     
     public void signalNext(){

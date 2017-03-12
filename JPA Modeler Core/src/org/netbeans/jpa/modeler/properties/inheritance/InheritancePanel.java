@@ -1,7 +1,7 @@
 package org.netbeans.jpa.modeler.properties.inheritance;
 
+import static java.lang.Boolean.TRUE;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -10,7 +10,6 @@ import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.BRANCH;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.LEAF;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
-import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.jpa.modeler.spec.Inheritance;
@@ -19,7 +18,6 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.widget.properties.customattr.Property;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 /**
  * Copyright [2014] Gaurav Gupta
@@ -129,13 +127,13 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
             inheritanceHandler.setInheritance(null);
             inheritanceHandler.setDiscriminatorColumn(null);
         }
-        if (type == LEAF || type == BRANCH) {
+        
+        boolean isAbstract = TRUE.equals(entityWidget.getBaseElementSpec().getAbstract()); 
+        if (!isAbstract && (type == LEAF || type == BRANCH || type == ROOT)) {
             inheritanceHandler.setDiscriminatorValue(value_TextField.getText());
         } else {
             inheritanceHandler.setDiscriminatorValue(null);
         }
-        
-//    
 
         return inheritanceHandler;
     }
@@ -144,7 +142,7 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
     public void setValue(InheritanceHandler inheritanceHandler) {
         this.inheritanceHandler = inheritanceHandler;
         type = entityWidget.getInheritanceState();
-
+        boolean isAbstract = TRUE.equals(entityWidget.getBaseElementSpec().getAbstract()); 
          switch (type) {
             case SINGLETON:
                 setEnablePanel(strategy_LayeredPane, false);
@@ -152,15 +150,12 @@ public class InheritancePanel extends GenericEmbeddedEditor<InheritanceHandler> 
                 break;
             case LEAF:
                 setEnablePanel(strategy_LayeredPane, false);
-                setEnablePanel(value_LayeredPane, true);
+                setEnablePanel(value_LayeredPane, !isAbstract);
                 break;
             case ROOT:
-                setEnablePanel(strategy_LayeredPane, true);
-                setEnablePanel(value_LayeredPane, false);
-                break;
             case BRANCH:
                 setEnablePanel(strategy_LayeredPane, true);
-                setEnablePanel(value_LayeredPane, true);
+                setEnablePanel(value_LayeredPane, !isAbstract);
                 break;
         }
 
