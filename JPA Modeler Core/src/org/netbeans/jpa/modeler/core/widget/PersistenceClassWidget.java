@@ -149,6 +149,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
         });
     }
 
+    @Override
     public void scanDuplicateAttributes(String previousName, String newName) {
         int previousNameCount = 0, newNameCount = 0;
         List<AttributeWidget<? extends Attribute>> attributeWidgets = this.getAllAttributeWidgets(true);
@@ -645,14 +646,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
         return manyToOneRelationAttributeWidgets;
     } 
 
+    @Deprecated //prefer PersistenceAttributes.getDerivedRelationAttributes
     public List<SingleRelationAttributeWidget> getDerivedRelationAttributeWidgets() {
         List<SingleRelationAttributeWidget> relationAttributeWidget = new ArrayList<>();
-        oneToOneRelationAttributeWidgets.stream().filter((oneToOneRelationAttributeWidget) -> (oneToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey())).forEach((oneToOneRelationAttributeWidget) -> {
-            relationAttributeWidget.add(oneToOneRelationAttributeWidget);
-        });
-        manyToOneRelationAttributeWidgets.stream().filter((manyToOneRelationAttributeWidget) -> (manyToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey())).forEach((manyToOneRelationAttributeWidget) -> {
-            relationAttributeWidget.add(manyToOneRelationAttributeWidget);
-        });
+        oneToOneRelationAttributeWidgets.stream()
+                .filter((oneToOneRelationAttributeWidget) -> (oneToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey()))
+                .forEach((oneToOneRelationAttributeWidget) -> {
+                    relationAttributeWidget.add(oneToOneRelationAttributeWidget);
+                });
+        manyToOneRelationAttributeWidgets.stream()
+                .filter((manyToOneRelationAttributeWidget) -> (manyToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey()))
+                .forEach((manyToOneRelationAttributeWidget) -> {
+                    relationAttributeWidget.add(manyToOneRelationAttributeWidget);
+                });
         return relationAttributeWidget;
     }
 

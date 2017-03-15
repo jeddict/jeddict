@@ -29,6 +29,9 @@ public class ClassValidator {
     public final static String NON_UNIQUE_TABLE_NAME = "MSG_NonUniqueTableName";
     public final static String CLASS_NAME_USED_BY_DEFAULT_CLASS = "MSG_ClassNameUsedByDefaultClass";
     public final static String NO_DISCRIMINATOR_VALUE_EXIST = "MSG_NoDiscriminatorValueExist";    
+    public final static String DUPLICATE_DEFAULT_CLASS = "MSG_DuplicateDefaultClass";    
+    
+
 //    public final static String NO_COMPOSITE_OPTION_DEFINED = "MSG_NoCompositeOptionDefined";
 
 }

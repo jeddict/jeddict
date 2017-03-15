@@ -45,6 +45,7 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
+import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
@@ -199,46 +200,20 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         InheritanceHandler classSpec = (InheritanceHandler) this.getBaseElementSpec();
         InheritanceStateType type = this.getInheritanceState();
         boolean isAbstract = TRUE.equals(this.getBaseElementSpec().getAbstract()); 
+        
         if(isAbstract || SINGLETON == type) {
-//            if (StringUtils.isNotBlank(classSpec.getDiscriminatorValue())) {
-//                getSignalManager().fire(WARNING, ClassValidator.INVALID_DISCRIMINATOR_VALUE_STATE);
-//            } else {
-//                getSignalManager().clear(WARNING, ClassValidator.INVALID_DISCRIMINATOR_VALUE_STATE);
-//            }
            if (StringUtils.isNotBlank(classSpec.getDiscriminatorValue())) {
               classSpec.setDiscriminatorValue(null);
            }
             getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-        } else {
+        }else if(classSpec.getInheritance()!= null && classSpec.getInheritance().getStrategy() == InheritanceType.TABLE_PER_CLASS) {
+            getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+        }else {
             if (StringUtils.isBlank(classSpec.getDiscriminatorValue())) {
                 getSignalManager().fire(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
             } else {
                 getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
             }
-//            getSignalManager().clear(WARNING, ClassValidator.INVALID_DISCRIMINATOR_VALUE_STATE);
-        }
-        
-        
-        if (SINGLETON == type || ROOT == type) {
-            // Issue Fix #6041 Start
-            boolean relationKey = this.getOneToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey()) ? true
-                    : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
-            
-            if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
-                getSignalManager().fire(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
-            } else {
-                getSignalManager().clear(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
-            }
-            // Issue Fix #6041 End
-          List<String> idGenList = this.getAllIdAttributeWidgets().stream().filter(idAttrWid -> idAttrWid.getBaseElementSpec().getGeneratedValue()!=null &&
-                    idAttrWid.getBaseElementSpec().getGeneratedValue().getStrategy()!=null).map(IdAttributeWidget::getName).collect(toList());
-            if(idGenList.size()> 1){
-               getSignalManager().fire(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
-            } else {
-                getSignalManager().clear(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST);
-            }
-        } else {
-            getSignalManager().clear(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
         }
     }
     

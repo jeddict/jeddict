@@ -16,9 +16,11 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.api.visual.widget.Widget;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
@@ -35,13 +37,19 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.jpa.modeler.spec.DefaultAttribute;
+import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.GenerationType;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.ManyToOne;
+import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
@@ -56,6 +64,9 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.list
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 
 public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> extends PersistenceClassWidget<E> {
 
@@ -73,7 +84,10 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
             CompositePKProperty property = PrimaryKeyContainerWidget.this.isCompositePKPropertyAllow();
             return property == CompositePKProperty.ALL || property == CompositePKProperty.CLASS;
         });
-        this.addPropertyChangeListener("compositePrimaryKeyClass", (PropertyChangeListener<String>) (oldName, newName) -> scanReservedDefaultClass(oldName, newName));
+        this.addPropertyChangeListener("compositePrimaryKeyClass", (PropertyChangeListener<String>) (oldName, newName) -> {
+            scanReservedDefaultClass(oldName, newName);
+//            scanDuplicateDefaultClass(oldName, newName);
+        });
     }
 
     @Override
@@ -367,6 +381,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         }
     }
 
+    @Deprecated //prefer PrimaryKeyAttributes.getSuperId
     public List<IdAttributeWidget> getAllIdAttributeWidgets() {
         List<IdAttributeWidget> idAttributeWidgetsResult = new ArrayList<>(this.getIdAttributeWidgets());
         List<JavaClassWidget> classWidgets = getAllSuperclassWidget();
@@ -379,6 +394,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         return idAttributeWidgetsResult;
     }
 
+    @Deprecated //prefer
     public List<AttributeWidget> getPrimaryKeyAttributeWidgets() {
         List<AttributeWidget> idAttributeWidgets_TMP = new ArrayList<>(this.getIdAttributeWidgets());
         idAttributeWidgets_TMP.addAll(getIdRelationAttributeWidgets());
@@ -393,6 +409,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         return idAttributeWidgets_TMP;
     }
 
+    @Deprecated //prefer PersistenceAttributes.getDerivedRelationAttributes
     public List<SingleRelationAttributeWidget> getIdRelationAttributeWidgets() {
         List<SingleRelationAttributeWidget> list = new ArrayList<>(getOneToOneRelationAttributeWidgets());
         list.addAll(getManyToOneRelationAttributeWidgets());
@@ -431,9 +448,9 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
             });
             categories.put("PrimaryKey", idAttributeCatWidget);
         }
-        
+
         categories.putAll(super.getAttributeCategories());
-        
+
         if (!versionAttributeWidgets.isEmpty()) {
             List<Widget> versionAttributeCatWidget = new ArrayList<>();
             getVersionAttributeWidgets().stream().forEach((versionAttributeWidget) -> {
@@ -487,7 +504,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         }
         sortAttributes();
         scanDuplicateAttributes(attributeWidget.getBaseElementSpec().getName(), null);
-        javaClass.updateArtifact((Attribute)attributeWidget.getBaseElementSpec());
+        javaClass.updateArtifact((Attribute) attributeWidget.getBaseElementSpec());
     }
 
     @Override
@@ -505,4 +522,69 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
             }
         }
     }
+
+//    /**
+//     * To reserve DefaultClass name should not be used by any other DefaultClass
+//     * with different attribute structure .
+//     *
+//     * @param previousName
+//     * @param newName
+//     */
+//    public void scanDuplicateMismatchDefaultClass(String previousName, String newName) {
+//        int previousNameCount = 0, newNameCount = 0;
+//        String previousNameClass, newNameClass;
+//        DefaultClass previousDefaultClass = null, newDefaultClass = null;
+//        EntityMappings entityMappings = this.getModelerScene().getBaseElementSpec();
+//        for (JavaClass javaClass : entityMappings.getJavaClass()) {
+//            if (javaClass instanceof IdentifiableClass) {
+//                IdentifiableClass ic = (IdentifiableClass) javaClass;
+//                if (ic.getCompositePrimaryKeyType() != null) {
+//                    if (ic.getCompositePrimaryKeyClass().equals(previousName)) {
+//                        if (previousDefaultClass == null) {
+//                            previousDefaultClass = ic.getDefaultClass();
+//                            previousNameClass = ic.getClazz();
+//                            ++previousNameCount;
+//                        } else if(!previousDefaultClass.getAttributes().equals(ic.getDefaultClass().getAttributes())){
+//                            ++previousNameCount;
+//                        }
+//                    }
+//                    if (ic.getCompositePrimaryKeyClass().equals(newName)) {
+//                        if (newDefaultClass == null) {
+//                            newDefaultClass = ic.getDefaultClass();
+//                            newNameClass = ic.getClazz();
+//                            ++newNameCount;                        
+//                        } else if(!newDefaultClass.getAttributes().equals(ic.getDefaultClass().getAttributes())){
+//                            ++newNameCount;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+////
+////        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();
+////        for (JavaClassWidget<JavaClass> javaClassWidget : javaClassList) {
+////            JavaClass javaClass = javaClassWidget.getBaseElementSpec();
+////            if (javaClass instanceof IdentifiableClass) {
+////                IdentifiableClass ic = (IdentifiableClass) javaClass;
+////                if (ic.getCompositePrimaryKeyType() != null) {
+////                    if (ic.getCompositePrimaryKeyClass().equals(previousName)) {
+////                        if (previousNameCount > 1) {
+////                            javaClassWidget.getSignalManager().fire(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS, previousName, previousNameClasses.toString());
+////                        } else if (!javaClassWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+////                            javaClassWidget.getSignalManager().clear(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS);
+////                        }
+////                    }
+////
+////                    if (ic.getCompositePrimaryKeyClass().equals(newName)) {
+////                        if (++newNameCount > 1) {
+////                            javaClassWidget.getSignalManager().fire(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS, newName, newNameClasses.toString());
+////                        } else if (!javaClassWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+////                            javaClassWidget.getSignalManager().clear(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS);
+////                        }
+////                    }
+////                }
+////            }
+////        }
+//    }
+
 }

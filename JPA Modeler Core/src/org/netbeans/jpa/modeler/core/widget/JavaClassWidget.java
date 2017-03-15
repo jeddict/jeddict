@@ -18,10 +18,10 @@ package org.netbeans.jpa.modeler.core.widget;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import static java.util.stream.Collectors.groupingBy;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
@@ -96,12 +96,12 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         this.getImageWidget().getActions().addAction(new JavaClassAction());
     }
-   
+
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
         JavaClass javaClass = this.getBaseElementSpec();
-       
+
         set.put("CLASS_STRUCTURE", getCustomAnnoation(this.getModelerScene(), javaClass.getAnnotation()));
         set.put("CLASS_STRUCTURE", getCustomParentClass(this));
         set.put("CLASS_STRUCTURE", getCustomArtifact(this.getModelerScene(), javaClass.getInterfaces(), "Interface"));
@@ -112,7 +112,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
         @Override
         public WidgetAction.State mousePressed(Widget widget, WidgetAction.WidgetMouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount()==2) {
+            if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 2) {
                 openSourceCode(true);
                 return WidgetAction.State.CONSUMED;
             }
@@ -120,7 +120,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         }
     }
 
-    public FileObject getFileObject(){
+    public FileObject getFileObject() {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
         FileObject fileObject;
         if (javaClass.getFileObject() != null) {
@@ -133,21 +133,23 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         }
         return fileObject;
     }
-    
+
     private void openSourceCode(boolean retryIfFileNotFound) {
         FileObject fileObject = getFileObject();
         if (fileObject == null || !fileObject.isValid()) {
-              NotifyDescriptor.Confirmation msg = null;
-              if(retryIfFileNotFound){
-              msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
-                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.title"), NotifyDescriptor.OK_CANCEL_OPTION,  NotifyDescriptor.QUESTION_MESSAGE);
-              } else {
-               msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
-                    getMessage(this.getClass(), "SRC_FILE_NOT_FOUND_IN_CURRENT_PROECT.title"), NotifyDescriptor.OK_CANCEL_OPTION,  NotifyDescriptor.QUESTION_MESSAGE);
-              }
+            NotifyDescriptor.Confirmation msg = null;
+            if (retryIfFileNotFound) {
+                msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
+                        getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.title"), NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
+            } else {
+                msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
+                        getMessage(this.getClass(), "SRC_FILE_NOT_FOUND_IN_CURRENT_PROECT.title"), NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
+            }
             if (NotifyDescriptor.YES_OPTION.equals(DialogDisplayer.getDefault().notify(msg))) {
                 this.getBaseElementSpec().setGenerateSourceCode(true);
-                JPAModelerUtil.generateSourceCode(this.getModelerScene().getModelerFile(), () -> {openSourceCode(false);});
+                JPAModelerUtil.generateSourceCode(this.getModelerScene().getModelerFile(), () -> {
+                    openSourceCode(false);
+                });
             }
         } else {
             org.netbeans.modules.openfile.OpenFile.open(fileObject, -1);
@@ -187,14 +189,14 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
     public void scanDuplicateClass(String previousName, String newName) {
         int previousNameCount = 0, newNameCount = 0;
-        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();        
+        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();
         EntityMappings entityMappings = this.getModelerScene().getBaseElementSpec();
-        
+
         List<JavaClass> hiddenJavaClasses = new ArrayList<>(entityMappings.getJavaClass());
         hiddenJavaClasses.removeAll(
                 javaClassList.stream()
-                .map(jcw -> (JavaClass)jcw.getBaseElementSpec())
-                .collect(toList())
+                        .map(jcw -> (JavaClass) jcw.getBaseElementSpec())
+                        .collect(toList())
         );
         for (JavaClass javaClass : hiddenJavaClasses) {
             if (javaClass.getClazz().equals(previousName)) {
@@ -204,7 +206,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
                 ++newNameCount;
             }
         }
-        
+
         for (JavaClassWidget<JavaClass> javaClassWidget : javaClassList) {
             JavaClass javaClass = javaClassWidget.getBaseElementSpec();
 
@@ -221,49 +223,6 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
                     javaClassWidget.getSignalManager().fire(ERROR, ClassValidator.NON_UNIQUE_JAVA_CLASS);
                 } else if (!javaClassWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
                     javaClassWidget.getSignalManager().clear(ERROR, ClassValidator.NON_UNIQUE_JAVA_CLASS);
-                }
-            }
-        }
-    }
-    
-    public void scanReservedDefaultClass(String previousName, String newName) {
-        int previousNameCount = 0, newNameCount = 0;
-        List<String> previousNameClasses = new ArrayList<>(), newNameClasses = new ArrayList<>();
-        
-        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();        
-        EntityMappings entityMappings = this.getModelerScene().getBaseElementSpec();
-        for (JavaClass javaClass : entityMappings.getJavaClass()) {
-            if (javaClass instanceof IdentifiableClass) {
-                IdentifiableClass ic = (IdentifiableClass) javaClass;
-                if (ic.getCompositePrimaryKeyType() != null) {
-                    if (ic.getCompositePrimaryKeyClass().equals(previousName)) {
-                        ++previousNameCount;
-                        previousNameClasses.add(ic.getClazz() + ".<" + ic.getAttributes().getEmbeddedId().getName() + '>');
-                    }
-                    if (ic.getCompositePrimaryKeyClass().equals(newName)) {
-                        ++newNameCount;
-                        newNameClasses.add(ic.getClazz() + ".<" + ic.getAttributes().getEmbeddedId().getName() + '>');
-                    }
-                }
-            }
-        }
-             
-        for (JavaClassWidget<JavaClass> javaClassWidget : javaClassList) {
-            JavaClass javaClass = javaClassWidget.getBaseElementSpec();
-
-            if (javaClass.getClazz().equals(previousName)) {
-                if (++previousNameCount > 1) {
-                    javaClassWidget.getSignalManager().fire(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS, previousName, previousNameClasses.toString());
-                } else if (!javaClassWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
-                    javaClassWidget.getSignalManager().clear(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS);
-                }
-            }
-
-            if (javaClass.getClazz().equals(newName)) {
-                if (++newNameCount > 1) {
-                    javaClassWidget.getSignalManager().fire(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS, newName, newNameClasses.toString());
-                } else if (!javaClassWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
-                    javaClassWidget.getSignalManager().clear(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS);
                 }
             }
         }
@@ -276,7 +235,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         }
         return name;
     }
-        
+
     @Override
     public void setLabel(String label) {
         if (StringUtils.isNotBlank(label)) {
@@ -359,8 +318,9 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     }
 
     public abstract InheritanceStateType getInheritanceState();
+
     public abstract InheritanceStateType getInheritanceState(boolean includeAllClass);
-    
+
 ////    private static final Border WIDGET_BORDER = new ShadowBorder(new Color(255, 25, 25) ,2, new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25), new Color(255, 255, 255), new Color(255, 25, 25));
     public void showInheritancePath() {
         IColorScheme colorScheme = this.getModelerScene().getColorScheme();
@@ -396,6 +356,56 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         IColorScheme colorScheme = this.getModelerScene().getColorScheme();
         this.setHighlightStatus(false);
         colorScheme.updateUI(this, this.getState(), this.getState());
+    }
+
+    /**
+     * To reserve DefaultClass name should not be used by any visual artifact
+     * e.g Embeddable etc.
+     *
+     * @param previousName
+     * @param newName
+     */
+    public void scanReservedDefaultClass(String previousName, String newName) {
+        int previousNameCount = 0, newNameCount = 0;
+        List<String> previousNameClasses = new ArrayList<>(), newNameClasses = new ArrayList<>();
+
+        List<JavaClassWidget> javaClassList = this.getModelerScene().getJavaClassWidges();
+        EntityMappings entityMappings = this.getModelerScene().getBaseElementSpec();
+        for (JavaClass javaClass : entityMappings.getJavaClass()) {
+            if (javaClass instanceof IdentifiableClass) {
+                IdentifiableClass ic = (IdentifiableClass) javaClass;
+                if (ic.getCompositePrimaryKeyType() != null) {
+                    if (ic.getCompositePrimaryKeyClass().equals(previousName)) {
+                        ++previousNameCount;
+                        previousNameClasses.add(ic.getClazz() + ".<" + ic.getAttributes().getEmbeddedId().getName() + '>');
+                    }
+                    if (ic.getCompositePrimaryKeyClass().equals(newName)) {
+                        ++newNameCount;
+                        newNameClasses.add(ic.getClazz() + ".<" + ic.getAttributes().getEmbeddedId().getName() + '>');
+                    }
+                }
+            }
+        }
+
+        for (JavaClassWidget<JavaClass> javaClassWidget : javaClassList) {
+            JavaClass javaClass = javaClassWidget.getBaseElementSpec();
+
+            if (javaClass.getClazz().equals(previousName)) {
+                if (++previousNameCount > 1) {
+                    javaClassWidget.getSignalManager().fire(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS, previousName, previousNameClasses.toString());
+                } else if (!javaClassWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+                    javaClassWidget.getSignalManager().clear(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS);
+                }
+            }
+
+            if (javaClass.getClazz().equals(newName)) {
+                if (++newNameCount > 1) {
+                    javaClassWidget.getSignalManager().fire(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS, newName, newNameClasses.toString());
+                } else if (!javaClassWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+                    javaClassWidget.getSignalManager().clear(ERROR, ClassValidator.CLASS_NAME_USED_BY_DEFAULT_CLASS);
+                }
+            }
+        }
     }
 
     public abstract void scanDuplicateAttributes(String previousName, String newName);
