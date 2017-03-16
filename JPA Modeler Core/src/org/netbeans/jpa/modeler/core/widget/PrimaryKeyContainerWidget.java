@@ -394,7 +394,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         return idAttributeWidgetsResult;
     }
 
-    @Deprecated //prefer
+    @Deprecated //prefer PrimaryKeyAttributes.getPrimaryKeyAttributes
     public List<AttributeWidget> getPrimaryKeyAttributeWidgets() {
         List<AttributeWidget> idAttributeWidgets_TMP = new ArrayList<>(this.getIdAttributeWidgets());
         idAttributeWidgets_TMP.addAll(getIdRelationAttributeWidgets());

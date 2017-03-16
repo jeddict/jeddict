@@ -760,13 +760,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         return getContent(entityMappings);
     }
 
-    public static void removeDefaultJoinColumn(PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget, String attributeName) {
-        for (SingleRelationAttributeWidget attributeWidget : primaryKeyContainerWidget.getIdRelationAttributeWidgets()) {
-            SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
+    public static void removeDefaultJoinColumn(IdentifiableClass identifiableClass, String attributeName) {
+        for (SingleRelationAttribute relationAttribute : identifiableClass.getAttributes().getDerivedRelationAttributes()) {
             if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
                 continue;
             }
-            if (!attributeWidget.getName().equals(attributeName)) {
+            if (!relationAttribute.getName().equals(attributeName)) {
                 continue;
             }
             relationAttribute.getJoinColumn().clear();
@@ -774,25 +773,22 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/8 #Same Column name in CompositePK
-    public static void addDefaultJoinColumnForCompositePK(PrimaryKeyContainerWidget<? extends IdentifiableClass> primaryKeyContainerWidget,
+    public static void addDefaultJoinColumnForCompositePK(IdentifiableClass identifiableClass,
             String attributeName, Set<String> allFields, List<JoinColumn> joinColumns) {
         //Get all @Id @Relation owner attribute 
-        for (SingleRelationAttributeWidget attributeWidget : primaryKeyContainerWidget.getIdRelationAttributeWidgets()) {
-            SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attributeWidget.getBaseElementSpec();
+        for (SingleRelationAttribute relationAttribute : identifiableClass.getAttributes().getDerivedRelationAttributes()) {
             if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
                 continue;
             }
-            if (!attributeWidget.getName().equals(attributeName)) {
+            if (!relationAttribute.getName().equals(attributeName)) {
                 continue;
             }
 
             //check is it composite key
-            EntityWidget targetEntityWidget = attributeWidget.getRelationFlowWidget().getTargetEntityWidget();
-            Entity targetEntity = targetEntityWidget.getBaseElementSpec();
+            Entity targetEntity = relationAttribute.getConnectedEntity();
             relationAttribute.getJoinColumn().clear();
             if (joinColumns == null || joinColumns.isEmpty()) {
-                for (AttributeWidget attributeWidget_Tmp : targetEntityWidget.getPrimaryKeyAttributeWidgets()) {
-                    Attribute attribute = (Attribute) attributeWidget_Tmp.getBaseElementSpec();
+                for (Attribute attribute : targetEntity.getAttributes().getPrimaryKeyAttributes()) {
                     JoinColumn joinColumn = new JoinColumn();
                     String joinColumnName = (targetEntity.getClazz() + '_' + attribute.getName()).toUpperCase();
                     joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName));
