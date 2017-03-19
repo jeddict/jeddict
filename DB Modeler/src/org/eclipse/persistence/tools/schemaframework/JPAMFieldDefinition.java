@@ -131,9 +131,17 @@ public class JPAMFieldDefinition extends FieldDefinition {
         } else if (inherited) {
             if (managedAttribute instanceof RelationAttribute) {
                 if (inverse) {
-                    column = new DBParentAssociationInverseJoinColumn(name, intrinsicClass, (RelationAttribute) managedAttribute, relationTable);
+                    column = new DBParentAssociationInverseJoinColumn(name, intrinsicClass, managedAttribute, relationTable);
                 } else {
-                    column = new DBParentAssociationJoinColumn(name, intrinsicClass, (RelationAttribute) managedAttribute, relationTable);
+                    column = new DBParentAssociationJoinColumn(name, intrinsicClass, managedAttribute, relationTable);
+                }
+            } else if (managedAttribute instanceof ElementCollection) {
+                if (foriegnKey) {
+                    column = new DBParentAssociationJoinColumn(name, intrinsicClass, managedAttribute, relationTable);
+                } else if(mapKey){//e.g Map<Basic,Basic>
+                    column = buildMapKeyColumn();//todo
+                } else {
+                    column = new DBColumn(name, managedAttribute);
                 }
             } else {
                 column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
@@ -290,5 +298,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
         }
         return column;
     }
+    
+    
 
 }

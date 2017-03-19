@@ -19,9 +19,9 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public abstract class DBParentAssociationColumn<E extends RelationAttribute> extends DBParentColumn<E> implements DBForeignKey<JoinColumn> {
+public abstract class DBParentAssociationColumn<E extends Attribute> extends DBParentColumn<E> implements DBForeignKey<JoinColumn> {
 
     protected AssociationOverride associationOverride;
     protected final boolean relationTableExist;

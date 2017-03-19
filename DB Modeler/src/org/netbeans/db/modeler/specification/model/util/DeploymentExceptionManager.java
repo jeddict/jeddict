@@ -78,7 +78,6 @@ public class DeploymentExceptionManager {
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
             if (entityMapping.getCache().getDatabaseConnectionCache() != null) {
                 entityMapping.getCache().setDatabaseConnection(null);
-                ((DBModelerUtil) file.getModelerUtil()).loadModelerFile(file);
                 fixError = true;
             }
         } else if (throwable instanceof ValidationException) {
@@ -104,10 +103,11 @@ public class DeploymentExceptionManager {
         } else if (!fixError) {
             throw new ProcessInterruptedException(throwable.getMessage());
         } else {
+            //change to unsaved state // todo
             throw new ProcessInterruptedException(throwable.getMessage(), () -> {
                 ModelerFile parentFile = file.getParentFile();
                 DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
-            });
+            }); //or file.getModelerUtil().loadModelerFile(file);
         }
 
     }
@@ -154,7 +154,6 @@ public class DeploymentExceptionManager {
                     JoinTable joinTable = ((RelationAttribute) attribute).getJoinTable();
                     joinTable.getJoinColumn().clear();
                     joinTable.getInverseJoinColumn().clear();
-                    file.getModelerUtil().loadModelerFile(file);
                     fixError = true;
                 } else {
                     fixError = false;
@@ -242,7 +241,6 @@ public class DeploymentExceptionManager {
                                     break;
                                 }
                             }
-                            file.getModelerUtil().loadModelerFile(file);
                             fixError = true;
                         } else {
                             fixError = false;
@@ -257,7 +255,6 @@ public class DeploymentExceptionManager {
                                 getMessage(DeploymentExceptionManager.class, "TITLE_NO_TARGET_FOREIGN_KEYS_SPECIFIED"),
                                 YES_NO_OPTION) == YES_NO_OPTION) {
                             JPAModelerUtil.removeDefaultJoinColumn(entity, attributeName);
-                            file.getModelerUtil().loadModelerFile(file);
                             fixError = true;
                         } else {
                             fixError = false;
@@ -273,7 +270,6 @@ public class DeploymentExceptionManager {
                                 getMessage(DeploymentExceptionManager.class, "TITLE_NO_FOREIGN_KEYS_ARE_SPECIFIED"),
                                 YES_NO_OPTION) == YES_NO_OPTION) {
                             JPAModelerUtil.removeDefaultJoinColumn(entity, attributeName);
-                            file.getModelerUtil().loadModelerFile(file);
                             fixError = true;
                         } else {
                             fixError = false;
@@ -295,7 +291,6 @@ public class DeploymentExceptionManager {
                                     .stream()
                                     .filter(idAttr -> !idAttr.getColumn().getInsertable())
                                     .forEach(idAttr -> idAttr.getColumn().setInsertable(true));
-                            file.getModelerUtil().loadModelerFile(file);
                             fixError = true;
                         } else {
                             fixError = false;

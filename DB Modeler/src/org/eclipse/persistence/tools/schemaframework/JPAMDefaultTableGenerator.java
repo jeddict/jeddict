@@ -891,7 +891,7 @@ public class JPAMDefaultTableGenerator {
             targetFieldNames.add(targetField.getNameDelimited(databasePlatform));
 
             fkField = resolveDatabaseField(fkField, targetField);
-            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, true, false, false, false, false, false, fkField);//TODO true/false
+            FieldDefinition fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), intrinsicAttribute, managedAttribute, false, true, false, isInherited, false, false, false, fkField);//TODO true/false
             if (!targetTable.getFields().contains(fieldDef)) {
                 targetTable.addField(fieldDef);
             }

@@ -176,6 +176,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             DeploymentExceptionManager.handleException(file, ex);
         } catch (Exception ex) {
             ex.printStackTrace();
+            file.handleException(ex);
             throw new ProcessInterruptedException(ex.getMessage());
         }
     }
