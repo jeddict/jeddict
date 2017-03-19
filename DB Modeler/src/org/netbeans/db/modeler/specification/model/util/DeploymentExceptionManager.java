@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
@@ -40,6 +42,7 @@ import org.eclipse.persistence.exceptions.ValidationException;
 import static org.eclipse.persistence.exceptions.ValidationException.CONVERTER_CLASS_NOT_FOUND;
 import static org.eclipse.persistence.exceptions.ValidationException.INCOMPLETE_JOIN_COLUMNS_SPECIFIED;
 import static org.eclipse.persistence.exceptions.ValidationException.INVALID_DERIVED_ID_PRIMARY_KEY_FIELD;
+import static org.eclipse.persistence.exceptions.ValidationException.NON_UNIQUE_ENTITY_NAME;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import org.netbeans.db.modeler.exception.DBValidationException;
@@ -138,45 +141,75 @@ public class DeploymentExceptionManager {
 
     private static Boolean handleDBValidationException(DBValidationException validationException, ModelerFile file) throws ProcessInterruptedException {
         Boolean fixError = null;
+        JavaClass javaClass = validationException.getJavaClass();
         Attribute attribute = validationException.getAttribute();
-        JavaClass javaClass = attribute.getJavaClass();
-        String attrDetail = javaClass.getClass().getSimpleName().toLowerCase() + " " + javaClass.getClazz() + " for attribute " + attribute.getName();
-        if (INCOMPLETE_JOIN_COLUMNS_SPECIFIED == validationException.getErrorCode()) {//reconstruct join column
-            //e.g : https://github.com/jGauravGupta/JPAModeler/issues/67
-            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
-                    getMessage(DeploymentExceptionManager.class, "MSG_INCOMPLETE_JOIN_COLUMNS_SPECIFIED", attrDetail),
-                    "Error", YES_NO_OPTION) == YES_NO_OPTION) {
-                if (attribute instanceof RelationAttribute) {
-                    if (attribute instanceof JoinColumnHandler) {
-                        JoinColumnHandler columnHandler = (JoinColumnHandler) attribute;
-                        columnHandler.getJoinColumn().clear();
-                    }
-                    JoinTable joinTable = ((RelationAttribute) attribute).getJoinTable();
-                    joinTable.getJoinColumn().clear();
-                    joinTable.getInverseJoinColumn().clear();
-                    fixError = true;
-                } else {
-                    fixError = false;
-                }
-            }
-        } else if (INVALID_DERIVED_ID_PRIMARY_KEY_FIELD == validationException.getErrorCode()) {
-            // If there is no primary key accessor then the user must have
-            // specified an incorrect reference column name. Throw an exception.
-            //Ref : https://github.com/jGauravGupta/JPAModeler/issues/164
-            if (attribute instanceof SingleRelationAttribute) {
-                SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attribute;
+        
+        String attrDetail = javaClass.getClass().getSimpleName().toLowerCase() + " " + javaClass.getClazz();
+        if(attribute!=null){
+            attrDetail = attrDetail+ " for attribute " + attribute.getName();
+        }
+        switch (validationException.getErrorCode()) {
+            case INCOMPLETE_JOIN_COLUMNS_SPECIFIED:
+                //reconstruct join column
+                //e.g : https://github.com/jGauravGupta/JPAModeler/issues/67
                 if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
-                        getMessage(DeploymentExceptionManager.class, "MSG_INVALID_DERIVED_ID_PRIMARY_KEY_FIELD", attrDetail),
-                        getMessage(DeploymentExceptionManager.class, "TITLE_INVALID_DERIVED_ID_PRIMARY_KEY_FIELD"),
-                        YES_NO_OPTION) == YES_NO_OPTION) {
-                    relationAttribute.getJoinColumn().clear();
-                    relationAttribute.getJoinTable().getJoinColumn().clear();
-                    relationAttribute.getJoinTable().getInverseJoinColumn().clear();
-                    fixError = true;
+                        getMessage(DeploymentExceptionManager.class, "MSG_INCOMPLETE_JOIN_COLUMNS_SPECIFIED", attrDetail),
+                        "Error", YES_NO_OPTION) == YES_NO_OPTION) {
+                    if (attribute instanceof RelationAttribute) {
+                        if (attribute instanceof JoinColumnHandler) {
+                            JoinColumnHandler columnHandler = (JoinColumnHandler) attribute;
+                            columnHandler.getJoinColumn().clear();
+                        }
+                        JoinTable joinTable = ((RelationAttribute) attribute).getJoinTable();
+                        joinTable.getJoinColumn().clear();
+                        joinTable.getInverseJoinColumn().clear();
+                        fixError = true;
+                    } else {
+                        fixError = false;
+                    }
+                }   break;
+            case INVALID_DERIVED_ID_PRIMARY_KEY_FIELD:
+                // If there is no primary key accessor then the user must have
+                // specified an incorrect reference column name. Throw an exception.
+                //Ref : https://github.com/jGauravGupta/JPAModeler/issues/164
+                if (attribute instanceof SingleRelationAttribute) {
+                    SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attribute;
+                    if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
+                            getMessage(DeploymentExceptionManager.class, "MSG_INVALID_DERIVED_ID_PRIMARY_KEY_FIELD", attrDetail),
+                            getMessage(DeploymentExceptionManager.class, "TITLE_INVALID_DERIVED_ID_PRIMARY_KEY_FIELD"),
+                            YES_NO_OPTION) == YES_NO_OPTION) {
+                        relationAttribute.getJoinColumn().clear();
+                        relationAttribute.getJoinTable().getJoinColumn().clear();
+                        relationAttribute.getJoinTable().getInverseJoinColumn().clear();
+                        fixError = true;
+                    } else {
+                        fixError = false;
+                    }
+                }   break;
+            case NON_UNIQUE_ENTITY_NAME:
+                if (javaClass instanceof DefaultClass) {
+                    DefaultClass defaultClass = (DefaultClass) javaClass;
+                    EntityMappings mappings = defaultClass.getRootElement();
+                    List<IdentifiableClass> conflictClasses = mappings.getJavaClass()
+                            .stream()
+                            .filter(clazz -> clazz instanceof IdentifiableClass)
+                            .map(clazz -> (IdentifiableClass) clazz)
+                            .filter(ic -> ic.getCompositePrimaryKeyType() != null)
+                            .filter(ic -> ic.getCompositePrimaryKeyClass().equals(javaClass.getClazz()))
+                            .collect(toList());
+                    String conflictClassNames = conflictClasses.stream()
+                            .map(clazz -> clazz.getClazz())
+                            .collect(Collectors.joining(" , ", "[", "]"));
+                    showErrorMessage("NON_UNIQUE_ENTITY_NAME",
+                            defaultClass.getClazz() + " is defined in " + conflictClassNames + " with different attribute type");
                 } else {
-                    fixError = false;
+                    showErrorMessage("NON_UNIQUE_ENTITY_NAME", validationException.getValidationException().getMessage());
                 }
-            }
+
+                fixError = false;
+                break;
+            default:
+                break;
         }
         return fixError;
     }
