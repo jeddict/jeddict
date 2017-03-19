@@ -350,6 +350,14 @@ public class JPAMDefaultTableGenerator {
     private Attribute getManagedAttribute(ClassDescriptor refDescriptor, DatabaseField dbField, LinkedList<Attribute> intrinsicAttribute) {
         if (refDescriptor != null) {
             for (DatabaseMapping refMapping : refDescriptor.getMappings()) {
+                if(!refMapping.getFields()
+                        .stream()
+                        .filter(field -> field == dbField)
+                        .findAny()
+                        .isPresent()){
+                    continue;
+                }
+                
                 if (refMapping.getFields().size() > 1) {
                     intrinsicAttribute.add((Attribute) refMapping.getProperty(Attribute.class));
                     return getManagedAttribute(refMapping.getReferenceDescriptor(), dbField, intrinsicAttribute);
