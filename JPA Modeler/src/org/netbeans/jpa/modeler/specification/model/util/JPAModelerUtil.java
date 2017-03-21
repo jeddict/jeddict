@@ -63,7 +63,6 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTORelationAttrib
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
-import org.netbeans.jpa.modeler.core.widget.attribute.relation.SingleRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.MultiValueEmbeddableFlowWidget;
@@ -156,6 +155,7 @@ import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
 import static org.openide.util.NbBundle.getMessage;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceElement;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
@@ -236,6 +236,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static ImageIcon EDIT_ICON;
     public static ImageIcon DELETE_ICON;
     public static ImageIcon DELETE_ALL_ICON;
+    public static ImageIcon PAINT_ICON;
     public static ImageIcon SUCCESS_ICON;
     public static ImageIcon WARNING_ICON;
     public static ImageIcon ERROR_ICON;
@@ -372,11 +373,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             EDIT_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/edit-element.png"));
             DELETE_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/delete-element.png"));
             DELETE_ALL_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/delete-all-element.png"));
+            PAINT_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/paint.png"));
             SUCCESS_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/success_16.png"));
             WARNING_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/warning_16.png"));
             ERROR_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/error_16.png"));
             HOME_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/home.png"));
-
             UP_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/anchor_up.png")).getImage();
             DOWN_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/anchor_down.png")).getImage();
         }
@@ -730,12 +731,22 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     private void loadDiagram(JPAModelerScene scene, WorkSpaceItem workSpaceItem) {
-        Widget widget = (Widget) scene.getBaseElement(workSpaceItem.getJavaClass().getId());
-        if (widget != null && widget instanceof INodeWidget) {
-            INodeWidget nodeWidget = (INodeWidget) widget;
-            nodeWidget.setPreferredLocation(workSpaceItem.getLocation());
+        JavaClassWidget<JavaClass> classWidget = (JavaClassWidget<JavaClass>) scene.getBaseElement(workSpaceItem.getJavaClass().getId());
+        if (classWidget != null) {
+            classWidget.setPreferredLocation(workSpaceItem.getLocation());
+            if(workSpaceItem.getTextDesign()!=null){
+                classWidget.setTextDesign(workSpaceItem.getTextDesign());
+                scene.reinstallColorScheme(classWidget);
+            }
+            for(AttributeWidget<? extends Attribute> attrWidget : classWidget.getAllAttributeWidgets(false)){
+                WorkSpaceElement workSpaceElement = workSpaceItem.getWorkSpaceElementMap().get(attrWidget.getBaseElementSpec());
+                if(workSpaceElement!=null){
+                    attrWidget.setTextDesign(workSpaceElement.getTextDesign());
+                    scene.reinstallColorScheme(classWidget);
+                }
+            }
         } else {
-            throw new InvalidElmentException("Invalid JPA Element : " + widget);
+            throw new InvalidElmentException("Invalid JPA Element : " + classWidget);
         }
     }
 

@@ -27,6 +27,7 @@ import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceElement;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceItem;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
@@ -39,6 +40,8 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.H
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.WORKSPACE_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
+import org.netbeans.modeler.widget.design.NodeTextDesign;
+import org.netbeans.modeler.widget.design.PinTextDesign;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
@@ -188,14 +191,23 @@ public class WorkSpaceManager {
         }
     }
 
-    public void syncWorkSpaceItemLocation() {
+    public void syncWorkSpaceItem() {
         EntityMappings entityMappings = scene.getBaseElementSpec();
         for (WorkSpaceItem item : entityMappings.getCurrentWorkSpace().getItems()) {
             IBaseElementWidget widget = scene.getBaseElement(item.getJavaClass().getId());
             if (widget != null && widget instanceof JavaClassWidget) {
-                JavaClassWidget<JavaClass> javaClassWidget = (JavaClassWidget<JavaClass>) widget;
-                item.setX(javaClassWidget.getSceneViewBound().x);
-                item.setY(javaClassWidget.getSceneViewBound().y);
+                JavaClassWidget<JavaClass> classWidget = (JavaClassWidget<JavaClass>) widget;
+                item.setX(classWidget.getSceneViewBound().x);
+                item.setY(classWidget.getSceneViewBound().y);
+                item.setTextDesign(classWidget.getTextDesign().isChanged()
+                        ? (NodeTextDesign)classWidget.getTextDesign():null);
+                item.setWorkSpaceElement(
+                        classWidget.getAllAttributeWidgets(false)
+                                .stream()
+                                .filter(attrWidget -> attrWidget.getTextDesign().isChanged())
+                                .map(attrWidget -> new WorkSpaceElement(attrWidget.getBaseElementSpec(), (PinTextDesign) attrWidget.getTextDesign()))
+                                .collect(toList())
+                );
             } else {
                 item.setLocation(null);
             }
@@ -204,7 +216,7 @@ public class WorkSpaceManager {
     
     public void updateWorkSpace() {
         EntityMappings entityMappings = scene.getBaseElementSpec();
-        syncWorkSpaceItemLocation();
+        syncWorkSpaceItem();
         entityMappings.setCurrentWorkSpace(entityMappings.getNextWorkSpace());
         entityMappings.setJPADiagram(null);
     }

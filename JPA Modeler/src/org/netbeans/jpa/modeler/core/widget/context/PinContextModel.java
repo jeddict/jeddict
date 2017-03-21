@@ -38,13 +38,14 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttrib
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DOWN_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PAINT_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.UP_ICON;
+import org.netbeans.jpa.modeler.specification.model.workspace.HighlightWidgetDialog;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextPaletteButtonModel;
@@ -70,10 +71,20 @@ public class PinContextModel {
     public static ContextPaletteModel getContextPaletteModel(IPinWidget pinWidget) {
         ContextPaletteModel contextPaletteModel = new DefaultContextPaletteModel(pinWidget);
         addMoveModel(contextPaletteModel, pinWidget);
+        addHighlightWdgetModel(contextPaletteModel, pinWidget);
         addDeleteModel(contextPaletteModel, pinWidget);
         return contextPaletteModel;
     }
 
+    private static void addHighlightWdgetModel(ContextPaletteModel contextPaletteModel, IPinWidget pinWidget) {
+        ContextPaletteButtonModel highlightModel = new DefaultPaletteButtonModel();
+        highlightModel.setImage(PAINT_ICON.getImage());
+        highlightModel.setTooltip("Highlight");
+        highlightModel.setPaletteModel(contextPaletteModel);
+        highlightModel.setMouseListener(getHighlightWidgetAction(pinWidget));
+        contextPaletteModel.getChildren().add(highlightModel);
+    }    
+    
     private static void addDeleteModel(ContextPaletteModel contextPaletteModel, IPinWidget pinWidget) {
         ContextPaletteButtonModel deleteModel = new DefaultPaletteButtonModel();
         deleteModel.setImage(DELETE_ICON.getImage());
@@ -101,6 +112,16 @@ public class PinContextModel {
         contextPaletteModel.getChildren().add(downModel);
     }
 
+    private static MouseListener getHighlightWidgetAction(final IPinWidget widget) {
+        return new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                NBModelerUtil.hideContextPalette(widget.getModelerScene());
+                HighlightWidgetDialog widgetDialog = new HighlightWidgetDialog(widget, widget.getTextDesign());
+                widgetDialog.setVisible(true);
+            }
+        };
+    }
     private static MouseListener getMoveUpWidgetAction(final IPinWidget widget, final int distance) {
         return new java.awt.event.MouseAdapter() {
             @Override

@@ -144,7 +144,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     });
                     failure = true;
                 }
-                for (AttributeWidget attributeWidget : p.getAllAttributeWidgets()) {
+                for (AttributeWidget attributeWidget : p.getAllAttributeWidgets(false)) {
                     if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
                         errorMessage.append('\t').append(p.getName()).append('.').append(attributeWidget.getName()).append(':').append('\n');
                         attributeWidget.getSignalManager().getSignalList(ERROR).values().forEach(v -> {
@@ -384,7 +384,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
                 DBUtil.openDBViewer(this.getModelerFile(), entityMapping);
             } else {
-                this.getWorkSpaceManager().syncWorkSpaceItemLocation();
+                this.getWorkSpaceManager().syncWorkSpaceItem();
                 DBUtil.openDBViewer(this.getModelerFile(), isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
             }
         });
@@ -392,7 +392,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 //        JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);
 //        visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
 //        visDB.addActionListener(e -> {
-//            syncWorkSpaceItemLocation(this);
+//            syncWorkSpaceItem(this);
 ////            DBUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
 //        });
 

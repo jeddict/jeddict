@@ -200,12 +200,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     }
 
     public RelationAttributeWidget findRelationAttributeWidget(String id, Class<? extends RelationAttributeWidget>... relationAttributeWidgetClasses) {
-//        List<RelationAttributeWidget> relationAttributeWidgets = new ArrayList<RelationAttributeWidget>();
-//        relationAttributeWidgets.addAll(oneToOneRelationAttributeWidgets);
-//        relationAttributeWidgets.addAll(oneToManyRelationAttributeWidgets);
-//        relationAttributeWidgets.addAll(manyToOneRelationAttributeWidgets);
-//        relationAttributeWidgets.addAll(manyToManyRelationAttributeWidgets);
-
         for (Class<? extends RelationAttributeWidget> relationAttributeWidgetClass : relationAttributeWidgetClasses) {
             if (relationAttributeWidgetClass == OTORelationAttributeWidget.class) {
                 for (OTORelationAttributeWidget oneToOneRelationAttributeWidget : oneToOneRelationAttributeWidgets) {

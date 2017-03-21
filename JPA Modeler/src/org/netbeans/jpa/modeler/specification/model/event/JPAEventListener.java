@@ -52,7 +52,7 @@ public class JPAEventListener extends EventListener {
                 if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
                     DBUtil.openDBViewer(file, entityMapping);
                 } else {
-                    scene.getWorkSpaceManager().syncWorkSpaceItemLocation();
+                    scene.getWorkSpaceManager().syncWorkSpaceItem();
                     DBUtil.openDBViewer(file, isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
                 }
             }

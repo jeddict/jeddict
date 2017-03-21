@@ -411,5 +411,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     public abstract void scanDuplicateAttributes(String previousName, String newName);
 
     public abstract List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets();
+    
+    public abstract List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute);
 
 }

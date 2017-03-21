@@ -16,11 +16,9 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.api.visual.widget.Widget;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
@@ -37,19 +35,13 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
-import org.netbeans.jpa.modeler.spec.DefaultAttribute;
-import org.netbeans.jpa.modeler.spec.DefaultClass;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.GeneratedValue;
 import org.netbeans.jpa.modeler.spec.GenerationType;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.ManyToOne;
-import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
@@ -64,9 +56,6 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.list
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
-import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 
 public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> extends PersistenceClassWidget<E> {
 

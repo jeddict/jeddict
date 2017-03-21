@@ -26,6 +26,7 @@ import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BI_DIRECTIONAL;
@@ -39,12 +40,14 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.M
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTMR_SOURCE_ANCHOR_SHAPE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTOR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PAINT_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PK_BI_DIRECTIONAL;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PK_UNI_DIRECTIONAL;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SINGLE_VALUE_EMBEDDED_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.TRANSIENT_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.UNI_DIRECTIONAL;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VERSION_ATTRIBUTE;
+import org.netbeans.jpa.modeler.specification.model.workspace.HighlightWidgetDialog;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.context.ContextActionType;
@@ -130,10 +133,10 @@ public class NodeContextModel {
                 BASIC_ATTRIBUTE, contextPaletteModel);
         addBasicAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addBasicAttributeModel));
         ContextPaletteButtonModel addBasicCollectionAttributeModel = getContextPaletteButtonModel("BASIC_COLLECTION_ATTRIBUTE", "Basic ElementCollection Attribute",
-               BASIC_COLLECTION_ATTRIBUTE, contextPaletteModel);
+                BASIC_COLLECTION_ATTRIBUTE, contextPaletteModel);
         addBasicCollectionAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addBasicCollectionAttributeModel));
         ContextPaletteButtonModel addTransientAttributeModel = getContextPaletteButtonModel("TRANSIENT_ATTRIBUTE", "Transient Attribute",
-               TRANSIENT_ATTRIBUTE, contextPaletteModel);
+                TRANSIENT_ATTRIBUTE, contextPaletteModel);
         addTransientAttributeModel.setMouseListener(getAddWidgetAction(nodeWidget, addTransientAttributeModel));
         ContextPaletteButtonModel addVersionAttributeModel = getContextPaletteButtonModel("VERSION_ATTRIBUTE", "Version Attribute",
                 VERSION_ATTRIBUTE, contextPaletteModel);
@@ -335,12 +338,20 @@ public class NodeContextModel {
 
         }
 
+        ContextPaletteButtonModel highlightModel = new DefaultPaletteButtonModel();
+        contextPaletteModel.getChildren().add(highlightModel);
+        highlightModel.setImage(PAINT_ICON.getImage());
+        highlightModel.setTooltip("Highlight");
+        highlightModel.setPaletteModel(contextPaletteModel);
+        highlightModel.setMouseListener(getHighlightWidgetAction(nodeWidget));
+
         ContextPaletteButtonModel deleteModel = new DefaultPaletteButtonModel();
         contextPaletteModel.getChildren().add(deleteModel);
         deleteModel.setImage(DELETE_ICON.getImage());
         deleteModel.setTooltip("Delete");
         deleteModel.setPaletteModel(contextPaletteModel);
         deleteModel.setMouseListener(getRemoveWidgetAction(nodeWidget));
+
         return contextPaletteModel;
     }
 
@@ -350,6 +361,17 @@ public class NodeContextModel {
         WidgetAction action = new ConnectAction(new ContextPaletteConnectDecorator(), layer, connector);
         WidgetAction[] retVal = new WidgetAction[]{action};
         return retVal;
+    }
+
+    private static MouseListener getHighlightWidgetAction(final INodeWidget widget) {
+        return new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                NBModelerUtil.hideContextPalette(widget.getModelerScene());
+                HighlightWidgetDialog widgetDialog = new HighlightWidgetDialog(widget, widget.getTextDesign());
+                widgetDialog.setVisible(true);
+            }
+        };
     }
 
     private static MouseListener getRemoveWidgetAction(final INodeWidget widget) {
