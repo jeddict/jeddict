@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.eclipse.persistence.internal.jpa.metadata.xml;
+package org.netbeans.db.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +33,7 @@ import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttrib
 import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.MappingAccessor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.objects.MetadataClass;
 import org.eclipse.persistence.internal.jpa.metadata.converters.MixedConverterMetadata;
+import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.netbeans.jpa.modeler.db.accessor.DefaultClassSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;

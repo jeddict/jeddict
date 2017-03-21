@@ -22,7 +22,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
-import org.eclipse.persistence.internal.jpa.metadata.xml.DBEntityMappings;
+import org.netbeans.db.modeler.spec.DBEntityMappings;
 import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.sessions.DatabaseLogin;
