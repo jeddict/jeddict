@@ -15,7 +15,9 @@
  */
 package org.netbeans.jpa.modeler.specification.model.workspace;
 
+import java.util.ArrayList;
 import static java.util.Collections.singletonMap;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import javax.swing.JMenu;
@@ -25,6 +27,7 @@ import javax.swing.JRadioButtonMenuItem;
 import static javax.swing.SwingUtilities.invokeLater;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceElement;
@@ -190,7 +193,34 @@ public class WorkSpaceManager {
             );
         }
     }
+    
+    public void loadDependentItems(WorkSpace workSpace) {
+        Set<JavaClass<? extends IAttributes>> selectedClasses = workSpace.getItems()
+                .stream()
+                .map(wi -> (JavaClass<? extends IAttributes>) wi.getJavaClass())
+                .collect(toSet());
+        
+        Set<JavaClass<? extends IAttributes>> dependantClasses = findDependents(selectedClasses);
+        if (dependantClasses.size() > 0) {
+            selectedClasses.addAll(dependantClasses);
+            
+            workSpace.setItems(
+                    selectedClasses
+                            .stream()
+                            .map(WorkSpaceItem::new)
+                            .collect(toSet())
+            );
+        }
+    }
 
+    static Set<JavaClass<? extends IAttributes>> findDependents(Set<JavaClass<? extends IAttributes>> selectedClasses){
+        Set<JavaClass<? extends IAttributes>> dependantClasses = selectedClasses.stream()
+                .flatMap(_class -> _class.getAllSuperclass().stream())
+                .collect(toSet());
+        dependantClasses.removeAll(selectedClasses);
+        return dependantClasses;
+    }
+        
     public void syncWorkSpaceItem() {
         EntityMappings entityMappings = scene.getBaseElementSpec();
         for (WorkSpaceItem item : entityMappings.getCurrentWorkSpace().getItems()) {
@@ -220,4 +250,6 @@ public class WorkSpaceManager {
         entityMappings.setCurrentWorkSpace(entityMappings.getNextWorkSpace());
         entityMappings.setJPADiagram(null);
     }
+    
+    
 }

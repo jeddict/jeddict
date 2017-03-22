@@ -32,8 +32,10 @@ import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceItem;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.WORKSPACE_ICON;
+import static org.netbeans.jpa.modeler.specification.model.workspace.WorkSpaceManager.findDependents;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.window.GenericDialog;
+//import org.netbeans.modules.java.source.base.Bundle;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
@@ -198,14 +200,6 @@ public class WorkSpaceDialog extends GenericDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private Set<JavaClass<? extends IAttributes>> findDependents(Set<JavaClass<? extends IAttributes>> selectedClasses){
-        Set<JavaClass<? extends IAttributes>> dependantClasses = selectedClasses.stream()
-                .flatMap(_class -> _class.getAllSuperclass().stream())
-                .collect(toSet());
-         dependantClasses.removeAll(selectedClasses);
-        return dependantClasses;
-    }
     
     private boolean validateField() {
         if (StringUtils.isBlank(nameTextField.getText())) {

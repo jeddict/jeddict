@@ -284,7 +284,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         SINGLE_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/single-value-anchor-shape.png")).getImage();
         MULTI_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/multi-value-anchor-shape.png")).getImage();
 
-        IO = IOProvider.getDefault().getIO("JPA Modeler", false);
+        IO = IOProvider.getDefault().getIO("Jeddict", false);
     }
 
     @Override
@@ -477,6 +477,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 workSpace = (WorkSpace) file.getAttribute(WORK_SPACE);
                 if (workSpace != null) {
                     entityMappings.setCurrentWorkSpace(workSpace.getId());
+                }
+                if(entityMappings.getPreviousWorkSpace() != entityMappings.getCurrentWorkSpace() && !entityMappings.isRootWorkSpace()){
+                    scene.getWorkSpaceManager().loadDependentItems(entityMappings.getCurrentWorkSpace());
                 }
                 entityMappings.getCurrentWorkSpace().getItems()
                         .stream()
