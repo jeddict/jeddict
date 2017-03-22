@@ -44,7 +44,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
  * Object to hold onto the entity mappings metadata.
  *
  * @author Gaurav Gupta
- * @since JPA Modeler 1.3
+ * @since Jeddict 1.3
  */
 public class DBEntityMappings extends XMLEntityMappings {
 

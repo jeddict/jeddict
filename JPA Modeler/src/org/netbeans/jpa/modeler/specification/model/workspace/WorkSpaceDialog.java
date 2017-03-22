@@ -219,8 +219,10 @@ public class WorkSpaceDialog extends GenericDialog {
                         .collect(toSet());
         Set<JavaClass<? extends IAttributes>> dependantClasses = findDependents(selectedClasses);
         String dependantClassesText = dependantClasses.stream().map(JavaClass::getClazz).collect(joining(","));
+        int MAX_CHAR = 100;
+        dependantClassesText = dependantClassesText.substring(0, Math.min(MAX_CHAR, dependantClassesText.length())) + "...";
         if (dependantClasses.size() > 0) {
-            int option = showConfirmDialog(WindowManager.getDefault().getMainWindow(), String.format("Workspace is dependent on [%s] classes, \n Are you sure you want to proceed by adding [%s]?", dependantClasses.size(), dependantClassesText), "Dependant class", YES_NO_OPTION);
+            int option = showConfirmDialog(WindowManager.getDefault().getMainWindow(), String.format("Workspace is dependent on [%s] classes, Are you sure you want to proceed by adding \n [%s]?", dependantClasses.size(), dependantClassesText), "Dependant class", YES_NO_OPTION);
             if (option == OK_OPTION) {
                 selectedClasses.addAll(dependantClasses);
             } else {

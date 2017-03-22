@@ -151,7 +151,7 @@ public class DeploymentExceptionManager {
         switch (validationException.getErrorCode()) {
             case INCOMPLETE_JOIN_COLUMNS_SPECIFIED:
                 //reconstruct join column
-                //e.g : https://github.com/jGauravGupta/JPAModeler/issues/67
+                //e.g : https://github.com/jeddict/jeddict/issues/67
                 if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
                         getMessage(DeploymentExceptionManager.class, "MSG_INCOMPLETE_JOIN_COLUMNS_SPECIFIED", attrDetail),
                         "Error", YES_NO_OPTION) == YES_NO_OPTION) {
@@ -171,7 +171,7 @@ public class DeploymentExceptionManager {
             case INVALID_DERIVED_ID_PRIMARY_KEY_FIELD:
                 // If there is no primary key accessor then the user must have
                 // specified an incorrect reference column name. Throw an exception.
-                //Ref : https://github.com/jGauravGupta/JPAModeler/issues/164
+                //Ref : https://github.com/jeddict/jeddict/issues/164
                 if (attribute instanceof SingleRelationAttribute) {
                     SingleRelationAttribute relationAttribute = (SingleRelationAttribute) attribute;
                     if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
@@ -224,7 +224,7 @@ public class DeploymentExceptionManager {
 
             switch (de.getErrorCode()) {
                 case MULTIPLE_WRITE_MAPPINGS_FOR_FIELD:
-                    //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/8 #Same Column name in CompositePK
+                    //Issue fix : https://github.com/jeddict/jeddict/issues/8 #Same Column name in CompositePK
                     if (de.getDescriptor() instanceof DBRelationalDescriptor && ((DBRelationalDescriptor) de.getDescriptor()).getAccessor() instanceof EntitySpecAccessor) {
                         DBRelationalDescriptor relationalDescriptor = (DBRelationalDescriptor) de.getDescriptor();
                         if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(),
@@ -242,7 +242,7 @@ public class DeploymentExceptionManager {
                                 for (DatabaseField databaseField : de.getMapping().getFields()) {
                                     if (databaseField.isPrimaryKey()) {
                                         JoinColumn joinColumn = new JoinColumn();
-                                        //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/45 #Same Column name in table
+                                        //Issue fix : https://github.com/jeddict/jeddict/issues/45 #Same Column name in table
                                         if (!databaseField.getName().startsWith(attributeName.toUpperCase() + "_")) {
                                             String joinColumnName = (attributeName.toUpperCase() + "_" + databaseField.getName()).toUpperCase();
                                             joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName));

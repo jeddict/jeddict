@@ -2,12 +2,12 @@
 /JPA Classes Reverse Engineering/build/
 /JPA Specification/build/
 /ORM Converter/build/
-/JPA Modeler/build/
+/Jeddict/build/
 /Database Reverse Engineering/nbproject/private/
 /JPA Classes Reverse Engineering/nbproject/private/
 /JPA Specification/nbproject/private/
 /ORM Converter/nbproject/private/
-/JPA Modeler/nbproject/private/
+/Jeddict/nbproject/private/
 /build/
 /nbproject/private/
 /DBViewer/nbproject/private/
@@ -22,7 +22,7 @@
 /Collaboration/build/
 /Installer/nbproject/private/
 /Installer/build/
-/JPA Modeler Libraries/build/
-/JPA Modeler Libraries/nbproject/private/
+/Jeddict Libraries/build/
+/Jeddict Libraries/nbproject/private/
 /dist/
 /Collaboration/nbproject/private/

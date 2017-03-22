@@ -55,7 +55,7 @@ public final class UpdateHandler {
 
     public static void checkAndHandleUpdates() {
 
-        JPAModelerInstaller.info("Checking for updates to JPA Modeler plugin...");
+        JPAModelerInstaller.info("Checking for updates to Jeddict plugin...");
 
         // refresh silent update center first
         refreshSilentUpdateProvider();
@@ -68,18 +68,18 @@ public final class UpdateHandler {
         if (updates.isEmpty() && available.isEmpty()) {
             JPAModelerInstaller.LOOKUP_BOOTSTRAP_UPDATE = false;
             // none for install
-            JPAModelerInstaller.info("JPA Modeler plugin is up to date.");
+            JPAModelerInstaller.info("Jeddict plugin is up to date.");
             return;
         }
 
-        JPAModelerInstaller.info("Found new JPA Modeler plugin version, updating...");
+        JPAModelerInstaller.info("Found new Jeddict plugin version, updating...");
 
         // create a container for install
         OperationContainer<InstallSupport> containerForInstall = feedContainer(available, false);
         if (containerForInstall != null) {
             try {
                 handleInstall(containerForInstall);
-                JPAModelerInstaller.info("JPA Modeler plugin installation finished.");
+                JPAModelerInstaller.info("Jeddict plugin installation finished.");
             } catch (UpdateHandlerException ex) {
                 JPAModelerInstaller.error(ex.toString());
 
@@ -100,7 +100,7 @@ public final class UpdateHandler {
         if (containerForUpdate != null) {
             try {
                 handleInstall(containerForUpdate);
-                JPAModelerInstaller.info("JPA Modeler plugin update finished.");
+                JPAModelerInstaller.info("Jeddict plugin update finished.");
             } catch (UpdateHandlerException ex) {
                 JPAModelerInstaller.error(ex.toString());
 
@@ -212,7 +212,7 @@ public final class UpdateHandler {
             return ;
         }
         try {
-            final String displayName = "Checking for updates to JPA Modeler plugin...";
+            final String displayName = "Checking for updates to Jeddict plugin...";
             silentUpdateProvider.refresh(
                 ProgressHandleFactory.createHandle(
                     displayName,
@@ -238,7 +238,7 @@ public final class UpdateHandler {
             JPAModelerInstaller.info("Silent Update Provider " + p.getName());
             if (p.getName().equals(oldCodename) || p.getName().equals(JPAModelerInstaller.CODENAME)) { // this is our current plugin
                 try {
-                    final String displayName = "Checking for updates to JPA Modeler plugin...";
+                    final String displayName = "Checking for updates to Jeddict plugin...";
                     p.refresh(
                         ProgressHandleFactory.createHandle(
                             displayName,
@@ -276,7 +276,7 @@ public final class UpdateHandler {
         // loop all updates and add to container for update
         for (UpdateElement ue : updates) {
             if (container.canBeAdded(ue.getUpdateUnit(), ue) && ue.getCodeName().equals(JPAModelerInstaller.CODENAME)) {
-                JPAModelerInstaller.info("Update to JPA Modeler plugin found: " + ue);
+                JPAModelerInstaller.info("Update to Jeddict plugin found: " + ue);
                 OperationInfo<InstallSupport> operationInfo = container.add(ue);
                 if (operationInfo == null) {
                     continue;
@@ -306,7 +306,7 @@ public final class UpdateHandler {
     }
 
     static Validator doDownload(InstallSupport support) throws OperationException {
-        final String displayName = "Downloading new version of JPA Modeler plugin...";
+        final String displayName = "Downloading new version of Jeddict plugin...";
         ProgressHandle downloadHandle = ProgressHandleFactory.createHandle(
             displayName,
             new Cancellable () {
@@ -320,7 +320,7 @@ public final class UpdateHandler {
     }
 
     static Installer doVerify(InstallSupport support, Validator validator) throws OperationException {
-        final String displayName = "Validating JPA Modeler plugin...";
+        final String displayName = "Validating Jeddict plugin...";
         ProgressHandle validateHandle = ProgressHandleFactory.createHandle(
             displayName,
             new Cancellable () {
@@ -335,7 +335,7 @@ public final class UpdateHandler {
     }
 
     static Restarter doInstall(InstallSupport support, Installer installer) throws OperationException {
-        final String displayName = "Installing JPA Modeler plugin...";
+        final String displayName = "Installing Jeddict plugin...";
         ProgressHandle installHandle = ProgressHandleFactory.createHandle(
             displayName,
             new Cancellable () {

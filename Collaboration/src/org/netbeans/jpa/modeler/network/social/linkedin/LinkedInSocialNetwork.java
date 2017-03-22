@@ -40,10 +40,10 @@ public class LinkedInSocialNetwork {
         if (LINK == null) {
             try {
                 LINK = new StringBuilder(INTENT)
-                        .append("url=").append(URLEncoder.encode("http://jpamodeler.blogspot.in", "UTF-8"))
-                        .append("&title=").append(URLEncoder.encode("JPA Modeler - your jpa assistant", "UTF-8"))
-                        .append("&summary=").append(URLEncoder.encode("JPA Modeler assists to create, design and edit java persistence application business model and DB visually as graphical diagram. It automates JPA code generation, enable to import database into diagram or modify database from diagram visually and also supports existing JPA Classes Reverse Engineering. It is open-source and free. Check it out at http://jpamodeler.blogspot.in", "UTF-8"))
-                        .append("&source=").append(URLEncoder.encode("http://jpamodeler.blogspot.in", "UTF-8")).toString();
+                        .append("url=").append(URLEncoder.encode("http://jeddict.github.io", "UTF-8"))
+                        .append("&title=").append(URLEncoder.encode("Jeddict", "UTF-8"))
+                        .append("&summary=").append(URLEncoder.encode("Jeddict assists to create, design and edit java persistence application business model and DB visually as graphical diagram. It automates JPA code generation, enable to import database into diagram or modify database from diagram visually and also supports existing JPA Classes Reverse Engineering. It is open-source and free. Check it out at http://jeddict.github.io", "UTF-8"))
+                        .append("&source=").append(URLEncoder.encode("http://jeddict.github.io", "UTF-8")).toString();
             } catch (UnsupportedEncodingException ex) {
                 ExceptionUtils.printStackTrace(ex);
             }

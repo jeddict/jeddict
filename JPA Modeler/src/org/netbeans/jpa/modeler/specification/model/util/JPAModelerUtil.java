@@ -786,7 +786,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         }
     }
 
-    //Issue fix : https://github.com/jGauravGupta/JPAModeler/issues/8 #Same Column name in CompositePK
+    //Issue fix : https://github.com/jeddict/jeddict/issues/8 #Same Column name in CompositePK
     public static void addDefaultJoinColumnForCompositePK(IdentifiableClass identifiableClass,
             String attributeName, Set<String> allFields, List<JoinColumn> joinColumns) {
         //Get all @Id @Relation owner attribute 
