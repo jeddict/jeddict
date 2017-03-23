@@ -17,18 +17,16 @@ package org.netbeans.db.modeler.spec;
 
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
+import org.netbeans.jpa.modeler.spec.extend.JoinTableHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 
 /**
  *
@@ -54,7 +52,7 @@ public class JoinColumnFinder {
             }
         } else {
             if (attribute instanceof RelationAttribute) {
-                joinColumns = getRelationAttributeJoinColumn(attribute, (JoinColumnHandler) attribute, relationTableExist, inverse);
+                joinColumns = getRelationAttributeJoinColumn(attribute, (JoinTableHandler) attribute, relationTableExist, inverse);
             } else if (attribute instanceof ElementCollection) { // not applicable for inverse-join-column
                 joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();
             } else {
@@ -70,8 +68,7 @@ public class JoinColumnFinder {
             joinColumns = getRelationAttributeJoinColumn(attribute, associationOverride, relationTableExist, inverse);
         } else if (attribute instanceof ElementCollection) { 
             joinColumns = ((ElementCollection) attribute).getCollectionTable().getJoinColumn();//https://github.com/jeddict/jeddict/issues/148 AssociactionOverride is not applicable for element collection
-        } else {
-            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+        } else {            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }
         return joinColumns;
     }
@@ -133,18 +130,18 @@ public class JoinColumnFinder {
         return joinColumn;
     }
 
-    private static List<JoinColumn> getRelationAttributeJoinColumn(Attribute attribute, JoinColumnHandler columnHandler, boolean relationTableExist, boolean inverse) {
+    private static List<JoinColumn> getRelationAttributeJoinColumn(Attribute attribute, JoinTableHandler tableHandler, boolean relationTableExist, boolean inverse) {
         List<JoinColumn> joinColumns;
         if (!relationTableExist) {
-            if (attribute instanceof SingleRelationAttribute || attribute instanceof OneToMany) {
-                joinColumns = columnHandler.getJoinColumn();
+            if (attribute instanceof JoinColumnHandler) {//SingleRelationAttribute OneToMany
+                joinColumns = ((JoinColumnHandler)tableHandler).getJoinColumn();
             } else {
                 throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
             }
         } else if (inverse) {
-            joinColumns = columnHandler.getJoinTable().getInverseJoinColumn();
+            joinColumns = tableHandler.getJoinTable().getInverseJoinColumn();
         } else {
-            joinColumns = columnHandler.getJoinTable().getJoinColumn();
+            joinColumns = tableHandler.getJoinTable().getJoinColumn();
         }
         return joinColumns;
     }
