@@ -144,7 +144,8 @@ public class WorkSpaceManager {
                 if (option == javax.swing.JOptionPane.OK_OPTION) {
                     entityMappings.removeWorkSpace(entityMappings.getCurrentWorkSpace());
                     entityMappings.setNextWorkSpace(entityMappings.getRootWorkSpace());
-                    openWorkSpace(false, entityMappings.getRootWorkSpace());
+                    scene.getModelerPanelTopComponent().changePersistenceState(false);
+                    openWorkSpace(true, entityMappings.getRootWorkSpace());
                 }
             });
             workSpaceMenu.add(deleteWPItem);
