@@ -15,7 +15,6 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import org.netbeans.bean.validation.constraints.Past;
 import org.netbeans.orm.converter.compiler.*;
@@ -38,7 +37,7 @@ public class PastSnippet extends ConstraintSnippet<Past> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && FALSE.equals(constraint.getOrPresent())) {
+        if (constraint.getMessage() == null && !TRUE.equals(constraint.getOrPresent())) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.stream.Collectors.joining;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
@@ -48,11 +49,14 @@ import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.orm.converter.util.ImportSet;
+import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
     private List<AnnotationSnippet> annotation = new ArrayList<>();
-    private List<ConstraintSnippet> constraints = new ArrayList<>();
+    private List<ConstraintSnippet> attributeConstraints = new ArrayList<>();
+    private List<ConstraintSnippet> keyConstraints = new ArrayList<>();
+    private List<ConstraintSnippet> valueConstraints = new ArrayList<>();
     private boolean functionalType;
 
     private JaxbVariableType jaxbVariableType;
@@ -135,7 +139,18 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.lob = lob;
     }
 
-    public String getType() {//Modified : Collection => Collection<Entity>
+    public String getConstraintType() {
+        String type;
+        if (this.getTypeIdentifier() != null) {
+            type = this.getTypeIdentifier().getConstraintVariableType();
+        } else {
+            type = classHelper.getClassName();
+        }
+
+        return type;
+    }
+
+    public String getType() {//Modified : Collection => Collection<Entity> 
         String type;
         if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
             type = this.getTypeIdentifier().getVariableType();
@@ -448,7 +463,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
-        for (ConstraintSnippet snippet : this.getConstraints()) {
+        for (ConstraintSnippet snippet : this.getAttributeConstraints()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+
+        for (ConstraintSnippet snippet : this.getKeyConstraints()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+
+        for (ConstraintSnippet snippet : this.getValueConstraints()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
@@ -562,17 +585,60 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     /**
-     * @return the constraints
+     * @return the attributeConstraints
      */
-    public List<ConstraintSnippet> getConstraints() {
-        return constraints;
+    public List<ConstraintSnippet> getAttributeConstraints() {
+        return attributeConstraints;
     }
 
     /**
-     * @param constraints the constraints to set
+     * @param attributeConstraints the attributeConstraints to set
      */
-    public void setConstraints(List<ConstraintSnippet> constraints) {
-        this.constraints = constraints;
+    public void setAttributeConstraints(List<ConstraintSnippet> attributeConstraints) {
+        this.attributeConstraints = attributeConstraints;
+    }
+
+    /**
+     * @return the keyConstraints
+     */
+    public List<ConstraintSnippet> getKeyConstraints() {
+        return keyConstraints;
+    }
+    
+    public String getInlineKeyConstraint() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        for (ConstraintSnippet keyConstraint : keyConstraints) {
+            sb.append(keyConstraint.getSnippet()).append(" ");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * @param keyConstraints the keyConstraints to set
+     */
+    public void setKeyConstraints(List<ConstraintSnippet> keyConstraints) {
+        this.keyConstraints = keyConstraints;
+    }
+
+    /**
+     * @return the valueConstraints
+     */
+    public List<ConstraintSnippet> getValueConstraints() {
+        return valueConstraints;
+    }
+    
+    public String getInlineValueConstraint() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        for (ConstraintSnippet valueConstraint : valueConstraints) {
+            sb.append(valueConstraint.getSnippet()).append(" ");
+        }
+        return sb.toString();
+    }
+    /**
+     * @param valueConstraints the valueConstraints to set
+     */
+    public void setValueConstraints(List<ConstraintSnippet> valueConstraints) {
+        this.valueConstraints = valueConstraints;
     }
 
     /**

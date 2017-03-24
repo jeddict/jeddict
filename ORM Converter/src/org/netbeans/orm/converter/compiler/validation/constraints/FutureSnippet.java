@@ -38,7 +38,7 @@ public class FutureSnippet extends ConstraintSnippet<Future> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && FALSE.equals(constraint.getOrPresent())) {
+        if (constraint.getMessage() == null && !TRUE.equals(constraint.getOrPresent())) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();

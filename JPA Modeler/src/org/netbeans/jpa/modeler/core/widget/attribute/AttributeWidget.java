@@ -142,6 +142,16 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             }
         });
         
+        this.getBaseElementSpec().getAttributeConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("ATTRIBUTE_CONSTRAINTS", "ATTRIBUTE_CONSTRAINTS", this, constraint);
+        }); 
+        this.getBaseElementSpec().getKeyConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("KEY_CONSTRAINTS", "KEY_CONSTRAINTS", this, constraint);
+        }); 
+        this.getBaseElementSpec().getValueConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("VALUE_CONSTRAINTS", "VALUE_CONSTRAINTS", this, constraint);
+        }); 
+        
     }
 
    

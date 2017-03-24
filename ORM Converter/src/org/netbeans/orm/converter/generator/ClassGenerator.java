@@ -391,9 +391,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.getAnnotation().addAll(getAnnotationSnippet(attr.getAnnotation()));
             variableDef.getAnnotation().addAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
             
-            if (attr instanceof BaseAttribute) {
-                variableDef.setConstraints(getConstraintSnippet(attr.getConstraints()));
-            }
+            variableDef.setAttributeConstraints(getConstraintSnippet(attr.getAttributeConstraints()));
+            variableDef.setKeyConstraints(getConstraintSnippet(attr.getKeyConstraints()));
+            variableDef.setValueConstraints(getConstraintSnippet(attr.getValueConstraints()));
 
             List<AttributeSnippet> snippets = new ArrayList<>();//todo global attribute snippet at class level ; javaClass.getAttrSnippets());
             snippets.addAll(attr.getSnippets());

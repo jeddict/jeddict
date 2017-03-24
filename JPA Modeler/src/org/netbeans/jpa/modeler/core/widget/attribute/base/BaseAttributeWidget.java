@@ -57,9 +57,6 @@ public abstract class BaseAttributeWidget<E extends BaseAttribute> extends Attri
 //        MultiValueEmbeddedAttributeWidget => ElementCollection [Column not allowed]
 //        set.put("BASIC_PROP", getValidationProperty());
 
-        this.getBaseElementSpec().getConstraints().stream().forEach((constraint) -> {
-            set.createPropertySet(this, constraint, getPropertyChangeListeners(), getPropertyVisibilityHandlers());
-        });        
     }
     
 }
