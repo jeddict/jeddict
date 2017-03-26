@@ -94,20 +94,20 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
 
     public abstract RelationFlowWidget getRelationFlowWidget();
 
-    @Override
-    protected List<JMenuItem> getPopupMenuItemList() {
-        List<JMenuItem> menuList = super.getPopupMenuItemList();
-        if (this.getClassWidget().getBaseElementSpec() instanceof Entity) {
-            JMenuItem visDB = new JMenuItem("Nano DB", NANO_DB);
-            visDB.addActionListener((ActionEvent e) -> {
-                ModelerFile file = this.getModelerScene().getModelerFile();
-                DBUtil.openDBViewer(file, DBUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), (Entity) this.getClassWidget().getBaseElementSpec(), (RelationAttribute) this.getBaseElementSpec()));
-            });
-
-            menuList.add(0, visDB);
-        }
-        return menuList;
-    }
+//    @Override
+//    protected List<JMenuItem> getPopupMenuItemList() {
+//        List<JMenuItem> menuList = super.getPopupMenuItemList();
+//        if (this.getClassWidget().getBaseElementSpec() instanceof Entity) {
+//            JMenuItem visDB = new JMenuItem("Nano DB", NANO_DB);
+//            visDB.addActionListener((ActionEvent e) -> {
+//                ModelerFile file = this.getModelerScene().getModelerFile();
+//                DBUtil.openDBViewer(file, DBUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), (Entity) this.getClassWidget().getBaseElementSpec(), (RelationAttribute) this.getBaseElementSpec()));
+//            });
+//
+//            menuList.add(0, visDB);
+//        }
+//        return menuList;
+//    }
     
     public PersistenceClassWidget getConnectedClassWidget(){
             IFlowElementWidget flowElementWidget = this.getBaseElementSpec().isOwner() ? 

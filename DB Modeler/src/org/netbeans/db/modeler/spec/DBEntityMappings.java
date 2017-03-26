@@ -22,7 +22,6 @@ import static java.util.stream.Collectors.toList;
 import javax.persistence.AttributeConverter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.eclipse.persistence.internal.jpa.metadata.DBMetadataDescriptor;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.ConverterAccessor;
@@ -39,6 +38,7 @@ import org.netbeans.jpa.modeler.db.accessor.EmbeddableSpecAccessor;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
 import org.netbeans.jpa.modeler.spec.Converter;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 
 /**
  * Object to hold onto the entity mappings metadata.
@@ -51,20 +51,34 @@ public class DBEntityMappings extends XMLEntityMappings {
     private final EntityMappings mappings;
     private final ClassLoader classLoader;
 
-    public DBEntityMappings(EntityMappings mappings, ClassLoader classLoader) {
+    public DBEntityMappings(EntityMappings mappings, WorkSpace workSpace, ClassLoader classLoader) {
         this.mappings = mappings;
         this.classLoader = classLoader;
 
 //        setPackage(mappings.getPackage());//conflict with converter virtual class add the package prefix
-        setEntities(mappings.getEntity().stream().map(EntitySpecAccessor::getInstance).collect(toList()));
+        setEntities(mappings.getEntity()
+                .stream()
+                .filter(entity -> workSpace==null || workSpace.hasItem(entity))
+                .map(entity-> EntitySpecAccessor.getInstance(workSpace, entity))
+                .collect(toList()));
 //      setMappedSuperclasses(mappings.getMappedSuperclass().stream().map(MappedSuperclassSpecAccessor::getInstance).collect(toList()));
         setMappedSuperclasses(new ArrayList<>());
 
         List<EmbeddableAccessor> embeddableAccessors = new ArrayList<>();
-        embeddableAccessors.addAll(mappings.getEmbeddable().stream().map(EmbeddableSpecAccessor::getInstance).collect(toList()));
-        embeddableAccessors.addAll(mappings.getDefaultClass().stream().map(DefaultClassSpecAccessor::getInstance).collect(toList()));
+        embeddableAccessors.addAll(mappings.getEmbeddable()
+                .stream()
+                .filter(embeddable -> workSpace==null || workSpace.hasItem(embeddable))
+                .map(embeddable-> EmbeddableSpecAccessor.getInstance(workSpace, embeddable))
+                .collect(toList()));
+        embeddableAccessors.addAll(mappings.getDefaultClass()
+                .stream()
+                .map(DefaultClassSpecAccessor::getInstance)
+                .collect(toList()));
         setEmbeddables(embeddableAccessors);
-        setMixedConverters(mappings.getConverter().stream().map(Converter::getAccessor).collect(toList()));
+        setMixedConverters(mappings.getConverter()
+                .stream()
+                .map(Converter::getAccessor)
+                .collect(toList()));
         setConverters(new ArrayList<>());
         setTypeConverters(new ArrayList<>());
         setObjectTypeConverters(new ArrayList<>());

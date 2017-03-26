@@ -57,7 +57,6 @@ import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
 import org.netbeans.db.modeler.core.widget.table.RelationTableWidget;
 import org.netbeans.db.modeler.core.widget.table.SecondaryTableWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.exception.DBValidationException;
 import org.netbeans.db.modeler.persistence.internal.jpa.deployment.JPAMPersistenceUnitProcessor;
 import org.netbeans.db.modeler.persistence.internal.jpa.metadata.JPAMMetadataProcessor;
 import org.netbeans.db.modeler.spec.DBColumn;
@@ -87,6 +86,7 @@ import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -185,9 +185,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         try {
 
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
+            WorkSpace workSpace = (WorkSpace) file.getAttributes().get(WorkSpace.class.getSimpleName());
 
             DBModelerScene scene = (DBModelerScene) file.getModelerScene();
-            DBMapping dbMapping = createDBMapping(file, entityMapping);
+            DBMapping dbMapping = createDBMapping(file, entityMapping, workSpace);
 
             scene.setBaseElementSpec(dbMapping);
 
@@ -203,7 +204,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         }
     }
 
-    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping) throws ClassNotFoundException, DBConnectionNotFound {
+    private DBMapping createDBMapping(ModelerFile file, EntityMappings entityMapping, WorkSpace workSpace) throws ClassNotFoundException, DBConnectionNotFound {
         DBMapping dbMapping = new DBMapping();
         DatabaseConnectionCache connection = entityMapping.getCache().getDatabaseConnectionCache();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
@@ -245,7 +246,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             }
             session = new DatabaseSessionImpl(databaseLogin);
             JPAMMetadataProcessor processor = new JPAMMetadataProcessor(session, dynamicClassLoader, true, false, true, true, false, null, null);
-            XMLEntityMappings mapping = new DBEntityMappings(entityMapping, dynamicClassLoader);
+            XMLEntityMappings mapping = new DBEntityMappings(entityMapping, workSpace, dynamicClassLoader);
             JPAMPersistenceUnitProcessor.processORMetadata(mapping, processor, true, Mode.ALL);
 
             processor.setClassLoader(dynamicClassLoader);

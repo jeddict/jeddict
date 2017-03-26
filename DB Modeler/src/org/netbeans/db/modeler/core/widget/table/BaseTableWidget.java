@@ -106,7 +106,8 @@ public class BaseTableWidget extends TableWidget<DBBaseTable> {
                 secondaryTable.setName(secondaryTableName);
                 entity.addSecondaryTable(secondaryTable);
                 ModelerFile parentFile = BaseTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
+                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
             } else {
                 JOptionPane.showMessageDialog((Component) BaseTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Table already exist");
             }

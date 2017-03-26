@@ -113,11 +113,12 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         DBRelationTable relationTable = this.getBaseElementSpec();
         if (relationTable.getAttribute() instanceof JoinColumnHandler) {
-            JMenuItem joinTable = new JMenuItem("Delete Join Table");//, MICRO_DB);
+            JMenuItem joinTable = new JMenuItem("Delete Join Table");
             joinTable.addActionListener((ActionEvent e) -> {
                 convertToJoinColumn();
                 ModelerFile parentFile = RelationTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
+                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
             });
             menuList.add(0, joinTable);
         }

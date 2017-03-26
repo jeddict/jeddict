@@ -47,20 +47,12 @@ public class JPAEventListener extends EventListener {
         component.getActionMap().put("DB_VIEWER", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JPAModelerScene scene = (JPAModelerScene)file.getModelerScene();
+                JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
                 EntityMappings entityMapping = scene.getBaseElementSpec();
-                if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
-                    DBUtil.openDBViewer(file, entityMapping);
-                } else {
-                    scene.getWorkSpaceManager().syncWorkSpaceItem();
-                    DBUtil.openDBViewer(file, isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
-                }
+                DBUtil.openDBViewer(file, entityMapping, entityMapping.getCurrentWorkSpace());
+
             }
         });
-        
-                        
-
-        
 
     }
 

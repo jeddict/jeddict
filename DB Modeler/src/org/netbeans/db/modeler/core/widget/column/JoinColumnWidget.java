@@ -119,7 +119,8 @@ public class JoinColumnWidget<E extends DBJoinColumn> extends ForeignKeyWidget<E
                 String joinTableName = JOptionPane.showInputDialog((Component) JoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
                 convertToJoinTable(joinTableName);
                 ModelerFile parentFile = JoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
-                DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
+                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
             });
             menuList.add(0, joinTable);
         }

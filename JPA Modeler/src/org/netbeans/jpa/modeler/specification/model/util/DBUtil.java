@@ -46,6 +46,7 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.c
  */
 public class DBUtil {
 
+    @Deprecated
     public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity javaClass, RelationAttribute relationAttribute) {
 
         EntityMappings mappingClone = cloneEntityMapping(mappings);
@@ -72,18 +73,21 @@ public class DBUtil {
 
     public static void openDBViewer(ModelerFile file) {
         EntityMappings entityMappings = (EntityMappings) file.getModelerScene().getBaseElementSpec();
-        openDBViewer(file, entityMappings);
+        openDBViewer(file, entityMappings, entityMappings.getCurrentWorkSpace());
     }
 
-    public static void openDBViewer(ModelerFile file, EntityMappings entityMappings) {
+    public static void openDBViewer(ModelerFile file, EntityMappings entityMappings, WorkSpace workSpace) {
         if (!((JPAModelerScene) file.getModelerScene()).compile()) {
             return;
+        }
+        if (entityMappings.getRootWorkSpace() == workSpace) {
+            workSpace = null;
         }
         try {
             PreExecutionUtil.preExecution(file);
             DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
             Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
-            dbModelerRequestManager.init(file, entityMappings);
+            dbModelerRequestManager.init(file, entityMappings, workSpace);
             IModelerScene scene;
             if (dbChildModelerFile.isPresent()) {
                 ModelerFile childModelerFile = dbChildModelerFile.get();
@@ -99,8 +103,7 @@ public class DBUtil {
                     file.handleException(ex);
                 }
                 childModelerFile.load();
-            } 
-            else {
+            } else {
                 dbChildModelerFile = file.getChildrenFile("DB");
                 if (dbChildModelerFile.isPresent()) {
                     dbChildModelerFile.get().getModelerScene().validate();//TODO remove it// should be called from framework
@@ -133,36 +136,36 @@ public class DBUtil {
     private static void mapToOrignalObject(IPersistenceAttributes orignalAttributes, IPersistenceAttributes clonedAttributes) {
 
         clonedAttributes.getBasic().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getBasic(a.getId()).get());
+            orignalAttributes.getBasic(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
         clonedAttributes.getElementCollection().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getElementCollection(a.getId()).get());
+            orignalAttributes.getElementCollection(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
         clonedAttributes.getEmbedded().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getEmbedded(a.getId()).get());
+            orignalAttributes.getEmbedded(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
 
         clonedAttributes.getManyToMany().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getManyToMany(a.getId()).get());
+            orignalAttributes.getManyToMany(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
         clonedAttributes.getManyToOne().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getManyToOne(a.getId()).get());
+            orignalAttributes.getManyToOne(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
         clonedAttributes.getOneToMany().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getOneToMany(a.getId()).get());
+            orignalAttributes.getOneToMany(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
         clonedAttributes.getOneToOne().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getOneToOne(a.getId()).get());
+            orignalAttributes.getOneToOne(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
         clonedAttributes.getTransient().forEach(a -> {
-            a.setOrignalObject(orignalAttributes.getTransient(a.getId()).get());
+            orignalAttributes.getTransient(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
         });
         if (clonedAttributes instanceof PrimaryKeyAttributes) {
             ((PrimaryKeyAttributes) clonedAttributes).getId().forEach(a -> {
-                a.setOrignalObject(((PrimaryKeyAttributes) orignalAttributes).getId(a.getId()).get());
+                ((PrimaryKeyAttributes) orignalAttributes).getId(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
             });
             ((PrimaryKeyAttributes) clonedAttributes).getVersion().forEach(a -> {
-                a.setOrignalObject(((PrimaryKeyAttributes) orignalAttributes).getVersion(a.getId()).get());
+                ((PrimaryKeyAttributes) orignalAttributes).getVersion(a.getId()).ifPresent(attr -> a.setOrignalObject(attr));
             });
         }
 
@@ -211,6 +214,7 @@ public class DBUtil {
      * @param entity The master node
      * @return
      */
+    @Deprecated
     public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity entity) {
         EntityMappings mappingClone = cloneEntityMapping(mappings);
         Entity entityClone = mappingClone.getEntity(entity.getId());
@@ -261,10 +265,11 @@ public class DBUtil {
      * @param workSpace The master node
      * @return
      */
+    @Deprecated
     public static EntityMappings isolateEntityMapping(EntityMappings mappings, WorkSpace workSpace) {
         EntityMappings mappingClone = cloneEntityMapping(mappings);
         WorkSpace workSpaceClone = mappingClone.getCurrentWorkSpace();
-        
+
         mappingClone.setEntity(
                 mappingClone.getEntity()
                         .stream()
@@ -283,16 +288,17 @@ public class DBUtil {
                         .filter(jc -> workSpaceClone.hasItem(jc))
                         .collect(toList())
         );
-        
+
         mappingClone.getManagedClass()
                 .stream()
                 .forEach(jc -> isolateClass(jc, workSpaceClone));
-        
+
         mapToOrignalObject(mappings, mappingClone);
         return mappingClone;
     }
-    
-    private static void isolateClass(ManagedClass<IPersistenceAttributes> classSpec, WorkSpace workSpace){
+
+    @Deprecated
+    private static void isolateClass(ManagedClass<IPersistenceAttributes> classSpec, WorkSpace workSpace) {
 //        if (classSpec.getAttributes() instanceof IPersistenceAttributes) {
 //                    IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) classSpec.getAttributes();
 //                    EmbeddedId embeddedId = persistenceAttributes.getEmbeddedId();
@@ -312,7 +318,7 @@ public class DBUtil {
                         .filter(ec -> ec.getConnectedClass() != null)
                         .filter(ec -> workSpace.hasItem(ec.getConnectedClass()))
                         .collect(toList())
-        );     
+        );
         classSpec.getAttributes().setOneToOne(
                 classSpec.getAttributes().getOneToOne()
                         .stream()

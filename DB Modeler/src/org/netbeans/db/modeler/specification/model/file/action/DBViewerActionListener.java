@@ -20,8 +20,8 @@ import org.netbeans.db.modeler.specification.model.engine.DBDiagramEngine;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
-import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
@@ -40,21 +40,24 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA_DB", name = "DB Viewer", 
         modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class,
         relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
-        version = "3.7.1", architectureVersion = "1.4")
+        version = "3.8", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
 
     private EntityMappings mappings;
+    private WorkSpace workSpace;
 
     @Override
     public void initSpecification(final ModelerFile modelerFile) {
         modelerFile.setIcon(TAB_ICON);
         modelerFile.getAttributes().put(EntityMappings.class.getSimpleName(), mappings);
+        modelerFile.getAttributes().put(WorkSpace.class.getSimpleName(), workSpace);
     }
 
     @Override
-    public void init(ModelerFile file, EntityMappings mappings) {
+    public void init(ModelerFile file, EntityMappings mappings, WorkSpace workSpace) {
         this.mappings = mappings;
+        this.workSpace = workSpace;
         context = null;
         openModelerFile("DB", null, null, file, null);
     }

@@ -381,12 +381,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
         visDB.addActionListener(e -> {
             EntityMappings entityMapping = this.getBaseElementSpec();
-            if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
-                DBUtil.openDBViewer(this.getModelerFile(), entityMapping);
-            } else {
-                this.getWorkSpaceManager().syncWorkSpaceItem();
-                DBUtil.openDBViewer(this.getModelerFile(), isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
-            }
+             DBUtil.openDBViewer(this.getModelerFile(), entityMapping, entityMapping.getCurrentWorkSpace());
         });
         
 //        JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);

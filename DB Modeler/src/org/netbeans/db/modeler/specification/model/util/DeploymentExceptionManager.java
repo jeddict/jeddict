@@ -109,7 +109,8 @@ public class DeploymentExceptionManager {
             //change to unsaved state // todo
             throw new ProcessInterruptedException(throwable.getMessage(), () -> {
                 ModelerFile parentFile = file.getParentFile();
-                DBUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
+                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
             }); //or file.getModelerUtil().loadModelerFile(file);
         }
 

@@ -45,6 +45,7 @@ import org.netbeans.modeler.specification.model.document.property.ElementPropert
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
+import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
@@ -206,30 +207,50 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
               classSpec.setDiscriminatorValue(null);
            }
             getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-        }else if(classSpec.getInheritance()!= null && classSpec.getInheritance().getStrategy() == InheritanceType.TABLE_PER_CLASS) {
-            getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-        }else {
-            if (StringUtils.isBlank(classSpec.getDiscriminatorValue())) {
-                getSignalManager().fire(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
-            } else {
-                getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+        }else if(ROOT == type) {
+                evaluateDiscriminatorValue(classSpec.getInheritance());
+        }else if(BRANCH == type) {
+            if (!evaluateDiscriminatorValue(classSpec.getInheritance())) {
+                if (this.getSuperclassWidget().getBaseElementSpec() instanceof InheritanceHandler) {
+                    evaluateDiscriminatorValue(((InheritanceHandler) this.getSuperclassWidget().getBaseElementSpec()).getInheritance());
+                }
+            }
+        }else if(LEAF == type) {
+            if(this.getSuperclassWidget().getBaseElementSpec() instanceof InheritanceHandler){
+                evaluateDiscriminatorValue(((InheritanceHandler) this.getSuperclassWidget().getBaseElementSpec()).getInheritance());
             }
         }
     }
     
-    @Override
-    protected List<JMenuItem> getPopupMenuItemList() {
-        List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem visDB = new JMenuItem("Micro DB", MICRO_DB);
-        visDB.addActionListener((ActionEvent e) -> {
-            ModelerFile file = this.getModelerScene().getModelerFile();
-            Entity entity = this.getBaseElementSpec();
-            DBUtil.openDBViewer(file, DBUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), entity));
-        });
-
-        menuList.add(0, visDB);
-        return menuList;
+    private boolean evaluateDiscriminatorValue(Inheritance inheritance){
+        boolean status = true;
+        InheritanceHandler classSpec = (InheritanceHandler) this.getBaseElementSpec();
+        if (inheritance != null && inheritance.getStrategy() == InheritanceType.TABLE_PER_CLASS) {
+                getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+            } else {
+                if (StringUtils.isBlank(classSpec.getDiscriminatorValue())) {
+                    getSignalManager().fire(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+                    status = false;
+                } else {
+                    getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
+                }
+            }
+        return status;
     }
+    
+//    @Override
+//    protected List<JMenuItem> getPopupMenuItemList() {
+//        List<JMenuItem> menuList = super.getPopupMenuItemList();
+//        JMenuItem visDB = new JMenuItem("Micro DB", MICRO_DB);
+//        visDB.addActionListener((ActionEvent e) -> {
+//            ModelerFile file = this.getModelerScene().getModelerFile();
+//            Entity entity = this.getBaseElementSpec();
+//            DBUtil.openDBViewer(file, DBUtil.isolateEntityMapping(this.getModelerScene().getBaseElementSpec(), entity));
+//        });
+//
+//        menuList.add(0, visDB);
+//        return menuList;
+//    }
 
     /**
      * @return the abstractEntity

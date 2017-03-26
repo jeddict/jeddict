@@ -45,12 +45,7 @@ public class ShortcutListener extends KeyAdapter {
             } else if (e.getKeyCode() == KeyEvent.VK_D) {
                 JPAModelerScene scene = (JPAModelerScene)file.getModelerScene();
                 EntityMappings entityMapping = scene.getBaseElementSpec();
-                if (entityMapping.getRootWorkSpace() == entityMapping.getCurrentWorkSpace()) {
-                    DBUtil.openDBViewer(file, entityMapping);
-                } else {
-                    scene.getWorkSpaceManager().syncWorkSpaceItem();
-                    DBUtil.openDBViewer(file, isolateEntityMapping(entityMapping, entityMapping.getCurrentWorkSpace()));
-                }
+                DBUtil.openDBViewer(file, entityMapping, entityMapping.getCurrentWorkSpace());
             }
         }
 

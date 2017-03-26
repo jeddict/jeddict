@@ -144,7 +144,6 @@ import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
-import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
@@ -1368,8 +1367,12 @@ public class PropertiesHandler {
 
             @Override
             public void setData(InheritanceHandler classSpec) {
-                entityWidget.setBaseElementSpec((Entity) classSpec);
                 entityWidget.scanDiscriminatorValue();
+                entityWidget.getSubclassWidgets()
+                        .stream()
+                        .filter(sw -> sw instanceof EntityWidget)
+                        .map(sw -> (EntityWidget)sw)
+                        .forEach(sw -> sw.scanDiscriminatorValue());
             }
 
             @Override
