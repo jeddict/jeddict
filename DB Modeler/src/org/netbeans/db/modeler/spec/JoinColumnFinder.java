@@ -17,6 +17,7 @@ package org.netbeans.db.modeler.spec;
 
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -92,7 +93,7 @@ public class JoinColumnFinder {
                     joinColumn = column;
                     created = true;
                     break;
-//                } else if (StringUtils.isBlank(column.getName())) {
+                } else if (StringUtils.isBlank(column.getName())) {
 //                it.remove();
                 }
             }
@@ -100,7 +101,7 @@ public class JoinColumnFinder {
             if (!created) {
                 joinColumn = new JoinColumn();
                 joinColumn.setImplicitName(name);
-//                joinColumnList.add(joinColumn);
+                joinColumns.add(joinColumn);
             }
         }
         return joinColumn;
