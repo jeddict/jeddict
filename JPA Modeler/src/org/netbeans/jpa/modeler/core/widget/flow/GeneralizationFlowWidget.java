@@ -115,7 +115,11 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
             ((EntityWidget) this.getSubclassWidget()).scanDuplicateInheritedAttributes();
             ((EntityWidget) this.getSubclassWidget()).scanDiscriminatorValue();
         }
-        
+        if (this.getSuperclassWidget() instanceof EntityWidget) {
+            ((EntityWidget) this.getSubclassWidget()).scanKeyError();
+            ((EntityWidget) this.getSubclassWidget()).scanDuplicateInheritedAttributes();
+            ((EntityWidget) this.getSuperclassWidget()).scanDiscriminatorValue();
+        }
     }
 
     @Override
@@ -133,6 +137,11 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
             ((EntityWidget) this.getSubclassWidget()).scanKeyError();
             ((EntityWidget) this.getSubclassWidget()).scanDuplicateInheritedAttributes();
             ((EntityWidget) this.getSubclassWidget()).scanDiscriminatorValue();
+        }
+        if (this.getSuperclassWidget() instanceof EntityWidget) {
+            ((EntityWidget) this.getSuperclassWidget()).scanKeyError();
+            ((EntityWidget) this.getSuperclassWidget()).scanDuplicateInheritedAttributes();
+            ((EntityWidget) this.getSuperclassWidget()).scanDiscriminatorValue();
         }
         this.setSubclassWidget(null);
         this.setSuperclassWidget(null);

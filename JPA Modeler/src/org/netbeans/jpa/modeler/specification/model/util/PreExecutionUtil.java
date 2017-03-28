@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.specification.model.util;
 
+import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -62,19 +63,24 @@ public class PreExecutionUtil {
                 if (baseElementWidget instanceof JavaClassWidget) {
                     if (baseElementWidget instanceof PersistenceClassWidget) {
                         PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
+                         boolean isAbstract = TRUE.equals(persistenceClassWidget.getBaseElementSpec().getAbstract()); 
                         if (persistenceClassWidget instanceof EntityWidget) {
                             EntityWidget entityWidget = (EntityWidget) persistenceClassWidget;
                             InheritanceHandler classSpec = (InheritanceHandler) entityWidget.getBaseElementSpec();
                             InheritanceStateType inheritanceState = entityWidget.getInheritanceState();
                             switch (inheritanceState) {
                                 case LEAF:
-                                case SINGLETON:
                                     classSpec.setDiscriminatorColumn(null);
                                     classSpec.setInheritance(null);
                                     break;
-                                case ROOT:
+                                case SINGLETON :
+                                    classSpec.setDiscriminatorColumn(null);
+                                    classSpec.setInheritance(null);
                                     classSpec.setDiscriminatorValue(null);
                                     break;
+                            }
+                            if (isAbstract) {
+                                classSpec.setDiscriminatorValue(null);
                             }
                         }
 

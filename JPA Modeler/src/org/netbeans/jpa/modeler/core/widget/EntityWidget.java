@@ -87,8 +87,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         setName(entity.getClazz());
         setLabel(entity.getClazz());
         this.setImage(getIcon());
-        scanKeyError();//todo atm parent class not connected
-        scanDiscriminatorValue();
         validateName(null, this.getName());
     }
     
@@ -203,9 +201,6 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         boolean isAbstract = TRUE.equals(this.getBaseElementSpec().getAbstract()); 
         
         if(isAbstract || SINGLETON == type) {
-           if (StringUtils.isNotBlank(classSpec.getDiscriminatorValue())) {
-              classSpec.setDiscriminatorValue(null);
-           }
             getSignalManager().clear(WARNING, ClassValidator.NO_DISCRIMINATOR_VALUE_EXIST);
         }else if(ROOT == type) {
                 evaluateDiscriminatorValue(classSpec.getInheritance());
