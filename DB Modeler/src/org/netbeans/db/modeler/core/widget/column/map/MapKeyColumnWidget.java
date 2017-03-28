@@ -35,6 +35,7 @@ public class MapKeyColumnWidget extends BasicColumnWidget<DBMapKeyColumn<Attribu
         @Override
     public void createPropertySet(ElementPropertySet set) {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
+
         if (attribute instanceof MapKeyHandler) {  // cover MultiRelational Attribute + ElementCollection
             MapKeyHandler mapKeyHandler = (MapKeyHandler) attribute;
             
@@ -48,7 +49,7 @@ public class MapKeyColumnWidget extends BasicColumnWidget<DBMapKeyColumn<Attribu
     protected String evaluateName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
         if (attribute instanceof MapKeyHandler) {
-            return "BBB";//((MapKeyHandler) attribute).getDefaultColumnName();
+            return ((MapKeyHandler) attribute).getDefaultMapKeyColumnName();
         } else {
             throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
         }

@@ -15,7 +15,6 @@
  */
 package org.netbeans.db.modeler.spec;
 
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 
 /**

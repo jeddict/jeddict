@@ -562,22 +562,11 @@ public class JPAMDefaultTableGenerator {
 
         for (DatabaseMapping mapping : descriptor.getMappings()) {
             ManagedClass managedClass = descriptorManagedClass;
+
             Attribute managedAttribute = (Attribute) mapping.getProperty(Attribute.class);
             Boolean isInherited = (Boolean) mapping.getProperty(Inheritance.class);
             isInherited = isInherited == null ? false : isInherited;
             
-            if (mapping.isForeignReferenceMapping()) {
-                if (managedAttribute instanceof RelationAttribute) {
-                    RelationAttribute relationAttribute = (RelationAttribute) managedAttribute;
-                    if (!relationAttribute.isOwner()) {
-                        managedClass = relationAttribute.getConnectedEntity();
-                        managedAttribute = relationAttribute.getConnectedAttribute();
-                    }
-                } else if (managedAttribute instanceof ElementCollection) {
-                }
-            } else if (mapping.isAggregateMapping()) {
-            }
-
             if (intrinsicAttribute.peek() == null) {
                 intrinsicAttribute.offer(managedAttribute);
 //                intrinsicLocalAttribute = intrinsicAttribute.peek();
