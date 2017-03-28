@@ -507,11 +507,26 @@
                 </attribute>
                 <attribute id="pattern.regexp" class="java.lang.String" name="regexp">
                     <display-name>      regexp</display-name>
+                    <description>
+                        The regular expression to match
+                    </description>                    
                     <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="pattern.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
                 </attribute>
                 <attribute id="pattern.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
+                    <description>
+                        The error message template
+                    </description>                       
                 </attribute>
             </attributes>
             <visible><![CDATA[node.getAttributeConstraintsMap().get("Pattern") != null]]></visible>
@@ -589,6 +604,14 @@
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
+                <attribute id="decimalMin.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified minimum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
                 <attribute id="decimalMin.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -606,6 +629,14 @@
                 </attribute>
                 <attribute id="decimalMax.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="decimalMax.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified maximum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="decimalMax.message" class="java.lang.String" name="message">
@@ -767,6 +798,15 @@
                     <display-name>      regexp</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
+                <attribute id="Key.pattern.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
                 <attribute id="Key.pattern.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -847,6 +887,14 @@
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
+                <attribute id="Key.decimalMin.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified minimum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
                 <attribute id="Key.decimalMin.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -864,6 +912,14 @@
                 </attribute>
                 <attribute id="Key.decimalMax.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.decimalMax.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified maximum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="Key.decimalMax.message" class="java.lang.String" name="message">
@@ -1025,6 +1081,15 @@
                     <display-name>      regexp</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
+                <attribute id="Value.pattern.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
                 <attribute id="Value.pattern.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -1105,6 +1170,14 @@
                     <display-name>      value</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
+                <attribute id="Value.decimalMin.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified minimum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>                
                 <attribute id="Value.decimalMin.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -1122,6 +1195,14 @@
                 </attribute>
                 <attribute id="Value.decimalMax.value" class="java.lang.String" name="value">
                     <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.decimalMax.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified maximum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="Value.decimalMax.message" class="java.lang.String" name="message">

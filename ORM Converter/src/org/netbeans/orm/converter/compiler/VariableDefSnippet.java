@@ -21,10 +21,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import static java.util.stream.Collectors.joining;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.core.util.AttributeType.getArrayType;
 import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
+import static org.netbeans.jcode.core.util.AttributeType.isArray;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
@@ -140,19 +141,31 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getConstraintType() {
-        String type;
-        if (this.getTypeIdentifier() != null) {
+        String type = null;
+        if (this.getTypeIdentifier() != null) { 
             type = this.getTypeIdentifier().getConstraintVariableType();
-        } else {
+        } else if(isArray(classHelper.getClassName())) {
+            String constraint= null;
+            try {
+                constraint = getInlineValueConstraint();
+            } catch (InvalidDataException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            if (constraint != null) {
+                type = getArrayType(classHelper.getClassName()) + " " + constraint + "[]" ;
+            }
+        } 
+        
+        if(type == null){
             type = classHelper.getClassName();
         }
-
+        
         return type;
     }
 
-    public String getType() {//Modified : Collection => Collection<Entity> 
+    public String getType() {
         String type;
-        if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
+        if (this.getTypeIdentifier() != null) {
             type = this.getTypeIdentifier().getVariableType();
         } else {
             type = classHelper.getClassName();
@@ -500,11 +513,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 || "short".equals(type) || "char".equals(type)
                 || "int".equals(type) || "long".equals(type)
                 || "float".equals(type) || "double".equals(type);
-    }
-
-    public boolean isArray(String type) {
-        int length = type.length();
-        return type.charAt(length - 2) == '[' && type.charAt(length - 1) == ']';
     }
 
     public boolean isPrimitiveArray(String type) {
