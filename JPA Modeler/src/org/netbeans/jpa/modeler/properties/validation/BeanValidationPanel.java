@@ -19,7 +19,7 @@ import javax.swing.DefaultComboBoxModel;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.widget.properties.customattr.Property;
 
 public class BeanValidationPanel extends EntityComponent<JoinColumn> {

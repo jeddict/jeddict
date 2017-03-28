@@ -50,10 +50,9 @@ import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
 import org.netbeans.modules.db.explorer.metadata.MetadataModelManager;
 import org.netbeans.modules.db.metadata.model.api.Metadata;
@@ -64,6 +63,7 @@ import org.netbeans.modules.db.metadata.model.api.Procedure;
 import org.netbeans.modules.db.metadata.model.api.SQLType;
 import org.openide.text.CloneableEditorSupport;
 import org.openide.util.RequestProcessor;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 
 public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredProcedureQuery> implements DocumentListener {
 
@@ -745,7 +745,6 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         final NAttributeEntity attributeEntity = new NAttributeEntity("ResultSetMappings", "ResultSet Mappings", "");
         attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("ENTITY_OBJECT", false, true, org.netbeans.jpa.modeler.spec.Entity.class));
         columns.add(new Column("Add ResultSet Mapping", true, Boolean.class));
         columns.add(new Column("ResultSet Name", true, String.class));
@@ -756,7 +755,7 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
 
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerFile));
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 
@@ -836,12 +835,11 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Value", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new QueryHintPanel());
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 
@@ -898,13 +896,12 @@ public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredP
         final NAttributeEntity attributeEntity = new NAttributeEntity("StoredProcedureParameter", "StoredProcedure Parameter", "");
         attributeEntity.setCountDisplay(new String[]{"No StoredProcedure Parameters", "One StoredProcedure Parameter", " StoredProcedure Parameters"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Type", false, String.class));
         columns.add(new Column("ParameterMode", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new StoredProcedureParameterPanel(modelerFile));
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 

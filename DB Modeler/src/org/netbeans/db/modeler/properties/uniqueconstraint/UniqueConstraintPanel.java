@@ -25,7 +25,7 @@ import org.netbeans.db.modeler.properties.tablemember.TableMemberPanel;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 
 public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
 

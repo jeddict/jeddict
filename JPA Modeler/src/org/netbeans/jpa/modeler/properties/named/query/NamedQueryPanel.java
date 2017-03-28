@@ -31,12 +31,12 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
 import org.openide.text.CloneableEditorSupport;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 
 public class NamedQueryPanel extends EntityComponent<NamedQuery> implements ModelerPanel {
 
@@ -341,12 +341,11 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Value", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new QueryHintPanel());
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 

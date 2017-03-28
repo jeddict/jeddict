@@ -29,11 +29,11 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 
 public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping> {
 
@@ -400,12 +400,11 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         final NAttributeEntity attributeEntity = new NAttributeEntity("EntityResult", "Entity Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Entity Results", "One Entity Result", " Entity Results"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Entity Class", false, String.class));
         columns.add(new Column("Field", false, Integer.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new EntityResultPanel(modelerFile));
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 
@@ -462,12 +461,11 @@ public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping>
         final NAttributeEntity attributeEntity = new NAttributeEntity("ConstructorResult", "Constructor Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Constructor Results", "One Constructor Result", " Constructor Results"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Target Class", false, String.class));
         columns.add(new Column("Column", false, Integer.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ConstructorResultPanel(modelerFile));
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 

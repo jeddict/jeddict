@@ -37,10 +37,9 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
 import org.netbeans.modules.db.api.sql.execute.SQLExecution;
 import org.openide.text.CloneableEditorSupport;
@@ -48,6 +47,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 
 public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> implements Lookup.Provider {
 
@@ -484,12 +484,11 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
         final NAttributeEntity attributeEntityObj = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntityObj.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Value", false, String.class));
         attributeEntityObj.setColumns(columns);
         attributeEntityObj.setCustomDialog(new QueryHintPanel());
-        attributeEntityObj.setTableDataListener(new NEntityDataListener() {
+        attributeEntityObj.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 

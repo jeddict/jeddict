@@ -18,8 +18,6 @@ package org.netbeans.jpa.modeler.properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,7 +127,6 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.list
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.support.ComboBoxPropertySupport;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
@@ -145,11 +142,13 @@ import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
 import static org.openide.util.NbBundle.getMessage;
+import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 
 public class PropertiesHandler {
 
     public static final String NONE_TYPE = "< none >";
 
+    @Deprecated //use enummy
     public static ComboBoxPropertySupport getAccessTypeProperty(JPAModelerScene modelerScene, final AccessTypeHandler accessTypeHandlerSpec) {
         ComboBoxListener<AccessType> comboBoxListener = new ComboBoxListener<AccessType>() {
             @Override
@@ -279,7 +278,7 @@ public class PropertiesHandler {
             public ActionHandler getActionHandler() {
                 return ActionHandler.getInstance(() -> {
                     String collectionType = NBModelerUtil.browseClass(modelerFile);
-                    return new ComboBoxValue<String>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
+                    return new ComboBoxValue<>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
                 })
                         .afterCreation(e -> em.getCache().addCollectionClass(e.getValue()))
                         .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
@@ -291,7 +290,6 @@ public class PropertiesHandler {
 
     public static ComboBoxPropertySupport getMapKeyProperty(AttributeWidget<? extends Attribute> attributeWidget, final MapKeyHandler mapKeyHandler, PropertyVisibilityHandler mapKeyVisibilityHandler) {
         JPAModelerScene modelerScene = attributeWidget.getModelerScene();
-        EntityMappings em = modelerScene.getBaseElementSpec();
         ComboBoxListener<Attribute> comboBoxListener = new ComboBoxListener<Attribute>() {
 
             @Override
@@ -394,6 +392,7 @@ public class PropertiesHandler {
             @Override
             public List<ComboBoxValue<Attribute>> getItemList() {
                 List<ComboBoxValue<Attribute>> comboBoxValues = new ArrayList<>();
+                comboBoxValues.add(new ComboBoxValue(null, EMPTY));
                 getAllAttributeWidgets().forEach(classAttributeWidget -> {
                     Attribute attribute = ((AttributeWidget<? extends Attribute>) classAttributeWidget).getBaseElementSpec();
                     comboBoxValues.add(new ComboBoxValue(attribute, attribute.getName()));
@@ -466,58 +465,12 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No JoinColumns exist", "One JoinColumn exist", "JoinColumns exist"});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Column Name", false, String.class));
         columns.add(new Column("Referenced Column Name", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new JoinColumnPanel(entity));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = joinColumnsSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<? extends JoinColumn> joinColumns = joinColumnsSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<? extends JoinColumn> itr = joinColumns.iterator();
-                while (itr.hasNext()) {
-                    JoinColumn joinColumn = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = joinColumn;
-                    row[1] = joinColumn.getName();
-                    row[2] = joinColumn.getReferencedColumnName();//for representation
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                joinColumnsSpec.clear();
-                data.stream().forEach((row) -> {
-                    ((List<JoinColumn>) joinColumnsSpec).add((JoinColumn) row[0]);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(joinColumnsSpec,
+                t -> Arrays.asList(t.getName(), t.getReferencedColumnName())));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -526,58 +479,11 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No AttributeOverrides exist", "One AttributeOverride exist", "AttributeOverrides exist"});
 
         attributeEntity.setColumns(Arrays.asList(
-                new Column("OBJECT", false, true, Object.class),
                 new Column("Attribute Name", false, String.class),
                 new Column("Column Name", false, String.class)
         ));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = attributeOverridesSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                Set<AttributeOverride> attributeOverrides = attributeOverridesSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<? extends AttributeOverride> itr = attributeOverrides.iterator();
-                while (itr.hasNext()) {
-                    AttributeOverride attributeOverride = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = attributeOverride;
-                    row[1] = attributeOverride.getName();
-                    row[2] = attributeOverride.getColumn() != null ? attributeOverride.getColumn().getName() : EMPTY;//for representation
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                attributeOverridesSpec.clear();
-                data.stream().forEach((row) -> {
-                    AttributeOverride attributeOverride = (AttributeOverride) row[0];
-                    attributeOverridesSpec.add(attributeOverride);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(attributeOverridesSpec,
+                t -> Arrays.asList(t.getName(), t.getColumn() != null ? t.getColumn().getName() : EMPTY)));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -586,60 +492,12 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No AssociationOverrides exist", "One AssociationOverride exist", "AssociationOverrides exist"});
 
         attributeEntity.setColumns(Arrays.asList(
-                new Column("OBJECT", false, true, Object.class),
                 new Column("Association Name", false, String.class),
                 new Column("JoinTable Name", false, String.class),
                 new Column("JoinColumn Size", false, Integer.class)
         ));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = associationOverridesSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                Set<AssociationOverride> associationOverrides = associationOverridesSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<? extends AssociationOverride> itr = associationOverrides.iterator();
-                while (itr.hasNext()) {
-                    AssociationOverride attributeOverride = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = attributeOverride;
-                    row[1] = attributeOverride.getName();
-                    row[2] = attributeOverride.getJoinTable().getName();
-                    row[3] = attributeOverride.getJoinColumn().size();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                associationOverridesSpec.clear();
-                data.stream().forEach((row) -> {
-                    AssociationOverride associationOverride = (AssociationOverride) row[0];
-                    associationOverridesSpec.add(associationOverride);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(associationOverridesSpec, 
+        (t) -> Arrays.asList(t.getName(), t.getJoinTable().getName(), t.getJoinColumn().size())));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -650,58 +508,12 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No PrimaryKeyJoinColumns exist", "One PrimaryKeyJoinColumn exist", "PrimaryKeyJoinColumns exist"});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Column Name", false, String.class));
         columns.add(new Column("Referenced Column Name", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new PrimaryKeyJoinColumnPanel(entity));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = primaryKeyJoinColumnsSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<? extends PrimaryKeyJoinColumn> primaryKeyJoinColumns = primaryKeyJoinColumnsSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<? extends PrimaryKeyJoinColumn> itr = primaryKeyJoinColumns.iterator();
-                while (itr.hasNext()) {
-                    PrimaryKeyJoinColumn primaryKeyJoinColumn = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = primaryKeyJoinColumn;
-                    row[1] = primaryKeyJoinColumn.getName();
-                    row[2] = primaryKeyJoinColumn.getReferencedColumnName();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                primaryKeyJoinColumnsSpec.clear();
-                data.stream().forEach((row) -> {
-                    ((List<PrimaryKeyJoinColumn>) primaryKeyJoinColumnsSpec).add((PrimaryKeyJoinColumn) row[0]);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(primaryKeyJoinColumnsSpec,
+                t -> Arrays.asList(t.getName(), t.getReferencedColumnName())));
         entityWidget.addPropertyVisibilityHandler("PrimaryKeyJoinColumns", () -> {
             InheritanceStateType inheritanceState = entityWidget.getInheritanceState();
             return inheritanceState == InheritanceStateType.BRANCH || inheritanceState == InheritanceStateType.LEAF;
@@ -715,56 +527,13 @@ public class PropertiesHandler {
 
         attributeEntity.setCountDisplay(new String[]{"No ResultSet Mappings", "One ResultSet Mapping", " ResultSet Mappings"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("ResultSet Name", true, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerScene.getModelerFile(), entity));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data = new LinkedList<>();
-            int count;
-
-            @Override
-            public void initCount() {
-                count = sqlResultSetMappingSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                for (SqlResultSetMapping resultSetMapping : sqlResultSetMappingSpec) {
-                    Object[] row = new Object[2];
-                    row[0] = resultSetMapping;
-                    row[1] = resultSetMapping.getName();
-                    data_local.add(row);
-                }
-//                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                sqlResultSetMappingSpec.clear();
-                data.stream().map((row) -> (SqlResultSetMapping) row[0]).map((resultSetMapping) -> {
-                    resultSetMapping.setIdentifiableClass(entity);
-                    return resultSetMapping;
-                }).forEach((resultSetMapping) -> {
-                    sqlResultSetMappingSpec.add(resultSetMapping);
-                });
-                initData();
-            }
-        });
-        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(sqlResultSetMappingSpec,
+                t -> Arrays.asList(t.getName()),
+                 (t, row) -> t.setIdentifiableClass(entity)));
+       return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
     public static PropertySupport getNamedStoredProcedureQueryProperty(JPAModelerScene modelerScene, Entity entity) {
@@ -773,64 +542,15 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No NamedStoredProcedureQueries exist", "One NamedStoredProcedureQuery exist", "NamedStoredProcedureQueries exist"});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("ProcedureName", false, String.class));
         columns.add(new Column("Parameters", false, Integer.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedStoredProcedureQueryPanel(modelerScene.getModelerFile()));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = namedStoredProcedureQueriesSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<NamedStoredProcedureQuery> joinColumns = namedStoredProcedureQueriesSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<NamedStoredProcedureQuery> itr = joinColumns.iterator();
-                while (itr.hasNext()) {
-                    NamedStoredProcedureQuery namedStoredProcedureQuery = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = namedStoredProcedureQuery;
-                    row[1] = namedStoredProcedureQuery.isEnable();
-                    row[2] = namedStoredProcedureQuery.getName();
-                    row[3] = namedStoredProcedureQuery.getProcedureName();
-                    row[4] = namedStoredProcedureQuery.getParameter().size();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                namedStoredProcedureQueriesSpec.clear();
-                data.stream().forEach((row) -> {
-                    NamedStoredProcedureQuery procedureQuery = (NamedStoredProcedureQuery) row[0];
-                    procedureQuery.setEnable((boolean) row[1]);
-                    namedStoredProcedureQueriesSpec.add(procedureQuery);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(namedStoredProcedureQueriesSpec,
+                t -> Arrays.asList(t.isEnable(),t.getName(), t.getProcedureName(), t.getParameter().size()),
+                 (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -840,64 +560,15 @@ public class PropertiesHandler {
         final List<NamedQuery> namedQueriesSpec = identifiableClass.getNamedQuery();
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
         columns.add(new Column("Lock Mode Type", false, true, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedQueryPanel(identifiableClass, modelerScene.getModelerFile()));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = namedQueriesSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<NamedQuery> joinColumns = namedQueriesSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<NamedQuery> itr = joinColumns.iterator();
-                while (itr.hasNext()) {
-                    NamedQuery namedQuery = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = namedQuery;
-                    row[1] = namedQuery.isEnable();
-                    row[2] = getShortQueryName(identifiableClass, namedQuery.getName());
-                    row[3] = namedQuery.getQuery();
-                    row[4] = namedQuery.getLockMode();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                namedQueriesSpec.clear();
-                data.stream().forEach((row) -> {
-                    NamedQuery namedQuery = (NamedQuery) row[0];
-                    namedQuery.setEnable((boolean) row[1]);
-                    namedQueriesSpec.add(namedQuery);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(namedQueriesSpec,
+                t -> Arrays.asList(t.isEnable(), getShortQueryName(identifiableClass, t.getName()),t.getQuery(),t.getLockMode()),
+        (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -906,59 +577,13 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No Annotations exist", "One Annotation exist", "Annotations exist"});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Annoation", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new AnnotationPanel(modelerScene.getModelerFile()));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = annotations.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<Annotation> itr = annotations.iterator();
-                while (itr.hasNext()) {
-                    Annotation annotation = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = annotation;
-                    row[1] = annotation.isEnable();
-                    row[2] = annotation.getName();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                annotations.clear();
-                data.stream().forEach((row) -> {
-                    Annotation annotationElement = (Annotation) row[0];
-                    annotationElement.setEnable((boolean) row[1]);
-                    annotations.add(annotationElement);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(annotations,
+                t -> Arrays.asList(t.isEnable(), t.getName()),
+                (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -967,59 +592,13 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{String.format("No %s exist", artifactType), String.format("One %s exist", artifactType), String.format("%s exist", artifactType)});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column(artifactType, false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new JavaClassArtifactPanel(modelerScene.getModelerFile(), artifactType));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = referenceClasses.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<ReferenceClass> itr = referenceClasses.iterator();
-                while (itr.hasNext()) {
-                    ReferenceClass referenceClass = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = referenceClass;
-                    row[1] = referenceClass.isEnable();
-                    row[2] = referenceClass.getName();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                referenceClasses.clear();
-                data.stream().forEach((row) -> {
-                    ReferenceClass referenceClass = (ReferenceClass) row[0];
-                    referenceClass.setEnable((boolean) row[1]);
-                    referenceClasses.add(referenceClass);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(referenceClasses,
+                t -> Arrays.asList(t.isEnable(), t.getName()),
+                (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -1075,61 +654,14 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No Snippets exist", "One Snippet exist", "Snippets exist"});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Snippet", false, String.class));
         columns.add(new Column("Location", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new CustomSnippetPanel(modelerScene.getModelerFile(), snippetType, snippetLocationType));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = snippets.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<T> itr = snippets.iterator();
-                while (itr.hasNext()) {
-                    T snippet = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = snippet;
-                    row[1] = snippet.isEnable();
-                    row[2] = snippet.getValue();
-                    row[3] = snippet.getLocationType().getTitle();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                snippets.clear();
-                data.stream().forEach((row) -> {
-                    T snippet = (T) row[0];
-                    snippet.setEnable((boolean) row[1]);
-                    snippets.add(snippet);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(snippets,
+                t -> Arrays.asList(t.isEnable(), t.getValue(), t.getLocationType().getTitle()),
+                (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -1149,60 +681,13 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No EntityGraphs exist", "One EntityGraph exist", "EntityGraphs exist"});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedEntityGraphPanel(entityWidget));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = entityGraphsSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<NamedEntityGraph> entityGraphList = entityGraphsSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<NamedEntityGraph> itr = entityGraphList.iterator();
-                while (itr.hasNext()) {
-                    NamedEntityGraph entityGraph = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = entityGraph;
-                    row[1] = entityGraph.isEnable();
-                    row[2] = entityGraph.getName();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                entityGraphsSpec.clear();
-                data.stream().forEach((row) -> {
-                    NamedEntityGraph entityGraph = (NamedEntityGraph) row[0];
-                    entityGraph.setEnable((boolean) row[1]);
-                    entityGraphsSpec.add(entityGraph);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(entityGraphsSpec,
+                t -> Arrays.asList(t.isEnable(), t.getName()),
+        (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -1211,62 +696,14 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No Named Native Queries exist", "One Named Native Query exist", "Named Native Queries exist"});
         List<NamedNativeQuery> namedNativeQueriesSpec = entity.getNamedNativeQuery();
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Query", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedNativeQueryPanel(modelerScene.getModelerFile(), entity));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = namedNativeQueriesSpec.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<NamedNativeQuery> namedNativeQueries = namedNativeQueriesSpec;
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<NamedNativeQuery> itr = namedNativeQueries.iterator();
-                while (itr.hasNext()) {
-                    NamedNativeQuery namedNativeQuery = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = namedNativeQuery;
-                    row[1] = namedNativeQuery.isEnable();
-                    row[2] = namedNativeQuery.getName();
-                    row[3] = namedNativeQuery.getQuery();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                namedNativeQueriesSpec.clear();
-                data.stream().forEach((row) -> {
-                    NamedNativeQuery nativeQuery = (NamedNativeQuery) row[0];
-                    nativeQuery.setEnable((boolean) row[1]);
-                    namedNativeQueriesSpec.add(nativeQuery);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(namedNativeQueriesSpec,
+                t -> Arrays.asList(t.isEnable(), t.getName(), t.getQuery()),
+                (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -1482,73 +919,26 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No Constructors exist", "One Constructor exist", "Constructors exist"});
         List<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Constructor List", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ConstructorPanel(persistenceClassWidget));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = constructors.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<Constructor> itr = constructors.iterator();
-                while (itr.hasNext()) {
-                    Constructor constructor = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = constructor;
-                    row[1] = constructor.isEnable();
-                    row[2] = constructor.toString();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                constructors.clear();
-
-                data.stream().forEach((row) -> {
-                    Constructor constructorElement = (Constructor) row[0];
-                    constructorElement.setEnable((boolean) row[1]);
-                    constructors.add(constructorElement);
-                });
-                //add no-arg constructor, if no-arg constructor not exist and other constructor exist
-                if (!constructors.isEmpty() && !constructors.stream().anyMatch(con -> con.getAttributes().isEmpty())) {
-                    constructors.add(Constructor.getNoArgsInstance());
-                }
-
-                //Enable no-args constructor and disable other no-args constructor , if more then one are available 
-                if (!constructors.isEmpty()) {
-                    List<Constructor> noArgsConstructors = constructors.stream().filter(con -> con.isNoArgs()).collect(toList());
-                    noArgsConstructors.stream().forEach(con -> con.setEnable(false));
-                    noArgsConstructors.get(0).setEnable(true);
-                    noArgsConstructors.get(0).setAccessModifier(AccessModifierType.PUBLIC);
-                }
-
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(constructors,
+                t -> Arrays.asList(t.isEnable(), t.toString()),
+                (t, row) -> t.setEnable((boolean) row[1]),
+                () -> {
+                    //add no-arg constructor, if no-arg constructor not exist and other constructor exist
+                    if (!constructors.isEmpty() && !constructors.stream().anyMatch(con -> con.getAttributes().isEmpty())) {
+                        constructors.add(Constructor.getNoArgsInstance());
+                    }
+                    //Enable no-args constructor and disable other no-args constructor , if more then one are available 
+                    if (!constructors.isEmpty()) {
+                        List<Constructor> noArgsConstructors = constructors.stream().filter(con -> con.isNoArgs()).collect(toList());
+                        noArgsConstructors.stream().forEach(con -> con.setEnable(false));
+                        noArgsConstructors.get(0).setEnable(true);
+                        noArgsConstructors.get(0).setAccessModifier(AccessModifierType.PUBLIC);
+                    }
+                }));
         return new NEntityPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), attributeEntity);
     }
 
@@ -1796,62 +1186,14 @@ public class PropertiesHandler {
         attributeEntity.setCustomDialog(new ConverterPanel(scene.getModelerFile()));
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Converter Class", false, String.class));
         columns.add(new Column("Attribute Type", false, String.class));
         columns.add(new Column("DB Field Type", false, String.class));
         columns.add(new Column("Auto Apply", true, Boolean.class));
         attributeEntity.setColumns(columns);
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = converters.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<Converter> itr = converters.iterator();
-                while (itr.hasNext()) {
-                    Converter converter = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = converter;
-                    row[1] = converter.getClazz();
-                    row[2] = converter.getAttributeType();
-                    row[3] = converter.getFieldType();
-                    row[4] = converter.isAutoApply();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                converters.clear();
-                converters.addAll(data.stream().map((row) -> {
-                    Converter converter = (Converter) row[0];
-                    converter.setAutoApply((boolean) row[4]);
-                    return converter;
-                }).collect(toList()));
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(converters,
+                t -> Arrays.asList(t.getClazz(), t.getAttributeType(), t.getFieldType(), t.isAutoApply()),
+                (t, row) -> t.setAutoApply((boolean) row[4])));
         return new NEntityPropertySupport(scene.getModelerFile(), attributeEntity);
     }
 
@@ -1886,60 +1228,13 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No Convert exist", "One Convert exist", "Converts exist"});
 
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Converter Class", false, String.class));
         columns.add(new Column("AttributeName", false, String.class));
         columns.add(new Column("Disable Global Conversion", true, Boolean.class));
         attributeEntity.setColumns(columns);
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = converts.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<Convert> itr = converts.iterator();
-                while (itr.hasNext()) {
-                    Convert convert = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = convert;
-                    row[1] = convert.getConverter();
-                    row[2] = convert.getAttributeName();
-                    row[3] = convert.isDisableConversion();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                converts.clear();
-                converts.addAll(data.stream().map((row) -> {
-                    Convert convert = (Convert) row[0];
-                    convert.setDisableConversion((boolean) row[3]);
-                    return convert;
-                }).collect(toList()));
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(converts,
+                t -> Arrays.asList(t.getConverter(), t.getAttributeName(), t.isDisableConversion()),
+        (t, row) -> t.setDisableConversion((boolean) row[3])));
         return attributeEntity;
     }
 
@@ -1995,64 +1290,5 @@ public class PropertiesHandler {
         });
         return new EmbeddedPropertySupport(scene.getModelerFile(), entity);
     }
-
-//    public static PropertySupport getWorkSpaceProperty(final JPAModelerScene modelerScene) {
-//        final List<WorkSpace> workSpaces = modelerScene.getBaseElementSpec().getWorkSpaces();
-//        final NAttributeEntity attributeEntity = new NAttributeEntity("WorkSpaces", "WorkSpace", "");//getMessage(PropertiesHandler.class, "INFO_ENTITY_GRAPH"));
-//        attributeEntity.setCountDisplay(new String[]{"No WorkSpace exist", "One WorkSpace exist", "WorkSpace exist"});
-//
-//        List<Column> columns = new ArrayList<>();
-//        columns.add(new Column("OBJECT", false, true, Object.class));
-////        columns.add(new Column("#", true, Boolean.class));
-//        columns.add(new Column("Name", false, String.class));
-//        attributeEntity.setColumns(columns);
-//        attributeEntity.setCustomDialog(new NamedEntityGraphPanel(entityWidget));
-//
-//        attributeEntity.setTableDataListener(new NEntityDataListener() {
-//            List<Object[]> data;
-//            int count;
-//
-//            @Override
-//            public void initCount() {
-//                count = workSpaces.size();
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return count;
-//            }
-//
-//            @Override
-//            public void initData() {
-//                List<Object[]> data_local = new LinkedList<>();
-//                Iterator<WorkSpace> itr = workSpaces.iterator();
-//                while (itr.hasNext()) {
-//                    WorkSpace workSpace = itr.next();
-//                    Object[] row = new Object[attributeEntity.getColumns().size()];
-//                    row[0] = workSpace;
-//                    data_local.add(row);
-//                }
-//                this.data = data_local;
-//            }
-//
-//            @Override
-//            public List<Object[]> getData() {
-//                return data;
-//            }
-//
-//            @Override
-//            public void setData(List<Object[]> data) {
-//                workSpaces.clear();
-//                data.stream().forEach((row) -> {
-//                    WorkSpace workSpace = (WorkSpace) row[0];
-//                    workSpaces.add(workSpace);
-//                });
-//                this.data = data;
-//            }
-//
-//        });
-//
-//        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
-//    }
 
 }

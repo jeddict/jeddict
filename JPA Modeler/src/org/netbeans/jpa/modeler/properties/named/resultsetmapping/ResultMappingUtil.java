@@ -24,7 +24,7 @@ import org.netbeans.jpa.modeler.spec.FieldResult;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 
 public class ResultMappingUtil {
 
@@ -32,12 +32,11 @@ public class ResultMappingUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity("ColumnResult", "Column Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Column Results", "One Column Result", " Column Results"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Class", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new ColumnResultPanel(modelerFile));
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 
@@ -94,12 +93,11 @@ public class ResultMappingUtil {
         final NAttributeEntity attributeEntity = new NAttributeEntity("FieldResult", "Field Result", "");
         attributeEntity.setCountDisplay(new String[]{"No Field Results", "One Field Result", " Field Results"});
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Column", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new FieldResultPanel());
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
+        attributeEntity.setTableDataListener(new INEntityDataListener() {
             List<Object[]> data = new LinkedList<>();
             int count;
 

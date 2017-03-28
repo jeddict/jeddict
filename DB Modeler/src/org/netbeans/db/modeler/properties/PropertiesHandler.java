@@ -16,6 +16,7 @@
 package org.netbeans.db.modeler.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,9 +29,10 @@ import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.openide.nodes.PropertySupport;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
+import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 
 public class PropertiesHandler {
 
@@ -39,57 +41,12 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No Index exist", "One Index exist", "Indexes exist"});
         List<Index> indices = tableWidget.getBaseElementSpec().getIndexes();
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Columns", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new IndexPanel(tableWidget));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = indices.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<Index> itr = indices.iterator();
-                while (itr.hasNext()) {
-                    Index constraint = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = constraint;
-                    row[1] = constraint.getName();
-                    row[2] = constraint.toString();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                indices.clear();
-                data.stream().forEach((row) -> {
-                    indices.add((Index) row[0]);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(indices,
+                t -> Arrays.asList(t.getName(), t.toString())));
         return new NEntityPropertySupport(tableWidget.getModelerScene().getModelerFile(), attributeEntity);
     }
     
@@ -98,57 +55,12 @@ public class PropertiesHandler {
         attributeEntity.setCountDisplay(new String[]{"No UniqueConstraints exist", "One UniqueConstraint exist", "UniqueConstraints exist"});
         Set<UniqueConstraint> uniqueConstraints = tableWidget.getBaseElementSpec().getUniqueConstraints();
         List<Column> columns = new ArrayList<>();
-        columns.add(new Column("OBJECT", false, true, Object.class));
         columns.add(new Column("Name", false, String.class));
         columns.add(new Column("Columns", false, String.class));
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new UniqueConstraintPanel(tableWidget));
-
-        attributeEntity.setTableDataListener(new NEntityDataListener() {
-            List<Object[]> data;
-            int count;
-
-            @Override
-            public void initCount() {
-                count = uniqueConstraints.size();
-            }
-
-            @Override
-            public int getCount() {
-                return count;
-            }
-
-            @Override
-            public void initData() {
-                List<Object[]> data_local = new LinkedList<>();
-                Iterator<UniqueConstraint> itr = uniqueConstraints.iterator();
-                while (itr.hasNext()) {
-                    UniqueConstraint constraint = itr.next();
-                    Object[] row = new Object[attributeEntity.getColumns().size()];
-                    row[0] = constraint;
-                    row[1] = constraint.getName();
-                    row[2] = constraint.toString();
-                    data_local.add(row);
-                }
-                this.data = data_local;
-            }
-
-            @Override
-            public List<Object[]> getData() {
-                return data;
-            }
-
-            @Override
-            public void setData(List<Object[]> data) {
-                uniqueConstraints.clear();
-                data.stream().forEach((row) -> {
-                    uniqueConstraints.add((UniqueConstraint) row[0]);
-                });
-                this.data = data;
-            }
-
-        });
-
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(uniqueConstraints,
+                t -> Arrays.asList(t.getName(), t.toString())));
         return new NEntityPropertySupport(tableWidget.getModelerScene().getModelerFile(), attributeEntity);
     }
 
