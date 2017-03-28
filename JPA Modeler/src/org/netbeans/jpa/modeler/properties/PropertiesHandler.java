@@ -372,18 +372,8 @@ public class PropertiesHandler {
 
             @Override
             public ComboBoxValue<Attribute> getItem() {
-                Attribute attribute = null;
                 if (entity.getLabelAttribute() != null) {
-                    attribute = entity.getLabelAttribute();
-                } else { //select any attribute if not found 
-                    List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets();
-                    if (!attributeWidgets.isEmpty()) {
-                        attribute = attributeWidgets.get(0).getBaseElementSpec();
-                        entity.setLabelAttribute(attribute);
-                    }
-                }
-                if (attribute != null) {
-                    return new ComboBoxValue(attribute, attribute.getName());
+                    return new ComboBoxValue(entity.getLabelAttribute(), entity.getLabelAttribute().getName());
                 } else {
                     return new ComboBoxValue(null, EMPTY);
                 }
