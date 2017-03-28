@@ -374,7 +374,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         for (JavaClass javaClass : entityMappings.getJavaClass()) {
             if (javaClass instanceof IdentifiableClass) {
                 IdentifiableClass ic = (IdentifiableClass) javaClass;
-                if (ic.getCompositePrimaryKeyType() != null) {
+                if (ic.getCompositePrimaryKeyType() != null && ic.getCompositePrimaryKeyClass() != null) {
                     if (ic.getCompositePrimaryKeyClass().equals(previousName)) {
                         ++previousNameCount;
                         previousNameClasses.add(ic.getClazz() + ".<" + ic.getAttributes().getEmbeddedId().getName() + '>');
