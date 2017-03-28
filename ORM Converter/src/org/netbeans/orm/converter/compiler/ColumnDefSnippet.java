@@ -224,7 +224,8 @@ public class ColumnDefSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
         
-        return "@" + (mapKey? MAP_KEY_COLUMN : COLUMN) + ORMConverterUtil.OPEN_PARANTHESES + (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
+        return "@" + (mapKey? MAP_KEY_COLUMN : COLUMN) + ORMConverterUtil.OPEN_PARANTHESES + 
+                (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 

@@ -49,12 +49,14 @@ public class ElementCollectionSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
+        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
+            builder.append(mapKeySnippet.getSnippet())
+                    .append(ORMConverterUtil.NEW_LINE)
+                    .append(ORMConverterUtil.TAB);
+        }
         builder.append("@").append(ELEMENT_COLLECTION);
         if (fetchType != null) {
             builder.append("(fetch=").append(getFetchType()).append(ORMConverterUtil.CLOSE_PARANTHESES);
-        }
-        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
-            builder.append(mapKeySnippet.getSnippet()).append(TAB);
         }
         return builder.toString();
     }
