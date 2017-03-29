@@ -151,7 +151,7 @@ public class JPAMDefaultTableGenerator {
      * Used to track the table definition: keyed by the table name, and valued
      * by the table definition object.
      */
-    protected Map<String, TableDefinition> tableMap = null;
+    protected Map<String, JPAMTableDefinition> tableMap = null;
 
     /**
      * Used to track the field definition: keyed by the database field object,
@@ -995,7 +995,7 @@ public class JPAMDefaultTableGenerator {
     }
 
     protected TableDefinition getTableDefFromDBTable(ManagedClass managedClass, Attribute managedAttribute, LinkedList<Entity> intrinsicEntity, DatabaseTable databaseTable) {
-        TableDefinition tableDefinition = this.tableMap.get(databaseTable.getName());
+        JPAMTableDefinition tableDefinition = this.tableMap.get(databaseTable.getName());
 
         if (tableDefinition == null) {
             //table not built yet, simply built it
@@ -1367,7 +1367,7 @@ public class JPAMDefaultTableGenerator {
         sourceTableDef.addForeignKeyConstraint(constraint);
     }
 
-    protected void addUniqueKeyConstraints(TableDefinition sourceTableDef, Map<String, List<List<String>>> uniqueConstraintsMap) {
+    protected void addUniqueKeyConstraints(JPAMTableDefinition sourceTableDef, Map<String, List<List<String>>> uniqueConstraintsMap) {
         int serialNumber = -1;
 
         for (String name : uniqueConstraintsMap.keySet()) {

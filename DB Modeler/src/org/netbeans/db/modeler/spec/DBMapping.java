@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
@@ -34,6 +35,8 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
 
     private String name;
     private final Map<String, DBTable> tables = new HashMap<>();
+    
+    private final Map<String, String> queries = new HashMap<>();
     private final Map<String, String> creationQueries = new HashMap<>();
     private final Map<String, List<String>> alterationQueries = new HashMap<>();
 
@@ -106,12 +109,24 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
         this.name = name;
     }
 
+    public String getQuery(String table) {
+        return queries.get(table);
+    }
+
+    public void putQuery(String table, String query) {
+        if(StringUtils.isNotBlank(query)){
+            queries.put(table, query);
+        }
+    }
+    
     public String getCreateQuery(String table) {
         return creationQueries.get(table);
     }
 
-    public String putCreateQuery(String table, String query) {
-        return creationQueries.put(table, query);
+    public void putCreateQuery(String table, String query) {
+        if(StringUtils.isNotBlank(query)){
+            creationQueries.put(table, query);
+        }
     }
 
     public List<String> getAlterQuery(String table) {
@@ -119,19 +134,27 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
     }
 
     public void putAlterQuery(String table, String query) {
-        if(getAlterQuery(table)==null){
-            alterationQueries.put(table, new ArrayList<>());
+        if (StringUtils.isNotBlank(query)) {
+            if (getAlterQuery(table) == null) {
+                alterationQueries.put(table, new ArrayList<>());
+            }
+            getAlterQuery(table).add(query);
         }
-        getAlterQuery(table).add(query);
     }
 
     public String getSQL() {
         StringBuilder queryList = new StringBuilder();
-        creationQueries.values().stream().forEach((query) -> {
+        queries.values().forEach((query) -> {
+            queryList.append(query).append(";\n");
+        });
+        
+        creationQueries.values().forEach((query) -> {
             queryList.append(query).append(";\n");
         });
 
-        alterationQueries.values().stream().flatMap(queries -> queries.stream()).forEach((query) -> {
+        alterationQueries.values().stream()
+                .flatMap(queries -> queries.stream())
+                .forEach((query) -> {
             queryList.append(query).append(";\n");
         });
 
