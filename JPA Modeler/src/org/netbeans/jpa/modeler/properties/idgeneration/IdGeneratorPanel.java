@@ -89,7 +89,7 @@ public class IdGeneratorPanel extends GenericEmbeddedEditor<Id> {
             TableGenerator tableGenerator = new TableGenerator();
             if (tabgen_name_TextField.getText() == null || tabgen_name_TextField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "Table Generator name can not be empty", "Name required", JOptionPane.INFORMATION_MESSAGE);
-                return null;
+                throw new IllegalStateException();
             }
             tableGenerator.setName(tabgen_name_TextField.getText());
             tableGenerator.setTable(tabgen_tableName_TextField.getText());

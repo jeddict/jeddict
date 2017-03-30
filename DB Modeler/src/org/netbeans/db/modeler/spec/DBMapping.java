@@ -37,6 +37,7 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
     private final Map<String, DBTable> tables = new HashMap<>();
     
     private final Map<String, String> queries = new HashMap<>();
+    private final Map<String, String> insertQueries = new HashMap<>();
     private final Map<String, String> creationQueries = new HashMap<>();
     private final Map<String, List<String>> alterationQueries = new HashMap<>();
 
@@ -115,7 +116,11 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
 
     public void putQuery(String table, String query) {
         if(StringUtils.isNotBlank(query)){
-            queries.put(table, query);
+            if (query.startsWith("INSERT")) {
+                insertQueries.put(table, query);
+            } else {
+                queries.put(table, query);
+            }
         }
     }
     
@@ -147,7 +152,9 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
         queries.values().forEach((query) -> {
             queryList.append(query).append(";\n");
         });
-        
+        insertQueries.values().forEach((query) -> {
+            queryList.append(query).append(";\n");
+        });
         creationQueries.values().forEach((query) -> {
             queryList.append(query).append(";\n");
         });
