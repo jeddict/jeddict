@@ -183,21 +183,23 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
     public void loadModelerFileInternal(ModelerFile file) throws DBConnectionNotFound, org.netbeans.modeler.core.exception.ProcessInterruptedException {
         try {
-
+            
+            DBModelerScene scene = (DBModelerScene) file.getModelerScene();
+            scene.startSceneGeneration();
+            
             EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
             WorkSpace workSpace = (WorkSpace) file.getAttributes().get(WorkSpace.class.getSimpleName());
-
-            DBModelerScene scene = (DBModelerScene) file.getModelerScene();
             DBMapping dbMapping = createDBMapping(file, entityMapping, workSpace);
-
             scene.setBaseElementSpec(dbMapping);
-
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMapping);
 
             dbMapping.getTables().stream().forEach(table -> loadTable(scene, table));
             loadFlowEdge(scene);
             scene.autoLayout();
+
+            scene.commitSceneGeneration();
+
 
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);

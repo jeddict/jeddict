@@ -16,8 +16,8 @@
 package org.netbeans.jpa.modeler.specification.model.util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -35,8 +35,6 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import org.netbeans.modeler.widget.node.INodeWidget;
 import org.openide.util.Lookup;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.cloneEntityMapping;
 
@@ -80,35 +78,34 @@ public class DBUtil {
         if (!((JPAModelerScene) file.getModelerScene()).compile()) {
             return;
         }
-        if (entityMappings.getRootWorkSpace() == workSpace) {
-            workSpace = null;
-        }
+        WorkSpace paramWorkSpace = entityMappings.getRootWorkSpace() == workSpace ? null:workSpace;
         try {
             PreExecutionUtil.preExecution(file);
-            DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);//new DefaultSourceCodeGeneratorFactory();//SourceGeneratorFactoryProvider.getInstance();//
-            Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
-            dbModelerRequestManager.init(file, entityMappings, workSpace);
-            IModelerScene scene;
-            if (dbChildModelerFile.isPresent()) {
-                ModelerFile childModelerFile = dbChildModelerFile.get();
-                scene = childModelerFile.getModelerScene();
-                scene.getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
-                    ((INodeWidget) element).remove(false);
-                });
-                childModelerFile.unload();
-                try {
-                    childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
-                    scene.validate();
-                } catch (Exception ex) {
-                    file.handleException(ex);
-                }
-                childModelerFile.load();
-            } else {
-                dbChildModelerFile = file.getChildrenFile("DB");
-                if (dbChildModelerFile.isPresent()) {
-                    dbChildModelerFile.get().getModelerScene().validate();//TODO remove it// should be called from framework
-                }
-            }
+            DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);
+            
+            //close diagram and reopen 
+            long st = new Date().getTime();
+        file.getChildrenFile("DB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
+      System.out.println("openDBViewer close Total time : " + (new Date().getTime() - st) + " ms");
+            dbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
+            System.out.println("openDBViewer Total time : " + (new Date().getTime() - st) + " ms");
+//            dbModelerRequestManager.init(file, entityMappings, workSpace);
+//            //Delete existing table and reload agaian
+//            Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
+//            if (dbChildModelerFile.isPresent()) {
+//                ModelerFile childModelerFile = dbChildModelerFile.get();
+//                childModelerFile.getModelerScene().getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
+//                    ((INodeWidget) element).remove(false);
+//                });
+//                childModelerFile.unload();
+//                try {
+//                    childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
+//                    childModelerFile.getModelerScene().validate();
+//                } catch (Exception ex) {
+//                    file.handleException(ex);
+//                }
+//                childModelerFile.load();
+//            } 
         } catch (Throwable t) {
             file.handleException(t);
         }

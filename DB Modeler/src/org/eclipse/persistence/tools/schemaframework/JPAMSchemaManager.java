@@ -305,7 +305,7 @@ public class JPAMSchemaManager {
         } else if (databaseObjectDefinition instanceof TableSequenceDefinition) {
             query = ((TableSequenceDefinition) databaseObjectDefinition).buildCreationWriter(session, new StringWriter()).toString();
         }
-        System.out.println("query : " + query);//org.eclipse.persistence.tools.schemaframework.SequenceObjectDefinition
+//        System.out.println("query : " + query);
         //            } else {
         //                // Check if we should create a database schema for this
         //                // database object definition on the database. It is only
