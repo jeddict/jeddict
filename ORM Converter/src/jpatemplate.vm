@@ -132,8 +132,8 @@ $n#end
 #foreach($snippet in $varDef.getCustomSnippet("BEFORE_FIELD") )
     $snippet 
 $n#end
-#if ($varDef.isJavaDocExist())
-$varDef.getJavaDoc()
+#if ($varDef.isPropertyJavaDocExist())
+$varDef.getPropertyJavaDoc()
 #end
 #####################var - jaxb annotations ###############################
 #if($classDef.isJaxbSupport())
@@ -234,16 +234,15 @@ $n#end
 ##################### PropertyChangeSupport / VetoableChangeSupport ###############################
 #if ($classDef.isPropertyChangeSupport())
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-#end
+$n#end
 #if ($classDef.isVetoableChangeSupport())
     private transient final VetoableChangeSupport vetoableChangeSupport = new VetoableChangeSupport(this);
-#end
+$n#end
 #foreach( $varDef in $classDef.getVariableDefs() )
 #if ($varDef.isPropertyChangeSupport() || $varDef.isVetoableChangeSupport())
     public static final String $varDef.getPropName() = "$varDef.name";
+$n#end
 #end
-#end
-
 #####################custom class snippet - after field ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_FIELD") )
     $snippet
@@ -251,8 +250,7 @@ $n#end
 #####################Constructor #################################
 #foreach($constructor in $classDef.getConstructors())
     $constructor.getSnippet()
-
-#end
+$n#end
 #####################custom class snippet - before method ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_METHOD") )
     $snippet
@@ -263,8 +261,11 @@ $n#end
 #foreach($snippet in $varDef.getCustomSnippet("BEFORE_METHOD") )
     $snippet
 $n#end
-#set($method = $varDef.getMethodName())
 ##################### getter ###############################
+#if ($varDef.isGetterJavaDocExist())
+$varDef.getGetterJavaDoc()
+#end
+#set($method = $varDef.getMethodName())
 #if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
     public $varDef.returnType is$method() {
 #else
@@ -285,6 +286,9 @@ $n#end
     }
 
 ##################### setter ###############################
+#if ($varDef.isSetterJavaDocExist())
+$varDef.getSetterJavaDoc()
+#end
     public void set$method($varDef.type $varDef.name) #if($classDef.isVetoableChangeSupport())throws PropertyVetoException #end{
 #####################custom attribute snippet - pre setter ###############################
 #foreach($snippet in $varDef.getCustomSnippet("PRE_SETTER") )
@@ -316,7 +320,11 @@ $n#end
 #end
     }
 
+##################### fluent ###############################
 #if($fluentAPI)
+#if ($varDef.isFluentJavaDocExist())
+$varDef.getFluentJavaDoc()
+#end
 #set($fluentMethod = $varDef.fluentMethodName)
     public $classDef.getClassName() $fluentMethod($varDef.type $varDef.name) {
         this.$varDef.name = $varDef.name;
@@ -327,7 +335,7 @@ $n#end
 #foreach($snippet in $varDef.getCustomSnippet("AFTER_METHOD") )
     $snippet
 $n#end
-#end
+$n#end
 ##################### PropertyChangeSupport / VetoableChangeSupport ###############################
 #if ($classDef.isPropertyChangeSupport())
 
@@ -368,8 +376,7 @@ $n#end
     public void removeVetoableChangeListener(VetoableChangeListener listener) {
         vetoableChangeSupport.removeVetoableChangeListener(listener);
     }
-#end
-
+$n#end
 #####################custom class snippet - after method ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_METHOD") )
     $snippet
@@ -380,22 +387,19 @@ $n#end
     public boolean equals(Object obj) {
         $classDef.getEqualsMethod().getSnippet()
     }
-
-#end
+$n#end
 #if ($classDef.getHashcodeMethod())
     @Override
     public int hashCode() {
         $classDef.getHashcodeMethod().getSnippet()
     }
-
-#end
+$n#end
 #if ($classDef.getToStringMethod())
     @Override
     public String toString() {
         return $classDef.getToStringMethod().getSnippet();
     }
-
-#end
+$n#end
 #####################custom class snippet - default ###############################
 #foreach($snippet in $classDef.getCustomSnippet("DEFAULT") )
     $snippet

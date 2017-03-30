@@ -32,8 +32,6 @@ import static org.netbeans.jcode.jpa.JPAConstants.ENTITY;
 import static org.netbeans.jcode.jpa.JPAConstants.ENTITY_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
-import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
-import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
@@ -42,7 +40,6 @@ import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
-import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.orm.converter.util.ImportSet;
 
@@ -51,7 +48,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private static final String JPA_TEMPLATE_FILENAME = "jpatemplate.vm";
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
-    private static final VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
     private List<ConstructorSnippet> constructorSnippets;
     private HashcodeMethodSnippet hashcodeMethodSnippet;
     private EqualsMethodSnippet equalsMethodSnippet;
@@ -60,15 +56,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private List<AnnotationSnippet> annotation;
     private Map<ClassSnippetLocationType, List<String>> customSnippet;
 
-    static {
-        AUTO_GENERATE.setName("id");
-        AUTO_GENERATE.setType("String");
-        AUTO_GENERATE.setAutoGenerate(true);
-        AUTO_GENERATE.setPrimaryKey(true);
-    }
-
     private boolean embeddable = false;
-    private boolean generateId = false;
     private boolean excludeDefaultListener = false;
     private boolean excludeSuperClassListener = false;
     private boolean mappedSuperClass = false;
@@ -130,14 +118,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public void setExcludeSuperClassListener(
             boolean excludeSuperClassListener) {
         this.excludeSuperClassListener = excludeSuperClassListener;
-    }
-
-    public boolean isGenerateId() {
-        return generateId;
-    }
-
-    public void setGenerateId(boolean generateId) {
-        this.generateId = generateId;
     }
 
     public boolean isMappedSuperClass() {
@@ -327,11 +307,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     }
 
     public List<VariableDefSnippet> getVariableDefs() {
-
-        if (generateId && !variableDefs.contains(AUTO_GENERATE)) {
-            variableDefs.add(AUTO_GENERATE);
-        }
-
         return variableDefs;
     }
 
@@ -448,12 +423,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             for (VariableDefSnippet variableDef : variableDefs) {
                 importSnippets.addAll(variableDef.getImportSnippets());
             }
-        }
-
-        if (generateId) {
-            importSnippets.add(ID_FQN);
-            importSnippets.add(GENERATION_TYPE_FQN);
-            importSnippets.add(GENERATED_VALUE_FQN);
         }
 
         if (excludeDefaultListener) {

@@ -27,6 +27,7 @@ import static org.netbeans.jcode.core.util.AttributeType.getArrayType;
 import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
 import static org.netbeans.jcode.core.util.AttributeType.isArray;
 import org.netbeans.jcode.core.util.StringHelper;
+import static org.netbeans.jcode.core.util.StringHelper.firstLower;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
@@ -821,21 +822,75 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.description = description;
     }
 
-    public String getJavaDoc() {
+    public StringBuilder getJavaDoc(String prefix) {
         StringBuilder doc = new StringBuilder();
         doc.append(TAB).append("/**").append(NEW_LINE);
-//        if (StringUtils.isNotBlank(description)) {
+        int count = 0;
         for (String line : description.split("\\r\\n|\\n|\\r")) {
-            doc.append(" * ").append(line).append(NEW_LINE);
+            count++;
+            doc.append(TAB).append(" * ");
+            if (count == 1 && StringUtils.isNotBlank(prefix)) {
+                doc.append(prefix);
+                line = firstLower(line);
+            }
+            doc.append(line).append(NEW_LINE);
         }
-//        }
-        doc.append(" */");
+        return doc;
+    }
+    
+    public String getPropertyJavaDoc() {
+        StringBuilder doc = getJavaDoc(null);
+        doc.append(TAB).append(" */");
         return doc.toString();
     }
-
+    
+    public String getGetterJavaDoc() {
+        StringBuilder doc = getJavaDoc("Get ");
+        doc.append(TAB).append(" * ").append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}",getName())).append(NEW_LINE);
+        doc.append(TAB).append(" */");
+        return doc.toString();
+    }
+        
+    public String getSetterJavaDoc() {
+        StringBuilder doc = getJavaDoc("Set ");
+        doc.append(TAB).append(" * ").append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}",getName(),getName())).append(NEW_LINE);
+        doc.append(TAB).append(" */");
+        return doc.toString();
+    }
+            
+    public String getFluentJavaDoc() {
+        StringBuilder doc = getJavaDoc("Set ");
+        doc.append(TAB).append(" * ").append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}",getName(),getName())).append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}",attribute.getJavaClass().getClazz())).append(NEW_LINE);
+        doc.append(TAB).append(" */");
+        return doc.toString();
+    }
+    
+    
+    
     public boolean isJavaDocExist() {
         return StringUtils.isNotBlank(description);
     }
+    
+    public boolean isPropertyJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isPropertyJavaDoc();
+    }
+    
+    public boolean isGetterJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isGetterJavaDoc();
+    }
+    
+    public boolean isSetterJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isSetterJavaDoc();
+    }
+    
+    public boolean isFluentJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isFluentAPIJavaDoc();
+    }
+    
 
     /**
      * @return the temporal
