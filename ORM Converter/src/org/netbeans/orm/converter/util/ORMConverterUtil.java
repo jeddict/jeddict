@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
@@ -40,17 +42,20 @@ import javax.swing.text.StyledDocument;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.GuardedDocument;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.lib.editor.util.swing.PositionRegion;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.WritableSnippet;
+import org.openide.ErrorManager;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
 import org.openide.util.UserQuestionException;
@@ -268,97 +273,48 @@ public class ORMConverterUtil {
         return fo;
     }
 
-    public static void formatFile(FileObject fo) {
-        if (!fo.isLocked()) {
-            FileLock lock = null;
+    private static BaseDocument getDocument(final FileObject fo) throws DataObjectNotFoundException, IOException {
+        BaseDocument doc = null;
+        DataObject dObj = DataObject.find(fo);
+        if (dObj != null) {
+            EditorCookie editor = dObj.getLookup().lookup(EditorCookie.class);
+            if (editor != null) {
+                doc = (BaseDocument) editor.openDocument();
+            }
+        }
+        return doc;
+    }
+    
+    private static void formatFile(final FileObject fo) {
+        assert fo != null;
+        final BaseDocument doc;
+        try {
+            doc = getDocument(fo);
+            if (doc == null) {
+                return;
+            }
+            final Reformat reformat = Reformat.get(doc);
+            reformat.lock();
             try {
-                lock = fo.lock();
-            
-                DataObject dobj = DataObject.find(fo);
-                EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
-                ec.close();
-                StyledDocument sd;
-                try {
-                    sd = ec.openDocument();
-                } catch (UserQuestionException uqe) {
-                    uqe.confirmed();
-                    sd = ec.openDocument();
-                }
-                final StyledDocument doc = sd;
-                final Reformat reformat = Reformat.get(doc);
-
-                reformat.lock();
-
-                try {
-                    NbDocument.runAtomic(doc, () -> {
-                        try {
-                            reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
-                        } catch (BadLocationException ex) {
-                            ExceptionUtils.printStackTrace(ex);
-                        }
-                    });
-                } finally {
-                    reformat.unlock();
-                }
-
-                ec.saveDocument();
-
-            } catch (IOException ex) {
-                ExceptionUtils.printStackTrace(ex);
+                doc.runAtomic(() -> {
+                    try {
+                        reformat.reformat(0, doc.getLength());
+                    } catch (BadLocationException x) {
+                        throw new RuntimeException(x);
+                    }
+                });
             } finally {
-                if(lock!=null){
-                    lock.releaseLock();
-                }
+                reformat.unlock();
             }
-            
-        }
-    }
-
-    //TODO: ref from org.netbeans.editor.ActionFactory:
-    private static void reformat(Reformat formatter, Document doc, int startPos, int endPos, AtomicBoolean canceled) throws BadLocationException {
-        final GuardedDocument gdoc = (doc instanceof GuardedDocument) ? (GuardedDocument) doc : null;
-
-        int pos = startPos;
-        if (gdoc != null) {
-            pos = gdoc.getGuardedBlockChain().adjustToBlockEnd(pos);
-        }
-
-        LinkedList<PositionRegion> regions = new LinkedList<>();
-        while (pos < endPos) {
-            int stopPos = endPos;
-            if (gdoc != null) { // adjust to start of the next guarded block
-                stopPos = gdoc.getGuardedBlockChain().adjustToNextBlockStart(pos);
-                if (stopPos == -1 || stopPos > endPos) {
-                    stopPos = endPos;
-                }
-            }
-
-            if (pos < stopPos) {
-                regions.addFirst(new PositionRegion(doc, pos, stopPos));
-                pos = stopPos;
-            } else {
-                pos++; //ensure to make progress
-            }
-
-            if (gdoc != null) { // adjust to end of current block
-                pos = gdoc.getGuardedBlockChain().adjustToBlockEnd(pos);
-            }
-        }
-
-        if (canceled.get()) {
-            return;
-        }
-        // Once we start formatting, the task can't be canceled
-
-        for (PositionRegion region : regions) {
             try {
-                formatter.reformat(region.getStartOffset(), region.getEndOffset());
-            } catch(BadLocationException ex) {
-              ex.printStackTrace();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                DataObject.find(fo).getLookup().lookup(EditorCookie.class).saveDocument();
+            } catch (IOException e) {
+                Exceptions.printStackTrace(e);
             }
+        } catch (Exception ex) {
+            // no disaster
+            ErrorManager.getDefault().log(ErrorManager.WARNING, "Cannot reformat the file: " + fo.getPath()); // NOI18N
         }
     }
-
+   
 }
