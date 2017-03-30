@@ -556,7 +556,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
 
     @Override
     public void sortAttributes() {
-        this.sortPins(getAttributeCategories());
+            this.sortPins(getAttributeCategories());
     }
     
     public Map<String, List<Widget>> getAttributeCategories() {

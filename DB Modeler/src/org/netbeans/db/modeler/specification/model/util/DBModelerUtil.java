@@ -196,10 +196,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
             dbMapping.getTables().stream().forEach(table -> loadTable(scene, table));
             loadFlowEdge(scene);
-            scene.autoLayout();
-
             scene.commitSceneGeneration();
-
+            scene.autoLayout();
 
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);

@@ -91,8 +91,6 @@ public class PreExecutionUtil {
         }
 
         executeCompositePrimaryKeyEvaluation(scene.getBaseElements(), entityMappings);
-//        addDefaultJoinColumnForCompositePK(scene.getBaseElements(), entityMappings);
-
         clearInheritanceData(file);
 
     }
