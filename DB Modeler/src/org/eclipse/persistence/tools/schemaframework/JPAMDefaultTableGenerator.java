@@ -360,7 +360,11 @@ public class JPAMDefaultTableGenerator {
                 
                 if (refMapping.getFields().size() > 1) {
                     intrinsicAttribute.add((Attribute) refMapping.getProperty(Attribute.class));
-                    return getManagedAttribute(refMapping.getReferenceDescriptor(), dbField, intrinsicAttribute);
+                    if(refMapping.getReferenceDescriptor() == refDescriptor){ //self-relationship with composite pk
+                        return (Attribute) refMapping.getProperty(Attribute.class);
+                    } else {
+                        return getManagedAttribute(refMapping.getReferenceDescriptor(), dbField, intrinsicAttribute);
+                    }
                 } else if (!refMapping.getFields().isEmpty() && refMapping.getFields().get(0) == dbField) {
                     intrinsicAttribute.add((Attribute) refMapping.getProperty(Attribute.class));
                     return (Attribute) refMapping.getProperty(Attribute.class);

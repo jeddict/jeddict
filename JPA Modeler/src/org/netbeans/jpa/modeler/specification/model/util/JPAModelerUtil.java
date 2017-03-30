@@ -420,9 +420,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     @Override
     public void loadModelerFile(final ModelerFile file) throws ProcessInterruptedException {
-
+        
         try {
             JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
+            scene.startSceneGeneration();
             File savedFile = file.getFile();
             EntityMappings entityMappings = null;
             try {
@@ -460,11 +461,11 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 }
 
             }
-
+            
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMappings);
             scene.setBaseElementSpec(entityMappings);
-            scene.startSceneGeneration();
+            
             entityMappings.repairDefinition(IO);
 
             scene.getWorkSpaceManager().reloadMainWorkSpace();
@@ -510,7 +511,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                 scene.autoLayout();
                 entityMappings.setStatus(null);
             }
-
+                    
             updateWindowTitle(file, entityMappings);
             scene.commitSceneGeneration();
         } catch (JAXBException ex) {
@@ -619,33 +620,35 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     private void loadFlowEdge(JPAModelerScene scene) {
+        scene.getBaseElements()
+                .stream()
+                .filter((baseElementWidget) -> (baseElementWidget instanceof JavaClassWidget))
+                .forEach((baseElementWidget) -> {
+                    JavaClassWidget javaClassWidget = (JavaClassWidget) baseElementWidget;
+                    loadGeneralization(scene, javaClassWidget);
+                    if (baseElementWidget instanceof PersistenceClassWidget) {
+                        PersistenceClassWidget<? extends ManagedClass> sourcePersistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
+                        for (SingleValueEmbeddedAttributeWidget embeddedAttributeWidget : sourcePersistenceClassWidget.getSingleValueEmbeddedAttributeWidgets()) {
+                            loadEmbeddedEdge(scene, "SINGLE_EMBEDDABLE_RELATION", sourcePersistenceClassWidget, embeddedAttributeWidget);
+                        }
+                        for (MultiValueEmbeddedAttributeWidget embeddedAttributeWidget : sourcePersistenceClassWidget.getMultiValueEmbeddedAttributeWidgets()) {
+                            loadEmbeddedEdge(scene, "MULTI_EMBEDDABLE_RELATION", sourcePersistenceClassWidget, embeddedAttributeWidget);
+                        }
 
-        scene.getBaseElements().stream().filter((baseElementWidget) -> (baseElementWidget instanceof JavaClassWidget)).forEach((baseElementWidget) -> {
-            JavaClassWidget javaClassWidget = (JavaClassWidget) baseElementWidget;
-            loadGeneralization(scene, javaClassWidget);
-            if (baseElementWidget instanceof PersistenceClassWidget) {
-                PersistenceClassWidget<? extends ManagedClass> sourcePersistenceClassWidget = (PersistenceClassWidget) baseElementWidget;
-                for (SingleValueEmbeddedAttributeWidget embeddedAttributeWidget : sourcePersistenceClassWidget.getSingleValueEmbeddedAttributeWidgets()) {
-                    loadEmbeddedEdge(scene, "SINGLE_EMBEDDABLE_RELATION", sourcePersistenceClassWidget, embeddedAttributeWidget);
-                }
-                for (MultiValueEmbeddedAttributeWidget embeddedAttributeWidget : sourcePersistenceClassWidget.getMultiValueEmbeddedAttributeWidgets()) {
-                    loadEmbeddedEdge(scene, "MULTI_EMBEDDABLE_RELATION", sourcePersistenceClassWidget, embeddedAttributeWidget);
-                }
-
-                for (OTORelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getOneToOneRelationAttributeWidgets()) {
-                    loadRelationEdge(scene, "OTO_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, OTORelationAttributeWidget.class);
-                }
-                for (OTMRelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getOneToManyRelationAttributeWidgets()) {
-                    loadRelationEdge(scene, "OTM_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, OTMRelationAttributeWidget.class);
-                }
-                for (MTORelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getManyToOneRelationAttributeWidgets()) {
-                    loadRelationEdge(scene, "MTO_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, OTMRelationAttributeWidget.class);
-                }
-                for (MTMRelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getManyToManyRelationAttributeWidgets()) {
-                    loadRelationEdge(scene, "MTM_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, MTMRelationAttributeWidget.class);
-                }
-            }
-        });
+                        for (OTORelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getOneToOneRelationAttributeWidgets()) {
+                            loadRelationEdge(scene, "OTO_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, OTORelationAttributeWidget.class);
+                        }
+                        for (OTMRelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getOneToManyRelationAttributeWidgets()) {
+                            loadRelationEdge(scene, "OTM_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, OTMRelationAttributeWidget.class);
+                        }
+                        for (MTORelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getManyToOneRelationAttributeWidgets()) {
+                            loadRelationEdge(scene, "MTO_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, OTMRelationAttributeWidget.class);
+                        }
+                        for (MTMRelationAttributeWidget sourceRelationAttributeWidget : sourcePersistenceClassWidget.getManyToManyRelationAttributeWidgets()) {
+                            loadRelationEdge(scene, "MTM_RELATION", sourcePersistenceClassWidget, sourceRelationAttributeWidget, MTMRelationAttributeWidget.class);
+                        }
+                    }
+                });
     }
 
     private void loadEmbeddedEdge(JPAModelerScene scene, String contextToolId, PersistenceClassWidget sourcePersistenceClassWidget, EmbeddedAttributeWidget sourceAttributeWidget) {
@@ -788,39 +791,38 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 
     //Issue fix : https://github.com/jeddict/jeddict/issues/8 #Same Column name in CompositePK
     public static void addDefaultJoinColumnForCompositePK(IdentifiableClass identifiableClass,
-            String attributeName, Set<String> allFields, List<JoinColumn> joinColumns) {
-        //Get all @Id @Relation owner attribute 
-        for (SingleRelationAttribute relationAttribute : identifiableClass.getAttributes().getDerivedRelationAttributes()) {
+            Attribute attribute, Set<String> allFields, List<JoinColumn> joinColumns) {
+        if (attribute instanceof SingleRelationAttribute) {
+            SingleRelationAttribute relationAttribute = (SingleRelationAttribute)attribute;
             if (!relationAttribute.isOwner()) {  //Only Owner will draw edge because in any case uni/bi owner is always exist
-                continue;
+                return;
             }
-            if (!relationAttribute.getName().equals(attributeName)) {
-                continue;
-            }
-
+           
             //check is it composite key
             Entity targetEntity = relationAttribute.getConnectedEntity();
             relationAttribute.getJoinColumn().clear();
             if (joinColumns == null || joinColumns.isEmpty()) {
-                for (Attribute attribute : targetEntity.getAttributes().getPrimaryKeyAttributes()) {
+                //unused snippet
+                for (Attribute targetAttribute : targetEntity.getAttributes().getPrimaryKeyAttributes()) {
                     JoinColumn joinColumn = new JoinColumn();
-                    String joinColumnName = (targetEntity.getClazz() + '_' + attribute.getName()).toUpperCase();
+                    String joinColumnName = (targetEntity.getClazz() + '_' + targetAttribute.getName()).toUpperCase();
                     joinColumnName = getNext(joinColumnName, nextJoinColumnName -> allFields.contains(nextJoinColumnName));
                     joinColumn.setName(joinColumnName);
-                    if (attribute instanceof RelationAttribute) {
-                        Entity connectedEntity = ((RelationAttribute) attribute).getConnectedEntity();
+                    if (targetAttribute instanceof RelationAttribute) {
+                        Entity connectedEntity = ((RelationAttribute) targetAttribute).getConnectedEntity();
                         if (connectedEntity.getCompositePrimaryKeyType() != null) {
                             //TODO  
                         } else {
                             Id id = connectedEntity.getAttributes().getId().get(0);
-                            joinColumn.setReferencedColumnName(attribute.getName() + "_" + id.getDefaultColumnName());
+                            joinColumn.setReferencedColumnName(targetAttribute.getName() + "_" + id.getDefaultColumnName());
                         }
                     } else {
-                        joinColumn.setReferencedColumnName(attribute.getName());
+                        joinColumn.setReferencedColumnName(targetAttribute.getName());
                     }
                     relationAttribute.getJoinColumn().add(joinColumn);
                 }
             } else {
+                //called from db exception handeler
                 relationAttribute.getJoinColumn().addAll(joinColumns);
             }
         }

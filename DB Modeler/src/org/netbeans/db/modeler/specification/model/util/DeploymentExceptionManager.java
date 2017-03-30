@@ -258,7 +258,7 @@ public class DeploymentExceptionManager {
                                         }
                                     }
                                 }
-                                JPAModelerUtil.addDefaultJoinColumnForCompositePK(entity, attributeName, allFields, joinColumns);
+                                JPAModelerUtil.addDefaultJoinColumnForCompositePK(entity, attribute, allFields, joinColumns);
                             } else {
                                 if (de.getMapping().getFields().size() == 1) {
                                     if (attribute instanceof PersistenceBaseAttribute) {
