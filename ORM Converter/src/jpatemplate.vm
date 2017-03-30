@@ -317,7 +317,7 @@ $n#end
     }
 
 #if($fluentAPI)
-#set($fluentMethod = $varDef.name)
+#set($fluentMethod = $varDef.fluentMethodName)
     public $classDef.getClassName() $fluentMethod($varDef.type $varDef.name) {
         this.$varDef.name = $varDef.name;
         return this;

@@ -27,6 +27,7 @@ import static org.netbeans.jcode.core.util.AttributeType.getArrayType;
 import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
 import static org.netbeans.jcode.core.util.AttributeType.isArray;
 import org.netbeans.jcode.core.util.StringHelper;
+import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
@@ -47,6 +48,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.orm.converter.util.ImportSet;
@@ -207,6 +209,16 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getName() {
         return name;
     }
+    
+    public String getFluentMethodName() {
+        if(StringUtils.isNotBlank(CodePanel.getFluentAPIPrefix())){
+            return CodePanel.getFluentAPIPrefix() + firstUpper(getName());
+        } else {
+            return getName();
+        }
+    }
+    
+    
 
     public void setName(String name) {
         this.name = name;
