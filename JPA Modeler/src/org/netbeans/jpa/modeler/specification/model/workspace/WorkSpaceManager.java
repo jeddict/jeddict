@@ -228,8 +228,10 @@ public class WorkSpaceManager {
             IBaseElementWidget widget = scene.getBaseElement(item.getJavaClass().getId());
             if (widget != null && widget instanceof JavaClassWidget) {
                 JavaClassWidget<JavaClass> classWidget = (JavaClassWidget<JavaClass>) widget;
-                item.setX(classWidget.getSceneViewBound().x);
-                item.setY(classWidget.getSceneViewBound().y);
+                if (!scene.isSceneGenerating()) {
+                    item.setX(classWidget.getSceneViewBound().x);
+                    item.setY(classWidget.getSceneViewBound().y);
+                } 
                 item.setTextDesign(classWidget.getTextDesign().isChanged()
                         ? (NodeTextDesign)classWidget.getTextDesign():null);
                 item.setWorkSpaceElement(
