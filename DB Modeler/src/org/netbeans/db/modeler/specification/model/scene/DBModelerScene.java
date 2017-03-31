@@ -195,10 +195,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
         return colorSchemes;
     }
 
-        @Override
-    public JComponent createTreeView(){
-        return null;
-    }
+
     
     @Override
     public void destroy() {
