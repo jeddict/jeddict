@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import static java.util.stream.Collectors.toList;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
@@ -188,14 +189,17 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     public Map<String, Class<? extends IColorScheme>> getColorSchemes() {
         Map<String, Class<? extends IColorScheme>> colorSchemes = new HashMap<>();
-//        colorSchemes.put("Classic",PFactory.getNetBeans60Scheme());
         colorSchemes.put("Default", DBColorScheme.class);
         colorSchemes.put("Dark", PDarkColorScheme.class);
         colorSchemes.put("Light", PLightColorScheme.class);
-//        colorSchemes.put("Mac", PFactory.getMacScheme());
         return colorSchemes;
     }
 
+        @Override
+    public JComponent createTreeView(){
+        return null;
+    }
+    
     @Override
     public void destroy() {
         try {

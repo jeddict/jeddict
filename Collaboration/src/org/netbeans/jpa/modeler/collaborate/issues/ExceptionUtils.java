@@ -51,7 +51,7 @@ public final class ExceptionUtils implements IExceptionHandler {
     }
 
     public static void printStackTrace(String errorMessage, final Throwable t, final ModelerFile file) {
-        
+        t.printStackTrace();
         if (StringUtils.isBlank(errorMessage)) {
             errorMessage = t.getMessage();
 

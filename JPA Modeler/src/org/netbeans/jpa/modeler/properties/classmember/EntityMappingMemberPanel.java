@@ -143,6 +143,9 @@ public class EntityMappingMemberPanel extends GenericEmbeddedEditor<EntityMappin
      * @return the classCheckable
      */
     public Predicate<JavaClass> getClassCheckable() {
+        if(classCheckable == null){
+            return javaClass -> true;
+        }
         return classCheckable;
     }
 

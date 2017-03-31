@@ -50,7 +50,15 @@ public class JPAEventListener extends EventListener {
                 JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
                 EntityMappings entityMapping = scene.getBaseElementSpec();
                 DBUtil.openDBViewer(file, entityMapping, entityMapping.getCurrentWorkSpace());
-
+            }
+        });
+        
+        component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, InputEvent.CTRL_MASK), "FIND");
+        component.getActionMap().put("FIND", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
+                scene.searchWidget();
             }
         });
 
