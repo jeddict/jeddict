@@ -17,6 +17,7 @@ package org.netbeans.db.modeler.specification.model.file.action;
 
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.db.modeler.specification.model.engine.DBDiagramEngine;
+import org.netbeans.db.modeler.specification.model.event.ShortcutListener;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
@@ -52,6 +53,7 @@ public class DBViewerActionListener extends ModelerFileActionListener implements
         modelerFile.setIcon(TAB_ICON);
         modelerFile.getAttributes().put(EntityMappings.class.getSimpleName(), mappings);
         modelerFile.getAttributes().put(WorkSpace.class.getSimpleName(), workSpace);
+        modelerFile.getModelerPanelTopComponent().addKeyListener(new ShortcutListener(modelerFile));
     }
 
     @Override

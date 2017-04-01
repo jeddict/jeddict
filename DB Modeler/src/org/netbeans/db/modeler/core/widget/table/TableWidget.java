@@ -16,7 +16,6 @@
 package org.netbeans.db.modeler.core.widget.table;
 
 import java.awt.Cursor;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -62,13 +61,14 @@ import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.jpa.modeler.core.widget.*;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
-import static org.netbeans.modeler.core.engine.ModelerDiagramEngine.NODE_WIDGET_SELECT_PROVIDER;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
+import org.netbeans.modeler.specification.model.document.IRootElement;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
+import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -295,32 +295,6 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         return null;
     }
 
-//        private void moveVisibleRect (IModelerScene modelerScene, Point center) {
-//        JComponent component = modelerScene.getView ();
-//        if (component == null)
-//            return;
-//        double zoomFactor = modelerScene.getZoomFactor ();
-//        Rectangle bounds = modelerScene.getBounds ();
-//        Dimension size = getSize ();
-//
-//        double sx = bounds.width > 0 ? (double) size.width / bounds.width : 0.0;
-//        double sy = bounds.width > 0 ? (double) size.height / bounds.height : 0.0;
-//        double scale = Math.min (sx, sy);
-//
-//        int vw = (int) (scale * bounds.width);
-//        int vh = (int) (scale * bounds.height);
-//        int vx = (size.width - vw) / 2;
-//        int vy = (size.height - vh) / 2;
-//
-//        int cx = (int) ((double) (center.x - vx) / scale * zoomFactor);
-//        int cy = (int) ((double) (center.y - vy) / scale * zoomFactor);
-//
-//        Rectangle visibleRect = component.getVisibleRect ();
-//        visibleRect.x = cx - visibleRect.width / 2;
-//        visibleRect.y = cy - visibleRect.height / 2;
-//        component.scrollRectToVisible (visibleRect);
-//
-//    }
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuItemList = new LinkedList<>();
@@ -330,41 +304,15 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
             DBTable table = TableWidget.this.getBaseElementSpec();
             Entity entity = table.getEntity();
             ModelerFile modelerFile = TableWidget.this.getModelerScene().getModelerFile();
-            modelerFile = modelerFile.getParentFile();
-
-            Widget widget = (Widget) ((JPAModelerScene) modelerFile.getModelerScene()).getBaseElements().stream().filter(w -> w.getBaseElementSpec() == entity).findAny().get();
-            modelerFile.getModelerScene().setFocusedWidget(widget);
-
-            Rectangle visibleRect = modelerFile.getModelerScene().getView().getVisibleRect();
-            Rectangle widetRec = new Rectangle(widget.getLocation());
-            Rectangle sceneRec = widget.getScene().getBounds();
-
-            int x = 0, y = 0;
-            if (widetRec.y + visibleRect.height / 2 > sceneRec.height && widetRec.y + visibleRect.height / 2 < sceneRec.height) {
-//                System.out.println("Center Vertcal");
-                y = widetRec.y - visibleRect.height / 2;
-            } else if (widetRec.y + visibleRect.height / 2 > sceneRec.height) {
-//                System.out.println("Bottom");
-                y = sceneRec.height;
-            } else if (widetRec.y + visibleRect.height / 2 < sceneRec.height) {
-//                System.out.println("Top");
-                y = 0;
-            }
-
-            if (widetRec.x + visibleRect.width / 2 > sceneRec.width && widetRec.x + visibleRect.width / 2 < sceneRec.width) {
-//                System.out.println("Center Horizontal");
-                x = widetRec.x - visibleRect.width / 2;
-            } else if (widetRec.x + visibleRect.width / 2 > sceneRec.width) {
-//                System.out.println("Right");
-                x = sceneRec.width;
-            } else if (widetRec.x + visibleRect.width / 2 < sceneRec.width) {
-//                System.out.println("Left");
-                x = 0;
-            }
-
-            NODE_WIDGET_SELECT_PROVIDER.select(widget, null, false);
-            modelerFile.getModelerScene().getView().scrollRectToVisible(new Rectangle(x, y, widget.getBounds().width, widget.getBounds().height));
-            JPAFileActionListener.open(modelerFile);
+            ModelerFile parentModelerFile = modelerFile.getParentFile();
+            IModelerScene<IRootElement> parentScene = parentModelerFile.getModelerScene();
+            INodeWidget widget = (INodeWidget) parentScene.getBaseElements()
+                    .stream()
+                    .filter(w -> w.getBaseElementSpec() == entity)
+                    .findAny()
+                    .get();
+            JPAFileActionListener.open(parentModelerFile);
+            parentModelerFile.getModelerDiagramEngine().moveToWidget(widget);
 
         });
 

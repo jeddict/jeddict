@@ -13,13 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.jpa.modeler.specification.model.event;
+package org.netbeans.db.modeler.specification.model.event;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import org.netbeans.db.modeler.spec.DBMapping;
+import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
+import static org.netbeans.jpa.modeler.specification.model.util.DBUtil.isolateEntityMapping;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 
@@ -39,12 +42,8 @@ public class ShortcutListener extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
         if (e.isControlDown() == true) {
-            if (e.getKeyCode() == KeyEvent.VK_G) {
-                JPAModelerUtil.generateSourceCode(file);
-            } else if (e.getKeyCode() == KeyEvent.VK_D) {
-                JPAModelerScene scene = (JPAModelerScene)file.getModelerScene();
-                EntityMappings entityMapping = scene.getBaseElementSpec();
-                DBUtil.openDBViewer(file, entityMapping, entityMapping.getCurrentWorkSpace());
+            if (e.getKeyCode() == KeyEvent.VK_L) {
+                     SQLEditorUtil.openEditor(file, ((DBMapping) file.getModelerScene().getBaseElementSpec()).getSQL());
             } else if (e.getKeyCode() == KeyEvent.VK_F) {
                 file.getModelerDiagramEngine().searchWidget();
             }

@@ -23,7 +23,6 @@ import javax.swing.KeyStroke;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
-import static org.netbeans.jpa.modeler.specification.model.util.DBUtil.isolateEntityMapping;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.actions.EventListener;
 import org.netbeans.modeler.core.ModelerFile;
@@ -53,12 +52,11 @@ public class JPAEventListener extends EventListener {
             }
         });
         
-        component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, InputEvent.CTRL_MASK), "FIND");
-        component.getActionMap().put("FIND", new AbstractAction() {
+        component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, InputEvent.CTRL_MASK), "SEARCH");
+        component.getActionMap().put("SEARCH", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
-                scene.searchWidget();
+                file.getModelerDiagramEngine().searchWidget();
             }
         });
 

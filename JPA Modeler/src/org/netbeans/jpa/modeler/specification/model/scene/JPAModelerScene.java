@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.specification.model.scene;
 
-import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import org.netbeans.api.project.Project;
-import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.getNext;
@@ -47,7 +45,6 @@ import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectiona
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
 import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
-import org.netbeans.jpa.modeler.find.SearchDialog;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
@@ -93,8 +90,6 @@ import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.jpa.modeler.specification.model.workspace.WorkSpaceManager;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.RUN_JPQL_ICON;
-import static org.netbeans.modeler.core.engine.ModelerDiagramEngine.NODE_WIDGET_SELECT_PROVIDER;
-import org.netbeans.modeler.widget.node.INodeWidget;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -113,19 +108,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         set.put("GLOBAL_CONFIG", getCustomArtifact(this, entityMappings.getInterfaces(), "Interface"));
 
     }
-
-    public void searchWidget(){
-        final SearchDialog searchDialog = new SearchDialog(this);
-        searchDialog.setVisible(true);
-        INodeWidget widget = searchDialog.getValue();
-        Rectangle visibleRect = getView().getVisibleRect();
-        visibleRect.x = (int)widget.getLocation().getX() - visibleRect.width / 2 + widget.getBounds().width / 2;
-        visibleRect.y = (int)widget.getLocation().getY() - visibleRect.height / 2 + widget.getBounds().height / 4;
-        getView().scrollRectToVisible(visibleRect);
-        NODE_WIDGET_SELECT_PROVIDER.select((Widget)widget, null, false);
-        setFocusedWidget((Widget)widget);
-    }
-    
+   
     public List<EntityWidget> getEntityWidgets() {
         List<EntityWidget> entityWidgets = new ArrayList<>();
         for (IBaseElementWidget baseElement : getBaseElements()) {
@@ -359,7 +342,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @Override
     public void init() {
         super.init();
-        
 
         //After installation of new version, auto save file 
         ModelerFile file = this.getModelerFile();

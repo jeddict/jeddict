@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import static java.util.stream.Collectors.toList;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
@@ -32,6 +31,7 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.db.modeler.specification.model.event.DBEventListener;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.VIEW_SQL;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.db.modeler.theme.DBColorScheme;
@@ -44,6 +44,7 @@ import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.PrimaryKeyJoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
+import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -243,4 +244,8 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
         return menuList;
     }
 
+    @Override
+    protected IEventListener getEventListener() {
+        return new DBEventListener();
+    }
 }

@@ -15,22 +15,17 @@
  */
 package org.netbeans.db.modeler.specification.model.engine;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 import org.netbeans.api.db.explorer.DatabaseConnection;
-import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELOAD_ICON;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.engine.ModelerDiagramEngine;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
-import org.netbeans.modeler.widget.node.INodeWidget;
-import org.openide.util.Lookup;
 
 /**
  *
@@ -43,6 +38,7 @@ public class DBDiagramEngine extends ModelerDiagramEngine {
         buildReloadTool(bar);
         buildExportDocTool(bar);
         buildSatelliteTool(bar);
+        buildSearchTool(bar);
         bar.add(new JToolBar.Separator());
         buildDBCon(bar);
         bar.add(new JToolBar.Separator());
