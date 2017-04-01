@@ -35,6 +35,8 @@ import static org.netbeans.jcode.jpa.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_F
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
@@ -53,8 +55,8 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private EqualsMethodSnippet equalsMethodSnippet;
     private ToStringMethodSnippet toStringMethodSnippet;
 
-    private List<AnnotationSnippet> annotation;
     private Map<ClassSnippetLocationType, List<String>> customSnippet;
+    private Map<ClassAnnotationLocationType, List<AnnotationSnippet>> annotation;
 
     private boolean embeddable = false;
     private boolean excludeDefaultListener = false;
@@ -433,7 +435,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             importSnippets.add(EXCLUDE_SUPERCLASS_LISTENERS_FQN);
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation()) {
+        for (AnnotationSnippet snippet : this.getAnnotation().values().stream().flatMap(annot -> annot.stream()).collect(toList())) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
@@ -482,17 +484,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the annotation
      */
-    public List<AnnotationSnippet> getAnnotation() {
-        if (annotation == null) {
-            annotation = new ArrayList<>();
-        }
+    public Map<ClassAnnotationLocationType, List<AnnotationSnippet>> getAnnotation() {
         return annotation;
     }
-
+    
+    public List<AnnotationSnippet> getAnnotation(String locationType) {
+        return annotation.get(ClassAnnotationLocationType.valueOf(locationType));
+    }
+    
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<AnnotationSnippet> annotation) {
+    public void setAnnotation(Map<ClassAnnotationLocationType, List<AnnotationSnippet>> annotation) {
         this.annotation = annotation;
     }
 

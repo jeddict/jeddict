@@ -27,8 +27,8 @@ import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getAttributeAnnoation;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getAttributeSnippet;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomAnnoation;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldTypeProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getJaxbVarTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
@@ -106,7 +106,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
             }
         }
         getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
-        set.put("ATTR_PROP", getCustomAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
+        set.put("ATTR_PROP", getAttributeAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
         set.put("ATTR_PROP", getAttributeSnippet(this.getModelerScene(), this.getBaseElementSpec().getSnippets()));
 
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> {

@@ -118,14 +118,14 @@ public class TypeIdentifierSnippet implements Snippet {
                     if (_class != null && Map.class.isAssignableFrom(_class)) {
                         if (multiRelationAttributeSnippet.getMapKeySnippet() != null && multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType().getClassName() != null) {
                             mapKeyClassHelper = multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType();
-                            constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) + "," + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
+                            constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
                             type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
                         } else {
-                            constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY + "," + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
+                            constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
                             type = collectionTypeClassHelper.getClassName() + "<" + SELECT_MAP_KEY + "," + wrap(classHelper.getClassName()) + ">";
                         }
                     } else {
-                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
+                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
                         type = collectionTypeClassHelper.getClassName() + "<" + wrap(classHelper.getClassName()) + ">";
                     }
 
@@ -157,14 +157,14 @@ public class TypeIdentifierSnippet implements Snippet {
                 if (_class != null && Map.class.isAssignableFrom(_class)) {
                     if (elementCollection.getMapKeySnippet() != null && elementCollection.getMapKeySnippet().getMapKeyAttributeType().getClassName() != null) {
                         mapKeyClassHelper = elementCollection.getMapKeySnippet().getMapKeyAttributeType();
-                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) + "," + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
+                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
                         type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
                     } else {
-                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY + "," + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
+                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
                         type = collectionTypeClassHelper.getClassName() + "<" + SELECT_MAP_KEY + "," + wrap(classHelper.getClassName()) + ">";
                     }
                 } else {
-                    constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
+                    constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
                     type = collectionTypeClassHelper.getClassName() + "<" + wrap(classHelper.getClassName()) + ">";
                 }
 

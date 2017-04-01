@@ -117,8 +117,8 @@ $classDef.getNamedEntityGraphs().getSnippet()
 $classDef.getNamedStoredProcedureQueries().getSnippet()
 #end
 ##################### custom annotation ###############################
-#foreach($annotation in $classDef.getAnnotation() )
-    $annotation.getSnippet()
+#foreach($annotation in $classDef.getAnnotation("CLASS") )
+$annotation.getSnippet()
 #end
 public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end#if($classDef.isInterfaceExist()) implements $classDef.getUnqualifiedInterfaceList()#end { 
 
@@ -217,7 +217,7 @@ $varDef.getAssociationOverrides().getSnippet()
 #if ($varDef.getAttributeOverrides())
 $varDef.getAttributeOverrides().getSnippet()
 #end
-#foreach($annotation in $varDef.getAnnotation() )
+#foreach($annotation in $varDef.getAnnotation("PROPERTY") )
     $annotation.getSnippet()
 #end
 #foreach($constraint in $varDef.getAttributeConstraints() )
@@ -265,6 +265,9 @@ $n#end
 #if ($varDef.isGetterJavaDocExist())
 $varDef.getGetterJavaDoc()
 #end
+#foreach($annotation in $varDef.getAnnotation("GETTER") )
+    $annotation.getSnippet()
+#end
 #set($method = $varDef.getMethodName())
 #if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
     public $varDef.returnType is$method() {
@@ -288,6 +291,9 @@ $varDef.getGetterJavaDoc()
 ##################### setter ###############################
 #if ($varDef.isSetterJavaDocExist())
 $varDef.getSetterJavaDoc()
+#end
+#foreach($annotation in $varDef.getAnnotation("SETTER") )
+    $annotation.getSnippet()
 #end
     public void set$method($varDef.type $varDef.name) #if($classDef.isVetoableChangeSupport())throws PropertyVetoException #end{
 #####################custom attribute snippet - pre setter ###############################
@@ -324,6 +330,9 @@ $varDef.getSetterJavaDoc()
 #if($fluentAPI)
 #if ($varDef.isFluentJavaDocExist())
 $varDef.getFluentJavaDoc()
+#end
+#foreach($annotation in $varDef.getAnnotation("FLUENT") )
+    $annotation.getSnippet()
 #end
 #set($fluentMethod = $varDef.fluentMethodName)
     public $classDef.getClassName() $fluentMethod($varDef.type $varDef.name) {

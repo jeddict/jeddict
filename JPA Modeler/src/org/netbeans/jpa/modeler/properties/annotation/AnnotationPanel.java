@@ -18,29 +18,40 @@ package org.netbeans.jpa.modeler.properties.annotation;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
+import org.netbeans.jpa.modeler.spec.extend.AnnotationLocation;
+import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassAnnotation;
+import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
+import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
 import org.netbeans.modeler.properties.EntityComponent;
+import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
+import org.openide.util.Exceptions;
 
 public class AnnotationPanel extends EntityComponent<Annotation> implements ModelerPanel {
 
     private Annotation annotation;
     private final ModelerFile modelerFile;
+    private final Class<? extends Annotation> annotationType;
     
-    public AnnotationPanel(ModelerFile modelerFile) {
+    public AnnotationPanel(ModelerFile modelerFile, Class<? extends Annotation> annotationType) {
         this.modelerFile=modelerFile;
+        this.annotationType = annotationType;
     }
     
     @Override
     public void postConstruct() {
         initComponents();
+        annotationLocationTypeInit();
     }
 
     @Override
     public void init() {
+        scopeComboBox.setSelectedIndex(0);
     }
 
     @Override
@@ -61,10 +72,28 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
             Object[] row = ((RowValue) entityValue).getRow();
             annotation = (Annotation) row[0];
             annotation_EditorPane.setText(annotation.getName());
+            setAnnotationLocationType(annotation.getLocationType());
         }
-
     }
 
+    private void annotationLocationTypeInit() {
+        scopeComboBox.removeAllItems();
+        for (AnnotationLocation locationType : (annotationType==ClassAnnotation.class?ClassAnnotationLocationType.values():AttributeAnnotationLocationType.values())) {
+            scopeComboBox.addItem(new ComboBoxValue(locationType, locationType.getTitle()));
+        }
+    }
+
+    private void setAnnotationLocationType(AnnotationLocation locationType) {
+        if (locationType == null) {
+            scopeComboBox.setSelectedIndex(0);
+        } else {
+            for (int i = 0; i < scopeComboBox.getItemCount(); i++) {
+                if (((ComboBoxValue<SnippetLocation>) scopeComboBox.getItemAt(i)).getValue() == locationType) {
+                    scopeComboBox.setSelectedIndex(i);
+                }
+            }
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -82,6 +111,7 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
         annotation_ScrollPane = new javax.swing.JScrollPane();
         annotation_EditorPane = new javax.swing.JEditorPane();
         dataType_Action = new javax.swing.JButton();
+        scopeComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -131,16 +161,20 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
         annotation_ScrollPane.setViewportView(annotation_EditorPane);
 
         dataType_Action.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/properties/resource/searchbutton.png"))); // NOI18N
-        dataType_Action.setPreferredSize(new java.awt.Dimension(37, 37));
+        dataType_Action.setMinimumSize(new java.awt.Dimension(32, 32));
+        dataType_Action.setPreferredSize(new java.awt.Dimension(32, 32));
         dataType_Action.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dataType_ActionActionPerformed(evt);
             }
         });
 
+        scopeComboBox.setToolTipText(org.openide.util.NbBundle.getMessage(AnnotationPanel.class, "AnnotationPanel.scopeComboBox.toolTipText")); // NOI18N
+
         root_jLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(annotation_ScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         root_jLayeredPane.setLayer(dataType_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        root_jLayeredPane.setLayer(scopeComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout root_jLayeredPaneLayout = new javax.swing.GroupLayout(root_jLayeredPane);
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
@@ -151,7 +185,9 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
                 .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
-                        .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scopeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -160,11 +196,13 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(annotation_ScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(dataType_Action, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scopeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -201,23 +239,36 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             if (row[0] == null) {
-                annotation = new Annotation();
+                annotation = newAnnotation();
             } else {
                 annotation = (Annotation) row[0];
             }
         }
 
         annotation.setName(annotation_EditorPane.getText());
+        annotation.setLocationType(((ComboBoxValue<AnnotationLocation>) scopeComboBox.getSelectedItem()).getValue());
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
             row[0] = annotation;
             row[1] = annotation.isEnable();
             row[2] = annotation.getName();
+            row[3] = annotation.getLocationType().getTitle();
         }
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
 
+    private Annotation newAnnotation() {
+        try {
+            return annotationType.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new IllegalStateException(ex);
+        }
+    }
+    
+    
+    
     private void cancel_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancel_ButtonActionPerformed
         cancelActionPerformed(evt);
     }//GEN-LAST:event_cancel_ButtonActionPerformed
@@ -235,6 +286,7 @@ public class AnnotationPanel extends EntityComponent<Annotation> implements Mode
     private javax.swing.JButton dataType_Action;
     private javax.swing.JLayeredPane root_jLayeredPane;
     private javax.swing.JButton save_Button;
+    private javax.swing.JComboBox scopeComboBox;
     // End of variables declaration//GEN-END:variables
 
     @Override

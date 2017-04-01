@@ -84,7 +84,6 @@ import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippet;
-import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.ClassSnippet;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
@@ -97,6 +96,7 @@ import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.bean.validation.constraints.Constraint;
+import org.netbeans.jpa.modeler.spec.extend.AnnotationLocation;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
@@ -204,8 +204,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             classDef.setInterfaces(interfaces.stream().filter(ReferenceClass::isEnable).map(ReferenceClass::getName).collect(toList()));
         }
 
-        classDef.getAnnotation().addAll(getAnnotationSnippet(javaClass.getAnnotation()));
-        classDef.getAnnotation().addAll(getAnnotationSnippet(javaClass.getRuntimeAnnotation()));
+        classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
+        classDef.getAnnotation().putAll(getAnnotationSnippet(javaClass.getRuntimeAnnotation()));
         
         List<ClassSnippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
         snippets.addAll(javaClass.getSnippets());
@@ -277,16 +277,19 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return columnDef;
     }
 
-    protected List<AnnotationSnippet> getAnnotationSnippet(List<Annotation> annotations) {
-        List<AnnotationSnippet> snippets = new ArrayList<>();
-        for (Annotation annotation : annotations) {
+    protected <T extends AnnotationLocation> Map<T, List<AnnotationSnippet>> getAnnotationSnippet(List<? extends Annotation<T>> annotations) {
+        Map<T, List<AnnotationSnippet>> snippetsMap = new HashMap<>();
+        for (Annotation<T> annotation : annotations) {
             if (annotation.isEnable()) {
+                if (snippetsMap.get(annotation.getLocationType()) == null) {
+                    snippetsMap.put(annotation.getLocationType(), new ArrayList<>());
+                }
                 AnnotationSnippet snippet = new AnnotationSnippet();
                 snippet.setName(annotation.getName());
-                snippets.add(snippet);
+                snippetsMap.get(annotation.getLocationType()).add(snippet);
             }
         }
-        return snippets;
+        return snippetsMap;
     }
 
     protected <T extends SnippetLocation> Map<T, List<String>> getCustomSnippet(List<? extends Snippet<T>> snippets) {
@@ -388,9 +391,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     classDef.setVetoableChangeSupport(true);
                 }
             }
-            variableDef.getAnnotation().addAll(getAnnotationSnippet(attr.getAnnotation()));
-            variableDef.getAnnotation().addAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
-            
+
             variableDef.setAttributeConstraints(getConstraintSnippet(attr.getAttributeConstraints()));
             variableDef.setKeyConstraints(getConstraintSnippet(attr.getKeyConstraints()));
             variableDef.setValueConstraints(getConstraintSnippet(attr.getValueConstraints()));
@@ -399,7 +400,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             snippets.addAll(attr.getSnippets());
             snippets.addAll(attr.getRuntimeSnippets());
             variableDef.setCustomSnippet(getCustomSnippet(snippets));
-
+            variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
+            variableDef.getAnnotation().putAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
+            
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
             if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
                 variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());

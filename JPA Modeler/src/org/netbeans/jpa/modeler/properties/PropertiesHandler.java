@@ -92,12 +92,12 @@ import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.AccessTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotation;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippet;
-import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
+import org.netbeans.jpa.modeler.spec.extend.ClassAnnotation;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.ClassSnippet;
-import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import org.netbeans.jpa.modeler.spec.extend.ConvertContainerHandler;
@@ -137,7 +137,6 @@ import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertContainerHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
-import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
@@ -561,18 +560,27 @@ public class PropertiesHandler {
         (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
+    
+    public static PropertySupport getClassAnnoation(JPAModelerScene modelerScene, List<ClassAnnotation> snippets) {
+        return getCustomAnnoation(modelerScene, snippets, ClassAnnotation.class);
+    }
 
-    public static PropertySupport getCustomAnnoation(JPAModelerScene modelerScene, List<Annotation> annotations) {
+    public static PropertySupport getAttributeAnnoation(JPAModelerScene modelerScene, List<AttributeAnnotation> snippets) {
+        return getCustomAnnoation(modelerScene, snippets, AttributeAnnotation.class);
+    }
+
+    public static <T extends Annotation> PropertySupport getCustomAnnoation(JPAModelerScene modelerScene, List<T> annotations, Class<T> annotationType) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("Annotations", "Annotations", "");
         attributeEntity.setCountDisplay(new String[]{"No Annotations exist", "One Annotation exist", "Annotations exist"});
 
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Annoation", false, String.class));
+        columns.add(new Column("Location", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new AnnotationPanel(modelerScene.getModelerFile()));
+        attributeEntity.setCustomDialog(new AnnotationPanel(modelerScene.getModelerFile(), annotationType));
         attributeEntity.setTableDataListener(new NEntityDataListener<>(annotations,
-                t -> Arrays.asList(t.isEnable(), t.getName()),
+                t -> Arrays.asList(t.isEnable(), t.getName(), t.getLocationType().getTitle()),
                 (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
@@ -632,14 +640,14 @@ public class PropertiesHandler {
     }
 
     public static PropertySupport getClassSnippet(JPAModelerScene modelerScene, List<ClassSnippet> snippets) {
-        return getCustomSnippet(modelerScene, snippets, ClassSnippet.class, ClassSnippetLocationType.class);
+        return getCustomSnippet(modelerScene, snippets, ClassSnippet.class);
     }
 
     public static PropertySupport getAttributeSnippet(JPAModelerScene modelerScene, List<AttributeSnippet> snippets) {
-        return getCustomSnippet(modelerScene, snippets, AttributeSnippet.class, AttributeSnippetLocationType.class);
+        return getCustomSnippet(modelerScene, snippets, AttributeSnippet.class);
     }
 
-    public static <T extends Snippet> PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<T> snippets, Class<T> snippetType, Class<? extends SnippetLocation> snippetLocationType) {
+    public static <T extends Snippet> PropertySupport getCustomSnippet(JPAModelerScene modelerScene, List<T> snippets, Class<T> snippetType) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("Snippets", "Snippets", "");
         attributeEntity.setCountDisplay(new String[]{"No Snippets exist", "One Snippet exist", "Snippets exist"});
 
@@ -648,7 +656,7 @@ public class PropertiesHandler {
         columns.add(new Column("Snippet", false, String.class));
         columns.add(new Column("Location", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new CustomSnippetPanel(modelerScene.getModelerFile(), snippetType, snippetLocationType));
+        attributeEntity.setCustomDialog(new CustomSnippetPanel(modelerScene.getModelerFile(), snippetType));
         attributeEntity.setTableDataListener(new NEntityDataListener<>(snippets,
                 t -> Arrays.asList(t.isEnable(), t.getValue(), t.getLocationType().getTitle()),
                 (t, row) -> t.setEnable((boolean) row[1])));

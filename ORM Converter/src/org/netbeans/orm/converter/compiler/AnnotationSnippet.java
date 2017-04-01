@@ -28,7 +28,6 @@ public class AnnotationSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        
         return name;
     }
     
@@ -56,6 +55,7 @@ public class AnnotationSnippet implements Snippet {
      * @param name the name to set
      */
     public void setName(String name) {
+        name = name.replaceAll("[\n\r]", "");
         if(haveElements(name)){
             int startChild = name.indexOf('(');
             _import = name.substring(1, startChild);

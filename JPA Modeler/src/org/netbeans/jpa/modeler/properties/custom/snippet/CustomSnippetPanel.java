@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippet;
 import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
@@ -33,12 +34,10 @@ public class CustomSnippetPanel<T extends Snippet> extends EntityComponent<Snipp
 
     private Snippet snippet;
     private final ModelerFile modelerFile;
-    private Class<? extends SnippetLocation> type;
-    private Class<Snippet> snippetType;
+    private final Class<? extends Snippet> snippetType;
 
-    public CustomSnippetPanel(ModelerFile modelerFile, Class<Snippet> snippetType, Class<? extends SnippetLocation> type) {
+    public CustomSnippetPanel(ModelerFile modelerFile, Class<? extends Snippet> snippetType) {
         this.modelerFile = modelerFile;
-        this.type = type;
         this.snippetType=snippetType;
     }
 
@@ -78,7 +77,7 @@ public class CustomSnippetPanel<T extends Snippet> extends EntityComponent<Snipp
 
     private void snippetLocationTypeInit() {
         scopeComboBox.removeAllItems();
-        for (SnippetLocation locationType : (type==ClassSnippetLocationType.class?ClassSnippetLocationType.values():AttributeSnippetLocationType.values())) {
+        for (SnippetLocation locationType : (snippetType==ClassSnippet.class?ClassSnippetLocationType.values():AttributeSnippetLocationType.values())) {
             scopeComboBox.addItem(new ComboBoxValue(locationType, locationType.getTitle()));
         }
     }
@@ -235,7 +234,6 @@ public class CustomSnippetPanel<T extends Snippet> extends EntityComponent<Snipp
             row[1] = snippet.isEnable();
             row[2] = snippet.getValue();
             row[3] = snippet.getLocationType().getTitle();
-
         }
         saveActionPerformed(evt);
     }//GEN-LAST:event_saveButtonActionPerformed

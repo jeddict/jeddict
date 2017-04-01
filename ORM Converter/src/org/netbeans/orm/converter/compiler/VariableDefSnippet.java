@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jcode.core.util.AttributeType.getArrayType;
@@ -51,13 +52,13 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.orm.converter.util.ImportSet;
 import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
-    private List<AnnotationSnippet> annotation = new ArrayList<>();
     private List<ConstraintSnippet> attributeConstraints = new ArrayList<>();
     private List<ConstraintSnippet> keyConstraints = new ArrayList<>();
     private List<ConstraintSnippet> valueConstraints = new ArrayList<>();
@@ -102,6 +103,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private TypeIdentifierSnippet typeIdentifier;
     private Attribute attribute;
     private Map<AttributeSnippetLocationType, List<String>> customSnippet;
+    private Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> annotation;
     private ConvertsSnippet converts;
 
     public VariableDefSnippet() {
@@ -485,7 +487,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(associationOverrides.getImportSnippets());
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation()) {
+        for (AnnotationSnippet snippet : this.getAnnotation().values().stream().flatMap(annot -> annot.stream()).collect(toList())) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
@@ -591,17 +593,40 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @return the annotation
      */
-    public List<AnnotationSnippet> getAnnotation() {
-        if(annotation == null){
-            annotation = new ArrayList<>();
-        }
+    public Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> getAnnotation() {
         return annotation;
     }
-
+    
+    public List<AnnotationSnippet> getAnnotation(String locationType) {
+        return annotation.get(AttributeAnnotationLocationType.valueOf(locationType));
+    }
+    
+    public String getInlineKeyAnnotation() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        List<AnnotationSnippet> snippets = annotation.get(AttributeAnnotationLocationType.KEY);
+        if (snippets != null) {
+            for (AnnotationSnippet snippet : snippets) {
+                sb.append(snippet.getSnippet()).append(" ");
+            }
+        }
+        return sb.toString();
+    }
+    
+    public String getInlineValueAnnotation() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        List<AnnotationSnippet> snippets = annotation.get(AttributeAnnotationLocationType.TYPE);
+        if (snippets != null) {
+            for (AnnotationSnippet snippet : snippets) {
+                sb.append(snippet.getSnippet()).append(" ");
+            }
+        }
+        return sb.toString();
+    }
+    
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<AnnotationSnippet> annotation) {
+    public void setAnnotation(Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> annotation) {
         this.annotation = annotation;
     }
 
