@@ -19,11 +19,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
-import static org.netbeans.jpa.modeler.specification.model.util.DBUtil.isolateEntityMapping;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**

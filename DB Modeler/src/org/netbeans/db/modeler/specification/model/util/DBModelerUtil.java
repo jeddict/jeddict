@@ -18,6 +18,7 @@ package org.netbeans.db.modeler.specification.model.util;
 import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import java.awt.Image;
 import java.awt.Point;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.eclipse.persistence.exceptions.ValidationException;
@@ -98,7 +99,9 @@ import org.netbeans.modeler.core.exception.ModelerException;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
+import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
+import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.specification.model.util.PModelerUtil;
@@ -623,5 +626,14 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     public static void inDev() {
         JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "This functionality is in developement");
     }
-
+    
+    @Override
+    public void loadBaseElement(IBaseElementWidget parentConatiner, List<IBaseElement> elements) {
+        throw new UnsupportedOperationException("CPP not supported in DB Modeler");
+    }
+    
+    @Override
+    public IBaseElement clone(IBaseElement element){
+        throw new UnsupportedOperationException("Clonning not supported in DB Modeler");
+    }
 }

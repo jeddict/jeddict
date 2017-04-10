@@ -15,19 +15,13 @@
  */
 package org.netbeans.jpa.modeler.specification.model.util;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.jpa.modeler.spec.PrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
@@ -36,38 +30,12 @@ import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Lookup;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.cloneEntityMapping;
 
 /**
  *
  * @author jGauravGupta
  */
 public class DBUtil {
-
-    @Deprecated
-    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity javaClass, RelationAttribute relationAttribute) {
-
-        EntityMappings mappingClone = cloneEntityMapping(mappings);
-        Entity entityClone = mappingClone.getEntity(javaClass.getId());
-        RelationAttribute relationAttributeClone = entityClone.getAttributes().getRelationAttribute(relationAttribute.getId()).get();
-
-        Entity mappedEntityClone = relationAttributeClone.getConnectedEntity();
-        RelationAttribute mappedRelationAttributeClone = relationAttributeClone.getConnectedAttribute();
-
-        makeSiblingOrphan(entityClone, relationAttributeClone, mappedEntityClone, mappedRelationAttributeClone);
-        makeSiblingOrphan(mappedEntityClone, mappedRelationAttributeClone, entityClone, relationAttributeClone);
-
-        mappingClone.getEmbeddable().stream().forEach((embeddable) -> makeSiblingOrphan(embeddable));
-        mappingClone.getMappedSuperclass().stream().forEach((mappedSuperclass) -> makeSiblingOrphan(mappedSuperclass));
-
-        Set<Entity> relationClasses = new HashSet<>();
-        relationClasses.add(entityClone);
-        relationClasses.add(mappedEntityClone);
-        mappingClone.setEntity(new ArrayList<>());
-        relationClasses.stream().forEach(mappingClone::addEntity);
-        mapToOrignalObject(mappings, mappingClone);
-        return mappingClone;
-    }
 
     public static void openDBViewer(ModelerFile file) {
         EntityMappings entityMappings = (EntityMappings) file.getModelerScene().getBaseElementSpec();
@@ -78,34 +46,17 @@ public class DBUtil {
         if (!((JPAModelerScene) file.getModelerScene()).compile()) {
             return;
         }
-        WorkSpace paramWorkSpace = entityMappings.getRootWorkSpace() == workSpace ? null:workSpace;
+        WorkSpace paramWorkSpace = entityMappings.getRootWorkSpace() == workSpace ? null : workSpace;
         try {
             PreExecutionUtil.preExecution(file);
             DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);
-            
+
             //close diagram and reopen 
             long st = new Date().getTime();
-        file.getChildrenFile("DB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
-      System.out.println("openDBViewer close Total time : " + (new Date().getTime() - st) + " ms");
+            file.getChildrenFile("DB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
+            System.out.println("openDBViewer close Total time : " + (new Date().getTime() - st) + " ms");
             dbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
             System.out.println("openDBViewer Total time : " + (new Date().getTime() - st) + " ms");
-//            dbModelerRequestManager.init(file, entityMappings, workSpace);
-//            //Delete existing table and reload agaian
-//            Optional<ModelerFile> dbChildModelerFile = file.getChildrenFile("DB");
-//            if (dbChildModelerFile.isPresent()) {
-//                ModelerFile childModelerFile = dbChildModelerFile.get();
-//                childModelerFile.getModelerScene().getBaseElements().stream().filter(element -> element instanceof INodeWidget).forEach(element -> {
-//                    ((INodeWidget) element).remove(false);
-//                });
-//                childModelerFile.unload();
-//                try {
-//                    childModelerFile.getModelerUtil().loadModelerFile(childModelerFile);
-//                    childModelerFile.getModelerScene().validate();
-//                } catch (Exception ex) {
-//                    file.handleException(ex);
-//                }
-//                childModelerFile.load();
-//            } 
         } catch (Throwable t) {
             file.handleException(t);
         }
@@ -204,142 +155,164 @@ public class DBUtil {
         attr.setElementCollection(null);
     }
 
-    /**
-     * Micro DB filter
-     *
-     * @param mappings The graph
-     * @param entity The master node
-     * @return
-     */
-    @Deprecated
-    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity entity) {
-        EntityMappings mappingClone = cloneEntityMapping(mappings);
-        Entity entityClone = mappingClone.getEntity(entity.getId());
-
-        Set<Entity> connectedEntities = new HashSet<>();
-        connectedEntities.add(entityClone);
-
-        //Owner
-        connectedEntities.addAll(entityClone.getAttributes().getRelationConnectedClassRef());
-
-        //Inverse Owner
-        connectedEntities.addAll(mappingClone.getEntity()
-                .stream()
-                .filter(e -> e.getAttributes().getRelationAttributes().stream().anyMatch(r -> r.getConnectedEntity() == entityClone))
-                .collect(toSet()));
-
-        //Inheritance
-        connectedEntities.addAll(connectedEntities
-                .stream()
-                .flatMap(ce -> ce.getAllSuperclass().stream().filter(sc -> sc instanceof Entity).map(sc -> (Entity) sc))
-                .collect(toSet()));
-
-        connectedEntities.remove(entityClone);
-
-        connectedEntities.stream()
-                .map(e -> e.getAttributes())
-                .forEach(attr -> {
-                    attr.getManyToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
-                    attr.getManyToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
-                    attr.getOneToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
-                    attr.getOneToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
-                    attr.setEmbedded(null);
-                });
-
-        connectedEntities.add(entityClone);
-
-        //setup Entity
-        mappingClone.setEntity(connectedEntities.stream().collect(toList()));
-
-        mapToOrignalObject(mappings, mappingClone);
-        return mappingClone;
-    }
-
-    /**
-     * WorkSpace DB filter
-     *
-     * @param mappings The graph
-     * @param workSpace The master node
-     * @return
-     */
-    @Deprecated
-    public static EntityMappings isolateEntityMapping(EntityMappings mappings, WorkSpace workSpace) {
-        EntityMappings mappingClone = cloneEntityMapping(mappings);
-        WorkSpace workSpaceClone = mappingClone.getCurrentWorkSpace();
-
-        mappingClone.setEntity(
-                mappingClone.getEntity()
-                        .stream()
-                        .filter(jc -> workSpaceClone.hasItem(jc))
-                        .collect(toList())
-        );
-        mappingClone.setMappedSuperclass(
-                mappingClone.getMappedSuperclass()
-                        .stream()
-                        .filter(jc -> workSpaceClone.hasItem(jc))
-                        .collect(toList())
-        );
-        mappingClone.setEmbeddable(
-                mappingClone.getEmbeddable()
-                        .stream()
-                        .filter(jc -> workSpaceClone.hasItem(jc))
-                        .collect(toList())
-        );
-
-        mappingClone.getManagedClass()
-                .stream()
-                .forEach(jc -> isolateClass(jc, workSpaceClone));
-
-        mapToOrignalObject(mappings, mappingClone);
-        return mappingClone;
-    }
-
-    @Deprecated
-    private static void isolateClass(ManagedClass<IPersistenceAttributes> classSpec, WorkSpace workSpace) {
-//        if (classSpec.getAttributes() instanceof IPersistenceAttributes) {
-//                    IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) classSpec.getAttributes();
-//                    EmbeddedId embeddedId = persistenceAttributes.getEmbeddedId();
-//                    if (embeddedId != null && !workSpace.hasItem(embeddedId.getConnectedClass())) {
-//                        persistenceAttributes.set
-//                    }
-//                }
-        classSpec.getAttributes().setEmbedded(
-                classSpec.getAttributes().getEmbedded()
-                        .stream()
-                        .filter(embedded -> workSpace.hasItem(embedded.getConnectedClass()))
-                        .collect(toList())
-        );
-        classSpec.getAttributes().setElementCollection(
-                classSpec.getAttributes().getElementCollection()
-                        .stream()
-                        .filter(ec -> ec.getConnectedClass() != null)
-                        .filter(ec -> workSpace.hasItem(ec.getConnectedClass()))
-                        .collect(toList())
-        );
-        classSpec.getAttributes().setOneToOne(
-                classSpec.getAttributes().getOneToOne()
-                        .stream()
-                        .filter(oto -> workSpace.hasItem(oto.getConnectedEntity()))
-                        .collect(toList())
-        );
-        classSpec.getAttributes().setOneToMany(
-                classSpec.getAttributes().getOneToMany()
-                        .stream()
-                        .filter(otm -> workSpace.hasItem(otm.getConnectedEntity()))
-                        .collect(toList())
-        );
-        classSpec.getAttributes().setManyToOne(
-                classSpec.getAttributes().getManyToOne()
-                        .stream()
-                        .filter(mto -> workSpace.hasItem(mto.getConnectedEntity()))
-                        .collect(toList())
-        );
-        classSpec.getAttributes().setManyToMany(
-                classSpec.getAttributes().getManyToMany()
-                        .stream()
-                        .filter(mtm -> workSpace.hasItem(mtm.getConnectedEntity()))
-                        .collect(toList())
-        );
-    }
-
+//    /**
+//     * Micro DB filter
+//     *
+//     * @param mappings The graph
+//     * @param entity The master node
+//     * @return
+//     */
+//    @Deprecated
+//    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity entity) {
+//        EntityMappings mappingClone = cloneEntityMapping(mappings);
+//        Entity entityClone = mappingClone.getEntity(entity.getId());
+//
+//        Set<Entity> connectedEntities = new HashSet<>();
+//        connectedEntities.add(entityClone);
+//
+//        //Owner
+//        connectedEntities.addAll(entityClone.getAttributes().getRelationConnectedClassRef());
+//
+//        //Inverse Owner
+//        connectedEntities.addAll(mappingClone.getEntity()
+//                .stream()
+//                .filter(e -> e.getAttributes().getRelationAttributes().stream().anyMatch(r -> r.getConnectedEntity() == entityClone))
+//                .collect(toSet()));
+//
+//        //Inheritance
+//        connectedEntities.addAll(connectedEntities
+//                .stream()
+//                .flatMap(ce -> ce.getAllSuperclass().stream().filter(sc -> sc instanceof Entity).map(sc -> (Entity) sc))
+//                .collect(toSet()));
+//
+//        connectedEntities.remove(entityClone);
+//
+//        connectedEntities.stream()
+//                .map(e -> e.getAttributes())
+//                .forEach(attr -> {
+//                    attr.getManyToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
+//                    attr.getManyToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
+//                    attr.getOneToMany().removeIf(r -> r.getConnectedEntity() != entityClone);
+//                    attr.getOneToOne().removeIf(r -> r.getConnectedEntity() != entityClone);
+//                    attr.setEmbedded(null);
+//                });
+//
+//        connectedEntities.add(entityClone);
+//
+//        //setup Entity
+//        mappingClone.setEntity(connectedEntities.stream().collect(toList()));
+//
+//        mapToOrignalObject(mappings, mappingClone);
+//        return mappingClone;
+//    }
+//
+////    /**
+//     * WorkSpace DB filter
+//     *
+//     * @param mappings The graph
+//     * @param workSpace The master node
+//     * @return
+//     */
+//    @Deprecated
+//    public static EntityMappings isolateEntityMapping(EntityMappings mappings, WorkSpace workSpace) {
+//        EntityMappings mappingClone = cloneEntityMapping(mappings);
+//        WorkSpace workSpaceClone = mappingClone.getCurrentWorkSpace();
+//
+//        mappingClone.setEntity(
+//                mappingClone.getEntity()
+//                        .stream()
+//                        .filter(jc -> workSpaceClone.hasItem(jc))
+//                        .collect(toList())
+//        );
+//        mappingClone.setMappedSuperclass(
+//                mappingClone.getMappedSuperclass()
+//                        .stream()
+//                        .filter(jc -> workSpaceClone.hasItem(jc))
+//                        .collect(toList())
+//        );
+//        mappingClone.setEmbeddable(
+//                mappingClone.getEmbeddable()
+//                        .stream()
+//                        .filter(jc -> workSpaceClone.hasItem(jc))
+//                        .collect(toList())
+//        );
+//
+//        mappingClone.getManagedClass()
+//                .stream()
+//                .forEach(jc -> isolateClass(jc, workSpaceClone));
+//
+//        mapToOrignalObject(mappings, mappingClone);
+//        return mappingClone;
+//    }
+//    @Deprecated
+//    public static EntityMappings isolateEntityMapping(EntityMappings mappings, Entity javaClass, RelationAttribute relationAttribute) {
+//
+//        EntityMappings mappingClone = cloneEntityMapping(mappings);
+//        Entity entityClone = mappingClone.getEntity(javaClass.getId());
+//        RelationAttribute relationAttributeClone = entityClone.getAttributes().getRelationAttribute(relationAttribute.getId()).get();
+//
+//        Entity mappedEntityClone = relationAttributeClone.getConnectedEntity();
+//        RelationAttribute mappedRelationAttributeClone = relationAttributeClone.getConnectedAttribute();
+//
+//        makeSiblingOrphan(entityClone, relationAttributeClone, mappedEntityClone, mappedRelationAttributeClone);
+//        makeSiblingOrphan(mappedEntityClone, mappedRelationAttributeClone, entityClone, relationAttributeClone);
+//
+//        mappingClone.getEmbeddable().stream().forEach((embeddable) -> makeSiblingOrphan(embeddable));
+//        mappingClone.getMappedSuperclass().stream().forEach((mappedSuperclass) -> makeSiblingOrphan(mappedSuperclass));
+//
+//        Set<Entity> relationClasses = new HashSet<>();
+//        relationClasses.add(entityClone);
+//        relationClasses.add(mappedEntityClone);
+//        mappingClone.setEntity(new ArrayList<>());
+//        relationClasses.stream().forEach(mappingClone::addEntity);
+//        mapToOrignalObject(mappings, mappingClone);
+//        return mappingClone;
+//    }
+//    @Deprecated
+//    private static void isolateClass(ManagedClass<IPersistenceAttributes> classSpec, WorkSpace workSpace) {
+////        if (classSpec.getAttributes() instanceof IPersistenceAttributes) {
+////                    IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) classSpec.getAttributes();
+////                    EmbeddedId embeddedId = persistenceAttributes.getEmbeddedId();
+////                    if (embeddedId != null && !workSpace.hasItem(embeddedId.getConnectedClass())) {
+////                        persistenceAttributes.set
+////                    }
+////                }
+//        classSpec.getAttributes().setEmbedded(
+//                classSpec.getAttributes().getEmbedded()
+//                        .stream()
+//                        .filter(embedded -> workSpace.hasItem(embedded.getConnectedClass()))
+//                        .collect(toList())
+//        );
+//        classSpec.getAttributes().setElementCollection(
+//                classSpec.getAttributes().getElementCollection()
+//                        .stream()
+//                        .filter(ec -> ec.getConnectedClass() != null)
+//                        .filter(ec -> workSpace.hasItem(ec.getConnectedClass()))
+//                        .collect(toList())
+//        );
+//        classSpec.getAttributes().setOneToOne(
+//                classSpec.getAttributes().getOneToOne()
+//                        .stream()
+//                        .filter(oto -> workSpace.hasItem(oto.getConnectedEntity()))
+//                        .collect(toList())
+//        );
+//        classSpec.getAttributes().setOneToMany(
+//                classSpec.getAttributes().getOneToMany()
+//                        .stream()
+//                        .filter(otm -> workSpace.hasItem(otm.getConnectedEntity()))
+//                        .collect(toList())
+//        );
+//        classSpec.getAttributes().setManyToOne(
+//                classSpec.getAttributes().getManyToOne()
+//                        .stream()
+//                        .filter(mto -> workSpace.hasItem(mto.getConnectedEntity()))
+//                        .collect(toList())
+//        );
+//        classSpec.getAttributes().setManyToMany(
+//                classSpec.getAttributes().getManyToMany()
+//                        .stream()
+//                        .filter(mtm -> workSpace.hasItem(mtm.getConnectedEntity()))
+//                        .collect(toList())
+//        );
+//    }
 }

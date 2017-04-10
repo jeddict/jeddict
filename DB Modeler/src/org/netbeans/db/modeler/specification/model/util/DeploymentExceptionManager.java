@@ -220,7 +220,7 @@ public class DeploymentExceptionManager {
         if (ie.getIntegrityChecker().getCaughtExceptions().get(0) instanceof DescriptorException) {
             DescriptorException de = (DescriptorException) ie.getIntegrityChecker().getCaughtExceptions().get(0);
             Entity entity = ((EntitySpecAccessor) ((DBRelationalDescriptor) de.getDescriptor()).getAccessor()).getEntity();
-            String attributeName = de.getMapping().getAttributeName();
+            String attributeName = de.getMapping()!=null?de.getMapping().getAttributeName():null;
             String attrDetail = entity.getClass().getSimpleName().toLowerCase() + " " + entity.getClazz() + " for attribute " + attributeName;
 
             switch (de.getErrorCode()) {

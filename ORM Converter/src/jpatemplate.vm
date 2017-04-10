@@ -336,8 +336,19 @@ $varDef.getFluentJavaDoc()
 #end
 #set($fluentMethod = $varDef.fluentMethodName)
     public $classDef.getClassName() $fluentMethod($varDef.type $varDef.name) {
+#####################custom attribute snippet - pre fluent ###############################
+#foreach($snippet in $varDef.getCustomSnippet("PRE_FLUENT") )
+        $snippet
+$n#end
+#####################custom attribute snippet - fluent ###############################
+#if($varDef.getCustomSnippet("FLUENT").isEmpty() == false)
+#foreach($snippet in $varDef.getCustomSnippet("FLUENT") )
+        $snippet
+#end
+#else
         this.$varDef.name = $varDef.name;
         return this;
+#end
     }
 #end
 #####################custom attribute snippet - after method ###############################
