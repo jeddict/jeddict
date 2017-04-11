@@ -796,6 +796,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             if (mappedBy != null) {
                 snippet.append(String.format("@XmlInverseReference(mappedBy=\"%s\")", mappedBy));
             } 
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_REF) {
+            snippet.append("@XmlElementRef");
         } else {
             if (isPrimaryKey()) {
 //            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
