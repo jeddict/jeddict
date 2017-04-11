@@ -406,7 +406,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
             if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
                 variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
-            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT) {
+            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT || attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_REF) {
                 variableDef.setJaxbXmlElement(attr.getJaxbXmlElement());
             } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENTS) {
 //            variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
