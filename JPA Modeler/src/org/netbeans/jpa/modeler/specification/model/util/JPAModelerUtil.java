@@ -17,15 +17,17 @@ package org.netbeans.jpa.modeler.specification.model.util;
 
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import javax.swing.ImageIcon;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
@@ -112,6 +114,7 @@ import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseElement;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
+import org.netbeans.jpa.modeler.spec.extend.ExtensionElements;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -278,7 +281,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     static {
 
         try {
-            MODELER_CONTEXT = JAXBContext.newInstance(new Class<?>[]{EntityMappings.class, Attribute.class}); // unmarshaller will be always init before marshaller
+            MODELER_CONTEXT = JAXBContext.newInstance(new Class<?>[]{EntityMappings.class, Entity.class, Attribute.class}); // unmarshaller will be always init before marshaller
         } catch (JAXBException ex) {
             ExceptionUtils.printStackTrace(ex);
         }
@@ -600,13 +603,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     @Override
-    public void loadBaseElement(IBaseElementWidget parentConatiner, List<IBaseElement> elements) {
+    public void loadBaseElement(IBaseElementWidget parentConatiner, Map<IBaseElement,Rectangle> elements) {
         if (parentConatiner instanceof JavaClassWidget) {
             ManagedClass<IPersistenceAttributes> classSpec = (ManagedClass) parentConatiner.getBaseElementSpec();
             PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) parentConatiner;
             WorkSpace workSpace = classSpec.getRootElement().getCurrentWorkSpace();
             JPAModelerScene scene = (JPAModelerScene) persistenceClassWidget.getModelerScene();
-            for (IBaseElement element : elements) {
+            for (Map.Entry<IBaseElement,Rectangle> elementEntry : elements.entrySet()) {
+                IBaseElement element = elementEntry.getKey();
                 if (element instanceof Attribute) {
                     Attribute attribute = (Attribute) element;
                     attribute.setAttributes(classSpec.getAttributes());
@@ -686,27 +690,22 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         } else if (parentConatiner instanceof JPAModelerScene) {
             JPAModelerScene scene = (JPAModelerScene) parentConatiner;
             EntityMappings entityMappings = scene.getBaseElementSpec();
-            for (IBaseElement element : elements) {
+            List<JavaClassWidget> javaClassWidgets = new ArrayList<>();
+            for (Map.Entry<IBaseElement,Rectangle> elementEntry : elements.entrySet()) {
+                IBaseElement element = elementEntry.getKey();
                 if (element instanceof JavaClass) {
                     JavaClass javaClass = (JavaClass) element;
                     entityMappings.addBaseElement(javaClass);
                     JavaClassWidget javaClassWidget = (JavaClassWidget) loadFlowNode(scene, javaClass);
-                    loadAttribute(javaClassWidget);
-                    loadFlowEdge(javaClassWidget);
-
-                    Optional<WorkSpaceItem> optionalWI = entityMappings.getCurrentWorkSpace().getItems()
-                            .stream()
-                            .filter(item -> item.getLocation() != null)
-                            .filter(item -> StringUtils.equals(item.getJavaClass().getClazz(), javaClass.getClazz()))
-                            .findAny();
-                    WorkSpaceItem workSpaceItem = new WorkSpaceItem(javaClass, 100, 100);
-                    if (optionalWI.isPresent()) {
-                        workSpaceItem.setX(optionalWI.get().getX() + 150);
-                        workSpaceItem.setY(optionalWI.get().getY() + 50);
-                    }
+                    javaClassWidgets.add(javaClassWidget);
+                    Rectangle widgetLocation = elementEntry.getValue();
+                    Rectangle currentLocation = scene.getView().getVisibleRect();
+                    WorkSpaceItem workSpaceItem = new WorkSpaceItem(javaClass, currentLocation.x + widgetLocation.x + 150, currentLocation.y + widgetLocation.y + 50);
                     loadDiagram(scene, workSpaceItem);
                 }
             }
+            javaClassWidgets.forEach(jcw -> loadAttribute(jcw));
+            javaClassWidgets.forEach(jcw -> loadFlowEdge(jcw));
             entityMappings.initJavaInheritanceMapping();
         }
     }
@@ -1460,19 +1459,12 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     @Override
-    public IBaseElement clone(IBaseElement element) {
-        if (element instanceof EntityMappings) {
-            return cloneEntityMapping((EntityMappings) element);
-        } else {
-            return cloneElement(element);
+    public List<IBaseElement> clone(List<IBaseElement> elements) {
+        List<IBaseElement> clonedElements = cloneElement(new ExtensionElements(elements)).getAny();
+        for (int i = 0; i < clonedElements.size(); i++) {
+            copyRef(null, elements.get(i), null, clonedElements.get(i), clonedElements);
         }
-    }
-
-    @Deprecated
-    public EntityMappings cloneEntityMapping(EntityMappings entityMappings) {
-        EntityMappings definition_Load = cloneElement(entityMappings);
-        definition_Load.initJavaInheritanceMapping();
-        return definition_Load;
+        return clonedElements;
     }
 
     public <T extends Object> T cloneElement(T element) {
@@ -1494,7 +1486,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             }
             StringReader reader = new StringReader(sw.toString());
             clonedElement = (T) MODELER_UNMARSHALLER.unmarshal(new StreamSource(reader), (Class<T>) element.getClass()).getValue();
-            copyRef(element, clonedElement);
             MODELER_UNMARSHALLER = null;
         } catch (JAXBException ex) {
             ExceptionUtils.printStackTrace(ex);
@@ -1502,7 +1493,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         return clonedElement;
     }
 
-    private <T extends Object> void copyRef(T element, T clonedElement) {
+    private <P extends Object,T extends Object> void copyRef(P parentElement, T element, P parentClonedElement, T clonedElement, List<T> clonedElements) {
         if (element instanceof BaseElement) {
             ((BaseElement) clonedElement).setRootElement(((BaseElement) element).getRootElement());
             ((BaseElement) clonedElement).setId(NBModelerUtil.getAutoGeneratedStringId());
@@ -1515,34 +1506,41 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             List<Attribute> attributes = ((JavaClass) element).getAttributes().getAllAttribute();
             List<Attribute> clonedAttributes = ((JavaClass) clonedElement).getAttributes().getAllAttribute();
             for (int i = 0; i < attributes.size(); i++) {
-                if (attributes.get(i) instanceof RelationAttribute && !((RelationAttribute) attributes.get(i)).isOwner()) {
-                    continue;
-                }
-                copyRef(attributes.get(i), clonedAttributes.get(i));
+                copyRef(element, attributes.get(i), clonedElement, clonedAttributes.get(i), clonedAttributes);
             }
             if(((JavaClass) clonedElement).getAttributes() instanceof IPersistenceAttributes){
                 IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes)((JavaClass) clonedElement).getAttributes();
-                persistenceAttributes.removeNonOwnerAttribute();
+                persistenceAttributes.removeNonOwnerAttribute(new HashSet<>((List<JavaClass>)clonedElements));
             }
             
-
         } else if (element instanceof Attribute) {
 
             if (element instanceof CompositionAttribute) {
-                ((CompositionAttribute) clonedElement).setConnectedClass(((CompositionAttribute) element).getConnectedClass());
+                if (((CompositionAttribute) clonedElement).getConnectedClass() == null) {
+                    ((CompositionAttribute) clonedElement).setConnectedClass(((CompositionAttribute) element).getConnectedClass());
+                }
                 if (element instanceof ElementCollection) {
-                    ((ElementCollection) clonedElement).setMapKeyEntity(((ElementCollection) element).getMapKeyEntity());
-                    ((ElementCollection) clonedElement).setMapKeyEmbeddable(((ElementCollection) element).getMapKeyEmbeddable());
-                    //skip mapKeyAttribute
+                    if (((ElementCollection) clonedElement).getMapKeyEntity() == null) {
+                        ((ElementCollection) clonedElement).setMapKeyEntity(((ElementCollection) element).getMapKeyEntity());
+                    }
+                    if (((ElementCollection) clonedElement).getMapKeyEmbeddable() == null) {
+                        ((ElementCollection) clonedElement).setMapKeyEmbeddable(((ElementCollection) element).getMapKeyEmbeddable());
+                    }//skip mapKeyAttribute
                 }
             } else if (element instanceof RelationAttribute) {
                 if(((RelationAttribute) clonedElement).getConnectedEntity() == null){ //if not self
-                    ((RelationAttribute) clonedElement).setConnectedEntity(((RelationAttribute) element).getConnectedEntity());
+                    if(((RelationAttribute) clonedElement).getConnectedEntity() == null){
+                        ((RelationAttribute) clonedElement).setConnectedEntity(((RelationAttribute) element).getConnectedEntity());
+                    }
                 }
                 // ConnectedAttribute => convert bi-directional to uni-directional
                 if (element instanceof MultiRelationAttribute) {
-                    ((MultiRelationAttribute) clonedElement).setMapKeyEntity(((MultiRelationAttribute) element).getMapKeyEntity());
-                    ((MultiRelationAttribute) clonedElement).setMapKeyEmbeddable(((MultiRelationAttribute) element).getMapKeyEmbeddable());
+                    if (((MultiRelationAttribute) clonedElement).getMapKeyEntity() == null) {
+                        ((MultiRelationAttribute) clonedElement).setMapKeyEntity(((MultiRelationAttribute) element).getMapKeyEntity());
+                    }
+                    if (((MultiRelationAttribute) clonedElement).getMapKeyEntity() == null) {
+                        ((MultiRelationAttribute) clonedElement).setMapKeyEmbeddable(((MultiRelationAttribute) element).getMapKeyEmbeddable());
+                    }
                     //skip mapKeyAttribute
                 }
             }

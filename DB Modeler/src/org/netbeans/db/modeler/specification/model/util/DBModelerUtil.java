@@ -18,7 +18,9 @@ package org.netbeans.db.modeler.specification.model.util;
 import org.netbeans.db.modeler.exception.DBConnectionNotFound;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.eclipse.persistence.exceptions.ValidationException;
@@ -628,12 +630,12 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
     }
     
     @Override
-    public void loadBaseElement(IBaseElementWidget parentConatiner, List<IBaseElement> elements) {
+    public void loadBaseElement(IBaseElementWidget parentConatiner, Map<IBaseElement,Rectangle> elements) {
         throw new UnsupportedOperationException("CPP not supported in DB Modeler");
     }
     
     @Override
-    public IBaseElement clone(IBaseElement element){
+    public List<IBaseElement> clone(List<IBaseElement> element){
         throw new UnsupportedOperationException("Clonning not supported in DB Modeler");
     }
 }
