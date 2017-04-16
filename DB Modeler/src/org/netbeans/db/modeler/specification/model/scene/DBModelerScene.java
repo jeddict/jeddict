@@ -236,11 +236,12 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
         JMenuItem openSQLEditor = new JMenuItem("View SQL (beta)", VIEW_SQL);
-        openSQLEditor.addActionListener((ActionEvent e) -> {
-            SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
-        });
+        openSQLEditor.addActionListener(e -> SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL()));
 
-        menuList.add(0, openSQLEditor);
+        menuList.add(openSQLEditor);
+        menuList.add(getThemeMenu());
+        menuList.add(getContainerMenu());
+        menuList.add(getPropertyMenu());
         return menuList;
     }
 
