@@ -15,7 +15,7 @@
  */
 package org.netbeans.db.modeler.specification.model.scene;
 
-import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,7 +234,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
-        List<JMenuItem> menuList = super.getPopupMenuItemList();
+        List<JMenuItem> menuList = new ArrayList<>();
         JMenuItem openSQLEditor = new JMenuItem("View SQL (beta)", VIEW_SQL);
         openSQLEditor.addActionListener(e -> SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL()));
 
