@@ -18,6 +18,10 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION;
+import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
@@ -25,11 +29,16 @@ public class ElementCollectionSnippet implements Snippet {
 
     private String collectionType;
     private String targetClass;
+    private String targetClassPackage;
+    
     private String fetchType = null;
     private MapKeySnippet mapKeySnippet;
 //    private String accessType = null;
 
     public String getFetchType() {
+        if (fetchType != null) {
+            return "FetchType." + fetchType;
+        }
         return fetchType;
     }
 
@@ -40,12 +49,14 @@ public class ElementCollectionSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        builder.append("@ElementCollection");
-        if (fetchType != null) {
-            builder.append("(fetch=FetchType.").append(fetchType).append(ORMConverterUtil.CLOSE_PARANTHESES);
-        }
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
-            builder.append(mapKeySnippet.getSnippet()).append(TAB);
+            builder.append(mapKeySnippet.getSnippet())
+                    .append(ORMConverterUtil.NEW_LINE)
+                    .append(ORMConverterUtil.TAB);
+        }
+        builder.append("@").append(ELEMENT_COLLECTION);
+        if (fetchType != null) {
+            builder.append("(fetch=").append(getFetchType()).append(ORMConverterUtil.CLOSE_PARANTHESES);
         }
         return builder.toString();
     }
@@ -53,9 +64,9 @@ public class ElementCollectionSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.ElementCollection");
+        importSnippets.add(ELEMENT_COLLECTION_FQN);
         if (fetchType != null) {
-            importSnippets.add("javax.persistence.FetchType");
+            importSnippets.add(FETCH_TYPE_FQN);
         }
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             importSnippets.addAll(mapKeySnippet.getImportSnippets());
@@ -116,5 +127,19 @@ public class ElementCollectionSnippet implements Snippet {
      */
     public void setMapKeySnippet(MapKeySnippet mapKeySnippet) {
         this.mapKeySnippet = mapKeySnippet;
+    }
+
+    /**
+     * @return the targetClassPackage
+     */
+    public String getTargetClassPackage() {
+        return targetClassPackage;
+    }
+
+    /**
+     * @param targetClassPackage the targetClassPackage to set
+     */
+    public void setTargetClassPackage(String targetClassPackage) {
+        this.targetClassPackage = targetClassPackage;
     }
 }

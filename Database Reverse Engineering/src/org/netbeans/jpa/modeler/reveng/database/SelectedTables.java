@@ -28,8 +28,8 @@ import java.util.TreeMap;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
-import org.netbeans.modules.j2ee.core.api.support.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityMember;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.Table;
@@ -121,10 +121,10 @@ public final class SelectedTables {
             this.location = location;
             this.packageName = packageName;
 
-            if (location != null && packageName != null) {
-                targetFolder = SourceGroups.getFolderForPackage(location, packageName, false);
+            if (packageName != null && !packageName.isEmpty()) {
+                targetFolder = SourceGroupSupport.getFolderForPackage(location, packageName, false);
             } else {
-                targetFolder = null;
+                targetFolder = location.getRootFolder();
             }
             return true;
         }

@@ -27,8 +27,8 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jcode.core.util.SourceGroupSupport;
-import org.netbeans.jcode.core.util.SourceGroups;
-import static org.netbeans.jcode.core.util.SourceGroups.getFolderSourceGroup;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
+import static org.netbeans.jcode.core.util.SourceGroupSupport.getFolderSourceGroup;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
@@ -230,7 +230,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
             return false;
         }
 
-        if (!SourceGroups.isFolderWritable(getLocationValue(), packageName)) {
+        if (!SourceGroupSupport.isFolderWritable(getLocationValue(), packageName)) {
             wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_JavaTargetChooser_UnwritablePackage")); //NOI18N
             return false;
         }
@@ -258,7 +258,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     void read(WizardDescriptor settings) {
         FileObject targetFolder = Templates.getTargetFolder(settings);
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
-        SourceGroup[] sourceGroups = SourceGroups.getJavaSourceGroups(project);
+        SourceGroup[] sourceGroups = SourceGroupSupport.getJavaSourceGroups(project);
         SourceGroupUISupport.connect(locationComboBox, sourceGroups);
         packageComboBox.setRenderer(PackageView.listRenderer());
         updateSourceGroupPackages();

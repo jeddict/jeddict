@@ -17,7 +17,9 @@ package org.netbeans.db.modeler.core.widget.column;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JMenuItem;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
@@ -30,21 +32,46 @@ import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COL
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
+import org.netbeans.jpa.modeler.settings.view.ViewPanel;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, DBModelerScene> {
+public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, DBModelerScene> implements IColumnWidget {
 
     private final List<ReferenceFlowWidget> referenceFlowWidget = new ArrayList<>();
 
     public ColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(DBModelerUtil.COLUMN);
+    }
+
+    public void visualizeDataType() {
+        AttributeViewAs viewAs = ViewPanel.getDataType();
+        DBColumn column = this.getBaseElementSpec();
+        
+        String dataType = column.getDataType();
+        if (null != viewAs) switch (viewAs) {
+            case CLASS_FQN:
+            case SIMPLE_CLASS_NAME:
+                dataType = dataType + "(" + column.getSize()+ ")";
+                break;
+        //skip
+            case SHORT_CLASS_NAME:
+                break;
+            case NONE:
+                return;
+            default:
+                break;
+        }
+        
+        visualizeDataType(dataType);
     }
 
     public void setDatatypeTooltip() {
@@ -67,6 +94,8 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     @Override
     public void init() {
         validateName(this.getName());
+        visualizeDataType();
+        setDatatypeTooltip();
     }
 
     @Override
@@ -160,84 +189,37 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
 
     protected void validateName(String name) {
         if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-            this.getErrorHandler().throwSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+            getSignalManager().fire(ERROR, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
+            getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
         if (tableSpec.findColumns(name).size() > 1) {
-            getErrorHandler().throwSignal(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
+            getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         } else {
-            getErrorHandler().clearSignal(AttributeValidator.NON_UNIQUE_COLUMN_NAME);
+            getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         }
     }
 
     protected void validateTableName(String name) {
         if (name != null && !name.trim().isEmpty()) {
             if (SQLKeywords.isSQL99ReservedKeyword(name)) {
-                getErrorHandler().throwSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().fire(ERROR, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             } else {
-                getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         } else {
-            getErrorHandler().clearSignal(AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
     }
 
-//    @Override
-//    protected List<JMenuItem> getPopupMenuItemList() {
-//        List<JMenuItem> menuItemList = new LinkedList<>();
-//
-//        JMenuItem drive = new JMenuItem("Drive to Entity");
-//        drive.addActionListener((ActionEvent e) -> {
-//            DBColumn column = ColumnWidget.this.getBaseElementSpec();
-//            Entity entity = table.getEntity();
-//            ModelerFile modelerFile = ColumnWidget.this.getModelerScene().getModelerFile();
-//            modelerFile = modelerFile.getParentFile();
-//
-//            Widget widget = (Widget) ((JPAModelerScene) modelerFile.getModelerScene()).getBaseElements().stream().filter(w -> w.getBaseElementSpec() == entity).findAny().get();
-//            modelerFile.getModelerScene().setFocusedWidget(widget);
-//
-//            Rectangle visibleRect = modelerFile.getModelerScene().getView().getVisibleRect();
-//            Rectangle widetRec = new Rectangle(widget.getLocation());
-//            Rectangle sceneRec = widget.getScene().getBounds();
-//
-//            int x = 0, y = 0;
-//            if (widetRec.y + visibleRect.height / 2 > sceneRec.height && widetRec.y + visibleRect.height / 2 < sceneRec.height) {
-//                System.out.println("Center Vertcal");
-//                y = widetRec.y - visibleRect.height / 2;
-//            } else if (widetRec.y + visibleRect.height / 2 > sceneRec.height) {
-//                System.out.println("Bottom");
-//                y = sceneRec.height;
-//            } else if (widetRec.y + visibleRect.height / 2 < sceneRec.height) {
-//                System.out.println("Top");
-//                y = 0;
-//            }
-//
-//            if (widetRec.x + visibleRect.width / 2 > sceneRec.width && widetRec.x + visibleRect.width / 2 < sceneRec.width) {
-//                System.out.println("Center Horizontal");
-//                x = widetRec.x - visibleRect.width / 2;
-//            } else if (widetRec.x + visibleRect.width / 2 > sceneRec.width) {
-//                System.out.println("Right");
-//                x = sceneRec.width;
-//            } else if (widetRec.x + visibleRect.width / 2 < sceneRec.width) {
-//                System.out.println("Left");
-//                x = 0;
-//            }
-//
-//            NODE_WIDGET_SELECT_PROVIDER.select(widget, null, false);
-//            modelerFile.getModelerScene().getView().scrollRectToVisible(new Rectangle(x, y, widget.getBounds().width, widget.getBounds().height));
-//            JPAFileActionListener.open(modelerFile);
-//
-//        });
-//
-//        menuItemList.add(0, drive);
-//
-//        menuItemList.add(getPropertyMenu());
-//
-//        return menuItemList;
-//    }
+    @Override
+    protected List<JMenuItem> getPopupMenuItemList() {
+        List<JMenuItem> menuItemList = new LinkedList<>();
+        menuItemList.add(getPropertyMenu());
+        return menuItemList;
+    }
     
     @Override
     public String getIconPath() {

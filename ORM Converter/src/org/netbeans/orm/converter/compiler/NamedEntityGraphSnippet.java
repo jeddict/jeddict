@@ -18,6 +18,8 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPH;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
@@ -37,7 +39,7 @@ public class NamedEntityGraphSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedEntityGraph(name=\"");
+        builder.append("@").append(NAMED_ENTITY_GRAPH).append("(name=\"");
         builder.append(getName());
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
@@ -93,7 +95,7 @@ public class NamedEntityGraphSnippet implements Snippet {
 
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedEntityGraph");
+        importSnippets.add(NAMED_ENTITY_GRAPH_FQN);
 
         if (namedAttributeNodes != null && !namedAttributeNodes.isEmpty()) {
             importSnippets.addAll(namedAttributeNodes.get(0).getImportSnippets());

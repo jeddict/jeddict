@@ -17,6 +17,8 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
+import static org.netbeans.jcode.jpa.JPAConstants.FIELD_RESULT;
+import static org.netbeans.jcode.jpa.JPAConstants.FIELD_RESULT_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class FieldResultSnippet implements Snippet {
@@ -49,7 +51,7 @@ public class FieldResultSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@FieldResult(");
+        builder.append("@").append(FIELD_RESULT).append("(");
 
         builder.append("name=\"");
         builder.append(getName());
@@ -67,6 +69,6 @@ public class FieldResultSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.FieldResult");
+        return Collections.singletonList(FIELD_RESULT_FQN);
     }
 }

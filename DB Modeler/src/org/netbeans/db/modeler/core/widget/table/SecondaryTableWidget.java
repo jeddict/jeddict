@@ -25,15 +25,16 @@ import org.netbeans.db.modeler.spec.DBSecondaryTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.SECONDARY_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.SECONDARY_TABLE_ICON_PATH;
-import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
+import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
@@ -42,7 +43,7 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
     private SecondaryTable table;
     public SecondaryTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, value) -> {
             setName(value);
             setLabel(name);
         });
@@ -74,16 +75,16 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
         }
 
         if (SQLKeywords.isSQL99ReservedKeyword(SecondaryTableWidget.this.getName())) {
-            this.getErrorHandler().throwSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().fire(ERROR, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().clear(ERROR, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBMapping mapping = SecondaryTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(SecondaryTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().fire(ERROR, ClassValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().clear(ERROR, ClassValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }
@@ -105,7 +106,8 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
                     .forEach(a -> ((PersistenceBaseAttribute)a).getColumn().setTable(null));
                 entity.removeSecondaryTable(table);
                 ModelerFile parentFile = SecondaryTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
+                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
         });
         menuList.add(0, joinTable);
         return menuList;

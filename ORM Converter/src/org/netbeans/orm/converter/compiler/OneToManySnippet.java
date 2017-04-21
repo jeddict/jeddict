@@ -15,10 +15,87 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
+
 public class OneToManySnippet extends MultiRelationAttributeSnippet {
+
+    private boolean orphanRemoval = false;
+    
+    @Override
+    public String getSnippet() throws InvalidDataException {
+
+        if (!CodePanel.isGenerateDefaultValue()) {
+            if (mappedBy == null
+                    && orphanRemoval == false
+                    && getTargetEntity() == null
+                    && getFetchType() == null
+                    && getCascadeTypes().isEmpty() 
+                    && (mapKeySnippet==null || mapKeySnippet.isEmpty())) {
+                return "@" + getType();
+            }
+        }
+               
+        StringBuilder builder = new StringBuilder();
+        if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
+            builder.append(mapKeySnippet.getSnippet())
+                    .append(ORMConverterUtil.NEW_LINE)
+                    .append(ORMConverterUtil.TAB);
+        }
+
+        builder.append("@").append(getType()).append("(");
+
+        if (!getCascadeTypes().isEmpty()) {
+            builder.append("cascade={");
+            String encodedString = ORMConverterUtil.getCommaSeparatedString(getCascadeTypes());
+            builder.append(encodedString);
+            builder.append("},");
+        }
+
+        if (getFetchType() != null) {
+            builder.append("fetch = ");
+            builder.append(getFetchType());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        if (getTargetEntity() != null) {
+            builder.append("targetEntity = ");
+            builder.append(getTargetEntity());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
+            builder.append("orphanRemoval=").append(orphanRemoval).append(",");
+        }
+        
+        if (mappedBy != null) {
+            builder.append("mappedBy = ");
+            builder.append(ORMConverterUtil.QUOTE);
+            builder.append(mappedBy);
+            builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        return builder.substring(0, builder.length() - 1)
+                + ORMConverterUtil.CLOSE_PARANTHESES;
+    }
 
        @Override
     public String getType() {
         return "OneToMany";
+    }
+
+    /**
+     * @return the orphanRemoval
+     */
+    public boolean isOrphanRemoval() {
+        return orphanRemoval;
+    }
+
+    /**
+     * @param orphanRemoval the orphanRemoval to set
+     */
+    public void setOrphanRemoval(boolean orphanRemoval) {
+        this.orphanRemoval = orphanRemoval;
     }
 }

@@ -21,7 +21,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.JOIN_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.JOIN_COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_JOIN_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_PARANTHESES;
 
@@ -122,7 +122,7 @@ public class JoinColumnSnippet implements Snippet {
             builder.append(JOIN_COLUMN);
         }
         
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (insertable == true
                     && nullable == true
                     && unique == false
@@ -166,7 +166,7 @@ public class JoinColumnSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             builder.append("insertable=");
             builder.append(insertable);
             builder.append(ORMConverterUtil.COMMA);
@@ -176,7 +176,7 @@ public class JoinColumnSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             builder.append("nullable=");
             builder.append(nullable);
             builder.append(ORMConverterUtil.COMMA);
@@ -186,7 +186,7 @@ public class JoinColumnSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             builder.append("unique=");
             builder.append(unique);
             builder.append(ORMConverterUtil.COMMA);
@@ -196,7 +196,7 @@ public class JoinColumnSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             builder.append("updatable=");
             builder.append(updatable);
             builder.append(ORMConverterUtil.COMMA);

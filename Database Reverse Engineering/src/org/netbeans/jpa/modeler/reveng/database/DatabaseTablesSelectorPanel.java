@@ -47,10 +47,10 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.dbschema.SchemaElement;
-import org.netbeans.modules.j2ee.core.api.support.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
@@ -238,8 +238,8 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
             // should be selected
             int dbschemaCount = dbschemaComboBox.getItemCount();
             if (targetFolder != null) {
-                SourceGroup[] sourceGroups = SourceGroups.getJavaSourceGroups(project);
-                SourceGroup targetSourceGroup = SourceGroups.getFolderSourceGroup(sourceGroups, targetFolder);
+                SourceGroup[] sourceGroups = SourceGroupSupport.getJavaSourceGroups(project);
+                SourceGroup targetSourceGroup = SourceGroupSupport.getFolderSourceGroup(sourceGroups, targetFolder);
                 if (targetSourceGroup != null) {
                     for (int i = 0; i < dbschemaCount; i++) {
                         Object nextSchema = dbschemaComboBox.getItemAt(i);

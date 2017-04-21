@@ -50,7 +50,7 @@ public class MapKeyEmbeddedColumnWidget extends EmbeddedAttributeColumnWidget<DB
     public void createPropertySet(ElementPropertySet set) {
         AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
         set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
-        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) this::setMultiPropertyName);
-        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (oldValue, value) -> setMultiPropertyName(value));
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
     }
 }

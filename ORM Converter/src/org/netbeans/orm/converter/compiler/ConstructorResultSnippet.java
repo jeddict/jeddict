@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.CONSTRUCTOR_RESULT;
+import static org.netbeans.jcode.jpa.JPAConstants.CONSTRUCTOR_RESULT_FQN;
 
 public class ConstructorResultSnippet implements Snippet {
 
@@ -72,7 +74,7 @@ public class ConstructorResultSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@ConstructorResult(targetClass=");
+        builder.append("@").append(CONSTRUCTOR_RESULT).append("(targetClass=");
         builder.append(getTargetClass());
         builder.append(ORMConverterUtil.COMMA);
 
@@ -99,12 +101,12 @@ public class ConstructorResultSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (columnResults.isEmpty()) {
-            return Collections.singletonList("javax.persistence.ConstructorResult");
+            return Collections.singletonList(CONSTRUCTOR_RESULT_FQN);
         }
 
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.ConstructorResult");
+        importSnippets.add(CONSTRUCTOR_RESULT_FQN);
         for (ColumnResultSnippet columnResult : columnResults) {
             importSnippets.addAll(columnResult.getImportSnippets());
         }

@@ -38,7 +38,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="nameLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="nameTextField" pref="484" max="32767" attributes="0"/>
+                  <Component id="nameTextField" pref="191" max="32767" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="action_jLayeredPane" min="-2" pref="156" max="-2" attributes="0"/>
               </Group>
@@ -75,7 +75,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="448" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="452" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -100,7 +100,7 @@
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="0" width="70" height="-1"/>
+                  <AbsoluteConstraints x="0" y="0" width="70" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>

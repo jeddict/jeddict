@@ -15,8 +15,10 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.PRIMARY_KEY_JOIN_COLUMN;
+import static org.netbeans.jcode.jpa.JPAConstants.PRIMARY_KEY_JOIN_COLUMN_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class PrimaryKeyJoinColumnSnippet implements Snippet {
@@ -25,6 +27,8 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
     private String name = null;
     private String referencedColumnName = null;
 
+    private ForeignKeySnippet foreignKey;
+    
     public String getColumnDefinition() {
         return columnDefinition;
     }
@@ -48,6 +52,20 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
     public void setReferencedColumnName(String referencedColumnName) {
         this.referencedColumnName = referencedColumnName;
     }
+    
+    /**
+     * @return the foreignKey
+     */
+    public ForeignKeySnippet getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * @param foreignKey the foreignKey to set
+     */
+    public void setForeignKey(ForeignKeySnippet foreignKey) {
+        this.foreignKey = foreignKey;
+    }
 
     @Override
     public String getSnippet() throws InvalidDataException {
@@ -55,12 +73,12 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
         if (name == null
                 && referencedColumnName == null
                 && columnDefinition == null) {
-            return "@PrimaryKeyJoinColumn";
+            return "@" + PRIMARY_KEY_JOIN_COLUMN;
         }
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@PrimaryKeyJoinColumn(");
+        builder.append("@").append(PRIMARY_KEY_JOIN_COLUMN).append("(");
 
         if (name != null) {
             builder.append("name=\"");
@@ -83,12 +101,24 @@ public class PrimaryKeyJoinColumnSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
+        if (foreignKey != null) {
+            builder.append("foreignKey=");
+            builder.append(foreignKey.getSnippet());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+        
         return builder.substring(0, builder.length() - 1)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.PrimaryKeyJoinColumn");
+       List<String> importSnippets = new ArrayList<>();
+       importSnippets.add(PRIMARY_KEY_JOIN_COLUMN_FQN);
+        if (foreignKey != null) {
+            importSnippets.addAll(foreignKey.getImportSnippets());
+        }
+
+        return importSnippets;
     }
 }

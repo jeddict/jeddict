@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.spec.DBDiscriminatorColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -29,9 +28,7 @@ public class DiscriminatorColumnWidget extends ColumnWidget<DBDiscriminatorColum
 
     public DiscriminatorColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
+        this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value)); 
     }
 
     @Override

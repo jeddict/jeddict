@@ -19,11 +19,11 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
+public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey<JoinColumn> {
 
     private final boolean relationTableExist;
     private final JoinColumn joinColumn;
-    private final List<? extends JoinColumn> joinColumns;
+    private final List<JoinColumn> joinColumns;
 
     public DBJoinColumn(String name, Attribute attribute, boolean relationTableExist) {
         super(name, attribute);
@@ -39,7 +39,7 @@ public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey {
         return joinColumn;
     }
 
-    public List<? extends JoinColumn> getJoinColumns() {
+    public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 

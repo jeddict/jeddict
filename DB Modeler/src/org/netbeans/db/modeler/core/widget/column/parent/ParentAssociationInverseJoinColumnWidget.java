@@ -18,7 +18,7 @@ package org.netbeans.db.modeler.core.widget.column.parent;
 import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
 import org.netbeans.db.modeler.spec.DBParentAssociationInverseJoinColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
@@ -29,8 +29,8 @@ public class ParentAssociationInverseJoinColumnWidget extends ParentAssociationC
     }
 
     @Override
-    protected String evaluateName() {
-        return InverseJoinColumnWidget.evaluateName(this.getBaseElementSpec().getAttribute(), this.getBaseElementSpec().getReferenceColumn());
+    protected String evaluateName() {//only RelationAttribute are inverse in nature
+        return InverseJoinColumnWidget.evaluateName((RelationAttribute)this.getBaseElementSpec().getAttribute(), this.getBaseElementSpec().getReferenceColumn());
     }
 
 }

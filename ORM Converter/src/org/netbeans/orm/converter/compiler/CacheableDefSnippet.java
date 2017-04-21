@@ -15,18 +15,28 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import static org.netbeans.jcode.jpa.JPAConstants.CACHEABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.CACHEABLE_FQN;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 
 public class CacheableDefSnippet implements Snippet {
 
+    private Boolean status;
+
+    public CacheableDefSnippet(Boolean status) {
+        this.status = status;
+    }
+    
+    
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
-        builder.append("@Cacheable");
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        builder.append("@").append(CACHEABLE);
+        if(status!=null && !status){
+            builder.append("(false)");
+        } else if (CodePanel.isGenerateDefaultValue()) {
             builder.append("(true)");
         }
         return builder.toString();
@@ -34,6 +44,6 @@ public class CacheableDefSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singleton("javax.persistence.Cacheable");
+        return Collections.singleton(CACHEABLE_FQN);
     }
 }

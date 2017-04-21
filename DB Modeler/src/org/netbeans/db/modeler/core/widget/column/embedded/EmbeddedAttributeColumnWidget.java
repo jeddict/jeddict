@@ -80,13 +80,12 @@ public class EmbeddedAttributeColumnWidget<E extends DBEmbeddedAttributeColumn> 
 
             AttributeOverride attributeOverride = this.getBaseElementSpec().getAttributeOverride();
             set.createPropertySet("ATTRIBUTE_OVERRIDE", "ATTR_OVERRIDE", this, attributeOverride.getColumn(), getPropertyChangeListeners());
-
         } else if (this.getBaseElementSpec().getAttribute() instanceof ElementCollection) {
             //in dev
         }
-        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) this::setMultiPropertyName);
-        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) this::setMultiPropertyName);
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
-        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (oldValue, value) -> setMultiPropertyName(value));
+        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (oldValue, value) -> setMultiPropertyName(value));
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
     }
 }

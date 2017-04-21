@@ -250,4 +250,29 @@ public class JPAMTableDefinition extends TableDefinition {
         }
         return foreignKeyName;
     }
+    
+    public UniqueKeyConstraint buildUniqueKeyConstraint(String name, List<String> fieldNames, int serialNumber, DatabasePlatform platform) {
+        assert fieldNames.size() > 0;
+        
+        UniqueKeyConstraint unqConstraint = new UniqueKeyConstraint();
+        
+        for (String fieldName : fieldNames) {
+            unqConstraint.addSourceField(fieldName);
+        }
+        
+        // If the name was not provided, default one, otherwise use the name provided.
+        if (name == null || name.equals("")) {
+            unqConstraint.setName(buildUniqueKeyConstraintName(getName(), serialNumber, platform.getMaxUniqueKeyNameSize()));
+        } else {
+            // Hack if off if it exceeds the max size.
+            if (name.length() > platform.getMaxUniqueKeyNameSize()) {
+                unqConstraint.setName(name.substring(0, platform.getMaxUniqueKeyNameSize() - 1));
+            } else {
+                unqConstraint.setName(name);
+            }
+        }
+        
+        return unqConstraint;
+    }
+
 }

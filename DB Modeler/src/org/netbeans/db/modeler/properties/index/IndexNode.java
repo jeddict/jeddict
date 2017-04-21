@@ -18,21 +18,32 @@ package org.netbeans.db.modeler.properties.index;
 import org.netbeans.db.modeler.properties.tablemember.nodes.*;
 import java.util.List;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
-import org.netbeans.db.modeler.properties.order.OrderColumn;
+import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.nodes.LeafNodeAction;
+import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.db.modeler.properties.tablemember.TableMembers;
-import org.openide.nodes.Children;
+import org.netbeans.jpa.modeler.navigator.nodes.Direction;
+import org.netbeans.jpa.modeler.properties.order.type.OrderTypeColumn;
 
-public class IndexNode extends TMLeafNode implements OrderColumn {
+public class IndexNode extends TMLeafNode implements OrderTypeColumn {
 
     private OrderType order;
 
-    public IndexNode(ColumnWidget leafAttributeWidget, TableMembers tableMembers, Children children, CheckableAttributeNode checkableNode, List<Class<? extends LeafNodeAction>> actions) {
-        super(leafAttributeWidget, tableMembers, children, checkableNode, actions);
+    public IndexNode(ColumnWidget leafAttributeWidget, TableMembers tableMembers, CheckableAttributeNode checkableNode, List<Class<? extends LeafNodeAction>> actions) {
+        super(leafAttributeWidget, tableMembers, checkableNode, actions);
     }
     
+    @Override
+    public void init() {
+        super.init();
+        
+        if(getLeafColumnWidget() instanceof IPrimaryKeyWidget){
+           getCheckableNode().setSelected(true, Direction.NONE);
+           getCheckableNode().setCheckEnabled(false);
+           getCheckableNode().setEnableWithParent(false);
+        }
+    }
     
     @Override
     public String getHtmlDisplayName() {
@@ -42,7 +53,7 @@ public class IndexNode extends TMLeafNode implements OrderColumn {
         if(order == OrderType.DESC){
             name = String.format(template, tab + "DESC") ;
         } else {
-            name = String.format(template, tab + "AS7C") ;
+            name = String.format(template, tab + "ASC") ;
         }
         return name;
     }

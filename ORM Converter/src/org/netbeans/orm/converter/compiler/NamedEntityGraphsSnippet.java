@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPHS;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
 
 /**
  *
@@ -62,7 +64,7 @@ public class NamedEntityGraphsSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedEntityGraphs({");
+        builder.append("@").append(NAMED_ENTITY_GRAPHS).append("({");
 
         for (NamedEntityGraphSnippet namedEntityGraph : namedEntityGraphs) {
             builder.append(namedEntityGraph.getSnippet());
@@ -87,7 +89,7 @@ public class NamedEntityGraphsSnippet implements Snippet {
 
         ArrayList<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedEntityGraphs");
+        importSnippets.add(NAMED_ENTITY_GRAPHS_FQN);
         for(NamedEntityGraphSnippet namedEntityGraph : namedEntityGraphs){
             importSnippets.addAll(namedEntityGraph.getImportSnippets());
         }

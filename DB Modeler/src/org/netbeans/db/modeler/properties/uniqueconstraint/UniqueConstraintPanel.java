@@ -18,7 +18,6 @@ package org.netbeans.db.modeler.properties.uniqueconstraint;
 import java.util.ArrayList;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import javax.swing.JOptionPane;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -26,7 +25,7 @@ import org.netbeans.db.modeler.properties.tablemember.TableMemberPanel;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 
 public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
 
@@ -102,7 +101,7 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
         );
         classMemberPanelLayout.setVerticalGroup(
             classMemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 448, Short.MAX_VALUE)
+            .addGap(0, 452, Short.MAX_VALUE)
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.save_Button.text")); // NOI18N
@@ -113,7 +112,7 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 29);
+        save_Button.setBounds(0, 0, 70, 30);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.cancel_Button.toolTipText")); // NOI18N
@@ -131,6 +130,11 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
 
         org.openide.awt.Mnemonics.setLocalizedText(nameLabel, org.openide.util.NbBundle.getMessage(UniqueConstraintPanel.class, "UniqueConstraintPanel.nameLabel.text")); // NOI18N
 
+        rootLayeredPane.setLayer(classMemberPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(nameTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        rootLayeredPane.setLayer(nameLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout rootLayeredPaneLayout = new javax.swing.GroupLayout(rootLayeredPane);
         rootLayeredPane.setLayout(rootLayeredPaneLayout);
         rootLayeredPaneLayout.setHorizontalGroup(
@@ -139,7 +143,7 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
                 .addContainerGap()
                 .addComponent(nameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(classMemberPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -155,10 +159,6 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
                         .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(nameLabel))))
         );
-        rootLayeredPane.setLayer(classMemberPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(nameTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        rootLayeredPane.setLayer(nameLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -184,7 +184,11 @@ public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
         if (!validateField()) {
             return;
         }
-        uniqueConstraint.setColumnName(new ArrayList<>(((TableMemberPanel) classMemberPanel).getValue().getColumns().stream().map(c -> c.getColumn()).collect(toList())));
+        uniqueConstraint.setColumnName(new ArrayList<>(
+                ((TableMemberPanel) classMemberPanel).getValue().getColumns().stream()
+                .map(c -> c.getProperty())
+                .collect(toList())
+        ));
         uniqueConstraint.setName(nameTextField.getText());
 
         if (this.getEntity().getClass() == RowValue.class) {

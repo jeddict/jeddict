@@ -25,10 +25,10 @@ import java.util.Set;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jpa.modeler.reveng.database.generator.DbSchemaEjbGenerator;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.dbschema.SchemaElement;
-import org.netbeans.modules.j2ee.core.api.support.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityClass;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityRelation;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityRelation.CollectionType;
@@ -207,7 +207,7 @@ public class ImportHelper {
     }
 
     public FileObject getPackageObject() throws IOException {
-        return SourceGroups.getFolderForPackage(getLocation(), getPackageName());
+        return SourceGroupSupport.getFolderForPackage(getLocation(), getPackageName());
     }
 
     public SourceGroup getLocation() {

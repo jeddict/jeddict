@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import static org.netbeans.jcode.jpa.JPAConstants.TABLE_GENERATOR;
+import static org.netbeans.jcode.jpa.JPAConstants.TABLE_GENERATOR_FQN;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TableGeneratorSnippet implements Snippet {
@@ -128,7 +130,7 @@ public class TableGeneratorSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@TableGenerator(name=\"");
+        builder.append("@").append(TABLE_GENERATOR).append("(name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
@@ -175,13 +177,13 @@ public class TableGeneratorSnippet implements Snippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || allocationSize != 50) {
+        if (CodePanel.isGenerateDefaultValue() || allocationSize != 50) {
             builder.append("allocationSize=");
             builder.append(allocationSize);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
+        if (CodePanel.isGenerateDefaultValue() || initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
             builder.append("initialValue=");
             builder.append(initialValue);
             builder.append(ORMConverterUtil.COMMA);
@@ -222,11 +224,11 @@ public class TableGeneratorSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (uniqueConstraints.isEmpty() && indices.isEmpty()) {
-            return Collections.singletonList("javax.persistence.TableGenerator");
+            return Collections.singletonList(TABLE_GENERATOR_FQN);
         }
 
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.TableGenerator");
+        importSnippets.add(TABLE_GENERATOR_FQN);
         if (!uniqueConstraints.isEmpty()) {
             importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }

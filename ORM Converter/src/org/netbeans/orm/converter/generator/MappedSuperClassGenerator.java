@@ -15,23 +15,20 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
-import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
-    private static Logger logger = ORMConvLogger.getLogger(MappedSuperClassGenerator.class);
-
-    private MappedSuperclass mappedSuperclass = null;
+    private MappedSuperclass mappedSuperclass;
 
     public MappedSuperClassGenerator(MappedSuperclass parsedMappedSuperclass, String packageName) {
         super(new ManagedClassDefSnippet());
         this.mappedSuperclass = parsedMappedSuperclass;
-        this.packageName = packageName;
+        this.rootPackageName = packageName;
+        this.packageName = mappedSuperclass.getAbsolutePackage(rootPackageName);
     }
 
     @Override
@@ -56,7 +53,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
                 mappedSuperclass.getExcludeSuperclassListeners());
 
         //Attributes -- Method level annotations
-        Attributes parsedAttributes = mappedSuperclass.getAttributes();
+        IPrimaryKeyAttributes parsedAttributes = mappedSuperclass.getAttributes();
 
         if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(mappedSuperclass, parsedAttributes.getEmbeddedId());
@@ -80,6 +77,7 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
         if (StringUtils.isNotBlank(mappedSuperclass.getDescription())) {
             classDef.setDescription(mappedSuperclass.getDescription());
         }
+        classDef.setAuthor(mappedSuperclass.getAuthor());
         classDef.setMappedSuperClass(true);
         classDef.setXmlRootElement(mappedSuperclass.getXmlRootElement());
         return classDef;

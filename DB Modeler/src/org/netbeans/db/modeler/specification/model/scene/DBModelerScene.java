@@ -15,7 +15,7 @@
  */
 package org.netbeans.db.modeler.specification.model.scene;
 
-import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,21 +24,27 @@ import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.db.modeler.specification.model.event.DBEventListener;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.VIEW_SQL;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.db.modeler.theme.DBColorScheme;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.IJoinColumn;
 import org.netbeans.jpa.modeler.spec.validator.column.JoinColumnValidator;
+import org.netbeans.jpa.modeler.spec.validator.column.PrimaryKeyJoinColumnValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AssociationValidator;
 import org.netbeans.jpa.modeler.spec.validator.override.AttributeValidator;
+import org.netbeans.modeler.actions.IEventListener;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.scene.vmd.DefaultPModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
@@ -48,7 +54,7 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
-import org.netbeans.modeler.widget.node.vmd.internal.PDarkColorScheme;
+import org.netbeans.modeler.widget.node.vmd.internal.*;
 import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 
 public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
@@ -63,11 +69,17 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                 if (baseElementWidget instanceof TableWidget) {
                     TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
                     tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion procced each element locked
-                     for (ForeignKeyWidget foreignKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getForeignKeyWidgets())) {
+                    for (ForeignKeyWidget foreignKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getForeignKeyWidgets())) {
                         foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
-                            ((ReferenceFlowWidget) w).remove(); 
+                            ((ReferenceFlowWidget) w).remove();
                         });
                     }
+                    for (IPrimaryKeyWidget primaryKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getPrimaryKeyWidgets())) {
+                        primaryKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
+                            ((ReferenceFlowWidget) w).remove();
+                        });
+                    }
+
                     tableWidget.setLocked(false);
                 }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
@@ -159,9 +171,11 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public IColorScheme getColorScheme() {
-        EntityMappings entityMappings = (EntityMappings)this.getModelerFile().getParentFile().getDefinitionElement();
-         if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
+        EntityMappings entityMappings = (EntityMappings) this.getModelerFile().getParentFile().getDefinitionElement();
+        if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
+        } else if (PFactory.getLightScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
+            return PFactory.getColorScheme(PFactory.getLightScheme());
         } else {
             return PFactory.getColorScheme(DBColorScheme.class);
         }
@@ -169,20 +183,21 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     public void setColorScheme(Class<? extends IColorScheme> scheme) {
-        EntityMappings entityMappings = (EntityMappings)this.getModelerFile().getParentFile().getDefinitionElement();
+        EntityMappings entityMappings = (EntityMappings) this.getModelerFile().getParentFile().getDefinitionElement();
         entityMappings.setDbTheme(scheme.getSimpleName());
     }
 
     @Override
     public Map<String, Class<? extends IColorScheme>> getColorSchemes() {
         Map<String, Class<? extends IColorScheme>> colorSchemes = new HashMap<>();
-//        colorSchemes.put("Classic",PFactory.getNetBeans60Scheme());
         colorSchemes.put("Default", DBColorScheme.class);
         colorSchemes.put("Dark", PDarkColorScheme.class);
-//        colorSchemes.put("Mac", PFactory.getMacScheme());
+        colorSchemes.put("Light", PLightColorScheme.class);
         return colorSchemes;
     }
 
+
+    
     @Override
     public void destroy() {
         try {
@@ -194,12 +209,16 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
                 this.getBaseElementSpec().getTables().stream().flatMap(t -> t.getColumns().stream())
                         .filter(c -> c instanceof DBForeignKey).collect(toList())
                         .forEach((DBColumn column) -> {
-                            List<? extends JoinColumn> joinColumns;
-                            JoinColumn joinColumn;
+                            List<IJoinColumn> joinColumns;
+                            IJoinColumn joinColumn;
                             joinColumn = ((DBForeignKey) column).getJoinColumn();
                             joinColumns = ((DBForeignKey) column).getJoinColumns();
-                            if (joinColumn != null && JoinColumnValidator.isEmpty(joinColumn)) {
-                                joinColumns.remove(joinColumn);
+                            if (joinColumn != null) {
+                                if (joinColumn instanceof JoinColumn && JoinColumnValidator.isEmpty((JoinColumn) joinColumn)) {
+                                    joinColumns.remove(joinColumn);
+                                } else if (joinColumn instanceof PrimaryKeyJoinColumn && PrimaryKeyJoinColumnValidator.isEmpty((PrimaryKeyJoinColumn) joinColumn)) {
+                                    joinColumns.remove(joinColumn);
+                                }
                             }
                         });
             }
@@ -215,14 +234,19 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
-        List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem openSQLEditor = new JMenuItem("View SQL (beta)",VIEW_SQL);
-        openSQLEditor.addActionListener((ActionEvent e) -> {
-            SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL());
-        });
+        List<JMenuItem> menuList = new ArrayList<>();
+        JMenuItem openSQLEditor = new JMenuItem("View SQL (beta)", VIEW_SQL);
+        openSQLEditor.addActionListener(e -> SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL()));
 
-        menuList.add(0, openSQLEditor);
+        menuList.add(openSQLEditor);
+        menuList.add(getThemeMenu());
+        menuList.add(getContainerMenu());
+        menuList.add(getPropertyMenu());
         return menuList;
     }
 
+    @Override
+    protected IEventListener getEventListener() {
+        return new DBEventListener();
+    }
 }

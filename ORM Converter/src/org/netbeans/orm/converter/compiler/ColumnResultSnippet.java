@@ -20,6 +20,8 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 import java.util.Collection;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_RESULT;
+import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_RESULT_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 
 public class ColumnResultSnippet implements Snippet {
@@ -60,7 +62,7 @@ public class ColumnResultSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@ColumnResult(name=\"");
+        builder.append("@").append(COLUMN_RESULT).append("(name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
@@ -78,7 +80,7 @@ public class ColumnResultSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.ColumnResult");
+        importSnippets.add(COLUMN_RESULT_FQN);
         if (classHelper.getFQClassName() != null) {
             importSnippets.add(classHelper.getFQClassName());
         }

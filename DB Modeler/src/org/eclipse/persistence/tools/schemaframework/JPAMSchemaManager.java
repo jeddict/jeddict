@@ -247,6 +247,7 @@ public class JPAMSchemaManager {
 
         if ((!session.getPlatform().supportsForeignKeyConstraints()) || tableDefinition.getForeignKeyMap().isEmpty()) {
             return;
+            //TODO : issue #65
         }
 
         for (ForeignKeyConstraint foreignKey : tableDefinition.getForeignKeyMap().values()) {
@@ -296,8 +297,15 @@ public class JPAMSchemaManager {
         //                }
         //
         //                databaseObjectDefinition.createOnDatabase(getSession());
-        String query = ((TableDefinition) databaseObjectDefinition).buildCreationWriter(session, new StringWriter()).toString();
-        System.out.println("query : " + query);
+        String query = null;
+        if (databaseObjectDefinition instanceof TableDefinition) {
+            query = ((TableDefinition) databaseObjectDefinition).buildCreationWriter(session, new StringWriter()).toString();
+        } else if (databaseObjectDefinition instanceof SequenceObjectDefinition) {
+            query = ((SequenceObjectDefinition) databaseObjectDefinition).buildCreationWriter(session, new StringWriter()).toString();
+        } else if (databaseObjectDefinition instanceof TableSequenceDefinition) {
+            query = ((TableSequenceDefinition) databaseObjectDefinition).buildCreationWriter(session, new StringWriter()).toString();
+        }
+//        System.out.println("query : " + query);
         //            } else {
         //                // Check if we should create a database schema for this
         //                // database object definition on the database. It is only
@@ -421,7 +429,8 @@ public class JPAMSchemaManager {
                         // Don't create it if it already exists on the database.
                         // In all all other cases, write it out.
                         if ((shouldWriteToDatabase() && !exists) || !shouldWriteToDatabase()) {
-                            createObject(tableDefinition);
+                            String query = createObject(tableDefinition);
+                            getDBMapping().putQuery(tableDefinition.getName(), query);
                         }
                     } else // Don't check exists since if writing to scripts only with no connection,
                     // we'll never write the sql out. When executing to the database, the drop
@@ -434,7 +443,8 @@ public class JPAMSchemaManager {
                     {
                         if (replace) {
                             dropObject(tableDefinition);
-                            createObject(tableDefinition);
+                            String query = createObject(tableDefinition);
+                            getDBMapping().putQuery(tableDefinition.getName(), query);
                         }
                     }
                 }
@@ -446,7 +456,8 @@ public class JPAMSchemaManager {
         // Handle the sequence objects second.
         try {
             if (createSequences) {
-                createObject(definition);
+                String query = createObject(definition);
+                getDBMapping().putQuery(definition.getName(), query);
             } else {
                 try {
                     // If the sequence definition has and will drop a table definition, then check
@@ -472,7 +483,8 @@ public class JPAMSchemaManager {
 
                 // Drop only scripts we don't want to replace.
                 if (replace) {
-                    createObject(definition);
+                    String query = createObject(definition);
+                    getDBMapping().putQuery(definition.getName(), query);
                 }
             }
         } catch (Exception exception) {
@@ -1041,7 +1053,8 @@ public class JPAMSchemaManager {
                 }
             }
 
-            createObject(databaseDefinition);
+            String query = createObject(databaseDefinition);
+            getDBMapping().putCreateQuery(databaseDefinition.getName(), query);
         }
     }
 

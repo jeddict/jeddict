@@ -18,6 +18,9 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDE;
+import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class AttributeOverrideSnippet implements Snippet {
@@ -51,7 +54,7 @@ public class AttributeOverrideSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@AttributeOverride(");
+        builder.append("@").append(ATTRIBUTE_OVERRIDE).append("(");
 
         builder.append("name=\"");
         builder.append(name);
@@ -69,8 +72,8 @@ public class AttributeOverrideSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.AttributeOverride");
-        importSnippets.add("javax.persistence.Column");
+        importSnippets.add(ATTRIBUTE_OVERRIDE_FQN);
+        importSnippets.add(COLUMN_FQN);
 
         return importSnippets;
     }

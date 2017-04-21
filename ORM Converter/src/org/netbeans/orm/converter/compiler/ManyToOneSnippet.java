@@ -16,41 +16,36 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ID;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MANY_TO_ONE;
+import static org.netbeans.jcode.jpa.JPAConstants.MANY_TO_ONE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID_FQN;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class ManyToOneSnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet {
-
-    private boolean optional = false;
-    private String mapsId;
-    private boolean primaryKey;
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
+public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         if (isPrimaryKey()) {
+            builder.append("@");
             if (mapsId == null) {
-                builder.append("@Id");
+                builder.append(ID);
             } else if (mapsId.trim().isEmpty()) {
-                builder.append("@MapsId");
+                builder.append(MAPS_ID);
             } else {
-                builder.append("@MapsId(\"").append(mapsId).append("\")");
+                builder.append(MAPS_ID).append("(\"").append(mapsId).append("\")");
             }
         }
-        builder.append("@ManyToOne");
+        builder.append("@").append(MANY_TO_ONE);
 
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (optional == true
                     && getTargetEntity() == null
                     && getFetchType() == null
@@ -61,7 +56,7 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
 
         builder.append("(");
 
-        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+        if (CodePanel.isGenerateDefaultValue() || optional == false) {
             builder.append("optional=").append(optional).append(",");
         }
 
@@ -93,59 +88,25 @@ public class ManyToOneSnippet extends AbstractRelationDefSnippet
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-
-        if (getFetchType() == null
-                && getCascadeTypes().isEmpty() && !isPrimaryKey()) {
-
-            return Collections.singletonList("javax.persistence.ManyToOne");
-        }
-
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
         if (isPrimaryKey()) {
             if (mapsId == null) {
-                importSnippets.add("javax.persistence.Id");
+                importSnippets.add(ID_FQN);
             } else {
-                importSnippets.add("javax.persistence.MapsId");
+                importSnippets.add(MAPS_ID_FQN);
             }
         }
-        importSnippets.add("javax.persistence.ManyToOne");
+        importSnippets.add(MANY_TO_ONE_FQN);
 
         if (getFetchType() != null) {
-            importSnippets.add("javax.persistence.FetchType");
+            importSnippets.add(FETCH_TYPE_FQN);
         }
 
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add("javax.persistence.CascadeType");
+            importSnippets.add(CASCADE_TYPE_FQN);
         }
 
         return importSnippets;
     }
 
-    /**
-     * @return the primaryKey
-     */
-    public boolean isPrimaryKey() {
-        return primaryKey;
-    }
-
-    /**
-     * @param primaryKey the primaryKey to set
-     */
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
-
-    /**
-     * @return the mapsId
-     */
-    public String getMapsId() {
-        return mapsId;
-    }
-
-    /**
-     * @param mapsId the mapsId to set
-     */
-    public void setMapsId(String mapsId) {
-        this.mapsId = mapsId;
-    }
 }

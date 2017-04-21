@@ -17,7 +17,6 @@ package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Logger;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
@@ -27,24 +26,23 @@ import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.ClassGenerator;
 import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClassDefSnippet> {
 
-    private static Logger logger = ORMConvLogger.getLogger(StaticMetamodelGenerator.class);
-
-    private ManagedClass managedClass = null;
-    private String entityPackageName;
+    private final ManagedClass managedClass;
+    private final String entityPackageName;
 
     public StaticMetamodelGenerator(ManagedClass managedClass, String entityPackageName, String packageName) {
         super(new StaticMetamodelClassDefSnippet());
         this.managedClass = managedClass;
-        this.packageName = packageName;
+        this.rootPackageName = packageName;
+        this.packageName = managedClass.getAbsolutePackage(rootPackageName);
         this.entityPackageName=entityPackageName;
     }
 
@@ -114,21 +112,24 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
         if (parsedAttributes != null) {
             if (parsedAttributes instanceof IPersistenceAttributes) {
                 IPersistenceAttributes persistenceAttributes = (IPersistenceAttributes) parsedAttributes;
-                if (persistenceAttributes.getEmbeddedId() == null) {
-                    processBase(persistenceAttributes.getId());
-                } else {
-                    processBase(persistenceAttributes.getEmbeddedId());
+                if (parsedAttributes instanceof IPrimaryKeyAttributes) {
+                    IPrimaryKeyAttributes primaryKeyAttributes = (IPrimaryKeyAttributes) parsedAttributes;
+                    if (primaryKeyAttributes.getEmbeddedId() == null) {
+                        processBase(primaryKeyAttributes.getId());
+                    } else {
+                        processBase(primaryKeyAttributes.getEmbeddedId());
+                    }
+                    processBase(primaryKeyAttributes.getVersion());
                 }
-                processBase(persistenceAttributes.getVersion());//todo move to last
-            }
 
-            processBase(parsedAttributes.getBasic());
-            processBase(parsedAttributes.getElementCollection());
-            processBase(parsedAttributes.getEmbedded());
-            processRelation(parsedAttributes.getOneToOne());
-            processRelation(parsedAttributes.getManyToOne());
-            processRelation(parsedAttributes.getOneToMany());
-            processRelation(parsedAttributes.getManyToMany());
+                processBase(persistenceAttributes.getBasic());
+                processBase(persistenceAttributes.getElementCollection());
+                processBase(persistenceAttributes.getEmbedded());
+                processRelation(persistenceAttributes.getOneToOne());
+                processRelation(persistenceAttributes.getManyToOne());
+                processRelation(persistenceAttributes.getOneToMany());
+                processRelation(persistenceAttributes.getManyToMany());
+            }
 }
 
         // Classlevel annotations

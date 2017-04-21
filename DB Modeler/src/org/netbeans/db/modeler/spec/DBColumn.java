@@ -41,8 +41,6 @@ public class DBColumn<E> extends FlowPin {
         this.name = name;
     }
 
-//    public Column() {
-//    }
     /**
      * @return the name
      */

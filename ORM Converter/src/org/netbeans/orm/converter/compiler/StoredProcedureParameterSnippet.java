@@ -17,6 +17,10 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.PARAMETER_MODE;
+import static org.netbeans.jcode.jpa.JPAConstants.PARAMETER_MODE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.STORED_PROCEDURE_PARAMETER;
+import static org.netbeans.jcode.jpa.JPAConstants.STORED_PROCEDURE_PARAMETER_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -54,7 +58,7 @@ public class StoredProcedureParameterSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@StoredProcedureParameter(");
+        builder.append("@").append(STORED_PROCEDURE_PARAMETER).append("(");
         if (name != null) {
             builder.append("name=\"");
             builder.append(name);
@@ -63,7 +67,7 @@ public class StoredProcedureParameterSnippet implements Snippet {
         }
 
         if (mode != null) {
-            builder.append("mode=ParameterMode.");
+            builder.append("mode=").append(PARAMETER_MODE).append(".");
             builder.append(mode);
             builder.append(ORMConverterUtil.COMMA);
         }
@@ -81,13 +85,13 @@ public class StoredProcedureParameterSnippet implements Snippet {
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.StoredProcedureParameter");
+        importSnippets.add(STORED_PROCEDURE_PARAMETER_FQN);
 
         if (classHelper.getFQClassName() != null) {
             importSnippets.add(classHelper.getFQClassName());
         }
         if (mode != null) {
-            importSnippets.add("javax.persistence.ParameterMode");
+            importSnippets.add(PARAMETER_MODE_FQN);
         }
 
         return importSnippets;

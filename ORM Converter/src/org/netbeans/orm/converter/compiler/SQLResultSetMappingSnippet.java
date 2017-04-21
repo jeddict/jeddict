@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPING;
+import static org.netbeans.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class SQLResultSetMappingSnippet implements Snippet {
@@ -103,7 +105,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@SqlResultSetMapping(");
+        builder.append("@").append(SQL_RESULTSET_MAPPING).append("(");
 
         builder.append("name=\"");
         builder.append(name);
@@ -157,11 +159,11 @@ public class SQLResultSetMappingSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (entityResults.isEmpty() && constructorResults.isEmpty() && columnResults.isEmpty()) {
-            return Collections.singletonList("javax.persistence.SqlResultSetMapping");
+            return Collections.singletonList(SQL_RESULTSET_MAPPING_FQN);
         }
 
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.SqlResultSetMapping");
+        importSnippets.add(SQL_RESULTSET_MAPPING_FQN);
         if (entityResults != null) {
             for (EntityResultSnippet entityResult : entityResults) {
                 importSnippets.addAll(entityResult.getImportSnippets());

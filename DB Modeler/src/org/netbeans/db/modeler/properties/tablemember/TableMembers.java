@@ -18,7 +18,7 @@ package org.netbeans.db.modeler.properties.tablemember;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
 import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
 
@@ -57,7 +57,10 @@ public class TableMembers {
     }
     
     public Optional<OrderbyItem> findColumn(String name){
-        return getColumns().stream().filter(c -> c.getColumn().equals(name)).findAny();
+        return getColumns()
+                .stream()
+                .filter(c -> c.getProperty().equals(name))
+                .findAny();
     }
 
     /**
@@ -69,7 +72,10 @@ public class TableMembers {
 
     @Override
     public String toString() {
-        return getColumns().stream().map(c -> c.getColumn()).collect(Collectors.joining(", "));
+        return getColumns()
+                .stream()
+                .map(c -> c.getProperty())
+                .collect(joining(", "));
     }
 
 }

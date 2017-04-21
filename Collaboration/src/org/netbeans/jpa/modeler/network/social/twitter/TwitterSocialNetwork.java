@@ -31,7 +31,7 @@ import org.netbeans.jpa.modeler.network.social.SharingHelper;
 public class TwitterSocialNetwork {
 
     private static final String INTENT = "https://twitter.com/intent/tweet?source=webclient&text=";
-    private static final String MESSAGE = "Check out #JPAModeler, to generate & reverse engineering #JPA code and visualize(modify) the DB and ER diagram (http://jpamodeler.blogspot.in)";
+    private static final String MESSAGE = "Check out #Jeddict, to generate & reverse engineering #JPA code and visualize(modify) the DB and ER diagram (http://jeddict.github.io)";
     private static String LINK;
     public static Icon TWITTER;
 

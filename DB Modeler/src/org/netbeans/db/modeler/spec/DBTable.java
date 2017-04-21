@@ -17,14 +17,16 @@ package org.netbeans.db.modeler.spec;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 /**
  *
@@ -35,7 +37,7 @@ public abstract class DBTable extends FlowNode {
     private String name;
     private Entity entity;
 
-    private final Map<String, DBColumn> columns = new HashMap<>();
+    private final Map<String, DBColumn> columns = new LinkedHashMap<>();
 
     public DBTable(String name) {
         this(name, null);
@@ -46,9 +48,18 @@ public abstract class DBTable extends FlowNode {
         this.entity = entity;
     }
 
+    public void sortColumns() {
+        //TODO
+//        columns.values().forEach(column -> {
+//            Attribute attribute = column.getAttribute();
+//            JavaClass javaClass = attribute.getJavaClass();
+
+//        });
+    }
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -56,6 +67,7 @@ public abstract class DBTable extends FlowNode {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -100,5 +112,6 @@ public abstract class DBTable extends FlowNode {
     }
 
     public abstract Set<UniqueConstraint> getUniqueConstraints();
+    
     public abstract List<Index> getIndexes();
 }

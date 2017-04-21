@@ -163,8 +163,8 @@ public class DBColorScheme implements IColorScheme {
         PIN_WIDGET_SELECT_BACKGROUND = new Color(235, 112, 62);
         PIN_WIDGET_SELECT_LBACKGROUND = new Color(246, 129, 82);
 
-        PIN_WIDGET_TEXT_COLOR = new Color(76, 76, 76);
-        PIN_WIDGET_HOVER_TEXT_COLOR = new Color(66, 66, 66);
+        PIN_WIDGET_TEXT_COLOR = new Color(35, 35, 35);
+        PIN_WIDGET_HOVER_TEXT_COLOR = new Color(40, 40, 40);
         PIN_WIDGET_SELECT_TEXT_COLOR = Color.WHITE;
         PIN_WIDGET_SELECT_BORDER = BorderFactory.createCompositeBorder(BorderFactory.createLineBorder(0, 1, 0, 1, WIDGET_BORDER_COLOR), BorderFactory.createLineBorder(2, 3, 2, 3, WIDGET_HOVER_BORDER_COLOR));
 
@@ -177,10 +177,11 @@ public class DBColorScheme implements IColorScheme {
         widget.setBorder(WIDGET_BORDER);
         Widget header = widget.getHeader();
         Rectangle bound = widget.getHeader().getBounds();
-        if (bound != null) {
-            GradientPaint gp = new GradientPaint(bound.x + bound.width / 2, bound.y, WIDGET_LBACKGROUND, bound.x + bound.width / 2, bound.y + bound.height, WIDGET_BACKGROUND);
-            header.setBackground(gp);
+        if (bound == null) {
+            bound = HEADER_BOUND;
         }
+        GradientPaint gp = new GradientPaint(bound.x + bound.width / 2, bound.y, WIDGET_LBACKGROUND, bound.x + bound.width / 2, bound.y + bound.height, WIDGET_BACKGROUND);
+        header.setBackground(gp);
         header.setBorder(OPAQUE_BORDER);
         widget.getHeader().setOpaque(true);
         widget.getNodeNameWidget().setForeground(Color.WHITE);

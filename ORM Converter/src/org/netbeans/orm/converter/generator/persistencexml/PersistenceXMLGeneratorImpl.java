@@ -31,7 +31,7 @@ import org.netbeans.orm.converter.util.ClassesRepository;
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class PersistenceXMLGeneratorImpl implements ModuleGenerator {
 
-    private EntityMappings parsedEntityMappings;//Required Generation based on inheritence means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
+    private EntityMappings parsedEntityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
 
     @Override

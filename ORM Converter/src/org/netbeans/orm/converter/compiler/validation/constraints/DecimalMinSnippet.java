@@ -15,8 +15,10 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
+import static java.lang.Boolean.FALSE;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.validation.constraints.DecimalMin;
+import org.netbeans.bean.validation.constraints.DecimalMin;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.compiler.*;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -37,7 +39,9 @@ public class DecimalMinSnippet extends ConstraintSnippet<DecimalMin> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && StringUtils.isBlank(constraint.getValue())) {
+        if (constraint.getMessage() == null 
+                && StringUtils.isBlank(constraint.getValue())
+                && !FALSE.equals(constraint.getInclusive())) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();
@@ -50,6 +54,17 @@ public class DecimalMinSnippet extends ConstraintSnippet<DecimalMin> {
             builder.append(ORMConverterUtil.COMMA);
         }
         
+        if (CodePanel.isGenerateDefaultValue()) {
+            boolean inclusive = !FALSE.equals(constraint.getInclusive());
+            builder.append("inclusive=");
+            builder.append(inclusive);
+            builder.append(ORMConverterUtil.COMMA);
+        } else if (FALSE.equals(constraint.getInclusive())) {
+            builder.append("inclusive=");
+            builder.append(constraint.getInclusive());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
          if (constraint.getMessage() != null) {
             builder.append("message=\"");
             builder.append(constraint.getMessage());

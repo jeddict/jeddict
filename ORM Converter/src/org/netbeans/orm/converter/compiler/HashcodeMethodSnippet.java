@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
@@ -42,7 +43,9 @@ public class HashcodeMethodSnippet implements Snippet {
         int startNumber = generatePrimeNumber(2, 10);
         int multiplyNumber = generatePrimeNumber(10, 100);
 
-        builder.append(String.format("int hash = %s;",startNumber)).append(NEW_LINE);
+        if(!classMembers.getAttributes().isEmpty()){
+            builder.append(String.format("int hash = %s;",startNumber)).append(NEW_LINE);
+        }
         
         if (StringUtils.isNotBlank(classMembers.getPreCode())) {
             builder.append(classMembers.getPreCode()).append(NEW_LINE);
@@ -50,20 +53,29 @@ public class HashcodeMethodSnippet implements Snippet {
         
         for (int i = 0; i < classMembers.getAttributes().size(); i++) {
             Attribute attribute = classMembers.getAttributes().get(i);
-            String expression;
-            if(attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)){
-                expression = getHashcodeExpression(((BaseAttribute)attribute).getAttributeType(), attribute.getName());
-            } else {
-                expression = getHashcodeExpression(attribute.getName());
+            if(attribute instanceof DefaultAttribute) {
+                attribute = ((DefaultAttribute)attribute).getConnectedAttribute();
             }
-            builder.append(String.format("hash = %s * hash + %s;\n", multiplyNumber, expression));
+            
+            String expression;
+            boolean optionalType = attribute.isOptionalReturnType();
+            if(attribute instanceof BaseAttribute && !(attribute instanceof CompositionAttribute)){
+                expression = getHashcodeExpression(((BaseAttribute)attribute).getAttributeType(), attribute.getName(), optionalType);
+            } else {
+                expression = getHashcodeExpression(attribute.getName(), optionalType);
+            }
+            builder.append("        ")
+                   .append(String.format("hash = %s * hash + %s;", multiplyNumber, expression)).append(NEW_LINE);
         }
         
         if (StringUtils.isNotBlank(classMembers.getPostCode())) {
             builder.append(classMembers.getPostCode()).append(NEW_LINE);
         }
         
-        builder.append("return hash;");
+        if(!classMembers.getAttributes().isEmpty()){
+            builder.append("        ")
+                   .append("return hash;");
+        }
         return builder.toString();
     }
 

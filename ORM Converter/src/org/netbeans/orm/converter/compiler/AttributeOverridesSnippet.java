@@ -15,81 +15,18 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES;
+import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
 
-public class AttributeOverridesSnippet implements Snippet {
+public class AttributeOverridesSnippet extends SnippetContainer<AttributeOverrideSnippet> {
 
-    private List<AttributeOverrideSnippet> attributeOverrides = Collections.EMPTY_LIST;
-
-    public void addAttributeOverrides(AttributeOverrideSnippet attributeOverride) {
-
-        if (attributeOverrides.isEmpty()) {
-            attributeOverrides = new ArrayList<AttributeOverrideSnippet>();
-        }
-
-        attributeOverrides.add(attributeOverride);
-    }
-
-    public List<AttributeOverrideSnippet> getAttributeOverrides() {
-        return attributeOverrides;
-    }
-
-    public void setAttributeOverrides(
-            List<AttributeOverrideSnippet> attributeOverrides) {
-
-        if (attributeOverrides != null) {
-            this.attributeOverrides = attributeOverrides;
-        }
+    @Override
+    public String getContianerName() {
+        return ATTRIBUTE_OVERRIDES;
     }
 
     @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (attributeOverrides.isEmpty()) {
-            throw new InvalidDataException("Missing AttributeOverrides");
-        }
-
-        if (attributeOverrides.size() == 1) {
-            return attributeOverrides.get(0).getSnippet();
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@AttributeOverrides({");
-
-        for (AttributeOverrideSnippet attributeOverride : attributeOverrides) {
-            builder.append(attributeOverride.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_BRACES
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-    }
-
-    @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (attributeOverrides.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-
-        if (attributeOverrides.size() == 1) {
-            return attributeOverrides.get(0).getImportSnippets();
-        }
-
-        Collection<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add("javax.persistence.AttributeOverrides");
-
-        for (AttributeOverrideSnippet attributeOverride : attributeOverrides) {
-            importSnippets.addAll(attributeOverride.getImportSnippets());
-        }
-
-        return importSnippets;
+    public String getContianerFQN() {
+        return ATTRIBUTE_OVERRIDES_FQN;
     }
 }

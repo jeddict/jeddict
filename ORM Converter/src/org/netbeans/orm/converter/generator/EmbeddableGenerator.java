@@ -15,27 +15,20 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
-import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
-    private static Logger logger = ORMConvLogger.getLogger(
-            EmbeddableGenerator.class);
-
-    private Embeddable embeddable = null;
+    private Embeddable embeddable;
 
     public EmbeddableGenerator(Embeddable parsedEmbeddable, String packageName) {
         super(new ManagedClassDefSnippet());
-        this.packageName = packageName;
         this.embeddable = parsedEmbeddable;
+        this.rootPackageName = packageName;
+        this.packageName = embeddable.getAbsolutePackage(rootPackageName);
     }
 
     @Override
@@ -43,11 +36,9 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
 
         //Commented -- revist for Phase 3
         //ParsedAccessType accessType = parsedEmbeddable.getAccess();
-        embeddable.getAttributes();
 
         //Attributes -- Method level annotations
-        EmbeddableAttributes parsedEmbeddableAttributes
-                = embeddable.getAttributes();
+        EmbeddableAttributes parsedEmbeddableAttributes = embeddable.getAttributes();
 
         if (parsedEmbeddableAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processBasic(parsedEmbeddableAttributes.getBasic());
@@ -65,6 +56,7 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         if (StringUtils.isNotBlank(embeddable.getDescription())) {
             classDef.setDescription(embeddable.getDescription());
         }
+        classDef.setAuthor(embeddable.getAuthor());
         classDef.setEmbeddable(true);
         return classDef;
     }

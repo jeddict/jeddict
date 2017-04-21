@@ -17,8 +17,10 @@ package org.netbeans.db.modeler.spec;
 
 import org.netbeans.jpa.modeler.spec.AttributeOverride;
 import org.netbeans.jpa.modeler.spec.Basic;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
+import org.netbeans.jpa.modeler.spec.Version;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public class DBParentAttributeColumn extends DBParentColumn<Attribute> {
@@ -27,7 +29,8 @@ public class DBParentAttributeColumn extends DBParentColumn<Attribute> {
 
     public DBParentAttributeColumn(String name, Entity intrinsicClass, Attribute managedAttribute) {
         super(name, intrinsicClass, managedAttribute);
-        if (managedAttribute instanceof Id || managedAttribute instanceof Basic) {
+        if (managedAttribute instanceof Id || managedAttribute instanceof Basic 
+                || managedAttribute instanceof Version ||  managedAttribute instanceof ElementCollection) {
             attributeOverride = intrinsicClass.findAttributeOverride(getKeyName());
             if (attributeOverride == null) {
                 attributeOverride = new AttributeOverride();

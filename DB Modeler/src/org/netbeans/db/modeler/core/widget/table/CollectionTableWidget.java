@@ -22,12 +22,13 @@ import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLLECTION_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.COLLECTION_TABLE_ICON_PATH;
-import org.netbeans.jpa.modeler.rules.entity.EntityValidator;
+import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.CollectionTable;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
@@ -35,7 +36,7 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
 
     public CollectionTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
-        this.addPropertyChangeListener("CollectionTable_name", (PropertyChangeListener<String>) (String value) -> {
+        this.addPropertyChangeListener("CollectionTable_name", (PropertyChangeListener<String>) (oldValue, value) -> {
             setName(value);
             setLabel(name);
         });
@@ -61,16 +62,16 @@ public class CollectionTableWidget extends TableWidget<DBCollectionTable> {
         }
 
         if (SQLKeywords.isSQL99ReservedKeyword(CollectionTableWidget.this.getName())) {
-            this.getErrorHandler().throwSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().fire(ERROR, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         } else {
-            this.getErrorHandler().clearSignal(EntityValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            this.getSignalManager().clear(ERROR, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
         DBMapping mapping = CollectionTableWidget.this.getModelerScene().getBaseElementSpec();
         if (mapping.findAllTable(CollectionTableWidget.this.getName()).size() > 1) {
-            getErrorHandler().throwSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().fire(ERROR, ClassValidator.NON_UNIQUE_TABLE_NAME);
         } else {
-            getErrorHandler().clearSignal(EntityValidator.NON_UNIQUE_TABLE_NAME);
+            getSignalManager().clear(ERROR, ClassValidator.NON_UNIQUE_TABLE_NAME);
         }
 
     }

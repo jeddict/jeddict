@@ -28,7 +28,7 @@ import org.netbeans.jpa.modeler.network.social.SharingHelper;
  */
 public class EnhancementRequestHandler {
 
-    private static Icon ENHANCEMENT_ICON;
+    public static Icon ENHANCEMENT_ICON;
     private static EnhancementRequestHandler instance;
 
     private EnhancementRequestHandler() {

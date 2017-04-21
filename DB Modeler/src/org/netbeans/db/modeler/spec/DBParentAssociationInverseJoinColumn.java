@@ -16,11 +16,11 @@
 package org.netbeans.db.modeler.spec;
 
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public class DBParentAssociationInverseJoinColumn extends DBParentAssociationColumn<RelationAttribute> {
+public class DBParentAssociationInverseJoinColumn extends DBParentAssociationColumn<Attribute> {
 
-    public DBParentAssociationInverseJoinColumn(String name, Entity intrinsicClass, RelationAttribute managedAttribute, boolean relationTableExist) {
+    public DBParentAssociationInverseJoinColumn(String name, Entity intrinsicClass, Attribute managedAttribute, boolean relationTableExist) {
         super(name, intrinsicClass, managedAttribute, relationTableExist);
         joinColumnsOverride = JoinColumnFinder.findJoinColumns(associationOverride, managedAttribute, relationTableExist, true);
         joinColumnOverride = JoinColumnFinder.findJoinColumn(name, joinColumnsOverride);

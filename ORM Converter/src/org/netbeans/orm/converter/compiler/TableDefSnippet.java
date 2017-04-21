@@ -15,10 +15,12 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.TABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.TABLE_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class TableDefSnippet implements Snippet {
@@ -69,12 +71,12 @@ public class TableDefSnippet implements Snippet {
                 && catalog == null
                 && schema == null
                 && uniqueConstraints.isEmpty() && indices.isEmpty()) {
-            return "@Table";
+            return "@" + TABLE;
         }
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@Table(");
+        builder.append("@").append(TABLE).append("(");
 
         if (name != null) {
             builder.append("name=\"");
@@ -132,12 +134,12 @@ public class TableDefSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (uniqueConstraints == null) {
-            return Collections.singletonList("javax.persistence.Table");
+            return Collections.singletonList(TABLE_FQN);
         }
 
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
 
-        importSnippets.add("javax.persistence.Table");
+        importSnippets.add(TABLE_FQN);
          if (!uniqueConstraints.isEmpty()) {
             importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
         }

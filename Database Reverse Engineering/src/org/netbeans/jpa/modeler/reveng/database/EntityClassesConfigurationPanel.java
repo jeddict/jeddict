@@ -40,9 +40,9 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
-import org.netbeans.modules.j2ee.core.api.support.SourceGroups;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.provider.Provider;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
@@ -137,7 +137,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
 
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
 
-        SourceGroup[] sourceGroups = SourceGroups.getJavaSourceGroups(project);
+        SourceGroup[] sourceGroups = SourceGroupSupport.getJavaSourceGroups(project);
         SourceGroupUISupport.connect(locationComboBox, sourceGroups);
 
         packageComboBox.setRenderer(PackageView.listRenderer());
@@ -146,10 +146,10 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
 
         if (targetFolder != null) {
             // set default source group and package cf. targetFolder
-            SourceGroup targetSourceGroup = SourceGroups.getFolderSourceGroup(sourceGroups, targetFolder);
+            SourceGroup targetSourceGroup = SourceGroupSupport.getFolderSourceGroup(sourceGroups, targetFolder);
             if (targetSourceGroup != null) {
                 locationComboBox.setSelectedItem(targetSourceGroup);
-                String targetPackage = SourceGroups.getPackageForFolder(targetSourceGroup, targetFolder);
+                String targetPackage = SourceGroupSupport.getPackageForFolder(targetSourceGroup, targetFolder);
                 if (targetPackage != null) {
                     packageComboBoxEditor.setText(targetPackage);
                 }
@@ -599,7 +599,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
                 return false;
             }
 
-            if (!SourceGroups.isFolderWritable(sourceGroup, packageName)) {
+            if (!SourceGroupSupport.isFolderWritable(sourceGroup, packageName)) {
                 setErrorMessage(NbBundle.getMessage(EntityClassesConfigurationPanel.class, "ERR_JavaTargetChooser_UnwritablePackage")); //NOI18N
                 return false;
             }
@@ -612,16 +612,12 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
             // issue 92192: need to check that we will have a persistence provider
             // available to add to the classpath while generating entity classes (unless
             // the classpath already contains one)
-            ClassPath classPath = null;
-            try {
-                FileObject packageFO = SourceGroups.getFolderForPackage(sourceGroup, packageName, false);
-                if (packageFO == null) {
-                    packageFO = sourceGroup.getRootFolder();
-                }
-                classPath = ClassPath.getClassPath(packageFO, ClassPath.COMPILE);
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, null, e);
+            FileObject packageFO = SourceGroupSupport.getFolderForPackage(sourceGroup, packageName, false);
+            if (packageFO == null) {
+                packageFO = sourceGroup.getRootFolder();
             }
+            ClassPath classPath = ClassPath.getClassPath(packageFO, ClassPath.COMPILE);
+
             if (classPath != null) {
                 if (classPath.findResource("javax/persistence/EntityManager.class") == null) { // NOI18N
                     // initialize the provider list lazily

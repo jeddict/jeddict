@@ -30,9 +30,8 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -42,9 +41,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
 
     public InverseJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
+        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
     }
 
     @Override
@@ -85,7 +82,8 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
                 String joinTableName = JOptionPane.showInputDialog((Component) InverseJoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
                 convertToJoinTable(joinTableName);
                 ModelerFile parentFile = InverseJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
-                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
+                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
             });
             menuList.add(0, joinTable);
         }

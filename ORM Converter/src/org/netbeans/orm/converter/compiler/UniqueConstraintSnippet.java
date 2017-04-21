@@ -18,6 +18,8 @@ package org.netbeans.orm.converter.compiler;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.jpa.JPAConstants.UNIQUE_CONSTRAINT;
+import static org.netbeans.jcode.jpa.JPAConstants.UNIQUE_CONSTRAINT_FQN;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -36,7 +38,7 @@ public class UniqueConstraintSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@UniqueConstraint(");
+        builder.append("@").append(UNIQUE_CONSTRAINT).append("(");
 
         if (StringUtils.isNotBlank(constraint.getName())) {
             builder.append("name=\"");
@@ -65,7 +67,7 @@ public class UniqueConstraintSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.UniqueConstraint");
+        return Collections.singletonList(UNIQUE_CONSTRAINT_FQN);
 
     }
 }

@@ -16,13 +16,12 @@
 package org.netbeans.db.modeler.core.widget.column.map;
 
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
-import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
 import org.netbeans.db.modeler.spec.DBMapKeyJoinColumn;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
-import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -42,7 +41,7 @@ public class MapKeyJoinColumnWidget extends ForeignKeyWidget<DBMapKeyJoinColumn>
         set.createPropertySet("FOREIGN_KEY", this, joinColumn.getForeignKey() , null);
     }
     
-        @Override
+    @Override
     protected void updateName(String name) {
         JoinColumn column = this.getBaseElementSpec().getJoinColumn();
         column.setName(name);
@@ -51,9 +50,15 @@ public class MapKeyJoinColumnWidget extends ForeignKeyWidget<DBMapKeyJoinColumn>
 
     @Override
     protected String evaluateName() {
-        DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
-        Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
-        return JoinColumnWidget.evaluateName(table, id);
+//        DBTable table = (DBTable) this.getTableWidget().getBaseElementSpec();
+////        Id id = (Id) this.getBaseElementSpec().getReferenceColumn().getAttribute();
+////        return JoinColumnWidget.evaluateName(table, id);
+        Attribute attribute = this.getBaseElementSpec().getAttribute();
+        if (attribute instanceof MapKeyHandler) {
+            return ((MapKeyHandler) attribute).getDefaultMapKeyColumnName();
+        } else {
+            throw new IllegalStateException("Invalid attribute type : " + attribute.getClass().getSimpleName());
+        }
     }
 
 }

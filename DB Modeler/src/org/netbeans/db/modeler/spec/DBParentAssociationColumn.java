@@ -19,18 +19,18 @@ import java.util.List;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
-import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public abstract class DBParentAssociationColumn<E extends RelationAttribute> extends DBParentColumn<E> implements DBForeignKey {
+public abstract class DBParentAssociationColumn<E extends Attribute> extends DBParentColumn<E> implements DBForeignKey<JoinColumn> {
 
     protected AssociationOverride associationOverride;
     protected final boolean relationTableExist;
 
     protected JoinColumn joinColumn;
-    protected List<? extends JoinColumn> joinColumns;
+    protected List<JoinColumn> joinColumns;
 
     protected JoinColumn joinColumnOverride;
-    protected List<? extends JoinColumn> joinColumnsOverride;
+    protected List<JoinColumn> joinColumnsOverride;
 
     public DBParentAssociationColumn(String name, Entity intrinsicClass, E managedAttribute, boolean relationTableExist) {
         super(name, intrinsicClass, managedAttribute);
@@ -58,7 +58,7 @@ public abstract class DBParentAssociationColumn<E extends RelationAttribute> ext
         return joinColumn;
     }
 
-    public List<? extends JoinColumn> getJoinColumns() {
+    public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 
@@ -66,7 +66,7 @@ public abstract class DBParentAssociationColumn<E extends RelationAttribute> ext
         return joinColumnOverride;
     }
 
-    public List<? extends JoinColumn> getJoinColumnsOverride() {
+    public List<JoinColumn> getJoinColumnsOverride() {
         return joinColumnsOverride;
     }
 

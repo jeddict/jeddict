@@ -34,7 +34,7 @@ import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -45,9 +45,7 @@ public class JoinColumnWidget<E extends DBJoinColumn> extends ForeignKeyWidget<E
 
     public JoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
+        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
     }
 
     @Override
@@ -121,7 +119,8 @@ public class JoinColumnWidget<E extends DBJoinColumn> extends ForeignKeyWidget<E
                 String joinTableName = JOptionPane.showInputDialog((Component) JoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
                 convertToJoinTable(joinTableName);
                 ModelerFile parentFile = JoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
-                JPAModelerUtil.openDBViewer(parentFile, (EntityMappings) parentFile.getModelerScene().getBaseElementSpec());
+                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
+                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
             });
             menuList.add(0, joinTable);
         }

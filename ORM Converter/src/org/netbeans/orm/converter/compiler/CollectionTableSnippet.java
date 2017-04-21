@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.COLLECTION_TABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.COLLECTION_TABLE_FQN;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class CollectionTableSnippet implements Snippet {
@@ -73,12 +76,12 @@ public class CollectionTableSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
 
         if (isEmpty()) {
-            return null;//"@CollectionTable";
+            return null;
         }
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@CollectionTable(");
+        builder.append("@").append(COLLECTION_TABLE).append("(");
 
         if (name != null && !name.trim().isEmpty()) {
             builder.append("name=\"");
@@ -159,12 +162,12 @@ public class CollectionTableSnippet implements Snippet {
         }
 
         if (joinColumns.isEmpty() && uniqueConstraints == null && foreignKey == null) {
-            return Collections.singletonList("javax.persistence.CollectionTable");
+            return Collections.singletonList(COLLECTION_TABLE_FQN);
         }
 
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
 
-        importSnippets.add("javax.persistence.CollectionTable");
+        importSnippets.add(COLLECTION_TABLE_FQN);
 
         if (!joinColumns.isEmpty()) {
             for (JoinColumnSnippet joinColumn : joinColumns) {

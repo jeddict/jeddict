@@ -37,8 +37,8 @@ public class BasicColumnWidget<E extends DBColumn<Attribute>> extends ColumnWidg
         if (attribute instanceof ColumnHandler) {  // cover PersistenceBaseAttribute + ElementCollection
             ColumnHandler baseAttribute = (ColumnHandler) attribute;
             set.createPropertySet(this, baseAttribute.getColumn(), getPropertyChangeListeners());
-            this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) this::setPropertyName);
-            this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
+            this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
+            this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
         }
     }
 

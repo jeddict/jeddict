@@ -26,6 +26,7 @@ public class JaxbPackageInfoGenerator extends ClassGenerator<JaxbPackageInfoClas
     public JaxbPackageInfoGenerator(EntityMappings parsedEntityMappings, String packageName) {
         super(new JaxbPackageInfoClassDefSnippet());
         this.parsedEntityMappings = parsedEntityMappings;
+        this.rootPackageName = packageName;
         this.packageName = packageName;
     }
 

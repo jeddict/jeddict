@@ -32,7 +32,7 @@ import org.netbeans.modeler.core.IExceptionHandler;
  */
 public final class ExceptionUtils implements IExceptionHandler {
 
-    public static final String ISSUES_URL = "https://github.com/jGauravGupta/jpamodeler/issues/new";
+    public static final String ISSUES_URL = "https://github.com/jeddict/jeddict/issues/new";
 
     static final Logger LOG = Logger.getLogger(ExceptionUtils.class.getName());
 
@@ -51,7 +51,7 @@ public final class ExceptionUtils implements IExceptionHandler {
     }
 
     public static void printStackTrace(String errorMessage, final Throwable t, final ModelerFile file) {
-        
+        t.printStackTrace();
         if (StringUtils.isBlank(errorMessage)) {
             errorMessage = t.getMessage();
 
@@ -65,8 +65,9 @@ public final class ExceptionUtils implements IExceptionHandler {
         }
         final String message = errorMessage;
         LOG.log(Level.ALL, errorMessage, t);
+        String content = file!=null?file.getContent():"";
         SwingUtilities.invokeLater(() -> {
-            ExceptionReporterPanel exceptionReporterPanel = new ExceptionReporterPanel(message, t, file);
+            ExceptionReporterPanel exceptionReporterPanel = new ExceptionReporterPanel(message, t, content);
             exceptionReporterPanel.setVisible(true);
         });
       

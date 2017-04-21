@@ -18,24 +18,21 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ID;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPS_ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ONE_TO_ONE;
+import static org.netbeans.jcode.jpa.JPAConstants.ONE_TO_ONE_FQN;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class OneToOneSnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet {
+public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
-    private boolean optional = false;
+    private boolean orphanRemoval = false;
     private String mappedBy = null;
-    private String mapsId;
-    private boolean primaryKey;
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
 
     public String getMappedBy() {
         return mappedBy;
@@ -49,16 +46,17 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
         if (isPrimaryKey()) {
+            builder.append("@");
             if (mapsId == null) {
-                builder.append("@Id");
+                builder.append(ID);
             } else if (mapsId.trim().isEmpty()) {
-                builder.append("@MapsId");
+                builder.append(MAPS_ID);
             } else {
-                builder.append("@MapsId(\"").append(mapsId).append("\")");
+                builder.append(MAPS_ID).append("(\"").append(mapsId).append("\")");
             }
         }
-        builder.append("@OneToOne");
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        builder.append("@").append(ONE_TO_ONE);
+        if (!CodePanel.isGenerateDefaultValue()) {
             if (mappedBy == null
                     && optional == true
                     && getTargetEntity() == null
@@ -70,8 +68,12 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
 
         builder.append("(");
 
-        if (GeneratorUtil.isGenerateDefaultValue() || optional == false) {
+        if (CodePanel.isGenerateDefaultValue() || optional == false) {
             builder.append("optional=").append(optional).append(",");
+        }
+        
+        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
+            builder.append("orphanRemoval=").append(orphanRemoval).append(",");
         }
 
         if (!getCascadeTypes().isEmpty()) {
@@ -114,57 +116,46 @@ public class OneToOneSnippet extends AbstractRelationDefSnippet
         if (getFetchType() == null
                 && getCascadeTypes().isEmpty() && !isPrimaryKey()) {
 
-            return Collections.singletonList("javax.persistence.OneToOne");
+            return Collections.singletonList(ONE_TO_ONE_FQN);
         }
 
-        List<String> importSnippets = new ArrayList<String>();
+        List<String> importSnippets = new ArrayList<>();
 
         if (isPrimaryKey()) {
             if (mapsId == null) {
-                importSnippets.add("javax.persistence.Id");
+                importSnippets.add(ID_FQN);
             } else {
-                importSnippets.add("javax.persistence.MapsId");
+                importSnippets.add(MAPS_ID_FQN);
             }
         }
 
-        importSnippets.add("javax.persistence.OneToOne");
+        importSnippets.add(ONE_TO_ONE_FQN);
 
         if (getFetchType() != null) {
-            importSnippets.add("javax.persistence.FetchType");
+            importSnippets.add(FETCH_TYPE_FQN);
         }
 
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add("javax.persistence.CascadeType");
+            importSnippets.add(CASCADE_TYPE_FQN);
         }
 
+//        if (getTargetEntityPackage()!= null) {
+//            importSnippets.add(getTargetEntityPackage() + ORMConverterUtil.DOT + getTargetEntityName());
+//        }
         return importSnippets;
     }
 
     /**
-     * @return the primaryKey
+     * @return the orphanRemoval
      */
-    public boolean isPrimaryKey() {
-        return primaryKey;
+    public boolean isOrphanRemoval() {
+        return orphanRemoval;
     }
 
     /**
-     * @param primaryKey the primaryKey to set
+     * @param orphanRemoval the orphanRemoval to set
      */
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
-
-    /**
-     * @return the mapsId
-     */
-    public String getMapsId() {
-        return mapsId;
-    }
-
-    /**
-     * @param mapsId the mapsId to set
-     */
-    public void setMapsId(String mapsId) {
-        this.mapsId = mapsId;
+    public void setOrphanRemoval(boolean orphanRemoval) {
+        this.orphanRemoval = orphanRemoval;
     }
 }

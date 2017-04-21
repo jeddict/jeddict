@@ -106,17 +106,9 @@ public class JPAMFieldDefinition extends FieldDefinition {
     }
 
     public JPAMFieldDefinition(Entity intrinsicClass, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable) {
-//        if(intrinsicAttribute!=null){
         this.intrinsicClass = intrinsicClass.getOrignalObject() != null ? (Entity) intrinsicClass.getOrignalObject() : intrinsicClass;
-//        }else {
-//           this.intrinsicClass = null;
-//       }
-//        if(managedAttribute!=null){
         this.managedAttribute = managedAttribute.getOrignalObject() != null ? (Attribute) managedAttribute.getOrignalObject() : managedAttribute;
-//        } else {
-//           this.managedAttribute = null;
-//       }
-        this.inverse = inverse;
+        this.inverse = inverse; 
         this.foriegnKey = foriegnKey;
         this.relationTable = relationTable;
         this.inherited = true;
@@ -139,15 +131,23 @@ public class JPAMFieldDefinition extends FieldDefinition {
         } else if (inherited) {
             if (managedAttribute instanceof RelationAttribute) {
                 if (inverse) {
-                    column = new DBParentAssociationInverseJoinColumn(name, intrinsicClass, (RelationAttribute) managedAttribute, relationTable);
+                    column = new DBParentAssociationInverseJoinColumn(name, intrinsicClass, managedAttribute, relationTable);
                 } else {
-                    column = new DBParentAssociationJoinColumn(name, intrinsicClass, (RelationAttribute) managedAttribute, relationTable);
+                    column = new DBParentAssociationJoinColumn(name, intrinsicClass, managedAttribute, relationTable);
+                }
+            } else if (managedAttribute instanceof ElementCollection) {
+                if (foriegnKey) {
+                    column = new DBParentAssociationJoinColumn(name, intrinsicClass, managedAttribute, relationTable);
+                } else if(mapKey){//e.g Map<Basic,Basic>
+                    column = buildMapKeyColumn();//todo
+                } else {
+                    column = new DBColumn(name, managedAttribute);
                 }
             } else {
                 column = new DBParentAttributeColumn(name, intrinsicClass, managedAttribute);
             }
         } else if (foriegnKey && inverse && (intrinsicAttribute == null || intrinsicAttribute.isEmpty())) {//intrinsicAttribute will be null in case of JoinTableStrategy primary key mapping to children
-            column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
+            column = new DBPrimaryKeyJoinColumn(name, intrinsicClass, (Id) managedAttribute);
         } else if (intrinsicAttribute.size() == 1) {
             if (intrinsicAttribute.peek() instanceof RelationAttribute) {
                 if(mapKey){//e.g Map<Basic,Basic>
@@ -168,7 +168,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
                     column = new DBColumn(name, managedAttribute);
                 }
             } else if (foriegnKey && inverse && intrinsicAttribute.peek() instanceof Id) {//PrimaryKeyJoinColumn
-                column = new DBPrimaryKeyJoinColumn(name, (Id) managedAttribute);
+                column = new DBPrimaryKeyJoinColumn(name, intrinsicClass, (Id) managedAttribute);
             } else {
                 column = new DBColumn(name, managedAttribute);
             }
@@ -212,7 +212,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
                     } else if (((EmbeddedId) intrinsicAttribute.get(0)).getConnectedAttribute() instanceof RelationAttribute) {
                         column = new DBInverseJoinColumn(name, (RelationAttribute) ((EmbeddedId) intrinsicAttribute.get(0)).getConnectedAttribute(), relationTable);//2.4.1.3 Example 5:b id(firstName,lastName)
                     } else {
-                        column = new DBColumn(name, managedAttribute);
+                        column = new DBColumn(name, ((DefaultAttribute) managedAttribute).getConnectedAttribute());
 //                        column = new DBEmbeddedIdAttributeColumn(name, embeddedId, managedAttribute);
                     }
                 }
@@ -298,5 +298,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
         }
         return column;
     }
+    
+    
 
 }

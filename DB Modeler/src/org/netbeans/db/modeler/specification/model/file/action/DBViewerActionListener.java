@@ -17,11 +17,12 @@ package org.netbeans.db.modeler.specification.model.file.action;
 
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.db.modeler.specification.model.engine.DBDiagramEngine;
+import org.netbeans.db.modeler.specification.model.event.ShortcutListener;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
@@ -38,25 +39,29 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         document = "org/netbeans/db/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/db/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA_DB", name = "DB Viewer", 
-        modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class, exportManager = ExportManagerImpl.class,
+        modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class,
         relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
-        version = "2.5", architectureVersion = "1.4")
+        version = "4.2", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
 
     private EntityMappings mappings;
+    private WorkSpace workSpace;
 
     @Override
     public void initSpecification(final ModelerFile modelerFile) {
         modelerFile.setIcon(TAB_ICON);
         modelerFile.getAttributes().put(EntityMappings.class.getSimpleName(), mappings);
+        modelerFile.getAttributes().put(WorkSpace.class.getSimpleName(), workSpace);
+        modelerFile.getModelerPanelTopComponent().addKeyListener(new ShortcutListener(modelerFile));
     }
 
     @Override
-    public void init(ModelerFile file, EntityMappings mappings) {
+    public void init(ModelerFile file, EntityMappings mappings, WorkSpace workSpace) {
         this.mappings = mappings;
+        this.workSpace = workSpace;
         context = null;
-        openModelerFile("DB", null, null, file);
+        openModelerFile("DB", null, null, file, null);
     }
 
 }

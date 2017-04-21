@@ -25,7 +25,7 @@ public class JPAMDynamicTypeBuilder extends DynamicTypeBuilder {
         // Configure Table names if provided
         if (tableNames != null) {
             if (tableNames.length == 0) {
-                //Fix for : https://github.com/jGauravGupta/jpamodeler/issues/1
+                //Fix for : https://github.com/jeddict/jeddict/issues/1
                 // If ClassDescriptor is entity then don't make it Aggregate
                 if (descriptor.getTables().size() == 0 && !(relationDescriptor.getAccessor() instanceof EntitySpecAccessor)) {
                     descriptor.descriptorIsAggregate();

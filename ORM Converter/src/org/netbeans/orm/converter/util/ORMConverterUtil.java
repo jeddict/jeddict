@@ -15,12 +15,14 @@
  */
 package org.netbeans.orm.converter.util;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStreamWriter;
 
 import java.nio.charset.Charset;
 
@@ -28,25 +30,34 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.GuardedDocument;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.lib.editor.util.swing.PositionRegion;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.WritableSnippet;
+import org.openide.ErrorManager;
 import org.openide.cookies.EditorCookie;
+import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.text.NbDocument;
+import org.openide.util.Exceptions;
 import org.openide.util.UserQuestionException;
 
 public class ORMConverterUtil {
@@ -63,6 +74,7 @@ public class ORMConverterUtil {
     public static final String LESS_THAN = "<";
     public static final String NEW_LINE = "\n";
     public static final String NEW_TAB = "\t";
+    public static final String HALF_TAB = "  ";
     public static final String TAB = "    ";
     public static final String OPEN_BRACES = "{";
     public static final String OPEN_PARANTHESES = "(";
@@ -115,10 +127,9 @@ public class ORMConverterUtil {
         return file;
     }
 
-    public static Collection<String> eliminateSamePkgImports(
-            String classPackage, Collection<String> importSnippets) {
+    public static Collection<String> eliminateSamePkgImports(String classPackage, Collection<String> importSnippets) {
 
-        List<String> uniqueImports = new ArrayList<String>();
+        List<String> uniqueImports = new ArrayList<>();
 
         for (String importSnippet : importSnippets) {
 
@@ -191,28 +202,32 @@ public class ORMConverterUtil {
         return new String(getBytes(file), charsetName);
     }
 
-    public static Template getTemplate(String templateName) throws Exception {
+    static {
+        try {
+            Properties properties = new Properties();
+            properties.load(ORMConverterUtil.class.getClassLoader().getResourceAsStream("velocity.properties"));
+            Velocity.init(properties);
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
 
-        ClassLoader classLoader = ORMConverterUtil.class.getClassLoader();
-
-        InputStream inputStream = classLoader.getResourceAsStream(
-                "velocity.properties");
-
-        Properties properties = new Properties();
-        properties.load(inputStream);
-
-        Velocity.init(properties);
-
+    public static String writeToTemplate(String templateName, Map context) throws Exception {
         Template template = Velocity.getTemplate(templateName);
-
-        return template;
+        ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass, "UTF-8"))) {
+            if (template != null) {
+                template.merge(new VelocityContext(context), writer);
+            }
+            writer.flush();
+        }
+        return generatedClass.toString();
     }
 
     public static Collection<String> processedImportStatements(
             Collection<String> importSnippets) {
 
-        Collection<String> processedStatements = new ArrayList<String>();
-
+        Collection<String> processedStatements = new ArrayList<>();
         for (String element : importSnippets) {
             processedStatements.add(IMPORT + element + SEMICOLON);
         }
@@ -258,86 +273,48 @@ public class ORMConverterUtil {
         return fo;
     }
 
-    public static void formatFile(FileObject fo) {
-        try {
-            DataObject dobj = DataObject.find(fo);
-            EditorCookie ec = dobj.getLookup().lookup(EditorCookie.class);
-            ec.close();
-            StyledDocument sd;
-            try {
-                sd = ec.openDocument();
-            } catch (UserQuestionException uqe) {
-                uqe.confirmed();
-                sd = ec.openDocument();
+    private static BaseDocument getDocument(final FileObject fo) throws DataObjectNotFoundException, IOException {
+        BaseDocument doc = null;
+        DataObject dObj = DataObject.find(fo);
+        if (dObj != null) {
+            EditorCookie editor = dObj.getLookup().lookup(EditorCookie.class);
+            if (editor != null) {
+                doc = (BaseDocument) editor.openDocument();
             }
-            final StyledDocument doc = sd;
+        }
+        return doc;
+    }
+    
+    private static void formatFile(final FileObject fo) {
+        assert fo != null;
+        final BaseDocument doc;
+        try {
+            doc = getDocument(fo);
+            if (doc == null) {
+                return;
+            }
             final Reformat reformat = Reformat.get(doc);
-
             reformat.lock();
-
             try {
-                NbDocument.runAtomic(doc, () -> {
+                doc.runAtomic(() -> {
                     try {
-                        reformat(reformat, doc, 0, doc.getLength(), new AtomicBoolean());
-                    } catch (BadLocationException ex) {
-                        ExceptionUtils.printStackTrace(ex);
+                        reformat.reformat(0, doc.getLength());
+                    } catch (BadLocationException x) {
+                        throw new RuntimeException(x);
                     }
                 });
             } finally {
                 reformat.unlock();
             }
-
-            ec.saveDocument();
-
-        } catch (IOException ex) {
-            ExceptionUtils.printStackTrace(ex);
-        }
-    }
-
-    //TODO: copied from org.netbeans.editor.ActionFactory:
-    static void reformat(Reformat formatter, Document doc, int startPos, int endPos, AtomicBoolean canceled) throws BadLocationException {
-        final GuardedDocument gdoc = (doc instanceof GuardedDocument)
-                ? (GuardedDocument) doc : null;
-
-        int pos = startPos;
-        if (gdoc != null) {
-            pos = gdoc.getGuardedBlockChain().adjustToBlockEnd(pos);
-        }
-
-        LinkedList<PositionRegion> regions = new LinkedList<PositionRegion>();
-        while (pos < endPos) {
-            int stopPos = endPos;
-            if (gdoc != null) { // adjust to start of the next guarded block
-                stopPos = gdoc.getGuardedBlockChain().adjustToNextBlockStart(pos);
-                if (stopPos == -1 || stopPos > endPos) {
-                    stopPos = endPos;
-                }
-            }
-
-            if (pos < stopPos) {
-                regions.addFirst(new PositionRegion(doc, pos, stopPos));
-                pos = stopPos;
-            } else {
-                pos++; //ensure to make progress
-            }
-
-            if (gdoc != null) { // adjust to end of current block
-                pos = gdoc.getGuardedBlockChain().adjustToBlockEnd(pos);
-            }
-        }
-
-        if (canceled.get()) {
-            return;
-        }
-        // Once we start formatting, the task can't be canceled
-
-        for (PositionRegion region : regions) {
             try {
-            formatter.reformat(region.getStartOffset(), region.getEndOffset());
-            } catch(Exception ex){
-                ex.printStackTrace();
+                DataObject.find(fo).getLookup().lookup(EditorCookie.class).saveDocument();
+            } catch (IOException e) {
+                Exceptions.printStackTrace(e);
             }
+        } catch (Exception ex) {
+            // no disaster
+            ErrorManager.getDefault().log(ErrorManager.WARNING, "Cannot reformat the file: " + fo.getPath()); // NOI18N
         }
     }
-
+   
 }

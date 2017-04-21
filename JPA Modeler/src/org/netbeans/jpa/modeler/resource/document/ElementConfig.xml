@@ -1,0 +1,1217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<element-config>
+    <groups>
+        <group id="BASIC_PROP" name="Basic Properties"/>
+        <group id="CLASS_STRUCTURE" name="Class Properties" position="1" />
+        <group id="ATTR_PROP" name="Attribute Properties" position="1" />
+       
+        <group id="JPA_PROP" name="JPA Metadata" position="2" />
+        <group id="ENTITY_PROP" name="Entity Properties" position="2" />
+
+        <group id="COLUMN_PROP" name="Column Properties" position="5" /> 
+        <group id="TABLE_PROP" name="Table Properties" position="6" />
+        <group id="JOIN_COLUMN_PROP" name="Join Column Properties" position="7" />
+        <group id="JOIN_TABLE_PROP" name="Join Table Properties" position="8" />
+        <group id="COLLECTION_TABLE_PROP" name="Collection Table Properties" position="9" />
+        
+        <group id="GENERATE_SOURCECODE_PROP" name="Genarate"/>
+        <group id="JAXB_PROP" name="JAXB Properties"/>
+        <group id="JAXB_ATTR_PROP" name="JAXB Attribute Properties"/>
+        <group id="JAXB_ELE_PROP" name="JAXB Element Properties"/>
+        
+        <group id="ATTRIBUTE_CONSTRAINTS" name="Field-level constraints - Bean Validation Properties" position="10" />
+        <group id="KEY_CONSTRAINTS" name="Key Type argument constraints - Bean Validation Properties" position="11" />
+        <group id="VALUE_CONSTRAINTS" name="Type argument constraints - Bean Validation Properties" position="12" />
+        
+        <group id="GLOBAL_CONFIG" name="Global Config"/>
+        <group id="PACKAGE" name="Package"/>
+        <group id="QUERY" name="Query"/>
+        <group id="UI_PROP" name="UI Properties"  position="50"/>
+
+    </groups>
+    <elements>
+        <element id="EntityMappings" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.EntityMappings">
+            <attributes>
+                <attribute id="jaxbSupport" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="jaxbSupport" refresh-onchange="true" >
+                    <display-name>JAXB Source</display-name>
+                </attribute>
+                <attribute id="generateStaticMetamodel" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="generateStaticMetamodel" refresh-onchange="true">
+                    <display-name>StaticMetamodel</display-name>
+                </attribute>
+                <attribute id="staticMetamodelPackage" groupId="PACKAGE" class="java.lang.String" name="staticMetamodelPackage">
+                    <display-name>StaticMetamodel Package</display-name>
+                    <visible><![CDATA[root.generateStaticMetamodel==true]]></visible>
+                </attribute>
+                <attribute id="jaxbNameSpace" groupId="JAXB_PROP" class="java.lang.String" name="jaxbNameSpace">
+                    <display-name>JAXB NameSpace</display-name>
+                    <visible><![CDATA[root.jaxbSupport==true]]></visible>
+                </attribute>
+                <attribute id="persistenceUnitName" groupId="BASIC_PROP" class="java.lang.String" name="persistenceUnitName">
+                    <display-name>PersistenceUnit Name</display-name>
+                </attribute>
+                <attribute id="package" groupId="PACKAGE" class="java.lang.String" name="package">
+                    <display-name>Entity Package</display-name>
+                </attribute>
+                <attribute id="schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
+                </attribute>
+                <attribute id="catalog" groupId="BASIC_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                <attribute id="diagramVersion" groupId="BASIC_PROP" class="java.lang.String" name="diagramVersion">
+                    <display-name>Version</display-name>
+                </attribute>
+                <attribute id="description" groupId="BASIC_PROP" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>  
+            </attributes>
+        </element>
+        <element id="JavaClass" class="org.netbeans.jpa.modeler.spec.extend.JavaClass">
+            <attributes>
+                <attribute id="package" groupId="CLASS_STRUCTURE" class="java.lang.String" name="package">
+                    <display-name>Sub-Package</display-name>
+                </attribute>
+                <attribute id="class" groupId="CLASS_STRUCTURE" class="java.lang.String" name="clazz">
+                    <display-name>Class</display-name>
+                </attribute>
+                <attribute id="author" groupId="CLASS_STRUCTURE" class="java.lang.String" name="author">
+                    <display-name>Author</display-name>
+                    <description>Describes an author.</description>
+                </attribute> 
+                <attribute id="description" groupId="CLASS_STRUCTURE" class="java.lang.String" name="description">
+                    <display-name>Description</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
+            <attributes>
+                <attribute id="name" groupId="ATTR_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                </attribute>
+                <attribute id="description" groupId="ATTR_PROP" class="java.lang.String" name="description" after="name">
+                    <display-name>Description</display-name>
+                </attribute>
+                <attribute id="defaultValue" groupId="ATTR_PROP" class="java.lang.String" name="defaultValue"  after="fieldType">
+                    <display-name>Default Value</display-name>
+                </attribute>
+                <attribute id="includeInUI" groupId="UI_PROP" class="java.lang.Boolean" name="includeInUI">
+                    <display-name>Include in UI</display-name>
+                    <description>
+                        If unselected, attribute will not be available in frontend.
+                    </description>
+                </attribute>
+                <attribute id="propertyChangeSupport" groupId="ATTR_PROP" class="java.lang.Boolean" name="propertyChangeSupport">
+                    <display-name>Property Change Support</display-name>
+                    <description>Property Change Support</description>
+                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
+                </attribute>
+                <attribute id="vetoableChangeSupport" groupId="ATTR_PROP" class="java.lang.Boolean" name="vetoableChangeSupport">
+                    <display-name>Vetoable Change Support</display-name>
+                    <description>Vetoable Change Support</description>
+                    <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">
+            <attributes>
+                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                    <display-name>MapKey Type</display-name>
+                </attribute>  
+            </attributes>
+        </element>
+        <element id="ElementCollection" class="org.netbeans.jpa.modeler.spec.ElementCollection">
+            <attributes>
+                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                    <display-name>MapKey Type</display-name>
+                </attribute>  
+            </attributes>
+        </element>
+        <element id="Table" class="org.netbeans.jpa.modeler.spec.Table">
+            <attributes>
+                <attribute id="table_name" groupId="TABLE_PROP" class="java.lang.String" name="name">
+                    <display-name>name</display-name>
+                </attribute>
+                <attribute id="catalog" groupId="TABLE_PROP" class="java.lang.String" name="catalog">
+                    <display-name>catalog</display-name>
+                </attribute>
+                <attribute id="schema" groupId="TABLE_PROP" class="java.lang.String" name="schema">
+                    <display-name>schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+         <element id="Column" groupId="COLUMN_PROP" class="org.netbeans.jpa.modeler.spec.Column">
+            <attributes>
+                <attribute id="column_name" groupId="COLUMN_PROP" class="java.lang.String" name="name">
+                    <display-name>Column Name</display-name>
+                </attribute>
+                <attribute id="table_name" groupId="COLUMN_PROP" class="java.lang.String" name="table">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                <attribute id="unique" groupId="COLUMN_PROP" class="java.lang.Boolean" name="unique">
+                    <display-name>Unique</display-name>
+                </attribute>
+                   <attribute id="nullable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="nullable">
+                    <display-name>Nullable</display-name>
+                </attribute>
+                    <attribute id="insertable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="insertable">
+                    <display-name>Insertable</display-name>
+                </attribute>
+                   <attribute id="updatable" groupId="COLUMN_PROP" class="java.lang.Boolean" name="updatable">
+                    <display-name>Updatable</display-name>
+                </attribute>
+                <attribute id="length" groupId="COLUMN_PROP" class="java.lang.Integer" name="length">
+                    <display-name>Length</display-name>
+                    <visible><![CDATA[
+                                  node.isTextAttributeType()
+                                ]]></visible>
+                </attribute>
+                <attribute id="precision" groupId="COLUMN_PROP" class="java.lang.Integer" name="precision">
+                    <display-name>Precision</display-name>
+                    <visible><![CDATA[
+                                  node.isPrecisionAttributeType()
+                                ]]></visible>
+                </attribute>
+                <attribute id="scale" groupId="COLUMN_PROP" class="java.lang.Integer" name="scale">
+                    <display-name>Scale</display-name>
+                    <visible><![CDATA[
+                                  node.isScaleAttributeType()
+                                ]]></visible>
+                </attribute>
+                 <attribute id="columnDefinition" groupId="COLUMN_PROP" class="java.lang.String" name="columnDefinition">
+                    <display-name>Column Definition</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="IdentifiableClass" class="org.netbeans.jpa.modeler.spec.IdentifiableClass">
+            <attributes>
+                <attribute id="xmlRootElement" groupId="JAXB_PROP" class="java.lang.Boolean" name="xmlRootElement" >
+                    <display-name>Root Element</display-name>
+                    <visible><![CDATA[root.jaxbSupport==true]]></visible>
+                </attribute>
+                <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
+                    <display-name>Composite PrimaryKey Class</display-name>
+                </attribute>
+            </attributes>
+        </element>
+               
+        <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
+            <attributes>
+                <attribute id="entityName" groupId="ENTITY_PROP" class="java.lang.String" name="entityName">
+                    <display-name>Entity Name</display-name>
+                    <description>Entity name will be used to identify the domain for JPQL queries ( default value is the entity class name )</description>
+                </attribute>
+               <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
+                    <display-name>Is Abstract</display-name>
+                    <description>Abstract entities cannot be instantiated but it can be queried just like concrete entities. If an abstract entity is the target of a query, the query operates on all the concrete subclasses of the abstract entity.</description>
+                </attribute>
+            </attributes>
+        </element>
+<!--        <element id="RelationAttribute" groupId="CASCADE_PROP" class="org.netbeans.jpa.modeler.spec.extend.RelationAttribute">
+            <attributes>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+                <attribute id="cascadePersist" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadePersist">
+                    <display-name>Persist</display-name>
+                </attribute>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+                <attribute id="cascadeAll" groupId="BASIC_PROP" class="java.lang.Boolean" name="cascadeAll">
+                    <display-name>All</display-name>
+                </attribute>
+
+            </attributes>
+        </element>-->
+
+        <element id="Basic" class="org.netbeans.jpa.modeler.spec.Basic">
+            <attributes>
+                <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>
+            </attributes>
+        </element> 
+        
+        <element id="Transient" class="org.netbeans.jpa.modeler.spec.Transient">
+            <attributes>
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
+                    <display-name>Optional return type</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Embedded" class="org.netbeans.jpa.modeler.spec.Embedded">
+            <attributes>
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
+                    <display-name>Optional return type</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="PersistenceBaseAttribute" class="org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute">
+            <attributes>
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
+                    <display-name>Optional return type</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        
+        <element id="OneToOne" class="org.netbeans.jpa.modeler.spec.OneToOne">
+            <attributes>
+                <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>
+                
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
+                    <display-name>Optional return type</display-name>
+                </attribute>
+                <attribute id="orphanRemoval" groupId="JPA_PROP" class="java.lang.Boolean" name="orphanRemoval">
+                    <display-name>Orphan Removal</display-name>
+                    <description>
+                        The orphanRemoval functionality is intended for entities that are privately "owned" by their parent entity 
+                        and defines whether removing the relationship should also result in a removal of the referred entity.
+                    </description>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="OneToMany" class="org.netbeans.jpa.modeler.spec.OneToMany">
+            <attributes>
+                <attribute id="orphanRemoval" groupId="JPA_PROP" class="java.lang.Boolean" name="orphanRemoval">
+                    <display-name>Orphan Removal</display-name>
+                    <description>
+                        The orphanRemoval functionality is intended for entities that are privately "owned" by their parent entity 
+                        and defines whether removing the relationship should also result in a removal of the referred entity.
+                    </description>
+                </attribute>                
+            </attributes>
+        </element>
+        <element id="ManyToOne" class="org.netbeans.jpa.modeler.spec.ManyToOne">
+            <attributes>
+                <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
+                    <display-name>Optional</display-name>
+                </attribute>
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
+                    <display-name>Optional return type</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="JoinTable" class="org.netbeans.jpa.modeler.spec.JoinTable">
+            <attributes>
+                <attribute id="JoinTable_name" groupId="JOIN_TABLE_PROP" class="java.lang.String" name="name">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                <attribute id="JoinTable_catalog" groupId="JOIN_TABLE_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                <attribute id="JoinTable_schema" groupId="JOIN_TABLE_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="CollectionTable" class="org.netbeans.jpa.modeler.spec.CollectionTable">
+            <attributes>
+                <attribute id="CollectionTable_name" groupId="COLLECTION_TABLE_PROP" class="java.lang.String" name="name">
+                    <display-name>Table Name</display-name>
+                </attribute>
+                <attribute id="CollectionTable_catalog" groupId="COLLECTION_TABLE_PROP" class="java.lang.String" name="catalog">
+                    <display-name>Catalog</display-name>
+                </attribute>
+                <attribute id="CollectionTable_schema" groupId="COLLECTION_TABLE_PROP" class="java.lang.String" name="schema">
+                    <display-name>Schema</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <!--        <element id="BaseAttribute" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.BaseAttribute">
+            <attributes>
+                                <attribute id="attributeType" groupId="BASIC_PROP" class="java.lang.String" name="attributeType">
+                    <display-name>Data Type</display-name>
+                </attribute>
+            </attributes>
+        </element>-->
+        <element id="JaxbXmlAttribute" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute">
+            <attributes>
+                <attribute id="JaxbXmlAttribute.name" groupId="JAXB_ATTR_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Attribute")]]></visible>
+                </attribute>
+                <attribute id="JaxbXmlAttribute.required" groupId="JAXB_ATTR_PROP" class="java.lang.Boolean" name="required">
+                    <display-name>Required</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Attribute")]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="JaxbXmlElement" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement">
+            <attributes>
+                <attribute id="JaxbXmlElement.name" groupId="JAXB_ELE_PROP" class="java.lang.String" name="name">
+                    <display-name>Name</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Element")]]></visible>
+                </attribute>
+                <attribute id="JaxbXmlElement.required" groupId="JAXB_ELE_PROP" class="java.lang.Boolean" name="required">
+                    <display-name>Required</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Element")]]></visible>
+                </attribute>
+            </attributes>
+        </element>
+         
+   
+   
+   
+   
+   
+   
+   
+        <!--On Attribute-->
+        <element id="NotNull" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotNull">
+            <attributes>
+                <attribute id="notnull.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotNull</display-name>
+                    <description>
+                        The value of the field or property must not be null.
+                    </description>
+                </attribute>
+                <attribute id="notnull.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("NotNull") != null &&
+                    ((node.getAttributeConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Null").selected==false)]]></visible>
+        </element>
+        <element id="Null" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Null">
+            <attributes>
+                <attribute id="null.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Null</display-name>
+                    <description>
+                        The value of the field or property must be null.
+                    </description>
+                </attribute>
+                <attribute id="null.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Null") != null && 
+                        ((node.getAttributeConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotNull").selected==false)]]></visible>
+        </element>
+        <element id="AssertFalse" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertFalse">
+            <attributes>
+                <attribute id="assertFalse.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertFalse</display-name>
+                    <description>
+                        The value of the field or property must be false.
+                    </description>
+                </attribute>
+                <attribute id="assertFalse.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("AssertFalse") != null &&
+                        ((node.getAttributeConstraintsMap().get("AssertTrue").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("AssertTrue").selected==false)]]></visible>
+        </element>
+        <element id="AssertTrue" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertTrue">
+            <attributes>
+                <attribute id="assertTrue.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertTrue</display-name>
+                    <description>
+                        The value of the field or property must be true.
+                    </description>
+                </attribute>
+                <attribute id="assertTrue.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("AssertTrue") != null &&
+                        ((node.getAttributeConstraintsMap().get("AssertFalse").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("AssertFalse").selected==false)]]></visible>
+        </element>
+        <element id="Past" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Past">
+            <attributes>
+                <attribute id="past.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Past</display-name>
+                    <description>
+                        The value of the field or property must be a date in the past.
+                    </description>
+                </attribute>
+                <attribute id="past.orPresent" class="java.lang.Boolean" name="orPresent" >
+                    <display-name>      orPresent</display-name>
+                    <description>
+                        The notion of present here is defined relatively to the type on which the constraint is used. 
+                        For instance, if the constraint is on a Year, present would mean the whole current year.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="past.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Past") != null &&
+                        ((node.getAttributeConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Future").selected==false)]]></visible>
+        </element>
+        <element id="Future" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Future">
+            <attributes>
+                <attribute id="future.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Future</display-name>
+                    <description>
+                        The value of the field or property must be a date in the future.
+                    </description>
+                </attribute>
+                <attribute id="future.orPresent" class="java.lang.Boolean" name="orPresent" >
+                    <display-name>      orPresent</display-name>
+                    <description>
+                        The notion of present here is defined relatively to the type on which the constraint is used. 
+                        For instance, if the constraint is on a Year, present would mean the whole current year.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="future.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Future") != null &&
+                        ((node.getAttributeConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Past").selected==false)]]></visible>
+        </element>
+        <element id="Size" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Size">
+            <attributes>
+                <attribute id="size.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Size</display-name>
+                    <description>
+                        The size of the field or property is evaluated and must match the specified boundaries. 
+                    </description>
+                </attribute>
+                <attribute id="size.min" class="java.lang.Integer" name="min">
+                    <display-name>      Min size</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="size.max" class="java.lang.Integer" name="max">
+                    <display-name>      Max size</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="size.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Size") != null]]></visible>
+        </element>
+        <element id="Pattern" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Pattern">
+            <attributes>
+                <attribute id="pattern.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Pattern</display-name>
+                    <description>
+                        The value of the field or property must match the regular expression defined in the regexp element.
+                    </description>
+                </attribute>
+                <attribute id="pattern.regexp" class="java.lang.String" name="regexp">
+                    <display-name>      regexp</display-name>
+                    <description>
+                        The regular expression to match
+                    </description>                    
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="pattern.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
+                <attribute id="pattern.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                    <description>
+                        The error message template
+                    </description>                       
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Pattern") != null]]></visible>
+        </element>
+        <element id="Digits" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Digits">
+            <attributes>
+                <attribute id="digits.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Digits</display-name>
+                    <description>
+                        The value of the field or property must be a number within a specified range. The integer element specifies the maximum integral digits for the number, and the fraction element specifies the maximum fractional digits for the number.
+                    </description>
+                </attribute>
+                <attribute id="digits.fraction" class="java.lang.Integer" name="fraction">
+                    <display-name>      Fraction</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="digits.integer" class="java.lang.Integer" name="integer">
+                    <display-name>      Integer</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="digits.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Digits") != null]]></visible>
+        </element>
+        <element id="Min" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Min">
+            <attributes>
+                <attribute id="min.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Min</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="min.value" class="java.lang.Long" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="min.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Min") != null]]></visible>
+        </element>
+        <element id="Max" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Max">
+            <attributes>
+                <attribute id="max.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Max</display-name>
+                    <description>
+                        The value of the field or property must be an integer value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="max.value" class="java.lang.Long" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="max.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Max") != null]]></visible>
+        </element>
+        <element id="DecimalMin" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMin">
+            <attributes>
+                <attribute id="decimalMin.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@DecimalMin</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="decimalMin.value" class="java.lang.String" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="decimalMin.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified minimum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="decimalMin.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("DecimalMin") != null]]></visible>
+        </element>
+        <element id="DecimalMax" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMax">
+            <attributes>
+                <attribute id="decimalMax.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@DecimalMax</display-name>
+                    <description>
+                        The value of the field or property must be a decimal value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="decimalMax.value" class="java.lang.String" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="decimalMax.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified maximum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="decimalMax.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("DecimalMax") != null]]></visible>
+        </element>
+        
+        
+        
+        <!--On Key-->
+        <element id="Key.NotNull" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotNull">
+            <attributes>
+                <attribute id="Key.notnull.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotNull</display-name>
+                    <description>
+                        The value of the field or property must not be null.
+                    </description>
+                </attribute>
+                <attribute id="Key.notnull.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <!--<visible><![CDATA[(node.getKeyConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Null").selected==false]]></visible>-->
+            <visible><![CDATA[node.getKeyConstraintsMap().get("NotNull") != null &&
+                    ((node.getKeyConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Null").selected==false)]]></visible>
+        </element>
+        <element id="Key.Null" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Null">
+            <attributes>
+                <attribute id="Key.null.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Null</display-name>
+                    <description>
+                        The value of the field or property must be null.
+                    </description>
+                </attribute>
+                <attribute id="Key.null.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Null") != null && 
+                        ((node.getKeyConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotNull").selected==false)]]></visible>
+        </element>
+        <element id="Key.AssertFalse" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertFalse">
+            <attributes>
+                <attribute id="Key.assertFalse.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertFalse</display-name>
+                    <description>
+                        The value of the field or property must be false.
+                    </description>
+                </attribute>
+                <attribute id="Key.assertFalse.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("AssertFalse") != null &&
+                        ((node.getKeyConstraintsMap().get("AssertTrue").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("AssertTrue").selected==false)]]></visible>
+        </element>
+        <element id="Key.AssertTrue" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertTrue">
+            <attributes>
+                <attribute id="Key.assertTrue.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertTrue</display-name>
+                    <description>
+                        The value of the field or property must be true.
+                    </description>
+                </attribute>
+                <attribute id="Key.assertTrue.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("AssertTrue") != null &&
+                        ((node.getKeyConstraintsMap().get("AssertFalse").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("AssertFalse").selected==false)]]></visible>
+        </element>
+        <element id="Key.Past" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Past">
+            <attributes>
+                <attribute id="Key.past.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Past</display-name>
+                    <description>
+                        The value of the field or property must be a date in the past.
+                    </description>
+                </attribute>
+                <attribute id="Key.past.orPresent" class="java.lang.Boolean" name="orPresent" >
+                    <display-name>      orPresent</display-name>
+                    <description>
+                        The notion of present here is defined relatively to the type on which the constraint is used. 
+                        For instance, if the constraint is on a Year, present would mean the whole current year.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.past.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Past") != null &&
+                        ((node.getKeyConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Future").selected==false)]]></visible>
+        </element>
+        <element id="Key.Future" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Future">
+            <attributes>
+                <attribute id="Key.future.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Future</display-name>
+                    <description>
+                        The value of the field or property must be a date in the future.
+                    </description>
+                </attribute>
+                <attribute id="Key.future.orPresent" class="java.lang.Boolean" name="orPresent" >
+                    <display-name>      orPresent</display-name>
+                    <description>
+                        The notion of present here is defined relatively to the type on which the constraint is used. 
+                        For instance, if the constraint is on a Year, present would mean the whole current year.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.future.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Future") != null &&
+                        ((node.getKeyConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Past").selected==false)]]></visible>
+        </element>
+        <element id="Key.Size" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Size">
+            <attributes>
+                <attribute id="Key.size.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Size</display-name>
+                    <description>
+                        The size of the field or property is evaluated and must match the specified boundaries. 
+                    </description>
+                </attribute>
+                <attribute id="Key.size.min" class="java.lang.Integer" name="min">
+                    <display-name>      Min size</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.size.max" class="java.lang.Integer" name="max">
+                    <display-name>      Max size</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.size.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Size") != null]]></visible>
+        </element>
+        <element id="Key.Pattern" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Pattern">
+            <attributes>
+                <attribute id="Key.pattern.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Pattern</display-name>
+                    <description>
+                        The value of the field or property must match the regular expression defined in the regexp element.
+                    </description>
+                </attribute>
+                <attribute id="Key.pattern.regexp" class="java.lang.String" name="regexp">
+                    <display-name>      regexp</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.pattern.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
+                <attribute id="Key.pattern.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Pattern") != null]]></visible>
+        </element>
+        <element id="Key.Digits" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Digits">
+            <attributes>
+                <attribute id="Key.digits.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Digits</display-name>
+                    <description>
+                        The value of the field or property must be a number within a specified range. The integer element specifies the maximum integral digits for the number, and the fraction element specifies the maximum fractional digits for the number.
+                    </description>
+                </attribute>
+                <attribute id="Key.digits.fraction" class="java.lang.Integer" name="fraction">
+                    <display-name>      Fraction</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.digits.integer" class="java.lang.Integer" name="integer">
+                    <display-name>      Integer</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.digits.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Digits") != null]]></visible>
+        </element>
+        <element id="Key.Min" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Min">
+            <attributes>
+                <attribute id="Key.min.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Min</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Key.min.value" class="java.lang.Long" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.min.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Min") != null]]></visible>
+        </element>
+        <element id="Key.Max" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Max">
+            <attributes>
+                <attribute id="Key.max.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Max</display-name>
+                    <description>
+                        The value of the field or property must be an integer value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Key.max.value" class="java.lang.Long" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.max.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Max") != null]]></visible>
+        </element>
+        <element id="Key.DecimalMin" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMin">
+            <attributes>
+                <attribute id="Key.decimalMin.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@DecimalMin</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Key.decimalMin.value" class="java.lang.String" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.decimalMin.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified minimum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.decimalMin.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("DecimalMin") != null]]></visible>
+        </element>
+        <element id="Key.DecimalMax" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMax">
+            <attributes>
+                <attribute id="Key.decimalMax.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@DecimalMax</display-name>
+                    <description>
+                        The value of the field or property must be a decimal value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Key.decimalMax.value" class="java.lang.String" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.decimalMax.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified maximum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.decimalMax.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("DecimalMax") != null]]></visible>
+        </element>
+   
+   
+   
+        <!--On Value-->
+        <element id="Value.NotNull" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotNull">
+            <attributes>
+                <attribute id="Value.notnull.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotNull</display-name>
+                    <description>
+                        The value of the field or property must not be null.
+                    </description>
+                </attribute>
+                <attribute id="Value.notnull.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <!--<visible><![CDATA[(node.getValueConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Null").selected==false]]></visible>-->
+            <visible><![CDATA[node.getValueConstraintsMap().get("NotNull") != null &&
+                    ((node.getValueConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Null").selected==false)]]></visible>
+        </element>
+        <element id="Value.Null" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Null">
+            <attributes>
+                <attribute id="Value.null.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Null</display-name>
+                    <description>
+                        The value of the field or property must be null.
+                    </description>
+                </attribute>
+                <attribute id="Value.null.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Null") != null && 
+                        ((node.getValueConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotNull").selected==false)]]></visible>
+        </element>
+        <element id="Value.AssertFalse" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertFalse">
+            <attributes>
+                <attribute id="Value.assertFalse.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertFalse</display-name>
+                    <description>
+                        The value of the field or property must be false.
+                    </description>
+                </attribute>
+                <attribute id="Value.assertFalse.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("AssertFalse") != null &&
+                        ((node.getValueConstraintsMap().get("AssertTrue").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("AssertTrue").selected==false)]]></visible>
+        </element>
+        <element id="Value.AssertTrue" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertTrue">
+            <attributes>
+                <attribute id="Value.assertTrue.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@AssertTrue</display-name>
+                    <description>
+                        The value of the field or property must be true.
+                    </description>
+                </attribute>
+                <attribute id="Value.assertTrue.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("AssertTrue") != null &&
+                        ((node.getValueConstraintsMap().get("AssertFalse").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("AssertFalse").selected==false)]]></visible>
+        </element>
+        <element id="Value.Past" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Past">
+            <attributes>
+                <attribute id="Value.past.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Past</display-name>
+                    <description>
+                        The value of the field or property must be a date in the past.
+                    </description>
+                </attribute>
+                <attribute id="Value.past.orPresent" class="java.lang.Boolean" name="orPresent" >
+                    <display-name>      orPresent</display-name>
+                    <description>
+                        The notion of present here is defined relatively to the type on which the constraint is used. 
+                        For instance, if the constraint is on a Year, present would mean the whole current year.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.past.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Past") != null &&
+                        ((node.getValueConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Future").selected==false)]]></visible>
+        </element>
+        <element id="Value.Future" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Future">
+            <attributes>
+                <attribute id="Value.future.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Future</display-name>
+                    <description>
+                        The value of the field or property must be a date in the future.
+                    </description>
+                </attribute>
+                <attribute id="Value.future.orPresent" class="java.lang.Boolean" name="orPresent" >
+                    <display-name>      orPresent</display-name>
+                    <description>
+                        The notion of present here is defined relatively to the type on which the constraint is used. 
+                        For instance, if the constraint is on a Year, present would mean the whole current year.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.future.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Future") != null &&
+                        ((node.getValueConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Past").selected==false)]]></visible>
+        </element>
+        <element id="Value.Size" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Size">
+            <attributes>
+                <attribute id="Value.size.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Size</display-name>
+                    <description>
+                        The size of the field or property is evaluated and must match the specified boundaries. 
+                    </description>
+                </attribute>
+                <attribute id="Value.size.min" class="java.lang.Integer" name="min">
+                    <display-name>      Min size</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.size.max" class="java.lang.Integer" name="max">
+                    <display-name>      Max size</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.size.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Size") != null]]></visible>
+        </element>
+        <element id="Value.Pattern" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Pattern">
+            <attributes>
+                <attribute id="Value.pattern.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Pattern</display-name>
+                    <description>
+                        The value of the field or property must match the regular expression defined in the regexp element.
+                    </description>
+                </attribute>
+                <attribute id="Value.pattern.regexp" class="java.lang.String" name="regexp">
+                    <display-name>      regexp</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.pattern.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
+                <attribute id="Value.pattern.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Pattern") != null]]></visible>
+        </element>
+        <element id="Value.Digits" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Digits">
+            <attributes>
+                <attribute id="Value.digits.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Digits</display-name>
+                    <description>
+                        The value of the field or property must be a number within a specified range. The integer element specifies the maximum integral digits for the number, and the fraction element specifies the maximum fractional digits for the number.
+                    </description>
+                </attribute>
+                <attribute id="Value.digits.fraction" class="java.lang.Integer" name="fraction">
+                    <display-name>      Fraction</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.digits.integer" class="java.lang.Integer" name="integer">
+                    <display-name>      Integer</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.digits.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Digits") != null]]></visible>
+        </element>
+        <element id="Value.Min" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Min">
+            <attributes>
+                <attribute id="Value.min.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Min</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Value.min.value" class="java.lang.Long" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.min.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Min") != null]]></visible>
+        </element>
+        <element id="Value.Max" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Max">
+            <attributes>
+                <attribute id="Value.max.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Max</display-name>
+                    <description>
+                        The value of the field or property must be an integer value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Value.max.value" class="java.lang.Long" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.max.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Max") != null]]></visible>
+        </element>
+        <element id="Value.DecimalMin" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMin">
+            <attributes>
+                <attribute id="Value.decimalMin.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@DecimalMin</display-name>
+                    <description>
+                        The value of the field or property must be an integer value greater than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Value.decimalMin.value" class="java.lang.String" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.decimalMin.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified minimum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>                
+                <attribute id="Value.decimalMin.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("DecimalMin") != null]]></visible>
+        </element>
+        <element id="Value.DecimalMax" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.DecimalMax">
+            <attributes>
+                <attribute id="Value.decimalMax.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@DecimalMax</display-name>
+                    <description>
+                        The value of the field or property must be a decimal value lower than or equal to the number in the value element.
+                    </description>
+                </attribute>
+                <attribute id="Value.decimalMax.value" class="java.lang.String" name="value">
+                    <display-name>      value</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.decimalMax.inclusive" class="java.lang.Boolean" name="inclusive" >
+                    <display-name>      inclusive</display-name>
+                    <description>
+                        Specifies whether the specified maximum is inclusive or exclusive.
+                        By default, it is inclusive.
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.decimalMax.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("DecimalMax") != null]]></visible>
+        </element>
+   
+    </elements>
+</element-config>

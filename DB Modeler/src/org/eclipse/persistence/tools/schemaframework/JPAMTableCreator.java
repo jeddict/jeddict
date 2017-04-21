@@ -40,15 +40,15 @@ public class JPAMTableCreator {
      */
     public static boolean CHECK_EXISTENCE = true;
 
-    protected List<TableDefinition> tableDefinitions;
+    protected List<JPAMTableDefinition> tableDefinitions;
     protected String name;
     protected boolean ignoreDatabaseException; //if true, DDL generation will continue even if exceptions occur
 
     public JPAMTableCreator() {
-        this(new ArrayList<TableDefinition>());
+        this(new ArrayList<JPAMTableDefinition>());
     }
 
-    public JPAMTableCreator(List<TableDefinition> tableDefinitions) {
+    public JPAMTableCreator(List<JPAMTableDefinition> tableDefinitions) {
         super();
         this.tableDefinitions = tableDefinitions;
     }
@@ -56,14 +56,14 @@ public class JPAMTableCreator {
     /**
      * Add the table.
      */
-    public void addTableDefinition(TableDefinition tableDefinition) {
+    public void addTableDefinition(JPAMTableDefinition tableDefinition) {
         this.tableDefinitions.add(tableDefinition);
     }
 
     /**
      * Add a set of tables.
      */
-    public void addTableDefinitions(Collection<TableDefinition> tableDefs) {
+    public void addTableDefinitions(Collection<JPAMTableDefinition> tableDefs) {
         this.tableDefinitions.addAll(tableDefs);
     }
 
@@ -92,12 +92,12 @@ public class JPAMTableCreator {
     /**
      * Create constraints.
      */
-    public void createConstraints(List<TableDefinition> tables, DatabaseSession session, JPAMSchemaManager schemaManager, boolean build) {
+    public void createConstraints(List<JPAMTableDefinition> tables, DatabaseSession session, JPAMSchemaManager schemaManager, boolean build) {
         buildConstraints(schemaManager, build);
 
         // Unique constraints should be generated before foreign key constraints,
         // because foreign key constraints can reference unique constraints
-        for (TableDefinition table : tables) {
+        for (JPAMTableDefinition table : tables) {
             try {
                 schemaManager.createUniqueConstraints(table);
             } catch (DatabaseException ex) {
@@ -107,7 +107,7 @@ public class JPAMTableCreator {
             }
         }
 
-        for (TableDefinition table : tables) {
+        for (JPAMTableDefinition table : tables) {
             try {
                 schemaManager.createForeignConstraints(table);
             } catch (DatabaseException ex) {
@@ -151,8 +151,8 @@ public class JPAMTableCreator {
         buildConstraints(schemaManager, build);
 
         String sequenceTableName = getSequenceTableName(session);
-        List<TableDefinition> missingTables = new ArrayList<>();
-        for (TableDefinition tableDefinition : getTableDefinitions()) {
+        List<JPAMTableDefinition> missingTables = new ArrayList<>();
+        for (JPAMTableDefinition tableDefinition : getTableDefinitions()) {
             // Must not create sequence table as done in createSequences.
             if (!tableDefinition.getName().equals(sequenceTableName)) {
 //                boolean alreadyExists = false;
@@ -179,10 +179,10 @@ public class JPAMTableCreator {
         createConstraints(missingTables, session, schemaManager, false);
 
         schemaManager.createOrReplaceSequences(createSequenceTables, createSequences);
-        for (TableDefinition table : missingTables) {
+        for (JPAMTableDefinition table : missingTables) {
             schemaManager.createMapping(table);
         }
-        for (TableDefinition table : missingTables) {
+        for (JPAMTableDefinition table : missingTables) {
             schemaManager.createReference(table);
         }
     }
@@ -208,7 +208,7 @@ public class JPAMTableCreator {
     public void dropConstraints(DatabaseSession session, JPAMSchemaManager schemaManager, boolean build) {
         buildConstraints(schemaManager, build);
 
-        for (TableDefinition table : getTableDefinitions()) {
+        for (JPAMTableDefinition table : getTableDefinitions()) {
             try {
                 schemaManager.dropConstraints(table);
             } catch (DatabaseException exception) {
@@ -251,15 +251,15 @@ public class JPAMTableCreator {
             dropConstraints(session, schemaManager, false);
 
             String sequenceTableName = getSequenceTableName(session);
-            List<TableDefinition> tables = getTableDefinitions();
+            List<JPAMTableDefinition> tables = getTableDefinitions();
             int trys = 1;
             if (JPAMSchemaManager.FORCE_DROP) {
                 trys = 5;
             }
             while ((trys > 0) && !tables.isEmpty()) {
                 trys--;
-                List<TableDefinition> failed = new ArrayList<TableDefinition>();
-                for (TableDefinition table : tables) {
+                List<JPAMTableDefinition> failed = new ArrayList<JPAMTableDefinition>();
+                for (JPAMTableDefinition table : tables) {
                     // Must not create sequence table as done in createSequences.
                     if (!table.getName().equals(sequenceTableName)) {
                         try {
@@ -294,7 +294,7 @@ public class JPAMTableCreator {
     /**
      * Return the tables.
      */
-    public List<TableDefinition> getTableDefinitions() {
+    public List<JPAMTableDefinition> getTableDefinitions() {
         return tableDefinitions;
     }
 
@@ -351,7 +351,7 @@ public class JPAMTableCreator {
      */
     protected void buildConstraints(JPAMSchemaManager schemaManager, boolean build) {
         if (build) {
-            for (TableDefinition table : getTableDefinitions()) {
+            for (JPAMTableDefinition table : getTableDefinitions()) {
                 schemaManager.buildFieldTypes(table);
             }
         }
@@ -430,7 +430,7 @@ public class JPAMTableCreator {
         buildConstraints(schemaManager, build);
 
         String sequenceTableName = getSequenceTableName(session);
-        for (TableDefinition table : getTableDefinitions()) {
+        for (JPAMTableDefinition table : getTableDefinitions()) {
             // Must not create sequence table as done in createSequences.
             if (!table.getName().equals(sequenceTableName)) {
                 AbstractSession abstractSession = (AbstractSession) session;

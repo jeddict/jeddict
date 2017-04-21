@@ -29,16 +29,10 @@ public class EmbeddedAttributeJoinColumnWidget extends ForeignKeyWidget<DBEmbedd
 
     public EmbeddedAttributeJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
-
-        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
-
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) this::validateTableName);
-        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) this::validateTableName);
+        this.addPropertyChangeListener("column_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
+        this.addPropertyChangeListener("attr_override_column_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
+        this.addPropertyChangeListener("attr_override_table_name", (PropertyChangeListener<String>) (oldValue, value) -> validateTableName(value));
     }
 
     @Override

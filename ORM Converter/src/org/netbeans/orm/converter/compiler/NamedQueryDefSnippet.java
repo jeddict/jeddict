@@ -18,6 +18,10 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.LOCK_MODE_TYPE;
+import static org.netbeans.jcode.jpa.JPAConstants.LOCK_MODE_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_QUERY;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_QUERY_FQN;
 import org.netbeans.jpa.modeler.spec.LockModeType;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -86,7 +90,7 @@ public class NamedQueryDefSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedQuery(name=\"");
+        builder.append("@").append(NAMED_QUERY).append("(name=\"");
         builder.append(name);
         builder.append(ORMConverterUtil.QUOTE);
         builder.append(ORMConverterUtil.COMMA);
@@ -97,7 +101,7 @@ public class NamedQueryDefSnippet implements Snippet {
         builder.append(ORMConverterUtil.COMMA);
 
         if (lockMode != null) {
-            builder.append("lockMode=LockModeType.");
+            builder.append("lockMode=").append(LOCK_MODE_TYPE).append(".");
             builder.append(lockMode);
             builder.append(ORMConverterUtil.COMMA);
         }
@@ -123,9 +127,9 @@ public class NamedQueryDefSnippet implements Snippet {
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add("javax.persistence.NamedQuery");
+        importSnippets.add(NAMED_QUERY_FQN);
         if (lockMode != null) {
-            importSnippets.add("javax.persistence.LockModeType");
+            importSnippets.add(LOCK_MODE_TYPE_FQN);
         }
         if (!queryHints.isEmpty()) {
             importSnippets.addAll(queryHints.get(0).getImportSnippets());

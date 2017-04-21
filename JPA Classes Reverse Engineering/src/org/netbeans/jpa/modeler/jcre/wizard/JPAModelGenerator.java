@@ -41,12 +41,12 @@ public class JPAModelGenerator {
         javaSource.runUserActionTask(new Task<CompilationController>() {
             @Override
             public void run(CompilationController controller) throws IOException {
-                try {
+            try {
                 controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
                 TypeElement jc = controller.getElements().getTypeElement(entityClass);
                 if (jc != null) {
                     fieldAccess[0] = JavaSourceParserUtil.isFieldAccess(jc);
-                    if (entityMappings.findEntity(jc.getSimpleName().toString()) == null) {
+                    if (!entityMappings.findEntity(jc.getSimpleName().toString()).isPresent()) {
                         org.netbeans.jpa.modeler.spec.Entity entitySpec = new org.netbeans.jpa.modeler.spec.Entity();
                         entitySpec.load(entityMappings, jc, fieldAccess[0]);
                         entityMappings.addEntity(entitySpec);
@@ -54,9 +54,9 @@ public class JPAModelGenerator {
                 } else {
                     missingEntities.add(entityClass);
                 }
-                } catch(Throwable t){
-                    ExceptionUtils.printStackTrace(t);
-                }
+            } catch(Throwable t){
+                ExceptionUtils.printStackTrace(t);
+            }
             }
         }, true);
     }

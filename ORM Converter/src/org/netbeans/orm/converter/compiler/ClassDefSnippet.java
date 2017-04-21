@@ -15,49 +15,50 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.getGenericType;
+import static org.netbeans.jcode.core.util.JavaIdentifiers.unqualifyGeneric;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS;
+import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
-import org.netbeans.jpa.modeler.spec.extend.SnippetLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
+import org.netbeans.orm.converter.util.ImportSet;
 
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
     private static final String JPA_TEMPLATE_FILENAME = "jpatemplate.vm";
     private static final String DEFAULT_TEMPLATE_FILENAME = "classtemplate.vm";
 
-    private static final VariableDefSnippet AUTO_GENERATE = new VariableDefSnippet();
     private List<ConstructorSnippet> constructorSnippets;
     private HashcodeMethodSnippet hashcodeMethodSnippet;
     private EqualsMethodSnippet equalsMethodSnippet;
     private ToStringMethodSnippet toStringMethodSnippet;
 
-    private List<AnnotationSnippet> annotation;
-    private Map<SnippetLocationType,List<String>> customSnippet;
-
-    static {
-        AUTO_GENERATE.setName("id");
-        AUTO_GENERATE.setType("String");
-        AUTO_GENERATE.setAutoGenerate(true);
-        AUTO_GENERATE.setPrimaryKey(true);
-    }
+    private Map<ClassSnippetLocationType, List<String>> customSnippet;
+    private Map<ClassAnnotationLocationType, List<AnnotationSnippet>> annotation;
 
     private boolean embeddable = false;
-    private boolean generateId = false;
     private boolean excludeDefaultListener = false;
     private boolean excludeSuperClassListener = false;
     private boolean mappedSuperClass = false;
@@ -69,7 +70,11 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private final ClassHelper classHelper = new ClassHelper();
     private final ClassHelper superClassHelper = new ClassHelper();
     private String description;
+    private String author;
     private String entityName;
+
+    private boolean propertyChangeSupport;
+    private boolean vetoableChangeSupport;
 
     private TableDefSnippet tableDef;
     private CacheableDefSnippet cacheableDef;
@@ -82,6 +87,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private DiscriminatorValueSnippet discriminatorValue;
 
     private EntityListenersSnippet entityListeners;
+    private ConvertsSnippet converts;
     private InheritanceSnippet inheritance;
     private NamedQueriesSnippet namedQueries;
     private NamedNativeQueriesSnippet namedNativeQueries;
@@ -89,7 +95,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private NamedEntityGraphsSnippet namedEntityGraphs;
     private NamedStoredProcedureQueriesSnippet namedStoredProcedureQueries;
 
-    private List<VariableDefSnippet> variableDefs = new ArrayList<VariableDefSnippet>();
+    private List<VariableDefSnippet> variableDefs = new ArrayList<>();
 
     public boolean isEmbeddable() {
         return embeddable;
@@ -114,14 +120,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public void setExcludeSuperClassListener(
             boolean excludeSuperClassListener) {
         this.excludeSuperClassListener = excludeSuperClassListener;
-    }
-
-    public boolean isGenerateId() {
-        return generateId;
-    }
-
-    public void setGenerateId(boolean generateId) {
-        this.generateId = generateId;
     }
 
     public boolean isMappedSuperClass() {
@@ -158,7 +156,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     }
 
     public String getSuperClassName() {
-        return superClassHelper.getClassName();
+        return superClassHelper.getClassDeclarationWithFQGeneric();
     }
 
     public void setSuperClassName(String className) {
@@ -256,18 +254,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public String getEntityString() {
 
         if (mappedSuperClass) {
-            return "@MappedSuperclass";
+            return "@" + MAPPED_SUPERCLASS;
         }
 
         if (embeddable) {
-            return "@Embeddable";
+            return "@" + EMBEDDABLE;
         }
 
         if (entity) {
             if (entityName == null || entityName.isEmpty()) {
-                return "@Entity";
+                return "@" + ENTITY;
             } else {
-                return "@Entity(name=\"" + entityName + "\")";
+                return "@" + ENTITY + "(name=\"" + entityName + "\")";
             }
 
         }
@@ -311,11 +309,6 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     }
 
     public List<VariableDefSnippet> getVariableDefs() {
-
-        if (generateId && !variableDefs.contains(AUTO_GENERATE)) {
-            variableDefs.add(AUTO_GENERATE);
-        }
-
         return variableDefs;
     }
 
@@ -330,25 +323,13 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     @Override
     public String getSnippet() throws InvalidDataException {
         try {
-            Template template = ORMConverterUtil.getTemplate(getTemplateName());
 
-            VelocityContext velocityContext = new VelocityContext();
+            Map velocityContext = new HashMap();
             velocityContext.put("classDef", this);
             velocityContext.put("n", NEW_LINE);
             velocityContext.put("fluentAPI", CodePanel.isGenerateFluentAPI());
-            
 
-            ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
-
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass))) {
-                if (template != null) {
-                    template.merge(velocityContext, writer);
-                }
-
-                writer.flush();
-            }
-
-            return generatedClass.toString();
+            return ORMConverterUtil.writeToTemplate(getTemplateName(), velocityContext);
 
         } catch (Exception e) {
             throw new InvalidDataException("Class name : " + classHelper.getFQClassName(), e);
@@ -358,14 +339,14 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     public Collection<String> getImports() throws InvalidDataException {
 
         //Sort and eliminate duplicates
-        Collection<String> importSnippets = new TreeSet<>();
+        ImportSet importSnippets = new ImportSet();
 
         if (mappedSuperClass) {
-            importSnippets.add("javax.persistence.MappedSuperclass");
+            importSnippets.add(MAPPED_SUPERCLASS_FQN);
         } else if (embeddable) {
-            importSnippets.add("javax.persistence.Embeddable");
+            importSnippets.add(EMBEDDABLE_FQN);
         } else if (entity) {
-            importSnippets.add("javax.persistence.Entity");
+            importSnippets.add(ENTITY_FQN);
         }
 
         if (superClassHelper.getPackageName() != null) {
@@ -424,6 +405,10 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             importSnippets.addAll(entityListeners.getImportSnippets());
         }
 
+        if (converts != null) {
+            importSnippets.addAll(converts.getImportSnippets());
+        }
+
         if (discriminatorColumn != null) {
             importSnippets.addAll(discriminatorColumn.getImportSnippets());
         }
@@ -442,23 +427,19 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             }
         }
 
-        if (generateId) {
-            importSnippets.add("javax.persistence.Id");
-            importSnippets.add("javax.persistence.GenerateType");
-            importSnippets.add("javax.persistence.GenerateValue");
-        }
-
         if (excludeDefaultListener) {
-            importSnippets.add("javax.persistence.ExcludeDefaultListeners");
+            importSnippets.add(EXCLUDE_DEFAULT_LISTENERS_FQN);
         }
 
         if (excludeSuperClassListener) {
-            importSnippets.add("javax.persistence.ExcludeSuperclassListeners");
+            importSnippets.add(EXCLUDE_SUPERCLASS_LISTENERS_FQN);
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation()) {
+        for (AnnotationSnippet snippet : this.getAnnotation().values().stream().flatMap(annot -> annot.stream()).collect(toList())) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
+
+        importSnippets.addAll(this.getInterfaces().stream().collect(toList()));
 
         return importSnippets;
     }
@@ -503,14 +484,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the annotation
      */
-    public List<AnnotationSnippet> getAnnotation() {
+    public Map<ClassAnnotationLocationType, List<AnnotationSnippet>> getAnnotation() {
         return annotation;
     }
-
+    
+    public List<AnnotationSnippet> getAnnotation(String locationType) {
+        return annotation.get(ClassAnnotationLocationType.valueOf(locationType));
+    }
+    
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<AnnotationSnippet> annotation) {
+    public void setAnnotation(Map<ClassAnnotationLocationType, List<AnnotationSnippet>> annotation) {
         this.annotation = annotation;
     }
 
@@ -532,6 +517,9 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      * @return the interfaces
      */
     public List<String> getInterfaces() {
+        if (interfaces == null) {
+            interfaces = new ArrayList<>();
+        }
         return interfaces;
     }
 
@@ -540,6 +528,14 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
      */
     public void setInterfaces(List<String> interfaces) {
         this.interfaces = interfaces;
+    }
+
+    public boolean isInterfaceExist() {
+        return interfaces != null && !interfaces.isEmpty();
+    }
+
+    public String getUnqualifiedInterfaceList() {
+        return interfaces.stream().map(fqn -> unqualifyGeneric(fqn) + getGenericType(fqn)).collect(joining(", "));
     }
 
     /**
@@ -600,16 +596,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
 
     public String getJavaDoc() {
         StringBuilder doc = new StringBuilder();
-        doc.append("/**").append(NEW_LINE);
-        if (StringUtils.isNotBlank(description)) {
-            for (String line : description.split("\\r\\n|\\n|\\r")) {
-                doc.append(" * ").append(line).append(NEW_LINE);
+        if (StringUtils.isNotBlank(description) || StringUtils.isNotBlank(author)) {
+            doc.append(NEW_LINE).append("/**").append(NEW_LINE);
+            if (StringUtils.isNotBlank(description)) {
+                for (String line : description.split("\\r\\n|\\n|\\r")) {
+                    doc.append(" * ").append(line).append(NEW_LINE);
+                }
             }
+            if (StringUtils.isNotBlank(author)) {
+                doc.append(" * @author ").append(author).append(NEW_LINE);
+            }
+            doc.append(" */");
         }
-        if (StringUtils.isNotBlank(JavaSourceHelper.getAuthor())) {
-            doc.append(" * @author  ").append(JavaSourceHelper.getAuthor()).append(NEW_LINE);
-        }
-        doc.append(" */");
         return doc.toString();
     }
 
@@ -687,19 +685,74 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @return the customSnippet
      */
-    public Map<SnippetLocationType,List<String>> getCustomSnippet() {
+    public Map<ClassSnippetLocationType, List<String>> getCustomSnippet() {
         return customSnippet;
     }
-    
+
     public List<String> getCustomSnippet(String type) {
-        return customSnippet.get(SnippetLocationType.valueOf(type));
+        return customSnippet.get(ClassSnippetLocationType.valueOf(type));
     }
 
     /**
      * @param customSnippet the customSnippet to set
      */
-    public void setCustomSnippet(Map<SnippetLocationType,List<String>> customSnippet) {
+    public void setCustomSnippet(Map<ClassSnippetLocationType, List<String>> customSnippet) {
         this.customSnippet = customSnippet;
     }
 
+    /**
+     * @return the author
+     */
+    public String getAuthor() {
+        return author;
+    }
+
+    /**
+     * @param author the author to set
+     */
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    /**
+     * @return the propertyChangeSupport
+     */
+    public boolean isPropertyChangeSupport() {
+        return propertyChangeSupport;
+    }
+
+    /**
+     * @param propertyChangeSupport the propertyChangeSupport to set
+     */
+    public void setPropertyChangeSupport(boolean propertyChangeSupport) {
+        this.propertyChangeSupport = propertyChangeSupport;
+    }
+
+    /**
+     * @return the vetoableChangeSupport
+     */
+    public boolean isVetoableChangeSupport() {
+        return vetoableChangeSupport;
+    }
+
+    /**
+     * @param vetoableChangeSupport the vetoableChangeSupport to set
+     */
+    public void setVetoableChangeSupport(boolean vetoableChangeSupport) {
+        this.vetoableChangeSupport = vetoableChangeSupport;
+    }
+
+    /**
+     * @return the converts
+     */
+    public ConvertsSnippet getConverts() {
+        return converts;
+    }
+
+    /**
+     * @param converts the converts to set
+     */
+    public void setConverts(ConvertsSnippet converts) {
+        this.converts = converts;
+    }
 }

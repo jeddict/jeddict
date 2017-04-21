@@ -15,60 +15,65 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.jcode.jpa.JPAConstants.ORDER_BY;
+import static org.netbeans.jcode.jpa.JPAConstants.ORDER_BY_FQN;
+import org.netbeans.jpa.modeler.spec.OrderBy;
+import org.netbeans.jpa.modeler.spec.OrderType;
+import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.QUOTE;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.SPACE;
 
 public class OrderBySnippet implements Snippet {
 
-    private List<String> orderList = Collections.EMPTY_LIST;
+    private List<OrderbyItem> orderList = Collections.EMPTY_LIST;
 
-    public List<String> getOrderList() {
-        return orderList;
-    }
-
-    public OrderBySnippet() {
-    }
-
-    public OrderBySnippet(String orderBy) {
-        if (!StringUtils.EMPTY.equals(orderBy)) {
-            orderList = new ArrayList<String>();
-            orderList.add(orderBy);
-        }
-    }
-
-    public void setOrderList(List<String> orderList) {
-        if (orderList != null) {
-            this.orderList = orderList;
-        }
+    public OrderBySnippet(OrderBy orderBy) {
+        orderList = orderBy.getAttributes();
     }
 
     @Override
     public String getSnippet() throws InvalidDataException {
 
         if (orderList.isEmpty()) {
-            return "@OrderBy";
+            return "@" + ORDER_BY;
         }
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@OrderBy(");
+        builder.append("@").append(ORDER_BY).append("(");
+        builder.append(QUOTE);
 
-        for (String order : orderList) {
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(order);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        for (OrderbyItem order : orderList) {
+            boolean propertyExist = !StringUtils.isBlank(order.getProperty());
+            if (propertyExist) {
+                builder.append(order.getProperty());
+            }
+            if (order.getOrderType() != null) {
+                if (propertyExist) { //ElementCollection Basic type then property not exist
+                    builder.append(SPACE);
+                }
+                builder.append(order.getOrderType().name());
+            } else if (CodePanel.isGenerateDefaultValue()) {
+                if (propertyExist) {
+                    builder.append(SPACE);
+                }
+                builder.append(OrderType.ASC.name());
+            }
+            builder.append(COMMA).append(SPACE);
         }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        builder.setLength(builder.length() - 2);
+        builder.append(QUOTE).append(CLOSE_PARANTHESES);
+        return builder.toString();
     }
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.OrderBy");
+        return Collections.singletonList(ORDER_BY_FQN);
     }
 }

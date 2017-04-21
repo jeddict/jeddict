@@ -15,8 +15,11 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.jpa.modeler.spec.validation.constraints.Future;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import org.netbeans.bean.validation.constraints.Future;
 import org.netbeans.orm.converter.compiler.*;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
  *
@@ -32,6 +35,29 @@ public class FutureSnippet extends ConstraintSnippet<Future> {
     protected String getAPI() {
         return "Future";
     }
-  
-    
+
+    @Override
+    public String getSnippet() throws InvalidDataException {
+        if (constraint.getMessage() == null && !TRUE.equals(constraint.getOrPresent())) {
+            return "@" + getAPI();
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
+
+        if (TRUE.equals(constraint.getOrPresent())) {
+            builder.append("orPresent=");
+            builder.append(constraint.getOrPresent());
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        if (constraint.getMessage() != null) {
+            builder.append("message=\"");
+            builder.append(constraint.getMessage());
+            builder.append(ORMConverterUtil.QUOTE);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
+        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+    }
+
 }

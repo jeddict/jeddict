@@ -15,7 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.jpa.modeler.spec.validation.constraints.Size;
+import org.netbeans.bean.validation.constraints.Size;
 import org.netbeans.orm.converter.compiler.*;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
@@ -36,7 +36,7 @@ public class SizeSnippet extends ConstraintSnippet<Size> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && constraint.getMax() == null && constraint.getMessage() == null) {
+        if (constraint.getMessage() == null && constraint.getMin() == null && constraint.getMax() == null) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();

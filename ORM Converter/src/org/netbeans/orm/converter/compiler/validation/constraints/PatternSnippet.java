@@ -15,10 +15,19 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.validation.constraints.Pattern;
+import org.netbeans.bean.validation.constraints.Flag;
+import org.netbeans.bean.validation.constraints.Pattern;
+import static org.netbeans.jcode.beanvalidation.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
 import org.netbeans.orm.converter.compiler.*;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_BRACES;
 
 /**
  *
@@ -26,8 +35,16 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
  */
 public class PatternSnippet extends ConstraintSnippet<Pattern> {
 
+    private List<Flag> flags = Collections.EMPTY_LIST;
+
     public PatternSnippet(Pattern pattern) {
         super(pattern);
+        if (!StringUtils.isBlank(constraint.getFlags())) {
+            flags = Arrays.stream(constraint.getFlags().split(","))
+                    .map(flag -> Flag.fromValue(flag.trim()))
+                    .filter(flag -> flag != null)
+                    .collect(toList());
+        }
     }
 
     @Override
@@ -37,7 +54,7 @@ public class PatternSnippet extends ConstraintSnippet<Pattern> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && StringUtils.isBlank(constraint.getRegexp())) {
+        if (constraint.getMessage() == null && StringUtils.isBlank(constraint.getRegexp()) && flags.isEmpty()) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();
@@ -49,7 +66,14 @@ public class PatternSnippet extends ConstraintSnippet<Pattern> {
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         }
-       
+
+        if (!flags.isEmpty()) {
+            builder.append("flags=").append(OPEN_BRACES);
+            builder.append(flags.stream().map(Flag::name).collect(joining(", ")));
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
+            builder.append(ORMConverterUtil.COMMA);
+        }
+
         if (constraint.getMessage() != null) {
             builder.append("message=\"");
             builder.append(constraint.getMessage());
@@ -58,6 +82,18 @@ public class PatternSnippet extends ConstraintSnippet<Pattern> {
         }
 
         return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+    }
+
+    @Override
+    public Collection<String> getImportSnippets() throws InvalidDataException {
+        Collection<String> imports = super.getImportSnippets();
+        imports.addAll(
+                flags.stream()
+                        .map(Flag::name)
+                        .map(flag -> "static " + BEAN_VAILDATION_PACKAGE + ".Pattern.Flag." + flag)
+                        .collect(toList())
+        );
+        return imports;
     }
 
 }

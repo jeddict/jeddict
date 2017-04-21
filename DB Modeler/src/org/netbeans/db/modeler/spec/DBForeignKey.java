@@ -16,15 +16,15 @@
 package org.netbeans.db.modeler.spec;
 
 import java.util.List;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.IJoinColumn;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public interface DBForeignKey {
+public interface DBForeignKey<T extends IJoinColumn> {
 
-    public JoinColumn getJoinColumn();
+    public T getJoinColumn();
 
-    public List<? extends JoinColumn> getJoinColumns();
+    public List<T> getJoinColumns();
 }

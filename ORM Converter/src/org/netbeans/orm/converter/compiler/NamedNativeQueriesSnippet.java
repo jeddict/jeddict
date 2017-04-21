@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERIES;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERIES_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class NamedNativeQueriesSnippet implements Snippet {
@@ -48,7 +50,7 @@ public class NamedNativeQueriesSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
 
         if (namedNativeQueries.isEmpty()) {
-            throw new InvalidDataException("Missing NamedNativeQueries");
+            throw new InvalidDataException("Missing " + NAMED_NATIVE_QUERIES);
         }
 
         if (namedNativeQueries.size() == 1) {
@@ -57,7 +59,7 @@ public class NamedNativeQueriesSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedNativeQueries({");
+        builder.append("@").append(NAMED_NATIVE_QUERIES).append("({");
 
         for (NamedNativeQuerySnippet namedNativeQuery : namedNativeQueries) {
             builder.append(namedNativeQuery.getSnippet());
@@ -82,7 +84,7 @@ public class NamedNativeQueriesSnippet implements Snippet {
 
         ArrayList<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedNativeQueries");
+        importSnippets.add(NAMED_NATIVE_QUERIES_FQN);
         for(NamedNativeQuerySnippet namedNativeQuery : namedNativeQueries){
             importSnippets.addAll(namedNativeQuery.getImportSnippets());
         }

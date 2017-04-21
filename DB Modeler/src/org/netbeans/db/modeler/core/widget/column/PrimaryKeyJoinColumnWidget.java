@@ -17,10 +17,9 @@ package org.netbeans.db.modeler.core.widget.column;
 
 import org.netbeans.db.modeler.spec.DBPrimaryKeyJoinColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jpa.modeler.spec.Column;
+import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
@@ -30,9 +29,7 @@ public class PrimaryKeyJoinColumnWidget extends ForeignKeyWidget<DBPrimaryKeyJoi
 
     public PrimaryKeyJoinColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.addPropertyChangeListener("JoinColumn_name", (PropertyChangeListener<String>) (String value) -> {
-            setPropertyName(value);
-        });
+        this.addPropertyChangeListener("PrimaryKeyJoinColumn_name", (PropertyChangeListener<String>) (oldValue, value) -> setPropertyName(value));
     }
 
     @Override
@@ -43,15 +40,16 @@ public class PrimaryKeyJoinColumnWidget extends ForeignKeyWidget<DBPrimaryKeyJoi
 
     @Override
     protected void updateName(String newName) {
-        Id attribute = this.getBaseElementSpec().getAttribute();
-        ColumnHandler baseAttribute = (ColumnHandler) attribute;
-        baseAttribute.getColumn().setName(this.name);
+        PrimaryKeyJoinColumn column = this.getBaseElementSpec().getJoinColumn();
+        column.setName(newName);
+        ColumnUtil.syncronizeCompositeKeyJoincolumn(this.getReferenceFlowWidget().get(0).getReferenceColumnWidget().getTableWidget(), this.getTableWidget());//TODO get(n) // TODO applicable here ?
     }
 
     @Override
     public void createPropertySet(ElementPropertySet set) {
-        Column column = this.getBaseElementSpec().getAttribute().getColumn();
-        set.createPropertySet(this, column, getPropertyChangeListeners());
+        PrimaryKeyJoinColumn joinColumn = this.getBaseElementSpec().getJoinColumn();
+        set.createPropertySet("PK_JOIN_COLUMN", this, joinColumn, getPropertyChangeListeners());
+        set.createPropertySet("FOREIGN_KEY", this, joinColumn.getForeignKey() , null);
     }
 
 }

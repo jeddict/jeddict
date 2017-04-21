@@ -15,9 +15,10 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ATTRIBUTE_NODE;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ATTRIBUTE_NODE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 /**
@@ -80,12 +81,12 @@ public class NamedAttributeNodeSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
         if (getSubgraph() != null && getKeySubgraph() != null) {
-            builder.append("@NamedAttributeNode(\"");
+            builder.append("@").append(NAMED_ATTRIBUTE_NODE).append("(\"");
             builder.append(getName());
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
         } else {
-            builder.append("@NamedAttributeNode(value=\"");
+            builder.append("@").append(NAMED_ATTRIBUTE_NODE).append("(value=\"");
             builder.append(getName());
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(ORMConverterUtil.COMMA);
@@ -111,7 +112,7 @@ public class NamedAttributeNodeSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList("javax.persistence.NamedAttributeNode");
+        return Collections.singletonList(NAMED_ATTRIBUTE_NODE_FQN);
     }
 
 }

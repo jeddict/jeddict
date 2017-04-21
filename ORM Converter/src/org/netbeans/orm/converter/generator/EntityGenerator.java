@@ -15,10 +15,7 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.jpa.modeler.spec.Attributes;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -27,26 +24,22 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.JOINED;
 import static org.netbeans.jpa.modeler.spec.InheritanceType.TABLE_PER_CLASS;
-import org.netbeans.jpa.modeler.spec.extend.CompositePrimaryKeyType;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.orm.converter.compiler.DiscriminatorColumnSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorValueSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet.Type;
-import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
-    private static Logger logger = ORMConvLogger.getLogger(EntityGenerator.class);
-
-    private Entity entity = null;
+    private Entity entity;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
         super(new ManagedClassDefSnippet());
         this.entity = parsedEntity;
-        this.packageName = packageName;
+        this.rootPackageName = packageName;
+        this.packageName = entity.getAbsolutePackage(rootPackageName);
     }
 
     @Override
@@ -62,7 +55,8 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         classDef.setAttributeOverrides(processAttributeOverrides(entity.getAttributeOverride()));
 
         processSecondaryTable(entity.getSecondaryTable());
-        processPrimaryKeyJoinColumns(entity.getPrimaryKeyJoinColumn());
+        processPrimaryKeyJoinColumns(getPrimaryKeyJoinColumns(entity.getPrimaryKeyJoinColumn()), getForeignKey(entity.getPrimaryKeyForeignKey()));
+        
         processSqlResultSetMapping(entity.getSqlResultSetMapping());
         processEntityListeners(entity.getEntityListeners());
 
@@ -70,6 +64,9 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
                 entity.getExcludeDefaultListeners());
         processExcludeSuperclassListeners(
                 entity.getExcludeSuperclassListeners());
+        
+        classDef.setConverts(processConverts(entity.getConverts()));
+        
         //Table
         processTable(entity.getTable());
         
@@ -86,11 +83,11 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         processNamedStoredProcedureQueries((EntityMappings) entity.getRootElement(), entity.getNamedStoredProcedureQuery());
 
         //Attributes -- Method level annotations
-        Attributes parsedAttributes = entity.getAttributes();
+        IPrimaryKeyAttributes parsedAttributes = entity.getAttributes();
 
         if (parsedAttributes != null) {//#ATTRIBUTE_SEQUENCE_FLOW#
             processEmbeddedId(entity, parsedAttributes.getEmbeddedId());
-            if (entity.getCompositePrimaryKeyType() != CompositePrimaryKeyType.EMBEDDEDID) {
+            if (!entity.isEmbeddedIdType()) {
                 processId(parsedAttributes.getId());
             }
             processBasic(parsedAttributes.getBasic());
@@ -117,9 +114,10 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
         if (StringUtils.isNotBlank(entity.getDescription())) {
             classDef.setDescription(entity.getDescription());
         }
-        if (entity.getTable() != null) {
-            classDef.setEntityName(entity.getName()); //modified by gaurav gupta //.getTable().getName()
+        if (StringUtils.isNotBlank(entity.getEntityName())) {
+            classDef.setEntityName(entity.getEntityName()); 
         }
+        classDef.setAuthor(entity.getAuthor());
         classDef.setEntity(true);
         classDef.setXmlRootElement(entity.getXmlRootElement());
 

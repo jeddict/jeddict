@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static java.util.stream.Collectors.toSet;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_QUERIES;
+import static org.netbeans.jcode.jpa.JPAConstants.NAMED_QUERIES_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class NamedQueriesSnippet implements Snippet {
@@ -49,7 +50,7 @@ public class NamedQueriesSnippet implements Snippet {
     public String getSnippet() throws InvalidDataException {
 
         if (namedQueries.isEmpty()) {
-            throw new InvalidDataException("Missing NamedQueries");
+            throw new InvalidDataException("Missing " + NAMED_QUERIES);
         }
 
         if (namedQueries.size() == 1) {
@@ -58,7 +59,7 @@ public class NamedQueriesSnippet implements Snippet {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("@NamedQueries({");
+        builder.append("@").append(NAMED_QUERIES).append("({");
 
         for (NamedQueryDefSnippet namedQuery : namedQueries) {
             builder.append(namedQuery.getSnippet());
@@ -83,7 +84,7 @@ public class NamedQueriesSnippet implements Snippet {
 
         ArrayList<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add("javax.persistence.NamedQueries");
+        importSnippets.add(NAMED_QUERIES_FQN);
         for(NamedQueryDefSnippet namedQuery : namedQueries){
             importSnippets.addAll(namedQuery.getImportSnippets());
         }

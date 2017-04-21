@@ -35,8 +35,19 @@ public interface RelationDefSnippet extends Snippet {
     public String getFetchType();
 
     public void setFetchType(String fetchType);
+    
+    public String getTargetEntityName();
 
     public String getTargetEntity();
 
     public void setTargetEntity(String targetEntity);
+
+    public String getTargetEntityPackage();
+
+    public void setTargetEntityPackage(String targetEntityPackage);
+    
+    public String getTargetField();
+    
+    public void setTargetField(String targetField);
+
 }

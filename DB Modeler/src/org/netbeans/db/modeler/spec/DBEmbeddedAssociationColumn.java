@@ -21,16 +21,16 @@ import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
-public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends DBEmbeddedColumn<E> implements DBForeignKey {
+public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends DBEmbeddedColumn<E> implements DBForeignKey<JoinColumn> {
 
     protected AssociationOverride associationOverride;
     protected final boolean relationTableExist;
 
     protected JoinColumn joinColumn;
-    protected List<? extends JoinColumn> joinColumns;
+    protected List<JoinColumn> joinColumns;
 
     protected JoinColumn joinColumnOverride;
-    protected List<? extends JoinColumn> joinColumnsOverride;
+    protected List<JoinColumn> joinColumnsOverride;
 
     public DBEmbeddedAssociationColumn(String name, List<Embedded> embeddedList, E managedAttribute, boolean relationTableExist) {
         super(name, embeddedList, managedAttribute);
@@ -58,7 +58,7 @@ public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends D
         return joinColumn;
     }
 
-    public List<? extends JoinColumn> getJoinColumns() {
+    public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }
 
@@ -66,7 +66,7 @@ public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends D
         return joinColumnOverride;
     }
 
-    public List<? extends JoinColumn> getJoinColumnsOverride() {
+    public List<JoinColumn> getJoinColumnsOverride() {
         return joinColumnsOverride;
     }
 

@@ -22,7 +22,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN_FQN;
-import org.netbeans.orm.converter.generator.GeneratorUtil;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ColumnDefSnippet implements Snippet {
@@ -51,7 +51,7 @@ public class ColumnDefSnippet implements Snippet {
     
     public boolean isEmptyObject() {
         boolean empty = false;
-        if (!GeneratorUtil.isGenerateDefaultValue()) {
+        if (!CodePanel.isGenerateDefaultValue()) {
             if ((name == null || name.trim().isEmpty())
                     && (table == null || table.trim().isEmpty())
                     && (columnDefinition == null || columnDefinition.trim().isEmpty())
@@ -166,7 +166,7 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("\",");
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             if (unique == true) {
                 builder.append("unique=true,");
             } else {
@@ -176,7 +176,7 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("unique=true,");
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             if (updatable == true) {
                 builder.append("updatable=true,");
             } else {
@@ -186,7 +186,7 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("updatable=false,");
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             if (insertable == true) {
                 builder.append("insertable=true,");
             } else {
@@ -196,7 +196,7 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("insertable=false,");
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue()) {
+        if (CodePanel.isGenerateDefaultValue()) {
             if (nullable == true) {
                 builder.append("nullable=true,");
             } else {
@@ -206,25 +206,26 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("nullable=false,");
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || length != 255) {
+        if (CodePanel.isGenerateDefaultValue() || length != 255) {
             builder.append("length=");
             builder.append(length);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || scale != 0) {
+        if (CodePanel.isGenerateDefaultValue() || scale != 0) {
             builder.append("scale=");
             builder.append(scale);
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (GeneratorUtil.isGenerateDefaultValue() || precision != 0) {
+        if (CodePanel.isGenerateDefaultValue() || precision != 0) {
             builder.append("precision=");
             builder.append(precision);
             builder.append(ORMConverterUtil.COMMA);
         }
         
-        return "@" + (mapKey? MAP_KEY_COLUMN : COLUMN) + ORMConverterUtil.OPEN_PARANTHESES + (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
+        return "@" + (mapKey? MAP_KEY_COLUMN : COLUMN) + ORMConverterUtil.OPEN_PARANTHESES + 
+                (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
                 + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 

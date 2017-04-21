@@ -19,14 +19,16 @@ import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
+import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBForeignKey;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.extend.IJoinColumn;
 
 /**
  *
@@ -43,14 +45,16 @@ public class ColumnUtil {
      * name and the referencedColumnName elements must be specified in each such
      * '@JoinColumn'.
      */
-    public static void syncronizeCompositeKeyJoincolumn(TableWidget sourceTableWidget, final TableWidget targetTableWidget) {
+    public static void syncronizeCompositeKeyJoincolumn(TableWidget<DBTable> sourceTableWidget, final TableWidget<DBTable> targetTableWidget) {
         if (sourceTableWidget.getPrimaryKeyWidgets().size() > 1) {
-            for (Object widget : sourceTableWidget.getPrimaryKeyWidgets()) {
-                IPrimaryKeyWidget<DBColumn<Id>> primaryKeyWidget = (IPrimaryKeyWidget<DBColumn<Id>>) widget;
-                Optional<ReferenceFlowWidget> optionalReferenceFlowWidget = primaryKeyWidget.getReferenceFlowWidget().stream().filter(r -> r.getForeignKeyWidget().getTableWidget() == targetTableWidget).findFirst();
+            for (IPrimaryKeyWidget<DBColumn<Id>> primaryKeyWidget : sourceTableWidget.getPrimaryKeyWidgets()) {
+                Optional<ReferenceFlowWidget> optionalReferenceFlowWidget = primaryKeyWidget.getReferenceFlowWidget()
+                        .stream()
+                        .filter(r -> r.getForeignKeyWidget().getTableWidget() == targetTableWidget)
+                        .findFirst();
                 if (optionalReferenceFlowWidget.isPresent()) {
                     ForeignKeyWidget foreignKeyWidget = optionalReferenceFlowWidget.get().getForeignKeyWidget();
-                    JoinColumn joinColumn;
+                    IJoinColumn joinColumn;
                     if (foreignKeyWidget instanceof ParentAssociationColumnWidget) {
                         joinColumn = ((DBParentAssociationColumn) foreignKeyWidget.getBaseElementSpec()).getJoinColumnOverride();
                     } else {

@@ -40,6 +40,14 @@ public class DBEventListener extends EventListener {
                 SQLEditorUtil.openEditor(modelerFile, ((DBMapping) modelerFile.getModelerScene().getBaseElementSpec()).getSQL());
             }
         });
+        
+        component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, InputEvent.CTRL_MASK), "SEARCH");
+        component.getActionMap().put("SEARCH", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                modelerFile.getModelerDiagramEngine().searchWidget();
+            }
+        });
 
     }
 }

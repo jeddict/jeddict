@@ -15,8 +15,6 @@
  */
 package org.netbeans.db.modeler.properties.index;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBTable;
@@ -24,7 +22,7 @@ import org.netbeans.db.modeler.properties.tablemember.TableMemberPanel;
 import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.entity.custom.editor.combobox.internal.EntityComponent;
+import org.netbeans.modeler.properties.EntityComponent;
 
 public class IndexPanel extends EntityComponent<Index> {
 
@@ -42,8 +40,8 @@ public class IndexPanel extends EntityComponent<Index> {
 
     @Override
     public void init() {
-        ((TableMemberPanel) classMemberPanel).init();
-        ((TableMemberPanel) classMemberPanel).setChildFactory(new IndexChildFactory());
+        ((TableMemberPanel) tableMemberPanel).init();
+        ((TableMemberPanel) tableMemberPanel).setChildFactory(new IndexChildFactory());
         pack();
     }
     
@@ -55,8 +53,8 @@ public class IndexPanel extends EntityComponent<Index> {
             this.setEntity(new RowValue(new Object[3]));
         }
         index = new Index();
-        ((TableMemberPanel)classMemberPanel).setTableWidget(tableWidget);
-        ((TableMemberPanel) classMemberPanel).setValue(index.getColumnList());
+        ((TableMemberPanel)tableMemberPanel).setTableWidget(tableWidget);
+        ((TableMemberPanel) tableMemberPanel).setValue(index.getColumnList());
         nameTextField.setText(EMPTY);
         uniqueCheckBox.setSelected(false);
     }
@@ -68,8 +66,8 @@ public class IndexPanel extends EntityComponent<Index> {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             index = (Index) row[0];
-            ((TableMemberPanel)classMemberPanel).setTableWidget(tableWidget);
-            ((TableMemberPanel) classMemberPanel).setValue(index.getColumnList());
+            ((TableMemberPanel)tableMemberPanel).setTableWidget(tableWidget);
+            ((TableMemberPanel) tableMemberPanel).setValue(index.getColumnList());
             nameTextField.setText(index.getName());
             if(index.isUnique()!=null && index.isUnique()){
                uniqueCheckBox.setSelected(true); 
@@ -90,7 +88,7 @@ public class IndexPanel extends EntityComponent<Index> {
     private void initComponents() {
 
         rootLayeredPane = new javax.swing.JLayeredPane();
-        classMemberPanel = new org.netbeans.db.modeler.properties.tablemember.TableMemberPanel("Indexes");
+        tableMemberPanel = new org.netbeans.db.modeler.properties.tablemember.TableMemberPanel("Indexes");
         configPane = new javax.swing.JLayeredPane();
         action_jLayeredPane = new javax.swing.JLayeredPane();
         save_Button = new javax.swing.JButton();
@@ -101,28 +99,29 @@ public class IndexPanel extends EntityComponent<Index> {
 
         rootLayeredPane.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout classMemberPanelLayout = new javax.swing.GroupLayout(classMemberPanel);
-        classMemberPanel.setLayout(classMemberPanelLayout);
-        classMemberPanelLayout.setHorizontalGroup(
-            classMemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout tableMemberPanelLayout = new javax.swing.GroupLayout(tableMemberPanel);
+        tableMemberPanel.setLayout(tableMemberPanelLayout);
+        tableMemberPanelLayout.setHorizontalGroup(
+            tableMemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        classMemberPanelLayout.setVerticalGroup(
-            classMemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 458, Short.MAX_VALUE)
+        tableMemberPanelLayout.setVerticalGroup(
+            tableMemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 414, Short.MAX_VALUE)
         );
 
-        rootLayeredPane.add(classMemberPanel, java.awt.BorderLayout.CENTER);
+        rootLayeredPane.add(tableMemberPanel, java.awt.BorderLayout.CENTER);
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(IndexPanel.class, "IndexPanel.save_Button.text")); // NOI18N
         save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(IndexPanel.class, "IndexPanel.save_Button.toolTipText")); // NOI18N
+        save_Button.setPreferredSize(new java.awt.Dimension(57, 29));
         save_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 save_ButtonActionPerformed(evt);
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 70, 29);
+        save_Button.setBounds(0, 0, 70, 30);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(IndexPanel.class, "IndexPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(IndexPanel.class, "IndexPanel.cancel_Button.toolTipText")); // NOI18N
@@ -141,20 +140,25 @@ public class IndexPanel extends EntityComponent<Index> {
 
         org.openide.awt.Mnemonics.setLocalizedText(uniqueCheckBox, org.openide.util.NbBundle.getMessage(IndexPanel.class, "IndexPanel.uniqueCheckBox.text")); // NOI18N
 
+        configPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        configPane.setLayer(nameTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        configPane.setLayer(nameLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        configPane.setLayer(uniqueCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout configPaneLayout = new javax.swing.GroupLayout(configPane);
         configPane.setLayout(configPaneLayout);
         configPaneLayout.setHorizontalGroup(
             configPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(configPaneLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(nameLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(configPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(configPaneLayout.createSequentialGroup()
                         .addComponent(uniqueCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 154, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                         .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(configPaneLayout.createSequentialGroup()
-                        .addComponent(nameLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(nameTextField)
                         .addContainerGap())))
         );
@@ -170,10 +174,6 @@ public class IndexPanel extends EntityComponent<Index> {
                     .addComponent(uniqueCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
-        configPane.setLayer(action_jLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        configPane.setLayer(nameTextField, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        configPane.setLayer(nameLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        configPane.setLayer(uniqueCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         rootLayeredPane.add(configPane, java.awt.BorderLayout.SOUTH);
 
@@ -201,13 +201,9 @@ public class IndexPanel extends EntityComponent<Index> {
         if (!validateField()) {
             return;
         }
-        index.setColumnList(((TableMemberPanel) classMemberPanel).getValue().getColumns());
+        index.setColumnList(((TableMemberPanel) tableMemberPanel).getValue().getColumns());
         index.setName(nameTextField.getText());
-        if(uniqueCheckBox.isSelected()){
-            index.setUnique(true);
-        } else {
-            index.setUnique(false);
-        }
+        index.setUnique(uniqueCheckBox.isSelected());
 
         if (this.getEntity().getClass() == RowValue.class) {
             Object[] row = ((RowValue) this.getEntity()).getRow();
@@ -225,12 +221,12 @@ public class IndexPanel extends EntityComponent<Index> {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JButton cancel_Button;
-    private javax.swing.JPanel classMemberPanel;
     private javax.swing.JLayeredPane configPane;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JLayeredPane rootLayeredPane;
     private javax.swing.JButton save_Button;
+    private javax.swing.JPanel tableMemberPanel;
     private javax.swing.JCheckBox uniqueCheckBox;
     // End of variables declaration//GEN-END:variables
 

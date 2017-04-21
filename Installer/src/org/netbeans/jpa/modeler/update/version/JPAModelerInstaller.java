@@ -31,8 +31,8 @@ import org.openide.windows.WindowManager;
 public class JPAModelerInstaller extends ModuleInstall implements Runnable {
     public static final String CODENAME = "org.netbeans.jpa.modeler";
     public static final String IDE_NAME = "NetBeans";
-    public static final String CONFIG = ".jpamodeler.cfg";
-    public static final Logger log = Logger.getLogger("JPAModeler");
+    public static final String CONFIG = ".jeddict.cfg";
+    public static final Logger log = Logger.getLogger("jeddict");
 
     public static String VERSION = "Unknown";
     public static String IDE_VERSION = "Unknown";
@@ -46,9 +46,9 @@ public class JPAModelerInstaller extends ModuleInstall implements Runnable {
     public void run() {
         JPAModelerInstaller.VERSION = JPAModelerInstaller.getPluginVersion();
         JPAModelerInstaller.IDE_VERSION = System.getProperty("netbeans.buildnumber");
-        JPAModelerInstaller.log.log(Level.INFO, "Initializing JPA Modeler v{0} (https://jpamodeler.github.io/)", JPAModelerInstaller.VERSION);
+        JPAModelerInstaller.log.log(Level.INFO, "Initializing Jeddict v{0} (https://jeddict.github.io/)", JPAModelerInstaller.VERSION);
 
-        JPAModelerInstaller.info("Finished initializing JPA Modeler...");
+        JPAModelerInstaller.info("Finished initializing Jeddict...");
         lookupUpdates();
     }
 

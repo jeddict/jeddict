@@ -17,18 +17,17 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
-import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE;
-import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE;
-import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet
-        implements RelationDefSnippet, CollectionTypeHandler {
+public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet implements CollectionTypeHandler {
 
     protected String collectionType;
     protected String mappedBy = null;
-    private MapKeySnippet mapKeySnippet;
+    protected MapKeySnippet mapKeySnippet;
 
     public String getMappedBy() {
         return mappedBy;
@@ -64,7 +63,9 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
 
         StringBuilder builder = new StringBuilder();
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
-            builder.append(mapKeySnippet.getSnippet());
+            builder.append(mapKeySnippet.getSnippet())
+                    .append(ORMConverterUtil.NEW_LINE)
+                    .append(ORMConverterUtil.TAB);
         }
 
         builder.append("@").append(getType()).append("(");
@@ -103,16 +104,19 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        importSnippets.add(PERSISTENCE_PACKAGE + getType());
+        importSnippets.add(PERSISTENCE_PACKAGE_PREFIX + getType());
         if (getFetchType() != null) {
-            importSnippets.add(FETCH_TYPE);
+            importSnippets.add(FETCH_TYPE_FQN);
         }
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
-            importSnippets.add(CASCADE_TYPE);
+            importSnippets.add(CASCADE_TYPE_FQN);
         }
         if(mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             importSnippets.addAll(mapKeySnippet.getImportSnippets());
         }
+//        if (getTargetEntityPackage()!= null) {
+//            importSnippets.add(getTargetEntityPackage() + ORMConverterUtil.DOT + getTargetEntityName());
+//        }
         return importSnippets;
     }
 

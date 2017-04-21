@@ -16,28 +16,30 @@
 package org.netbeans.db.modeler.spec;
 
 import java.util.List;
+import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
 
-public class DBPrimaryKeyJoinColumn extends DBColumn<Id> implements DBForeignKey {
+public class DBPrimaryKeyJoinColumn extends DBColumn<Id> implements DBForeignKey<PrimaryKeyJoinColumn> {
 
-    private final JoinColumn joinColumn;
-    private final List<JoinColumn> joinColumns;
+    private final PrimaryKeyJoinColumn joinColumn;
+    private final List<PrimaryKeyJoinColumn> joinColumns;
 
-    public DBPrimaryKeyJoinColumn(String name, Id attribute) {
+    public DBPrimaryKeyJoinColumn(String name, Entity entity, Id attribute) {
         super(name, attribute);
-        joinColumns = null;//JoinColumnFinder.findJoinColumns(attribute, relationTableExist, true);
-        joinColumn = null;//JoinColumnFinder.findJoinColumn(name, joinColumns);
+        joinColumns = JoinColumnFinder.findPrimaryKeyJoinColumns(entity);
+        joinColumn = JoinColumnFinder.findPrimaryKeyJoinColumn(name, joinColumns);
     }
 
     /**
      * @return the inverseJoinColumn
      */
-    public JoinColumn getJoinColumn() {
+    public PrimaryKeyJoinColumn getJoinColumn() {
         return joinColumn;
     }
 
-    public List<JoinColumn> getJoinColumns() {
+    public List<PrimaryKeyJoinColumn> getJoinColumns() {
         return joinColumns;
     }
 }

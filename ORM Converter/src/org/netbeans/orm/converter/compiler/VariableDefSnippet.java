@@ -19,9 +19,27 @@ import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnip
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import static org.netbeans.jcode.core.util.AttributeType.getArrayType;
+import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
+import static org.netbeans.jcode.core.util.AttributeType.isArray;
 import org.netbeans.jcode.core.util.StringHelper;
+import static org.netbeans.jcode.core.util.StringHelper.firstLower;
+import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
+import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.LOB_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY;
+import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.TRANSIENT_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.VERSION_FQN;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
@@ -31,49 +49,69 @@ import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;
+import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
+import org.netbeans.orm.converter.util.ImportSet;
+import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
 
-    private List<AnnotationSnippet> annotation = new ArrayList<>();
-    private List<ConstraintSnippet> constraints = new ArrayList<>();
+    private List<ConstraintSnippet> attributeConstraints = new ArrayList<>();
+    private List<ConstraintSnippet> keyConstraints = new ArrayList<>();
+    private List<ConstraintSnippet> valueConstraints = new ArrayList<>();
+    private boolean functionalType;
 
     private JaxbVariableType jaxbVariableType;
     private JaxbXmlAttribute jaxbXmlAttribute;
     private JaxbXmlElement jaxbXmlElement;
     private List<JaxbXmlElement> jaxbXmlElementList;
 
-    private boolean autoGenerate = false;
-    private boolean embedded = false;
-    private boolean embeddedId = false;
-    private boolean lob = false;
-    private boolean primaryKey = false;
-    private boolean tranzient = false;
-    private boolean version = false;
+    private boolean autoGenerate;
+    private boolean embedded;
+    private boolean embeddedId;
+    private boolean lob;
+    private boolean primaryKey;
+    private boolean tranzient;
+    private boolean version;
 
     private String name;
+    private String defaultValue;
     private String description;
+    private boolean propertyChangeSupport;
+    private boolean vetoableChangeSupport;
     private final ClassHelper classHelper = new ClassHelper();
-    //TODO: See if these 2 can be as a class
-    private String mapKey = null;
+    private String mapKey;
+    private BasicSnippet basic;
+    private ElementCollectionSnippet elementCollection;
+    private ColumnDefSnippet columnDef;
+    private RelationDefSnippet relationDef;
+    private OrderBySnippet orderBy;
+    private OrderColumnSnippet orderColumn;
+    private JoinColumnsSnippet joinColumns;
+    private JoinTableSnippet joinTable;
+    private CollectionTableSnippet collectionTable;
+    private GeneratedValueSnippet generatedValue;
+    private TableGeneratorSnippet tableGenerator;
+    private SequenceGeneratorSnippet sequenceGenerator;
+    private EnumeratedSnippet enumerated;
+    private TemporalSnippet temporal;
+    private AssociationOverridesSnippet associationOverrides;
+    private AttributeOverridesSnippet attributeOverrides;
+    private TypeIdentifierSnippet typeIdentifier;
+    private Attribute attribute;
+    private Map<AttributeSnippetLocationType, List<String>> customSnippet;
+    private Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> annotation;
+    private ConvertsSnippet converts;
 
-    private BasicSnippet basic = null;
-    private ElementCollectionSnippet elementCollection = null;
+    public VariableDefSnippet() {
+    }
 
-    private ColumnDefSnippet columnDef = null;
-    private RelationDefSnippet relationDef = null;
-    private OrderBySnippet orderBy = null;
-    private JoinColumnsSnippet joinColumns = null;
-    private JoinTableSnippet joinTable = null;
-    private CollectionTableSnippet collectionTable = null;
-    private GeneratedValueSnippet generatedValue = null;
-    private TableGeneratorSnippet tableGenerator = null;
-    private SequenceGeneratorSnippet sequenceGenerator = null;
-    private EnumeratedSnippet enumerated = null;
-    private TemporalSnippet temporal = null;
-    private AssociationOverridesSnippet associationOverrides = null;
-    private AttributeOverridesSnippet attributeOverrides = null;
-
-    private TypeIdentifierSnippet typeIdentifier = null;
+    public VariableDefSnippet(Attribute attribute) {
+        this.attribute = attribute;
+    }
 
     public BasicSnippet getBasic() {
         return basic;
@@ -107,12 +145,64 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.lob = lob;
     }
 
-    public String getType() {//Modified : Collection => Collection<Entity>
-        if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
-            return this.getTypeIdentifier().getVariableType();
-        } else {
-            return classHelper.getClassName();
+    public String getConstraintType() {
+        String type = null;
+        if (this.getTypeIdentifier() != null) { 
+            type = this.getTypeIdentifier().getConstraintVariableType();
+        } else if(isArray(classHelper.getClassName())) {
+            String constraint= null;
+            try {
+                constraint = getInlineValueConstraint();
+            } catch (InvalidDataException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            if (constraint != null) {
+                type = getArrayType(classHelper.getClassName()) + " " + constraint + "[]" ;
+            }
+        } 
+        
+        if(type == null){
+            type = classHelper.getClassName();
         }
+        
+        return type;
+    }
+
+    public String getType() {
+        String type;
+        if (this.getTypeIdentifier() != null) {
+            type = this.getTypeIdentifier().getVariableType();
+        } else {
+            type = classHelper.getClassName();
+        }
+
+        return type;
+    }
+
+    public String getReturnType() {//Modified : Collection => Collection<Entity>
+        String type;
+        if (this.getTypeIdentifier() != null) { //Collection<Entity> , Collection<String>
+            type = this.getTypeIdentifier().getVariableType();
+        } else {
+            type = classHelper.getClassName();
+        }
+
+        if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
+            if (isArray(type)) {
+                type = "Optional<" + type + '>';
+            } else {
+                type = "Optional<" + getWrapperType(type) + '>';
+            }
+        }
+        return type;
+    }
+
+    public String getReturnValue() {
+        String value = "this." + getName();
+        if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
+            value = "Optional.ofNullable(" + value + ')';
+        }
+        return value;
     }
 
     public void setType(String type) {
@@ -122,6 +212,16 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getName() {
         return name;
     }
+    
+    public String getFluentMethodName() {
+        if(StringUtils.isNotBlank(CodePanel.getFluentAPIPrefix())){
+            return CodePanel.getFluentAPIPrefix() + firstUpper(getName());
+        } else {
+            return getName();
+        }
+    }
+    
+    
 
     public void setName(String name) {
         this.name = name;
@@ -164,7 +264,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      * getNickname()
      */
     public String getMethodName() {
-            return StringHelper.getMethodName(name);
+        return StringHelper.getMethodName(name);
+    }
+
+    public String getPropName() {
+        return "PROP_" + name.toUpperCase();
     }
 
     public RelationDefSnippet getRelationDef() {
@@ -250,10 +354,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getMapKeyString() {
 
         if (mapKey == null) {
-            return "@MapKey";
+            return "@" + MAP_KEY;
         }
 
-        return "@MapKey(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
+        return "@" + MAP_KEY + "(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
     public TypeIdentifierSnippet getTypeIdentifier() {
@@ -268,7 +372,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
-        Collection<String> importSnippets = new ArrayList<>();
+        ImportSet importSnippets = new ImportSet();
 
         if (classHelper.getClassName() == null) {
             typeIdentifier = new TypeIdentifierSnippet(this);
@@ -276,6 +380,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             importSnippets.addAll(typeIdentifier.getImportSnippets());
         } else if (classHelper.getPackageName() != null) {
             importSnippets.add(classHelper.getFQClassName());
+        }
+        if (functionalType) {
+            importSnippets.add(Optional.class.getCanonicalName());
         }
 
         if (basic != null) {
@@ -295,6 +402,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
         if (orderBy != null) {
             importSnippets.addAll(orderBy.getImportSnippets());
+        }
+
+        if (orderColumn != null) {
+            importSnippets.addAll(orderColumn.getImportSnippets());
         }
 
         if (joinColumns != null) {
@@ -324,72 +435,77 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (enumerated != null) {
             importSnippets.addAll(enumerated.getImportSnippets());
         }
-        
+
         if (temporal != null) {
             importSnippets.addAll(temporal.getImportSnippets());
         }
 
         if (mapKey != null) {
-            importSnippets.add("javax.persistence.MapKey");
+            importSnippets.add(MAP_KEY_FQN);
         }
 
         if (autoGenerate) {
-            importSnippets.add("javax.persistence.GenerateType");
-            importSnippets.add("javax.persistence.GenerateValue");
+            importSnippets.add(GENERATION_TYPE_FQN);
+            importSnippets.add(GENERATED_VALUE_FQN);
         }
 
         if (elementCollection != null) {
-            importSnippets.add("javax.persistence.ElementCollection");
+            importSnippets.add(ELEMENT_COLLECTION_FQN);
         }
         if (embedded) {
-            importSnippets.add("javax.persistence.Embedded");
+            importSnippets.add(EMBEDDED_FQN);
         }
 
         if (embeddedId) {
-            importSnippets.add("javax.persistence.EmbeddedId");
+            importSnippets.add(EMBEDDED_ID_FQN);
         }
 
         if (lob) {
-            importSnippets.add("javax.persistence.Lob");
+            importSnippets.add(LOB_FQN);
         }
 
         if (primaryKey) {
-            importSnippets.add("javax.persistence.Id");
+            importSnippets.add(ID_FQN);
         }
 
         if (tranzient) {
-            importSnippets.add("javax.persistence.Transient");
+            importSnippets.add(TRANSIENT_FQN);
         }
 
         if (version) {
-            importSnippets.add("javax.persistence.Version");
+            importSnippets.add(VERSION_FQN);
         }
 
-        if (this.getAttributeOverrides() != null) {
-            importSnippets.addAll(this.getAttributeOverrides().getImportSnippets());
-        }
-        if (this.getAssociationOverrides() != null) {
-            importSnippets.addAll(this.getAssociationOverrides().getImportSnippets());
-        }
-
-        for (AnnotationSnippet snippet : this.getAnnotation()) {
-            importSnippets.addAll(snippet.getImportSnippets());
+        if (converts != null) {
+            importSnippets.addAll(converts.getImportSnippets());
         }
         
-        for (ConstraintSnippet snippet : this.getConstraints()) {
+        if (attributeOverrides != null) {
+            importSnippets.addAll(attributeOverrides.getImportSnippets());
+        }
+        if (associationOverrides != null) {
+            importSnippets.addAll(associationOverrides.getImportSnippets());
+        }
+
+        for (AnnotationSnippet snippet : this.getAnnotation().values().stream().flatMap(annot -> annot.stream()).collect(toList())) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
-//        if (importSnippets.contains("java.lang.Integer")) {  //BUG : remove String
-//            importSnippets.remove("java.lang.Integer");
-//        }
-//        if(getJaxbVariableType().equals("Attribute")){
-//             importSnippets.add("javax.xml.bind.annotation.XmlAttribute");
-//        } else if(getJaxbVariableType().equals("Element")){
-//             importSnippets.add("javax.xml.bind.annotation.XmlElement");
-//        } else if(getJaxbVariableType().equals("Value")){
-//             importSnippets.add("javax.xml.bind.annotation.XmlValue");
-//        }
+        for (ConstraintSnippet snippet : this.getAttributeConstraints()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+
+        for (ConstraintSnippet snippet : this.getKeyConstraints()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+
+        for (ConstraintSnippet snippet : this.getValueConstraints()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+
+        if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null){
+             importSnippets.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
+        } 
         return importSnippets;
     }
 
@@ -412,11 +528,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 || "short".equals(type) || "char".equals(type)
                 || "int".equals(type) || "long".equals(type)
                 || "float".equals(type) || "double".equals(type);
-    }
-
-    public boolean isArray(String type) {
-        int length = type.length();
-        return type.charAt(length - 2) == '[' && type.charAt(length - 1) == ']';
     }
 
     public boolean isPrimitiveArray(String type) {
@@ -482,29 +593,98 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     /**
      * @return the annotation
      */
-    public List<AnnotationSnippet> getAnnotation() {
+    public Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> getAnnotation() {
         return annotation;
     }
-
+    
+    public List<AnnotationSnippet> getAnnotation(String locationType) {
+        return annotation.get(AttributeAnnotationLocationType.valueOf(locationType));
+    }
+    
+    public String getInlineKeyAnnotation() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        List<AnnotationSnippet> snippets = annotation.get(AttributeAnnotationLocationType.KEY);
+        if (snippets != null) {
+            for (AnnotationSnippet snippet : snippets) {
+                sb.append(snippet.getSnippet()).append(" ");
+            }
+        }
+        return sb.toString();
+    }
+    
+    public String getInlineValueAnnotation() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        List<AnnotationSnippet> snippets = annotation.get(AttributeAnnotationLocationType.TYPE);
+        if (snippets != null) {
+            for (AnnotationSnippet snippet : snippets) {
+                sb.append(snippet.getSnippet()).append(" ");
+            }
+        }
+        return sb.toString();
+    }
+    
     /**
      * @param annotation the annotation to set
      */
-    public void setAnnotation(List<AnnotationSnippet> annotation) {
+    public void setAnnotation(Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> annotation) {
         this.annotation = annotation;
     }
 
     /**
-     * @return the constraints
+     * @return the attributeConstraints
      */
-    public List<ConstraintSnippet> getConstraints() {
-        return constraints;
+    public List<ConstraintSnippet> getAttributeConstraints() {
+        return attributeConstraints;
     }
 
     /**
-     * @param constraints the constraints to set
+     * @param attributeConstraints the attributeConstraints to set
      */
-    public void setConstraints(List<ConstraintSnippet> constraints) {
-        this.constraints = constraints;
+    public void setAttributeConstraints(List<ConstraintSnippet> attributeConstraints) {
+        this.attributeConstraints = attributeConstraints;
+    }
+
+    /**
+     * @return the keyConstraints
+     */
+    public List<ConstraintSnippet> getKeyConstraints() {
+        return keyConstraints;
+    }
+    
+    public String getInlineKeyConstraint() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        for (ConstraintSnippet keyConstraint : keyConstraints) {
+            sb.append(keyConstraint.getSnippet()).append(" ");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * @param keyConstraints the keyConstraints to set
+     */
+    public void setKeyConstraints(List<ConstraintSnippet> keyConstraints) {
+        this.keyConstraints = keyConstraints;
+    }
+
+    /**
+     * @return the valueConstraints
+     */
+    public List<ConstraintSnippet> getValueConstraints() {
+        return valueConstraints;
+    }
+    
+    public String getInlineValueConstraint() throws InvalidDataException {
+        StringBuilder sb = new StringBuilder();
+        for (ConstraintSnippet valueConstraint : valueConstraints) {
+            sb.append(valueConstraint.getSnippet()).append(" ");
+        }
+        return sb.toString();
+    }
+    /**
+     * @param valueConstraints the valueConstraints to set
+     */
+    public void setValueConstraints(List<ConstraintSnippet> valueConstraints) {
+        this.valueConstraints = valueConstraints;
     }
 
     /**
@@ -567,34 +747,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getJaxbAnnotationSnippet() {
 
         StringBuilder snippet = new StringBuilder();
-        if (isPrimaryKey()) {
-//            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-        } else if (getRelationDef() != null) {
-            if (getRelationDef() instanceof OneToOneSnippet) {
-                OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelationDef();
-                if (otoSnippet.getMappedBy() != null && !otoSnippet.getMappedBy().trim().isEmpty()) {
-                    snippet.append("@XmlTransient");
-                } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                }
-            } else if (getRelationDef() instanceof OneToManySnippet) {
-                OneToManySnippet otmSnippet = (OneToManySnippet) getRelationDef();
-                if (otmSnippet.getMappedBy() != null && !otmSnippet.getMappedBy().trim().isEmpty()) {
-                    snippet.append("@XmlTransient");
-                } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                }
-            } else if (getRelationDef() instanceof ManyToOneSnippet) {
-//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-            } else if (getRelationDef() instanceof ManyToManySnippet) {
-                ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelationDef();
-                if (mtmSnippet.getMappedBy() != null && !mtmSnippet.getMappedBy().trim().isEmpty()) {
-                    snippet.append("@XmlTransient");
-                } else {
-//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
-                }
-            }
-        }
 
         if (getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
             if (getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
@@ -637,8 +789,44 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
             }
             snippet.append("@XmlValue");
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT && getRelationDef() == null) {
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT) {
             snippet.append("@XmlTransient");
+        }  else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
+            String mappedBy = getRelationDef().getTargetField();//both side are applicable so targetField is used instead of mappedBy
+            if (mappedBy != null) {
+                snippet.append(String.format("@XmlInverseReference(mappedBy=\"%s\")", mappedBy));
+            } 
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_REF) {
+            snippet.append("@XmlElementRef");
+        } else {
+            if (isPrimaryKey()) {
+//            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+            } else if (getRelationDef() != null) {
+                if (getRelationDef() instanceof OneToOneSnippet) {
+                    OneToOneSnippet otoSnippet = (OneToOneSnippet) getRelationDef();
+                    if (otoSnippet.getMappedBy() != null && !otoSnippet.getMappedBy().trim().isEmpty()) {
+                        snippet.append("@XmlTransient");
+                    } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                    }
+                } else if (getRelationDef() instanceof OneToManySnippet) {
+                    OneToManySnippet otmSnippet = (OneToManySnippet) getRelationDef();
+                    if (otmSnippet.getMappedBy() != null && !otmSnippet.getMappedBy().trim().isEmpty()) {
+                        snippet.append("@XmlTransient");
+                    } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                    }
+                } else if (getRelationDef() instanceof ManyToOneSnippet) {
+//                   snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                } else if (getRelationDef() instanceof ManyToManySnippet) {
+                    ManyToManySnippet mtmSnippet = (ManyToManySnippet) getRelationDef();
+                    if (mtmSnippet.getMappedBy() != null && !mtmSnippet.getMappedBy().trim().isEmpty()) {
+                        snippet.append("@XmlTransient");
+                    } else {
+//                      snippet.append("@XmlIDREF").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+                    }
+                }
+            }
         }
         int snippetLength = snippet.length(); //Remove NEW_LINE and TAB
         if (snippetLength > 6 && snippet.charAt(snippetLength - 5) == '\n') {
@@ -660,22 +848,76 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public String getJavaDoc() {
+
+    public StringBuilder getJavaDoc(String prefix) {
         StringBuilder doc = new StringBuilder();
         doc.append(TAB).append("/**").append(NEW_LINE);
-//        if (StringUtils.isNotBlank(description)) {
-            for (String line : description.split("\\r\\n|\\n|\\r")) {
-                doc.append(" * ").append(line).append(NEW_LINE);
+        int count = 0;
+        for (String line : description.split("\\r\\n|\\n|\\r")) {
+            count++;
+            doc.append(TAB).append(" * ");
+            if (count == 1 && StringUtils.isNotBlank(prefix)) {
+                doc.append(prefix);
+                line = firstLower(line);
             }
-//        }
-        doc.append(" */");
+            doc.append(line).append(NEW_LINE);
+        }
+        return doc;
+    }
+    
+    public String getPropertyJavaDoc() {
+        StringBuilder doc = getJavaDoc(null);
+        doc.append(TAB).append(" */");
         return doc.toString();
     }
     
-    public boolean isJavaDocExist(){
+    public String getGetterJavaDoc() {
+        StringBuilder doc = getJavaDoc("Get ");
+        doc.append(TAB).append(" * ").append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}",getName())).append(NEW_LINE);
+        doc.append(TAB).append(" */");
+        return doc.toString();
+    }
+        
+    public String getSetterJavaDoc() {
+        StringBuilder doc = getJavaDoc("Set ");
+        doc.append(TAB).append(" * ").append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}",getName(),getName())).append(NEW_LINE);
+        doc.append(TAB).append(" */");
+        return doc.toString();
+    }
+            
+    public String getFluentJavaDoc() {
+        StringBuilder doc = getJavaDoc("Set ");
+        doc.append(TAB).append(" * ").append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}",getName(),getName())).append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}",attribute.getJavaClass().getClazz())).append(NEW_LINE);
+        doc.append(TAB).append(" */");
+        return doc.toString();
+    }
+    
+    
+    
+    public boolean isJavaDocExist() {
         return StringUtils.isNotBlank(description);
     }
+    
+    public boolean isPropertyJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isPropertyJavaDoc();
+    }
+    
+    public boolean isGetterJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isGetterJavaDoc();
+    }
+    
+    public boolean isSetterJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isSetterJavaDoc();
+    }
+    
+    public boolean isFluentJavaDocExist() {
+        return isJavaDocExist() && CodePanel.isFluentAPIJavaDoc();
+    }
+    
 
     /**
      * @return the temporal
@@ -691,4 +933,106 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         this.temporal = temporal;
     }
 
+    /**
+     * @return the functionalType
+     */
+    public boolean isFunctionalType() {
+        return functionalType;
+    }
+
+    /**
+     * @param functionalType the functionalType to set
+     */
+    public void setFunctionalType(boolean functionalType) {
+        this.functionalType = functionalType;
+    }
+
+    /**
+     * @return the attribute
+     */
+    public Attribute getAttribute() {
+        return attribute;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    /**
+     * @return the customSnippet
+     */
+    public Map<AttributeSnippetLocationType, List<String>> getCustomSnippet() {
+        return customSnippet;
+    }
+
+    public List<String> getCustomSnippet(String type) {
+        return customSnippet.get(AttributeSnippetLocationType.valueOf(type));
+    }
+
+    /**
+     * @param customSnippet the customSnippet to set
+     */
+    public void setCustomSnippet(Map<AttributeSnippetLocationType, List<String>> customSnippet) {
+        this.customSnippet = customSnippet;
+    }
+
+    /**
+     * @return the orderColumn
+     */
+    public OrderColumnSnippet getOrderColumn() {
+        return orderColumn;
+    }
+
+    /**
+     * @param orderColumn the orderColumn to set
+     */
+    public void setOrderColumn(OrderColumnSnippet orderColumn) {
+        this.orderColumn = orderColumn;
+    }
+
+    /**
+     * @return the propertyChangeSupport
+     */
+    public boolean isPropertyChangeSupport() {
+        return propertyChangeSupport;
+    }
+
+    /**
+     * @param propertyChangeSupport the propertyChangeSupport to set
+     */
+    public void setPropertyChangeSupport(boolean propertyChangeSupport) {
+        this.propertyChangeSupport = propertyChangeSupport;
+    }
+
+    /**
+     * @return the vetoableChangeSupport
+     */
+    public boolean isVetoableChangeSupport() {
+        return vetoableChangeSupport;
+    }
+
+    /**
+     * @param vetoableChangeSupport the vetoableChangeSupport to set
+     */
+    public void setVetoableChangeSupport(boolean vetoableChangeSupport) {
+        this.vetoableChangeSupport = vetoableChangeSupport;
+    }
+
+    /**
+     * @return the convertsSnippet
+     */
+    public ConvertsSnippet getConverts() {
+        return converts;
+    }
+
+    /**
+     * @param convertsSnippet the convertsSnippet to set
+     */
+    public void setConverts(ConvertsSnippet convertsSnippet) {
+        this.converts = convertsSnippet;
+    }
 }
