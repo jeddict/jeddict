@@ -196,32 +196,34 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
             categories.put("Primary Key", primaryKeyCatWidget);
         }
 
-        List<Widget> foreignKeyCatWidget = new ArrayList<>();
+//        List<Widget> foreignKeyCatWidget = new ArrayList<>();
+//        List<Widget> derivedIdentiyCatWidget = new ArrayList<>();
+
+//        if (!foreignKeyWidgets.isEmpty()) {
+//            foreignKeyWidgets.values().stream()
+//                    .forEach((foreignKeyWidget) -> {
+//                        if (((DBColumn) foreignKeyWidget.getBaseElementSpec()).isPrimaryKey()) {
+//                            derivedIdentiyCatWidget.add(foreignKeyWidget);
+//                        } else {
+//                            foreignKeyCatWidget.add(foreignKeyWidget);
+//                        }
+//                    });
+//        }
+//        if (!derivedIdentiyCatWidget.isEmpty()) {
+//                categories.put("Derived Identity", derivedIdentiyCatWidget);
+//            }
+//        if (!foreignKeyCatWidget.isEmpty()) {
+//            categories.put("Foreign Key", foreignKeyCatWidget);
+//        }
+        
         if (!foreignKeyWidgets.isEmpty()) {
-            List<Widget> derivedIdentiyCatWidget = new ArrayList<>();
-            foreignKeyWidgets.values().stream().forEach((foreignKeyWidget) -> {
-                if (((DBColumn) foreignKeyWidget.getBaseElementSpec()).isPrimaryKey()) {
-                    derivedIdentiyCatWidget.add(foreignKeyWidget);
-                } else {
-                    foreignKeyCatWidget.add(foreignKeyWidget);
-                }
-            });
-            if (!derivedIdentiyCatWidget.isEmpty()) {
-                categories.put("Derived Identity", derivedIdentiyCatWidget);
-            }
+            categories.put("Foreign Key", new ArrayList<>(foreignKeyWidgets.values()));
         }
-
+        
         if (!columnWidgets.isEmpty()) {
-            List<Widget> columnCatWidget = new ArrayList<>();
-            columnWidgets.values().stream().forEach((columnWidget) -> {
-                columnCatWidget.add(columnWidget);
-            });
-            categories.put("Basic", columnCatWidget);
+            categories.put("Basic", new ArrayList<>(columnWidgets.values()));
         }
 
-        if (!foreignKeyCatWidget.isEmpty()) {
-            categories.put("Foreign Key", foreignKeyCatWidget);
-        }
 
         this.sortPins(categories);
     }
