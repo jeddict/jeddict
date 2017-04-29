@@ -186,12 +186,21 @@ public class ExceptionReporterPanel extends GenericDialog {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stackTraceWriter = new StringWriter();
+        StringWriter causedByWriter = new StringWriter();
+            
         try {
             StringBuilder report = new StringBuilder();
             report.append("Message : ").append(bugDescription).append('\n').append('\n');
-            throwable.printStackTrace(new PrintWriter(stringWriter));
-            report.append("StackTrace : ").append('\n').append(stringWriter.toString()).append('\n').append('\n');
+            
+            throwable.printStackTrace(new PrintWriter(stackTraceWriter));
+            report.append("StackTrace : ").append('\n').append(stackTraceWriter.toString()).append('\n').append('\n');
+            
+            if (throwable.getCause() != null) {
+                throwable.getCause().printStackTrace(new PrintWriter(causedByWriter));
+                report.append("Caused : ").append('\n').append(causedByWriter.toString()).append('\n').append('\n');
+            }
+            
             if (content != null) {
                 report.append("ModelerFile : ").append('\n').append("```xml").append('\n').append(content).append("```");
             }
@@ -203,11 +212,15 @@ public class ExceptionReporterPanel extends GenericDialog {
             setVisible(false);
         } finally {
             try {
-                stringWriter.close();
+                stackTraceWriter.close();
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
-
+            try {
+                causedByWriter.close();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
         NotificationDisplayer.getDefault().notify("Logs coppied",
                 ENHANCEMENT_ICON,

@@ -70,8 +70,6 @@ public final class ExceptionUtils implements IExceptionHandler {
             ExceptionReporterPanel exceptionReporterPanel = new ExceptionReporterPanel(message, t, content);
             exceptionReporterPanel.setVisible(true);
         });
-      
-        t.printStackTrace();
     }
 
     @Override

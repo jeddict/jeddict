@@ -98,10 +98,17 @@ public class AttributeValidator {
             entityWidget.getIdAttributeWidgets().forEach((attributeWidget) -> {
                 attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             });
+            entityWidget.getDerivedRelationAttributeWidgets().forEach((attributeWidget) -> {
+                attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
+            });
         } else {
             entityWidget.getIdAttributeWidgets().forEach((attributeWidget) -> {
                 attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
             });
+            entityWidget.getDerivedRelationAttributeWidgets().forEach((attributeWidget) -> {
+                attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.PRIMARYKEY_INVALID_LOCATION);
+            });
+            
         }
 
     }
