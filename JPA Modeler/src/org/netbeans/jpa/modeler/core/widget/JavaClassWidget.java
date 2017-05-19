@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.awt.Cursor;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,8 +23,6 @@ import static java.util.stream.Collectors.toList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.StringUtils;
-import org.netbeans.api.visual.action.WidgetAction;
-import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
@@ -40,7 +37,6 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -48,12 +44,9 @@ import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
-import org.openide.DialogDisplayer;
-import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
-import static org.openide.util.NbBundle.getMessage;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -91,8 +84,19 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         });
 
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
+    }
+    
+    @Override
+    public void init() {
+        super.init();
         this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        this.getImageWidget().getActions().addAction(new JavaClassAction());
+        this.getImageWidget().getActions().addAction(
+                new OpenSourceCodeAction(
+                        () -> getFileObject(),
+                        this.getBaseElementSpec(),
+                        this.getModelerScene().getModelerFile()
+                )
+        );
     }
 
     @Override
@@ -106,53 +110,17 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         set.put("CLASS_STRUCTURE", getClassSnippet(this.getModelerScene(), javaClass.getSnippets()));
     }
 
-    private final class JavaClassAction extends WidgetAction.Adapter {
-
-        @Override
-        public WidgetAction.State mousePressed(Widget widget, WidgetAction.WidgetMouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 2) {
-                openSourceCode(true);
-                return WidgetAction.State.CONSUMED;
-            }
-            return WidgetAction.State.REJECTED;
-        }
-    }
-
     public FileObject getFileObject() {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
-        FileObject fileObject;
-        if (javaClass.getFileObject() != null) {
-            fileObject = javaClass.getFileObject();
-        } else {
-            EntityMappings mappings = this.getModelerScene().getBaseElementSpec();
-            ModelerFile modelerFile = this.getModelerScene().getModelerFile();
-            fileObject = SourceGroupSupport.getJavaFileObject(modelerFile.getSourceGroup(), javaClass.getFQN());
-            javaClass.setFileObject(fileObject);
-        }
-        return fileObject;
+        ModelerFile modelerFile = this.getModelerScene().getModelerFile();
+        return getFileObject(javaClass, modelerFile);
     }
 
-    private void openSourceCode(boolean retryIfFileNotFound) {
-        FileObject fileObject = getFileObject();
-        if (fileObject == null || !fileObject.isValid()) {
-            NotifyDescriptor.Confirmation msg = null;
-            if (retryIfFileNotFound) {
-                msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
-                        getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.title"), NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
-            } else {
-                msg = new NotifyDescriptor.Confirmation(getMessage(this.getClass(), "SRC_FILE_NOT_FOUND.text"),
-                        getMessage(this.getClass(), "SRC_FILE_NOT_FOUND_IN_CURRENT_PROECT.title"), NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
-            }
-            if (NotifyDescriptor.YES_OPTION.equals(DialogDisplayer.getDefault().notify(msg))) {
-                this.getBaseElementSpec().setGenerateSourceCode(true);
-                JPAModelerUtil.generateSourceCode(this.getModelerScene().getModelerFile(), () -> {
-                    openSourceCode(false);
-                });
-            }
-        } else {
-            org.netbeans.modules.openfile.OpenFile.open(fileObject, -1);
+    public static FileObject getFileObject(JavaClass javaClass, ModelerFile modelerFile) {
+        if (javaClass.getFileObject() == null) {
+            javaClass.setFileObject(SourceGroupSupport.getJavaFileObject(modelerFile.getSourceGroup(), javaClass.getFQN()));
         }
-
+        return javaClass.getFileObject();
     }
 
     public abstract void deleteAttribute(AttributeWidget attributeWidget);
@@ -409,7 +377,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     public abstract void scanDuplicateAttributes(String previousName, String newName);
 
     public abstract List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets();
-    
+
     public abstract List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute);
 
 }

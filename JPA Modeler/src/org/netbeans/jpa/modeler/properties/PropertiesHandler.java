@@ -51,7 +51,7 @@ import org.netbeans.jpa.modeler.properties.convert.ConvertPanel;
 import org.netbeans.jpa.modeler.properties.convert.ConverterPanel;
 import org.netbeans.jpa.modeler.properties.convert.OverrideConvertPanel;
 import org.netbeans.jpa.modeler.properties.custom.snippet.CustomSnippetPanel;
-import org.netbeans.jpa.modeler.properties.extend.ClassExtendPanel;
+import org.netbeans.jpa.modeler.properties.extend.ClassSelectionPanel;
 import org.netbeans.jpa.modeler.properties.fieldtype.FieldTypePanel;
 import org.netbeans.jpa.modeler.properties.idgeneration.IdGeneratorPanel;
 import org.netbeans.jpa.modeler.properties.implement.JavaClassArtifactPanel;
@@ -485,8 +485,8 @@ public class PropertiesHandler {
                 new Column("JoinTable Name", false, String.class),
                 new Column("JoinColumn Size", false, Integer.class)
         ));
-        attributeEntity.setTableDataListener(new NEntityDataListener<>(associationOverridesSpec, 
-        (t) -> Arrays.asList(t.getName(), t.getJoinTable().getName(), t.getJoinColumn().size())));
+        attributeEntity.setTableDataListener(new NEntityDataListener<>(associationOverridesSpec,
+                (t) -> Arrays.asList(t.getName(), t.getJoinTable().getName(), t.getJoinColumn().size())));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -521,8 +521,8 @@ public class PropertiesHandler {
         attributeEntity.setCustomDialog(new ResultSetMappingsPanel(modelerScene.getModelerFile(), entity));
         attributeEntity.setTableDataListener(new NEntityDataListener<>(sqlResultSetMappingSpec,
                 t -> Arrays.asList(t.getName()),
-                 (t, row) -> t.setIdentifiableClass(entity)));
-       return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
+                (t, row) -> t.setIdentifiableClass(entity)));
+        return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
     public static PropertySupport getNamedStoredProcedureQueryProperty(JPAModelerScene modelerScene, Entity entity) {
@@ -538,8 +538,8 @@ public class PropertiesHandler {
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedStoredProcedureQueryPanel(modelerScene.getModelerFile()));
         attributeEntity.setTableDataListener(new NEntityDataListener<>(namedStoredProcedureQueriesSpec,
-                t -> Arrays.asList(t.isEnable(),t.getName(), t.getProcedureName(), t.getParameter().size()),
-                 (t, row) -> t.setEnable((boolean) row[1])));
+                t -> Arrays.asList(t.isEnable(), t.getName(), t.getProcedureName(), t.getParameter().size()),
+                (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -556,11 +556,11 @@ public class PropertiesHandler {
         attributeEntity.setColumns(columns);
         attributeEntity.setCustomDialog(new NamedQueryPanel(identifiableClass, modelerScene.getModelerFile()));
         attributeEntity.setTableDataListener(new NEntityDataListener<>(namedQueriesSpec,
-                t -> Arrays.asList(t.isEnable(), getShortQueryName(identifiableClass, t.getName()),t.getQuery(),t.getLockMode()),
-        (t, row) -> t.setEnable((boolean) row[1])));
+                t -> Arrays.asList(t.isEnable(), getShortQueryName(identifiableClass, t.getName()), t.getQuery(), t.getLockMode()),
+                (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
-    
+
     public static PropertySupport getClassAnnoation(JPAModelerScene modelerScene, List<ClassAnnotation> snippets) {
         return getCustomAnnoation(modelerScene, snippets, ClassAnnotation.class);
     }
@@ -602,7 +602,7 @@ public class PropertiesHandler {
 
     public static EmbeddedPropertySupport getCustomParentClass(JavaClassWidget<? extends JavaClass> javaClassWidget) {
         GenericEmbedded entity = new GenericEmbedded("extends", "Extends", getMessage(PropertiesHandler.class, "INFO_EXTENDS_CLASS"));
-        entity.setEntityEditor(new ClassExtendPanel(javaClassWidget.getModelerScene().getModelerFile()));
+        entity.setEntityEditor(new ClassSelectionPanel(javaClassWidget.getModelerScene().getModelerFile()));
         entity.setDataListener(new EmbeddedDataListener<ReferenceClass>() {
             private JavaClass javaClass;
 
@@ -685,7 +685,7 @@ public class PropertiesHandler {
         attributeEntity.setCustomDialog(new NamedEntityGraphPanel(entityWidget));
         attributeEntity.setTableDataListener(new NEntityDataListener<>(entityGraphsSpec,
                 t -> Arrays.asList(t.isEnable(), t.getName()),
-        (t, row) -> t.setEnable((boolean) row[1])));
+                (t, row) -> t.setEnable((boolean) row[1])));
         return new NEntityPropertySupport(modelerScene.getModelerFile(), attributeEntity);
     }
 
@@ -806,7 +806,7 @@ public class PropertiesHandler {
                 entityWidget.getSubclassWidgets()
                         .stream()
                         .filter(sw -> sw instanceof EntityWidget)
-                        .map(sw -> (EntityWidget)sw)
+                        .map(sw -> (EntityWidget) sw)
                         .forEach(sw -> sw.scanDiscriminatorValue());
             }
 
@@ -1232,7 +1232,7 @@ public class PropertiesHandler {
         attributeEntity.setColumns(columns);
         attributeEntity.setTableDataListener(new NEntityDataListener<>(converts,
                 t -> Arrays.asList(t.getConverter(), t.getAttributeName(), t.isDisableConversion()),
-        (t, row) -> t.setDisableConversion((boolean) row[3])));
+                (t, row) -> t.setDisableConversion((boolean) row[3])));
         return attributeEntity;
     }
 

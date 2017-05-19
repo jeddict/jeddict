@@ -35,6 +35,9 @@
                 <attribute id="jaxbSupport" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="jaxbSupport" refresh-onchange="true" >
                     <display-name>JAXB Source</display-name>
                 </attribute>
+<!--                <attribute id="jsonbSupport" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="jsonbSupport" refresh-onchange="true" >
+                    <display-name>JSON-B Source</display-name>
+                </attribute>-->
                 <attribute id="generateStaticMetamodel" groupId="GENERATE_SOURCECODE_PROP" class="java.lang.Boolean" name="generateStaticMetamodel" refresh-onchange="true">
                     <display-name>StaticMetamodel</display-name>
                 </attribute>
@@ -123,7 +126,9 @@
             <attributes>
                 <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
                     <display-name>MapKey Type</display-name>
-                </attribute>  
+                </attribute> 
+<!--                <attribute id="collectionTable" class="org.netbeans.jpa.modeler.spec.CollectionTable" name="collectionTable" >
+                </attribute> -->
             </attributes>
         </element>
         <element id="Table" class="org.netbeans.jpa.modeler.spec.Table">

@@ -13,13 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.orm.converter.generator.jaxb.packageinfo;
+package org.netbeans.orm.converter.generator.packageinfo;
 
 import org.netbeans.orm.converter.generator.staticmetamodel.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jcode.task.ITaskSupervisor;
@@ -34,28 +35,25 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.openide.filesystems.FileUtil;
 
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
-public class JaxbPackageInfoModuleGeneratorImpl implements ModuleGenerator {
+public class PackageInfoModuleGeneratorImpl implements ModuleGenerator {
 
-    private Set<StaticMetamodelGenerator> staticMetamodelClass;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
-    private ITaskSupervisor task;
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
     private String packageName;
     private File destDir;
 
     @Override
     public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
-        this.staticMetamodelClass = new HashSet<>();
-        this.task = task;
         destDir = FileUtil.toFile(sourceGroup.getRootFolder());
         this.packageName = parsedEntityMappings.getPackage();
         try {
-            if (parsedEntityMappings.getJaxbNameSpace() == null || parsedEntityMappings.getJaxbNameSpace().trim().isEmpty()) {
+            if (StringUtils.isBlank(parsedEntityMappings.getJaxbNameSpace())
+                    && !parsedEntityMappings.isJsonbPackageInfoExist()) {
                 return;
             }
-            JaxbPackageInfoGenerator packageInfoGenerator = new JaxbPackageInfoGenerator(parsedEntityMappings, packageName);
+            PackageInfoGenerator packageInfoGenerator = new PackageInfoGenerator(parsedEntityMappings, packageName);
             ClassDefSnippet packageInfoDef = packageInfoGenerator.getClassDef();
             classesRepository.addWritableSnippet(ClassType.JAXB_PACKAGE_INFO, packageInfoDef);
-            task.log("Generating JAXB package-info.java", true);
+            task.log("Generating package-info.java", true);
             ORMConverterUtil.writeSnippet(packageInfoDef, destDir);
         } catch (InvalidDataException | IOException ex) {
             ExceptionUtils.printStackTrace(ex);

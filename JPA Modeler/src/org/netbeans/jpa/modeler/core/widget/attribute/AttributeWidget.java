@@ -36,8 +36,6 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
-import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
-import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
@@ -95,7 +93,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        if (!(this.getBaseElementSpec() instanceof EmbeddedId)) {//to hide property
+        Attribute attribute = this.getBaseElementSpec();
+        if (!(attribute instanceof EmbeddedId)) {//to hide property
             set.put("ATTR_PROP", getFieldTypeProperty("fieldType", "Field Type", "", false, this));
         } else {
             try {//add "custom manual editable class type property" instead of "Field Type Panel" for EmbeddedId
@@ -105,9 +104,20 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 this.getModelerScene().getModelerFile().handleException(ex);;
             }
         }
-        getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) this.getBaseElementSpec());
-        set.put("ATTR_PROP", getAttributeAnnoation(this.getModelerScene(), this.getBaseElementSpec().getAnnotation()));
-        set.put("ATTR_PROP", getAttributeSnippet(this.getModelerScene(), this.getBaseElementSpec().getSnippets()));
+        getJaxbVarTypeProperty(set, this, (JaxbVariableTypeHandler) attribute);
+        set.put("ATTR_PROP", getAttributeAnnoation(this.getModelerScene(), attribute.getAnnotation()));
+        set.put("ATTR_PROP", getAttributeSnippet(this.getModelerScene(), attribute.getSnippets()));
+
+        
+        attribute.getAttributeConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("ATTRIBUTE_CONSTRAINTS", "ATTRIBUTE_CONSTRAINTS", this, constraint);
+        }); 
+        attribute.getKeyConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("KEY_CONSTRAINTS", "KEY_CONSTRAINTS", this, constraint);
+        }); 
+        attribute.getValueConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("VALUE_CONSTRAINTS", "VALUE_CONSTRAINTS", this, constraint);
+        }); 
 
         this.addPropertyChangeListener("name", (PropertyChangeListener<String>) (oldValue, value) -> {
             if (StringUtils.isBlank(value)) {
@@ -141,17 +151,6 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
                 getSignalManager().clear(WARNING, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
             }
         });
-        
-        this.getBaseElementSpec().getAttributeConstraints().stream().forEach((constraint) -> {
-            set.createPropertySet("ATTRIBUTE_CONSTRAINTS", "ATTRIBUTE_CONSTRAINTS", this, constraint);
-        }); 
-        this.getBaseElementSpec().getKeyConstraints().stream().forEach((constraint) -> {
-            set.createPropertySet("KEY_CONSTRAINTS", "KEY_CONSTRAINTS", this, constraint);
-        }); 
-        this.getBaseElementSpec().getValueConstraints().stream().forEach((constraint) -> {
-            set.createPropertySet("VALUE_CONSTRAINTS", "VALUE_CONSTRAINTS", this, constraint);
-        }); 
-        
     }
 
    

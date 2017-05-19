@@ -22,6 +22,8 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
+import static org.netbeans.jpa.modeler.specification.model.event.JPAEventListener.registerGenerateSourceEvent;
+import static org.netbeans.jpa.modeler.specification.model.event.JPAEventListener.registerJSONBViewerEvent;
 import org.netbeans.modeler.actions.EventListener;
 import org.netbeans.modeler.core.ModelerFile;
 
@@ -40,14 +42,7 @@ public class DBEventListener extends EventListener {
                 SQLEditorUtil.openEditor(modelerFile, ((DBMapping) modelerFile.getModelerScene().getBaseElementSpec()).getSQL());
             }
         });
-        
-        component.getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, InputEvent.CTRL_MASK), "SEARCH");
-        component.getActionMap().put("SEARCH", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                modelerFile.getModelerDiagramEngine().searchWidget();
-            }
-        });
-
+        registerJSONBViewerEvent(component, modelerFile.getParentFile());
+        registerGenerateSourceEvent(component, modelerFile.getParentFile());;
     }
 }

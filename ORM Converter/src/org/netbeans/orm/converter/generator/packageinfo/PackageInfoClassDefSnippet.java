@@ -13,9 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.orm.converter.generator.jaxb.packageinfo;
+package org.netbeans.orm.converter.generator.packageinfo;
 
+import java.util.Collection;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
+import org.netbeans.orm.converter.compiler.InvalidDataException;
+import org.netbeans.orm.converter.compiler.Snippet;
+import org.netbeans.orm.converter.util.ImportSet;
 
 /**
  *
@@ -23,9 +28,9 @@ import org.netbeans.orm.converter.compiler.ClassDefSnippet;
  * that represents the entity, mapped superclass, or embeddable class designated
  * by the value element.
  */
-public class JaxbPackageInfoClassDefSnippet extends ClassDefSnippet {
+public class PackageInfoClassDefSnippet extends ClassDefSnippet {
 
-    private static final String JAXB_PACKAGE_INFO_TEMPLATE_FILENAME = "jaxb-package-info.vm";
+    private static final String JAXB_PACKAGE_INFO_TEMPLATE_FILENAME = "package-info.vm";
 
     @Override
     protected String getTemplateName() {
@@ -47,5 +52,23 @@ public class JaxbPackageInfoClassDefSnippet extends ClassDefSnippet {
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
+    
+    public boolean isJaxbMetadataExist(){
+        return StringUtils.isNotBlank(getNamespace());
+    }
+
+    @Override
+     public Collection<String> getImports() throws InvalidDataException {
+        ImportSet importSnippets = new ImportSet();
+      
+        if(isJaxbMetadataExist()){
+            importSnippets.add("javax.xml.bind.annotation.*");
+        }
+        for(Snippet snippet : getJSONBSnippets()){
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+        
+        return importSnippets;
+     }
 
 }

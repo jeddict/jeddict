@@ -38,7 +38,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
 
     private JavaClassWidget superclassWidget;
     private JavaClassWidget subclassWidget;
-    private static final IconAnchorShape GENERALIZATION_ANCHOR_SHAPE = new IconAnchorShape(GENERALIZATION_ANCHOR, true);
+    public static final IconAnchorShape GENERALIZATION_ANCHOR_SHAPE = new IconAnchorShape(GENERALIZATION_ANCHOR, true);
 
     public GeneralizationFlowWidget(JPAModelerScene scene, EdgeWidgetInfo edge) {
         super(scene, edge);

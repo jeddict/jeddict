@@ -62,6 +62,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private List<ConstraintSnippet> attributeConstraints = new ArrayList<>();
     private List<ConstraintSnippet> keyConstraints = new ArrayList<>();
     private List<ConstraintSnippet> valueConstraints = new ArrayList<>();
+    
+    private List<Snippet> attributeJSONBSnippets = new ArrayList<>();
     private boolean functionalType;
 
     private JaxbVariableType jaxbVariableType;
@@ -502,7 +504,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         for (ConstraintSnippet snippet : this.getValueConstraints()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
-
+        
+        for (Snippet snippet : this.getJSONBSnippets()) {
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+        
         if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null){
              importSnippets.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
         } 
@@ -1034,5 +1040,19 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setConverts(ConvertsSnippet convertsSnippet) {
         this.converts = convertsSnippet;
+    }
+
+    /**
+     * @return the attributeJSONBSnippets
+     */
+    public List<Snippet> getJSONBSnippets() {
+        return attributeJSONBSnippets;
+    }
+
+    /**
+     * @param attributeJSONBSnippets the attributeJSONBSnippets to set
+     */
+    public void setJSONBSnippets(List<Snippet> attributeJSONBSnippets) {
+        this.attributeJSONBSnippets = attributeJSONBSnippets;
     }
 }

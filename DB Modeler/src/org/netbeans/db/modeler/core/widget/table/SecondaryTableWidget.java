@@ -106,8 +106,7 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
                     .forEach(a -> ((PersistenceBaseAttribute)a).getColumn().setTable(null));
                 entity.removeSecondaryTable(table);
                 ModelerFile parentFile = SecondaryTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
-                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
+                DBUtil.openDBViewer(parentFile);
         });
         menuList.add(0, joinTable);
         return menuList;

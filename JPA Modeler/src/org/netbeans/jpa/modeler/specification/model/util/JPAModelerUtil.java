@@ -259,12 +259,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static ImageIcon GENERATE_SRC;
     public static ImageIcon ENTITY_VISIBILITY;
     public static ImageIcon SOCIAL_NETWORK_SHARING;
+    public static ImageIcon VIEW_JSONB;
     public static ImageIcon VIEW_DB;
     public static ImageIcon MICRO_DB;
     public static ImageIcon NANO_DB;
     public static ImageIcon PERSISTENCE_UNIT;
     public static ImageIcon RUN_JPQL_ICON;
     public static ImageIcon HOME_ICON;
+    public static ImageIcon SEARCH_ICON;
     public static ImageIcon WORKSPACE_ICON;
 
     public static Image UP_ICON;
@@ -290,6 +292,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         GENERATE_SRC = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/generate-src.png"));
         RUN_JPQL_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/run-jpql.png"));
         ENTITY_VISIBILITY = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/entity-visibility.png"));
+        VIEW_JSONB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/jsonb.png"));
+        SEARCH_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/search.png"));
         VIEW_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/db.png"));
         MICRO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/micro-db.png"));
         NANO_DB = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/nano-db.png"));
@@ -732,8 +736,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         return nodeWidget;
     }
 
-    private void loadFlowEdge(JavaClassWidget javaClassWidget) {
-        JPAModelerScene scene = (JPAModelerScene) javaClassWidget.getModelerScene();
+    private void loadFlowEdge(JavaClassWidget<JavaClass> javaClassWidget) {
+        JPAModelerScene scene = javaClassWidget.getModelerScene();
         loadGeneralization(scene, javaClassWidget);
         if (javaClassWidget instanceof PersistenceClassWidget) {
             PersistenceClassWidget<? extends ManagedClass> sourcePersistenceClassWidget = (PersistenceClassWidget) javaClassWidget;
@@ -770,7 +774,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         IEdgeWidget edgeWidget = scene.createEdgeWidget(edgeInfo);
         scene.setEdgeWidgetSource(edgeInfo, getEdgeSourcePinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, sourceAttributeWidget));
         scene.setEdgeWidgetTarget(edgeInfo, getEdgeTargetPinWidget(sourcePersistenceClassWidget, targetEntityWidget, edgeWidget, null));
-
     }
 
     private void loadRelationEdge(JPAModelerScene scene, String abstractTool, PersistenceClassWidget sourcePersistenceClassWidget, RelationAttributeWidget sourceRelationAttributeWidget, Class<? extends RelationAttributeWidget>... targetRelationAttributeWidgetClass) {
@@ -804,7 +807,6 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         ((IBaseElementWidget) edgeWidget.getSourceAnchor().getRelatedWidget()).onConnection();
         ((IBaseElementWidget) edgeWidget.getTargetAnchor().getRelatedWidget()).onConnection();
         ((IBaseElementWidget) edgeWidget).onConnection();
-
     }
 
     private void loadGeneralization(JPAModelerScene scene, JavaClassWidget javaClassWidget) {

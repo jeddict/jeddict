@@ -1,7 +1,0 @@
-@XmlSchema(namespace = "$classDef.getNamespace()", elementFormDefault = XmlNsForm.QUALIFIED)
-#####################Package Name definition ###########################
-#if ($classDef.getPackageName())
-package $classDef.getPackageName();
-
-import javax.xml.bind.annotation.*;
-#end

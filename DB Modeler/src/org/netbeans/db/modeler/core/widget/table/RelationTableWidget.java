@@ -117,8 +117,7 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
             joinTable.addActionListener((ActionEvent e) -> {
                 convertToJoinColumn();
                 ModelerFile parentFile = RelationTableWidget.this.getModelerScene().getModelerFile().getParentFile();
-                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
-                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
+                DBUtil.openDBViewer(parentFile);
             });
             menuList.add(0, joinTable);
         }

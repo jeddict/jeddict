@@ -19,6 +19,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
+import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.JSONBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -38,9 +40,11 @@ public class ShortcutListener extends KeyAdapter {
         super.keyPressed(e);
         if (e.isControlDown() == true) {
             if (e.getKeyCode() == KeyEvent.VK_L) {
-                     SQLEditorUtil.openEditor(file, ((DBMapping) file.getModelerScene().getBaseElementSpec()).getSQL());
-            } else if (e.getKeyCode() == KeyEvent.VK_F) {
-                file.getModelerDiagramEngine().searchWidget();
+                SQLEditorUtil.openEditor(file, ((DBMapping) file.getModelerScene().getBaseElementSpec()).getSQL());
+            }else if (e.getKeyCode() == KeyEvent.VK_B) {
+                JSONBUtil.openJSONBViewer(file.getParentFile());
+            } else if (e.getKeyCode() == KeyEvent.VK_G) {
+                JPAModelerUtil.generateSourceCode(file.getParentFile());
             }
         }
 

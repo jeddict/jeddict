@@ -88,29 +88,6 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
     public void createPropertySet(ElementPropertySet elementPropertySet) {
     }
 
-    private Color color;
-    // private Float size;
-
-    public Sheet.Set getVisualPropertiesSet(Sheet.Set set) throws NoSuchMethodException, NoSuchFieldException {
-        set.put(new ElementPropertySupport(this, Color.class, "color", "Color", "The Line Color of the SequenceFlow Element."));
-        return set;
-    }
-
-    /**
-     * @return the color
-     */
-    public Color getColor() {
-        return color;
-    }
-
-    /**
-     * @param color the color to set
-     */
-    public void setColor(Color color) {
-        this.color = color;
-        this.setLineColor(color);
-    }
-
     @Override
     public ForeignKeyWidget getSourceWidget() {
         return foreignKeyWidget;

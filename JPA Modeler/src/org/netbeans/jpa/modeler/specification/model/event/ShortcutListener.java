@@ -21,6 +21,7 @@ import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
+import org.netbeans.jpa.modeler.specification.model.util.JSONBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
@@ -42,14 +43,11 @@ public class ShortcutListener extends KeyAdapter {
             if (e.getKeyCode() == KeyEvent.VK_G) {
                 JPAModelerUtil.generateSourceCode(file);
             } else if (e.getKeyCode() == KeyEvent.VK_D) {
-                JPAModelerScene scene = (JPAModelerScene)file.getModelerScene();
-                EntityMappings entityMapping = scene.getBaseElementSpec();
-                DBUtil.openDBViewer(file, entityMapping, entityMapping.getCurrentWorkSpace());
-            } else if (e.getKeyCode() == KeyEvent.VK_F) {
-                file.getModelerDiagramEngine().searchWidget();
+                DBUtil.openDBViewer(file);
+            } else if (e.getKeyCode() == KeyEvent.VK_B) {
+                JSONBUtil.openJSONBViewer(file);
             }
         }
-
     }
 
 }

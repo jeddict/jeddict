@@ -90,6 +90,9 @@ import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.jpa.modeler.specification.model.workspace.WorkSpaceManager;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.RUN_JPQL_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SEARCH_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_JSONB;
+import org.netbeans.jpa.modeler.specification.model.util.JSONBUtil;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -361,6 +364,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @NbBundle.Messages({
         "GENERATE_SRC=Generate Source Code",
         "VIS_DB=Visualize DB",
+        "VIS_JSON=JSONB View",
+        "SEARCH=Search",
         "PERSISTENCE_UNIT=Persistence.xml",
         "RUN_JPQL=Run JPQL Query",
         "SHARE=Share"
@@ -377,17 +382,11 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
         JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);
         visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
-        visDB.addActionListener(e -> {
-            EntityMappings entityMapping = this.getBaseElementSpec();
-             DBUtil.openDBViewer(this.getModelerFile(), entityMapping, entityMapping.getCurrentWorkSpace());
-        });
+        visDB.addActionListener(e -> DBUtil.openDBViewer(this.getModelerFile()));
         
-//        JMenuItem visDB = new JMenuItem(Bundle.VIS_DB(), VIEW_DB);
-//        visDB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('D'), InputEvent.CTRL_DOWN_MASK));
-//        visDB.addActionListener(e -> {
-//            syncWorkSpaceItem(this);
-////            DBUtil.openDBViewer(this.getModelerFile(), this.getBaseElementSpec());
-//        });
+        JMenuItem visJSONB = new JMenuItem(Bundle.VIS_JSON(), VIEW_JSONB);
+        visJSONB.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('B'), InputEvent.CTRL_DOWN_MASK));
+        visJSONB.addActionListener(e -> JSONBUtil.openJSONBViewer(this.getModelerFile()));
 
         JMenuItem openPUXML = new JMenuItem(Bundle.PERSISTENCE_UNIT(), PERSISTENCE_UNIT);
         openPUXML.addActionListener(e -> {
@@ -396,14 +395,16 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                 PUDataObject pud = ProviderUtil.getPUDataObject(project);
                 org.netbeans.modules.openfile.OpenFile.open(pud.getPrimaryFile(), -1);
             } catch (InvalidPersistenceXmlException ex) {
-                JPAModelerScene.this.getModelerFile().handleException(ex);
+                this.getModelerFile().handleException(ex);
             }
         });
 
+        JMenuItem searchMenu = new JMenuItem(Bundle.SEARCH(), SEARCH_ICON);
+        searchMenu.setAccelerator(KeyStroke.getKeyStroke(Character.valueOf('F'), InputEvent.CTRL_DOWN_MASK));
+        searchMenu.addActionListener(e -> getModelerFile().getModelerDiagramEngine().searchWidget());
+
         JMenuItem openJPQLPanel = new JMenuItem(Bundle.RUN_JPQL(), RUN_JPQL_ICON);
-        openJPQLPanel.addActionListener(e -> {
-            new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile());
-        });
+        openJPQLPanel.addActionListener(e -> new JPQLExternalEditorController().init(JPAModelerScene.this.getModelerFile()));
 
         JMenu shareModeler = new JMenu(Bundle.SHARE());
         shareModeler.setIcon(SOCIAL_NETWORK_SHARING);
@@ -414,12 +415,14 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         menuList.add(index++, getWorkSpaceManager().getWorkSpaceMenu());
         menuList.add(index++, generateCode);
         menuList.add(index++, visDB);
+        menuList.add(index++, visJSONB);
+        menuList.add(index++, searchMenu);
+        menuList.add(index++, null);
         menuList.add(index++, openPUXML);
         menuList.add(index++, openJPQLPanel);
         menuList.add(index++, null);
         menuList.add(index++, shareModeler);
         menuList.add(index++, EnhancementRequestHandler.getInstance().getComponent());
-
 
         return menuList;
     }

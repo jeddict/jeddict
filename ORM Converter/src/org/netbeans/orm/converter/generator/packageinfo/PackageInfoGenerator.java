@@ -13,50 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.netbeans.orm.converter.generator.jaxb.packageinfo;
+package org.netbeans.orm.converter.generator.packageinfo;
 
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.orm.converter.generator.ClassGenerator;
 import org.netbeans.orm.converter.util.ClassHelper;
 
-public class JaxbPackageInfoGenerator extends ClassGenerator<JaxbPackageInfoClassDefSnippet> {
+public class PackageInfoGenerator extends ClassGenerator<PackageInfoClassDefSnippet> {
 
     private EntityMappings parsedEntityMappings = null;
 
-    public JaxbPackageInfoGenerator(EntityMappings parsedEntityMappings, String packageName) {
-        super(new JaxbPackageInfoClassDefSnippet());
+    public PackageInfoGenerator(EntityMappings parsedEntityMappings, String packageName) {
+        super(new PackageInfoClassDefSnippet());
         this.parsedEntityMappings = parsedEntityMappings;
         this.rootPackageName = packageName;
         this.packageName = packageName;
     }
 
     @Override
-    public JaxbPackageInfoClassDefSnippet getClassDef() {
+    public PackageInfoClassDefSnippet getClassDef() {
         ClassHelper classHelper = new ClassHelper("package-info");
         classHelper.setPackageName(packageName);
         classDef.setClassName(classHelper.getFQClassName());
         classDef.setPackageName(classHelper.getPackageName());
         classDef.setNamespace(parsedEntityMappings.getJaxbNameSpace());
+        classDef.setJSONBSnippets(getJSONBCPackageSnippet(parsedEntityMappings));
+        
         return classDef;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + (this.parsedEntityMappings.getJaxbNameSpace() != null ? this.parsedEntityMappings.getJaxbNameSpace().hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final JaxbPackageInfoGenerator other = (JaxbPackageInfoGenerator) obj;
-        return !(this.parsedEntityMappings.getJaxbNameSpace() != other.parsedEntityMappings.getJaxbNameSpace() && (this.parsedEntityMappings.getJaxbNameSpace() == null || !this.parsedEntityMappings.getJaxbNameSpace().equals(other.parsedEntityMappings.getJaxbNameSpace())));
     }
 
 }

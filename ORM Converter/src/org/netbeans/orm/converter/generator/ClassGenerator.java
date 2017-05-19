@@ -172,6 +172,15 @@ import org.netbeans.orm.converter.util.ORMConvLogger;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
+import org.netbeans.jsonb.converter.compiler.DateFormatSnippet;
+import org.netbeans.jsonb.converter.compiler.NillableSnippet;
+import org.netbeans.jsonb.converter.compiler.NumberFormatSnippet;
+import org.netbeans.jsonb.converter.compiler.PropertySnippet;
+import org.netbeans.jsonb.converter.compiler.TransientSnippet;
+import org.netbeans.jsonb.converter.compiler.TypeAdapterSnippet;
+import org.netbeans.jsonb.converter.compiler.TypeDeserializerSnippet;
+import org.netbeans.jsonb.converter.compiler.TypeSerializerSnippet;
+import org.netbeans.jsonb.converter.compiler.VisibilitySnippet;
 import org.netbeans.orm.converter.compiler.ConvertSnippet;
 import org.netbeans.orm.converter.compiler.ConvertsSnippet;
 import org.netbeans.orm.converter.compiler.OrderColumnSnippet;
@@ -203,7 +212,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             interfaces.addAll(javaClass.getInterfaces());
             classDef.setInterfaces(interfaces.stream().filter(ReferenceClass::isEnable).map(ReferenceClass::getName).collect(toList()));
         }
-
+        
+        classDef.setJSONBSnippets(getJSONBClassSnippet(javaClass));
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
         classDef.getAnnotation().putAll(getAnnotationSnippet(javaClass.getRuntimeAnnotation()));
         
@@ -373,6 +383,103 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
         return snippets;
     }
+    
+    protected List<org.netbeans.orm.converter.compiler.Snippet> getJSONBAttributeSnippet(Attribute attribute) {
+        List<org.netbeans.orm.converter.compiler.Snippet> snippets = new ArrayList<>();
+        if(StringUtils.isNotBlank(attribute.getJsonbProperty()) || attribute.getJsonbNillable()){
+            snippets.add(new PropertySnippet(attribute.getJsonbProperty(), attribute.getJsonbNillable()));
+        }
+        if(attribute.getJsonbTransient()){
+            snippets.add(new TransientSnippet());
+        }
+        if (attribute.getJsonbDateFormat() != null
+                && (StringUtils.isNotBlank(attribute.getJsonbDateFormat().getValue())
+                || StringUtils.isNotBlank(attribute.getJsonbDateFormat().getLocale()))) {
+            snippets.add(new DateFormatSnippet(attribute.getJsonbDateFormat()));
+        }
+        if (attribute.getJsonbNumberFormat() != null
+                && (StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getValue())
+                || StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getLocale()))) {
+            snippets.add(new NumberFormatSnippet(attribute.getJsonbNumberFormat()));
+        }
+        if(attribute.getJsonbTypeAdapter()!=null 
+                && attribute.getJsonbTypeAdapter().isEnable() 
+                && !StringUtils.isBlank(attribute.getJsonbTypeAdapter().getName())){
+            snippets.add(new TypeAdapterSnippet(attribute.getJsonbTypeAdapter()));
+        }
+        if(attribute.getJsonbTypeDeserializer()!=null 
+                && attribute.getJsonbTypeDeserializer().isEnable() 
+                && !StringUtils.isBlank(attribute.getJsonbTypeDeserializer().getName())){
+            snippets.add(new TypeDeserializerSnippet(attribute.getJsonbTypeDeserializer()));
+        }
+        if(attribute.getJsonbTypeSerializer()!=null 
+                && attribute.getJsonbTypeSerializer().isEnable() 
+                && !StringUtils.isBlank(attribute.getJsonbTypeSerializer().getName())){
+            snippets.add(new TypeSerializerSnippet(attribute.getJsonbTypeSerializer()));
+        }
+        return snippets;
+    }
+
+    protected List<org.netbeans.orm.converter.compiler.Snippet> getJSONBClassSnippet(JavaClass javaClass) {
+        List<org.netbeans.orm.converter.compiler.Snippet> snippets = new ArrayList<>();
+        if(javaClass.getJsonbNillable()){
+            snippets.add(new NillableSnippet(javaClass.getJsonbNillable()));
+        }
+        if (javaClass.getJsonbDateFormat() != null
+                && (StringUtils.isNotBlank(javaClass.getJsonbDateFormat().getValue())
+                || StringUtils.isNotBlank(javaClass.getJsonbDateFormat().getLocale()))) {
+            snippets.add(new DateFormatSnippet(javaClass.getJsonbDateFormat()));
+        }
+        if (javaClass.getJsonbNumberFormat() != null
+                && (StringUtils.isNotBlank(javaClass.getJsonbNumberFormat().getValue())
+                || StringUtils.isNotBlank(javaClass.getJsonbNumberFormat().getLocale()))) {
+            snippets.add(new NumberFormatSnippet(javaClass.getJsonbNumberFormat()));
+        }
+        if(javaClass.getJsonbTypeAdapter()!=null 
+                && javaClass.getJsonbTypeAdapter().isEnable() 
+                && !StringUtils.isBlank(javaClass.getJsonbTypeAdapter().getName())){
+            snippets.add(new TypeAdapterSnippet(javaClass.getJsonbTypeAdapter()));
+        }
+        if(javaClass.getJsonbTypeDeserializer()!=null 
+                && javaClass.getJsonbTypeDeserializer().isEnable() 
+                && !StringUtils.isBlank(javaClass.getJsonbTypeDeserializer().getName())){
+            snippets.add(new TypeDeserializerSnippet(javaClass.getJsonbTypeDeserializer()));
+        }
+        if(javaClass.getJsonbTypeSerializer()!=null 
+                && javaClass.getJsonbTypeSerializer().isEnable() 
+                && !StringUtils.isBlank(javaClass.getJsonbTypeSerializer().getName())){
+            snippets.add(new TypeSerializerSnippet(javaClass.getJsonbTypeSerializer()));
+        }
+        if(javaClass.getJsonbVisibility()!=null 
+                && javaClass.getJsonbVisibility().isEnable() 
+                && !StringUtils.isBlank(javaClass.getJsonbVisibility().getName())){
+            snippets.add(new VisibilitySnippet(javaClass.getJsonbVisibility()));
+        }
+        return snippets;
+    }
+
+    protected List<org.netbeans.orm.converter.compiler.Snippet> getJSONBCPackageSnippet(EntityMappings entityMappings) {
+        List<org.netbeans.orm.converter.compiler.Snippet> snippets = new ArrayList<>();
+        if(entityMappings.getJsonbNillable()){
+            snippets.add(new NillableSnippet(entityMappings.getJsonbNillable()));
+        }
+        if (entityMappings.getJsonbDateFormat() != null
+                && (StringUtils.isNotBlank(entityMappings.getJsonbDateFormat().getValue())
+                || StringUtils.isNotBlank(entityMappings.getJsonbDateFormat().getLocale()))) {
+            snippets.add(new DateFormatSnippet(entityMappings.getJsonbDateFormat()));
+        }
+        if (entityMappings.getJsonbNumberFormat() != null
+                && (StringUtils.isNotBlank(entityMappings.getJsonbNumberFormat().getValue())
+                || StringUtils.isNotBlank(entityMappings.getJsonbNumberFormat().getLocale()))) {
+            snippets.add(new NumberFormatSnippet(entityMappings.getJsonbNumberFormat()));
+        }
+        if (entityMappings.getJsonbVisibility() != null 
+                && entityMappings.getJsonbVisibility().isEnable() 
+                && !StringUtils.isBlank(entityMappings.getJsonbVisibility().getName())){
+            snippets.add(new VisibilitySnippet(entityMappings.getJsonbVisibility()));
+        }
+        return snippets;
+    }
 
     protected VariableDefSnippet getVariableDef(Attribute attr) {
         VariableDefSnippet variableDef = variables.get(attr.getName());
@@ -395,6 +502,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setAttributeConstraints(getConstraintSnippet(attr.getAttributeConstraints()));
             variableDef.setKeyConstraints(getConstraintSnippet(attr.getKeyConstraints()));
             variableDef.setValueConstraints(getConstraintSnippet(attr.getValueConstraints()));
+            variableDef.setJSONBSnippets(getJSONBAttributeSnippet(attr));
 
             List<AttributeSnippet> snippets = new ArrayList<>();//todo global attribute snippet at class level ; javaClass.getAttrSnippets());
             snippets.addAll(attr.getSnippets());

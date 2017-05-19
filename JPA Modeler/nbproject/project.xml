@@ -549,6 +549,8 @@
                 <friend>org.netbeans.db.modeler</friend>
                 <friend>org.netbeans.jpa.modeler.dbre</friend>
                 <friend>org.netbeans.jpa.modeler.jcre</friend>
+                <friend>org.netbeans.jsonb.modeler</friend>
+                <package>org.netbeans.db.modeler.manager</package>
                 <package>org.netbeans.jpa.modeler.core.signal</package>
                 <package>org.netbeans.jpa.modeler.core.widget</package>
                 <package>org.netbeans.jpa.modeler.core.widget.attribute</package>
@@ -565,6 +567,7 @@
                 <package>org.netbeans.jpa.modeler.navigator.overrideview</package>
                 <package>org.netbeans.jpa.modeler.properties</package>
                 <package>org.netbeans.jpa.modeler.properties.cascade</package>
+                <package>org.netbeans.jpa.modeler.properties.extend</package>
                 <package>org.netbeans.jpa.modeler.properties.fieldtype</package>
                 <package>org.netbeans.jpa.modeler.properties.idgeneration</package>
                 <package>org.netbeans.jpa.modeler.properties.inheritance</package>
@@ -584,13 +587,14 @@
                 <package>org.netbeans.jpa.modeler.source.generator.task</package>
                 <package>org.netbeans.jpa.modeler.source.generator.ui</package>
                 <package>org.netbeans.jpa.modeler.specification.export</package>
+                <package>org.netbeans.jpa.modeler.specification.model.event</package>
                 <package>org.netbeans.jpa.modeler.specification.model.file</package>
                 <package>org.netbeans.jpa.modeler.specification.model.file.action</package>
                 <package>org.netbeans.jpa.modeler.specification.model.navigator</package>
                 <package>org.netbeans.jpa.modeler.specification.model.scene</package>
                 <package>org.netbeans.jpa.modeler.specification.model.util</package>
-                <package>org.netbeans.jpa.modeler.visiblity.javaclass</package>
                 <package>org.netbeans.jpa.modeler.widget.connection.relation</package>
+                <package>org.netbeans.jsonb.modeler.manager</package>
             </friend-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/ApachePOI.jar</runtime-relative-path>

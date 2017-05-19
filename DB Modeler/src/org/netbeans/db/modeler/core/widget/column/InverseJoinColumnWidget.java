@@ -82,8 +82,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
                 String joinTableName = JOptionPane.showInputDialog((Component) InverseJoinColumnWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter join table name");
                 convertToJoinTable(joinTableName);
                 ModelerFile parentFile = InverseJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
-                EntityMappings entityMappings = (EntityMappings) parentFile.getModelerScene().getBaseElementSpec();
-                DBUtil.openDBViewer(parentFile, entityMappings, entityMappings.getCurrentWorkSpace());
+                DBUtil.openDBViewer(parentFile);
             });
             menuList.add(0, joinTable);
         }

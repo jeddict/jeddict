@@ -55,6 +55,7 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     private EqualsMethodSnippet equalsMethodSnippet;
     private ToStringMethodSnippet toStringMethodSnippet;
 
+    private List<Snippet> jsonbSnippets;
     private Map<ClassSnippetLocationType, List<String>> customSnippet;
     private Map<ClassAnnotationLocationType, List<AnnotationSnippet>> annotation;
 
@@ -435,12 +436,17 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
             importSnippets.add(EXCLUDE_SUPERCLASS_LISTENERS_FQN);
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation().values().stream().flatMap(annot -> annot.stream()).collect(toList())) {
+        for (AnnotationSnippet snippet : this.getAnnotation().values().stream()
+                .flatMap(annot -> annot.stream()).collect(toList())) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
         importSnippets.addAll(this.getInterfaces().stream().collect(toList()));
-
+        
+        for(Snippet snippet : this.getJSONBSnippets()){
+            importSnippets.addAll(snippet.getImportSnippets());
+        }
+        
         return importSnippets;
     }
 
@@ -752,7 +758,22 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
     /**
      * @param converts the converts to set
      */
+    
     public void setConverts(ConvertsSnippet converts) {
         this.converts = converts;
+    }
+
+    /**
+     * @return the classJSONBSnippets
+     */
+    public List<Snippet> getJSONBSnippets() {
+        return jsonbSnippets;
+    }
+
+    /**
+     * @param classJSONBSnippets the classJSONBSnippets to set
+     */
+    public void setJSONBSnippets(List<Snippet> classJSONBSnippets) {
+        this.jsonbSnippets = classJSONBSnippets;
     }
 }

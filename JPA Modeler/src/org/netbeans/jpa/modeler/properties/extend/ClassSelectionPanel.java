@@ -26,7 +26,7 @@ import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
  *
  * @author Gaurav Gupta
  */
-public class ClassExtendPanel extends GenericEmbeddedEditor<ReferenceClass> {
+public class ClassSelectionPanel extends GenericEmbeddedEditor<ReferenceClass> {
 
     private final ModelerFile modelerFile;
     private ReferenceClass referenceClass;
@@ -57,7 +57,7 @@ public class ClassExtendPanel extends GenericEmbeddedEditor<ReferenceClass> {
         }
     }
 
-    public ClassExtendPanel(ModelerFile modelerFile) {
+    public ClassSelectionPanel(ModelerFile modelerFile) {
         this.modelerFile = modelerFile;
     }
 

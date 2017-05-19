@@ -116,6 +116,10 @@ $classDef.getNamedEntityGraphs().getSnippet()
 #if ($classDef.getNamedStoredProcedureQueries() )
 $classDef.getNamedStoredProcedureQueries().getSnippet()
 #end
+##################### JSONB ###############################
+#foreach($snippet in $classDef.getJSONBSnippets() )
+$snippet.getSnippet()
+#end
 ##################### custom annotation ###############################
 #foreach($annotation in $classDef.getAnnotation("CLASS") )
 $annotation.getSnippet()
@@ -219,6 +223,9 @@ $varDef.getAttributeOverrides().getSnippet()
 #end
 #foreach($annotation in $varDef.getAnnotation("PROPERTY") )
     $annotation.getSnippet()
+#end
+#foreach($snippet in $varDef.getJSONBSnippets() )
+    $snippet.getSnippet()
 #end
 #foreach($constraint in $varDef.getAttributeConstraints() )
     $constraint.getSnippet()
