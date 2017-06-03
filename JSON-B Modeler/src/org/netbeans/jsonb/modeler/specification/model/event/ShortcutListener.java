@@ -17,8 +17,8 @@ package org.netbeans.jsonb.modeler.specification.model.event;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import org.netbeans.jpa.modeler.specification.model.util.JSONBUtil;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**
