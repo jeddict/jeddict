@@ -19,14 +19,21 @@ import java.awt.Cursor;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
+import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jpa.modeler.core.widget.*;
 import static org.netbeans.jpa.modeler.core.widget.JavaClassWidget.getFileObject;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Embedded;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
 import org.netbeans.jsonb.modeler.spec.JSONBDocument;
 import org.netbeans.jsonb.modeler.spec.JSONBNode;
@@ -48,6 +55,7 @@ import static org.netbeans.jsonb.modeler.properties.PropertiesHandler.getJsonbTy
 import static org.netbeans.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeSerializer;
 import static org.netbeans.jsonb.modeler.properties.PropertiesHandler.getJsonbVisibility;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jsonb.modeler.core.widget.context.DocumentContextModel;
 
 public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerScene> {
 
@@ -112,6 +120,12 @@ public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerSc
         }
     }
 
+    public List<JSONNodeWidget> getAllNodeWidgets() {
+        List<JSONNodeWidget> nodes = new ArrayList<>(branchNodeWidgets.values());
+        nodes.addAll(leafNodeWidgets.values());
+        return nodes;
+    }
+    
     /**
      * @return the leafNodeWidgets
      */
@@ -147,10 +161,25 @@ public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerSc
     public void removeBranchNodeWidget(BranchNodeWidget key) {
         branchNodeWidgets.remove(key.getId());
     }
+    
+    /**
+     * @return the JSONNodeWidget
+     */
+    public JSONNodeWidget getJSONNodeWidget(Attribute attr) {
+        if(attr instanceof RelationAttribute || attr instanceof Embedded || 
+                (attr instanceof ElementCollection && ((ElementCollection)attr).getConnectedClass()!=null)){
+            return branchNodeWidgets.get(attr.getId());
+        } else {
+           return leafNodeWidgets.get(attr.getId()); 
+        }
+    }
 
     @Override
     public ContextPaletteModel getContextPaletteModel() {
-        return null;
+        if (contextPaletteModel == null) {
+            contextPaletteModel = DocumentContextModel.getContextPaletteModel(this);
+        }
+        return contextPaletteModel;
     }
 
     @Override
@@ -259,5 +288,19 @@ public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerSc
     @Override
     public Image getIcon() {
         return JSON_DOCUMENT;
+    }
+    
+    public void sortNodes() {
+        this.sortPins(getNodeCategories());
+    }
+    
+    public Map<String, List<Widget>> getNodeCategories() {
+        List<Attribute> attributes = this.getBaseElementSpec().getJavaClass().getJsonbPropertyOrder();    
+        if(attributes.isEmpty()){
+            attributes = this.getBaseElementSpec().getJavaClass().getAttributes().getAllAttribute();
+        }
+        return Collections.singletonMap("", attributes.stream()
+                .map(attr -> getJSONNodeWidget(attr))
+                .collect(toList()));
     }
 }

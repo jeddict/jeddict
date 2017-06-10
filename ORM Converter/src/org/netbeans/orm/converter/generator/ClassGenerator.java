@@ -97,6 +97,7 @@ import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.bean.validation.constraints.Constraint;
 import org.netbeans.jpa.modeler.spec.extend.AnnotationLocation;
+import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.column.ForeignKeyValidator;
@@ -175,6 +176,7 @@ import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
 import org.netbeans.jsonb.converter.compiler.DateFormatSnippet;
 import org.netbeans.jsonb.converter.compiler.NillableSnippet;
 import org.netbeans.jsonb.converter.compiler.NumberFormatSnippet;
+import org.netbeans.jsonb.converter.compiler.PropertyOrderSnippet;
 import org.netbeans.jsonb.converter.compiler.PropertySnippet;
 import org.netbeans.jsonb.converter.compiler.TransientSnippet;
 import org.netbeans.jsonb.converter.compiler.TypeAdapterSnippet;
@@ -420,19 +422,23 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippets;
     }
 
-    protected List<org.netbeans.orm.converter.compiler.Snippet> getJSONBClassSnippet(JavaClass javaClass) {
+    protected List<org.netbeans.orm.converter.compiler.Snippet> getJSONBClassSnippet(JavaClass<IAttributes> javaClass) {
         List<org.netbeans.orm.converter.compiler.Snippet> snippets = new ArrayList<>();
         if(javaClass.getJsonbNillable()){
             snippets.add(new NillableSnippet(javaClass.getJsonbNillable()));
         }
-        if (javaClass.getJsonbDateFormat() != null
-                && (StringUtils.isNotBlank(javaClass.getJsonbDateFormat().getValue())
-                || StringUtils.isNotBlank(javaClass.getJsonbDateFormat().getLocale()))) {
+        if (!javaClass.getJsonbPropertyOrder().isEmpty()) {
+            snippets.add(new PropertyOrderSnippet(javaClass.getJsonbPropertyOrder()
+                    .stream()
+                    .map(Attribute::getName)
+                    .collect(toList())
+                )
+            );
+        }
+        if (javaClass.getJsonbDateFormat() != null && !javaClass.getJsonbDateFormat().isEmpty()) {
             snippets.add(new DateFormatSnippet(javaClass.getJsonbDateFormat()));
         }
-        if (javaClass.getJsonbNumberFormat() != null
-                && (StringUtils.isNotBlank(javaClass.getJsonbNumberFormat().getValue())
-                || StringUtils.isNotBlank(javaClass.getJsonbNumberFormat().getLocale()))) {
+        if (javaClass.getJsonbNumberFormat() != null && !javaClass.getJsonbNumberFormat().isEmpty()) {
             snippets.add(new NumberFormatSnippet(javaClass.getJsonbNumberFormat()));
         }
         if(javaClass.getJsonbTypeAdapter()!=null 

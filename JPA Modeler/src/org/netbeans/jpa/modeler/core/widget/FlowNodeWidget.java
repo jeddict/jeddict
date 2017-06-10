@@ -147,7 +147,7 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
         }
     }
 
-    private ContextPaletteModel contextPaletteModel;
+    protected ContextPaletteModel contextPaletteModel;
 
     @Override
     public ContextPaletteModel getContextPaletteModel() {

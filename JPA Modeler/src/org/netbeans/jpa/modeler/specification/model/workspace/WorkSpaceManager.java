@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.specification.model.workspace;
 
 import java.util.ArrayList;
 import static java.util.Collections.singletonMap;
+import java.util.Map;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -27,6 +28,7 @@ import javax.swing.JRadioButtonMenuItem;
 import static javax.swing.SwingUtilities.invokeLater;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
@@ -234,18 +236,24 @@ public class WorkSpaceManager {
                 } 
                 item.setTextDesign(classWidget.getTextDesign().isChanged()
                         ? (NodeTextDesign)classWidget.getTextDesign():null);
+                Map<Attribute, WorkSpaceElement> cache = item.getWorkSpaceElementMap();
                 item.setWorkSpaceElement(
                         classWidget.getAllAttributeWidgets(false)
                                 .stream()
-                                .filter(attrWidget -> attrWidget.getTextDesign().isChanged())
                                 .map(attrWidget -> new WorkSpaceElement(attrWidget.getBaseElementSpec(), (PinTextDesign) attrWidget.getTextDesign()))
                                 .collect(toList())
                 );
+                item.getWorkSpaceElement()
+                        .stream()
+                        .filter(wse -> cache.get(wse.getAttribute())!=null)
+                        .forEach(wse -> wse.setJsonbTextDesign(cache.get(wse.getAttribute()).getJsonbTextDesign()));
             } else {
                 item.setLocation(null);
             }
         }
     }
+    
+
     
     public void updateWorkSpace() {
         EntityMappings entityMappings = scene.getBaseElementSpec();

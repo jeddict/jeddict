@@ -26,17 +26,22 @@ import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.design.Diagram;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceElement;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceItem;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_JSONB;
 import org.netbeans.jsonb.modeler.core.widget.BranchNodeWidget;
 import org.netbeans.jsonb.modeler.core.widget.DocumentWidget;
 import org.netbeans.jsonb.modeler.core.widget.GeneralizationFlowWidget;
+import org.netbeans.jsonb.modeler.core.widget.JSONNodeWidget;
 import org.netbeans.jsonb.modeler.core.widget.LeafNodeWidget;
 import org.netbeans.jsonb.modeler.core.widget.ReferenceFlowWidget;
 import org.netbeans.jsonb.modeler.spec.JSONBBranchNode;
 import org.netbeans.jsonb.modeler.spec.JSONBDocument;
 import org.netbeans.jsonb.modeler.spec.JSONBLeafNode;
 import org.netbeans.jsonb.modeler.spec.JSONBMapping;
+import org.netbeans.jsonb.modeler.spec.JSONBNode;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -86,15 +91,7 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
     public static Image BOOLEAN_ICON;
     public static String UNKNOWN_ICON_PATH;
     public static Image UNKNOWN_ICON;
-
     public static Image TAB_ICON;
-    public static ImageIcon RELOAD_ICON;
-//    public static ImageIcon VIEW_SQL;
-
-//    static {// required to load before init
-//        ClassLoader cl = JSONBModelerUtil.class.getClassLoader();
-//        VIEW_SQL = new ImageIcon(cl.getResource("org/netbeans/db/modeler/resource/image/VIEW_SQL.png"));//Eager Loading required
-//    }
 
     @Override
     public void init() {
@@ -111,7 +108,6 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
             BOOLEAN_ICON_PATH = "org/netbeans/jsonb/modeler/resource/image/BOOLEAN.png";
             UNKNOWN_ICON_PATH = "org/netbeans/jsonb/modeler/resource/image/UNKNOWN.png";
             TAB_ICON = VIEW_JSONB.getImage();
-            RELOAD_ICON = new ImageIcon(cl.getResource("org/netbeans/jsonb/modeler/resource/image/RELOAD.png"));
             JSON_DOCUMENT = new ImageIcon(cl.getResource(JSON_DOCUMENT_ICON_PATH)).getImage();
             OBJECT_ICON = new ImageIcon(cl.getResource(OBJECT_ICON_PATH)).getImage();
             ARRAY_ICON = new ImageIcon(cl.getResource(ARRAY_ICON_PATH)).getImage();
@@ -132,12 +128,12 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
             JSONBModelerScene scene = (JSONBModelerScene) file.getModelerScene();
             scene.startSceneGeneration();
 
-            EntityMappings entityMapping = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
+            EntityMappings entityMappings = (EntityMappings) file.getAttributes().get(EntityMappings.class.getSimpleName());
             WorkSpace workSpace = (WorkSpace) file.getAttributes().get(WorkSpace.class.getSimpleName());
-            JSONBMapping jsonbMapping = new JSONBMapping(entityMapping, workSpace);
+            JSONBMapping jsonbMapping = new JSONBMapping(entityMappings, workSpace);
             scene.setBaseElementSpec(jsonbMapping);
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
-            modelerDiagram.setDefinitionElement(entityMapping);
+            modelerDiagram.setDefinitionElement(entityMappings);
 
             List<DocumentWidget> documentWidgets = jsonbMapping.getDocuments()
                     .stream()
@@ -145,8 +141,26 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
                     .collect(toList());
             documentWidgets.forEach(documentWidget -> loadAttribute(documentWidget));
             documentWidgets.forEach(documentWidget -> loadFlowEdge(documentWidget));
+            
+            Diagram diagram = entityMappings.getJPADiagram();
+            int itemSize;
+            long drawItemSize;
+            if (diagram != null) {
+                itemSize = entityMappings.getJPADiagram().getJPAPlane().getDiagramElement().size();
+                drawItemSize = 0;
+            } else {
+                drawItemSize = entityMappings.getCurrentWorkSpace().getItems()
+                        .stream()
+                        .filter(item -> item.getLocation() != null)
+                        .peek(item -> loadDiagram(scene, item))
+                        .count();
+                itemSize = entityMappings.getCurrentWorkSpace().getItems().size();
+            }
+            if (entityMappings.isGenerated() || drawItemSize != itemSize) {
+                scene.autoLayout();
+            }
+            
             scene.commitSceneGeneration();
-            scene.autoLayout();
         } catch (Exception ex) {
             ex.printStackTrace();
             file.handleException(ex);
@@ -176,6 +190,25 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
             DocumentWidget documentWidget = (DocumentWidget) nodeWidget;
             return documentWidget;
     }
+    
+    private void loadDiagram(JSONBModelerScene scene, WorkSpaceItem workSpaceItem) {
+        DocumentWidget documentWidget = (DocumentWidget) scene.getBaseElement(workSpaceItem.getJavaClass().getId());
+        if (documentWidget != null) {
+            documentWidget.setPreferredLocation(workSpaceItem.getLocation());
+            documentWidget.setTextDesign(workSpaceItem.getJsonbTextDesign());
+            for (JSONNodeWidget<? extends JSONBNode> nodeWidget : documentWidget.getAllNodeWidgets()) {
+                WorkSpaceElement workSpaceElement = workSpaceItem.getWorkSpaceElementMap().get(nodeWidget.getBaseElementSpec().getAttribute());
+                if (workSpaceElement == null) {
+                    workSpaceItem.addWorkSpaceElement(workSpaceElement = new WorkSpaceElement(nodeWidget.getBaseElementSpec().getAttribute()));
+                }
+                nodeWidget.setTextDesign(workSpaceElement.getJsonbTextDesign());
+            }
+            scene.reinstallColorScheme(documentWidget);
+        } else {
+            throw new InvalidElmentException("Invalid JSONB Element : " + documentWidget);
+        }
+    }
+    
 
     private void loadAttribute(DocumentWidget documentWidget) {
         JSONBDocument document = documentWidget.getBaseElementSpec();
@@ -187,6 +220,7 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
                         documentWidget.addLeafNode(node.getName(), node);
                     }
                 });
+                documentWidget.sortNodes();
             }
     }
     private void loadFlowEdge(DocumentWidget documentWidget) {
@@ -233,7 +267,7 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
     public void saveModelerFile(ModelerFile file) {
         file.getParentFile().getModelerUtil().saveModelerFile(file.getParentFile());
     }
-
+    
     @Override
     public String getContent(ModelerFile file) {
         return file.getParentFile().getModelerUtil().getContent(file.getParentFile());

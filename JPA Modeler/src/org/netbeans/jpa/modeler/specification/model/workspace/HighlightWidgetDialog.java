@@ -21,9 +21,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.window.GenericDialog;
+import org.netbeans.modeler.scene.vmd.AbstractPModelerScene;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.widget.design.ITextDesign;
 import org.netbeans.modeler.widget.node.IWidget;
@@ -269,7 +269,7 @@ public class HighlightWidgetDialog extends GenericDialog {
         textDesign.setStyle(((ComboBoxValue<Integer>) style_ComboBox.getSelectedItem()).getValue());
         textDesign.setSize(((Integer) size_Spinner.getValue()).floatValue());
 
-        ((JPAModelerScene)modelerScene).reinstallColorScheme(widget);
+        ((AbstractPModelerScene)modelerScene).reinstallColorScheme(widget);
         saveActionPerformed(evt);
     }//GEN-LAST:event_save_ButtonActionPerformed
 

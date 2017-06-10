@@ -106,13 +106,6 @@ public class NodeContextModel {
 
     public static ContextPaletteModel getContextPaletteModel(INodeWidget nodeWidget) {
         ContextPaletteModel contextPaletteModel = new DefaultContextPaletteModel(nodeWidget);
-
-//        ContextPaletteButtonModel setFocusModel = new DefaultPaletteButtonModel();
-//        contextPaletteModel.getChildren().add(setFocusModel);
-//        setFocusModel.setImage(Utilities.loadImage("org/netbeans/jpa/modeler/resource/image/attribute-association-override.png"));
-//        setFocusModel.setTooltip("Attribute/Association Override");
-//        setFocusModel.setPaletteModel(contextPaletteModel);
-//        setFocusModel.setMouseListener(PinContextModel.getFocusWidgetAction(nodeWidget));
         ContextPaletteButtonModel generalizationConnectionModel = new DefaultPaletteButtonModel();
         generalizationConnectionModel.setId("GENERALIZATION");
         generalizationConnectionModel.setImage(GENERALIZATION);

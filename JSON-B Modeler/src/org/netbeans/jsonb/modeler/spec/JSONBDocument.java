@@ -15,9 +15,16 @@
  */
 package org.netbeans.jsonb.modeler.spec;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import java.util.stream.IntStream;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -27,23 +34,36 @@ public class JSONBDocument extends FlowNode {
 
     private JavaClass javaClass;
     
-    private final Map<String, JSONBNode> nodes = new LinkedHashMap<>();
+    private List<JSONBNode> nodes = new LinkedList<>();
 
       public JSONBDocument(JavaClass javaClass) {
         this.javaClass = javaClass;
         this.javaClass.addLookup(JSONBDocument.class, this);
     }
       
-    void loadAttribute(){
-        for(Attribute attribute : this.javaClass.getAttributes().getAllAttribute()){
+    public void loadAttribute(){
+        List<JSONBNode> nodes = new LinkedList<>();
+        List<Attribute> attributes = this.javaClass.getAttributes().getAllAttribute();
+        List<Attribute> propertyOrder = this.javaClass.getJsonbPropertyOrder();
+        if(!propertyOrder.isEmpty()){
+            Map<String, Integer> attributesMap = IntStream.range(0, propertyOrder.size())
+                    .boxed()
+                    .collect(toMap(i -> propertyOrder.get(i).getId(), identity()));
+            attributes.sort(Comparator.comparing(attr -> attributesMap.get(attr.getId())));
+        }
+        
+        for(Attribute attribute : attributes){
             JSONBNode node;
-            if(attribute instanceof RelationAttribute){
+            if(attribute instanceof RelationAttribute || attribute instanceof Embedded){
+                node = new JSONBBranchNode(attribute);
+            } else if(attribute instanceof ElementCollection && ((ElementCollection)attribute).getConnectedClass()!=null){
                 node = new JSONBBranchNode(attribute);
             } else {
                 node = new JSONBLeafNode(attribute);
             }
-            nodes.put(node.getName(), node);
+            nodes.add(node);
         }
+        this.nodes = nodes;
     }
     
     public String getId() {
@@ -83,8 +103,8 @@ public class JSONBDocument extends FlowNode {
     /**
      * @return the nodes
      */
-    public Collection<JSONBNode> getNodes() {
-        return nodes.values();
+    public List<JSONBNode> getNodes() {
+        return nodes;
     }
 
 }

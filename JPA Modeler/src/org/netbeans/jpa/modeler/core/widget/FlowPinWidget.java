@@ -145,7 +145,7 @@ public abstract class FlowPinWidget<E extends FlowPin, S extends IPModelerScene>
         this.baseElementSpec = baseElementSpec;
     }
 
-    private ContextPaletteModel contextPaletteModel;
+    protected ContextPaletteModel contextPaletteModel;
 
     @Override
     public ContextPaletteModel getContextPaletteModel() {

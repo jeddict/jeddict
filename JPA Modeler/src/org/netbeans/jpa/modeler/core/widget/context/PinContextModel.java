@@ -99,7 +99,7 @@ public class PinContextModel {
         upModel.setImage(UP_ICON);
         upModel.setTooltip("Move Up");
         upModel.setPaletteModel(contextPaletteModel);
-        upModel.setMouseListener(getMoveUpWidgetAction(pinWidget, -1));
+        upModel.setMouseListener(getMoveWidgetAction(pinWidget, -1));
         upModel.checkVisibility(() -> checkMoveWidgetVisibility(pinWidget, -1));
         contextPaletteModel.getChildren().add(upModel);
 
@@ -107,7 +107,7 @@ public class PinContextModel {
         downModel.setImage(DOWN_ICON);
         downModel.setTooltip("Move Down");
         downModel.setPaletteModel(contextPaletteModel);
-        downModel.setMouseListener(getMoveUpWidgetAction(pinWidget, 1));
+        downModel.setMouseListener(getMoveWidgetAction(pinWidget, 1));
         downModel.checkVisibility(() -> checkMoveWidgetVisibility(pinWidget, 1));
         contextPaletteModel.getChildren().add(downModel);
     }
@@ -122,7 +122,7 @@ public class PinContextModel {
             }
         };
     }
-    private static MouseListener getMoveUpWidgetAction(final IPinWidget widget, final int distance) {
+    private static MouseListener getMoveWidgetAction(final IPinWidget widget, final int distance) {
         return new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {

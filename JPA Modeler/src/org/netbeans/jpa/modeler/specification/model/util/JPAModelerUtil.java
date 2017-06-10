@@ -268,6 +268,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static ImageIcon HOME_ICON;
     public static ImageIcon SEARCH_ICON;
     public static ImageIcon WORKSPACE_ICON;
+    public static ImageIcon RESET_ICON;
 
     public static Image UP_ICON;
     public static Image DOWN_ICON;
@@ -300,6 +301,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         SOCIAL_NETWORK_SHARING = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/share.png"));
         PERSISTENCE_UNIT = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/persistence-unit.png"));
         WORKSPACE_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/workspace.png"));
+        RESET_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/misc/reset.png"));
         COMPOSITION_ANCHOR = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/composition-anchor.png")).getImage();
         SINGLE_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/single-value-anchor-shape.png")).getImage();
         MULTI_VALUE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/multi-value-anchor-shape.png")).getImage();
@@ -485,8 +487,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             Diagram diagram = entityMappings.getJPADiagram();
             WorkSpace workSpace;
             if (diagram != null) {
-                entityMappings.getJavaClass()
-                        .forEach(node -> loadFlowNode(scene, node));
+                entityMappings.getJavaClass().forEach(node -> loadFlowNode(scene, node));
             } else {
                 workSpace = (WorkSpace) file.getAttribute(WORK_SPACE);
                 if (workSpace != null) {
@@ -850,17 +851,14 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         JavaClassWidget<JavaClass> classWidget = (JavaClassWidget<JavaClass>) scene.getBaseElement(workSpaceItem.getJavaClass().getId());
         if (classWidget != null) {
             classWidget.setPreferredLocation(workSpaceItem.getLocation());
-            if (workSpaceItem.getTextDesign() != null) {
-                classWidget.setTextDesign(workSpaceItem.getTextDesign());
-                scene.reinstallColorScheme(classWidget);
-            }
+            classWidget.setTextDesign(workSpaceItem.getTextDesign());
             for (AttributeWidget<? extends Attribute> attrWidget : classWidget.getAllAttributeWidgets(false)) {
                 WorkSpaceElement workSpaceElement = workSpaceItem.getWorkSpaceElementMap().get(attrWidget.getBaseElementSpec());
                 if (workSpaceElement != null) {
                     attrWidget.setTextDesign(workSpaceElement.getTextDesign());
-                    scene.reinstallColorScheme(classWidget);
                 }
             }
+            scene.reinstallColorScheme(classWidget);
         } else {
             throw new InvalidElmentException("Invalid JPA Element : " + classWidget);
         }

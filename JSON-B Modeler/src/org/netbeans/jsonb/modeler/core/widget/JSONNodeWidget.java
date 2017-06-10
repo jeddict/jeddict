@@ -21,16 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.yasson.internal.naming.DefaultNamingStrategies;
-import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
-import static org.netbeans.jpa.modeler.spec.GenerationType.IDENTITY;
 import static org.netbeans.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeAdapter;
 import static org.netbeans.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeDeserializer;
 import static org.netbeans.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeSerializer;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.jsonb.PropertyNamingStrategy;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jsonb.modeler.core.widget.context.DocumentContextModel;
+import org.netbeans.jsonb.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jsonb.modeler.spec.JSONBNode;
 import org.netbeans.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -132,7 +130,10 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
 
     @Override
     public ContextPaletteModel getContextPaletteModel() {
-        return null;
+        if (contextPaletteModel == null) {
+            contextPaletteModel = NodeContextModel.getContextPaletteModel(this);
+        }
+        return contextPaletteModel;
     }
 
     /**
@@ -168,15 +169,19 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
 
     protected void updateName(String newName) {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
-        attribute.setJsonbProperty(this.name);
+        attribute.setJsonbProperty(newName);
     }
     
     protected String evaluateName() {
         Attribute attribute = this.getBaseElementSpec().getAttribute();
         return attribute.getName();
     }
-
-
+    
+    @Override // to return attribute name instead of property display strategy label
+    public String getName() {
+        return evaluateName();
+    }
+    
     protected void validateName(String name) {
 //        JSONBDocument documentSpec = (JSONBDocument) this.getDocumentWidget().getBaseElementSpec();
 //        if (documentSpec.findColumns(name).size() > 1) {
@@ -185,12 +190,6 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
 //            getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_COLUMN_NAME);
 //        }
     }
-
-//    @Override
-//    protected List<JMenuItem> getPopupMenuItemList() {
-//        List<JMenuItem> menuItemList = new LinkedList<>();
-//        menuItemList.add(getPropertyMenu());
-//        return menuItemList;
-//    }
+    
 
 }

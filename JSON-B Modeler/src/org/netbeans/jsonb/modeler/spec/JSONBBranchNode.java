@@ -15,6 +15,8 @@
  */
 package org.netbeans.jsonb.modeler.spec;
 
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.Embedded;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 
@@ -31,6 +33,12 @@ public class JSONBBranchNode extends JSONBNode {
         if(attribute instanceof RelationAttribute){
             RelationAttribute relationAttribute = (RelationAttribute)attribute;
             this.documentReference = relationAttribute.getConnectedEntity().getLookup(JSONBDocument.class);
+        } else if(attribute instanceof Embedded){
+            Embedded relationAttribute = (Embedded)attribute;
+            this.documentReference = relationAttribute.getConnectedClass().getLookup(JSONBDocument.class);
+        } else if(attribute instanceof ElementCollection){
+            ElementCollection relationAttribute = (ElementCollection)attribute;
+            this.documentReference = relationAttribute.getConnectedClass().getLookup(JSONBDocument.class);
         }
     }
 
