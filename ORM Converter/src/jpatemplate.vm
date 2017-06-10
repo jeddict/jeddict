@@ -231,7 +231,7 @@ $varDef.getAttributeOverrides().getSnippet()
     $constraint.getSnippet()
 #end
 ## $varDef.type => $varDef.getTypeIdentifier().getConstraintVariableType() ## to resolve problem Collection => Collection<Entity>
-    private $varDef.constraintType $varDef.name#if($varDef.getDefaultValue()) = $varDef.getDefaultValue()#end;
+    $varDef.accessModifier $varDef.constraintType $varDef.name#if($varDef.getDefaultValue()) = $varDef.getDefaultValue()#end;
 
 #####################custom attribute snippet - after field ###############################
 #foreach($snippet in $varDef.getCustomSnippet("AFTER_FIELD") )

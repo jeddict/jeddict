@@ -491,6 +491,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         VariableDefSnippet variableDef = variables.get(attr.getName());
         if (variableDef == null) {
             variableDef = new VariableDefSnippet(attr);
+            variableDef.setAccessModifier(attr.getAccessModifier());
             variableDef.setName(attr.getName());
             variableDef.setDefaultValue(attr.getDefaultValue());
             variableDef.setDescription(attr.getDescription());

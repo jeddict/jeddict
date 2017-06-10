@@ -91,6 +91,9 @@
                 <attribute id="name" groupId="ATTR_PROP" class="java.lang.String" name="name">
                     <display-name>Name</display-name>
                 </attribute>
+                <attribute id="accessModifier" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.AccessModifierType" name="accessModifier">
+                    <display-name>Access Modifier</display-name>
+                </attribute>
                 <attribute id="description" groupId="ATTR_PROP" class="java.lang.String" name="description" after="name">
                     <display-name>Description</display-name>
                 </attribute>

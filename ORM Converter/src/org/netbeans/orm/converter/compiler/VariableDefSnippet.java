@@ -51,6 +51,7 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
@@ -79,6 +80,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private boolean tranzient;
     private boolean version;
 
+    private AccessModifierType accessModifier;
     private String name;
     private String defaultValue;
     private String description;
@@ -145,6 +147,17 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public void setLob(boolean lob) {
         this.lob = lob;
+    }
+    
+    public String getAccessModifier() {
+        if (accessModifier == null) {
+            return AccessModifierType.PRIVATE.getValue();
+        }
+        return accessModifier.getValue();
+    }
+
+    public void setAccessModifier(AccessModifierType accessModifier) {
+        this.accessModifier = accessModifier;
     }
 
     public String getConstraintType() {
@@ -223,8 +236,6 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
     }
     
-    
-
     public void setName(String name) {
         this.name = name;
     }
