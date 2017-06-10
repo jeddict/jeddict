@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.netbeans.jpa.modeler
 OpenIDE-Module-Localizing-Bundle: org/netbeans/jpa/modeler/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager

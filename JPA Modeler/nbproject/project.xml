@@ -593,6 +593,7 @@
                 <package>org.netbeans.jpa.modeler.specification.model.navigator</package>
                 <package>org.netbeans.jpa.modeler.specification.model.scene</package>
                 <package>org.netbeans.jpa.modeler.specification.model.util</package>
+                <package>org.netbeans.jpa.modeler.specification.model.workspace</package>
                 <package>org.netbeans.jpa.modeler.widget.connection.relation</package>
                 <package>org.netbeans.jsonb.modeler.manager</package>
             </friend-packages>
