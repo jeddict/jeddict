@@ -110,7 +110,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.jpa.modeler.installer</code-name-base>
+                    <code-name-base>org.netbeans.jeddict.installer</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -549,8 +549,9 @@
                 <friend>org.netbeans.db.modeler</friend>
                 <friend>org.netbeans.jpa.modeler.dbre</friend>
                 <friend>org.netbeans.jpa.modeler.jcre</friend>
-                <friend>org.netbeans.jsonb.modeler</friend>
+                <friend>org.netbeans.jeddict.jsonb.modeler</friend>
                 <package>org.netbeans.db.modeler.manager</package>
+                <package>org.netbeans.jeddict.jsonb.modeler.manager</package>
                 <package>org.netbeans.jpa.modeler.core.signal</package>
                 <package>org.netbeans.jpa.modeler.core.widget</package>
                 <package>org.netbeans.jpa.modeler.core.widget.attribute</package>
@@ -595,12 +596,8 @@
                 <package>org.netbeans.jpa.modeler.specification.model.util</package>
                 <package>org.netbeans.jpa.modeler.specification.model.workspace</package>
                 <package>org.netbeans.jpa.modeler.widget.connection.relation</package>
-                <package>org.netbeans.jsonb.modeler.manager</package>
+                <package>org.netbeans.jeddict.jsonb.modeler.manager</package>
             </friend-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/ApachePOI.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/ApachePOI.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>

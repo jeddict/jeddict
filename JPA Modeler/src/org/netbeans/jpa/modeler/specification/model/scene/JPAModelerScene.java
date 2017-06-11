@@ -360,11 +360,10 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     public void destroy() {
     }
 
-
     @NbBundle.Messages({
         "GENERATE_SRC=Generate Source Code",
         "VIS_DB=Visualize DB",
-        "VIS_JSON=JSONB View",
+        "VIS_JSON=JSONB View (Beta)",
         "SEARCH=Search",
         "PERSISTENCE_UNIT=Persistence.xml",
         "RUN_JPQL=Run JPQL Query",
@@ -415,7 +414,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
         menuList.add(index++, getWorkSpaceManager().getWorkSpaceMenu());
         menuList.add(index++, generateCode);
         menuList.add(index++, visDB);
-//        menuList.add(index++, visJSONB);
+        menuList.add(index++, visJSONB);
         menuList.add(index++, searchMenu);
         menuList.add(index++, null);
         menuList.add(index++, openPUXML);

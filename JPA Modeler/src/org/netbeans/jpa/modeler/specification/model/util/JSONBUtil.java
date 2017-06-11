@@ -16,7 +16,7 @@
 package org.netbeans.jpa.modeler.specification.model.util;
 
 import java.util.Date;
-import org.netbeans.jsonb.modeler.manager.JSONBModelerRequestManager;
+import org.netbeans.jeddict.jsonb.modeler.manager.JSONBModelerRequestManager;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
