@@ -25,6 +25,7 @@ import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.spec.DBInverseJoinColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.Id;
@@ -83,6 +84,7 @@ public class InverseJoinColumnWidget extends ForeignKeyWidget<DBInverseJoinColum
                 convertToJoinTable(joinTableName);
                 ModelerFile parentFile = InverseJoinColumnWidget.this.getModelerScene().getModelerFile().getParentFile();
                 DBUtil.openDBViewer(parentFile);
+                ILogger.recordDBAction("Create Join Table");
             });
             menuList.add(0, joinTable);
         }

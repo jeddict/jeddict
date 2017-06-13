@@ -388,36 +388,37 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     
     protected List<org.netbeans.orm.converter.compiler.Snippet> getJSONBAttributeSnippet(Attribute attribute) {
         List<org.netbeans.orm.converter.compiler.Snippet> snippets = new ArrayList<>();
-        if(StringUtils.isNotBlank(attribute.getJsonbProperty()) || attribute.getJsonbNillable()){
-            snippets.add(new PropertySnippet(attribute.getJsonbProperty(), attribute.getJsonbNillable()));
-        }
-        if(attribute.getJsonbTransient()){
+        if (attribute.getJsonbTransient()) {
             snippets.add(new TransientSnippet());
-        }
-        if (attribute.getJsonbDateFormat() != null
-                && (StringUtils.isNotBlank(attribute.getJsonbDateFormat().getValue())
-                || StringUtils.isNotBlank(attribute.getJsonbDateFormat().getLocale()))) {
-            snippets.add(new DateFormatSnippet(attribute.getJsonbDateFormat()));
-        }
-        if (attribute.getJsonbNumberFormat() != null
-                && (StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getValue())
-                || StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getLocale()))) {
-            snippets.add(new NumberFormatSnippet(attribute.getJsonbNumberFormat()));
-        }
-        if(attribute.getJsonbTypeAdapter()!=null 
-                && attribute.getJsonbTypeAdapter().isEnable() 
-                && !StringUtils.isBlank(attribute.getJsonbTypeAdapter().getName())){
-            snippets.add(new TypeAdapterSnippet(attribute.getJsonbTypeAdapter()));
-        }
-        if(attribute.getJsonbTypeDeserializer()!=null 
-                && attribute.getJsonbTypeDeserializer().isEnable() 
-                && !StringUtils.isBlank(attribute.getJsonbTypeDeserializer().getName())){
-            snippets.add(new TypeDeserializerSnippet(attribute.getJsonbTypeDeserializer()));
-        }
-        if(attribute.getJsonbTypeSerializer()!=null 
-                && attribute.getJsonbTypeSerializer().isEnable() 
-                && !StringUtils.isBlank(attribute.getJsonbTypeSerializer().getName())){
-            snippets.add(new TypeSerializerSnippet(attribute.getJsonbTypeSerializer()));
+        } else {
+            if (StringUtils.isNotBlank(attribute.getJsonbProperty()) || attribute.getJsonbNillable()) {
+                snippets.add(new PropertySnippet(attribute.getJsonbProperty(), attribute.getJsonbNillable()));
+            }
+            if (attribute.getJsonbDateFormat() != null
+                    && (StringUtils.isNotBlank(attribute.getJsonbDateFormat().getValue())
+                    || StringUtils.isNotBlank(attribute.getJsonbDateFormat().getLocale()))) {
+                snippets.add(new DateFormatSnippet(attribute.getJsonbDateFormat()));
+            }
+            if (attribute.getJsonbNumberFormat() != null
+                    && (StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getValue())
+                    || StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getLocale()))) {
+                snippets.add(new NumberFormatSnippet(attribute.getJsonbNumberFormat()));
+            }
+            if (attribute.getJsonbTypeAdapter() != null
+                    && attribute.getJsonbTypeAdapter().isEnable()
+                    && !StringUtils.isBlank(attribute.getJsonbTypeAdapter().getName())) {
+                snippets.add(new TypeAdapterSnippet(attribute.getJsonbTypeAdapter()));
+            }
+            if (attribute.getJsonbTypeDeserializer() != null
+                    && attribute.getJsonbTypeDeserializer().isEnable()
+                    && !StringUtils.isBlank(attribute.getJsonbTypeDeserializer().getName())) {
+                snippets.add(new TypeDeserializerSnippet(attribute.getJsonbTypeDeserializer()));
+            }
+            if (attribute.getJsonbTypeSerializer() != null
+                    && attribute.getJsonbTypeSerializer().isEnable()
+                    && !StringUtils.isBlank(attribute.getJsonbTypeSerializer().getName())) {
+                snippets.add(new TypeSerializerSnippet(attribute.getJsonbTypeSerializer()));
+            }
         }
         return snippets;
     }

@@ -20,6 +20,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.visual.widget.Widget;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
@@ -36,7 +37,10 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     public FlowNodeWidget(S scene, NodeWidgetInfo node) {
         super(scene, node);
         signalManager = new SignalManager(this);
-        setAnchorGap(4);
+        setAnchorGap(4); 
+        if (!node.isExist()) {
+            ILogger.recordJPACreateAction(node.getModelerDocument().getSpecification().getSimpleName());
+        }
     }
     
     @Override

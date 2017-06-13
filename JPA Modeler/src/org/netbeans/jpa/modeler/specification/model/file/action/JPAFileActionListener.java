@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.specification.model.file.action;
 
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.specification.model.event.ShortcutListener;
 import org.netbeans.jpa.modeler.specification.export.ExportManagerImpl;
@@ -30,7 +31,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         document = "org/netbeans/jpa/modeler/resource/document/DocumentConfig.xml",
         element = "org/netbeans/jpa/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA", name = "JPA 2.1 Specification", 
-        version = "4.2.2", architectureVersion = "1.4",
+        version = "4.2.3", architectureVersion = "1.4",
         modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class, exportManager = ExportManagerImpl.class,
         relationValidator = RelationValidator.class, exceptionHandler = ExceptionUtils.class)
 public class JPAFileActionListener extends ModelerFileActionListener {
@@ -42,6 +43,7 @@ public class JPAFileActionListener extends ModelerFileActionListener {
     @Override
     public void initSpecification(final ModelerFile modelerFile) {
         modelerFile.getModelerPanelTopComponent().addKeyListener(new ShortcutListener(modelerFile));
+        ILogger.openModelerFile("JPA");
     }
 
     public static void open(ModelerFile file) {

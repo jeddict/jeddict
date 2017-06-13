@@ -27,10 +27,10 @@ import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE_ICON_PATH;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;
@@ -97,8 +97,8 @@ public class BaseTableWidget extends TableWidget<DBBaseTable> {
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem joinTable = new JMenuItem("Create Secondary Table");
-        joinTable.addActionListener((ActionEvent e) -> {
+        JMenuItem menuItem = new JMenuItem("Create Secondary Table");
+        menuItem.addActionListener((ActionEvent e) -> {
             Entity entity = this.getBaseElementSpec().getEntity();
             String secondaryTableName = JOptionPane.showInputDialog((Component) BaseTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Please enter secondary table name");
             if (entity.getTable(secondaryTableName) == null) { //check from complete table list
@@ -107,11 +107,12 @@ public class BaseTableWidget extends TableWidget<DBBaseTable> {
                 entity.addSecondaryTable(secondaryTable);
                 ModelerFile parentFile = BaseTableWidget.this.getModelerScene().getModelerFile().getParentFile();
                 DBUtil.openDBViewer(parentFile);
+                ILogger.recordDBAction("Create Secondary Table");
             } else {
                 JOptionPane.showMessageDialog((Component) BaseTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Table already exist");
             }
         });
-        menuList.add(0, joinTable);
+        menuList.add(0, menuItem);
         return menuList;
     }
 

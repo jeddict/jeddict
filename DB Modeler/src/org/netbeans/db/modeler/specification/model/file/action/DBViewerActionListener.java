@@ -21,6 +21,7 @@ import org.netbeans.db.modeler.specification.model.event.ShortcutListener;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.db.modeler.specification.model.util.DBModelerUtil;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.TAB_ICON;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
@@ -41,7 +42,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA_DB", name = "DB Viewer", 
         modelerUtil = DBModelerUtil.class, modelerScene = DBModelerScene.class,
         relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
-        version = "4.2.2", architectureVersion = "1.4")
+        version = "4.2.3", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = DBModelerRequestManager.class)
 public class DBViewerActionListener extends ModelerFileActionListener implements DBModelerRequestManager {
 
@@ -54,6 +55,7 @@ public class DBViewerActionListener extends ModelerFileActionListener implements
         modelerFile.getAttributes().put(EntityMappings.class.getSimpleName(), mappings);
         modelerFile.getAttributes().put(WorkSpace.class.getSimpleName(), workSpace);
         modelerFile.getModelerPanelTopComponent().addKeyListener(new ShortcutListener(modelerFile));
+        ILogger.openModelerFile("DB");
     }
 
     @Override

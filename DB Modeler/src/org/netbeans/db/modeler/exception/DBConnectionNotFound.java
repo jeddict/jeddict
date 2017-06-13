@@ -24,6 +24,10 @@ public class DBConnectionNotFound extends Exception {
     public DBConnectionNotFound() {
     }
 
+    public DBConnectionNotFound(Throwable cause) {
+        super(cause);
+    }
+       
     /**
      * Constructs an instance of <code>DBConnectionNotFound</code> with the
      * specified detail message.

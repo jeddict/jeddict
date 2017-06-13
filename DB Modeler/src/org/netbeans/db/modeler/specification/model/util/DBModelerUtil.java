@@ -264,7 +264,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 session.loginAndDetectDatasource();
             } catch (Exception ex) {
                 if (ex instanceof org.eclipse.persistence.exceptions.DatabaseException) {
-                    throw new DBConnectionNotFound();
+                    throw new DBConnectionNotFound(ex);
                 } else {
                     throw ex;
                 }

@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.specification.model.workspace;
 
-import java.util.ArrayList;
 import static java.util.Collections.singletonMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +25,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import static javax.swing.SwingUtilities.invokeLater;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -110,6 +110,7 @@ public class WorkSpaceManager {
                 WorkSpace workSpace = workSpaceDialog.getWorkSpace();
                 entityMappings.addWorkSpace(workSpace);
                 openWorkSpace(false, workSpace);
+                ILogger.createWorkSpace();
             }
         });
         workSpaceMenu.add(createWPItem);
@@ -124,6 +125,7 @@ public class WorkSpaceManager {
                 } else {
                     loadWorkspaceUI();
                 }
+                ILogger.deleteAllWorkSpace();
             });
             workSpaceMenu.add(deleteAllWPItem);
         }
@@ -137,6 +139,7 @@ public class WorkSpaceManager {
                 if (workSpaceDialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
                     openWorkSpace(true, entityMappings.getCurrentWorkSpace());
                 }
+                ILogger.updateWorkSpace();
             });
             workSpaceMenu.add(updateWPItem);
 
@@ -149,6 +152,7 @@ public class WorkSpaceManager {
                     scene.getModelerPanelTopComponent().changePersistenceState(false);
                     openWorkSpace(true, entityMappings.getRootWorkSpace());
                 }
+                ILogger.deleteWorkSpace();
             });
             workSpaceMenu.add(deleteWPItem);
             workSpaceMenu.addSeparator();
@@ -172,6 +176,7 @@ public class WorkSpaceManager {
 //            }
             workSpaceMenuItem.addActionListener(e -> {
                 openWorkSpace(true, ws);
+                ILogger.openWorkSpace(ws.getItems().size());
             });
             workSpaceMenu.add(workSpaceMenuItem);
         }
@@ -246,7 +251,10 @@ public class WorkSpaceManager {
                 item.getWorkSpaceElement()
                         .stream()
                         .filter(wse -> cache.get(wse.getAttribute())!=null)
-                        .forEach(wse -> wse.setJsonbTextDesign(cache.get(wse.getAttribute()).getJsonbTextDesign()));
+                        .forEach(wse -> wse.setJsonbTextDesign(
+                                cache.get(wse.getAttribute()).getJsonbTextDesign().isChanged()?
+                                        cache.get(wse.getAttribute()).getJsonbTextDesign():null
+                        ));
             } else {
                 item.setLocation(null);
             }

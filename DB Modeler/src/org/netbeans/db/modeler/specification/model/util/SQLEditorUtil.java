@@ -17,7 +17,7 @@ package org.netbeans.db.modeler.specification.model.util;
 
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modules.db.explorer.sql.editor.SQLEditorSupport;
@@ -35,7 +35,8 @@ public class SQLEditorUtil {
         final DatabaseConnection connection = DBConnectionUtil.getConnection(modelerFile);
         RP.post(() -> {
             try {
-                SQLEditorSupport.openSQLEditor(connection, sql, false); //NOI18N
+                SQLEditorSupport.openSQLEditor(connection, sql, false);
+                ILogger.recordDBAction("Open SQL Editor");
             } catch (Exception exc) {
                 modelerFile.handleException(exc);
             }
@@ -49,6 +50,7 @@ public class SQLEditorUtil {
         RP.post(() -> {
             try {
                 SQLEditorSupport.openSQLEditor(connection, SQL_PREFIX + tableName, true); //NOI18N
+                ILogger.recordDBAction("Open DB Table");
             } catch (Exception exc) {
                 modelerFile.handleException(exc);
             }

@@ -15,6 +15,30 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.jcode.core</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>4.2.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.jpa.specification</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>4.2.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modeler.libs</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>4.2.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modeler.properties</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -81,12 +105,17 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>org.netbeans.jeddict.analytics</package>
                 <package>org.netbeans.jpa.modeler.collaborate.enhancement</package>
                 <package>org.netbeans.jpa.modeler.collaborate.issues</package>
                 <package>org.netbeans.jpa.modeler.network.social</package>
                 <package>org.netbeans.jpa.modeler.network.social.linkedin</package>
                 <package>org.netbeans.jpa.modeler.network.social.twitter</package>
             </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/google-analytics-java-1.1.3.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/google-analytics-java-1.1.3.jar</binary-origin>
+            </class-path-extension>
         </data>
     </configuration>
 </project>

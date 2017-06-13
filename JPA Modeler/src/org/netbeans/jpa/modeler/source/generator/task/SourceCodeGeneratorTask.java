@@ -27,6 +27,7 @@ import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
 import org.netbeans.jcode.task.AbstractNBTask;
 import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
 import org.netbeans.jcode.task.progress.ProgressHandler;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType;
@@ -118,8 +119,8 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         JEEApplicationGenerator applicationGenerator = null;
         
         entityMappings.cleanRuntimeArtifact();
+        appicationConfigData.setEntityMappings(entityMappings);
         if (appicationConfigData.getBussinesTechContext()!= null) {
-            appicationConfigData.setEntityMappings(entityMappings);
             applicationGenerator = new JEEApplicationGenerator(appicationConfigData, handler);
             applicationGenerator.preGeneration();
         }
@@ -130,7 +131,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
             applicationGenerator.generate();
             applicationGenerator.postGeneration();
         }
-
+        ILogger.logEvent(appicationConfigData);
     }
 
     private static String getBundleMessage(String key) {

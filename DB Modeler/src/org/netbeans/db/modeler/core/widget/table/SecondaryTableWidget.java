@@ -25,10 +25,10 @@ import org.netbeans.db.modeler.spec.DBSecondaryTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.SECONDARY_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.SECONDARY_TABLE_ICON_PATH;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
@@ -98,8 +98,8 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = super.getPopupMenuItemList();
-        JMenuItem joinTable = new JMenuItem("Delete Secondary Table");
-        joinTable.addActionListener((ActionEvent e) -> {
+        JMenuItem menuItem = new JMenuItem("Delete Secondary Table");
+        menuItem.addActionListener((ActionEvent e) -> {
             Entity entity = this.getBaseElementSpec().getEntity();
             entity.getAttributes().getAllAttribute().stream().filter(a -> a instanceof PersistenceBaseAttribute)
                     .filter(a -> StringUtils.equalsIgnoreCase(((PersistenceBaseAttribute)a).getColumn().getTable(),table.getName()))
@@ -107,8 +107,9 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
                 entity.removeSecondaryTable(table);
                 ModelerFile parentFile = SecondaryTableWidget.this.getModelerScene().getModelerFile().getParentFile();
                 DBUtil.openDBViewer(parentFile);
+            ILogger.recordDBAction("Delete Secondary Table");
         });
-        menuList.add(0, joinTable);
+        menuList.add(0, menuItem);
         return menuList;
     }
 

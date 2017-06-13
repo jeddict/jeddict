@@ -27,6 +27,7 @@ import org.netbeans.db.modeler.spec.DBRelationTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELATION_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELATION_TABLE_ICON_PATH;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -118,6 +119,7 @@ public class RelationTableWidget extends TableWidget<DBRelationTable> {
                 convertToJoinColumn();
                 ModelerFile parentFile = RelationTableWidget.this.getModelerScene().getModelerFile().getParentFile();
                 DBUtil.openDBViewer(parentFile);
+                ILogger.recordDBAction("Delete Join Table");
             });
             menuList.add(0, joinTable);
         }

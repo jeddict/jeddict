@@ -31,6 +31,7 @@ import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.jcode.core.util.SourceGroupSupport;
+import org.netbeans.jeddict.analytics.ILogger;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceGeneratorProvider;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
@@ -85,18 +86,16 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
         progressPanel = new ProgressPanel();
         final JComponent progressComponent = AggregateProgressFactory.createProgressComponent(handle);
 
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    handle.start();
-                    createModel(wizardDescriptor, progressContributor);
-                } catch(Throwable t){
-                    ExceptionUtils.printStackTrace(t);
-                } finally {
-                    generator.uninit();
-                    handle.finish();
-                }
+        final Runnable r = () -> {
+            try {
+                handle.start();
+                createModel(wizardDescriptor, progressContributor);
+            } catch(Throwable t){
+                ExceptionUtils.printStackTrace(t);
+            } finally {
+                generator.uninit();
+                ILogger.createModelerFile("DB-REV-ENG");
+                handle.finish();
             }
         };
         // Ugly hack ensuring the progress dialog opens after the wizard closes. Needed because:

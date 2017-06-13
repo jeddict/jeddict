@@ -225,41 +225,6 @@
                 <package>org.apache.velocity.util</package>
                 <package>org.apache.velocity.util.introspection</package>
                 <package>org.atteo.evo.inflector</package>
-                <package>org.h2</package>
-                <package>org.h2.api</package>
-                <package>org.h2.bnf</package>
-                <package>org.h2.bnf.context</package>
-                <package>org.h2.command</package>
-                <package>org.h2.command.ddl</package>
-                <package>org.h2.command.dml</package>
-                <package>org.h2.compress</package>
-                <package>org.h2.constraint</package>
-                <package>org.h2.engine</package>
-                <package>org.h2.expression</package>
-                <package>org.h2.fulltext</package>
-                <package>org.h2.index</package>
-                <package>org.h2.jdbc</package>
-                <package>org.h2.jdbcx</package>
-                <package>org.h2.jmx</package>
-                <package>org.h2.message</package>
-                <package>org.h2.mvstore</package>
-                <package>org.h2.mvstore.cache</package>
-                <package>org.h2.mvstore.db</package>
-                <package>org.h2.mvstore.rtree</package>
-                <package>org.h2.mvstore.type</package>
-                <package>org.h2.result</package>
-                <package>org.h2.schema</package>
-                <package>org.h2.security</package>
-                <package>org.h2.server</package>
-                <package>org.h2.server.pg</package>
-                <package>org.h2.server.web</package>
-                <package>org.h2.store</package>
-                <package>org.h2.store.fs</package>
-                <package>org.h2.table</package>
-                <package>org.h2.tools</package>
-                <package>org.h2.upgrade</package>
-                <package>org.h2.util</package>
-                <package>org.h2.value</package>
                 <package>say.swing</package>
             </public-packages>
             <class-path-extension>
@@ -269,10 +234,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/jfontchooser-1.0.5.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jfontchooser-1.0.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/h2-1.4.190.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/h2-1.4.190.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-collections-3.2.1.jar</runtime-relative-path>
