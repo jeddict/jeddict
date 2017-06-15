@@ -27,7 +27,7 @@ import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBRelationTable;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
@@ -122,7 +122,7 @@ public class JoinColumnWidget<E extends DBJoinColumn> extends ForeignKeyWidget<E
                 DBUtil.openDBViewer(parentFile);
             });
             menuList.add(0, joinTable);
-            ILogger.recordDBAction("Create Join Table");
+            JeddictLogger.recordDBAction("Create Join Table");
         }
         return menuList;
     }

@@ -27,7 +27,7 @@ import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.BASE_TABLE_ICON_PATH;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -107,7 +107,7 @@ public class BaseTableWidget extends TableWidget<DBBaseTable> {
                 entity.addSecondaryTable(secondaryTable);
                 ModelerFile parentFile = BaseTableWidget.this.getModelerScene().getModelerFile().getParentFile();
                 DBUtil.openDBViewer(parentFile);
-                ILogger.recordDBAction("Create Secondary Table");
+                JeddictLogger.recordDBAction("Create Secondary Table");
             } else {
                 JOptionPane.showMessageDialog((Component) BaseTableWidget.this.getModelerScene().getModelerPanelTopComponent(), "Table already exist");
             }

@@ -16,13 +16,9 @@
 package org.netbeans.jeddict.analytics;
 
 
-import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.jcode.layer.TechContext;
-import com.brsanthu.googleanalytics.EventHit;
-import com.brsanthu.googleanalytics.GoogleAnalytics;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
-import org.openide.util.NbBundle;
+import static org.netbeans.modeler.analytics.ILogger.*;
 
 /**
  * Insight program to collect usage data event for developer experience
@@ -31,10 +27,7 @@ import org.openide.util.NbBundle;
  *
  * @author jGauravGupta
  */
-public class ILogger {
-
-    private static GoogleAnalytics ANALYTICS;
-    private static boolean ENABLE = false;
+public class JeddictLogger {
 
     private final static String GENERATE_CATEGORY = "SOURCE_GENERATED";
     private final static String DOMAIN = "Domain";
@@ -54,42 +47,8 @@ public class ILogger {
     private final static String UPDATE = "Update";
     private final static String OPEN = "Open";
 
-    static {
-        if (ENABLE = Boolean.valueOf(NbBundle.getMessage(ILogger.class, "TRACKING_ENABLE"))) {
-            ANALYTICS = new GoogleAnalytics(NbBundle.getMessage(ILogger.class, "TRACKING_ID"));
-        }
-    }
 
-    private static final TemporalMap<String, Integer> data = new TemporalMap<String, Integer>(5, TimeUnit.MINUTES,
-            (key, value) -> {
-                String token[] = key.split("#");
-                String category = token[0], action = token[1], label = token[2];
-                EventHit eventHit = new EventHit(category, action, label, value);
-                System.out.println("ANALYTICS category[" + category + "] action[" + action + "] label[" + label + "] value[" + value + "]");
-                ANALYTICS.postAsync(eventHit);
-            });
-
-    public static void logEvent(String category, String action) {
-        logEvent(category, action, null, 1);
-    }
-
-    public static void logEvent(String category, String action, String label) {
-        logEvent(category, action, label, 1);
-    }
-
-    public static void logEvent(String category, String action, String label, int value) {
-        if (ENABLE && StringUtils.isNotBlank(category) && StringUtils.isNotBlank(action) && StringUtils.isNotBlank(label)) {
-            String key = category+"#"+action+"#"+label;
-            Integer existingValue = data.get(key);
-            if (existingValue != null) {
-                data.update(key, value + existingValue);
-            } else {
-                data.save(key, value);
-            }
-        }
-    }
-
-    public static void logEvent(ApplicationConfigData applicationConfigData) {
+    public static void logGenerateEvent(ApplicationConfigData applicationConfigData) {
         logEvent(GENERATE_CATEGORY, DOMAIN, JPA);
         logEvent(GENERATE_CATEGORY, DOMAIN, JPA_CLASS_COUNT, applicationConfigData.getEntityMappings().getJavaClass().size());
         logSourceGenerationEvent(applicationConfigData.getBussinesTechContext());

@@ -25,7 +25,7 @@ import org.netbeans.db.modeler.spec.DBSecondaryTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.SECONDARY_TABLE;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.SECONDARY_TABLE_ICON_PATH;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
@@ -107,7 +107,7 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
                 entity.removeSecondaryTable(table);
                 ModelerFile parentFile = SecondaryTableWidget.this.getModelerScene().getModelerFile().getParentFile();
                 DBUtil.openDBViewer(parentFile);
-            ILogger.recordDBAction("Delete Secondary Table");
+            JeddictLogger.recordDBAction("Delete Secondary Table");
         });
         menuList.add(0, menuItem);
         return menuList;

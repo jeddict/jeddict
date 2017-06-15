@@ -27,7 +27,7 @@ import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
 import org.netbeans.jcode.task.AbstractNBTask;
 import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
 import org.netbeans.jcode.task.progress.ProgressHandler;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGeneratorFactory;
 import org.netbeans.jpa.modeler.source.generator.adaptor.SourceCodeGeneratorType;
@@ -131,7 +131,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
             applicationGenerator.generate();
             applicationGenerator.postGeneration();
         }
-        ILogger.logEvent(appicationConfigData);
+        JeddictLogger.logGenerateEvent(appicationConfigData);
     }
 
     private static String getBundleMessage(String key) {

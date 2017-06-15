@@ -25,7 +25,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import static javax.swing.SwingUtilities.invokeLater;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
@@ -110,7 +110,7 @@ public class WorkSpaceManager {
                 WorkSpace workSpace = workSpaceDialog.getWorkSpace();
                 entityMappings.addWorkSpace(workSpace);
                 openWorkSpace(false, workSpace);
-                ILogger.createWorkSpace();
+                JeddictLogger.createWorkSpace();
             }
         });
         workSpaceMenu.add(createWPItem);
@@ -125,7 +125,7 @@ public class WorkSpaceManager {
                 } else {
                     loadWorkspaceUI();
                 }
-                ILogger.deleteAllWorkSpace();
+                JeddictLogger.deleteAllWorkSpace();
             });
             workSpaceMenu.add(deleteAllWPItem);
         }
@@ -139,7 +139,7 @@ public class WorkSpaceManager {
                 if (workSpaceDialog.getDialogResult() == javax.swing.JOptionPane.OK_OPTION) {
                     openWorkSpace(true, entityMappings.getCurrentWorkSpace());
                 }
-                ILogger.updateWorkSpace();
+                JeddictLogger.updateWorkSpace();
             });
             workSpaceMenu.add(updateWPItem);
 
@@ -152,7 +152,7 @@ public class WorkSpaceManager {
                     scene.getModelerPanelTopComponent().changePersistenceState(false);
                     openWorkSpace(true, entityMappings.getRootWorkSpace());
                 }
-                ILogger.deleteWorkSpace();
+                JeddictLogger.deleteWorkSpace();
             });
             workSpaceMenu.add(deleteWPItem);
             workSpaceMenu.addSeparator();
@@ -176,7 +176,7 @@ public class WorkSpaceManager {
 //            }
             workSpaceMenuItem.addActionListener(e -> {
                 openWorkSpace(true, ws);
-                ILogger.openWorkSpace(ws.getItems().size());
+                JeddictLogger.openWorkSpace(ws.getItems().size());
             });
             workSpaceMenu.add(workSpaceMenuItem);
         }

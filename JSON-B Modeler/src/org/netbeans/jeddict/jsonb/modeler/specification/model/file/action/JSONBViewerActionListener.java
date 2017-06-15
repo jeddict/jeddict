@@ -15,7 +15,7 @@
  */
 package org.netbeans.jeddict.jsonb.modeler.specification.model.file.action;
 
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.event.ShortcutListener;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil;
@@ -35,7 +35,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JSONB", name = "JSONB Viewer", 
         modelerUtil = JSONBModelerUtil.class, modelerScene = JSONBModelerScene.class,
         relationValidator = RelationValidator.class,
-        version = "4.2.3", architectureVersion = "1.4")
+        version = "4.2.4", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = JSONBModelerRequestManager.class)
 public class JSONBViewerActionListener extends ModelerFileActionListener implements JSONBModelerRequestManager {
 
@@ -48,7 +48,7 @@ public class JSONBViewerActionListener extends ModelerFileActionListener impleme
         modelerFile.getAttributes().put(EntityMappings.class.getSimpleName(), mappings);
         modelerFile.getAttributes().put(WorkSpace.class.getSimpleName(), workSpace);
         modelerFile.getModelerPanelTopComponent().addKeyListener(new ShortcutListener(modelerFile));
-        ILogger.openModelerFile("JSONB");
+        JeddictLogger.openModelerFile("JSONB");
     }
 
     @Override

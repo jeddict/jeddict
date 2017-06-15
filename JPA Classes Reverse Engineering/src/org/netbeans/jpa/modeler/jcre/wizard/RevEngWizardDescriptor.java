@@ -42,7 +42,7 @@ import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler._import.javaclass.JCREProcessor;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
@@ -134,7 +134,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
             } finally {
                 progressContributor.finish();
                 SwingUtilities.invokeLater(progressPanel::close);
-                ILogger.createModelerFile("JPA-REV-ENG");
+                JeddictLogger.createModelerFile("JPA-REV-ENG");
                 handle.finish();
             }
         };

@@ -21,7 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.modeler.scene.vmd.AbstractPModelerScene;
@@ -272,7 +272,7 @@ public class HighlightWidgetDialog extends GenericDialog {
 
         ((AbstractPModelerScene)modelerScene).reinstallColorScheme(widget);
         saveActionPerformed(evt);
-        ILogger.recordAction("Highlight"); 
+        JeddictLogger.recordAction("Highlight"); 
     }//GEN-LAST:event_save_ButtonActionPerformed
 
     private void cancel_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancel_ButtonActionPerformed

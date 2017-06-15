@@ -31,7 +31,7 @@ import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.jcode.core.util.SourceGroupSupport;
-import org.netbeans.jeddict.analytics.ILogger;
+import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceGeneratorProvider;
 import org.netbeans.jpa.modeler.reveng.database.generator.IPersistenceModelGenerator;
@@ -94,7 +94,7 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
                 ExceptionUtils.printStackTrace(t);
             } finally {
                 generator.uninit();
-                ILogger.createModelerFile("DB-REV-ENG");
+                JeddictLogger.createModelerFile("DB-REV-ENG");
                 handle.finish();
             }
         };
