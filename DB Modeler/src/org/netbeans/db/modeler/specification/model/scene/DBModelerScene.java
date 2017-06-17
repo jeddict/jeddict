@@ -170,11 +170,12 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     }
 
     @Override
-    public IColorScheme getColorScheme() {
+    public IColorScheme getColorScheme(String defaultTheme) {
         EntityMappings entityMappings = (EntityMappings) this.getModelerFile().getParentFile().getDefinitionElement();
-        if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
+        String theme = entityMappings.getDbTheme() == null ? defaultTheme : entityMappings.getDbTheme();
+        if (PFactory.getDarkScheme().getSimpleName().equals(theme)) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
-        } else if (PFactory.getLightScheme().getSimpleName().equals(entityMappings.getDbTheme())) {
+        } else if (PFactory.getLightScheme().getSimpleName().equals(theme)) {
             return PFactory.getColorScheme(PFactory.getLightScheme());
         } else {
             return PFactory.getColorScheme(DBColorScheme.class);

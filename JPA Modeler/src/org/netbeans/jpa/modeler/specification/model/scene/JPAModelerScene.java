@@ -93,6 +93,7 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.R
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SEARCH_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_JSONB;
 import org.netbeans.jpa.modeler.specification.model.util.JSONBUtil;
+import org.openide.util.NbPreferences;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -436,13 +437,14 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     }
 
     @Override
-    public IColorScheme getColorScheme() {
+    public IColorScheme getColorScheme(String defaultTheme) {
         EntityMappings entityMappings = this.getBaseElementSpec();
-        if (PFactory.getNetBeans60Scheme().getSimpleName().equals(entityMappings.getTheme())) {
+        String theme = entityMappings.getTheme() == null ? defaultTheme : entityMappings.getTheme();
+        if (PFactory.getNetBeans60Scheme().getSimpleName().equals(theme)) {
             return PFactory.getColorScheme(PFactory.getNetBeans60Scheme());
-        } else if (PFactory.getMetroScheme().getSimpleName().equals(entityMappings.getTheme())) {
+        } else if (PFactory.getMetroScheme().getSimpleName().equals(theme)) {
             return PFactory.getColorScheme(PFactory.getMetroScheme());
-        } else if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getTheme())) {
+        } else if (PFactory.getDarkScheme().getSimpleName().equals(theme)) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
         } else {
             return PFactory.getColorScheme(PFactory.getMacScheme());

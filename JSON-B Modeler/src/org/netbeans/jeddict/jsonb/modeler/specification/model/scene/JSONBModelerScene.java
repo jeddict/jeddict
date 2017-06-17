@@ -143,11 +143,12 @@ public class JSONBModelerScene extends DefaultPModelerScene<JSONBMapping> {
     }
 
     @Override
-    public IColorScheme getColorScheme() {
+    public IColorScheme getColorScheme(String defaultTheme) {
         EntityMappings entityMappings = (EntityMappings) this.getModelerFile().getParentFile().getDefinitionElement();
-        if (PFactory.getDarkScheme().getSimpleName().equals(entityMappings.getJBTheme())) {
+        String theme = entityMappings.getJBTheme() == null ? defaultTheme : entityMappings.getJBTheme();
+        if (PFactory.getDarkScheme().getSimpleName().equals(theme)) {
             return PFactory.getColorScheme(PFactory.getDarkScheme());
-        } else if (PFactory.getLightScheme().getSimpleName().equals(entityMappings.getJBTheme())) {
+        } else if (PFactory.getLightScheme().getSimpleName().equals(theme)) {
             return PFactory.getColorScheme(PFactory.getLightScheme());
         } else {
             return PFactory.getColorScheme(PFactory.getLightScheme());
