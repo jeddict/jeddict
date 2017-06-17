@@ -42,7 +42,7 @@ public class DelegatingWizardDescriptorPanel<Data> implements WizardDescriptor.F
     private final WizardDescriptor.Panel<Data> delegate;
 
     private WizardDescriptor wizardDescriptor;
-    private Project project;
+    private final Project project;
 
     /**
      * Create a new instance of DelegatingWizardDescriptorPanel.
@@ -78,7 +78,6 @@ public class DelegatingWizardDescriptorPanel<Data> implements WizardDescriptor.F
     public void readSettings(Data settings) {
         if (wizardDescriptor == null) {
             wizardDescriptor = (WizardDescriptor) settings;
-//            project = Templates.getProject((WizardDescriptor) settings);
         }
         delegate.readSettings(settings);
     }

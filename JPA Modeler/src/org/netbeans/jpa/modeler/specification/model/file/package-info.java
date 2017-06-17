@@ -14,7 +14,7 @@
  * the License.
  */
 @TemplateRegistration(folder = "Persistence", content = "JPADiagram.jpa"
-, position=1, displayName="#template_name", category="persistence",description="TemplateHelp.html", requireProject=false)
+, position=1, displayName="#template_name", description="TemplateHelp.html", requireProject=false)
 @Messages("template_name=JPA Modeler")
 package org.netbeans.jpa.modeler.specification.model.file;
 

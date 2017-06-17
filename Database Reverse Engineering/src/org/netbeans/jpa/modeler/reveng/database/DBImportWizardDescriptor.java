@@ -52,7 +52,9 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 
-@TemplateRegistration(folder = "Persistence", position = 2, displayName = "#DBImportWizardDescriptor_displayName", iconBase = "org/netbeans/jpa/modeler/reveng/database/resource/JPA_FILE_ICON.png", description = "resource/JPA_DB_IMPORT_DESC.html")
+@TemplateRegistration(folder = "Persistence", position = 2, displayName = "#DBImportWizardDescriptor_displayName",
+        iconBase = "org/netbeans/jpa/modeler/reveng/database/resource/JPA_FILE_ICON.png", 
+        description = "resource/JPA_DB_IMPORT_DESC.html", category = "persistence")
 public final class DBImportWizardDescriptor implements WizardDescriptor.InstantiatingIterator<WizardDescriptor> {
 
     private static final String PROP_HELPER = "wizard-helper"; //NOI18N

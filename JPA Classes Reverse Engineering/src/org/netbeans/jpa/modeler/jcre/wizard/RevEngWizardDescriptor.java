@@ -81,7 +81,9 @@ import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
 @ServiceProvider(service = JCREProcessor.class)
-@TemplateRegistration(folder = "Persistence", position = 2, displayName = "#RevEngWizardDescriptor_displayName", iconBase = "org/netbeans/jpa/modeler/jcre/wizard/resource/JPA_FILE_ICON.png", description = "resource/JPA_JCRE_DESC.html")
+@TemplateRegistration(folder = "Persistence", position = 2, displayName = "#RevEngWizardDescriptor_displayName",
+        iconBase = "org/netbeans/jpa/modeler/jcre/wizard/resource/JPA_FILE_ICON.png", 
+        description = "resource/JPA_JCRE_DESC.html", category = "persistence")
 public final class RevEngWizardDescriptor implements WizardDescriptor.InstantiatingIterator<WizardDescriptor>, JCREProcessor {
 
     private int index;
