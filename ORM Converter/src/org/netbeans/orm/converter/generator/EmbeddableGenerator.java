@@ -34,9 +34,6 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
     @Override
     public ManagedClassDefSnippet getClassDef() {
 
-        //Commented -- revist for Phase 3
-        //ParsedAccessType accessType = parsedEmbeddable.getAccess();
-
         //Attributes -- Method level annotations
         EmbeddableAttributes parsedEmbeddableAttributes = embeddable.getAttributes();
 
@@ -58,6 +55,8 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
         }
         classDef.setAuthor(embeddable.getAuthor());
         classDef.setEmbeddable(true);
+        classDef.setXmlRootElement(embeddable.getXmlRootElement());
+        
         return classDef;
     }
 }

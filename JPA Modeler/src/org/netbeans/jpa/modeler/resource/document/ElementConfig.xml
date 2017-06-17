@@ -79,10 +79,14 @@
                 </attribute>
                 <attribute id="author" groupId="CLASS_STRUCTURE" class="java.lang.String" name="author">
                     <display-name>Author</display-name>
-                    <description>Describes an author.</description>
+                    <description>Describes an author</description>
                 </attribute> 
                 <attribute id="description" groupId="CLASS_STRUCTURE" class="java.lang.String" name="description">
                     <display-name>Description</display-name>
+                </attribute>
+                <attribute id="xmlRootElement" groupId="JAXB_PROP" class="java.lang.Boolean" name="xmlRootElement" >
+                    <display-name>Root Element</display-name>
+                    <visible><![CDATA[root.jaxbSupport==true]]></visible>
                 </attribute>
             </attributes>
         </element>
@@ -192,10 +196,6 @@
         </element>
         <element id="IdentifiableClass" class="org.netbeans.jpa.modeler.spec.IdentifiableClass">
             <attributes>
-                <attribute id="xmlRootElement" groupId="JAXB_PROP" class="java.lang.Boolean" name="xmlRootElement" >
-                    <display-name>Root Element</display-name>
-                    <visible><![CDATA[root.jaxbSupport==true]]></visible>
-                </attribute>
                 <attribute id="compositePrimaryKeyClass" groupId="JPA_PROP" class="java.lang.String" name="compositePrimaryKeyClass">
                     <display-name>Composite PrimaryKey Class</display-name>
                 </attribute>
