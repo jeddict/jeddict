@@ -256,14 +256,13 @@ public class ORMConverterUtil {
                 writableSnippet.getClassHelper().getClassNameWithSourceSuffix());
         final FileObject fo = FileUtil.toFileObject(sourceFile);
        
-        RequestProcessor.getDefault().post(() -> {
-            try {
-                String content = writableSnippet.getSnippet();
-                ORMConverterUtil.writeContent(getFormattedText(content, "java"), sourceFile);
-            } catch (InvalidDataException | IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        });
+        try {
+            String content = writableSnippet.getSnippet();
+            ORMConverterUtil.writeContent(getFormattedText(content, "java"), sourceFile);
+        } catch (InvalidDataException | IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
         return fo;
     }
 
