@@ -420,14 +420,14 @@ public class PropertiesHandler {
                 } else if (fetchTypeHandlerSpec.getFetch() == FetchType.LAZY) {
                     return new ComboBoxValue(FetchType.LAZY, "Lazy");
                 } else {
-                    return new ComboBoxValue(null, "Default(Eager)");
+                    return new ComboBoxValue(null, "Default");
                 }
             }
 
             @Override
             public List<ComboBoxValue> getItemList() {
                 return Arrays.asList(
-                        new ComboBoxValue(null, "Default(Eager)"),
+                        new ComboBoxValue(null, "Default"),
                         new ComboBoxValue(FetchType.EAGER, "Eager"),
                         new ComboBoxValue(FetchType.LAZY, "Lazy"));
             }

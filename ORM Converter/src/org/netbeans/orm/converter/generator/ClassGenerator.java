@@ -1516,7 +1516,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedManyToOne.getFetch() != null) {
                 manyToOne.setFetchType(parsedManyToOne.getFetch().value());
+            } else if(CodePanel.isLazyDefaultTypeForSingleAssociation()){
+                manyToOne.setFetchType(FetchType.LAZY.value());
             }
+            
             manyToOne.setPrimaryKey(parsedManyToOne.isPrimaryKey());
             manyToOne.setMapsId(parsedManyToOne.getMapsId());
 
@@ -1600,7 +1603,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
             if (parsedOneToOne.getFetch() != null) {
                 oneToOne.setFetchType(parsedOneToOne.getFetch().value());
+            } else if(CodePanel.isLazyDefaultTypeForSingleAssociation()){
+                oneToOne.setFetchType(FetchType.LAZY.value());
             }
+            
             oneToOne.setOrphanRemoval(parsedOneToOne.getOrphanRemoval());
 
             oneToOne.setPrimaryKey(parsedOneToOne.isPrimaryKey());
