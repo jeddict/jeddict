@@ -73,6 +73,10 @@ public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerSc
     @Override
     public void init(){
         super.init();
+        addOpenSourceCodeAction();
+    }
+    
+    protected void addOpenSourceCodeAction() {
         this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         this.getImageWidget().getActions().addAction(
                 new OpenSourceCodeAction(

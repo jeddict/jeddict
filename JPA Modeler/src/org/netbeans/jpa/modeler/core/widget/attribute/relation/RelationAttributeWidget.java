@@ -74,6 +74,7 @@ public abstract class RelationAttributeWidget<E extends RelationAttribute> exten
     public void init() {
         this.getClassWidget().scanDuplicateAttributes(null, this.name);
         validateName(null, this.getName());
+        addOpenSourceCodeAction();
         //setAttributeTooltip, visualizeDataType moved to setConnectedSibling :: @init on new relationship creation no target class connected
     }
 

@@ -84,6 +84,7 @@ public abstract class EmbeddedAttributeWidget<E extends CompositionAttribute> ex
     public void init() {
         this.getClassWidget().scanDuplicateAttributes(null, this.name);
         validateName(null, this.getName());
+        addOpenSourceCodeAction();
         //setAttributeTooltip, visualizeDataType moved to setConnectedSibling :: @init on new compo creation no target class connected 
     }
     

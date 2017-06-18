@@ -90,6 +90,10 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     @Override
     public void init() {
         super.init();
+        addOpenSourceCodeAction();
+    }
+
+    protected void addOpenSourceCodeAction() {
         this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         this.getImageWidget().getActions().addAction(
                 new OpenSourceCodeAction(
@@ -114,7 +118,6 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     public FileObject getFileObject() {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
         ModelerFile modelerFile = this.getModelerScene().getModelerFile();
-
         return getFileObject(javaClass, modelerFile);
     }
 

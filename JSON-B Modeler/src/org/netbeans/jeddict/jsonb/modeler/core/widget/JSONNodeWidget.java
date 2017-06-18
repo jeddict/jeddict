@@ -15,6 +15,7 @@
  */
 package org.netbeans.jeddict.jsonb.modeler.core.widget;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
 import java.util.ArrayList;
@@ -27,10 +28,11 @@ import static org.netbeans.jeddict.jsonb.modeler.properties.PropertiesHandler.ge
 import static org.netbeans.jeddict.jsonb.modeler.properties.PropertiesHandler.getJsonbTypeSerializer;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jeddict.jsonb.modeler.core.widget.context.DocumentContextModel;
 import org.netbeans.jeddict.jsonb.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jeddict.jsonb.modeler.spec.JSONBNode;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
+import static org.netbeans.jpa.modeler.core.widget.JavaClassWidget.getFileObject;
+import org.netbeans.jpa.modeler.core.widget.OpenSourceCodeAction;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -110,6 +112,21 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
         this.setImage(getIcon());
         validateName(this.getName());
         setDatatypeTooltip();
+        addOpenSourceCodeAction();
+    }
+    
+    protected void addOpenSourceCodeAction() {
+        this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        this.getImageWidget().getActions().addAction(
+                new OpenSourceCodeAction(
+                        () -> getFileObject(
+                                this.getBaseElementSpec().getAttribute().getJavaClass(),
+                                this.getModelerScene().getModelerFile().getParentFile()
+                        ),
+                        this.getBaseElementSpec().getAttribute(),
+                        this.getModelerScene().getModelerFile().getParentFile()
+                )
+        );
     }
 
     @Override

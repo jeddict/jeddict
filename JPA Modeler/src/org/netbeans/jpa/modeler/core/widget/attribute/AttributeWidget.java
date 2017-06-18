@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
+import java.awt.Cursor;
 import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.atteo.evo.inflector.English;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
+import org.netbeans.jpa.modeler.core.widget.OpenSourceCodeAction;
 import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getAttributeAnnoation;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getAttributeSnippet;
@@ -171,12 +173,8 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         JMenuItem delete;
         delete = new JMenuItem("Delete");
         delete.setIcon(DELETE_ICON);
-        delete.addActionListener(e -> {
-            AttributeWidget.this.remove(true);
-        });
-
+        delete.addActionListener(e -> AttributeWidget.this.remove(true));
         menuList.add(0, delete);
-
         return menuList;
     }
 
@@ -184,10 +182,22 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     public void init() {
         this.getClassWidget().scanDuplicateAttributes(null, this.name);
         validateName(null, this.getName());
+        addOpenSourceCodeAction();
         setAttributeTooltip();
         visualizeDataType();
     }
 
+    protected void addOpenSourceCodeAction() {
+        this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        this.getImageWidget().getActions().addAction(
+                new OpenSourceCodeAction(
+                        () -> this.getClassWidget().getFileObject(),
+                        this.getBaseElementSpec(),
+                        this.getModelerScene().getModelerFile()
+                )
+        );
+    }
+    
     @Override
     public void destroy() {
         this.getClassWidget().scanDuplicateAttributes(this.name, null);
