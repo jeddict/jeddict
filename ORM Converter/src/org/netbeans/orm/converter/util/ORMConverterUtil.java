@@ -23,42 +23,33 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import java.nio.charset.Charset;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.netbeans.editor.BaseDocument;
-import org.netbeans.editor.GuardedDocument;
-import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
-import org.netbeans.lib.editor.util.swing.PositionRegion;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.WritableSnippet;
-import org.openide.ErrorManager;
 import org.openide.cookies.EditorCookie;
-import org.openide.filesystems.FileLock;
+import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileSystem;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
-import org.openide.util.UserQuestionException;
+import org.openide.util.RequestProcessor;
 
 public class ORMConverterUtil {
 
@@ -95,16 +86,15 @@ public class ORMConverterUtil {
         }
 
         File dir = new File(parentDir, childDir);
-
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
         File file = new File(dir, fileName);
-
         if (!file.exists()) {
-            file.createNewFile();
+            file.delete();
         }
+        file.createNewFile();
 
         return file;
     }
@@ -248,7 +238,7 @@ public class ORMConverterUtil {
             throw new IOException("Cannot write content to directory");
         }
 
-        if (!file.exists()) {
+        if (file.exists()) {
             file.createNewFile();
         }
 
@@ -260,61 +250,89 @@ public class ORMConverterUtil {
     public static FileObject writeSnippet(WritableSnippet writableSnippet, File destDir)
             throws InvalidDataException, IOException {
 
-        String content = writableSnippet.getSnippet();
-
         File sourceFile = ORMConverterUtil.createFile(
                 destDir.getAbsolutePath(),
                 writableSnippet.getClassHelper().getSourcePath(),
                 writableSnippet.getClassHelper().getClassNameWithSourceSuffix());
-
-        ORMConverterUtil.writeContent(content, sourceFile);
         final FileObject fo = FileUtil.toFileObject(sourceFile);
-        formatFile(fo);
+       
+        RequestProcessor.getDefault().post(() -> {
+            try {
+                String content = writableSnippet.getSnippet();
+                ORMConverterUtil.writeContent(getFormattedText(content, "java"), sourceFile);
+            } catch (InvalidDataException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        });
         return fo;
     }
 
-    private static BaseDocument getDocument(final FileObject fo) throws DataObjectNotFoundException, IOException {
-        BaseDocument doc = null;
-        DataObject dObj = DataObject.find(fo);
-        if (dObj != null) {
-            EditorCookie editor = dObj.getLookup().lookup(EditorCookie.class);
-            if (editor != null) {
-                doc = (BaseDocument) editor.openDocument();
-            }
-        }
-        return doc;
-    }
-    
-    private static void formatFile(final FileObject fo) {
-        assert fo != null;
-        final BaseDocument doc;
+    public static String getFormattedText(String textToFormat, String ext) {
         try {
-            doc = getDocument(fo);
-            if (doc == null) {
-                return;
-            }
-            final Reformat reformat = Reformat.get(doc);
-            reformat.lock();
+            FileSystem fs = FileUtil.createMemoryFileSystem();
+            FileObject root = fs.getRoot();
+            String fileName = FileUtil.findFreeFileName(root, "sample-format", ext);// NOI18N
+            FileObject data = FileUtil.createData(root, fileName + "." + ext);// NOI18N
+            Writer writer = new OutputStreamWriter(data.getOutputStream(), "UTF8");// NOI18N
             try {
-                doc.runAtomic(() -> {
-                    try {
-                        reformat.reformat(0, doc.getLength());
-                    } catch (BadLocationException x) {
-                        throw new RuntimeException(x);
-                    }
-                });
+                writer.append(textToFormat);
+                writer.flush();
             } finally {
-                reformat.unlock();
+                writer.close();
             }
-            try {
-                DataObject.find(fo).getLookup().lookup(EditorCookie.class).saveDocument();
-            } catch (IOException e) {
-                Exceptions.printStackTrace(e);
+            DataObject dob = DataObject.find(data);
+            EditorCookie ec = dob.getLookup().lookup(EditorCookie.class);
+            if (ec != null) {
+                final StyledDocument fmtDoc = ec.openDocument();
+                final Reformat fmt = Reformat.get(fmtDoc);
+                fmt.lock();
+                try {
+                    final Runnable runnable = () -> {
+                        try {
+                            fmt.reformat(0, fmtDoc.getLength());
+                        } catch (BadLocationException ex) {
+                        }
+                    };
+                    if (fmtDoc instanceof BaseDocument) {
+                        ((BaseDocument) fmtDoc).runAtomic(runnable);
+                    } else {
+                        runnable.run();
+                    }
+                } finally {
+                    fmt.unlock();
+                }
+                SaveCookie save = dob.getLookup().lookup(SaveCookie.class);
+                if (save != null) {
+                    save.save();
+                }
+                final String text = fmtDoc.getText(0, fmtDoc.getLength());
+                StringBuilder declText = new StringBuilder();
+                final int len = text.length();
+                int start = 0;
+                int end = len - 1;
+                // skip all whitespaces in the beginning and end of formatted text
+                for (; start < len && Character.isWhitespace(text.charAt(start)); start++) {
+                }
+                for (; end > start && Character.isWhitespace(text.charAt(end)); end--) {
+                }
+                
+                for (int i = start; i <= end; i++) {
+                    final char charAt = text.charAt(i);
+                    if (charAt == '\n') { 
+                        if (i <= end) {
+                            declText.append(charAt);
+                        }
+                    } else {
+                        declText.append(charAt);
+                    }
+                }
+                return declText.toString();
             }
-        } catch (Exception ex) {
-            // no disaster
-            ErrorManager.getDefault().log(ErrorManager.WARNING, "Cannot reformat the file: " + fo.getPath()); // NOI18N
+            data.delete();
+        } catch (BadLocationException | IOException ex) {
+            ex.printStackTrace(System.err);
         }
+        return textToFormat;
     }
-   
+
 }

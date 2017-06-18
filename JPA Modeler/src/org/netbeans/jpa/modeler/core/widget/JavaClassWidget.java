@@ -16,6 +16,7 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.awt.Cursor;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,7 +86,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
     }
-    
+
     @Override
     public void init() {
         super.init();
@@ -113,12 +114,16 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
     public FileObject getFileObject() {
         JavaClass javaClass = (JavaClass) this.getBaseElementSpec();
         ModelerFile modelerFile = this.getModelerScene().getModelerFile();
+
         return getFileObject(javaClass, modelerFile);
     }
 
     public static FileObject getFileObject(JavaClass javaClass, ModelerFile modelerFile) {
         if (javaClass.getFileObject() == null) {
             javaClass.setFileObject(SourceGroupSupport.getJavaFileObject(modelerFile.getSourceGroup(), javaClass.getFQN()));
+        }
+        if (javaClass.getFileObject() == null) {
+            javaClass.setFileObject(SourceGroupSupport.getJavaFileObject(modelerFile.getProject(), javaClass.getFQN()));
         }
         return javaClass.getFileObject();
     }

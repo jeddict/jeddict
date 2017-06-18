@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.core.widget.attribute;
 import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -36,6 +37,8 @@ import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.NamedNativeQuery;
+import org.netbeans.jpa.modeler.spec.NamedQuery;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
@@ -232,20 +235,18 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
        
                 //Refractor NamedQuery, NamedNativeQuery
                 if (this.getClassWidget().getBaseElementSpec() instanceof IdentifiableClass) {
-                    ((IdentifiableClass) this.getClassWidget().getBaseElementSpec()).getNamedQuery()
-                            .forEach(obj -> {
-                                obj.refractorName(singularPreName, singularNewName);
-                                obj.refractorName(pluralPreName, pluralNewName);
-                                obj.refractorQuery(singularPreName, singularNewName);
-                                obj.refractorQuery(pluralPreName, pluralNewName);
-                            });
-                    ((IdentifiableClass) this.getClassWidget().getBaseElementSpec()).getNamedNativeQuery()
-                            .forEach(obj -> {
-                                obj.refractorName(singularPreName, singularNewName);
-                                obj.refractorName(pluralPreName, pluralNewName);
-                                obj.refractorQuery(singularPreName, singularNewName);
-                                obj.refractorQuery(pluralPreName, pluralNewName);
-                            });
+                    for (NamedQuery obj : new CopyOnWriteArrayList<>(((IdentifiableClass) this.getClassWidget().getBaseElementSpec()).getNamedQuery())) {
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
+                    }
+                    for (NamedNativeQuery obj : new CopyOnWriteArrayList<>(((IdentifiableClass) this.getClassWidget().getBaseElementSpec()).getNamedNativeQuery())) {
+                        obj.refractorName(singularPreName, singularNewName);
+                        obj.refractorName(pluralPreName, pluralNewName);
+                        obj.refractorQuery(singularPreName, singularNewName);
+                        obj.refractorQuery(pluralPreName, pluralNewName);
+                    }
                 }
 
                
