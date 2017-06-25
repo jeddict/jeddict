@@ -45,8 +45,10 @@ import static org.netbeans.jcode.layer.Technology.Type.BUSINESS;
 import static org.netbeans.jcode.layer.Technology.Type.CONTROLLER;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
+import org.netbeans.jcode.stack.config.data.LayerConfigData;
 import org.netbeans.jcode.stack.config.panel.LayerConfigPanel;
 import org.netbeans.jcode.ui.source.ProjectCellRenderer;
+import org.netbeans.jcode.util.PreferenceUtils;
 import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
@@ -154,8 +156,8 @@ public class GenerateCodeDialog extends GenericDialog {
 
         businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
         if (projectType == ProjectType.WEB) {
-            controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultControllerLayer())}));
-            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
+            controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultControllerLayer.class)}));
+            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
         }
         controllerLayerCombo.setEnabled(false);
         viewerLayerCombo.setEnabled(false);
@@ -240,7 +242,7 @@ public class GenerateCodeDialog extends GenericDialog {
         if (projectType == ProjectType.WEB) {
             controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
             controllerLayerCombo.setEnabled(businessLayer.isValid());
-            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(new DefaultViewerLayer())}));
+            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
             viewerLayerCombo.setEnabled(false);
         }
         setTechPanel(businessLayer);
@@ -569,6 +571,7 @@ public class GenerateCodeDialog extends GenericDialog {
                     return true;
                 } else {
                     panel.store();
+                    PreferenceUtils.set(getTargetPoject(), panel.getConfigData());
                 }
             }
         }
@@ -581,11 +584,11 @@ public class GenerateCodeDialog extends GenericDialog {
         }
         entityMappings.setPackage(getPackage());
         if (getBusinessLayer() != null) {
-            technologyPref.put(BUSINESS.name(), getBusinessLayer().getGenerator().getClass().getSimpleName());
+            technologyPref.put(BUSINESS.name(), getBusinessLayer().getGeneratorClass().getSimpleName());
             if (getControllerLayer() != null) {
-                technologyPref.put(CONTROLLER.name(), getControllerLayer().getGenerator().getClass().getSimpleName());
+                technologyPref.put(CONTROLLER.name(), getControllerLayer().getGeneratorClass().getSimpleName());
                 if (getViewerLayer() != null) {
-                    technologyPref.put(VIEWER.name(), getViewerLayer().getGenerator().getClass().getSimpleName());
+                    technologyPref.put(VIEWER.name(), getViewerLayer().getGeneratorClass().getSimpleName());
                 }
             }
         }

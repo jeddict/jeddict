@@ -52,6 +52,12 @@
                 <attribute id="persistenceUnitName" groupId="BASIC_PROP" class="java.lang.String" name="persistenceUnitName">
                     <display-name>PersistenceUnit Name</display-name>
                 </attribute>
+<!--                
+                <attribute id="persistenceProviderType" groupId="BASIC_PROP" class="org.netbeans.jcode.jpa.PersistenceProviderType" name="persistenceProviderType">
+                    <display-name>Persistence Provider</display-name>
+                </attribute>
+                //todo
+-->
                 <attribute id="package" groupId="PACKAGE" class="java.lang.String" name="package">
                     <display-name>Entity Package</display-name>
                 </attribute>

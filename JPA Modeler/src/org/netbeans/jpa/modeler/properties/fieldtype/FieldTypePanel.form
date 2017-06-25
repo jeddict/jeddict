@@ -288,6 +288,10 @@
                   <StringArray count="0"/>
                 </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="searchBox"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="searchBox= new AutocompleteJComboBox&lt;&gt;();"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JButton" name="dataType_Action">
               <Properties>

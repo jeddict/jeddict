@@ -100,9 +100,6 @@ public class JPAFileDataObject extends ModelerFileDataObject {
     public JPAFileDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         registerEditor(JPA_FILE_TYPE, false);
-        if(pf.getSize()<=1){
-            JeddictLogger.createModelerFile("JPA");
-        }
     }
 
     @Override

@@ -238,6 +238,10 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public static Image MTOR_TARGET_ANCHOR_SHAPE;
     public static Image MTMR_SOURCE_ANCHOR_SHAPE;
     public static Image MTMR_TARGET_ANCHOR_SHAPE;
+    public static Image OTOR_ICON;
+    public static Image OTMR_ICON;
+    public static Image MTOR_ICON;
+    public static Image MTMR_ICON;
     public static Image UNI_DIRECTIONAL;
     public static Image BI_DIRECTIONAL;
     public static Image PK_UNI_DIRECTIONAL;
@@ -361,14 +365,20 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             PK_BOTO_ATTRIBUTE = new ImageIcon(cl.getResource(PK_BOTO_ATTRIBUTE_ICON_PATH)).getImage();
             GENERALIZATION = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/generalization.png")).getImage();
             GENERALIZATION_ANCHOR = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/generalization-anchor.png")).getImage();
+            
             OTOR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one.gif")).getImage();
             OTOR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png")).getImage();
-            OTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-many.gif")).getImage();
+            OTMR_SOURCE_ANCHOR_SHAPE = OTOR_SOURCE_ANCHOR_SHAPE;
             OTMR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-many-arrow.png")).getImage();
             MTOR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-one.gif")).getImage();
             MTOR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-one-arrow.png")).getImage();
             MTMR_SOURCE_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many.gif")).getImage();
             MTMR_TARGET_ANCHOR_SHAPE = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/many-to-many-arrow.png")).getImage();
+            
+            OTOR_ICON = OTOR_SOURCE_ANCHOR_SHAPE;
+            OTMR_ICON = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/one-to-many.gif")).getImage();
+            MTOR_ICON = MTOR_SOURCE_ANCHOR_SHAPE;
+            MTMR_ICON = MTMR_SOURCE_ANCHOR_SHAPE;
 
             UNI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/uni.png")).getImage();
             BI_DIRECTIONAL = new ImageIcon(cl.getResource("org/netbeans/jpa/modeler/resource/image/bi.png")).getImage();

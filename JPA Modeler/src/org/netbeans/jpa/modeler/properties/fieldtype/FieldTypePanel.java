@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
+import java.util.stream.Stream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -74,6 +75,7 @@ import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
+import org.netbeans.modeler.search.AutocompleteJComboBox;
 
 /**
  *
@@ -248,27 +250,27 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     }
 
     private void initDataTypeComboBox() {
-        String[] dataType = null;
-        List<ComboBoxValue> classList = null;
+        String[] dataTypes = null;
+        List<ComboBoxValue<Object>> classList = null;
         setDataTypeEditable();
         String type = (String) type_ComboBox.getSelectedItem();
         if (mapKey) {
             switch (type) {
                 case ENTITY:
-                    classList = entityMappings.getEntity().stream().map(e -> new ComboBoxValue<Entity>(e, e.getClazz())).collect(toList());
+                    classList = entityMappings.getEntity().stream().map(e -> new ComboBoxValue<Object>(e, e.getClazz())).collect(toList());
                     setDataTypeNonEditable();
                     break;
                 case EMBEDDABLE:
-                    classList = entityMappings.getEmbeddable().stream().map(e -> new ComboBoxValue<Embeddable>(e, e.getClazz())).collect(toList());
+                    classList = entityMappings.getEmbeddable().stream().map(e -> new ComboBoxValue<Object>(e, e.getClazz())).collect(toList());
                     setDataTypeNonEditable();
                     break;
                 case ENUMERATED:
                     break;
                 case TEMPORAL:
-                    dataType = TEMPORAL_DATATYPE;
+                    dataTypes = TEMPORAL_DATATYPE;
                     break;
                 default:
-                    dataType = MAPKEY_DEFAULT_DATATYPE;
+                    dataTypes = MAPKEY_DEFAULT_DATATYPE;
                     break;
             }
         } else if (attribute instanceof Basic) {
@@ -276,13 +278,13 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 case ENUMERATED:
                     break;
                 case TEMPORAL:
-                    dataType = TEMPORAL_DATATYPE;
+                    dataTypes = TEMPORAL_DATATYPE;
                     break;
                 case LOB:
-                    dataType = LOB_DATATYPE;
+                    dataTypes = LOB_DATATYPE;
                     break;
                 default:
-                    dataType = BASIC_DEFAULT_DATATYPE;
+                    dataTypes = BASIC_DEFAULT_DATATYPE;
                     break;
             }
         } else if (attribute instanceof ElementCollection) {
@@ -290,41 +292,41 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 case ENUMERATED:
                     break;
                 case TEMPORAL:
-                    dataType = TEMPORAL_DATATYPE;
+                    dataTypes = TEMPORAL_DATATYPE;
                     break;
                 case LOB:
-                    dataType = LOB_DATATYPE;
+                    dataTypes = LOB_DATATYPE;
                     break;
                 default:
-                    dataType = ELEMENTCOLLECTION_DEFAULT_DATATYPE;
+                    dataTypes = ELEMENTCOLLECTION_DEFAULT_DATATYPE;
                     break;
             }
         } else if (attribute instanceof Id) {
             switch (type) {
                 case TEMPORAL:
-                    dataType = new String[]{DATE};
+                    dataTypes = new String[]{DATE};
                     break;
                 default:
-                    dataType = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER,
+                    dataTypes = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER,
                         BIGINTEGER, BIGDECIMAL, DATE, SQL_DATE};
                     break;
             }
         } else if (attribute instanceof Version) {
-            dataType = new String[]{INT, INT_WRAPPER, SHORT, SHORT_WRAPPER, LONG, LONG_WRAPPER, SQL_TIMESTAMP};
+            dataTypes = new String[]{INT, INT_WRAPPER, SHORT, SHORT_WRAPPER, LONG, LONG_WRAPPER, SQL_TIMESTAMP};
         } else if (attribute instanceof Transient) {
             //skip it // no datatype is specified in spec
-            dataType = BASIC_DEFAULT_DATATYPE;
+            dataTypes = BASIC_DEFAULT_DATATYPE;
         }
         
-        dataType_ComboBox.removeAllItems();
         if (mapKey && classList != null) {
-            dataType_ComboBox.setModel(new DefaultComboBoxModel(classList.toArray()));
+            searchBox.setValue(classList);
         } else {
-            if (dataType == null) {
-             dataType = new String[]{EMPTY};
+            if (dataTypes == null) {
+             dataTypes = new String[]{EMPTY};
             }
-            dataType_ComboBox.setModel(new DefaultComboBoxModel(dataType));
-            dataType_ComboBox.setSelectedItem(dataType[0]);
+            searchBox.setValue(Stream.of(dataTypes)
+                .map(datatype -> new ComboBoxValue<Object>(datatype, datatype))
+                .collect(toList()));
         }
         
     }
@@ -428,7 +430,8 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         TimeStamp_RadioButton = new javax.swing.JRadioButton();
         dataType_LayeredPane = new javax.swing.JLayeredPane();
         dataType_Label = new javax.swing.JLabel();
-        dataType_ComboBox = new javax.swing.JComboBox();
+        searchBox= new AutocompleteJComboBox<>();
+        dataType_ComboBox = searchBox;
         dataType_Action = new javax.swing.JButton();
 
         jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(FieldTypePanel.class, "FieldTypePanel.jLayeredPane1.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
@@ -440,6 +443,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 type_ComboBoxActionPerformed(evt);
             }
         });
+
+        type_LayeredPane.setLayer(type_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        type_LayeredPane.setLayer(type_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout type_LayeredPaneLayout = new javax.swing.GroupLayout(type_LayeredPane);
         type_LayeredPane.setLayout(type_LayeredPaneLayout);
@@ -460,11 +466,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                     .addComponent(type_Label))
                 .addGap(0, 3, Short.MAX_VALUE))
         );
-        type_LayeredPane.setLayer(type_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        type_LayeredPane.setLayer(type_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane1.add(type_LayeredPane);
-        type_LayeredPane.setBounds(10, 30, 428, 30);
+        type_LayeredPane.setBounds(10, 30, 424, 23);
 
         extendType_LayeredPane.setLayout(new java.awt.FlowLayout());
 
@@ -476,6 +480,10 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
 
         Enumerated_buttonGroup.add(Default_Ordinal_RadioButton);
         org.openide.awt.Mnemonics.setLocalizedText(Default_Ordinal_RadioButton, org.openide.util.NbBundle.getMessage(FieldTypePanel.class, "FieldTypePanel.Default_Ordinal_RadioButton.text")); // NOI18N
+
+        Enumerated_LayeredPane1.setLayer(Ordinal_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        Enumerated_LayeredPane1.setLayer(String_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        Enumerated_LayeredPane1.setLayer(Default_Ordinal_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout Enumerated_LayeredPane1Layout = new javax.swing.GroupLayout(Enumerated_LayeredPane1);
         Enumerated_LayeredPane1.setLayout(Enumerated_LayeredPane1Layout);
@@ -498,9 +506,6 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                     .addComponent(Default_Ordinal_RadioButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        Enumerated_LayeredPane1.setLayer(Ordinal_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        Enumerated_LayeredPane1.setLayer(String_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        Enumerated_LayeredPane1.setLayer(Default_Ordinal_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         extendType_LayeredPane.add(Enumerated_LayeredPane1);
 
@@ -512,6 +517,10 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
 
         Temporal_buttonGroup.add(TimeStamp_RadioButton);
         org.openide.awt.Mnemonics.setLocalizedText(TimeStamp_RadioButton, org.openide.util.NbBundle.getMessage(FieldTypePanel.class, "FieldTypePanel.TimeStamp_RadioButton.text")); // NOI18N
+
+        Temporal_LayeredPane.setLayer(Date_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        Temporal_LayeredPane.setLayer(Time_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        Temporal_LayeredPane.setLayer(TimeStamp_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout Temporal_LayeredPaneLayout = new javax.swing.GroupLayout(Temporal_LayeredPane);
         Temporal_LayeredPane.setLayout(Temporal_LayeredPaneLayout);
@@ -535,9 +544,6 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                     .addComponent(TimeStamp_RadioButton))
                 .addContainerGap())
         );
-        Temporal_LayeredPane.setLayer(Date_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        Temporal_LayeredPane.setLayer(Time_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        Temporal_LayeredPane.setLayer(TimeStamp_RadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         extendType_LayeredPane.add(Temporal_LayeredPane);
 
@@ -555,6 +561,10 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                 dataType_ActionActionPerformed(evt);
             }
         });
+
+        dataType_LayeredPane.setLayer(dataType_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        dataType_LayeredPane.setLayer(dataType_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        dataType_LayeredPane.setLayer(dataType_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout dataType_LayeredPaneLayout = new javax.swing.GroupLayout(dataType_LayeredPane);
         dataType_LayeredPane.setLayout(dataType_LayeredPaneLayout);
@@ -579,12 +589,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                         .addComponent(dataType_Label)))
                 .addGap(0, 11, Short.MAX_VALUE))
         );
-        dataType_LayeredPane.setLayer(dataType_Label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        dataType_LayeredPane.setLayer(dataType_ComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        dataType_LayeredPane.setLayer(dataType_Action, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLayeredPane1.add(dataType_LayeredPane);
-        dataType_LayeredPane.setBounds(10, 100, 457, 38);
+        dataType_LayeredPane.setBounds(10, 100, 453, 31);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -627,13 +634,14 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     }//GEN-LAST:event_type_ComboBoxActionPerformed
 
     private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed
-        String dataType = NBModelerUtil.browseClass(modelerFile, (String)dataType_ComboBox.getSelectedItem());
+        String existingValue = dataType_ComboBox.getSelectedItem()!=null?dataType_ComboBox.getSelectedItem().toString():null;
+        String dataType = NBModelerUtil.browseClass(modelerFile, existingValue);
         if (((DefaultComboBoxModel) dataType_ComboBox.getModel()).getIndexOf(dataType) == -1) {
             ((DefaultComboBoxModel) dataType_ComboBox.getModel()).addElement(dataType);
         }
         dataType_ComboBox.setSelectedItem(dataType);
     }//GEN-LAST:event_dataType_ActionActionPerformed
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton Date_RadioButton;
     private javax.swing.JRadioButton Default_Ordinal_RadioButton;
@@ -655,6 +663,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     private javax.swing.JLabel type_Label;
     private javax.swing.JLayeredPane type_LayeredPane;
     // End of variables declaration//GEN-END:variables
+    private AutocompleteJComboBox<Object> searchBox;
 
     private void selectEnumType(EnumType enumType) {
         if (enumType != null) {

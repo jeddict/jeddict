@@ -26,7 +26,6 @@ import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BI_DIRECTIONAL;
@@ -35,11 +34,11 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.C
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ID_ATTRIBUTE;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTMR_SOURCE_ANCHOR_SHAPE;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTOR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTMR_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MTOR_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTMR_SOURCE_ANCHOR_SHAPE;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTOR_SOURCE_ANCHOR_SHAPE;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTMR_ICON;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTOR_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PAINT_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PK_BI_DIRECTIONAL;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PK_UNI_DIRECTIONAL;
@@ -173,7 +172,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionOTOModel = new DefaultGroupButtonModel();
             connectionOTOModel.setId("OTO_RELATION");
-            connectionOTOModel.setImage(OTOR_SOURCE_ANCHOR_SHAPE);
+            connectionOTOModel.setImage(OTOR_ICON);
             connectionOTOModel.setTooltip("One To One Relation");
             connectionOTOModel.setPaletteModel(contextPaletteModel);
             contextPaletteModel.getChildren().add(connectionOTOModel);
@@ -216,7 +215,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionOTMModel = new DefaultPaletteButtonModel();
             connectionOTMModel.setId("UOTM_RELATION");
-            connectionOTMModel.setImage(OTMR_SOURCE_ANCHOR_SHAPE);
+            connectionOTMModel.setImage(OTMR_ICON);
             connectionOTMModel.setTooltip("Unidirectional One To Many Relation");
             connectionOTMModel.setPaletteModel(contextPaletteModel);
             connectionOTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -225,7 +224,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionMTOModel = new DefaultGroupButtonModel();
             connectionMTOModel.setId("MTO_RELATION");
-            connectionMTOModel.setImage(MTOR_SOURCE_ANCHOR_SHAPE);
+            connectionMTOModel.setImage(MTOR_ICON);
             connectionMTOModel.setTooltip("Many To One Relation");
             connectionMTOModel.setPaletteModel(contextPaletteModel);
             contextPaletteModel.getChildren().add(connectionMTOModel);
@@ -268,7 +267,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionMTMModel = new DefaultGroupButtonModel();
             connectionMTMModel.setId("MTM_RELATION");
-            connectionMTMModel.setImage(MTMR_SOURCE_ANCHOR_SHAPE);
+            connectionMTMModel.setImage(MTMR_ICON);
             connectionMTMModel.setTooltip("Many To Many Relation");
             connectionMTMModel.setPaletteModel(contextPaletteModel);
             contextPaletteModel.getChildren().add(connectionMTMModel);
@@ -295,7 +294,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionUOTOModel = new DefaultPaletteButtonModel();
             connectionUOTOModel.setId("UOTO_RELATION");
-            connectionUOTOModel.setImage(OTOR_SOURCE_ANCHOR_SHAPE);
+            connectionUOTOModel.setImage(OTOR_ICON);
             connectionUOTOModel.setTooltip("Unidirectional One To One Relation");
             connectionUOTOModel.setPaletteModel(contextPaletteModel);
             connectionUOTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -304,7 +303,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionOTMModel = new DefaultPaletteButtonModel();
             connectionOTMModel.setId("UOTM_RELATION");
-            connectionOTMModel.setImage(OTMR_SOURCE_ANCHOR_SHAPE);
+            connectionOTMModel.setImage(OTMR_ICON);
             connectionOTMModel.setTooltip("Unidirectional One To Many Relation");
             connectionOTMModel.setPaletteModel(contextPaletteModel);
             connectionOTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -313,7 +312,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionUMTOModel = new DefaultPaletteButtonModel();
             connectionUMTOModel.setId("UMTO_RELATION");
-            connectionUMTOModel.setImage(MTOR_SOURCE_ANCHOR_SHAPE);
+            connectionUMTOModel.setImage(MTOR_ICON);
             connectionUMTOModel.setTooltip("Unidirectional Many To One Relation");
             connectionUMTOModel.setPaletteModel(contextPaletteModel);
             connectionUMTOModel.setContextActionType(ContextActionType.CONNECT);
@@ -322,7 +321,7 @@ public class NodeContextModel {
 
             ContextPaletteButtonModel connectionUMTMModel = new DefaultPaletteButtonModel();
             connectionUMTMModel.setId("UMTM_RELATION");
-            connectionUMTMModel.setImage(MTMR_SOURCE_ANCHOR_SHAPE);
+            connectionUMTMModel.setImage(MTMR_ICON);
             connectionUMTMModel.setTooltip("Unidirectional Many To Many Relation");
             connectionUMTMModel.setPaletteModel(contextPaletteModel);
             connectionUMTMModel.setContextActionType(ContextActionType.CONNECT);
@@ -378,48 +377,4 @@ public class NodeContextModel {
         };
     }
 
-//    private static MouseListener getFocusWidgetAction(final INodeWidget widget) {
-//        return new java.awt.event.MouseAdapter() {
-//            @Override
-//            public void mouseClicked(java.awt.event.MouseEvent evt) {
-//
-//                if (widget instanceof EntityWidget) {
-//                    JPAModelerScene modelerScene = (JPAModelerScene) widget.getModelerScene();
-//
-//                    EntityWidget entityWidget = (EntityWidget) widget;
-//                    if (entityWidget.isSelectedView()) {
-////                        for (IBaseElementWidget baseElementWidget : entityWidget.getModelerScene().getBaseElements()) {
-//////                            baseElementWidget.setVisible(true);
-////                        }
-////                        modelerScene.getWidgetHighlightLayer().setOpaque(false);
-////                        modelerScene.setRouter(RouterFactory.createOrthogonalSearchRouter(modelerScene.getMainLayer(), modelerScene.getConnectionLayer()));
-//
-////                        modelerScene.getMainLayer().setVisible(true);
-////                        modelerScene.getConnectionLayer().setVisible(true);
-//                        entityWidget.hideInheritancePath();
-//                        entityWidget.setSelectedView(false);
-//                    } else {
-////                        for (IBaseElementWidget baseElementWidget : entityWidget.getModelerScene().getBaseElements()) {
-//////                            baseElementWidget.setVisible(false);
-////                        }
-////                        modelerScene.getWidgetHighlightLayer().setOpaque(true);
-////                        modelerScene.setRouter(RouterFactory.createOrthogonalSearchRouter(modelerScene.getBoundaryWidgetLayer(), modelerScene.getWidgetHighlightLayer()));
-////                        modelerScene.setRouter(RouterFactory.createFreeRouter());
-//
-////                        SceneLayout sceneLayout = LayoutFactory.createSceneGraphLayout(modelerScene, new GridGraphLayout<NodeWidgetInfo, EdgeWidgetInfo>().setChecker(true));
-////                        sceneLayout.invokeLayout();
-////                        modelerScene.getMainLayer().setVisible(false);
-////                        modelerScene.getConnectionLayer().setVisible(false);
-//                        entityWidget.showInheritancePath();
-//                        entityWidget.setSelectedView(true);
-//                    }
-//
-//                }
-//
-////                widget.remove(true);
-//                NBModelerUtil.hideContextPalette(widget.getModelerScene());
-////                widget.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
-//            }
-//        };
-//    }
 }
