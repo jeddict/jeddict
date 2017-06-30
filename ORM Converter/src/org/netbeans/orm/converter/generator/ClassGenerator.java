@@ -97,6 +97,8 @@ import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import org.netbeans.bean.validation.constraints.Constraint;
 import org.netbeans.jpa.modeler.spec.extend.AnnotationLocation;
+import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;
 import org.netbeans.jpa.modeler.spec.validator.SequenceGeneratorValidator;
 import org.netbeans.jpa.modeler.spec.validator.TableGeneratorValidator;
@@ -311,7 +313,17 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                 if (snippetsMap.get(snippet.getLocationType()) == null) {
                     snippetsMap.put(snippet.getLocationType(), new ArrayList<>());
                 }
-                snippetsMap.get(snippet.getLocationType()).add(snippet.getValue());
+                String value = snippet.getValue();
+                if(snippet.getLocationType() == ClassSnippetLocationType.IMPORT ||
+                        snippet.getLocationType() == AttributeSnippetLocationType.IMPORT){
+                    if(!value.startsWith("import")){
+                        value = "import " + value;
+                    }
+                    if(!value.endsWith(";")){
+                        value = value + ";";
+                    }
+                }
+                snippetsMap.get(snippet.getLocationType()).add(value);
             }
         }
         return snippetsMap;
