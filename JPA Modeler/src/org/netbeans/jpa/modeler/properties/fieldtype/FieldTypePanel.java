@@ -54,8 +54,13 @@ import static org.netbeans.jcode.core.util.AttributeType.FLOAT;
 import static org.netbeans.jcode.core.util.AttributeType.FLOAT_WRAPPER;
 import static org.netbeans.jcode.core.util.AttributeType.INT;
 import static org.netbeans.jcode.core.util.AttributeType.INT_WRAPPER;
+import static org.netbeans.jcode.core.util.AttributeType.LOCAL_DATE;
+import static org.netbeans.jcode.core.util.AttributeType.LOCAL_DATE_TIME;
+import static org.netbeans.jcode.core.util.AttributeType.LOCAL_TIME;
 import static org.netbeans.jcode.core.util.AttributeType.LONG;
 import static org.netbeans.jcode.core.util.AttributeType.LONG_WRAPPER;
+import static org.netbeans.jcode.core.util.AttributeType.OFFSET_DATE_TIME;
+import static org.netbeans.jcode.core.util.AttributeType.OFFSET_TIME;
 import static org.netbeans.jcode.core.util.AttributeType.SHORT;
 import static org.netbeans.jcode.core.util.AttributeType.SHORT_WRAPPER;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_DATE;
@@ -88,20 +93,18 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     private Attribute attribute;
     private final EntityMappings entityMappings;
 
-    private static final String[] BASIC_DEFAULT_DATATYPE = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
-                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+    private static final String[] BASIC_DEFAULT_DATATYPE = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, 
+                        CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, 
+                        BIGINTEGER, BIGDECIMAL, SQL_DATE, SQL_TIME, SQL_TIMESTAMP,
+                        LOCAL_DATE, LOCAL_TIME, LOCAL_DATE_TIME, OFFSET_TIME, OFFSET_DATE_TIME};
     
     private static final String[] LOB_DATATYPE = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
     private static final String[] TEMPORAL_DATATYPE = new String[]{DATE, CALENDAR};
-    private static final String[] MAPKEY_DEFAULT_DATATYPE = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR_WRAPPER, BOOLEAN_WRAPPER,
-                        BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        //BUG : https://java.net/bugzilla/show_bug.cgi?id=6306 Add @Temporal annotation for java.util.Date fields
-                        /*DATE, CALENDAR,*/
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
-    private static final String[] ELEMENTCOLLECTION_DEFAULT_DATATYPE = new String[]{STRING, CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER,
-                        LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, BIGINTEGER, BIGDECIMAL,
-                        SQL_DATE, SQL_TIME, SQL_TIMESTAMP};
+    private static final String[] MAPKEY_DEFAULT_DATATYPE = BASIC_DEFAULT_DATATYPE;
+    private static final String[] ELEMENTCOLLECTION_DEFAULT_DATATYPE = new String[]{STRING, 
+                        CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, 
+                        BIGINTEGER, BIGDECIMAL, SQL_DATE, SQL_TIME, SQL_TIMESTAMP,
+                        LOCAL_DATE, LOCAL_TIME, LOCAL_DATE_TIME, OFFSET_TIME, OFFSET_DATE_TIME};
     private static final Set<String> BCLOB_DATATYPE_FILTER = new HashSet<>(Arrays.asList(BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY));
 
     @Override
