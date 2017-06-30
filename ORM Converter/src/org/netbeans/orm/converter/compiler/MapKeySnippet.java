@@ -47,36 +47,27 @@ public class MapKeySnippet implements Snippet {
          
     @Override
     public String getSnippet() throws InvalidDataException {
-
-//        if (mappedBy == null
-//                && getTargetEntity() == null
-//                && getFetchType() == null
-//                && getCascadeTypes().isEmpty() && mapKeyAttribute==null) {
-//            return "@"+getType();
-//        }
-
         StringBuilder builder = new StringBuilder();
         if (mapKeyAttribute != null) {
-           builder.append('@').append(MAP_KEY);
-           builder.append(ORMConverterUtil.OPEN_PARANTHESES);
-           builder.append("name = ");
-           builder.append(QUOTE).append(mapKeyAttribute.getName()).append(QUOTE);
-           builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
+            builder.append('@').append(MAP_KEY);
+            builder.append(ORMConverterUtil.OPEN_PARANTHESES);
+            builder.append("name = ");
+            builder.append(QUOTE).append(mapKeyAttribute.getName()).append(QUOTE);
+            builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
+        } else if (joinColumnsSnippet != null) {
+            builder.append(joinColumnsSnippet.getSnippet());
+        } else if (attributeOverrideSnippet != null) {
+            builder.append(attributeOverrideSnippet.getSnippet());
         } else {
-             if (columnSnippet != null) {
-                builder.append(columnSnippet.getSnippet());
-            } else if (temporalSnippet != null) {
+            if (temporalSnippet != null) {
                 builder.append(temporalSnippet.getSnippet());
             } else if (enumeratedSnippet != null) {
                 builder.append(enumeratedSnippet.getSnippet());
-            } else if (joinColumnsSnippet!= null) {
-                builder.append(joinColumnsSnippet.getSnippet());
-            } else if (attributeOverrideSnippet!= null) {
-                builder.append(attributeOverrideSnippet.getSnippet());
+            }
+            if (columnSnippet != null) {
+                builder.append(columnSnippet.getSnippet());
             }
         }
-//        builder.append(NEW_LINE);
-        
         return builder.toString();
     }
 
@@ -85,17 +76,18 @@ public class MapKeySnippet implements Snippet {
         List<String> importSnippets = new ArrayList<>();
         if (mapKeyAttribute != null) {
             importSnippets.add(MAP_KEY_FQN);
+        } else if (joinColumnsSnippet != null) {
+            importSnippets.addAll(joinColumnsSnippet.getImportSnippets());
+        } else if (attributeOverrideSnippet != null) {
+            importSnippets.addAll(attributeOverrideSnippet.getImportSnippets());
         } else {
-             if (columnSnippet != null) {
-                 importSnippets.addAll(columnSnippet.getImportSnippets());
-            } else if (temporalSnippet != null) {
-                 importSnippets.addAll(temporalSnippet.getImportSnippets());
+            if (temporalSnippet != null) {
+                importSnippets.addAll(temporalSnippet.getImportSnippets());
             } else if (enumeratedSnippet != null) {
-                 importSnippets.addAll(enumeratedSnippet.getImportSnippets());
-            } else if (joinColumnsSnippet!= null) {
-                 importSnippets.addAll(joinColumnsSnippet.getImportSnippets());
-            } else if (attributeOverrideSnippet!= null) {
-                 importSnippets.addAll(attributeOverrideSnippet.getImportSnippets());
+                importSnippets.addAll(enumeratedSnippet.getImportSnippets());
+            }
+            if (columnSnippet != null) {
+                importSnippets.addAll(columnSnippet.getImportSnippets());
             }
         }
         return importSnippets;

@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.properties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.velocity.util.StringUtils.firstLetterCaps;
@@ -142,6 +145,7 @@ import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
 import static org.openide.util.NbBundle.getMessage;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
+import org.openide.util.Exceptions;
 
 public class PropertiesHandler {
 
@@ -200,23 +204,30 @@ public class PropertiesHandler {
 
             void setCollectionType(ComboBoxValue<String> value) {
                 String collectionType = value.getValue();
-                boolean valid = false;
-                try {
-                    if (collectionType != null && !collectionType.trim().isEmpty()) {
-                        if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))
-                                || java.util.Map.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
-                            valid = true;
+                boolean valid = validateCollectionType(collectionType, colSpec.getCollectionImplType(), collectionType);
+                boolean nextValidation = valid;
+                if (!nextValidation) {
+                    try {
+                        if (StringUtils.isNotBlank(collectionType)) {
+                            if (java.util.Collection.class.isAssignableFrom(Class.forName(collectionType.trim()))
+                                    || java.util.Map.class.isAssignableFrom(Class.forName(collectionType.trim()))) {
+                                nextValidation = true;
+                            }
                         }
+                    } catch (ClassNotFoundException ex) {
+                        //skip allow = false;
                     }
-                } catch (ClassNotFoundException ex) {
-                    //skip allow = false;
                 }
-                if (!valid) {
+                if (!nextValidation) {
                     collectionType = java.util.Collection.class.getName();
                 }
 
                 colSpec.setCollectionType(collectionType);
-                em.getCache().addCollectionClass(collectionType);//move item to top in cache
+                em.getCache().addCollectionClass(collectionType);
+                
+                if (!valid) {
+                    attributeWidget.refreshProperties();
+                }
             }
 
             void manageMapType(String prevType, String newType) {
@@ -256,15 +267,18 @@ public class PropertiesHandler {
             public List<ComboBoxValue<String>> getItemList() {
                 List<ComboBoxValue<String>> comboBoxValues = new ArrayList<>();
                 value.addAll(em.getCache().getCollectionClasses());
-                em.getCache().getCollectionClasses().stream().forEach((collection) -> {
-                    Class _class;
-                    try {
-                        _class = Class.forName(collection);
-                        comboBoxValues.add(new ComboBoxValue(_class.getName(), _class.getSimpleName()));
-                    } catch (ClassNotFoundException ex) {
-                        comboBoxValues.add(new ComboBoxValue(collection, collection + "(Not Exist)"));
-                    }
-                });
+                em.getCache().getCollectionClasses()
+                        .stream()
+                        .filter(StringUtils::isNotEmpty)
+                        .forEach((collection) -> {
+                            Class _class;
+                            try {
+                                _class = Class.forName(collection);
+                                comboBoxValues.add(new ComboBoxValue(_class.getName(), _class.getSimpleName()));
+                            } catch (ClassNotFoundException ex) {
+                                comboBoxValues.add(new ComboBoxValue(collection, collection + "(Not Exist)"));
+                            }
+                        });
                 return comboBoxValues;
             }
 
@@ -277,7 +291,15 @@ public class PropertiesHandler {
             public ActionHandler getActionHandler() {
                 return ActionHandler.getInstance(() -> {
                     String collectionType = NBModelerUtil.browseClass(modelerFile);
-                    return new ComboBoxValue<>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
+                    try {
+                        if (Collection.class.isAssignableFrom(Class.forName(collectionType))
+                                || Map.class.isAssignableFrom(Class.forName(collectionType))) {
+                            return new ComboBoxValue<>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
+                        }
+                    } catch (ClassNotFoundException ex) {
+
+                    }
+                    throw new IllegalStateException("Invalid Collection/Map type");
                 })
                         .afterCreation(e -> em.getCache().addCollectionClass(e.getValue()))
                         .afterDeletion(e -> em.getCache().getCollectionClasses().remove(e.getValue()))
@@ -285,6 +307,126 @@ public class PropertiesHandler {
             }
         };
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionType", "Collection Type", "", comboBoxListener);
+    }
+    
+    public static ComboBoxPropertySupport getCollectionImplTypeProperty(AttributeWidget<? extends Attribute> attributeWidget, final CollectionTypeHandler colSpec) {
+        JPAModelerScene modelerScene = attributeWidget.getModelerScene();
+        EntityMappings em = modelerScene.getBaseElementSpec();
+        ModelerFile modelerFile = modelerScene.getModelerFile();
+        ComboBoxListener<String> comboBoxListener = new ComboBoxListener<String>() {
+            private final Set<String> value = new HashSet<>();
+
+            @Override
+            public void setItem(ComboBoxValue<String> value) {
+                setCollectionImplType(value);
+            }
+
+            void setCollectionImplType(ComboBoxValue<String> value) {
+                String collectionImplType = value.getValue();
+               boolean valid = validateCollectionType(colSpec.getCollectionType(), collectionImplType, collectionImplType);
+                if (valid) {
+                    colSpec.setCollectionImplType(collectionImplType);
+                    em.getCache().addCollectionImplClass(collectionImplType);
+                } else if (StringUtils.isEmpty(collectionImplType)) {
+                    colSpec.setCollectionImplType(null);
+                }
+            }
+
+            @Override
+            public ComboBoxValue<String> getItem() {
+                if (!value.contains(colSpec.getCollectionImplType())) {
+                    value.add(colSpec.getCollectionImplType());
+                    em.getCache().addCollectionImplClass(colSpec.getCollectionImplType());
+                }
+                if (StringUtils.isNotEmpty(colSpec.getCollectionImplType())) {
+                    return new ComboBoxValue(colSpec.getCollectionImplType(),
+                            colSpec.getCollectionImplType().substring(colSpec.getCollectionImplType().lastIndexOf('.') + 1));
+                } else {
+                    return new ComboBoxValue(null, EMPTY);
+                }
+            }
+
+            @Override
+            public List<ComboBoxValue<String>> getItemList() {
+                List<ComboBoxValue<String>> comboBoxValues = new ArrayList<>();
+                comboBoxValues.add(new ComboBoxValue(null, ""));
+                value.addAll(em.getCache().getCollectionImplClasses());
+                em.getCache().getCollectionImplClasses()
+                        .stream()
+                        .filter(StringUtils::isNotEmpty)
+                        .forEach((collection) -> {
+                            Class _class;
+                            try {
+                                _class = Class.forName(collection);
+                                comboBoxValues.add(new ComboBoxValue(_class.getName(), _class.getSimpleName()));
+                            } catch (ClassNotFoundException ex) {
+                                comboBoxValues.add(new ComboBoxValue(collection, collection + "(Not Exist)"));
+                            }
+                        });
+                return comboBoxValues;
+            }
+
+            @Override
+            public String getDefaultText() {
+                return EMPTY;
+            }
+
+            @Override
+            public ActionHandler getActionHandler() {
+                return ActionHandler.getInstance(() -> {
+                    String collectionType = NBModelerUtil.browseClass(modelerFile);
+                    try {
+                        if (Collection.class.isAssignableFrom(Class.forName(collectionType))
+                                || Map.class.isAssignableFrom(Class.forName(collectionType))) {
+                            return new ComboBoxValue<>(collectionType, collectionType.substring(collectionType.lastIndexOf('.') + 1));
+                        }
+                    } catch (ClassNotFoundException ex) {
+
+                    }
+                    throw new IllegalStateException("Invalid Collection/Map type");
+                })
+                        .afterCreation(e -> em.getCache().addCollectionImplClass(e.getValue()))
+                        .afterDeletion(e -> em.getCache().getCollectionImplClasses().remove(e.getValue()))
+                        .beforeDeletion(() -> JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), "Are you sue you want to delete this collection implementation class ?", "Delete Collection Implementation Class", JOptionPane.OK_CANCEL_OPTION));
+            }
+        };
+        org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("collectionImplType", "Collection Implementation Type", "");
+        attribute.setAfter("collectionType");
+        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionImplType", "Collection Implementation Type", "", comboBoxListener);
+    }
+    
+    
+    private static boolean validateCollectionType(String type1, String type2, String type3){
+         boolean valid = false;
+                try {
+                    if (StringUtils.isNotBlank(type3)) {
+                        if (java.util.Collection.class.isAssignableFrom(Class.forName(type3))
+                                || java.util.Map.class.isAssignableFrom(Class.forName(type3))) {
+                            valid = true;
+                        }
+
+                        if (StringUtils.isNotBlank(type1) && StringUtils.isNotBlank(type2)) {
+                            Class type1Class = Class.forName(type1);
+                            if (java.util.Collection.class.isAssignableFrom(type1Class)
+                                    && !type1Class.isAssignableFrom(Class.forName(type2))) {
+                                valid = false;
+                            }
+                            if (java.util.Map.class.isAssignableFrom(type1Class)
+                                    && !type1Class.isAssignableFrom(Class.forName(type2))) {
+                                valid = false;
+                            }
+                        }
+
+                    }
+                } catch (ClassNotFoundException ex) {
+                    //skip allow = false;
+                }
+                if(!valid) {
+                    if (StringUtils.isNotBlank(type1) && StringUtils.isNotBlank(type2)) {
+                        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), String.format("Incompatible Collection type [%s] and Implementation type [%s]", type1, type2), "Incompatible types", ERROR_MESSAGE);
+                    }
+                }
+        return valid;
     }
 
     public static ComboBoxPropertySupport getMapKeyProperty(AttributeWidget<? extends Attribute> attributeWidget, final MapKeyHandler mapKeyHandler, PropertyVisibilityHandler mapKeyVisibilityHandler) {
@@ -333,9 +475,9 @@ public class PropertiesHandler {
             private List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
                 JavaClassWidget classWidget;
                 if (attributeWidget instanceof MultiRelationAttributeWidget) {
-                    classWidget = ((MultiRelationAttributeWidget) attributeWidget).getRelationFlowWidget().getTargetEntityWidget();
+                    classWidget = ((MultiRelationAttributeWidget)attributeWidget).getConnectedClassWidget();
                 } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
-                    classWidget = ((MultiValueEmbeddedAttributeWidget) attributeWidget).getEmbeddableFlowWidget().getTargetEmbeddableWidget();
+                    classWidget = ((MultiValueEmbeddedAttributeWidget)attributeWidget).getEmbeddableFlowWidget().getTargetEmbeddableWidget();
                 } else {
                     classWidget = attributeWidget.getClassWidget();
                 }

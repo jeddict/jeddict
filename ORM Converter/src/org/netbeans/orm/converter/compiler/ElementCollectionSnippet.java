@@ -20,10 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION;
 import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
 public class ElementCollectionSnippet implements Snippet {
 

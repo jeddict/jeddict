@@ -50,7 +50,7 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     public void setCollectionType(String collectionType) {
         this.collectionType = collectionType;
     }
-
+    
     public abstract String getType();
 
     @Override

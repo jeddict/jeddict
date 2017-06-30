@@ -58,6 +58,7 @@ public abstract class MultiRelationAttributeWidget<E extends MultiRelationAttrib
             set.put("JPA_PROP", getMapKeyConvertProperty(this, this.getModelerScene(), (MapKeyConvertHandler) relationAttribute));
         }
         set.put("ATTR_PROP", PropertiesHandler.getCollectionTypeProperty(this, relationAttribute));
+        set.put("ATTR_PROP", PropertiesHandler.getCollectionImplTypeProperty(this, relationAttribute));
         createMapKeyPropertySet(set);
     }
 

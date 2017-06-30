@@ -58,6 +58,7 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
         set.put("JPA_PROP", getOrderProperty(this));
         set.put("JPA_PROP", PropertiesHandler.getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         set.put("ATTR_PROP", PropertiesHandler.getCollectionTypeProperty(this, elementCollectionSpec));
+        set.put("ATTR_PROP", PropertiesHandler.getCollectionImplTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", PropertiesHandler.getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
         createMapKeyPropertySet(set);

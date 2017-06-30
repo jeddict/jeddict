@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCollectionImplTypeProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCollectionTypeProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFetchTypeProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getJoinColumnsProperty;
@@ -68,6 +69,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
         set.put("JPA_PROP", getOrderProperty(this));
         set.put("JPA_PROP", getFetchTypeProperty(this.getModelerScene(), (FetchTypeHandler) this.getBaseElementSpec()));
         set.put("ATTR_PROP", getCollectionTypeProperty(this, elementCollectionSpec));
+        set.put("ATTR_PROP", getCollectionImplTypeProperty(this, elementCollectionSpec));
         set.createPropertySet(this, elementCollectionSpec.getCollectionTable());
         set.put("COLLECTION_TABLE_PROP", getJoinColumnsProperty("CollectionTable_JoinColumns", "Join Columns", "", this.getModelerScene(), elementCollectionSpec.getCollectionTable().getJoinColumn()));
         createMapKeyPropertySet(set);

@@ -27,7 +27,6 @@ import static org.netbeans.jcode.core.util.AttributeType.CALENDAR;
 import static org.netbeans.jcode.core.util.AttributeType.DOUBLE;
 import static org.netbeans.jcode.core.util.AttributeType.LONG;
 import static org.netbeans.jcode.core.util.AttributeType.STRING;
-import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.openide.util.Exceptions;
@@ -35,7 +34,9 @@ import org.openide.util.Exceptions;
 public class TypeIdentifierSnippet implements Snippet {
 
     private static final String SELECT_MAP_KEY = "Map_Key_Missing";
-    private String type, constraintType;
+    private String type, 
+            implementationType, //ArrayList, HashSet etc
+            constraintType;//bv, custom annotation etc
 
     private VariableDefSnippet variableDef = null;
 
@@ -55,6 +56,10 @@ public class TypeIdentifierSnippet implements Snippet {
         return constraintType==null?type:constraintType;
     }
 
+    public String getImplementationType(){
+        return implementationType;
+    }
+    
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         processVariableType();
@@ -73,8 +78,9 @@ public class TypeIdentifierSnippet implements Snippet {
 
     private ClassHelper getClassHelper(String targetEntity) {
 
-        ClassHelper classHelper = new ClassHelper(targetEntity);
+        ClassHelper classHelper = null;
         if (StringUtils.isNotBlank(targetEntity)) {
+            classHelper = new ClassHelper(targetEntity);
             int count = targetEntity.endsWith(ORMConverterUtil.CLASS_SUFFIX) ? 2 : 1;
             if (targetEntity.split("\\.").length <= count) {
                 CompilerConfigManager compilerConfigManager = CompilerConfigManager.getInstance();
@@ -107,7 +113,8 @@ public class TypeIdentifierSnippet implements Snippet {
                     MultiRelationAttributeSnippet multiRelationAttributeSnippet = (MultiRelationAttributeSnippet) relationDef;
 
                     importSnippets = new ArrayList<>();
-                    ClassHelper collectionTypeClassHelper = getClassHelper(((MultiRelationAttributeSnippet) relationDef).getCollectionType());
+                    ClassHelper collectionTypeClassHelper = getClassHelper(multiRelationAttributeSnippet.getCollectionType());
+                    ClassHelper collectionImplTypeClassHelper = getClassHelper(multiRelationAttributeSnippet.getCollectionImplType());
 
                     ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
                     classHelper.setPackageName(relationDef.getTargetEntityPackage());
@@ -118,15 +125,31 @@ public class TypeIdentifierSnippet implements Snippet {
                     if (_class != null && Map.class.isAssignableFrom(_class)) {
                         if (multiRelationAttributeSnippet.getMapKeySnippet() != null && multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType().getClassName() != null) {
                             mapKeyClassHelper = multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType();
-                            constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
-                            type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
+                            constraintType = collectionTypeClassHelper.getClassName() 
+                                    + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) 
+                                    + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) 
+                                    + ">";
+                            type = collectionTypeClassHelper.getClassName() 
+                                    + "<" + wrap(mapKeyClassHelper.getClassName()) 
+                                    + "," + wrap(classHelper.getClassName()) 
+                                    + ">";
                         } else {
-                            constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
-                            type = collectionTypeClassHelper.getClassName() + "<" + SELECT_MAP_KEY + "," + wrap(classHelper.getClassName()) + ">";
+                            constraintType = collectionTypeClassHelper.getClassName() 
+                                    + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY 
+                                    + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) 
+                                    + ">";
+                            type = collectionTypeClassHelper.getClassName() 
+                                    + "<" + SELECT_MAP_KEY 
+                                    + "," + wrap(classHelper.getClassName()) 
+                                    + ">";
                         }
                     } else {
-                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
-                        type = collectionTypeClassHelper.getClassName() + "<" + wrap(classHelper.getClassName()) + ">";
+                        constraintType = collectionTypeClassHelper.getClassName() 
+                                + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) 
+                                + ">";
+                        type = collectionTypeClassHelper.getClassName() 
+                                + "<" + wrap(classHelper.getClassName()) 
+                                + ">";
                     }
 
                     importSnippets.add(collectionTypeClassHelper.getFQClassName());
@@ -134,6 +157,10 @@ public class TypeIdentifierSnippet implements Snippet {
                         importSnippets.add(mapKeyClassHelper.getFQClassName());
                     }
                     importSnippets.add(classHelper.getFQClassName());
+                    if (collectionImplTypeClassHelper != null) {
+                        implementationType = collectionImplTypeClassHelper.getClassName();
+                        importSnippets.add(collectionImplTypeClassHelper.getFQClassName());
+                    }
                     return;
                 } else {
                     ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
@@ -148,6 +175,7 @@ public class TypeIdentifierSnippet implements Snippet {
                 importSnippets = new ArrayList<>();
 
                 ClassHelper collectionTypeClassHelper = getClassHelper(elementCollection.getCollectionType());
+                ClassHelper collectionImplTypeClassHelper = getClassHelper(elementCollection.getCollectionImplType());
                 ClassHelper classHelper = getClassHelper(elementCollection.getTargetClass());
                 if (elementCollection.getTargetClassPackage() != null) {
                     classHelper.setPackageName(elementCollection.getTargetClassPackage());
@@ -173,6 +201,10 @@ public class TypeIdentifierSnippet implements Snippet {
                     importSnippets.add(mapKeyClassHelper.getFQClassName());
                 }
                 importSnippets.add(classHelper.getFQClassName());
+                if (collectionImplTypeClassHelper != null) {
+                        implementationType = collectionImplTypeClassHelper.getClassName();
+                        importSnippets.add(collectionImplTypeClassHelper.getFQClassName());
+                }
                 return;
             }
 

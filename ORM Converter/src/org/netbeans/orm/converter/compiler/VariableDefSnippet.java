@@ -27,6 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jcode.core.util.AttributeType.getArrayType;
 import static org.netbeans.jcode.core.util.AttributeType.getWrapperType;
 import static org.netbeans.jcode.core.util.AttributeType.isArray;
+import org.netbeans.jcode.core.util.Inflector;
+import static org.netbeans.jcode.core.util.JavaSourceHelper.getSimpleClassName;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.firstLower;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
@@ -51,10 +53,14 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.ManyToMany;
+import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.orm.converter.util.ImportSet;
 import org.openide.util.Exceptions;
 
@@ -202,7 +208,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             type = classHelper.getClassName();
         }
 
-        if ((this.getTypeIdentifier() == null || getRelationDef() instanceof SingleRelationAttributeSnippet) && functionalType) {
+        if ((this.getTypeIdentifier() == null 
+                || getRelationDef() instanceof SingleRelationAttributeSnippet) 
+                && functionalType) {
             if (isArray(type)) {
                 type = "Optional<" + type + '>';
             } else {
@@ -218,6 +226,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             value = "Optional.ofNullable(" + value + ')';
         }
         return value;
+    }
+    
+    public String getImplementationType() {
+        if (this.getTypeIdentifier() != null) { 
+            return this.getTypeIdentifier().getImplementationType();
+        } else {
+            return null;
+        }
     }
 
     public void setType(String type) {
@@ -373,7 +389,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         return "@" + MAP_KEY + "(name=\"" + mapKey + ORMConverterUtil.QUOTE + ORMConverterUtil.CLOSE_PARANTHESES;
     }
 
-    public TypeIdentifierSnippet getTypeIdentifier() {
+    public TypeIdentifierSnippet getTypeIdentifier() { //in case of collection type
         return typeIdentifier;
     }
 
@@ -1065,5 +1081,63 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
      */
     public void setJSONBSnippets(List<Snippet> attributeJSONBSnippets) {
         this.attributeJSONBSnippets = attributeJSONBSnippets;
+    }
+    
+    public String getSingularName(){
+        return Inflector.getInstance().singularize(name);
+    }
+    
+    public String helperMethodName() {
+        return Inflector.getInstance().singularize(getMethodName());
+    }    
+
+    public String getHelperMethodSnippet() {
+        String singularName= getSingularName();
+        String methodName = getMethodName();
+        String helperMethodName = helperMethodName();
+        String connectedMethodName = null;
+        
+        StringBuilder sb = new StringBuilder();
+        
+        String type = null;
+        if(attribute instanceof ElementCollection){
+            type = ((ElementCollection)attribute).getAttributeType();
+        } else if(attribute instanceof MultiRelationAttribute){
+            type = ((MultiRelationAttribute)attribute).getConnectedEntity().getClazz();
+        }
+        
+        if(type == null){
+            return "";
+        }
+        
+        type = getSimpleClassName(type);
+        
+        //add
+        sb.append(String.format("public void add%s(%s %s) {", 
+                helperMethodName, type, singularName)).append(NEW_LINE);
+        sb.append(String.format("get%s().add(%s);", methodName, singularName)).append(NEW_LINE);
+        if(attribute instanceof OneToMany && !((OneToMany)attribute).isOwner()){
+            OneToMany otm = (OneToMany)attribute;
+            connectedMethodName = StringHelper.getMethodName(otm.getConnectedAttributeName());
+            sb.append(String.format("%s.set%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+        } else if(attribute instanceof ManyToMany && ((ManyToMany)attribute).isOwner()){
+            ManyToMany mtm = (ManyToMany)attribute;
+            connectedMethodName = StringHelper.getMethodName(mtm.getConnectedAttributeName());
+            sb.append(String.format("%s.get%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+        }
+        sb.append("}").append(NEW_LINE).append(NEW_LINE);
+        
+        //remove
+        sb.append(String.format("public void remove%s(%s %s) {", 
+                helperMethodName, type, getSingularName())).append(NEW_LINE);
+        sb.append(String.format("get%s().remove(%s);", methodName, singularName)).append(NEW_LINE);
+        if(attribute instanceof OneToMany && !((OneToMany)attribute).isOwner()){
+            sb.append(String.format("%s.set%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+        } else if(attribute instanceof ManyToMany && ((ManyToMany)attribute).isOwner()){
+            sb.append(String.format("%s.get%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+        }
+        sb.append("}").append(NEW_LINE).append(NEW_LINE);
+        
+        return sb.toString();
     }
 }

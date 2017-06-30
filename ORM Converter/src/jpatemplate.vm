@@ -291,6 +291,11 @@ $varDef.getGetterJavaDoc()
         $snippet
 #end
 #else
+    #if ($varDef.getImplementationType())
+        if($varDef.name == null) {
+            $varDef.name = new $varDef.getImplementationType()<>();
+        }
+    #end
         return $varDef.returnValue;
 #end
     }
@@ -358,6 +363,11 @@ $n#end
 #end
     }
 #end
+#####################add/remove ###############################
+#if ($varDef.getImplementationType())
+    $varDef.getHelperMethodSnippet()
+#end
+
 #####################custom attribute snippet - after method ###############################
 #foreach($snippet in $varDef.getCustomSnippet("AFTER_METHOD") )
     $snippet
