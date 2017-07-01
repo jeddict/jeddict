@@ -80,19 +80,31 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
         };
         this.addPropertyVisibilityHandler("number_value", numberVisibilityHandler);
         this.addPropertyVisibilityHandler("number_locale", numberVisibilityHandler);
-        
-        this.addPropertyChangeListener("jsonbTransient", (PropertyChangeListener<Boolean>)(oldValue, newValue) -> {
-            Font font = getPinNameWidget().getFont();
-            Map attributes = font.getAttributes();
-            attributes.put(TextAttribute.STRIKETHROUGH, newValue);
-            getPinNameWidget().setFont(new Font(attributes));
-        });
+        this.addPropertyChangeListener("jsonbTransient", (PropertyChangeListener<Boolean>)(oldValue, newValue) -> setTransientLabel(newValue));
         
         super.createPropertySet(set);
         JPAModelerScene parentScene = (JPAModelerScene) this.getModelerScene().getModelerFile().getParentFile().getModelerScene();
         set.put("JSONB_PROP", getJsonbTypeAdapter(attribute, this, parentScene));
         set.put("JSONB_PROP", getJsonbTypeSerializer(attribute, this, parentScene));
         set.put("JSONB_PROP", getJsonbTypeDeserializer(attribute, this, parentScene));
+        
+        attribute.getAttributeConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("ATTRIBUTE_CONSTRAINTS", "ATTRIBUTE_CONSTRAINTS", this, constraint);
+        }); 
+        attribute.getKeyConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("KEY_CONSTRAINTS", "KEY_CONSTRAINTS", this, constraint);
+        }); 
+        attribute.getValueConstraints().stream().forEach((constraint) -> {
+            set.createPropertySet("VALUE_CONSTRAINTS", "VALUE_CONSTRAINTS", this, constraint);
+        }); 
+
+    }
+    
+    private void setTransientLabel(Boolean transientProperty){
+            Font font = getPinNameWidget().getFont();
+            Map attributes = font.getAttributes();
+            attributes.put(TextAttribute.STRIKETHROUGH, transientProperty);
+            getPinNameWidget().setFont(new Font(attributes));
     }
 
 
@@ -113,6 +125,7 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
         validateName(this.getName());
         setDatatypeTooltip();
         addOpenSourceCodeAction();
+        setTransientLabel(((JSONBNode)this.getBaseElementSpec()).getAttribute().getJsonbTransient());
     }
     
     protected void addOpenSourceCodeAction() {

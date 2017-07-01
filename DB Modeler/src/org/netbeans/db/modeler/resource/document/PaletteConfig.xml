@@ -2,7 +2,7 @@
 <palette-config id="DB" name="DB">
     <!--    <category-node id="DB_COMP" name="DB Items">
         <subcategory-node  id="Table" name="Table"  >
-            <palette-document icon="/org/netbeans/db/modeler/resource/image/table_icon.png" />
+            <palette-document icon="org/netbeans/db/modeler/resource/image/table_icon.png" />
         </subcategory-node>        
     </category-node>-->
 </palette-config>

@@ -40,7 +40,7 @@ import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 
 public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
 
-    private SecondaryTable table;
+//    private SecondaryTable table;
     public SecondaryTableWidget(DBModelerScene scene, NodeWidgetInfo node) {
         super(scene, node);
         this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, value) -> {
@@ -51,7 +51,7 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
     
     @Override
     public void init() {
-        table = (SecondaryTable)this.getBaseElementSpec().getEntity().getTable(this.getName());
+//        table = (SecondaryTable)this.getBaseElementSpec().getEntity().getTable(this.getName());
     }
 
     private void setDefaultName() {
@@ -92,7 +92,7 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
     @Override
     public void createPropertySet(ElementPropertySet set) {
         super.createPropertySet(set);
-        set.createPropertySet(this, table, getPropertyChangeListeners());
+        set.createPropertySet(this, this.getBaseElementSpec().getSecondaryTable(), getPropertyChangeListeners());
     }
 
     @Override
@@ -102,9 +102,9 @@ public class SecondaryTableWidget extends TableWidget<DBSecondaryTable> {
         menuItem.addActionListener((ActionEvent e) -> {
             Entity entity = this.getBaseElementSpec().getEntity();
             entity.getAttributes().getAllAttribute().stream().filter(a -> a instanceof PersistenceBaseAttribute)
-                    .filter(a -> StringUtils.equalsIgnoreCase(((PersistenceBaseAttribute)a).getColumn().getTable(),table.getName()))
+                    .filter(a -> StringUtils.equalsIgnoreCase(((PersistenceBaseAttribute)a).getColumn().getTable(),this.getBaseElementSpec().getSecondaryTable().getName()))
                     .forEach(a -> ((PersistenceBaseAttribute)a).getColumn().setTable(null));
-                entity.removeSecondaryTable(table);
+                entity.removeSecondaryTable(this.getBaseElementSpec().getSecondaryTable());
                 ModelerFile parentFile = SecondaryTableWidget.this.getModelerScene().getModelerFile().getParentFile();
                 DBUtil.openDBViewer(parentFile);
             JeddictLogger.recordDBAction("Delete Secondary Table");

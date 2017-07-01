@@ -17,8 +17,6 @@ package org.netbeans.db.modeler.properties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
@@ -31,7 +29,6 @@ import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.openide.nodes.PropertySupport;
-import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 
 public class PropertiesHandler {

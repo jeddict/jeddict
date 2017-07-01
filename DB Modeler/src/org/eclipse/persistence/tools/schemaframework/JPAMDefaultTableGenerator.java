@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -95,6 +96,7 @@ import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.SecondaryTable;
+import org.netbeans.jpa.modeler.spec.Table;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
@@ -508,7 +510,13 @@ public class JPAMDefaultTableGenerator {
             if (intrinsicEntity.get(0).getDiscriminatorColumnName().equalsIgnoreCase(dbField.getNameDelimited(databasePlatform))) {//managedAttribute == null &&
                 fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), null, null, isInverse, isFKField, false, false, true, false, false, dbField);
             } else {
-                fieldDef = getFieldDefFromDBField(intrinsicEntity.get(0), null, null, isInverse, isFKField, false, false, false, true, false, dbField);
+                Table table = intrinsicEntity.get(0).getTable(dbField.getTable().getName());
+                if (table instanceof SecondaryTable) {
+                    SecondaryTable secondaryTable = (SecondaryTable) table;
+                    fieldDef = getFieldDefFromDBField(() -> new JPAMFieldDefinition(intrinsicEntity.get(0), true, secondaryTable), dbField);//SecondaryTable primarykey join column case
+                } else {
+                    fieldDef = getFieldDefFromDBField(() -> new JPAMFieldDefinition(intrinsicEntity.get(0), true), dbField);//primarykey join column case
+                }
             }
             //build or retrieve the field definition.
 
@@ -1084,19 +1092,29 @@ public class JPAMDefaultTableGenerator {
      * Build a field definition object from a database field.
      */
     protected FieldDefinition getFieldDefFromDBField(Entity intrinsicEntity, LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute, boolean inverse, boolean foriegnKey, boolean relationTable, boolean inherited, boolean dtype, boolean primaryKeyJoinColumn, boolean mapKey, DatabaseField dbField) {
-        FieldDefinition fieldDef = this.fieldMap.get(dbField);
-        if (fieldDef == null) {
+        Supplier<JPAMFieldDefinition> fieldDefSupplier = () -> {
+            JPAMFieldDefinition fieldDef;
             if (inherited) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity, managedAttribute, inverse, foriegnKey, relationTable);
             } else if (dtype) {
                 fieldDef = new JPAMFieldDefinition(intrinsicEntity);
             } else if (primaryKeyJoinColumn) {
-                fieldDef = new JPAMFieldDefinition(intrinsicEntity, true, true);
-            } else if(mapKey) {
+                fieldDef = new JPAMFieldDefinition(intrinsicEntity, primaryKeyJoinColumn);
+            } else if (mapKey) {
                 fieldDef = new JPAMFieldDefinition(intrinsicAttribute, managedAttribute, mapKey);
             } else {
                 fieldDef = new JPAMFieldDefinition(intrinsicAttribute, managedAttribute, inverse, foriegnKey, relationTable);
             }
+            return fieldDef;
+        };
+
+        return getFieldDefFromDBField(fieldDefSupplier, dbField);
+    }
+    
+    protected FieldDefinition getFieldDefFromDBField(Supplier<JPAMFieldDefinition> fieldDefSupplier, DatabaseField dbField) {
+        FieldDefinition fieldDef = this.fieldMap.get(dbField);
+        if (fieldDef == null) {
+            fieldDef = fieldDefSupplier.get();
             fieldDef.setName(dbField.getNameDelimited(databasePlatform));
 
             //added for extending tables where the field needs to be looked up

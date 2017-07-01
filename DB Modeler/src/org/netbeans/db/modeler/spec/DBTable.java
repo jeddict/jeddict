@@ -24,9 +24,7 @@ import java.util.Set;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
-import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 /**
  *

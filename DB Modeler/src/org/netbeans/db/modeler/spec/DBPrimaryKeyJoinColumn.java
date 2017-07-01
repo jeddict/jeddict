@@ -18,8 +18,8 @@ package org.netbeans.db.modeler.spec;
 import java.util.List;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
+import org.netbeans.jpa.modeler.spec.SecondaryTable;
 
 public class DBPrimaryKeyJoinColumn extends DBColumn<Id> implements DBForeignKey<PrimaryKeyJoinColumn> {
 
@@ -29,6 +29,12 @@ public class DBPrimaryKeyJoinColumn extends DBColumn<Id> implements DBForeignKey
     public DBPrimaryKeyJoinColumn(String name, Entity entity, Id attribute) {
         super(name, attribute);
         joinColumns = JoinColumnFinder.findPrimaryKeyJoinColumns(entity);
+        joinColumn = JoinColumnFinder.findPrimaryKeyJoinColumn(name, joinColumns);
+    }
+    
+    public DBPrimaryKeyJoinColumn(String name, SecondaryTable secondaryTable, Id attribute) {
+        super(name, attribute);
+        joinColumns = JoinColumnFinder.findPrimaryKeyJoinColumns(secondaryTable);
         joinColumn = JoinColumnFinder.findPrimaryKeyJoinColumn(name, joinColumns);
     }
 

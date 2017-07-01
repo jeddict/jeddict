@@ -151,10 +151,10 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         if (COLUMN == null) {
             ClassLoader cl = DBModelerUtil.class.getClassLoader();
 
-            BASE_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/TABLE.gif";
-            SECONDARY_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/SECONDARY_TABLE.gif";
-            COLLECTION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/COLLECTION_TABLE.gif";
-            RELATION_TABLE_ICON_PATH = "/org/netbeans/db/modeler/resource/image/JOIN_TABLE.png";
+            BASE_TABLE_ICON_PATH = "org/netbeans/db/modeler/resource/image/TABLE.gif";
+            SECONDARY_TABLE_ICON_PATH = "org/netbeans/db/modeler/resource/image/SECONDARY_TABLE.gif";
+            COLLECTION_TABLE_ICON_PATH = "org/netbeans/db/modeler/resource/image/COLLECTION_TABLE.gif";
+            RELATION_TABLE_ICON_PATH = "org/netbeans/db/modeler/resource/image/JOIN_TABLE.png";
             COLUMN_ICON_PATH = "org/netbeans/db/modeler/resource/image/COLUMN.gif";
             FOREIGNKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/FOREIGN_KEY.gif";
             PRIMARYKEY_ICON_PATH = "org/netbeans/db/modeler/resource/image/PRIMARY_KEY.gif";
@@ -201,9 +201,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
 
             dbMapping.getTables().stream().forEach(table -> loadTable(scene, table));
             loadFlowEdge(scene);
-            scene.commitSceneGeneration();
             scene.autoLayout();
-
+            scene.commitSceneGeneration();
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);
         }
@@ -362,7 +361,7 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                     });
                     tableWidget.sortAttributes();
                 }
-
+                scene.reinstallColorScheme(tableWidget);
             }
 
         }

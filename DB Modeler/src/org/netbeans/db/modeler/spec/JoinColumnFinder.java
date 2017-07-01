@@ -23,6 +23,7 @@ import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.jpa.modeler.spec.PrimaryKeyJoinColumn;
+import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.JoinTableHandler;
@@ -109,6 +110,10 @@ public class JoinColumnFinder {
 
     public static List<PrimaryKeyJoinColumn> findPrimaryKeyJoinColumns(Entity entity) {
         return entity.getPrimaryKeyJoinColumn();
+    }
+    
+    public static List<PrimaryKeyJoinColumn> findPrimaryKeyJoinColumns(SecondaryTable secondaryTable) {
+        return secondaryTable.getPrimaryKeyJoinColumn();
     }
 
     public static PrimaryKeyJoinColumn findPrimaryKeyJoinColumn(String name, List<PrimaryKeyJoinColumn> joinColumns) {

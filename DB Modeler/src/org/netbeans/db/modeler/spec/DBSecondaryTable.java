@@ -15,12 +15,37 @@
  */
 package org.netbeans.db.modeler.spec;
 
+import java.util.List;
+import java.util.Set;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Index;
+import org.netbeans.jpa.modeler.spec.SecondaryTable;
+import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 
 public class DBSecondaryTable extends DBBaseTable {
-    
-    public DBSecondaryTable(String name, Entity entity) {
+
+    private final SecondaryTable secondaryTable;
+
+    public DBSecondaryTable(String name, Entity entity, SecondaryTable secondaryTable) {
         super(name, entity);
+        this.secondaryTable = secondaryTable;
     }
-    
+
+    @Override
+    public Set<UniqueConstraint> getUniqueConstraints() {
+        return getSecondaryTable().getUniqueConstraint();
+    }
+
+    @Override
+    public List<Index> getIndexes() {
+        return getSecondaryTable().getIndex();
+    }
+
+    /**
+     * @return the secondaryTable
+     */
+    public SecondaryTable getSecondaryTable() {
+        return secondaryTable;
+    }
+
 }

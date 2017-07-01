@@ -120,7 +120,7 @@ public class DBColorScheme implements IColorScheme {
     }
 
     private DBColorScheme() {
-        SCENE_BACKGROUND = getBackgroundPaint();//Color.white;
+        SCENE_BACKGROUND = Color.white;//getBackgroundPaint();//Color.white;
 
         OPAQUE_BORDER = BorderFactory.createOpaqueBorder(2, 8, 2, 8);
         BUTTON_E = ImageUtilities.loadImage("org/netbeans/db/modeler/resource/image/theme/expand_u.png");
@@ -185,7 +185,8 @@ public class DBColorScheme implements IColorScheme {
         header.setBorder(OPAQUE_BORDER);
         widget.getHeader().setOpaque(true);
         widget.getNodeNameWidget().setForeground(Color.WHITE);
-        widget.getNodeNameWidget().setFont(widget.getScene().getDefaultFont().deriveFont(Font.BOLD, 12));
+        Font font = widget.getNodeNameWidget().getFont()!=null?widget.getNodeNameWidget().getFont():widget.getScene().getDefaultFont();
+        widget.getNodeNameWidget().setFont(font.deriveFont(Font.BOLD, 12));
         Widget pinsSeparator = widget.getPinsSeparator();
         pinsSeparator.setForeground(PIN_SEPERATOR_WIDGET_BACKGROUND);
         widget.getMinimizeButton().setImage(this.getMinimizeWidgetImage(widget));
@@ -298,14 +299,6 @@ public class DBColorScheme implements IColorScheme {
         return widget.isMinimized()
                 ? (state.isHovered() ? BUTTON_E_H : (state.isSelected() ? BUTTON_E_F : BUTTON_E))
                 : (state.isHovered() ? BUTTON_C_H : (state.isSelected() ? BUTTON_C_F : BUTTON_C));
-    }
-
-    @Override
-    public IPinSeperatorWidget createPinCategoryWidget(IPNodeWidget widget, String categoryDisplayName) {
-        Scene scene = widget.getScene();
-        IPinSeperatorWidget label = new PinSeperatorWidget(scene, categoryDisplayName);
-        installUI(label);
-        return label;
     }
 
     @Override
