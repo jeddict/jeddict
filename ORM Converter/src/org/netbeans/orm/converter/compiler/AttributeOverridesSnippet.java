@@ -20,6 +20,10 @@ import static org.netbeans.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
 
 public class AttributeOverridesSnippet extends SnippetContainer<AttributeOverrideSnippet> {
 
+    public AttributeOverridesSnippet(boolean repeatable) {
+        super(repeatable);
+    }
+        
     @Override
     public String getContianerName() {
         return ATTRIBUTE_OVERRIDES;

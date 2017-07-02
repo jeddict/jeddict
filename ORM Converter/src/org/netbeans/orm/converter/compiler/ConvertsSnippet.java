@@ -20,6 +20,10 @@ import static org.netbeans.jcode.jpa.JPAConstants.CONVERTS_FQN;
 
 public class ConvertsSnippet extends SnippetContainer<ConvertSnippet> {
 
+    public ConvertsSnippet(boolean repeatable) {
+        super(repeatable);
+    }
+        
     @Override
     public String getContianerName() {
         return CONVERTS;

@@ -15,81 +15,23 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.SECONDARY_TABLES;
 import static org.netbeans.jcode.jpa.JPAConstants.SECONDARY_TABLES_FQN;
-import org.netbeans.orm.converter.util.ImportSet;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class SecondaryTablesSnippet implements Snippet {
+public class SecondaryTablesSnippet extends SnippetContainer<SecondaryTableSnippet> {
 
-    private List<SecondaryTableSnippet> secondaryTables = Collections.EMPTY_LIST;
-
-    public void addSecondaryTable(SecondaryTableSnippet secondaryTable) {
-        if (secondaryTables.isEmpty()) {
-            secondaryTables = new ArrayList<SecondaryTableSnippet>();
-        }
-
-        secondaryTables.add(secondaryTable);
-    }
-
-    public List<SecondaryTableSnippet> getSecondaryTables() {
-        return secondaryTables;
-    }
-
-    public void setSecondaryTables(List<SecondaryTableSnippet> secondaryTables) {
-        if (secondaryTables != null) {
-            this.secondaryTables = secondaryTables;
-        }
+    public SecondaryTablesSnippet(boolean repeatable) {
+        super(repeatable);
     }
 
     @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (secondaryTables.isEmpty()) {
-            throw new InvalidDataException("Missing SecondaryTables");
-        }
-
-        if (secondaryTables.size() == 1) {
-            return secondaryTables.get(0).getSnippet();
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(SECONDARY_TABLES).append("({");
-
-        for (SecondaryTableSnippet secondaryTable : secondaryTables) {
-            builder.append(secondaryTable.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_BRACES
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+    public String getContianerName() {
+        return SECONDARY_TABLES;
     }
 
     @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (secondaryTables.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-
-        if (secondaryTables.size() == 1) {
-            return secondaryTables.get(0).getImportSnippets();
-        }
-
-        ImportSet importSnippets = new ImportSet();
-
-        importSnippets.add(SECONDARY_TABLES_FQN);
-
-        for (SecondaryTableSnippet secondaryTable : secondaryTables) {
-            importSnippets.addAll(secondaryTable.getImportSnippets());
-        }
-
-        return importSnippets;
+    public String getContianerFQN() {
+        return SECONDARY_TABLES_FQN;
     }
+
 }

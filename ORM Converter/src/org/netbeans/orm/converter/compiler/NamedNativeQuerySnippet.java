@@ -22,7 +22,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERY_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class NamedNativeQuerySnippet extends NamedQueryDefSnippet implements Snippet {
+public class NamedNativeQuerySnippet extends NamedQuerySnippet implements Snippet {
 
     private ClassHelper classHelper = new ClassHelper();
     private String resultSetMapping = null;

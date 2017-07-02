@@ -25,7 +25,7 @@ import static org.netbeans.jcode.jpa.JPAConstants.NAMED_QUERY_FQN;
 import org.netbeans.jpa.modeler.spec.LockModeType;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public class NamedQueryDefSnippet implements Snippet {
+public class NamedQuerySnippet implements Snippet {
 
 //    protected String attributeType = null;
     protected String query = null;

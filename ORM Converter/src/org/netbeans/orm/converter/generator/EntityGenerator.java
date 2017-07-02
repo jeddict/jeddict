@@ -36,7 +36,7 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
     private Entity entity;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
-        super(new ManagedClassDefSnippet());
+        super(new ManagedClassDefSnippet(), parsedEntity.getRootElement().getJavaEEVersion());
         this.entity = parsedEntity;
         this.rootPackageName = packageName;
         this.packageName = entity.getAbsolutePackage(rootPackageName);

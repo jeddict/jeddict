@@ -24,7 +24,7 @@ public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
     private DefaultClass defaultClass;
 
     public DefaultClassGenerator(DefaultClass parsedDefaultClass, String packageName) {
-        super(new ClassDefSnippet());
+        super(new ClassDefSnippet(), parsedDefaultClass.getRootElement().getJavaEEVersion());
         this.defaultClass = parsedDefaultClass;
         this.rootPackageName = packageName;
         this.packageName = defaultClass.getAbsolutePackage(rootPackageName);

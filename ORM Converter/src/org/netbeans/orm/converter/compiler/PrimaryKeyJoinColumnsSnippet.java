@@ -26,7 +26,12 @@ public class PrimaryKeyJoinColumnsSnippet implements Snippet {
 
     private List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = Collections.EMPTY_LIST;
     private ForeignKeySnippet foreignKey;
+    private boolean repeatable;
 
+    public PrimaryKeyJoinColumnsSnippet(boolean repeatable) {
+        this.repeatable = repeatable;
+    }
+    
     public void addPrimaryKeyJoinColumn(PrimaryKeyJoinColumnSnippet primaryKeyJoinColumn) {
         if (primaryKeyJoinColumns.isEmpty()) {
             primaryKeyJoinColumns = new ArrayList<>();
@@ -60,53 +65,59 @@ public class PrimaryKeyJoinColumnsSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder("@");
-        builder.append(PRIMARY_KEY_JOIN_COLUMNS);
-
-        if (primaryKeyJoinColumns.isEmpty()) {
-            return builder.toString();
-        }
-
+        StringBuilder builder = new StringBuilder();
         if (primaryKeyJoinColumns.size() == 1 && foreignKey == null) {
             return primaryKeyJoinColumns.get(0).getSnippet();
         }
-
-        builder.append("( value={");
-
+                
+        boolean isRepeatable = this.repeatable || foreignKey != null; 
+        
+        if (isRepeatable) {
+            builder.append("@").append(PRIMARY_KEY_JOIN_COLUMNS);
+            if (foreignKey != null) {
+                builder.append("( value={");
+            } else {
+                builder.append("({");
+            }
+        }
+        
         for (PrimaryKeyJoinColumnSnippet primaryKeyJoinColumn : primaryKeyJoinColumns) {
             builder.append(primaryKeyJoinColumn.getSnippet());
+            if(isRepeatable){builder.append(ORMConverterUtil.COMMA);}
+        }
+        if (isRepeatable) {
+            builder.setLength(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
-
-        builder.deleteCharAt(builder.length() - 1);
-
-        builder.append(ORMConverterUtil.CLOSE_BRACES);
-        builder.append(ORMConverterUtil.COMMA);
-
         if (foreignKey != null) {
             builder.append("foreignKey=");
             builder.append(foreignKey.getSnippet());
             builder.append(ORMConverterUtil.COMMA);
         }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        
+        if (isRepeatable) {
+            builder.setLength(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
+        }
+         return builder.toString();
     }
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        if (primaryKeyJoinColumns.isEmpty()) {
-            importSnippets.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
-        } else if (primaryKeyJoinColumns.size() == 1) {
+        boolean isRepeatable = this.repeatable || foreignKey != null; 
+        if (primaryKeyJoinColumns.size() == 1) {
             importSnippets.addAll(primaryKeyJoinColumns.get(0).getImportSnippets());
-            if(foreignKey != null){
+            if(isRepeatable && foreignKey != null){
                 importSnippets.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
             }
         } else {
-            importSnippets.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
             for (PrimaryKeyJoinColumnSnippet jc : primaryKeyJoinColumns) {
                 importSnippets.addAll(jc.getImportSnippets());
+            }
+            if (isRepeatable) {
+                importSnippets.add(PRIMARY_KEY_JOIN_COLUMNS_FQN);
             }
         }
 

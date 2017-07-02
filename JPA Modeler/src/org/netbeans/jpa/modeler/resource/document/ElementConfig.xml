@@ -55,6 +55,9 @@
                 <attribute id="persistenceProviderType" groupId="BASIC_PROP" class="org.netbeans.jcode.jpa.PersistenceProviderType" name="persistenceProviderType">
                     <display-name>Persistence Provider</display-name>
                 </attribute>
+                <attribute id="javaEEVersion" groupId="BASIC_PROP" class="org.jcode.infra.JavaEEVersion" name="javaEEVersion">
+                    <display-name>Java EE Version</display-name>
+                </attribute>
                 <attribute id="package" groupId="PACKAGE" class="java.lang.String" name="package">
                     <display-name>Entity Package</display-name>
                 </attribute>

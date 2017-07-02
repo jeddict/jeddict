@@ -25,7 +25,7 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
     private Embeddable embeddable;
 
     public EmbeddableGenerator(Embeddable parsedEmbeddable, String packageName) {
-        super(new ManagedClassDefSnippet());
+        super(new ManagedClassDefSnippet(), parsedEmbeddable.getRootElement().getJavaEEVersion());
         this.embeddable = parsedEmbeddable;
         this.rootPackageName = packageName;
         this.packageName = embeddable.getAbsolutePackage(rootPackageName);

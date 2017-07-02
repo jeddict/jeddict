@@ -100,7 +100,7 @@ public class JeddictInstaller extends ModuleInstall implements Runnable {
         for (UpdateUnit updateUnit : UpdateManager.getDefault().getUpdateUnits()) {
             UpdateElement updateElement = updateUnit.getInstalled();
             if (updateElement != null)
-                if (JeddictInstaller.CATEGORY.equals(updateElement.getCodeName()))
+                if (JeddictInstaller.CATEGORY.equals(updateElement.getCategory()))
                     return updateElement.getSpecificationVersion();
         }
         return "Unknown";

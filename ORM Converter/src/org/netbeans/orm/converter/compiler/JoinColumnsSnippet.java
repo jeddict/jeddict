@@ -29,15 +29,17 @@ public class JoinColumnsSnippet implements Snippet {
     private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
     private ForeignKeySnippet foreignKey;
     private boolean mapKey;
+    private boolean repeatable;
     
-    public JoinColumnsSnippet(boolean mapKey) {
+    public JoinColumnsSnippet(boolean repeatable) {
+        this.repeatable = repeatable;
+    }
+    
+    public JoinColumnsSnippet(boolean repeatable, boolean mapKey) {
+        this.repeatable = repeatable;
         this.mapKey = mapKey;
     }
 
-    public JoinColumnsSnippet() {
-    }
-    
-    
     public List<JoinColumnSnippet> getJoinColumns() {
         return joinColumns;
     }
@@ -50,54 +52,57 @@ public class JoinColumnsSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder("@");
-        if (mapKey) {
-            builder.append(MAP_KEY_JOIN_COLUMNS);
-        } else {
-            builder.append(JOIN_COLUMNS);
-        }
-        
-        if (joinColumns.isEmpty()) {
-            return builder.toString();
-        }
-
+        StringBuilder builder = new StringBuilder();
         if (joinColumns.size() == 1 && foreignKey==null) {
             return joinColumns.get(0).getSnippet();
         }
-
-        builder.append("({");
+        
+        boolean isRepeatable = this.repeatable || foreignKey != null; 
+        
+        if (isRepeatable) {
+            builder.append("@");
+            if (mapKey) {
+                builder.append(MAP_KEY_JOIN_COLUMNS);
+            } else {
+                builder.append(JOIN_COLUMNS);
+            }
+            if (foreignKey != null) {
+                builder.append("( value={");
+            } else {
+                builder.append("({");
+            }
+        }
 
         for (JoinColumnSnippet joinColumn : joinColumns) {
             builder.append(joinColumn.getSnippet());
+            if(isRepeatable){builder.append(ORMConverterUtil.COMMA);}
+        }
+        
+        if (isRepeatable) {
+            builder.setLength(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
         }
-        builder.deleteCharAt(builder.length() - 1);
-
-        builder.append(ORMConverterUtil.CLOSE_BRACES);
-        builder.append(ORMConverterUtil.COMMA);
-        
         if (foreignKey != null) {
             builder.append("foreignKey=");
             builder.append(foreignKey.getSnippet());
             builder.append(ORMConverterUtil.COMMA);
         }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        if (isRepeatable) {
+            builder.setLength(builder.length() - 1);
+            builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
+        }
+         
+         return builder.toString();
     }
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException { 
         List<String> importSnippets = new ArrayList<>();
-        if (joinColumns.isEmpty()) {
-            if (mapKey) {
-                importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
-            } else {
-                importSnippets.add(JOIN_COLUMNS_FQN);
-            }
-        } else if (joinColumns.size() == 1) {
+        boolean isRepeatable = this.repeatable || foreignKey != null; 
+        if (joinColumns.size() == 1) {
             importSnippets.addAll(joinColumns.get(0).getImportSnippets());
-            if(foreignKey != null){
+            if (isRepeatable && foreignKey != null) {
                 if (mapKey) {
                     importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
                 } else {
@@ -108,10 +113,12 @@ public class JoinColumnsSnippet implements Snippet {
             for (JoinColumnSnippet jc : joinColumns) {
                 importSnippets.addAll(jc.getImportSnippets());
             }
-            if (mapKey) {
-                importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
-            } else {
-                importSnippets.add(JOIN_COLUMNS_FQN);
+            if (isRepeatable) {
+                if (mapKey) {
+                    importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
+                } else {
+                    importSnippets.add(JOIN_COLUMNS_FQN);
+                }
             }
         }
 

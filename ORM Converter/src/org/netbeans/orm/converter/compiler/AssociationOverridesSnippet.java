@@ -20,6 +20,10 @@ import static org.netbeans.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
 
 public class AssociationOverridesSnippet extends SnippetContainer<AssociationOverrideSnippet> {
 
+    public AssociationOverridesSnippet(boolean repeatable) {
+        super(repeatable);
+    }
+    
     @Override
     public String getContianerName() {
         return ASSOCIATION_OVERRIDES;

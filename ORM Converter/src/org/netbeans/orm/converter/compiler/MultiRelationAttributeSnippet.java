@@ -20,12 +20,12 @@ import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
-import org.netbeans.jpa.modeler.spec.extend.CollectionTypeHandler;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
-public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet implements CollectionTypeHandler {
+public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet /*implements CollectionTypeHandler*/ {
 
     protected String collectionType;
+    protected String collectionImplType;
     protected String mappedBy = null;
     protected MapKeySnippet mapKeySnippet;
 
@@ -132,5 +132,21 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
      */
     public void setMapKeySnippet(MapKeySnippet mapKeySnippet) {
         this.mapKeySnippet = mapKeySnippet;
+    }
+
+    /**
+     * @return the collectionImplType
+     */
+//    @Override
+    public String getCollectionImplType() {
+        return collectionImplType;
+    }
+
+    /**
+     * @param collectionImplType the collectionImplType to set
+     */
+//    @Override
+    public void setCollectionImplType(String collectionImplType) {
+        this.collectionImplType = collectionImplType;
     }
 }

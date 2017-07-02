@@ -23,12 +23,17 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_TAB;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
 public abstract class SnippetContainer<T extends Snippet> implements Snippet {
 
     private List<T> snippets = Collections.EMPTY_LIST;
+   
+    private final boolean repeatable;
+
+    public SnippetContainer(boolean repeatable) {
+        this.repeatable = repeatable;
+    }
 
     @Override
     public String getSnippet() throws InvalidDataException {
@@ -41,17 +46,26 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
             return snippets.get(0).getSnippet();
         }
 
+        
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("@").append(getContianerName()).append("({");
-
-        for (T snippet : snippets) {
-            stringBuilder.append(NEW_LINE).append(NEW_TAB);
-            stringBuilder.append(snippet.getSnippet());
-            stringBuilder.append(COMMA);
+        
+        if(repeatable){
+            stringBuilder.append("@").append(getContianerName()).append("({");
+            stringBuilder.append(NEW_LINE);
         }
 
-        return stringBuilder.substring(0, stringBuilder.length() - 1)
-                + NEW_LINE + TAB + CLOSE_BRACES + CLOSE_PARANTHESES;
+        for (T snippet : snippets) {
+//            if(repeatable){stringBuilder.append(TAB);}
+            stringBuilder.append(snippet.getSnippet());
+            if(repeatable){stringBuilder.append(COMMA);}
+//            stringBuilder.append(NEW_LINE);      
+        }
+        
+        if(repeatable){
+            stringBuilder.setLength(stringBuilder.length() - 1);
+            stringBuilder.append(NEW_LINE + TAB + CLOSE_BRACES + CLOSE_PARANTHESES);
+        } 
+        return stringBuilder.toString();
     }
 
     @Override
@@ -64,7 +78,9 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
         }
         List<String> importSnippets = new ArrayList<>();
 
-        importSnippets.add(getContianerFQN());
+        if(repeatable){
+            importSnippets.add(getContianerFQN());
+        }
 
         for (T convertSnippet : snippets) {
             importSnippets.addAll(convertSnippet.getImportSnippets());
@@ -82,6 +98,10 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
 
     public List<T> get() {
         return snippets;
+    }
+    
+    public boolean isEmpty() {
+        return snippets.isEmpty();
     }
 
     public void set(List<T> snippets) {

@@ -24,7 +24,7 @@ public class PackageInfoGenerator extends ClassGenerator<PackageInfoClassDefSnip
     private EntityMappings parsedEntityMappings = null;
 
     public PackageInfoGenerator(EntityMappings parsedEntityMappings, String packageName) {
-        super(new PackageInfoClassDefSnippet());
+        super(new PackageInfoClassDefSnippet(), parsedEntityMappings.getJavaEEVersion());
         this.parsedEntityMappings = parsedEntityMappings;
         this.rootPackageName = packageName;
         this.packageName = packageName;

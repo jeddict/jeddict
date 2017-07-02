@@ -15,85 +15,28 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPHS;
 import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
 
 /**
  *
  * @author Shiwani Gupta <jShiwaniGupta@gmail.com>
+ * @author Gaurav Gupta
  */
-public class NamedEntityGraphsSnippet implements Snippet {
+public class NamedEntityGraphsSnippet extends SnippetContainer<NamedEntityGraphSnippet> {
 
-    private List<NamedEntityGraphSnippet> namedEntityGraphs = Collections.EMPTY_LIST;
-
-    public void addNamedEntityGraph(NamedEntityGraphSnippet namedQueryDef) {
-
-        if (namedEntityGraphs.isEmpty()) {
-            namedEntityGraphs = new ArrayList<>();
-        }
-
-        namedEntityGraphs.add(namedQueryDef);
-    }
-
-    public List<NamedEntityGraphSnippet> getNamedEntityGraphs() {
-        return namedEntityGraphs;
-    }
-
-    public void setNamedEntityGraphs(List<NamedEntityGraphSnippet> namedEntityGraphs) {
-        if (namedEntityGraphs != null) {
-            this.namedEntityGraphs = namedEntityGraphs;
-        }
+    public NamedEntityGraphsSnippet(boolean repeatable) {
+        super(repeatable);
     }
 
     @Override
-    public String getSnippet() throws InvalidDataException {
-
-        if (namedEntityGraphs.isEmpty()) {
-            throw new InvalidDataException("Missing NamedEntityGraphs");
-        }
-
-        if (namedEntityGraphs.size() == 1) {
-            return namedEntityGraphs.get(0).getSnippet();
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(NAMED_ENTITY_GRAPHS).append("({");
-
-        for (NamedEntityGraphSnippet namedEntityGraph : namedEntityGraphs) {
-            builder.append(namedEntityGraph.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
-        }
-
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_BRACES
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+    public String getContianerName() {
+        return NAMED_ENTITY_GRAPHS;
     }
 
     @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (namedEntityGraphs.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-
-        if (namedEntityGraphs.size() == 1) {
-            return namedEntityGraphs.get(0).getImportSnippets();
-        }
-
-        ArrayList<String> importSnippets = new ArrayList<>();
-
-        importSnippets.add(NAMED_ENTITY_GRAPHS_FQN);
-        for(NamedEntityGraphSnippet namedEntityGraph : namedEntityGraphs){
-            importSnippets.addAll(namedEntityGraph.getImportSnippets());
-        }
-
-        return importSnippets;
+    public String getContianerFQN() {
+        return NAMED_ENTITY_GRAPHS_FQN;
     }
+
 }

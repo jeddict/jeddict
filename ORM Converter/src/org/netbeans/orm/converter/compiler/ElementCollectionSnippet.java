@@ -26,12 +26,12 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class ElementCollectionSnippet implements Snippet {
 
     private String collectionType;
+    private String collectionImplType;
     private String targetClass;
     private String targetClassPackage;
     
     private String fetchType = null;
     private MapKeySnippet mapKeySnippet;
-//    private String accessType = null;
 
     public String getFetchType() {
         if (fetchType != null) {
@@ -86,19 +86,6 @@ public class ElementCollectionSnippet implements Snippet {
         this.targetClass = targetClass;
     }
 
-//    /**
-//     * @return the accessType
-//     */
-//    public String getAccessType() {
-//        return accessType;
-//    }
-//
-//    /**
-//     * @param accessType the accessType to set
-//     */
-//    public void setAccessType(String accessType) {
-//        this.accessType = accessType;
-//    }
     /**
      * @return the collectionType
      */
@@ -139,5 +126,21 @@ public class ElementCollectionSnippet implements Snippet {
      */
     public void setTargetClassPackage(String targetClassPackage) {
         this.targetClassPackage = targetClassPackage;
+    }
+    
+        /**
+     * @return the collectionImplType
+     */
+//    @Override
+    public String getCollectionImplType() {
+        return collectionImplType;
+    }
+
+    /**
+     * @param collectionImplType the collectionImplType to set
+     */
+//    @Override
+    public void setCollectionImplType(String collectionImplType) {
+        this.collectionImplType = collectionImplType;
     }
 }
