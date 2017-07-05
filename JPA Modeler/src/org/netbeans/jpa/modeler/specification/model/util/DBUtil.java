@@ -16,6 +16,8 @@
 package org.netbeans.jpa.modeler.specification.model.util;
 
 import java.util.Date;
+import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import org.netbeans.db.modeler.manager.DBModelerRequestManager;
 import org.netbeans.jpa.modeler.spec.PrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.Embeddable;
@@ -28,8 +30,10 @@ import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 
 /**
  *
@@ -51,12 +55,18 @@ public class DBUtil {
             PreExecutionUtil.preExecution(file);
             DBModelerRequestManager dbModelerRequestManager = Lookup.getDefault().lookup(DBModelerRequestManager.class);
 
-            //close diagram and reopen 
-            long st = new Date().getTime();
-            file.getChildrenFile("DB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
-            System.out.println("openDBViewer close Total time : " + (new Date().getTime() - st) + " ms");
-            dbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
-            System.out.println("openDBViewer Total time : " + (new Date().getTime() - st) + " ms");
+            if (dbModelerRequestManager == null) {
+                JOptionPane.showMessageDialog(null,
+                        NbBundle.getMessage(JSONBUtil.class, "Error.PLUGIN_INSTALLATION.text", "DB Modeler", file.getCurrentVersion()),
+                        NbBundle.getMessage(JSONBUtil.class, "Error.PLUGIN_INSTALLATION.title"), ERROR_MESSAGE, ERROR_ICON);
+            } else {
+                //close diagram and reopen 
+                long st = new Date().getTime();
+                file.getChildrenFile("DB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
+                System.out.println("openDBViewer close Total time : " + (new Date().getTime() - st) + " ms");
+                dbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
+                System.out.println("openDBViewer Total time : " + (new Date().getTime() - st) + " ms");
+            }
         } catch (Throwable t) {
             file.handleException(t);
         }

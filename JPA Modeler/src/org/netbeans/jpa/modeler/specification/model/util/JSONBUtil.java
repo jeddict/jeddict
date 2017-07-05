@@ -16,12 +16,16 @@
 package org.netbeans.jpa.modeler.specification.model.util;
 
 import java.util.Date;
+import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import org.netbeans.jeddict.jsonb.modeler.manager.JSONBModelerRequestManager;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 
 /**
  *
@@ -43,12 +47,18 @@ public class JSONBUtil {
             PreExecutionUtil.preExecution(file);
             JSONBModelerRequestManager jsonbModelerRequestManager = Lookup.getDefault().lookup(JSONBModelerRequestManager.class);
 
-            //close diagram and reopen 
-            long st = new Date().getTime();
-            file.getChildrenFile("JSONB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
-            System.out.println("openJSONBViewer close Total time : " + (new Date().getTime() - st) + " ms");
-            jsonbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
-            System.out.println("openJSONBViewer Total time : " + (new Date().getTime() - st) + " ms");
+            if (jsonbModelerRequestManager == null) {
+                JOptionPane.showMessageDialog(null,
+                        NbBundle.getMessage(JSONBUtil.class, "Error.PLUGIN_INSTALLATION.text", "JSONB Modeler", file.getCurrentVersion()),
+                        NbBundle.getMessage(JSONBUtil.class, "Error.PLUGIN_INSTALLATION.title"), ERROR_MESSAGE, ERROR_ICON);
+            } else {
+                //close diagram and reopen 
+                long st = new Date().getTime();
+                file.getChildrenFile("JSONB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
+                System.out.println("openJSONBViewer close Total time : " + (new Date().getTime() - st) + " ms");
+                jsonbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
+                System.out.println("openJSONBViewer Total time : " + (new Date().getTime() - st) + " ms");
+            }
         } catch (Throwable t) {
             file.handleException(t);
         }
