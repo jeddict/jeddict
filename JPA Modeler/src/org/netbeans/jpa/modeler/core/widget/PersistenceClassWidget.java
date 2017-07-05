@@ -507,7 +507,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
 
     protected void addNamedQuery(Attribute attribute, boolean enable) {
         ManagedClass managedClass = this.getBaseElementSpec();
-        if (managedClass instanceof IdentifiableClass) {
+        if (managedClass instanceof Entity) {
             IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
             NamedQuery namedQuery;
             if(attribute!=null){
@@ -522,7 +522,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     
     private void removeNamedQuery(Attribute attribute) {
         ManagedClass managedClass = this.getBaseElementSpec();
-        if (CodePanel.isDeleteQuery() && managedClass instanceof IdentifiableClass) {
+        if (CodePanel.isDeleteQuery() && managedClass instanceof Entity) {
             IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
             Optional<NamedQuery> value = identifiableClass.findNamedQuery(attribute);
             if(value.isPresent()){

@@ -16,13 +16,14 @@
 package org.netbeans.orm.converter.generator;
 
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 
 public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
-    private MappedSuperclass mappedSuperclass;
+    private final MappedSuperclass mappedSuperclass;
 
     public MappedSuperClassGenerator(MappedSuperclass parsedMappedSuperclass, String packageName) {
         super(new ManagedClassDefSnippet(), parsedMappedSuperclass.getRootElement().getJavaEEVersion());
@@ -34,15 +35,6 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
     @Override
     public ManagedClassDefSnippet getClassDef() {
 
-        //--BEGIN ---- TODOs:
-        /*
-         * Commented -- revist for Phase 3
-         *
-         ParsedAccessType accessType = parsedMappedSuperclass..getAccess();
-         * parsedMappedSuperclass.isMetaDataComplete()
-
-         */
-        //----END TODO ---------
         //Classlevel annotations
         processIdClass(mappedSuperclass.getIdClass());
         processEntityListeners(mappedSuperclass.getEntityListeners());
@@ -51,6 +43,13 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
                 mappedSuperclass.getExcludeDefaultListeners());
         processExcludeSuperclassListeners(
                 mappedSuperclass.getExcludeSuperclassListeners());
+        
+        //Queries
+        processNamedQueries(mappedSuperclass.getNamedQuery());
+        processNamedNativeQueries(mappedSuperclass.getNamedNativeQuery());
+        
+        //StoredProcedures
+        processNamedStoredProcedureQueries((EntityMappings) mappedSuperclass.getRootElement(), mappedSuperclass.getNamedStoredProcedureQuery());
 
         //Attributes -- Method level annotations
         IPrimaryKeyAttributes parsedAttributes = mappedSuperclass.getAttributes();
