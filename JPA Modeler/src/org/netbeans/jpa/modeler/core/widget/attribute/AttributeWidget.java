@@ -114,13 +114,13 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
         set.put("ATTR_PROP", getAttributeSnippet(this.getModelerScene(), attribute.getSnippets()));
 
         
-        attribute.getAttributeConstraints().stream().forEach((constraint) -> {
+        attribute.getAttributeConstraints().forEach((constraint) -> {
             set.createPropertySet("ATTRIBUTE_CONSTRAINTS", "ATTRIBUTE_CONSTRAINTS", this, constraint);
         }); 
-        attribute.getKeyConstraints().stream().forEach((constraint) -> {
+        attribute.getKeyConstraints().forEach((constraint) -> {
             set.createPropertySet("KEY_CONSTRAINTS", "KEY_CONSTRAINTS", this, constraint);
         }); 
-        attribute.getValueConstraints().stream().forEach((constraint) -> {
+        attribute.getValueConstraints().forEach((constraint) -> {
             set.createPropertySet("VALUE_CONSTRAINTS", "VALUE_CONSTRAINTS", this, constraint);
         }); 
 

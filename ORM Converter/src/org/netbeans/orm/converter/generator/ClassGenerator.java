@@ -538,15 +538,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.getAnnotation().putAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
             
             variableDef.setJaxbVariableType(attr.getJaxbVariableType());
-            if (attr.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
-                variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
-            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT || attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_REF) {
-                variableDef.setJaxbXmlElement(attr.getJaxbXmlElement());
-            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_ELEMENTS) {
-//            variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
-            } else if (attr.getJaxbVariableType() == JaxbVariableType.XML_VALUE || attr.getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
-//        variableDef.setJaxbXmlAttribute(attr.getJaxbXmlAttribute());
-            }
+            variableDef.setJaxbWrapperMetadata(attr.getJaxbWrapperMetadata());
+            variableDef.setJaxbMetadata(attr.getJaxbMetadata());
             variables.put(attr.getName(), variableDef);
         }
         return variableDef;

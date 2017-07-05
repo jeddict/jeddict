@@ -113,11 +113,8 @@ import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.annotation.Annotation;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
-import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_ELEMENT;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_TRANSIENT;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
@@ -142,10 +139,10 @@ import org.netbeans.jpa.modeler.spec.extend.MapKeyType;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import org.netbeans.jpa.modeler.spec.extend.SortableAttribute;
 import org.netbeans.jpa.modeler.spec.extend.TemporalTypeHandler;
+import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_DEFAULT;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
 import static org.openide.util.NbBundle.getMessage;
 import org.netbeans.modeler.properties.nentity.NEntityDataListener;
-import org.openide.util.Exceptions;
 
 public class PropertiesHandler {
 
@@ -855,30 +852,13 @@ public class PropertiesHandler {
             @Override
             public void setItem(ComboBoxValue<JaxbVariableType> value) {
                 varHandlerSpec.setJaxbVariableType(value.getValue());
-                varHandlerSpec.setJaxbXmlAttribute(null);
-                varHandlerSpec.setJaxbXmlElement(null);
-                varHandlerSpec.setJaxbXmlElementList(null);
-                if (value.getValue() == JaxbVariableType.XML_ATTRIBUTE || value.getValue() == JaxbVariableType.XML_LIST_ATTRIBUTE) {
-                    varHandlerSpec.setJaxbXmlAttribute(new JaxbXmlAttribute());
-                    set.replacePropertySet(attributeWidget, varHandlerSpec.getJaxbXmlAttribute(), attributeWidget.getPropertyChangeListeners());
-                } else if (value.getValue() == JaxbVariableType.XML_ELEMENT || value.getValue() == JaxbVariableType.XML_LIST_ELEMENT) {
-                    varHandlerSpec.setJaxbXmlElement(new JaxbXmlElement());
-                    set.replacePropertySet(attributeWidget, varHandlerSpec.getJaxbXmlElement(), attributeWidget.getPropertyChangeListeners());
-                } else if (value.getValue() == JaxbVariableType.XML_ELEMENTS) {
-                    varHandlerSpec.setJaxbXmlElementList(new ArrayList<>());
-//                     set.createPropertySet( attributeWidget , varHandlerSpec.get(), attributeWidget.getPropertyChangeListeners());
-                }
                 attributeWidget.refreshProperties();
             }
 
             @Override
             public ComboBoxValue<JaxbVariableType> getItem() {
                 if (varHandlerSpec.getJaxbVariableType() == null) {
-                    if (jaxbVariableList != null) {
-                        return new ComboBoxValue<>(XML_ELEMENT, "Default(Element)");
-                    } else {
-                        return new ComboBoxValue<>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText());
-                    }
+                    return new ComboBoxValue<>(XML_DEFAULT, XML_DEFAULT.getDisplayText());
                 } else {
                     return new ComboBoxValue<>(varHandlerSpec.getJaxbVariableType(), varHandlerSpec.getJaxbVariableType().getDisplayText());
                 }
@@ -886,25 +866,15 @@ public class PropertiesHandler {
 
             @Override
             public List<ComboBoxValue<JaxbVariableType>> getItemList() {
-                List<ComboBoxValue<JaxbVariableType>> values = new ArrayList<>();
-                if (jaxbVariableList != null) {
-                    values.add(new ComboBoxValue<>(XML_ELEMENT, "Default(Element)"));
-                    jaxbVariableList.stream().forEach((variableType) -> {
-                        values.add(new ComboBoxValue<>(variableType, variableType.getDisplayText()));
-                    });
-                } else {
-                    values.add(new ComboBoxValue<>(XML_TRANSIENT, XML_TRANSIENT.getDisplayText()));
-                }
-                return values;
+                return jaxbVariableList
+                        .stream()
+                        .map(type -> new ComboBoxValue<>(type, type.getDisplayText()))
+                        .collect(toList());
             }
 
             @Override
             public String getDefaultText() {
-                if (jaxbVariableList != null) {
-                    return "Default(Element)";
-                } else {
-                    return JaxbVariableType.XML_TRANSIENT.getDisplayText();
-                }
+                return XML_DEFAULT.getDisplayText();
             }
 
             @Override
@@ -912,13 +882,7 @@ public class PropertiesHandler {
                 return null;
             }
         };
-        if (varHandlerSpec.getJaxbVariableType() == JaxbVariableType.XML_ATTRIBUTE) {
-            set.replacePropertySet(attributeWidget, varHandlerSpec.getJaxbXmlAttribute(), attributeWidget.getPropertyChangeListeners());
-        } else if (varHandlerSpec.getJaxbVariableType() == JaxbVariableType.XML_ELEMENT) {
-            set.replacePropertySet(attributeWidget, varHandlerSpec.getJaxbXmlElement(), attributeWidget.getPropertyChangeListeners());
-        }
         set.put("JAXB_PROP", new ComboBoxPropertySupport(attributeWidget.getModelerScene().getModelerFile(), "jaxbVariableType", "Variable Type", "", comboBoxListener, "root.jaxbSupport==true", varHandlerSpec));
-
     }
 
     public static EmbeddedPropertySupport getInheritanceProperty(EntityWidget entityWidget) {

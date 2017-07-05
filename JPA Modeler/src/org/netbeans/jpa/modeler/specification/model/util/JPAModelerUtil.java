@@ -887,7 +887,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     public String getContent(ModelerFile file) {
         EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
 //        if(entityMappings==null){
-//            return "";
+//            return "*** Corrupted Document found ***";//if broken xml file opened
 //        }
         JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
         scene.getWorkSpaceManager().updateWorkSpace();

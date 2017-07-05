@@ -61,6 +61,7 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbMetadata;
 import org.netbeans.orm.converter.util.ImportSet;
 import org.openide.util.Exceptions;
 
@@ -69,14 +70,13 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     private List<ConstraintSnippet> attributeConstraints = new ArrayList<>();
     private List<ConstraintSnippet> keyConstraints = new ArrayList<>();
     private List<ConstraintSnippet> valueConstraints = new ArrayList<>();
-    
+
     private List<Snippet> attributeJSONBSnippets = new ArrayList<>();
     private boolean functionalType;
 
     private JaxbVariableType jaxbVariableType;
-    private JaxbXmlAttribute jaxbXmlAttribute;
-    private JaxbXmlElement jaxbXmlElement;
-    private List<JaxbXmlElement> jaxbXmlElementList;
+    private JaxbMetadata jaxbWrapperMetadata;
+    private JaxbMetadata jaxbMetadata;
 
     private boolean autoGenerate;
     private boolean embedded;
@@ -154,7 +154,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public void setLob(boolean lob) {
         this.lob = lob;
     }
-    
+
     public String getAccessModifier() {
         if (accessModifier == null) {
             return AccessModifierType.PRIVATE.getValue();
@@ -168,24 +168,24 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
 
     public String getConstraintType() {
         String type = null;
-        if (this.getTypeIdentifier() != null) { 
+        if (this.getTypeIdentifier() != null) {
             type = this.getTypeIdentifier().getConstraintVariableType();
-        } else if(isArray(classHelper.getClassName())) {
-            String constraint= null;
+        } else if (isArray(classHelper.getClassName())) {
+            String constraint = null;
             try {
                 constraint = getInlineValueConstraint();
             } catch (InvalidDataException ex) {
                 Exceptions.printStackTrace(ex);
             }
             if (constraint != null) {
-                type = getArrayType(classHelper.getClassName()) + " " + constraint + "[]" ;
+                type = getArrayType(classHelper.getClassName()) + " " + constraint + "[]";
             }
-        } 
-        
-        if(type == null){
+        }
+
+        if (type == null) {
             type = classHelper.getClassName();
         }
-        
+
         return type;
     }
 
@@ -208,8 +208,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             type = classHelper.getClassName();
         }
 
-        if ((this.getTypeIdentifier() == null 
-                || getRelationDef() instanceof SingleRelationAttributeSnippet) 
+        if ((this.getTypeIdentifier() == null
+                || getRelationDef() instanceof SingleRelationAttributeSnippet)
                 && functionalType) {
             if (isArray(type)) {
                 type = "Optional<" + type + '>';
@@ -227,9 +227,9 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         return value;
     }
-    
+
     public String getImplementationType() {
-        if (this.getTypeIdentifier() != null) { 
+        if (this.getTypeIdentifier() != null) {
             return this.getTypeIdentifier().getImplementationType();
         } else {
             return null;
@@ -243,15 +243,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public String getName() {
         return name;
     }
-    
+
     public String getFluentMethodName() {
-        if(StringUtils.isNotBlank(CodePanel.getFluentAPIPrefix())){
+        if (StringUtils.isNotBlank(CodePanel.getFluentAPIPrefix())) {
             return CodePanel.getFluentAPIPrefix() + firstUpper(getName());
         } else {
             return getName();
         }
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -508,7 +508,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         if (converts != null) {
             importSnippets.addAll(converts.getImportSnippets());
         }
-        
+
         if (attributeOverrides != null) {
             importSnippets.addAll(attributeOverrides.getImportSnippets());
         }
@@ -531,14 +531,14 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         for (ConstraintSnippet snippet : this.getValueConstraints()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
-        
+
         for (Snippet snippet : this.getJSONBSnippets()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
-        
-        if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null){
-             importSnippets.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
-        } 
+
+        if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
+            importSnippets.add("org.eclipse.persistence.oxm.annotations.XmlInverseReference");
+        }
         return importSnippets;
     }
 
@@ -629,11 +629,11 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public Map<AttributeAnnotationLocationType, List<AnnotationSnippet>> getAnnotation() {
         return annotation;
     }
-    
+
     public List<AnnotationSnippet> getAnnotation(String locationType) {
         return annotation.get(AttributeAnnotationLocationType.valueOf(locationType));
     }
-    
+
     public String getInlineKeyAnnotation() throws InvalidDataException {
         StringBuilder sb = new StringBuilder();
         List<AnnotationSnippet> snippets = annotation.get(AttributeAnnotationLocationType.KEY);
@@ -644,7 +644,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         return sb.toString();
     }
-    
+
     public String getInlineValueAnnotation() throws InvalidDataException {
         StringBuilder sb = new StringBuilder();
         List<AnnotationSnippet> snippets = annotation.get(AttributeAnnotationLocationType.TYPE);
@@ -655,7 +655,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         return sb.toString();
     }
-    
+
     /**
      * @param annotation the annotation to set
      */
@@ -683,7 +683,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public List<ConstraintSnippet> getKeyConstraints() {
         return keyConstraints;
     }
-    
+
     public String getInlineKeyConstraint() throws InvalidDataException {
         StringBuilder sb = new StringBuilder();
         for (ConstraintSnippet keyConstraint : keyConstraints) {
@@ -705,7 +705,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public List<ConstraintSnippet> getValueConstraints() {
         return valueConstraints;
     }
-    
+
     public String getInlineValueConstraint() throws InvalidDataException {
         StringBuilder sb = new StringBuilder();
         for (ConstraintSnippet valueConstraint : valueConstraints) {
@@ -713,6 +713,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         return sb.toString();
     }
+
     /**
      * @param valueConstraints the valueConstraints to set
      */
@@ -736,45 +737,31 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     /**
+     * @return the jaxbWrapperMetadata
+     */
+    public JaxbMetadata getJaxbWrapperMetadata() {
+        return jaxbWrapperMetadata;
+    }
+
+    /**
+     * @param jaxbWrapperMetadata the jaxbWrapperMetadata to set
+     */
+    public void setJaxbWrapperMetadata(JaxbMetadata jaxbWrapperMetadata) {
+        this.jaxbWrapperMetadata = jaxbWrapperMetadata;
+    }
+
+    /**
      * @return the jaxbXmlAttribute
      */
-    public JaxbXmlAttribute getJaxbXmlAttribute() {
-        return jaxbXmlAttribute;
+    public JaxbMetadata getJaxbMetadata() {
+        return jaxbMetadata;
     }
 
     /**
-     * @param jaxbXmlAttribute the jaxbXmlAttribute to set
+     * @param jaxbMetadata the jaxbMetadata to set
      */
-    public void setJaxbXmlAttribute(JaxbXmlAttribute jaxbXmlAttribute) {
-        this.jaxbXmlAttribute = jaxbXmlAttribute;
-    }
-
-    /**
-     * @return the jaxbXmlElement
-     */
-    public JaxbXmlElement getJaxbXmlElement() {
-        return jaxbXmlElement;
-    }
-
-    /**
-     * @param jaxbXmlElement the jaxbXmlElement to set
-     */
-    public void setJaxbXmlElement(JaxbXmlElement jaxbXmlElement) {
-        this.jaxbXmlElement = jaxbXmlElement;
-    }
-
-    /**
-     * @return the jaxbXmlElementList
-     */
-    public List<JaxbXmlElement> getJaxbXmlElementList() {
-        return jaxbXmlElementList;
-    }
-
-    /**
-     * @param jaxbXmlElementList the jaxbXmlElementList to set
-     */
-    public void setJaxbXmlElementList(List<JaxbXmlElement> jaxbXmlElementList) {
-        this.jaxbXmlElementList = jaxbXmlElementList;
+    public void setJaxbMetadata(JaxbMetadata jaxbMetadata) {
+        this.jaxbMetadata = jaxbMetadata;
     }
 
     public String getJaxbAnnotationSnippet() {
@@ -786,37 +773,75 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
             }
             snippet.append("@XmlAttribute");
-            JaxbXmlAttribute attr = this.getJaxbXmlAttribute();
-            if ((attr.getName() != null && !attr.getName().isEmpty()) || (attr.getRequired() != null && attr.getRequired())) {
+            JaxbMetadata md = this.getJaxbMetadata();
+            if (StringUtils.isNotBlank(md.getName())
+                    || StringUtils.isNotBlank(md.getNamespace())
+                    || md.getRequired()) {
                 snippet.append("(");
-                if (attr.getName() != null && !attr.getName().isEmpty()) {
-                    snippet.append("name = \"").append(attr.getName()).append("\", ");
+                if (StringUtils.isNotBlank(md.getName())) {
+                    snippet.append("name = \"").append(md.getName()).append("\", ");
                 }
-                if (attr.getRequired() != null) {
-                    snippet.append("required = ").append(attr.getRequired()).append(", ");
+                if (StringUtils.isNotBlank(md.getNamespace())) {
+                    snippet.append("namespace = \"").append(md.getNamespace()).append("\", ");
+                }
+                if (md.getRequired()) {
+                    snippet.append("required = ").append(md.getRequired()).append(", ");
                 }
                 snippet.setLength(snippet.length() - 2);
                 snippet.append(")");
             }
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT || getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT) {
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT
+                || getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT
+                || getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_WRAPPER) {
             if (getJaxbVariableType() == JaxbVariableType.XML_LIST_ELEMENT) {
                 snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
+            } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_WRAPPER) {
+                snippet.append("@XmlElementWrapper");
+                JaxbMetadata wmd = this.getJaxbWrapperMetadata();
+                if (StringUtils.isNotBlank(wmd.getName())
+                        || StringUtils.isNotBlank(wmd.getNamespace())
+                        || wmd.getRequired()
+                        || wmd.getNillable()) {
+                    snippet.append("(");
+                    if (wmd.getName() != null && !wmd.getName().isEmpty()) {
+                        snippet.append("name = \"").append(wmd.getName()).append("\", ");
+                    }
+                    if (StringUtils.isNotBlank(wmd.getNamespace())) {
+                        snippet.append("namespace = \"").append(wmd.getNamespace()).append("\", ");
+                    }
+                    if (wmd.getRequired()) {
+                        snippet.append("required = ").append(wmd.getRequired()).append(", ");
+                    }
+                    if (wmd.getNillable()) {
+                        snippet.append("nillable = ").append(wmd.getNillable()).append(", ");
+                    }
+                    snippet.setLength(snippet.length() - 2);
+                    snippet.append(")");
+                }
+                snippet.append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
             }
             snippet.append("@XmlElement");
-            JaxbXmlElement ele = this.getJaxbXmlElement();
-            if ((ele.getName() != null && !ele.getName().isEmpty()) || (ele.getRequired() != null && ele.getRequired())) {
+            JaxbMetadata md = this.getJaxbMetadata();
+            if (StringUtils.isNotBlank(md.getName())
+                    || StringUtils.isNotBlank(md.getNamespace())
+                    || md.getRequired()
+                    || md.getNillable()) {
                 snippet.append("(");
-                if (ele.getName() != null && !ele.getName().isEmpty()) {
-                    snippet.append("name = \"").append(ele.getName()).append("\", ");
+                if (md.getName() != null && !md.getName().isEmpty()) {
+                    snippet.append("name = \"").append(md.getName()).append("\", ");
                 }
-                if (ele.getRequired() != null) {
-                    snippet.append("required = ").append(ele.getRequired()).append(", ");
+                if (StringUtils.isNotBlank(md.getNamespace())) {
+                    snippet.append("namespace = \"").append(md.getNamespace()).append("\", ");
+                }
+                if (md.getRequired()) {
+                    snippet.append("required = ").append(md.getRequired()).append(", ");
+                }
+                if (md.getNillable()) {
+                    snippet.append("nillable = ").append(md.getNillable()).append(", ");
                 }
                 snippet.setLength(snippet.length() - 2);
                 snippet.append(")");
             }
-        } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENTS) { //pending
-            snippet.append("@XmlElements");
         } else if (getJaxbVariableType() == JaxbVariableType.XML_VALUE || getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
             if (getJaxbVariableType() == JaxbVariableType.XML_LIST_VALUE) {
                 snippet.append("@XmlList").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
@@ -824,13 +849,30 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
             snippet.append("@XmlValue");
         } else if (getJaxbVariableType() == JaxbVariableType.XML_TRANSIENT) {
             snippet.append("@XmlTransient");
-        }  else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
+        } else if (getJaxbVariableType() == JaxbVariableType.XML_INVERSE_REFERENCE && getRelationDef() != null) {
             String mappedBy = getRelationDef().getTargetField();//both side are applicable so targetField is used instead of mappedBy
             if (mappedBy != null) {
                 snippet.append(String.format("@XmlInverseReference(mappedBy=\"%s\")", mappedBy));
-            } 
+            }
         } else if (getJaxbVariableType() == JaxbVariableType.XML_ELEMENT_REF) {
             snippet.append("@XmlElementRef");
+            JaxbMetadata md = this.getJaxbMetadata();
+            if (StringUtils.isNotBlank(md.getName())
+                    || StringUtils.isNotBlank(md.getNamespace())
+                    || md.getRequired()) {
+                snippet.append("(");
+                if (StringUtils.isNotBlank(md.getName())) {
+                    snippet.append("name = \"").append(md.getName()).append("\", ");
+                }
+                if (StringUtils.isNotBlank(md.getNamespace())) {
+                    snippet.append("namespace = \"").append(md.getNamespace()).append("\", ");
+                }
+                if (md.getRequired()) {
+                    snippet.append("required = ").append(md.getRequired()).append(", ");
+                }
+                snippet.setLength(snippet.length() - 2);
+                snippet.append(")");
+            }
         } else {
             if (isPrimaryKey()) {
 //            snippet.append("@XmlID").append(ORMConverterUtil.NEW_LINE).append(ORMConverterUtil.TAB);
@@ -897,60 +939,57 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         }
         return doc;
     }
-    
+
     public String getPropertyJavaDoc() {
         StringBuilder doc = getJavaDoc(null);
         doc.append(TAB).append(" */");
         return doc.toString();
     }
-    
+
     public String getGetterJavaDoc() {
         StringBuilder doc = getJavaDoc("Get ");
         doc.append(TAB).append(" * ").append(NEW_LINE);
-        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}",getName())).append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}", getName())).append(NEW_LINE);
         doc.append(TAB).append(" */");
         return doc.toString();
     }
-        
+
     public String getSetterJavaDoc() {
         StringBuilder doc = getJavaDoc("Set ");
         doc.append(TAB).append(" * ").append(NEW_LINE);
-        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}",getName(),getName())).append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}", getName(), getName())).append(NEW_LINE);
         doc.append(TAB).append(" */");
         return doc.toString();
     }
-            
+
     public String getFluentJavaDoc() {
         StringBuilder doc = getJavaDoc("Set ");
         doc.append(TAB).append(" * ").append(NEW_LINE);
-        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}",getName(),getName())).append(NEW_LINE);
-        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}",attribute.getJavaClass().getClazz())).append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@param %s {@link #%s}", getName(), getName())).append(NEW_LINE);
+        doc.append(TAB).append(" * ").append(String.format("@return {@link #%s}", attribute.getJavaClass().getClazz())).append(NEW_LINE);
         doc.append(TAB).append(" */");
         return doc.toString();
     }
-    
-    
-    
+
     public boolean isJavaDocExist() {
         return StringUtils.isNotBlank(description);
     }
-    
+
     public boolean isPropertyJavaDocExist() {
         return isJavaDocExist() && CodePanel.isPropertyJavaDoc();
     }
-    
+
     public boolean isGetterJavaDocExist() {
         return isJavaDocExist() && CodePanel.isGetterJavaDoc();
     }
-    
+
     public boolean isSetterJavaDocExist() {
         return isJavaDocExist() && CodePanel.isSetterJavaDoc();
     }
-    
+
     public boolean isFluentJavaDocExist() {
         return isJavaDocExist() && CodePanel.isFluentAPIJavaDoc();
     }
-    
 
     /**
      * @return the temporal
@@ -1082,62 +1121,62 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     public void setJSONBSnippets(List<Snippet> attributeJSONBSnippets) {
         this.attributeJSONBSnippets = attributeJSONBSnippets;
     }
-    
-    public String getSingularName(){
+
+    public String getSingularName() {
         return Inflector.getInstance().singularize(name);
     }
-    
+
     public String helperMethodName() {
         return Inflector.getInstance().singularize(getMethodName());
-    }    
+    }
 
     public String getHelperMethodSnippet() {
-        String singularName= getSingularName();
+        String singularName = getSingularName();
         String methodName = getMethodName();
         String helperMethodName = helperMethodName();
         String connectedMethodName = null;
-        
+
         StringBuilder sb = new StringBuilder();
-        
+
         String type = null;
-        if(attribute instanceof ElementCollection){
-            type = ((ElementCollection)attribute).getAttributeType();
-        } else if(attribute instanceof MultiRelationAttribute){
-            type = ((MultiRelationAttribute)attribute).getConnectedEntity().getClazz();
+        if (attribute instanceof ElementCollection) {
+            type = ((ElementCollection) attribute).getAttributeType();
+        } else if (attribute instanceof MultiRelationAttribute) {
+            type = ((MultiRelationAttribute) attribute).getConnectedEntity().getClazz();
         }
-        
-        if(type == null){
+
+        if (type == null) {
             return "";
         }
-        
+
         type = getSimpleClassName(type);
-        
+
         //add
-        sb.append(String.format("public void add%s(%s %s) {", 
+        sb.append(String.format("public void add%s(%s %s) {",
                 helperMethodName, type, singularName)).append(NEW_LINE);
         sb.append(String.format("get%s().add(%s);", methodName, singularName)).append(NEW_LINE);
-        if(attribute instanceof OneToMany && !((OneToMany)attribute).isOwner()){
-            OneToMany otm = (OneToMany)attribute;
+        if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
+            OneToMany otm = (OneToMany) attribute;
             connectedMethodName = StringHelper.getMethodName(otm.getConnectedAttributeName());
             sb.append(String.format("%s.set%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
-        } else if(attribute instanceof ManyToMany && ((ManyToMany)attribute).isOwner()){
-            ManyToMany mtm = (ManyToMany)attribute;
+        } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
+            ManyToMany mtm = (ManyToMany) attribute;
             connectedMethodName = StringHelper.getMethodName(mtm.getConnectedAttributeName());
             sb.append(String.format("%s.get%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
         }
         sb.append("}").append(NEW_LINE).append(NEW_LINE);
-        
+
         //remove
-        sb.append(String.format("public void remove%s(%s %s) {", 
+        sb.append(String.format("public void remove%s(%s %s) {",
                 helperMethodName, type, getSingularName())).append(NEW_LINE);
         sb.append(String.format("get%s().remove(%s);", methodName, singularName)).append(NEW_LINE);
-        if(attribute instanceof OneToMany && !((OneToMany)attribute).isOwner()){
+        if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
             sb.append(String.format("%s.set%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
-        } else if(attribute instanceof ManyToMany && ((ManyToMany)attribute).isOwner()){
+        } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
             sb.append(String.format("%s.get%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
         }
         sb.append("}").append(NEW_LINE).append(NEW_LINE);
-        
+
         return sb.toString();
     }
 }

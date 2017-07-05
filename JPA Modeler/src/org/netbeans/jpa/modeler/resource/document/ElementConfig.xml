@@ -16,8 +16,6 @@
         
         <group id="GENERATE_SOURCECODE_PROP" name="Genarate"/>
         <group id="JAXB_PROP" name="JAXB Properties"/>
-        <group id="JAXB_ATTR_PROP" name="JAXB Attribute Properties"/>
-        <group id="JAXB_ELE_PROP" name="JAXB Element Properties"/>
         
         <group id="ATTRIBUTE_CONSTRAINTS" name="Field-level constraints - Bean Validation Properties" position="10" />
         <group id="KEY_CONSTRAINTS" name="Key Type argument constraints - Bean Validation Properties" position="11" />
@@ -126,6 +124,8 @@
                     <description>Vetoable Change Support</description>
                     <visible><![CDATA[org.netbeans.jpa.modeler.settings.code.CodePanel.isJavaSESupportEnable()==true]]></visible>
                 </attribute>
+                <attribute id="jaxbMetadata" groupId="JAXB_PROP" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbMetadata" name="jaxbMetadata" />         
+                <attribute id="jaxbWrapperMetadata" groupId="JAXB_PROP" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbMetadata" name="jaxbWrapperMetadata" />         
             </attributes>
         </element>
         <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">
@@ -336,34 +336,78 @@
                 </attribute>
             </attributes>
         </element>
-        <!--        <element id="BaseAttribute" groupId="BASIC_PROP" class="org.netbeans.jpa.modeler.spec.extend.BaseAttribute">
+        <element id="jaxbMetadata" groupId="JAXB_PROP" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbMetadata">
             <attributes>
-                                <attribute id="attributeType" groupId="BASIC_PROP" class="java.lang.String" name="attributeType">
-                    <display-name>Data Type</display-name>
-                </attribute>
-            </attributes>
-        </element>-->
-        <element id="JaxbXmlAttribute" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute">
-            <attributes>
-                <attribute id="JaxbXmlAttribute.name" groupId="JAXB_ATTR_PROP" class="java.lang.String" name="name">
+                <attribute id="jaxbMetadata.name" groupId="JAXB_PROP" class="java.lang.String" name="name" after="jaxbVariableType" >
                     <display-name>Name</display-name>
-                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Attribute")]]></visible>
+                    <description>Name of the XML Schema element</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT") 
+                                   || node.getJaxbVariableType().name().equals("XML_ATTRIBUTE")
+                                   || node.getJaxbVariableType().name().equals("XML_ELEMENT_REF")
+                                   || node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")
+                                   || node.getJaxbVariableType().name().equals("XML_LIST_ELEMENT")
+                                   || node.getJaxbVariableType().name().equals("XML_LIST_ATTRIBUTE")]]></visible>
                 </attribute>
-                <attribute id="JaxbXmlAttribute.required" groupId="JAXB_ATTR_PROP" class="java.lang.Boolean" name="required">
+                <attribute id="jaxbMetadata.required" groupId="JAXB_PROP" class="java.lang.Boolean" name="required" after="jaxbVariableType" >
                     <display-name>Required</display-name>
-                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Attribute")]]></visible>
+                    <description>Customize the element declaration to be required</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT") 
+                                   || node.getJaxbVariableType().name().equals("XML_ATTRIBUTE")
+                                   || node.getJaxbVariableType().name().equals("XML_ELEMENT_REF")
+                                   || node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")
+                                   || node.getJaxbVariableType().name().equals("XML_LIST_ELEMENT")
+                                   || node.getJaxbVariableType().name().equals("XML_LIST_ATTRIBUTE")]]></visible>
                 </attribute>
+                <attribute id="jaxbMetadata.nillable"  class="java.lang.Boolean" name="nillable" after="jaxbVariableType" >
+                    <display-name>Nillable</display-name>
+                    <description>Customize the element declaration to be nillable</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT")
+                                   || node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")
+                                   || node.getJaxbVariableType().name().equals("XML_LIST_ELEMENT")]]></visible>
+                </attribute>
+                <attribute id="jaxbMetadata.namespace" class="java.lang.String" name="namespace" after="jaxbVariableType" >
+                    <display-name>Namespace</display-name>
+                    <description>XML target namespace of the XML Schema element</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT") 
+                                   || node.getJaxbVariableType().name().equals("XML_ATTRIBUTE")
+                                   || node.getJaxbVariableType().name().equals("XML_ELEMENT_REF")
+                                   || node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")
+                                   || node.getJaxbVariableType().name().equals("XML_LIST_ELEMENT")
+                                   || node.getJaxbVariableType().name().equals("XML_LIST_ATTRIBUTE")]]></visible>
+                </attribute>
+<!--                                <attribute id="jaxbMetadata.defaultValue" class="java.lang.String" name="defaultValue">
+                    <display-name>DefaultValue</display-name>
+                    <visible><![CDATA[node.getJaxbVariableType() 
+                                   || node.getJaxbVariableType().name().equals("XML_ATTRIBUTE")]]></visible>
+                </attribute>-->
             </attributes>
         </element>
-        <element id="JaxbXmlElement" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement">
+        <element id="jaxbWrapperMetadata" groupId="JAXB_PROP" class="org.netbeans.jpa.modeler.spec.jaxb.JaxbMetadata">
             <attributes>
-                <attribute id="JaxbXmlElement.name" groupId="JAXB_ELE_PROP" class="java.lang.String" name="name">
-                    <display-name>Name</display-name>
-                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Element")]]></visible>
+                <attribute id="jaxbWrapperMetadata.name" groupId="JAXB_PROP" class="java.lang.String" name="name" after="jaxbVariableType" >
+                    <display-name>Wrapper Name</display-name>
+                    <description>Name of the XML wrapper element. 
+                                 By default, the XML wrapper element name is derived from the JavaBean property name</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")]]></visible>
                 </attribute>
-                <attribute id="JaxbXmlElement.required" groupId="JAXB_ELE_PROP" class="java.lang.Boolean" name="required">
-                    <display-name>Required</display-name>
-                    <visible><![CDATA[node.getJaxbVariableType().getType().equals("Element")]]></visible>
+                <attribute id="jaxbWrapperMetadata.required" groupId="JAXB_PROP" class="java.lang.Boolean" name="required" after="jaxbVariableType" >
+                    <display-name>Wrapper Required</display-name>
+                    <description>Customize the wrapper element declaration to be required.
+                                 If required() is true, then the corresponding generated
+                                 XML schema element declaration will have minOccurs="1" to indicate that the wrapper element is always expected.
+                                 Note that this only affects the schema generation, and not the unmarshalling or marshalling capability. 
+                                 This is simply a mechanism to let users express their application constraints better.</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")]]></visible>
+                </attribute>
+                <attribute id="jaxbWrapperMetadata.nillable"  class="java.lang.Boolean" name="nillable" after="jaxbVariableType" >
+                    <display-name>Wrapper Nillable</display-name>
+                    <description>If true, the absence of the collection is represented</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")]]></visible>
+                </attribute>
+                <attribute id="jaxbWrapperMetadata.namespace" class="java.lang.String" name="namespace" after="jaxbVariableType" >
+                    <display-name>Wrapper Namespace</display-name>
+                    <description>XML target namespace of the XML wrapper element</description>
+                    <visible><![CDATA[node.getJaxbVariableType().name().equals("XML_ELEMENT_WRAPPER")]]></visible>
                 </attribute>
             </attributes>
         </element>
