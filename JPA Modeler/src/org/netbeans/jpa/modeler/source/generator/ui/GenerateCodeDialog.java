@@ -227,7 +227,7 @@ public class GenerateCodeDialog extends GenericDialog {
         Technology tech = techContext.getTechnology();
         if (tech.panel() != LayerConfigPanel.class) {
             String title = tech.label();
-            int index = tech.index() - 1;
+            int index = tech.tabIndex() - 1;
             if (index < 0) {
                 configPane.addTab(title, null, techContext.getPanel(), tech.description());
             } else {

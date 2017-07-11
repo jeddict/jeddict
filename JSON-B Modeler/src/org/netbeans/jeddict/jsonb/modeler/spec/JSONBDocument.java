@@ -29,43 +29,57 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 
 public class JSONBDocument extends FlowNode {
 
     private JavaClass javaClass;
-    
+    private WorkSpace workSpace;
+
     private List<JSONBNode> nodes = new LinkedList<>();
 
-      public JSONBDocument(JavaClass javaClass) {
+    public JSONBDocument(JavaClass javaClass, WorkSpace workSpace) {
         this.javaClass = javaClass;
+        this.workSpace = workSpace;
         this.javaClass.addLookup(JSONBDocument.class, this);
     }
-      
-    public void loadAttribute(){
+
+    public void loadAttribute() {
         List<JSONBNode> nodes = new LinkedList<>();
         List<Attribute> attributes = this.javaClass.getAttributes().getAllAttribute();
         List<Attribute> propertyOrder = this.javaClass.getJsonbPropertyOrder();
-        if(!propertyOrder.isEmpty()){
+        if (!propertyOrder.isEmpty()) {
             Map<String, Integer> attributesMap = IntStream.range(0, propertyOrder.size())
                     .boxed()
                     .collect(toMap(i -> propertyOrder.get(i).getId(), identity()));
             attributes.sort(Comparator.comparing(attr -> attributesMap.get(attr.getId())));
         }
-        
-        for(Attribute attribute : attributes){
-            JSONBNode node;
-            if(attribute instanceof RelationAttribute || attribute instanceof Embedded){
-                node = new JSONBBranchNode(attribute);
-            } else if(attribute instanceof ElementCollection && ((ElementCollection)attribute).getConnectedClass()!=null){
-                node = new JSONBBranchNode(attribute);
+
+        for (Attribute attribute : attributes) {
+            JSONBNode node = null;
+
+            if (attribute instanceof RelationAttribute) {
+                if (workSpace == null || workSpace.hasItem(((RelationAttribute) attribute).getConnectedEntity())) {
+                    node = new JSONBBranchNode(attribute);
+                }
+            } else if (attribute instanceof Embedded) {
+                if (workSpace == null || workSpace.hasItem(((Embedded) attribute).getConnectedClass())) {
+                    node = new JSONBBranchNode(attribute);
+                }
+            } else if (attribute instanceof ElementCollection && ((ElementCollection) attribute).getConnectedClass() != null) {
+                if (workSpace == null || workSpace.hasItem(((ElementCollection) attribute).getConnectedClass())) {
+                    node = new JSONBBranchNode(attribute);
+                }
             } else {
                 node = new JSONBLeafNode(attribute);
             }
-            nodes.add(node);
+            if (node != null) {
+                nodes.add(node);
+            }
         }
         this.nodes = nodes;
     }
-    
+
     public String getId() {
         return javaClass.getId();
     }

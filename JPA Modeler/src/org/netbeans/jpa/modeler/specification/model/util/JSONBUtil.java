@@ -54,7 +54,7 @@ public class JSONBUtil {
             } else {
                 //close diagram and reopen 
                 long st = new Date().getTime();
-                file.getChildrenFile("JSONB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
+                file.getChildrenFile("JSONB").ifPresent(ModelerFile::close);
                 System.out.println("openJSONBViewer close Total time : " + (new Date().getTime() - st) + " ms");
                 jsonbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
                 System.out.println("openJSONBViewer Total time : " + (new Date().getTime() - st) + " ms");

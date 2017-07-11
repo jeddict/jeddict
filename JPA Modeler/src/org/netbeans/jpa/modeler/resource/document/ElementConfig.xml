@@ -492,14 +492,14 @@
                         The value of the field or property must be a date in the past.
                     </description>
                 </attribute>
-                <attribute id="past.orPresent" class="java.lang.Boolean" name="orPresent" >
+<!--                <attribute id="past.orPresent" class="java.lang.Boolean" name="orPresent" >
                     <display-name>      orPresent</display-name>
                     <description>
                         The notion of present here is defined relatively to the type on which the constraint is used. 
                         For instance, if the constraint is on a Year, present would mean the whole current year.
                     </description>
                     <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>
+                </attribute>-->
                 <attribute id="past.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -516,14 +516,14 @@
                         The value of the field or property must be a date in the future.
                     </description>
                 </attribute>
-                <attribute id="future.orPresent" class="java.lang.Boolean" name="orPresent" >
+<!--                <attribute id="future.orPresent" class="java.lang.Boolean" name="orPresent" >
                     <display-name>      orPresent</display-name>
                     <description>
                         The notion of present here is defined relatively to the type on which the constraint is used. 
                         For instance, if the constraint is on a Year, present would mean the whole current year.
                     </description>
                     <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>
+                </attribute>-->
                 <attribute id="future.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -781,14 +781,14 @@
                         The value of the field or property must be a date in the past.
                     </description>
                 </attribute>
-                <attribute id="Key.past.orPresent" class="java.lang.Boolean" name="orPresent" >
+<!--                <attribute id="Key.past.orPresent" class="java.lang.Boolean" name="orPresent" >
                     <display-name>      orPresent</display-name>
                     <description>
                         The notion of present here is defined relatively to the type on which the constraint is used. 
                         For instance, if the constraint is on a Year, present would mean the whole current year.
                     </description>
                     <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>
+                </attribute>-->
                 <attribute id="Key.past.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -805,14 +805,14 @@
                         The value of the field or property must be a date in the future.
                     </description>
                 </attribute>
-                <attribute id="Key.future.orPresent" class="java.lang.Boolean" name="orPresent" >
+<!--                <attribute id="Key.future.orPresent" class="java.lang.Boolean" name="orPresent" >
                     <display-name>      orPresent</display-name>
                     <description>
                         The notion of present here is defined relatively to the type on which the constraint is used. 
                         For instance, if the constraint is on a Year, present would mean the whole current year.
                     </description>
                     <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>
+                </attribute>-->
                 <attribute id="Key.future.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -1064,14 +1064,14 @@
                         The value of the field or property must be a date in the past.
                     </description>
                 </attribute>
-                <attribute id="Value.past.orPresent" class="java.lang.Boolean" name="orPresent" >
+<!--                <attribute id="Value.past.orPresent" class="java.lang.Boolean" name="orPresent" >
                     <display-name>      orPresent</display-name>
                     <description>
                         The notion of present here is defined relatively to the type on which the constraint is used. 
                         For instance, if the constraint is on a Year, present would mean the whole current year.
                     </description>
                     <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>
+                </attribute>-->
                 <attribute id="Value.past.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -1088,14 +1088,14 @@
                         The value of the field or property must be a date in the future.
                     </description>
                 </attribute>
-                <attribute id="Value.future.orPresent" class="java.lang.Boolean" name="orPresent" >
+<!--                <attribute id="Value.future.orPresent" class="java.lang.Boolean" name="orPresent" >
                     <display-name>      orPresent</display-name>
                     <description>
                         The notion of present here is defined relatively to the type on which the constraint is used. 
                         For instance, if the constraint is on a Year, present would mean the whole current year.
                     </description>
                     <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>
+                </attribute>-->
                 <attribute id="Value.future.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>

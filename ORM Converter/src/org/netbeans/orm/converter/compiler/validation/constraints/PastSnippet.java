@@ -37,17 +37,17 @@ public class PastSnippet extends ConstraintSnippet<Past> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && !TRUE.equals(constraint.getOrPresent())) {
+        if (constraint.getMessage() == null /*&& !TRUE.equals(constraint.getOrPresent())*/) {
             return "@" + getAPI();
         }
         StringBuilder builder = new StringBuilder();
         builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
 
-        if (TRUE.equals(constraint.getOrPresent())) {
-            builder.append("orPresent=");
-            builder.append(constraint.getOrPresent());
-            builder.append(ORMConverterUtil.COMMA);
-        }
+//        if (TRUE.equals(constraint.getOrPresent())) {
+//            builder.append("orPresent=");
+//            builder.append(constraint.getOrPresent());
+//            builder.append(ORMConverterUtil.COMMA);
+//        }
 
         if (constraint.getMessage() != null) {
             builder.append("message=\"");

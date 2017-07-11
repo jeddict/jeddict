@@ -359,6 +359,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
     @Override
     public void destroy() {
+        this.getModelerFile().getChildrenFile("JSONB").ifPresent(ModelerFile::close);
+        this.getModelerFile().getChildrenFile("DB").ifPresent(ModelerFile::close);
     }
 
     @NbBundle.Messages({

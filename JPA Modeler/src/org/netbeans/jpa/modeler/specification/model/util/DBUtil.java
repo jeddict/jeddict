@@ -62,7 +62,7 @@ public class DBUtil {
             } else {
                 //close diagram and reopen 
                 long st = new Date().getTime();
-                file.getChildrenFile("DB").ifPresent(modelerFile -> modelerFile.getModelerPanelTopComponent().close());
+                file.getChildrenFile("DB").ifPresent(ModelerFile::close);
                 System.out.println("openDBViewer close Total time : " + (new Date().getTime() - st) + " ms");
                 dbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
                 System.out.println("openDBViewer Total time : " + (new Date().getTime() - st) + " ms");
@@ -70,26 +70,6 @@ public class DBUtil {
         } catch (Throwable t) {
             file.handleException(t);
         }
-    }
-
-    @Deprecated
-    private static void mapToOrignalObject(EntityMappings orignalMappings, EntityMappings clonedMappings) {
-        clonedMappings.getEntity().forEach(class_ -> {
-            Entity orignalEntity = orignalMappings.getEntity(class_.getId());
-            class_.setOrignalObject(orignalEntity);
-            mapToOrignalObject(orignalEntity.getAttributes(), class_.getAttributes());
-        });
-        clonedMappings.getEmbeddable().forEach(class_ -> {
-            Embeddable orignalEmbeddable = orignalMappings.getEmbeddable(class_.getId());
-            class_.setOrignalObject(orignalEmbeddable);
-            mapToOrignalObject(orignalEmbeddable.getAttributes(), class_.getAttributes());
-        });
-        clonedMappings.getMappedSuperclass().forEach(e -> {
-            MappedSuperclass orignalMappedSuperclass = orignalMappings.getMappedSuperclass(e.getId());
-            e.setOrignalObject(orignalMappedSuperclass);
-            mapToOrignalObject(orignalMappedSuperclass.getAttributes(), e.getAttributes());
-        });
-
     }
 
     @Deprecated

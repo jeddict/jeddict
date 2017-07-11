@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import javax.swing.ImageIcon;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.design.Diagram;
@@ -42,6 +43,9 @@ import org.netbeans.jeddict.jsonb.modeler.spec.JSONBDocument;
 import org.netbeans.jeddict.jsonb.modeler.spec.JSONBLeafNode;
 import org.netbeans.jeddict.jsonb.modeler.spec.JSONBMapping;
 import org.netbeans.jeddict.jsonb.modeler.spec.JSONBNode;
+import org.netbeans.jpa.modeler.spec.design.Bounds;
+import org.netbeans.jpa.modeler.spec.design.DiagramElement;
+import org.netbeans.jpa.modeler.spec.design.Shape;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
@@ -145,14 +149,16 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
             Diagram diagram = entityMappings.getJPADiagram();
             int itemSize;
             long drawItemSize;
-            if (diagram != null) {
-                itemSize = entityMappings.getJPADiagram().getJPAPlane().getDiagramElement().size();
+            if (diagram != null && !diagram.getJPAPlane().getDiagramElement().isEmpty()) {
+                diagram.getJPAPlane().getDiagramElement()
+                        .forEach(diagramElement -> loadDiagram(scene, diagramElement));
+                itemSize = diagram.getJPAPlane().getDiagramElement().size();
                 drawItemSize = 0;
             } else {
                 drawItemSize = entityMappings.getCurrentWorkSpace().getItems()
                         .stream()
-                        .filter(item -> item.getLocation() != null)
                         .peek(item -> loadDiagram(scene, item))
+                        .filter(item -> item.getLocation() != null)
                         .count();
                 itemSize = entityMappings.getCurrentWorkSpace().getItems().size();
             }
@@ -190,7 +196,26 @@ public class JSONBModelerUtil implements PModelerUtil<JSONBModelerScene> {
             DocumentWidget documentWidget = (DocumentWidget) nodeWidget;
             return documentWidget;
     }
-    
+        
+    @Deprecated
+    private void loadDiagram(JSONBModelerScene scene, DiagramElement diagramElement) {
+        if (diagramElement instanceof Shape) {
+            Shape shape = (Shape) diagramElement;
+            Bounds bounds = shape.getBounds();
+            Widget widget = (Widget) scene.getBaseElement(shape.getElementRef());
+            if (widget != null) {
+                if (widget instanceof INodeWidget) {
+                    INodeWidget nodeWidget = (INodeWidget) widget;
+                    Point location = new Point((int) bounds.getX(), (int) bounds.getY());
+                    nodeWidget.setPreferredLocation(location);
+                    scene.reinstallColorScheme(nodeWidget);
+                } else {
+                    throw new InvalidElmentException("Invalid JSON Element : " + widget);
+                }
+            }
+        }
+    }
+
     private void loadDiagram(JSONBModelerScene scene, WorkSpaceItem workSpaceItem) {
         DocumentWidget documentWidget = (DocumentWidget) scene.getBaseElement(workSpaceItem.getJavaClass().getId());
         if (documentWidget != null) {

@@ -77,7 +77,7 @@ public class ExceptionReporterPanel extends GenericDialog {
         setIconImage(null);
         setName("errorDialog"); // NOI18N
 
-        iconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("org/netbeans/jpa/modeler/collaborate/resource/image/BUG_ICON.png"))); // NOI18N
+        iconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/collaborate/resource/image/BUG_ICON.png"))); // NOI18N
         iconLabel.setLabelFor(submitButton);
         iconLabel.setToolTipText(org.openide.util.NbBundle.getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.iconLabel.toolTipText")); // NOI18N
 

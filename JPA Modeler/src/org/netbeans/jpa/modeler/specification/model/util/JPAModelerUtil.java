@@ -518,7 +518,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             int itemSize;
             long drawItemSize;
 
-            if (diagram != null) {
+            if (diagram != null && !diagram.getJPAPlane().getDiagramElement().isEmpty()) {
                 diagram.getJPAPlane().getDiagramElement()
                         .forEach(diagramElement -> loadDiagram(scene, diagramElement));
                 itemSize = entityMappings.getJPADiagram().getJPAPlane().getDiagramElement().size();
@@ -526,8 +526,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             } else {
                 drawItemSize = entityMappings.getCurrentWorkSpace().getItems()
                         .stream()
-                        .filter(item -> item.getLocation() != null)
                         .peek(item -> loadDiagram(scene, item))
+                        .filter(item -> item.getLocation() != null)
                         .count();
                 itemSize = entityMappings.getCurrentWorkSpace().getItems().size();
             }
@@ -556,8 +556,8 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
         if (classWidget.getBaseElementSpec() instanceof ManagedClass) {
             ManagedClass<IPersistenceAttributes> classSpec = (ManagedClass) classWidget.getBaseElementSpec();
             PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) classWidget;
-            WorkSpace workSpace = classSpec.getRootElement().getCurrentWorkSpace();
-            if (classSpec.getAttributes() != null) {
+            if (classSpec.getRootElement()!=null && classSpec.getAttributes() != null) {
+                WorkSpace workSpace = classSpec.getRootElement().getCurrentWorkSpace();
                 if ((classSpec.getAttributes() instanceof IPrimaryKeyAttributes)
                         && (classWidget instanceof PrimaryKeyContainerWidget)) {
                     PrimaryKeyContainerWidget primaryKeyContainerWidget = (PrimaryKeyContainerWidget) classWidget;
@@ -850,6 +850,7 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
                     INodeWidget nodeWidget = (INodeWidget) widget;
                     Point location = new Point((int) bounds.getX(), (int) bounds.getY());
                     nodeWidget.setPreferredLocation(location);
+                    scene.reinstallColorScheme(nodeWidget);
                 } else {
                     throw new InvalidElmentException("Invalid JPA Element : " + widget);
                 }

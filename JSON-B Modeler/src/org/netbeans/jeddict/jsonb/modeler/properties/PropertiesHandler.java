@@ -140,7 +140,6 @@ public class PropertiesHandler {
 
     public static EmbeddedPropertySupport getJsonbVisibility(JsonbVisibilityHandler visibilityHandler, IPropertyWidget propertyWidget, JPAModelerScene modelerScene) {
         ModelerFile modelerFile = modelerScene.getModelerFile();
-        EntityMappings entityMappings = modelerScene.getBaseElementSpec();
 
         GenericEmbedded entity = new GenericEmbedded("jsonbVisibility", "Visibility", getMessage(PropertiesHandler.class, "INFO_JSONB_VISIBILITY"));
         entity.setEntityEditor(new ClassSelectionPanel(modelerFile));
