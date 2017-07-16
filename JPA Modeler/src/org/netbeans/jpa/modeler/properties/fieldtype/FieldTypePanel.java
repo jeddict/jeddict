@@ -68,6 +68,11 @@ import static org.netbeans.jcode.core.util.AttributeType.SQL_TIME;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_TIMESTAMP;
 import static org.netbeans.jcode.core.util.AttributeType.STRING;
 import static org.netbeans.jcode.core.util.AttributeType.isArray;
+import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE;
+import static org.netbeans.jcode.jpa.JPAConstants.ENTITY;
+import static org.netbeans.jcode.jpa.JPAConstants.ENUMERATED;
+import static org.netbeans.jcode.jpa.JPAConstants.LOB;
+import static org.netbeans.jcode.jpa.JPAConstants.TEMPORAL;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
@@ -88,6 +93,7 @@ import org.netbeans.modeler.search.AutocompleteJComboBox;
  */
 public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
 
+    private final static String DEFAULT = "Default";
     private final ModelerFile modelerFile;
     private final boolean mapKey;
     private Attribute attribute;
@@ -715,12 +721,5 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         }
         return null;
     }
-
-    private final static String ENTITY = "Entity";
-    private final static String TEMPORAL = "Temporal";
-    private final static String DEFAULT = "Default";
-    private final static String ENUMERATED = "Enumerated";
-    private final static String EMBEDDABLE = "Embeddable";
-    private final static String LOB = "Lob";
 
 }

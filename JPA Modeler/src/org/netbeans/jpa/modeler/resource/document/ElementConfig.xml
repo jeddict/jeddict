@@ -114,6 +114,16 @@
                         If unselected, attribute will not be available in frontend.
                     </description>
                 </attribute>
+                <attribute id="label" groupId="UI_PROP" class="java.lang.String" name="label">
+                    <display-name>Label</display-name>
+                    <description>
+                        HTML label tag
+                    </description>
+                </attribute>
+<!--                <attribute id="blobContentType" groupId="UI_PROP" class="org.netbeans.jpa.modeler.spec.extend.BlobContentType" name="blobContentType">
+                    <display-name>BLOB Content</display-name>
+                    <visible><![CDATA[node.isBlobAttributeType()]]></visible>
+                </attribute>-->
                 <attribute id="propertyChangeSupport" groupId="ATTR_PROP" class="java.lang.Boolean" name="propertyChangeSupport">
                     <display-name>Property Change Support</display-name>
                     <description>Property Change Support</description>
@@ -217,6 +227,12 @@
                <attribute id="abstract" groupId="CLASS_STRUCTURE" class="java.lang.Boolean" name="abstract">
                     <display-name>Is Abstract</display-name>
                     <description>Abstract entities cannot be instantiated but it can be queried just like concrete entities. If an abstract entity is the target of a query, the query operates on all the concrete subclasses of the abstract entity.</description>
+                </attribute>
+                <attribute id="label" groupId="UI_PROP" class="java.lang.String" name="label">
+                    <display-name>Label</display-name>
+                    <description>
+                        HTML label tag
+                    </description>
                 </attribute>
             </attributes>
         </element>

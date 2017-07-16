@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.source.generator.ui;
 
 import java.awt.Component;
 import java.awt.event.ItemEvent;
+import static java.awt.event.ItemEvent.SELECTED;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,11 +46,9 @@ import static org.netbeans.jcode.layer.Technology.Type.BUSINESS;
 import static org.netbeans.jcode.layer.Technology.Type.CONTROLLER;
 import static org.netbeans.jcode.layer.Technology.Type.VIEWER;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
-import org.netbeans.jcode.stack.config.data.LayerConfigData;
 import org.netbeans.jcode.stack.config.panel.LayerConfigPanel;
 import org.netbeans.jcode.ui.source.ProjectCellRenderer;
 import org.netbeans.jcode.util.PreferenceUtils;
-import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
@@ -536,9 +535,12 @@ public class GenerateCodeDialog extends GenericDialog {
     private SourceGroup sourceGroup = null;
 
     private void targetProjectComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_targetProjectComboItemStateChanged
-        setTargetPoject((Project) targetProjectCombo.getSelectedItem());
-        populateSourceFolderCombo();
-        initLayer();
+        if (evt.getStateChange() == SELECTED) {
+            setTargetPoject((Project) targetProjectCombo.getSelectedItem());
+            populateSourceFolderCombo();
+            setPackage(entityMappings.getPackage());
+            initLayer();
+        }
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
     private void generateSourceCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSourceCodeActionPerformed

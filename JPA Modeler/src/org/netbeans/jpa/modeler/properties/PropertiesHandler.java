@@ -540,7 +540,7 @@ public class PropertiesHandler {
             }
 
         };
-        org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("label", "UI Display Reference", "Select the attribute to represent the entity in UI");
+        org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("labelRef", "UI Display Reference", "Select the attribute to represent the entity in UI");
 //        attribute.setAfter("mapKeyType");
         return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
     }
