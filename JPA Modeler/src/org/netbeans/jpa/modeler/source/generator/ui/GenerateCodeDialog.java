@@ -143,14 +143,17 @@ public class GenerateCodeDialog extends GenericDialog {
         configPane.setVisible(false);
 
         ProjectType projectType = getTargetPoject() != null ? ProjectHelper.getProjectType(getTargetPoject()) : null;
-        if (projectType == null || projectType == ProjectType.JAR) {
+        if (projectType != null && projectType == ProjectType.WEB 
+                && getTargetPoject().getClass().getName().contains("Maven")) {
+            businessLayerCombo.setEnabled(true);
+            infoLabel.setText("");
+        } else {
             businessLayerCombo.setEnabled(false);
             controllerLayerCombo.setEnabled(false);
             viewerLayerCombo.setEnabled(false);
+            infoLabel.setText("Please select the [Maven > Web Application] project for full-stack app");
             this.pack();
             return;
-        } else {
-            businessLayerCombo.setEnabled(true);
         }
 
         businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
@@ -232,7 +235,10 @@ public class GenerateCodeDialog extends GenericDialog {
             } else {
                 configPane.insertTab(title, null, techContext.getPanel(), tech.description(), index);
             }
-            techContext.getSiblingTechContext().forEach(context -> this.addLayerTab(context));
+            techContext.getSiblingTechContext()
+                    .stream()
+                    .filter(tc -> tc.getTechnology().entityGenerator() != isCompleteApplication())
+                    .forEach(context -> this.addLayerTab(context));
         }
     }
 
@@ -295,6 +301,7 @@ public class GenerateCodeDialog extends GenericDialog {
         actionLayeredPane = new javax.swing.JLayeredPane();
         generateSourceCode = new javax.swing.JButton();
         cencelGenerateCode = new javax.swing.JButton();
+        infoLabel = new javax.swing.JLabel();
         completeAppCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -472,14 +479,18 @@ public class GenerateCodeDialog extends GenericDialog {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        org.openide.awt.Mnemonics.setLocalizedText(infoLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.infoLabel.text")); // NOI18N
+
         actionPane.setLayer(actionLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        actionPane.setLayer(infoLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout actionPaneLayout = new javax.swing.GroupLayout(actionPane);
         actionPane.setLayout(actionPaneLayout);
         actionPaneLayout.setHorizontalGroup(
             actionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actionPaneLayout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2))
         );
@@ -488,6 +499,7 @@ public class GenerateCodeDialog extends GenericDialog {
             .addGroup(actionPaneLayout.createSequentialGroup()
                 .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         setCompleteApplication(technologyPref.getBoolean(COMPLETE_APPLICATION, true));
@@ -510,8 +522,8 @@ public class GenerateCodeDialog extends GenericDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(completeAppCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 245, Short.MAX_VALUE)
-                        .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(actionPane))
                     .addComponent(optionPane))
                 .addContainerGap())
         );
@@ -602,8 +614,8 @@ public class GenerateCodeDialog extends GenericDialog {
 
     private void businessLayerComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_businessLayerComboItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            changeBusinessLayer(getBusinessLayer());
             setCompleteApplicationCompVisibility(getBusinessLayer().getTechnology().panel() != LayerConfigPanel.class);
+            changeBusinessLayer(getBusinessLayer());
         }
     }//GEN-LAST:event_businessLayerComboItemStateChanged
 
@@ -627,6 +639,7 @@ public class GenerateCodeDialog extends GenericDialog {
     private void completeAppCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_completeAppCheckBoxActionPerformed
         technologyPref.putBoolean(COMPLETE_APPLICATION, isCompleteApplication());
         manageGenerateButtonStatus();
+        initLayer();
     }//GEN-LAST:event_completeAppCheckBoxActionPerformed
 
     private void manageGenerateButtonStatus() {
@@ -824,6 +837,7 @@ public class GenerateCodeDialog extends GenericDialog {
     private javax.swing.JLabel controllerLayerLabel;
     private javax.swing.JButton entitySetting;
     private javax.swing.JButton generateSourceCode;
+    private javax.swing.JLabel infoLabel;
     private javax.swing.JLayeredPane optionPane;
     private javax.swing.JLabel packageLabel;
     private javax.swing.JComboBox resourcePackageCombo;
