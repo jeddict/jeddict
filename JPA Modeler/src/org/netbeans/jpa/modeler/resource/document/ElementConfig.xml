@@ -436,6 +436,44 @@
    
    
         <!--On Attribute-->
+        <element id="NotEmpty" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotEmpty">
+            <attributes>
+                <attribute id="notempty.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotEmpty</display-name>
+                    <description>
+                        The value of the field or property must not be null nor empty.
+                    </description>
+                </attribute>
+                <attribute id="notempty.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("NotEmpty") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Null").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotNull").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("NotBlank").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotBlank").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="NotBlank" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotBlank">
+            <attributes>
+                <attribute id="notblank.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotBlank</display-name>
+                    <description>
+                        The value of the field or property must not be null and must contain at least one non-whitespace character.
+                    </description>
+                </attribute>
+                <attribute id="notblank.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("NotBlank") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Null").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotNull").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("NotEmpty").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotEmpty").selected==false)
+                    ]]></visible>
+        </element>
         <element id="NotNull" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotNull">
             <attributes>
                 <attribute id="notnull.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
@@ -449,8 +487,9 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getAttributeConstraintsMap().get("NotNull") != null &&
-                    ((node.getAttributeConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Null").selected==false)]]></visible>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("NotNull") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Null").selected==false)
+                    ]]></visible>
         </element>
         <element id="Null" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Null">
             <attributes>
@@ -465,8 +504,9 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getAttributeConstraintsMap().get("Null") != null && 
-                        ((node.getAttributeConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotNull").selected==false)]]></visible>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Null") != null  
+                        && ((node.getAttributeConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NotNull").selected==false)
+                    ]]></visible>
         </element>
         <element id="AssertFalse" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertFalse">
             <attributes>
@@ -505,55 +545,159 @@
                 <attribute id="past.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Past</display-name>
                     <description>
-                        The value of the field or property must be a date in the past.
+                        The value of the field or property must be an instant, date or time in the past.
                     </description>
                 </attribute>
-<!--                <attribute id="past.orPresent" class="java.lang.Boolean" name="orPresent" >
-                    <display-name>      orPresent</display-name>
-                    <description>
-                        The notion of present here is defined relatively to the type on which the constraint is used. 
-                        For instance, if the constraint is on a Year, present would mean the whole current year.
-                    </description>
-                    <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>-->
                 <attribute id="past.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getAttributeConstraintsMap().get("Past") != null &&
-                        ((node.getAttributeConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Future").selected==false)]]></visible>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Past") != null                        
+                        && ((node.getAttributeConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Future").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
+        </element>
+                <element id="PastOrPresent" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.PastOrPresent">
+            <attributes>
+                <attribute id="pastorpresent.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@PastOrPresent</display-name>
+                    <description>
+                        The value of the field or property must be an instant, date or time in the past or in the present.
+                    </description>
+                </attribute>
+                <attribute id="pastorpresent.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("PastOrPresent") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Past").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Future").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
         </element>
         <element id="Future" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Future">
             <attributes>
                 <attribute id="future.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Future</display-name>
                     <description>
-                        The value of the field or property must be a date in the future.
+                        The value of the field or property must be an instant, date or time in the future.
                     </description>
                 </attribute>
-<!--                <attribute id="future.orPresent" class="java.lang.Boolean" name="orPresent" >
-                    <display-name>      orPresent</display-name>
-                    <description>
-                        The notion of present here is defined relatively to the type on which the constraint is used. 
-                        For instance, if the constraint is on a Year, present would mean the whole current year.
-                    </description>
-                    <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>-->
                 <attribute id="future.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getAttributeConstraintsMap().get("Future") != null &&
-                        ((node.getAttributeConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Past").selected==false)]]></visible>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Future") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Past").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="FutureOrPresent" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.FutureOrPresent">
+            <attributes>
+                <attribute id="futureorpresent.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@FutureOrPresent</display-name>
+                    <description>
+                        The value of the field or property must be an instant, date or time in the present or in the future.
+                    </description>
+                </attribute>
+                <attribute id="futureorpresent.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("FutureOrPresent") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Past").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Future").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Negative" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Negative">
+            <attributes>
+                <attribute id="negative.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Negative</display-name>
+                    <description>
+                        The value of the field or property must be a strictly negative number (i.e. 0 is considered as an invalid value).
+                    </description>
+                </attribute>
+                <attribute id="negative.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Negative") != null                        
+                        && ((node.getAttributeConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Positive").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="NegativeOrZero" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NegativeOrZero">
+            <attributes>
+                <attribute id="negativeorzero.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@NegativeOrZero</display-name>
+                    <description>
+                        The value of the field or property must be a negative number or 0.
+                    </description>
+                </attribute>
+                <attribute id="negativeorzero.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("NegativeOrZero") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Negative").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Positive").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Positive" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Positive">
+            <attributes>
+                <attribute id="positive.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Positive</display-name>
+                    <description>
+                        The value of the field or property must be a strictly positive number (i.e. 0 is considered as an invalid value).
+                    </description>
+                </attribute>
+                <attribute id="positive.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Positive") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Negative").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="PositiveOrZero" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.PositiveOrZero">
+            <attributes>
+                <attribute id="positiveorzero.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@PositiveOrZero</display-name>
+                    <description>
+                        The value of the field or property must be a positive number or 0.
+                    </description>
+                </attribute>
+                <attribute id="positiveorzero.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("PositiveOrZero") != null                        
+                        && ((node.getAttributeConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Negative").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getAttributeConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Positive").selected==false)
+                    ]]></visible>
         </element>
         <element id="Size" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Size">
             <attributes>
                 <attribute id="size.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Size</display-name>
                     <description>
-                        The size of the field or property is evaluated and must match the specified boundaries. 
+                        The size of the field or property must be between the specified boundaries (included).
                     </description>
                 </attribute>
                 <attribute id="size.min" class="java.lang.Integer" name="min">
@@ -603,7 +747,43 @@
                     </description>                       
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getAttributeConstraintsMap().get("Pattern") != null]]></visible>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Pattern") != null &&
+                        ((node.getAttributeConstraintsMap().get("Email").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Email").selected==false)]]></visible>
+        </element>
+        <element id="Email" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Email">
+            <attributes>
+                <attribute id="email.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Email</display-name>
+                    <description>
+                        The string has to be a well-formed email address. Exact semantics of what makes up a valid email address are left to Bean Validation providers.
+                    </description>
+                </attribute>
+                <attribute id="email.regexp" class="java.lang.String" name="regexp">
+                    <display-name>      regexp</display-name>
+                    <description>
+                        The regular expression to match
+                    </description>                    
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="email.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
+                <attribute id="email.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                    <description>
+                        The error message template
+                    </description>                       
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getAttributeConstraintsMap().get("Email") != null &&
+                        ((node.getAttributeConstraintsMap().get("Pattern").selected==true && this.selected==true ) || node.getAttributeConstraintsMap().get("Pattern").selected==false)]]></visible>
         </element>
         <element id="Digits" groupId="ATTRIBUTE_CONSTRAINTS" category="ATTRIBUTE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Digits">
             <attributes>
@@ -724,6 +904,44 @@
         
         
         <!--On Key-->
+              <element id="Key.NotEmpty" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotEmpty">
+            <attributes>
+                <attribute id="Key.notempty.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotEmpty</display-name>
+                    <description>
+                        The value of the field or property must not be null nor empty.
+                    </description>
+                </attribute>
+                <attribute id="Key.notempty.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("NotEmpty") != null                        
+                        && ((node.getKeyConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Null").selected==false)
+                        && ((node.getKeyConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotNull").selected==false)
+                        && ((node.getKeyConstraintsMap().get("NotBlank").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotBlank").selected==false)
+                    ]]></visible>
+        </element>
+                <element id="Key.NotBlank" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotBlank">
+            <attributes>
+                <attribute id="Key.notblank.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotBlank</display-name>
+                    <description>
+                        The value of the field or property must not be null and must contain at least one non-whitespace character.
+                    </description>
+                </attribute>
+                <attribute id="Key.notblank.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("NotBlank") != null                        
+                        && ((node.getKeyConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Null").selected==false)
+                        && ((node.getKeyConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotNull").selected==false)
+                        && ((node.getKeyConstraintsMap().get("NotEmpty").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotEmpty").selected==false)
+                    ]]></visible>
+        </element>
         <element id="Key.NotNull" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotNull">
             <attributes>
                 <attribute id="Key.notnull.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
@@ -737,9 +955,9 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <!--<visible><![CDATA[(node.getKeyConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Null").selected==false]]></visible>-->
-            <visible><![CDATA[node.getKeyConstraintsMap().get("NotNull") != null &&
-                    ((node.getKeyConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Null").selected==false)]]></visible>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("NotNull") != null                        
+                        && ((node.getKeyConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Null").selected==false)
+                    ]]></visible>
         </element>
         <element id="Key.Null" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Null">
             <attributes>
@@ -754,8 +972,9 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getKeyConstraintsMap().get("Null") != null && 
-                        ((node.getKeyConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotNull").selected==false)]]></visible>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Null") != null                        
+                        && ((node.getKeyConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NotNull").selected==false)
+                    ]]></visible>
         </element>
         <element id="Key.AssertFalse" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertFalse">
             <attributes>
@@ -794,55 +1013,159 @@
                 <attribute id="Key.past.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Past</display-name>
                     <description>
-                        The value of the field or property must be a date in the past.
+                        The value of the field or property must be an instant, date or time in the past.
                     </description>
                 </attribute>
-<!--                <attribute id="Key.past.orPresent" class="java.lang.Boolean" name="orPresent" >
-                    <display-name>      orPresent</display-name>
-                    <description>
-                        The notion of present here is defined relatively to the type on which the constraint is used. 
-                        For instance, if the constraint is on a Year, present would mean the whole current year.
-                    </description>
-                    <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>-->
                 <attribute id="Key.past.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getKeyConstraintsMap().get("Past") != null &&
-                        ((node.getKeyConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Future").selected==false)]]></visible>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Past") != null                        
+                        && ((node.getKeyConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getKeyConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Future").selected==false)
+                        && ((node.getKeyConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
+        </element>
+                <element id="Key.PastOrPresent" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.PastOrPresent">
+            <attributes>
+                <attribute id="Key.pastorpresent.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@PastOrPresent</display-name>
+                    <description>
+                        The value of the field or property must be an instant, date or time in the past or in the present.
+                    </description>
+                </attribute>
+                <attribute id="Key.pastorpresent.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("PastOrPresent") != null                        
+                        && ((node.getKeyConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Past").selected==false)
+                        && ((node.getKeyConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Future").selected==false)
+                        && ((node.getKeyConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
         </element>
         <element id="Key.Future" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Future">
             <attributes>
                 <attribute id="Key.future.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Future</display-name>
                     <description>
-                        The value of the field or property must be a date in the future.
+                        The value of the field or property must be an instant, date or time in the future.
                     </description>
                 </attribute>
-<!--                <attribute id="Key.future.orPresent" class="java.lang.Boolean" name="orPresent" >
-                    <display-name>      orPresent</display-name>
-                    <description>
-                        The notion of present here is defined relatively to the type on which the constraint is used. 
-                        For instance, if the constraint is on a Year, present would mean the whole current year.
-                    </description>
-                    <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>-->
                 <attribute id="Key.future.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getKeyConstraintsMap().get("Future") != null &&
-                        ((node.getKeyConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Past").selected==false)]]></visible>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Future") != null                        
+                        && ((node.getKeyConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Past").selected==false)
+                        && ((node.getKeyConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getKeyConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Key.FutureOrPresent" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.FutureOrPresent">
+            <attributes>
+                <attribute id="Key.futureorpresent.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@FutureOrPresent</display-name>
+                    <description>
+                        The value of the field or property must be an instant, date or time in the present or in the future.
+                    </description>
+                </attribute>
+                <attribute id="Key.futureorpresent.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("FutureOrPresent") != null                        
+                        && ((node.getKeyConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Past").selected==false)
+                        && ((node.getKeyConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getKeyConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Future").selected==false)
+                    ]]></visible>
+        </element>
+                <element id="Key.Negative" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Negative">
+            <attributes>
+                <attribute id="Key.negative.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Negative</display-name>
+                    <description>
+                        The value of the field or property must be a strictly negative number (i.e. 0 is considered as an invalid value).
+                    </description>
+                </attribute>
+                <attribute id="Key.negative.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Negative") != null                        
+                        && ((node.getKeyConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getKeyConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Positive").selected==false)
+                        && ((node.getKeyConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Key.NegativeOrZero" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NegativeOrZero">
+            <attributes>
+                <attribute id="Key.negativeorzero.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@NegativeOrZero</display-name>
+                    <description>
+                        The value of the field or property must be a negative number or 0.
+                    </description>
+                </attribute>
+                <attribute id="Key.negativeorzero.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("NegativeOrZero") != null                        
+                        && ((node.getKeyConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Negative").selected==false)
+                        && ((node.getKeyConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Positive").selected==false)
+                        && ((node.getKeyConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Key.Positive" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Positive">
+            <attributes>
+                <attribute id="Key.positive.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Positive</display-name>
+                    <description>
+                        The value of the field or property must be a strictly positive number (i.e. 0 is considered as an invalid value).
+                    </description>
+                </attribute>
+                <attribute id="Key.positive.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Positive") != null                        
+                        && ((node.getKeyConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Negative").selected==false)
+                        && ((node.getKeyConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getKeyConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Key.PositiveOrZero" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.PositiveOrZero">
+            <attributes>
+                <attribute id="Key.positiveorzero.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@PositiveOrZero</display-name>
+                    <description>
+                        The value of the field or property must be a positive number or 0.
+                    </description>
+                </attribute>
+                <attribute id="Key.positiveorzero.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("PositiveOrZero") != null                        
+                        && ((node.getKeyConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Negative").selected==false)
+                        && ((node.getKeyConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getKeyConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Positive").selected==false)
+                    ]]></visible>
         </element>
         <element id="Key.Size" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Size">
             <attributes>
                 <attribute id="Key.size.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Size</display-name>
                     <description>
-                        The size of the field or property is evaluated and must match the specified boundaries. 
+                        The size of the field or property must be between the specified boundaries (included).
                     </description>
                 </attribute>
                 <attribute id="Key.size.min" class="java.lang.Integer" name="min">
@@ -870,6 +1193,9 @@
                 </attribute>
                 <attribute id="Key.pattern.regexp" class="java.lang.String" name="regexp">
                     <display-name>      regexp</display-name>
+                    <description>
+                        The regular expression to match
+                    </description>                    
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="Key.pattern.flags" class="java.lang.String" name="flags">
@@ -884,9 +1210,48 @@
                 <attribute id="Key.pattern.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
+                    <description>
+                        The error message template
+                    </description>                       
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getKeyConstraintsMap().get("Pattern") != null]]></visible>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Pattern") != null &&
+                        ((node.getKeyConstraintsMap().get("Email").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Email").selected==false)]]></visible>
+        </element>
+                <element id="Key.Email" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Email">
+            <attributes>
+                <attribute id="Key.email.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Email</display-name>
+                    <description>
+                        The string has to be a well-formed email address. Exact semantics of what makes up a valid email address are left to Bean Validation providers.
+                    </description>
+                </attribute>
+                <attribute id="Key.email.regexp" class="java.lang.String" name="regexp">
+                    <display-name>      regexp</display-name>
+                    <description>
+                        The regular expression to match
+                    </description>                    
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Key.email.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
+                <attribute id="Key.email.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                    <description>
+                        The error message template
+                    </description>                       
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getKeyConstraintsMap().get("Email") != null &&
+                        ((node.getKeyConstraintsMap().get("Pattern").selected==true && this.selected==true ) || node.getKeyConstraintsMap().get("Pattern").selected==false)]]></visible>
         </element>
         <element id="Key.Digits" groupId="KEY_CONSTRAINTS" category="KEY_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Digits">
             <attributes>
@@ -1003,10 +1368,48 @@
             </attributes>
             <visible><![CDATA[node.getKeyConstraintsMap().get("DecimalMax") != null]]></visible>
         </element>
-   
+        
    
    
         <!--On Value-->
+              <element id="Value.NotEmpty" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotEmpty">
+            <attributes>
+                <attribute id="Value.notempty.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotEmpty</display-name>
+                    <description>
+                        The value of the field or property must not be null nor empty.
+                    </description>
+                </attribute>
+                <attribute id="Value.notempty.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("NotEmpty") != null                        
+                        && ((node.getValueConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Null").selected==false)
+                        && ((node.getValueConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotNull").selected==false)
+                        && ((node.getValueConstraintsMap().get("NotBlank").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotBlank").selected==false)
+                    ]]></visible>
+        </element>
+                <element id="Value.NotBlank" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotBlank">
+            <attributes>
+                <attribute id="Value.notblank.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
+                    <display-name>@NotBlank</display-name>
+                    <description>
+                        The value of the field or property must not be null and must contain at least one non-whitespace character.
+                    </description>
+                </attribute>
+                <attribute id="Value.notblank.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("NotBlank") != null                        
+                        && ((node.getValueConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Null").selected==false)
+                        && ((node.getValueConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotNull").selected==false)
+                        && ((node.getValueConstraintsMap().get("NotEmpty").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotEmpty").selected==false)
+                    ]]></visible>
+        </element>
         <element id="Value.NotNull" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NotNull">
             <attributes>
                 <attribute id="Value.notnull.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true" >
@@ -1020,9 +1423,9 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <!--<visible><![CDATA[(node.getValueConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Null").selected==false]]></visible>-->
-            <visible><![CDATA[node.getValueConstraintsMap().get("NotNull") != null &&
-                    ((node.getValueConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Null").selected==false)]]></visible>
+            <visible><![CDATA[node.getValueConstraintsMap().get("NotNull") != null                        
+                        && ((node.getValueConstraintsMap().get("Null").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Null").selected==false)
+                    ]]></visible>
         </element>
         <element id="Value.Null" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Null">
             <attributes>
@@ -1037,8 +1440,9 @@
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getValueConstraintsMap().get("Null") != null && 
-                        ((node.getValueConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotNull").selected==false)]]></visible>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Null") != null                        
+                        && ((node.getValueConstraintsMap().get("NotNull").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NotNull").selected==false)
+                    ]]></visible>
         </element>
         <element id="Value.AssertFalse" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.AssertFalse">
             <attributes>
@@ -1077,55 +1481,159 @@
                 <attribute id="Value.past.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Past</display-name>
                     <description>
-                        The value of the field or property must be a date in the past.
+                        The value of the field or property must be an instant, date or time in the past.
                     </description>
                 </attribute>
-<!--                <attribute id="Value.past.orPresent" class="java.lang.Boolean" name="orPresent" >
-                    <display-name>      orPresent</display-name>
-                    <description>
-                        The notion of present here is defined relatively to the type on which the constraint is used. 
-                        For instance, if the constraint is on a Year, present would mean the whole current year.
-                    </description>
-                    <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>-->
                 <attribute id="Value.past.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getValueConstraintsMap().get("Past") != null &&
-                        ((node.getValueConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Future").selected==false)]]></visible>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Past") != null                        
+                        && ((node.getValueConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getValueConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Future").selected==false)
+                        && ((node.getValueConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
+        </element>
+                <element id="Value.PastOrPresent" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.PastOrPresent">
+            <attributes>
+                <attribute id="Value.pastorpresent.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@PastOrPresent</display-name>
+                    <description>
+                        The value of the field or property must be an instant, date or time in the past or in the present.
+                    </description>
+                </attribute>
+                <attribute id="Value.pastorpresent.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("PastOrPresent") != null                        
+                        && ((node.getValueConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Past").selected==false)
+                        && ((node.getValueConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Future").selected==false)
+                        && ((node.getValueConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
         </element>
         <element id="Value.Future" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Future">
             <attributes>
                 <attribute id="Value.future.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Future</display-name>
                     <description>
-                        The value of the field or property must be a date in the future.
+                        The value of the field or property must be an instant, date or time in the future.
                     </description>
                 </attribute>
-<!--                <attribute id="Value.future.orPresent" class="java.lang.Boolean" name="orPresent" >
-                    <display-name>      orPresent</display-name>
-                    <description>
-                        The notion of present here is defined relatively to the type on which the constraint is used. 
-                        For instance, if the constraint is on a Year, present would mean the whole current year.
-                    </description>
-                    <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>-->
                 <attribute id="Value.future.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getValueConstraintsMap().get("Future") != null &&
-                        ((node.getValueConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Past").selected==false)]]></visible>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Future") != null                        
+                        && ((node.getValueConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Past").selected==false)
+                        && ((node.getValueConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getValueConstraintsMap().get("FutureOrPresent").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("FutureOrPresent").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Value.FutureOrPresent" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.FutureOrPresent">
+            <attributes>
+                <attribute id="Value.futureorpresent.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@FutureOrPresent</display-name>
+                    <description>
+                        The value of the field or property must be an instant, date or time in the present or in the future.
+                    </description>
+                </attribute>
+                <attribute id="Value.futureorpresent.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("FutureOrPresent") != null                        
+                        && ((node.getValueConstraintsMap().get("Past").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Past").selected==false)
+                        && ((node.getValueConstraintsMap().get("PastOrPresent").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("PastOrPresent").selected==false)
+                        && ((node.getValueConstraintsMap().get("Future").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Future").selected==false)
+                    ]]></visible>
+        </element>
+                <element id="Value.Negative" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Negative">
+            <attributes>
+                <attribute id="Value.negative.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Negative</display-name>
+                    <description>
+                        The value of the field or property must be a strictly negative number (i.e. 0 is considered as an invalid value).
+                    </description>
+                </attribute>
+                <attribute id="Value.negative.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Negative") != null                        
+                        && ((node.getValueConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getValueConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Positive").selected==false)
+                        && ((node.getValueConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Value.NegativeOrZero" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.NegativeOrZero">
+            <attributes>
+                <attribute id="Value.negativeorzero.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@NegativeOrZero</display-name>
+                    <description>
+                        The value of the field or property must be a negative number or 0.
+                    </description>
+                </attribute>
+                <attribute id="Value.negativeorzero.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("NegativeOrZero") != null                        
+                        && ((node.getValueConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Negative").selected==false)
+                        && ((node.getValueConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Positive").selected==false)
+                        && ((node.getValueConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Value.Positive" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Positive">
+            <attributes>
+                <attribute id="Value.positive.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Positive</display-name>
+                    <description>
+                        The value of the field or property must be a strictly positive number (i.e. 0 is considered as an invalid value).
+                    </description>
+                </attribute>
+                <attribute id="Value.positive.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Positive") != null                        
+                        && ((node.getValueConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Negative").selected==false)
+                        && ((node.getValueConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getValueConstraintsMap().get("PositiveOrZero").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("PositiveOrZero").selected==false)
+                    ]]></visible>
+        </element>
+        <element id="Value.PositiveOrZero" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.PositiveOrZero">
+            <attributes>
+                <attribute id="Value.positiveorzero.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@PositiveOrZero</display-name>
+                    <description>
+                        The value of the field or property must be a positive number or 0.
+                    </description>
+                </attribute>
+                <attribute id="Value.positiveorzero.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("PositiveOrZero") != null                        
+                        && ((node.getValueConstraintsMap().get("Negative").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Negative").selected==false)
+                        && ((node.getValueConstraintsMap().get("NegativeOrZero").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("NegativeOrZero").selected==false)
+                        && ((node.getValueConstraintsMap().get("Positive").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Positive").selected==false)
+                    ]]></visible>
         </element>
         <element id="Value.Size" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Size">
             <attributes>
                 <attribute id="Value.size.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
                     <display-name>@Size</display-name>
                     <description>
-                        The size of the field or property is evaluated and must match the specified boundaries. 
+                        The size of the field or property must be between the specified boundaries (included).
                     </description>
                 </attribute>
                 <attribute id="Value.size.min" class="java.lang.Integer" name="min">
@@ -1153,6 +1661,9 @@
                 </attribute>
                 <attribute id="Value.pattern.regexp" class="java.lang.String" name="regexp">
                     <display-name>      regexp</display-name>
+                    <description>
+                        The regular expression to match
+                    </description>                    
                     <visible><![CDATA[this.selected==true]]></visible>
                 </attribute>
                 <attribute id="Value.pattern.flags" class="java.lang.String" name="flags">
@@ -1167,9 +1678,48 @@
                 <attribute id="Value.pattern.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
+                    <description>
+                        The error message template
+                    </description>                       
                 </attribute>
             </attributes>
-            <visible><![CDATA[node.getValueConstraintsMap().get("Pattern") != null]]></visible>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Pattern") != null &&
+                        ((node.getValueConstraintsMap().get("Email").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Email").selected==false)]]></visible>
+        </element>
+                <element id="Value.Email" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Email">
+            <attributes>
+                <attribute id="Value.email.selected" class="java.lang.Boolean" name="selected" refresh-onchange="true">
+                    <display-name>@Email</display-name>
+                    <description>
+                        The string has to be a well-formed email address. Exact semantics of what makes up a valid email address are left to Bean Validation providers.
+                    </description>
+                </attribute>
+                <attribute id="Value.email.regexp" class="java.lang.String" name="regexp">
+                    <display-name>      regexp</display-name>
+                    <description>
+                        The regular expression to match
+                    </description>                    
+                    <visible><![CDATA[this.selected==true]]></visible>
+                </attribute>
+                <attribute id="Value.email.flags" class="java.lang.String" name="flags">
+                    <display-name>      flag</display-name>
+                    <description>
+                        Flags considered when resolving the regular expression.
+                        [ UNIX_LINES, CASE_INSENSITIVE, COMMENTS, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ ]
+                        *** e.g : CASE_INSENSITIVE, MULTILINE (comma-separated value)
+                    </description>
+                    <visible><![CDATA[this.selected==true]]></visible>                    
+                </attribute>
+                <attribute id="Value.email.message" class="java.lang.String" name="message">
+                    <display-name>      Message</display-name>
+                    <visible><![CDATA[this.selected==true]]></visible>
+                    <description>
+                        The error message template
+                    </description>                       
+                </attribute>
+            </attributes>
+            <visible><![CDATA[node.getValueConstraintsMap().get("Email") != null &&
+                        ((node.getValueConstraintsMap().get("Pattern").selected==true && this.selected==true ) || node.getValueConstraintsMap().get("Pattern").selected==false)]]></visible>
         </element>
         <element id="Value.Digits" groupId="VALUE_CONSTRAINTS" category="VALUE_CONSTRAINTS" class="org.netbeans.bean.validation.constraints.Digits">
             <attributes>
@@ -1251,7 +1801,7 @@
                         By default, it is inclusive.
                     </description>
                     <visible><![CDATA[this.selected==true]]></visible>
-                </attribute>                
+                </attribute>
                 <attribute id="Value.decimalMin.message" class="java.lang.String" name="message">
                     <display-name>      Message</display-name>
                     <visible><![CDATA[this.selected==true]]></visible>
@@ -1286,6 +1836,6 @@
             </attributes>
             <visible><![CDATA[node.getValueConstraintsMap().get("DecimalMax") != null]]></visible>
         </element>
-   
+        
     </elements>
 </element-config>

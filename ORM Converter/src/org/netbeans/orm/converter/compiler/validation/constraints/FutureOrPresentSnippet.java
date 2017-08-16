@@ -1,5 +1,5 @@
 /**
- * Copyright [2016] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,21 +15,21 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.bean.validation.constraints.Past;
+import org.netbeans.bean.validation.constraints.FutureOrPresent;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class PastSnippet extends ConstraintSnippet<Past> {
+public class FutureOrPresentSnippet extends ConstraintSnippet<FutureOrPresent> {
 
-    public PastSnippet(Past past) {
-        super(past);
+    public FutureOrPresentSnippet(FutureOrPresent futureOrPresent) {
+        super(futureOrPresent);
     }
 
     @Override
     protected String getAPI() {
-        return "Past";
+        return "FutureOrPresent";
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright [2016] Gaurav Gupta
+ * Copyright [2017] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,21 +15,21 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.netbeans.bean.validation.constraints.Past;
+import org.netbeans.bean.validation.constraints.Positive;
 
 /**
  *
  * @author Gaurav Gupta
  */
-public class PastSnippet extends ConstraintSnippet<Past> {
+public class PositiveSnippet extends ConstraintSnippet<Positive> {
 
-    public PastSnippet(Past past) {
-        super(past);
+    public PositiveSnippet(Positive positive) {
+        super(positive);
     }
 
     @Override
     protected String getAPI() {
-        return "Past";
+        return "Positive";
     }
 
 }
