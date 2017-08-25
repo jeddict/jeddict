@@ -80,7 +80,10 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
         };
         this.addPropertyVisibilityHandler("number_value", numberVisibilityHandler);
         this.addPropertyVisibilityHandler("number_locale", numberVisibilityHandler);
-        this.addPropertyChangeListener("jsonbTransient", (PropertyChangeListener<Boolean>)(oldValue, newValue) -> setTransientLabel(newValue));
+        this.addPropertyChangeListener("jsonbTransient", (PropertyChangeListener<Boolean>)(oldValue, newValue) -> {
+            this.getBaseElementSpec().getAttribute().setIncludeInUI(false);
+            setTransientLabel(newValue);
+        });
         
         super.createPropertySet(set);
         JPAModelerScene parentScene = (JPAModelerScene) this.getModelerScene().getModelerFile().getParentFile().getModelerScene();

@@ -79,6 +79,12 @@
                         If unselected, attribute will not be available in frontend.
                     </description>
                 </attribute>
+                <attribute id="label" groupId="UI_PROP" class="java.lang.String" name="label">
+                    <display-name>Label</display-name>
+                    <description>
+                        HTML label tag
+                    </description>
+                </attribute>
             </attributes>
         </element>
         <element id="JsonbDateFormat" class="org.netbeans.jpa.modeler.spec.jsonb.JsonbDateFormat">

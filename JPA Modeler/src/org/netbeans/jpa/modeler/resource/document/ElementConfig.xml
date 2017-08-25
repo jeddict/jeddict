@@ -53,9 +53,9 @@
                 <attribute id="persistenceProviderType" groupId="BASIC_PROP" class="org.netbeans.jcode.jpa.PersistenceProviderType" name="persistenceProviderType">
                     <display-name>Persistence Provider</display-name>
                 </attribute>
-                <attribute id="javaEEVersion" groupId="BASIC_PROP" class="org.jcode.infra.JavaEEVersion" name="javaEEVersion">
+<!--                <attribute id="javaEEVersion" groupId="BASIC_PROP" class="org.jcode.infra.JavaEEVersion" name="javaEEVersion">
                     <display-name>Java EE Version</display-name>
-                </attribute>
+                </attribute>-->
                 <attribute id="package" groupId="PACKAGE" class="java.lang.String" name="package">
                     <display-name>Entity Package</display-name>
                 </attribute>
@@ -120,7 +120,7 @@
                         HTML label tag
                     </description>
                 </attribute>
-<!--                <attribute id="blobContentType" groupId="UI_PROP" class="org.netbeans.jpa.modeler.spec.extend.BlobContentType" name="blobContentType">
+<!--            <attribute id="blobContentType" groupId="UI_PROP" class="org.netbeans.jpa.modeler.spec.extend.BlobContentType" name="blobContentType">
                     <display-name>BLOB Content</display-name>
                     <visible><![CDATA[node.isBlobAttributeType()]]></visible>
                 </attribute>-->
