@@ -124,6 +124,12 @@ public class GenerateCodeDialog extends GenericDialog {
         this.entityGenerationSettingDialog = new EntityGenerationSettingDialog(scene, selectedWorkSpace);
     }
 
+    private boolean isSupportedProject() {
+        ProjectType projectType = getTargetPoject() != null ? ProjectHelper.getProjectType(getTargetPoject()) : null;
+        return projectType != null && projectType == ProjectType.WEB
+                && getTargetPoject().getClass().getName().contains("Maven");
+    }
+    
     private void initUIComponents() {
         manageEntityGenerationSetting();//1st priority
 
@@ -131,36 +137,33 @@ public class GenerateCodeDialog extends GenericDialog {
         this.setTitle(NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.title"));
         setCaptureWindowSize(false);
         setDefaultButton(generateSourceCode);
-        setCompleteApplicationCompVisibility(false);
-
         populateProjectCombo();
-        setPackage(entityMappings.getPackage());
         initLayer();
     }
-
+   
     private void initLayer() {
+        setCompleteApplicationCompVisibility(false);
+        setPackage(entityMappings.getPackage());
         configPane.removeAll();
         configPane.setVisible(false);
 
-        ProjectType projectType = getTargetPoject() != null ? ProjectHelper.getProjectType(getTargetPoject()) : null;
-        if (projectType != null && projectType == ProjectType.WEB 
-                && getTargetPoject().getClass().getName().contains("Maven")) {
-            businessLayerCombo.setEnabled(true);
-            infoLabel.setText("");
-        } else {
+        if (!isSupportedProject()) {
             businessLayerCombo.setEnabled(false);
             controllerLayerCombo.setEnabled(false);
             viewerLayerCombo.setEnabled(false);
+            configData.setBussinesTechContext(null);
+            configData.setControllerTechContext(null);
+            configData.setViewerTechContext(null);
             infoLabel.setText("Please select the [Maven > Web Application] project for full-stack app");
             this.pack();
             return;
         }
 
+        infoLabel.setText("");
         businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
-        if (projectType == ProjectType.WEB) {
-            controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultControllerLayer.class)}));
-            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
-        }
+        controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultControllerLayer.class)}));
+        viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
+        businessLayerCombo.setEnabled(true);
         controllerLayerCombo.setEnabled(false);
         viewerLayerCombo.setEnabled(false);
 
@@ -169,7 +172,7 @@ public class GenerateCodeDialog extends GenericDialog {
         TechContext viewerContext = Generator.get(technologyPref.get(VIEWER.name(), DefaultViewerLayer.class.getSimpleName()));
         if (businessContext != null) {
             businessLayerCombo.setSelectedItem(businessContext);
-            if (businessContext.isValid() && controllerContext != null && projectType == ProjectType.WEB) {
+            if (businessContext.isValid() && controllerContext != null) {
                 controllerLayerCombo.setSelectedItem(controllerContext);
                 if (controllerContext.isValid() && viewerContext != null) {
                     viewerLayerCombo.setSelectedItem(viewerContext);
@@ -225,6 +228,16 @@ public class GenerateCodeDialog extends GenericDialog {
         this.pack();
     }
 
+    private void refreshLayer() {
+        if(getViewerLayer().isValid()){
+            setTechPanel(getViewerLayer());
+        } else if(getControllerLayer().isValid()){
+            setTechPanel(getControllerLayer());
+        } else if(getBusinessLayer().isValid()){
+            setTechPanel(getBusinessLayer());
+        }  
+    }
+        
     private void addLayerTab(TechContext techContext) {
         Technology tech = techContext.getTechnology();
         if (tech.panel() != LayerConfigPanel.class) {
@@ -237,19 +250,16 @@ public class GenerateCodeDialog extends GenericDialog {
             }
             techContext.getSiblingTechContext()
                     .stream()
-                    .filter(tc -> tc.getTechnology().entityGenerator() != isCompleteApplication())
+                    .filter(tc -> isCompleteApplication()?true:tc.getTechnology().entityGenerator())
                     .forEach(context -> this.addLayerTab(context));
         }
     }
 
     private void changeBusinessLayer(TechContext businessLayer) {
-        ProjectType projectType = ProjectHelper.getProjectType(getTargetPoject());
-        if (projectType == ProjectType.WEB) {
-            controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
-            controllerLayerCombo.setEnabled(businessLayer.isValid());
-            viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
-            viewerLayerCombo.setEnabled(false);
-        }
+        controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
+        controllerLayerCombo.setEnabled(businessLayer.isValid());
+        viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
+        viewerLayerCombo.setEnabled(false);
         setTechPanel(businessLayer);
     }
 
@@ -548,10 +558,15 @@ public class GenerateCodeDialog extends GenericDialog {
 
     private void targetProjectComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_targetProjectComboItemStateChanged
         if (evt.getStateChange() == SELECTED) {
+//            Project previousProject = getTargetPoject();
             setTargetPoject((Project) targetProjectCombo.getSelectedItem());
+//            Project newProject = getTargetPoject();
             populateSourceFolderCombo();
-            setPackage(entityMappings.getPackage());
-            initLayer();
+
+//            if ((ProjectHelper.getProjectType(previousProject) != ProjectHelper.getProjectType(newProject))
+//                    || (previousProject.getClass() != newProject.getClass())) {
+                initLayer();
+//            }
         }
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
@@ -597,7 +612,7 @@ public class GenerateCodeDialog extends GenericDialog {
             modelerFile.getModelerPanelTopComponent().changePersistenceState(false);
         }
         entityMappings.setPackage(getPackage());
-        if (getBusinessLayer() != null) {
+        if (isSupportedProject() && getBusinessLayer() != null) {
             technologyPref.put(BUSINESS.name(), getBusinessLayer().getGeneratorClass().getSimpleName());
             if (getControllerLayer() != null) {
                 technologyPref.put(CONTROLLER.name(), getControllerLayer().getGeneratorClass().getSimpleName());
@@ -639,7 +654,7 @@ public class GenerateCodeDialog extends GenericDialog {
     private void completeAppCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_completeAppCheckBoxActionPerformed
         technologyPref.putBoolean(COMPLETE_APPLICATION, isCompleteApplication());
         manageGenerateButtonStatus();
-        initLayer();
+        refreshLayer();
     }//GEN-LAST:event_completeAppCheckBoxActionPerformed
 
     private void manageGenerateButtonStatus() {
