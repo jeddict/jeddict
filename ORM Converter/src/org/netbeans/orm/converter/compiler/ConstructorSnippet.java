@@ -58,7 +58,10 @@ public class ConstructorSnippet implements Snippet {
 
         if (!allVariableSnippets.isEmpty()) {
             for (VariableDefSnippet variableSnippet : allVariableSnippets) {
-                builder.append(variableSnippet.getType()).append(SPACE).append(variableSnippet.getName()).append(COMMA);
+                builder.append(variableSnippet.getConstraintType())
+                        .append(SPACE)
+                        .append(variableSnippet.getName())
+                        .append(COMMA);
             }
             builder.setLength(builder.length() - 1);
         }

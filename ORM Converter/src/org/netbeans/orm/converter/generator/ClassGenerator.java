@@ -363,13 +363,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected List<ConstructorSnippet> getConstructorSnippets(JavaClass javaClass) {
-        List<ConstructorSnippet> constructorSnippets = new ArrayList<>();
-        Function<Attribute, VariableDefSnippet> buildVarDef = attr -> {
-            VariableDefSnippet variableDefSnippet = new VariableDefSnippet(attr);
-            variableDefSnippet.setName(attr.getName());
-            variableDefSnippet.setType(attr.getDataTypeLabel());
-            return variableDefSnippet;
-        };
+        List<ConstructorSnippet> constructorSnippets = new ArrayList<>();       
         List<Constructor> constructors = javaClass.getConstructors();
         if (javaClass instanceof DefaultClass && constructors.isEmpty()) { //for EmbeddedId and IdClass
             constructors.add(Constructor.getNoArgsInstance());
@@ -380,10 +374,16 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
         constructors.stream().filter(Constructor::isEnable).map(constructor -> {
             String className = javaClass.getClazz();
-            List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes().stream()
-                    .filter(attr -> attr.getJavaClass() != javaClass).map(buildVarDef).collect(toList());
-            List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes().stream()
-                    .filter(attr -> attr.getJavaClass() == javaClass).map(buildVarDef).collect(toList());
+            List<VariableDefSnippet> parentVariableSnippets = constructor.getAttributes()
+                    .stream()
+                    .filter(attr -> attr.getJavaClass() != javaClass)
+                    .map(attr -> getVariableDef(attr))
+                    .collect(toList());
+            List<VariableDefSnippet> localVariableSnippets = constructor.getAttributes()
+                    .stream()
+                    .filter(attr -> attr.getJavaClass() == javaClass)
+                    .map(attr -> getVariableDef(attr))
+                    .collect(toList());
             ConstructorSnippet snippet = new ConstructorSnippet(className, constructor, parentVariableSnippets, localVariableSnippets);
             return snippet;
         }).forEach(constructorSnippets::add);
