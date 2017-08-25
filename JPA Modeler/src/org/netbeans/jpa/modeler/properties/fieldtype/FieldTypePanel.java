@@ -52,6 +52,7 @@ import static org.netbeans.jcode.core.util.AttributeType.DOUBLE;
 import static org.netbeans.jcode.core.util.AttributeType.DOUBLE_WRAPPER;
 import static org.netbeans.jcode.core.util.AttributeType.FLOAT;
 import static org.netbeans.jcode.core.util.AttributeType.FLOAT_WRAPPER;
+import static org.netbeans.jcode.core.util.AttributeType.INSTANT;
 import static org.netbeans.jcode.core.util.AttributeType.INT;
 import static org.netbeans.jcode.core.util.AttributeType.INT_WRAPPER;
 import static org.netbeans.jcode.core.util.AttributeType.LOCAL_DATE;
@@ -67,6 +68,7 @@ import static org.netbeans.jcode.core.util.AttributeType.SQL_DATE;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_TIME;
 import static org.netbeans.jcode.core.util.AttributeType.SQL_TIMESTAMP;
 import static org.netbeans.jcode.core.util.AttributeType.STRING;
+import static org.netbeans.jcode.core.util.AttributeType.ZONED_DATE_TIME;
 import static org.netbeans.jcode.core.util.AttributeType.isArray;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDABLE;
 import static org.netbeans.jcode.jpa.JPAConstants.ENTITY;
@@ -102,7 +104,8 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     private static final String[] BASIC_DEFAULT_DATATYPE = new String[]{STRING, CHAR, BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, 
                         CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, 
                         BIGINTEGER, BIGDECIMAL, SQL_DATE, SQL_TIME, SQL_TIMESTAMP,
-                        LOCAL_DATE, LOCAL_TIME, LOCAL_DATE_TIME, OFFSET_TIME, OFFSET_DATE_TIME};
+                        LOCAL_DATE, LOCAL_TIME, LOCAL_DATE_TIME, OFFSET_TIME, OFFSET_DATE_TIME,
+                        ZONED_DATE_TIME, INSTANT};
     
     private static final String[] LOB_DATATYPE = new String[]{STRING, BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY};
     private static final String[] TEMPORAL_DATATYPE = new String[]{DATE, CALENDAR};
@@ -110,7 +113,8 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
     private static final String[] ELEMENTCOLLECTION_DEFAULT_DATATYPE = new String[]{STRING, 
                         CHAR_WRAPPER, BOOLEAN_WRAPPER, BYTE_WRAPPER, SHORT_WRAPPER, INT_WRAPPER, LONG_WRAPPER, FLOAT_WRAPPER, DOUBLE_WRAPPER, 
                         BIGINTEGER, BIGDECIMAL, SQL_DATE, SQL_TIME, SQL_TIMESTAMP,
-                        LOCAL_DATE, LOCAL_TIME, LOCAL_DATE_TIME, OFFSET_TIME, OFFSET_DATE_TIME};
+                        LOCAL_DATE, LOCAL_TIME, LOCAL_DATE_TIME, OFFSET_TIME, OFFSET_DATE_TIME,
+                        ZONED_DATE_TIME, INSTANT};
     private static final Set<String> BCLOB_DATATYPE_FILTER = new HashSet<>(Arrays.asList(BYTE_ARRAY, BYTE_WRAPPER_ARRAY, CHAR_ARRAY, CHAR_WRAPPER_ARRAY));
 
     @Override

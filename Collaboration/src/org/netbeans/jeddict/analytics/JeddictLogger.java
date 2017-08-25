@@ -51,12 +51,12 @@ public class JeddictLogger {
     public static void logGenerateEvent(ApplicationConfigData applicationConfigData) {
         logEvent(GENERATE_CATEGORY, DOMAIN, JPA);
         logEvent(GENERATE_CATEGORY, DOMAIN, JPA_CLASS_COUNT, applicationConfigData.getEntityMappings().getJavaClass().size());
-        logSourceGenerationEvent(applicationConfigData.getBussinesTechContext());
-        logSourceGenerationEvent(applicationConfigData.getControllerTechContext());
-        logSourceGenerationEvent(applicationConfigData.getViewerTechContext());
+        logSourceGenerationEvent(applicationConfigData.getBussinesTechContext(), applicationConfigData.isCompleteApplication());
+        logSourceGenerationEvent(applicationConfigData.getControllerTechContext(), applicationConfigData.isCompleteApplication());
+        logSourceGenerationEvent(applicationConfigData.getViewerTechContext(), applicationConfigData.isCompleteApplication());
     }
 
-    private static void logSourceGenerationEvent(TechContext context) {
+    private static void logSourceGenerationEvent(TechContext context, boolean completeApplication) {
         if (context != null) {
             logEvent(GENERATE_CATEGORY,
                     context.getTechnology().type().getDisplayLabel(),
@@ -67,7 +67,8 @@ public class JeddictLogger {
                     context.getTechnology().type().getDisplayLabel(), (String) data));
             context.getSiblingTechContext()
                     .stream()
-                    .forEach(childContext -> logSourceGenerationEvent(childContext));
+                    .filter(tc -> completeApplication?true:tc.getTechnology().entityGenerator())
+                    .forEach(childContext -> logSourceGenerationEvent(childContext, completeApplication));
         }
     }
 

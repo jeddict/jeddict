@@ -141,18 +141,6 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
             }
         };
 
-        // Ugly hack ensuring the progress dialog opens after the wizard closes. Needed because:
-        // 1) the wizard is not closed in the AWT event in which instantiate() is called.
-        //    Instead it is closed in an event scheduled by SwingUtilities.invokeLater().
-        // 2) when a modal dialog is created its owner is set to the foremost modal
-        //    dialog already displayed (if any). Because of #1 the wizard will be
-        //    closed when the progress dialog is already open, and since the wizard
-        //    is the owner of the progress dialog, the progress dialog is closed too.
-        // The order of the events in the event queue:
-        // -  this event
-        // -  the first invocation event of our runnable
-        // -  the invocation event which closes the wizard
-        // -  the second invocation event of our runnable
         SwingUtilities.invokeLater(new Runnable() {
             private boolean first = true;
 
@@ -301,7 +289,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
         }
         if (!noPuNeeded) {
             puPanel = new PersistenceUnitWizardDescriptor(getProject());
-            panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+            panels = new ArrayList<>();
             panels.add(secondPanel);
             panels.add(thirdPanel);
             panels.add(puPanel);
@@ -312,7 +300,7 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
             };
         } else {
 
-            panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+            panels = new ArrayList<>();
             panels.add(secondPanel);
             panels.add(thirdPanel);
             names = new String[]{
