@@ -17,9 +17,6 @@ package org.netbeans.jeddict.jsonb.modeler.core.widget;
 
 import java.awt.Image;
 import org.netbeans.jcode.core.util.AttributeType;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.jeddict.jsonb.modeler.spec.JSONBLeafNode;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.ARRAY_ICON;
@@ -38,6 +35,9 @@ import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBM
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.TIME_ICON_PATH;
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.UNKNOWN_ICON;
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.UNKNOWN_ICON_PATH;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.EnumTypeHandler;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 

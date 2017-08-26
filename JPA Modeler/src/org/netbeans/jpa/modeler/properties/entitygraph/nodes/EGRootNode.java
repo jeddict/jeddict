@@ -16,8 +16,8 @@
 package org.netbeans.jpa.modeler.properties.entitygraph.nodes;
 
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;

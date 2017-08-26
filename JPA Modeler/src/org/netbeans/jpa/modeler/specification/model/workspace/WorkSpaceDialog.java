@@ -35,7 +35,6 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.W
 import static org.netbeans.jpa.modeler.specification.model.workspace.WorkSpaceManager.findDependents;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.window.GenericDialog;
-//import org.netbeans.modules.java.source.base.Bundle;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 

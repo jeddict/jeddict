@@ -16,11 +16,11 @@
 package org.netbeans.db.modeler.properties.tablemember.nodes;
 
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.spec.DBTable;
-import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
-import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.db.modeler.properties.tablemember.TableMembers;
+import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
+import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 
 public class TMRootNode extends RootNode<TableMembers> {
 

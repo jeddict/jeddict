@@ -16,15 +16,15 @@
 package org.netbeans.jeddict.jsonb.modeler.core.widget;
 
 import java.awt.Image;
-import org.netbeans.jpa.modeler.spec.ElementCollection;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jeddict.jsonb.modeler.spec.JSONBBranchNode;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.ARRAY_ICON;
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.ARRAY_ICON_PATH;
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.OBJECT_ICON;
 import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil.OBJECT_ICON_PATH;
+import org.netbeans.jpa.modeler.spec.ElementCollection;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 

@@ -15,15 +15,14 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.CONSTRUCTOR_RESULT;
 import static org.netbeans.jcode.jpa.JPAConstants.CONSTRUCTOR_RESULT_FQN;
+import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ConstructorResultSnippet implements Snippet {
 

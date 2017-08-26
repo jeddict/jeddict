@@ -15,11 +15,11 @@
  */
 package org.netbeans.db.modeler.properties.index;
 
-import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import java.util.Collections;
+import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.properties.tablemember.nodes.*;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import org.openide.nodes.Node;
 
 

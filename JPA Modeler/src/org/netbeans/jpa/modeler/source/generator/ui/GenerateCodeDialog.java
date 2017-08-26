@@ -62,11 +62,11 @@ import org.netbeans.modeler.properties.window.GenericDialog;
 import org.netbeans.spi.java.project.support.ui.PackageView;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import static org.openide.awt.Mnemonics.setLocalizedText;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
-import org.openide.util.NbPreferences;
-import static org.openide.awt.Mnemonics.setLocalizedText;
 import static org.openide.util.NbBundle.getMessage;
+import org.openide.util.NbPreferences;
 
 /**
  *

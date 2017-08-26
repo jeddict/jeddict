@@ -55,7 +55,6 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidg
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.vmd.PEdgeWidget;
 import org.netbeans.modeler.widget.node.vmd.internal.*;
-import org.netbeans.modeler.widget.node.vmd.internal.PFactory;
 
 public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
 

@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.properties.entitygraph;
 
-import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -26,10 +25,11 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.IdAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
+import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGInternalNode;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGLeafNode;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGRootNode;
-import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.FetchType;
 import org.netbeans.jpa.modeler.spec.ManagedClass;

@@ -7,7 +7,6 @@ import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.dynamic.DynamicTypeBuilder;
 import org.eclipse.persistence.jpa.dynamic.DynamicIdentityPolicy;
 import org.netbeans.jpa.modeler.db.accessor.EntitySpecAccessor;
-import org.netbeans.jpa.modeler.spec.Entity;
 
 public class JPAMDynamicTypeBuilder extends DynamicTypeBuilder {
 

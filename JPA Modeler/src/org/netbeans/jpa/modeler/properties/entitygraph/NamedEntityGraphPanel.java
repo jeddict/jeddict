@@ -15,21 +15,21 @@
  */
 package org.netbeans.jpa.modeler.properties.entitygraph;
 
-import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.JOptionPane;
 import static javax.swing.SwingUtilities.invokeLater;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGInternalNode;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGLeafNode;
 import org.netbeans.jpa.modeler.properties.entitygraph.nodes.EGRootNode;
-import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.spec.NamedAttributeNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.EntityComponent;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
 

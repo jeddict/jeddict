@@ -36,13 +36,13 @@ import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
+import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ImportSet;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
-import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
-import org.netbeans.orm.converter.util.ImportSet;
 
 public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandler, AssociationOverridesHandler {
 

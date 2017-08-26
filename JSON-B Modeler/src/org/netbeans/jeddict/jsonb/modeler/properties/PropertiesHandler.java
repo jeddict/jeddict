@@ -15,7 +15,6 @@
  */
 package org.netbeans.jeddict.jsonb.modeler.properties;
 
-import static org.openide.util.NbBundle.getMessage;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.jpa.modeler.properties.extend.ClassSelectionPanel;
@@ -29,6 +28,7 @@ import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
 import org.netbeans.modeler.properties.embedded.EmbeddedPropertySupport;
 import org.netbeans.modeler.properties.embedded.GenericEmbedded;
 import org.netbeans.modeler.widget.property.IPropertyWidget;
+import static org.openide.util.NbBundle.getMessage;
 
 public class PropertiesHandler {
 

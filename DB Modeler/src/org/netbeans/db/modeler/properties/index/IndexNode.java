@@ -15,16 +15,16 @@
  */
 package org.netbeans.db.modeler.properties.index;
 
-import org.netbeans.db.modeler.properties.tablemember.nodes.*;
 import java.util.List;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
-import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
-import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.db.modeler.properties.tablemember.TableMembers;
+import org.netbeans.db.modeler.properties.tablemember.nodes.*;
+import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.Direction;
+import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 import org.netbeans.jpa.modeler.properties.order.type.OrderTypeColumn;
+import org.netbeans.jpa.modeler.spec.OrderType;
 
 public class IndexNode extends TMLeafNode implements OrderTypeColumn {
 

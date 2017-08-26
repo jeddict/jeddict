@@ -15,18 +15,18 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
-import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
+import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBJoinColumn;
 import org.netbeans.db.modeler.spec.DBRelationTable;
 import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
 import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.Id;

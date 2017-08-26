@@ -16,11 +16,11 @@
 package org.netbeans.jeddict.jsonb.modeler.core.widget;
 
 import org.netbeans.api.visual.anchor.AnchorShape;
+import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.modeler.anchorshape.crow.OneAndOneCrowShape;
 import org.netbeans.modeler.anchorshape.crow.OneOrMoreCrowShape;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;

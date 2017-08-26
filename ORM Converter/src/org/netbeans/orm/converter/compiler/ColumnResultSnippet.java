@@ -16,13 +16,12 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-
 import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_RESULT;
 import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_RESULT_FQN;
 import org.netbeans.orm.converter.util.ClassHelper;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ColumnResultSnippet implements Snippet {
 

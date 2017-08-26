@@ -16,8 +16,8 @@
 package org.netbeans.jpa.modeler.navigator.nodes;
 
 import static org.netbeans.jpa.modeler.navigator.nodes.Direction.DOWN;
-import static org.netbeans.jpa.modeler.navigator.nodes.Direction.UP;
 import static org.netbeans.jpa.modeler.navigator.nodes.Direction.NONE;
+import static org.netbeans.jpa.modeler.navigator.nodes.Direction.UP;
 import org.openide.explorer.view.CheckableNode;
 
 /**

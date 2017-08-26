@@ -15,11 +15,11 @@
  */
 package org.netbeans.jsonb.converter.compiler;
 
-import org.netbeans.orm.converter.compiler.*;
 import java.util.Collection;
 import java.util.Collections;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_TRANSIENT;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_TRANSIENT_FQN;
+import org.netbeans.orm.converter.compiler.*;
 
 public class TransientSnippet implements Snippet {
 

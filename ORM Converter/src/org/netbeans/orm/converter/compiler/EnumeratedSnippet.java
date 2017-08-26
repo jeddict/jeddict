@@ -25,8 +25,8 @@ import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_ORDINAL;
 import static org.netbeans.jcode.jpa.JPAConstants.ENUM_TYPE_STRING;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_ENUMERATED_FQN;
-import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.jpa.modeler.spec.EnumType;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class EnumeratedSnippet implements Snippet {

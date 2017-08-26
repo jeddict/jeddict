@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.core.widget.attribute;
 
 import java.awt.Cursor;
-import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -36,6 +35,7 @@ import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFieldType
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getJaxbVarTypeProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
+import org.netbeans.jpa.modeler.settings.view.AttributeViewAs;
 import org.netbeans.jpa.modeler.settings.view.ViewPanel;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;

@@ -26,14 +26,14 @@ import org.netbeans.jpa.modeler.spec.EntityResult;
 import org.netbeans.jpa.modeler.spec.SqlResultSetMapping;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.nentity.Column;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
-import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 
 public class ResultSetMappingsPanel extends EntityComponent<SqlResultSetMapping> {
 

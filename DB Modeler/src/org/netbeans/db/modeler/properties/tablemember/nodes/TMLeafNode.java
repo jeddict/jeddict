@@ -17,10 +17,10 @@ package org.netbeans.db.modeler.properties.tablemember.nodes;
 
 import java.util.List;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
+import org.netbeans.db.modeler.properties.tablemember.TableMembers;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
-import org.netbeans.db.modeler.properties.tablemember.TableMembers;
 import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 
 public class TMLeafNode extends LeafNode<TableMembers> {

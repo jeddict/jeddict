@@ -15,10 +15,9 @@
  */
 package org.netbeans.jeddict.jsonb.modeler.core.widget;
 
-import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
+import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
 import static org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget.GENERALIZATION_ANCHOR_SHAPE;
-import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;

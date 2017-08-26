@@ -27,9 +27,9 @@ import org.netbeans.jpa.modeler.spec.Index;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
+import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NEntityPropertySupport;
 import org.openide.nodes.PropertySupport;
-import org.netbeans.modeler.properties.nentity.NEntityDataListener;
 
 public class PropertiesHandler {
 

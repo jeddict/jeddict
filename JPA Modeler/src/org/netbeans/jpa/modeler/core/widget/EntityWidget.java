@@ -33,18 +33,18 @@ import org.netbeans.jpa.modeler.properties.PropertiesHandler;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCacheableProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConvertProperties;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEntityDisplayProperty;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.spec.Entity;
+import org.netbeans.jpa.modeler.spec.Inheritance;
+import org.netbeans.jpa.modeler.spec.InheritanceType;
+import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
-import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
-import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getInheritanceProperty;
-import org.netbeans.jpa.modeler.spec.Inheritance;
-import org.netbeans.jpa.modeler.spec.InheritanceType;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
+import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.properties.handler.PropertyVisibilityHandler;
 
 public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {

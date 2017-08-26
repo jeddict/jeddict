@@ -16,6 +16,7 @@
 package org.netbeans.jeddict.jsonb.modeler.specification.model.file.action;
 
 import org.netbeans.jeddict.analytics.JeddictLogger;
+import org.netbeans.jeddict.jsonb.modeler.manager.JSONBModelerRequestManager;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.event.ShortcutListener;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.scene.JSONBModelerScene;
 import org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBModelerUtil;
@@ -23,7 +24,6 @@ import static org.netbeans.jeddict.jsonb.modeler.specification.model.util.JSONBM
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
-import org.netbeans.jeddict.jsonb.modeler.manager.JSONBModelerRequestManager;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;

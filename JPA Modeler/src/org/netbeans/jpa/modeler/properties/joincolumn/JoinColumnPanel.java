@@ -17,9 +17,9 @@ package org.netbeans.jpa.modeler.properties.joincolumn;
 
 import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.EntityComponent;
 
 public class JoinColumnPanel extends EntityComponent<JoinColumn> {
 

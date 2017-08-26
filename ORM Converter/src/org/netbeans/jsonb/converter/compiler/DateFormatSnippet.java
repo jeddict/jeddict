@@ -15,7 +15,6 @@
  */
 package org.netbeans.jsonb.converter.compiler;
 
-import org.netbeans.orm.converter.compiler.*;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +22,7 @@ import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_DATE_FORMAT;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_DATE_FORMAT_FQN;
 import static org.netbeans.jpa.modeler.settings.code.CodePanel.isGenerateDefaultValue;
 import org.netbeans.jpa.modeler.spec.jsonb.JsonbFormat;
+import org.netbeans.orm.converter.compiler.*;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.COMMA;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.QUOTE;

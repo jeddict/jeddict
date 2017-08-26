@@ -16,10 +16,10 @@
 package org.netbeans.jeddict.jsonb.modeler.core.widget.context;
 
 import java.awt.event.MouseListener;
+import org.netbeans.jeddict.jsonb.modeler.core.widget.DocumentWidget;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PAINT_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.RESET_ICON;
 import org.netbeans.jpa.modeler.specification.model.workspace.HighlightWidgetDialog;
-import org.netbeans.jeddict.jsonb.modeler.core.widget.DocumentWidget;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.widget.context.ContextPaletteButtonModel;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;

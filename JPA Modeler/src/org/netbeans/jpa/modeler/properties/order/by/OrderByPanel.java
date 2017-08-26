@@ -16,7 +16,6 @@
 package org.netbeans.jpa.modeler.properties.order.by;
 
 import static java.util.Collections.singletonList;
-import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -24,6 +23,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.MultiRelationAttributeWidget;
+import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import org.netbeans.jpa.modeler.properties.order.type.OrderTypeColumn;

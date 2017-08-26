@@ -47,11 +47,12 @@ import org.netbeans.jpa.modeler.spec.StoredProcedureParameter;
 import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.nentity.Column;
+import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
 import org.netbeans.modules.db.explorer.metadata.MetadataModelManager;
@@ -62,7 +63,6 @@ import org.netbeans.modules.db.metadata.model.api.Parameter;
 import org.netbeans.modules.db.metadata.model.api.Procedure;
 import org.netbeans.modules.db.metadata.model.api.SQLType;
 import org.openide.util.RequestProcessor;
-import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 
 public class NamedStoredProcedureQueryPanel extends EntityComponent<NamedStoredProcedureQuery> implements DocumentListener {
 

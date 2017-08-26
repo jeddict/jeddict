@@ -20,9 +20,9 @@ import javax.swing.JOptionPane;
 import org.netbeans.jpa.modeler.spec.ConstructorResult;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
 

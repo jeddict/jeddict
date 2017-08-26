@@ -19,7 +19,6 @@ import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;

@@ -117,10 +117,13 @@ import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ExtensionElements;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
+import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.SingleRelationAttribute;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
+import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceElement;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceItem;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
@@ -141,6 +144,7 @@ import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.enti
 import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.annotaton.DiagramModel;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
+import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
@@ -163,15 +167,11 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
-import static org.openide.util.NbBundle.getMessage;
-import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
-import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
-import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceElement;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 
 public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
 

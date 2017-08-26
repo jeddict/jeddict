@@ -25,10 +25,10 @@ import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
-import org.openide.util.NbBundle;
 import org.netbeans.modeler.widget.node.IWidgetStateHandler;
 import org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType;
 import org.netbeans.modeler.widget.pin.IPinWidget;
+import org.openide.util.NbBundle;
 
 /**
  *

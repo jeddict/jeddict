@@ -15,11 +15,11 @@
  */
 package org.netbeans.jpa.modeler.navigator.nodes;
 
-import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
+import org.netbeans.jpa.modeler.navigator.nodes.actions.LeafNodeAction;
 import org.netbeans.modeler.properties.view.manager.PropertyNode;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;

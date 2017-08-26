@@ -16,8 +16,6 @@
 package org.netbeans.jpa.modeler.properties.order.by;
 
 import java.util.Arrays;
-import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
@@ -26,6 +24,8 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
+import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import org.netbeans.jpa.modeler.spec.ManagedClass;

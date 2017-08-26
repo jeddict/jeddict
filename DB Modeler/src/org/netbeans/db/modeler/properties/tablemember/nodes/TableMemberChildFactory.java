@@ -15,13 +15,13 @@
  */
 package org.netbeans.db.modeler.properties.tablemember.nodes;
 
-import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
-import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import java.util.List;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.properties.tablemember.TableMembers;
+import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.openide.nodes.Node;
 
 public class TableMemberChildFactory extends TreeChildFactory<TableMembers, ColumnWidget> {

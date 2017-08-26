@@ -15,10 +15,10 @@
  */
 package org.netbeans.db.modeler.core.widget.column.parent;
 
-import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.spec.DBParentAssociationColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
+import org.netbeans.db.modeler.specification.model.util.ColumnUtil;
 import org.netbeans.jpa.modeler.spec.JoinColumn;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;

@@ -29,7 +29,6 @@ import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.Entity;
-import org.netbeans.jpa.modeler.spec.SecondaryTable;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;

@@ -15,8 +15,8 @@
  */
 package org.netbeans.db.modeler.classloader;
 
-import org.netbeans.api.java.classpath.ClassPath;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
+import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.modeler.core.ModelerFile;
 
 /**

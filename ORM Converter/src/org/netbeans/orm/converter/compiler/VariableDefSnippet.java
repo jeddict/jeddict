@@ -15,7 +15,6 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,20 +35,13 @@ import static org.netbeans.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
+import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.ID_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.LOB_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.TRANSIENT_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.VERSION_FQN;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
-import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
-import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
-import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
-import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
-import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
@@ -60,7 +52,15 @@ import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;
 import org.netbeans.jpa.modeler.spec.extend.AttributeSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbMetadata;
+import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
+import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
+import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
+import org.netbeans.orm.converter.compiler.validation.constraints.ConstraintSnippet;
+import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ImportSet;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.NEW_LINE;
+import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {

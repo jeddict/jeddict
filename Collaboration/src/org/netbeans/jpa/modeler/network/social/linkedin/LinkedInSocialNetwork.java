@@ -15,8 +15,6 @@
  */
 package org.netbeans.jpa.modeler.network.social.linkedin;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import javax.swing.Icon;

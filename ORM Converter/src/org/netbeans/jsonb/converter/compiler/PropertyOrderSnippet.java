@@ -15,13 +15,13 @@
  */
 package org.netbeans.jsonb.converter.compiler;
 
-import org.netbeans.orm.converter.compiler.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static java.util.stream.Collectors.joining;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_PROPERTY_ORDER;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_PROPERTY_ORDER_FQN;
+import org.netbeans.orm.converter.compiler.*;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_BRACES;

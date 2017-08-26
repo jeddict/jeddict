@@ -21,8 +21,8 @@ import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.DISCRIMINATOR_TYPE_FQN;
-import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
+import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class DiscriminatorColumnSnippet implements Snippet {

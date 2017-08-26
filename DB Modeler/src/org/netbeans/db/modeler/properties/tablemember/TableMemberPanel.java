@@ -18,22 +18,22 @@ package org.netbeans.db.modeler.properties.tablemember;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.netbeans.db.modeler.properties.tablemember.nodes.TableMemberChildFactory;
-import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import javax.swing.SwingUtilities;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TMLeafNode;
 import org.netbeans.db.modeler.properties.tablemember.nodes.TMRootNode;
+import org.netbeans.db.modeler.properties.tablemember.nodes.TableMemberChildFactory;
 import org.netbeans.db.modeler.spec.DBTable;
+import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeParentNode;
+import org.netbeans.jpa.modeler.properties.order.type.OrderTypeColumn;
 import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.jpa.modeler.spec.extend.OrderbyItem;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.OutlineView;
-import org.netbeans.jpa.modeler.properties.order.type.OrderTypeColumn;
 
 public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implements ExplorerManager.Provider {
 

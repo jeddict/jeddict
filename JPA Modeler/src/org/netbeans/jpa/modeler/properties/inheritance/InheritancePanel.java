@@ -14,10 +14,10 @@ import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;
 import org.netbeans.jpa.modeler.spec.DiscriminatorType;
 import org.netbeans.jpa.modeler.spec.Inheritance;
 import org.netbeans.jpa.modeler.spec.InheritanceType;
+import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.widget.properties.customattr.Property;
-import org.netbeans.jpa.modeler.spec.extend.InheritanceHandler;
 
 /**
  * Copyright [2014] Gaurav Gupta

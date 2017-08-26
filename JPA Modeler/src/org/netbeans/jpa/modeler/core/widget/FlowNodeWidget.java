@@ -15,12 +15,12 @@
  */
 package org.netbeans.jpa.modeler.core.widget;
 
-import org.netbeans.jpa.modeler.core.signal.SignalManager;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jeddict.analytics.JeddictLogger;
+import org.netbeans.jpa.modeler.core.signal.SignalManager;
 import org.netbeans.jpa.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
 import org.netbeans.modeler.specification.model.document.IModelerScene;

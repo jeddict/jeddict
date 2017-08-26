@@ -16,8 +16,8 @@
 package org.netbeans.jpa.modeler.core.widget;
 
 import java.awt.Image;
-import org.netbeans.jpa.modeler.spec.PrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
+import org.netbeans.jpa.modeler.spec.PrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;

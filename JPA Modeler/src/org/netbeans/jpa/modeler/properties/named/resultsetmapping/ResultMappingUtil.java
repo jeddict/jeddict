@@ -23,8 +23,8 @@ import org.netbeans.jpa.modeler.spec.ColumnResult;
 import org.netbeans.jpa.modeler.spec.FieldResult;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.nentity.Column;
-import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.INEntityDataListener;
+import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 
 public class ResultMappingUtil {
 

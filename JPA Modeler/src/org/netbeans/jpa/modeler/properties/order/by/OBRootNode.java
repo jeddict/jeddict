@@ -16,8 +16,8 @@
 package org.netbeans.jpa.modeler.properties.order.by;
 
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.OrderBy;

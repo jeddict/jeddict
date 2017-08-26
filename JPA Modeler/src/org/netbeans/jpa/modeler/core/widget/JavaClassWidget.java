@@ -31,15 +31,20 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassAnnoation;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomParentClass;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
 import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
+import org.netbeans.jpa.modeler.spec.IdentifiableClass;
+import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
@@ -47,11 +52,6 @@ import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
-import org.netbeans.jpa.modeler.spec.IdentifiableClass;
-import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
-import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 

@@ -15,12 +15,10 @@
  */
 package org.netbeans.db.modeler.core.widget.flow;
 
-import java.awt.Color;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.IReferenceColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
@@ -33,8 +31,6 @@ import org.netbeans.modeler.anchorshape.crow.ZeroOrMoreCrowShape;
 import org.netbeans.modeler.anchorshape.crow.ZeroOrOneCrowShape;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
-import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
-import org.openide.nodes.Sheet;
 
 /**
  *

@@ -20,12 +20,12 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
-import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.db.modeler.properties.tablemember.TableMemberPanel;
+import org.netbeans.db.modeler.spec.DBTable;
 import org.netbeans.jpa.modeler.spec.UniqueConstraint;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.EntityComponent;
 
 public class UniqueConstraintPanel extends EntityComponent<UniqueConstraint> {
 

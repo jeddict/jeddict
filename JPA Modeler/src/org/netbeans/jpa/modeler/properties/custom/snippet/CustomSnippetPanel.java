@@ -24,10 +24,10 @@ import org.netbeans.jpa.modeler.spec.extend.ClassSnippetLocationType;
 import org.netbeans.jpa.modeler.spec.extend.Snippet;
 import org.netbeans.jpa.modeler.spec.extend.SnippetLocation;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.RowValue;
-import org.netbeans.modeler.properties.EntityComponent;
 import org.openide.util.Exceptions;
 
 public class CustomSnippetPanel<T extends Snippet> extends EntityComponent<Snippet> implements ModelerPanel {

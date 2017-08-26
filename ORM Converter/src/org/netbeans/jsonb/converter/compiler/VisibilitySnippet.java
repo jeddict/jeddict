@@ -16,12 +16,12 @@
 package org.netbeans.jsonb.converter.compiler;
 
 import java.util.ArrayList;
-import org.netbeans.orm.converter.compiler.*;
 import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_VISIBILITY;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_VISIBILITY_FQN;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
+import org.netbeans.orm.converter.compiler.*;
 import org.netbeans.orm.converter.util.ClassHelper;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_PARANTHESES;

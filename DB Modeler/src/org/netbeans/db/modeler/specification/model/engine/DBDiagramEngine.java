@@ -21,7 +21,6 @@ import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import static org.netbeans.db.modeler.specification.model.util.DBModelerUtil.RELOAD_ICON;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.cache.DBConnectionUtil;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.modeler.core.ModelerFile;

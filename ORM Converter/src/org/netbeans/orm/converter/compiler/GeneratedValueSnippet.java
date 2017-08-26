@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
 import static org.netbeans.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
+import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class GeneratedValueSnippet implements Snippet {
 

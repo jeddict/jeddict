@@ -15,8 +15,8 @@
  */
 package org.netbeans.jpa.modeler.properties.rootmember.nodes;
 
-import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
+import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
