@@ -18,7 +18,6 @@ package org.netbeans.jpa.modeler.properties.entitygraph;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import java.util.List;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
-import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
@@ -42,7 +41,6 @@ import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.openide.nodes.Node;
 
 public class ExecutionEGChildFactory extends TreeChildFactory<NamedEntityGraph, AttributeWidget> {

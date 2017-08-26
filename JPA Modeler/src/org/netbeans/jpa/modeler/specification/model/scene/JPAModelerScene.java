@@ -93,7 +93,6 @@ import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.R
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SEARCH_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.VIEW_JSONB;
 import org.netbeans.jpa.modeler.specification.model.util.JSONBUtil;
-import org.openide.util.NbPreferences;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 

@@ -36,7 +36,6 @@ import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS;
 import static org.netbeans.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
-import org.netbeans.jpa.modeler.spec.extend.ClassAnnotationLocationType;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;

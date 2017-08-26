@@ -15,7 +15,6 @@
  */
 package org.netbeans.jpa.modeler.source.generator.ui;
 
-import java.util.Optional;
 import org.netbeans.jpa.modeler.properties.classmember.EntityMappingMemberPanel;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;

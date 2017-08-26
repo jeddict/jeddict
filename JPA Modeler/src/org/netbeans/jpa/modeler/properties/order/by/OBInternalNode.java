@@ -22,7 +22,6 @@ import org.netbeans.jpa.modeler.navigator.nodes.InternalNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.OrderBy;
-import org.netbeans.jpa.modeler.spec.NamedSubgraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 
 public class OBInternalNode extends InternalNode<OrderBy> {

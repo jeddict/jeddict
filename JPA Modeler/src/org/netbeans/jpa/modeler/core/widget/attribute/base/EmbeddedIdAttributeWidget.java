@@ -19,7 +19,6 @@ import java.awt.Image;
 import java.util.List;
 import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
-import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE_ICON_PATH;

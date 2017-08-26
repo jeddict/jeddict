@@ -15,9 +15,6 @@
  */
 package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
-import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -29,9 +26,6 @@ import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
 import org.netbeans.jpa.modeler.spec.extend.JoinColumnHandler;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.NANO_DB;
-import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
 import org.netbeans.modeler.widget.node.IPNodeWidget;

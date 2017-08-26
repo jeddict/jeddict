@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import static org.netbeans.jcode.jpa.JPAConstants.CONVERT;
 import static org.netbeans.jcode.jpa.JPAConstants.CONVERT_FQN;
-import static org.netbeans.jpa.modeler.settings.code.CodePanel.isGenerateDefaultValue;
 import org.netbeans.jpa.modeler.spec.Convert;
 import static org.netbeans.jpa.modeler.settings.code.CodePanel.isGenerateDefaultValue;
 import org.netbeans.orm.converter.util.ClassHelper;

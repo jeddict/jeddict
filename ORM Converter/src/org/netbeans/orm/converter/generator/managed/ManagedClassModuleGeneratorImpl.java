@@ -18,7 +18,6 @@ package org.netbeans.orm.converter.generator.managed;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.api.project.Project;

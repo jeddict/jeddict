@@ -19,7 +19,6 @@ import java.util.Arrays;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import java.util.List;
-import java.util.Optional;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
@@ -31,11 +30,9 @@ import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
 import org.netbeans.jpa.modeler.properties.order.type.OrderAction;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.OrderBy;
-import org.netbeans.jpa.modeler.spec.OrderType;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
 import org.netbeans.modeler.specification.model.document.widget.IFlowElementWidget;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 public class OrderByChildFactory extends TreeChildFactory<OrderBy,AttributeWidget> {

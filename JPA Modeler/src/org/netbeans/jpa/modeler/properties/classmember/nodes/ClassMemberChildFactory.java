@@ -23,7 +23,6 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers,AttributeWidget> {

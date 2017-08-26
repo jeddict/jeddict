@@ -16,7 +16,6 @@
 package org.netbeans.orm.converter.generator.staticmetamodel;
 
 import java.util.Collection;
-import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;

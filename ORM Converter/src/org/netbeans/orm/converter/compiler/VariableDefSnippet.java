@@ -43,8 +43,6 @@ import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.TRANSIENT_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.VERSION_FQN;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlAttribute;
-import org.netbeans.jpa.modeler.spec.jaxb.JaxbXmlElement;
 import org.netbeans.orm.converter.compiler.extend.AssociationOverridesHandler;
 import org.netbeans.orm.converter.compiler.extend.AttributeOverridesHandler;
 import org.netbeans.orm.converter.util.ClassHelper;

@@ -15,7 +15,6 @@
  */
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
-import org.apache.commons.lang.StringUtils;
 import org.netbeans.bean.validation.constraints.Max;
 import org.netbeans.orm.converter.compiler.*;
 import org.netbeans.orm.converter.util.ORMConverterUtil;

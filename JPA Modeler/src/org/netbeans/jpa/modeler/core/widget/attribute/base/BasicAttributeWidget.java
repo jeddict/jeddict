@@ -19,7 +19,6 @@ import java.awt.Image;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConvertProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getFetchTypeProperty;
 import org.netbeans.jpa.modeler.spec.Basic;
-import org.netbeans.jpa.modeler.spec.extend.ConvertHandler;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE_ICON_PATH;

@@ -15,10 +15,8 @@
  */
 package org.netbeans.orm.converter.compiler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import org.netbeans.orm.converter.util.ClassHelper;
 
 public class EntityListenerSnippet {

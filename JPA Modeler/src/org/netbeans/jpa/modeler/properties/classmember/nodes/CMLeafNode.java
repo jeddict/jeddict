@@ -22,7 +22,6 @@ import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.openide.nodes.Children;
 
 public class CMLeafNode extends LeafNode<ClassMembers> {
 

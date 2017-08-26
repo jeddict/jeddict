@@ -17,8 +17,6 @@ package org.netbeans.jpa.modeler.specification.model.event;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import org.netbeans.jpa.modeler.spec.EntityMappings;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.DBUtil;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.jpa.modeler.specification.model.util.JSONBUtil;

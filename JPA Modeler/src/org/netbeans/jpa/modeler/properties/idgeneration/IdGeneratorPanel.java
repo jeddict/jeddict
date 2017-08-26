@@ -6,7 +6,6 @@ import org.netbeans.jpa.modeler.spec.GenerationType;
 import org.netbeans.jpa.modeler.spec.Id;
 import org.netbeans.jpa.modeler.spec.SequenceGenerator;
 import org.netbeans.jpa.modeler.spec.TableGenerator;
-import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.widget.properties.customattr.Property;
 import org.openide.windows.WindowManager;

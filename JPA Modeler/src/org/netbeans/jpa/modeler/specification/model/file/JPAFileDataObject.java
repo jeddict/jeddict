@@ -17,7 +17,6 @@ package org.netbeans.jpa.modeler.specification.model.file;
 
 import java.awt.Image;
 import java.io.IOException;
-import org.netbeans.jeddict.analytics.JeddictLogger;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.JPA_FILE_TYPE;
 import org.netbeans.modeler.file.ModelerFileDataObject;
 import org.netbeans.modeler.resource.toolbar.ImageUtil;

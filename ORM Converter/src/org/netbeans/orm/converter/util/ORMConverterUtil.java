@@ -49,7 +49,6 @@ import org.openide.filesystems.FileSystem;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
-import org.openide.util.RequestProcessor;
 
 public class ORMConverterUtil {
 

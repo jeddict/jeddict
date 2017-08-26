@@ -15,11 +15,8 @@
  */
 package org.netbeans.orm.converter.generator.packageinfo;
 
-import org.netbeans.orm.converter.generator.staticmetamodel.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;

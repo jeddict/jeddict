@@ -61,7 +61,6 @@ import org.netbeans.modules.db.metadata.model.api.MetadataModelException;
 import org.netbeans.modules.db.metadata.model.api.Parameter;
 import org.netbeans.modules.db.metadata.model.api.Procedure;
 import org.netbeans.modules.db.metadata.model.api.SQLType;
-import org.openide.text.CloneableEditorSupport;
 import org.openide.util.RequestProcessor;
 import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 

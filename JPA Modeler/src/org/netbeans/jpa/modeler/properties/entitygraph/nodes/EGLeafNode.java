@@ -21,7 +21,6 @@ import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
 import org.netbeans.jpa.modeler.spec.NamedEntityGraph;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
-import org.openide.nodes.Children;
 
 /**
  *
