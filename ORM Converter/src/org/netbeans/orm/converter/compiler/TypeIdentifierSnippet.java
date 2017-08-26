@@ -57,6 +57,7 @@ public class TypeIdentifierSnippet implements Snippet {
     }
 
     public String getImplementationType(){
+        processVariableType();
         return implementationType;
     }
     

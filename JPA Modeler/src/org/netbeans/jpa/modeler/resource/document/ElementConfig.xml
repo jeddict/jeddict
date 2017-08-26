@@ -140,14 +140,14 @@
         </element>
         <element id="MultiRelationAttribute" class="org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute">
             <attributes>
-                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionImplType">
                     <display-name>MapKey Type</display-name>
                 </attribute>  
             </attributes>
         </element>
         <element id="ElementCollection" class="org.netbeans.jpa.modeler.spec.ElementCollection">
             <attributes>
-                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionType">
+                <attribute id="mapKeyType" groupId="ATTR_PROP" class="org.netbeans.jpa.modeler.spec.extend.MapKeyType" name="mapKeyType" refresh-onchange="true" after="collectionImplType">
                     <display-name>MapKey Type</display-name>
                 </attribute> 
 <!--                <attribute id="collectionTable" class="org.netbeans.jpa.modeler.spec.CollectionTable" name="collectionTable" >

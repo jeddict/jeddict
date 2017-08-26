@@ -229,7 +229,10 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getImplementationType() {
+        System.out.println("#### " + this.getName() + " - " + this.getTypeIdentifier());
+        
         if (this.getTypeIdentifier() != null) {
+            System.out.println("#### " + this.getName() + " = " + this.getTypeIdentifier().getImplementationType());
             return this.getTypeIdentifier().getImplementationType();
         } else {
             return null;
@@ -1157,12 +1160,16 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
         sb.append(String.format("get%s().add(%s);", methodName, singularName)).append(NEW_LINE);
         if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
             OneToMany otm = (OneToMany) attribute;
-            connectedMethodName = StringHelper.getMethodName(otm.getConnectedAttributeName());
-            sb.append(String.format("%s.set%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            if (otm.getConnectedAttributeName() != null) {
+                connectedMethodName = StringHelper.getMethodName(otm.getConnectedAttributeName());
+                sb.append(String.format("%s.set%s(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            }
         } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
             ManyToMany mtm = (ManyToMany) attribute;
-            connectedMethodName = StringHelper.getMethodName(mtm.getConnectedAttributeName());
-            sb.append(String.format("%s.get%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            if (mtm.getConnectedAttributeName() != null) {
+                connectedMethodName = StringHelper.getMethodName(mtm.getConnectedAttributeName());
+                sb.append(String.format("%s.get%s().add(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            }
         }
         sb.append("}").append(NEW_LINE).append(NEW_LINE);
 
@@ -1171,9 +1178,15 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
                 helperMethodName, type, getSingularName())).append(NEW_LINE);
         sb.append(String.format("get%s().remove(%s);", methodName, singularName)).append(NEW_LINE);
         if (attribute instanceof OneToMany && !((OneToMany) attribute).isOwner()) {
-            sb.append(String.format("%s.set%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+            OneToMany otm = (OneToMany) attribute;
+            if (otm.getConnectedAttributeName() != null) {
+                sb.append(String.format("%s.set%s(null);", singularName, connectedMethodName)).append(NEW_LINE);
+            }
         } else if (attribute instanceof ManyToMany && ((ManyToMany) attribute).isOwner()) {
-            sb.append(String.format("%s.get%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            ManyToMany mtm = (ManyToMany) attribute;
+            if (mtm.getConnectedAttributeName() != null) {
+                sb.append(String.format("%s.get%s().remove(this);", singularName, connectedMethodName)).append(NEW_LINE);
+            }
         }
         sb.append("}").append(NEW_LINE).append(NEW_LINE);
 

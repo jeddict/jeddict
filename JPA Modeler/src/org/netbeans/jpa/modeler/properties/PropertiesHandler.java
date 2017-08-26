@@ -201,7 +201,7 @@ public class PropertiesHandler {
 
             void setCollectionType(ComboBoxValue<String> value) {
                 String collectionType = value.getValue();
-                boolean valid = validateCollectionType(collectionType, colSpec.getCollectionImplType(), collectionType);
+                boolean valid = validateCollectionType(collectionType, colSpec.getCollectionImplType(), true);
                 boolean nextValidation = valid;
                 if (!nextValidation) {
                     try {
@@ -320,7 +320,7 @@ public class PropertiesHandler {
 
             void setCollectionImplType(ComboBoxValue<String> value) {
                 String collectionImplType = value.getValue();
-               boolean valid = validateCollectionType(colSpec.getCollectionType(), collectionImplType, collectionImplType);
+               boolean valid = validateCollectionType(colSpec.getCollectionType(), collectionImplType, false);
                 if (valid) {
                     colSpec.setCollectionImplType(collectionImplType);
                     em.getCache().addCollectionImplClass(collectionImplType);
@@ -351,7 +351,7 @@ public class PropertiesHandler {
                 em.getCache().getCollectionImplClasses()
                         .stream()
                         .filter(StringUtils::isNotEmpty)
-                        .forEach((collection) -> {
+                        .forEach(collection -> {
                             Class _class;
                             try {
                                 _class = Class.forName(collection);
@@ -389,27 +389,28 @@ public class PropertiesHandler {
         };
         org.netbeans.modeler.config.element.Attribute attribute = new org.netbeans.modeler.config.element.Attribute("collectionImplType", "Collection Implementation Type", "");
         attribute.setAfter("collectionType");
-        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), "collectionImplType", "Collection Implementation Type", "", comboBoxListener);
+        return new ComboBoxPropertySupport(modelerScene.getModelerFile(), attribute, comboBoxListener);
     }
     
-    
-    private static boolean validateCollectionType(String type1, String type2, String type3){
+    //changedValue could be collectionType or implType
+    private static boolean validateCollectionType(String collectionType, String implType, boolean collectionTypeChanged){
          boolean valid = false;
+         String changedValue = collectionTypeChanged ? collectionType : implType;
                 try {
-                    if (StringUtils.isNotBlank(type3)) {
-                        if (java.util.Collection.class.isAssignableFrom(Class.forName(type3))
-                                || java.util.Map.class.isAssignableFrom(Class.forName(type3))) {
+                    if (StringUtils.isNotBlank(changedValue)) {
+                        if (java.util.Collection.class.isAssignableFrom(Class.forName(changedValue))
+                                || java.util.Map.class.isAssignableFrom(Class.forName(changedValue))) {
                             valid = true;
                         }
 
-                        if (StringUtils.isNotBlank(type1) && StringUtils.isNotBlank(type2)) {
-                            Class type1Class = Class.forName(type1);
+                        if (StringUtils.isNotBlank(collectionType) && StringUtils.isNotBlank(implType)) {
+                            Class type1Class = Class.forName(collectionType);
                             if (java.util.Collection.class.isAssignableFrom(type1Class)
-                                    && !type1Class.isAssignableFrom(Class.forName(type2))) {
+                                    && !type1Class.isAssignableFrom(Class.forName(implType))) {
                                 valid = false;
                             }
                             if (java.util.Map.class.isAssignableFrom(type1Class)
-                                    && !type1Class.isAssignableFrom(Class.forName(type2))) {
+                                    && !type1Class.isAssignableFrom(Class.forName(implType))) {
                                 valid = false;
                             }
                         }
@@ -419,8 +420,14 @@ public class PropertiesHandler {
                     //skip allow = false;
                 }
                 if(!valid) {
-                    if (StringUtils.isNotBlank(type1) && StringUtils.isNotBlank(type2)) {
-                        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), String.format("Incompatible Collection type [%s] and Implementation type [%s]", type1, type2), "Incompatible types", ERROR_MESSAGE);
+                    if (StringUtils.isNotBlank(collectionType) && StringUtils.isNotBlank(implType)) {
+                        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), 
+                                String.format("Incompatible Collection type [%s] and Implementation type [%s]", collectionType, implType), 
+                                "Incompatible types", ERROR_MESSAGE);
+                    } else if(!collectionTypeChanged && StringUtils.isBlank(implType) ){
+                        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), 
+                                "Set collection implementation type to generate add/remove method", 
+                                "Add/Remove method", ERROR_MESSAGE);
                     }
                 }
         return valid;

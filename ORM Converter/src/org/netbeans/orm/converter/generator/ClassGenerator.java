@@ -602,6 +602,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             FetchType parsedFetchType = parsedElementCollection.getFetch();
             ElementCollectionSnippet elementCollection = new ElementCollectionSnippet();
             elementCollection.setCollectionType(parsedElementCollection.getCollectionType());
+            elementCollection.setCollectionImplType(parsedElementCollection.getCollectionImplType());
             elementCollection.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedElementCollection));
             elementCollection.setTargetClass(parsedElementCollection.getAttributeType());
             if (parsedElementCollection.getConnectedClass() != null) {
@@ -1423,14 +1424,14 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return;
         }
         for (ManyToMany parsedManyToMany : parsedManyToManys) {
-            List<String> cascadeTypes = getCascadeTypes(
-                    parsedManyToMany.getCascade());
+            List<String> cascadeTypes = getCascadeTypes(parsedManyToMany.getCascade());
 
             JoinTableSnippet joinTable = getJoinTable(parsedManyToMany.getJoinTable());
 
             ManyToManySnippet manyToMany = new ManyToManySnippet();
 
             manyToMany.setCollectionType(parsedManyToMany.getCollectionType());
+            manyToMany.setCollectionImplType(parsedManyToMany.getCollectionImplType());
             manyToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedManyToMany));
             manyToMany.setMappedBy(parsedManyToMany.getMappedBy());
             manyToMany.setTargetEntity(parsedManyToMany.getTargetEntity());
@@ -1564,6 +1565,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             oneToMany.setTargetField(parsedOneToMany.getConnectedAttributeName());
             oneToMany.setMappedBy(parsedOneToMany.getMappedBy());
             oneToMany.setCollectionType(parsedOneToMany.getCollectionType());
+            oneToMany.setCollectionImplType(parsedOneToMany.getCollectionImplType());
             oneToMany.setMapKeySnippet(updateMapKeyAttributeSnippet(parsedOneToMany));
             if (parsedOneToMany.getFetch() != null) {
                 oneToMany.setFetchType(parsedOneToMany.getFetch().value());
