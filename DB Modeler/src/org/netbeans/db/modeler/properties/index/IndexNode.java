@@ -61,6 +61,7 @@ public class IndexNode extends TMLeafNode implements OrderTypeColumn {
     /**
      * @return the order
      */
+    @Override
     public OrderType getOrder() {
         return order;
     }
@@ -68,6 +69,7 @@ public class IndexNode extends TMLeafNode implements OrderTypeColumn {
     /**
      * @param order the order to set
      */
+    @Override
     public void setOrder(OrderType order) {
         this.order = order;
     }

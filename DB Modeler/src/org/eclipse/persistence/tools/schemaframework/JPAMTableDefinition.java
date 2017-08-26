@@ -110,6 +110,7 @@ public class JPAMTableDefinition extends TableDefinition {
     /**
      * INTERNAL: Build the foreign key constraints.
      */
+    @Override
     protected void buildFieldTypes(AbstractSession session) {
         // The ForeignKeyConstraint object is the newer way of doing things.
         // We support FieldDefinition.getForeignKeyFieldName() due to backwards compatibility
@@ -121,6 +122,7 @@ public class JPAMTableDefinition extends TableDefinition {
         }
     }
 
+    @Override
     void createUniqueConstraintsOnDatabase(final AbstractSession session) throws ValidationException, DatabaseException {
         if ((!session.getPlatform().supportsUniqueKeyConstraints())
                 || getUniqueKeys().isEmpty()
@@ -133,6 +135,7 @@ public class JPAMTableDefinition extends TableDefinition {
         }
     }
 
+    @Override
     void createForeignConstraintsOnDatabase(final AbstractSession session) throws ValidationException, DatabaseException {
         if ((!session.getPlatform().supportsForeignKeyConstraints()) || getForeignKeyMap().isEmpty()) {
             return;
@@ -149,6 +152,7 @@ public class JPAMTableDefinition extends TableDefinition {
      * Build a foreign key constraint using
      * FieldDefinition.getForeignKeyFieldName().
      */
+    @Override
     protected ForeignKeyConstraint buildForeignKeyConstraint(FieldDefinition field, DatabasePlatform platform) {
         Vector sourceFields = new Vector();
         Vector targetFields = new Vector();
@@ -171,6 +175,7 @@ public class JPAMTableDefinition extends TableDefinition {
     /**
      * Build a foreign key constraint.
      */
+    @Override
     protected ForeignKeyConstraint buildForeignKeyConstraint(List<String> fkFieldNames, List<String> pkFieldNames, TableDefinition targetTable, DatabasePlatform platform) {
         assert fkFieldNames.size() > 0 && fkFieldNames.size() == pkFieldNames.size();
 
@@ -195,6 +200,7 @@ public class JPAMTableDefinition extends TableDefinition {
      * the vowels from the table and field name. 4. Truncate the table name to
      * zero length if necessary.
      */
+    @Override
     protected String buildForeignKeyConstraintName(String tableName, String fieldName, int maximumNameLength, DatabasePlatform platform) {
         String startDelimiter = "";
         String endDelimiter = "";
@@ -253,6 +259,7 @@ public class JPAMTableDefinition extends TableDefinition {
         return foreignKeyName;
     }
     
+    @Override
     public UniqueKeyConstraint buildUniqueKeyConstraint(String name, List<String> fieldNames, int serialNumber, DatabasePlatform platform) {
         assert fieldNames.size() > 0;
         

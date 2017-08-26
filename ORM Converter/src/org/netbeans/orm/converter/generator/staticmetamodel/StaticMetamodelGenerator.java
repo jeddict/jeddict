@@ -143,7 +143,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
             classDef.setSuperClassName(superClassHelper.getFQClassName());
         }
 
-        classDef.setVariableDefs(new ArrayList<VariableDefSnippet>(variables.values()));
+        classDef.setVariableDefs(new ArrayList<>(variables.values()));
         classDef.setClassName(classHelper.getFQClassName());
 
         classDef.setPackageName(classHelper.getPackageName());

@@ -671,7 +671,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<String> cascadeTypes = new ArrayList<String>();
+        List<String> cascadeTypes = new ArrayList<>();
 
         EmptyType cascadeAll = cascadeType.getCascadeAll();
         EmptyType cascadeMerge = cascadeType.getCascadeMerge();
@@ -709,7 +709,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<ColumnResultSnippet> columnResults = new ArrayList<ColumnResultSnippet>();
+        List<ColumnResultSnippet> columnResults = new ArrayList<>();
 
         for (ColumnResult parsedColumnResult : parsedColumnResults) {
             ColumnResultSnippet columnResult = new ColumnResultSnippet();
@@ -729,7 +729,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<ConstructorResultSnippet> constructorResults = new ArrayList<ConstructorResultSnippet>();
+        List<ConstructorResultSnippet> constructorResults = new ArrayList<>();
 
         for (ConstructorResult parsedConstructorResult : parsedConstructorResults) {
             ConstructorResultSnippet constructorResult = new ConstructorResultSnippet();
@@ -750,7 +750,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<EntityResultSnippet> entityResults = new ArrayList<EntityResultSnippet>();
+        List<EntityResultSnippet> entityResults = new ArrayList<>();
 
         for (EntityResult parsedEntityResult : parsedEntityResults) {
 
@@ -779,7 +779,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<FieldResultSnippet> fieldResults = new ArrayList<FieldResultSnippet>();
+        List<FieldResultSnippet> fieldResults = new ArrayList<>();
 
         for (FieldResult parsedFieldResult : parsedFieldResults) {
             FieldResultSnippet fieldResult = new FieldResultSnippet();
@@ -933,7 +933,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<NamedAttributeNodeSnippet> namedAttributeNodes = new ArrayList<NamedAttributeNodeSnippet>();
+        List<NamedAttributeNodeSnippet> namedAttributeNodes = new ArrayList<>();
         for (NamedAttributeNode parsedNamedAttributeNode : parsedNamedAttributeNodes) {
             NamedAttributeNodeSnippet namedAttributeNode = new NamedAttributeNodeSnippet();
             namedAttributeNode.setName(parsedNamedAttributeNode.getName());
@@ -1179,7 +1179,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     }
 
     protected List<String> getResultClasses(EntityMappings entityMappings, List<String> parsedgetResultClasses) {
-        List<String> newParsedgetResultClasses = new ArrayList<String>();
+        List<String> newParsedgetResultClasses = new ArrayList<>();
 
         for (String resultClass : parsedgetResultClasses) {
             if (resultClass.charAt(0) == '{' && resultClass.charAt(resultClass.length() - 1) == '}') {
@@ -1204,7 +1204,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             return Collections.EMPTY_LIST;
         }
 
-        List<StoredProcedureParameterSnippet> storedProcedureParameters = new ArrayList<StoredProcedureParameterSnippet>();
+        List<StoredProcedureParameterSnippet> storedProcedureParameters = new ArrayList<>();
 
         for (StoredProcedureParameter parsedStoredProcedureParameter : parsedStoredProcedureParameters) {
             StoredProcedureParameterSnippet storedProcedureParameter = new StoredProcedureParameterSnippet();

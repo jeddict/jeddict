@@ -79,9 +79,9 @@ public class JPAMSchemaManager {
      * generation
      */
     protected boolean createDatabaseSchemas = false;
-    protected HashSet<String> createdDatabaseSchemas = new HashSet<String>();
-    protected HashSet<String> createdDatabaseSchemasOnDatabase = new HashSet<String>();
-    protected HashMap<String, DatabaseObjectDefinition> dropDatabaseSchemas = new HashMap<String, DatabaseObjectDefinition>();
+    protected HashSet<String> createdDatabaseSchemas = new HashSet<>();
+    protected HashSet<String> createdDatabaseSchemasOnDatabase = new HashSet<>();
+    protected HashMap<String, DatabaseObjectDefinition> dropDatabaseSchemas = new HashMap<>();
 
     private DBMapping dbMapping;
 
@@ -532,7 +532,7 @@ public class JPAMSchemaManager {
     protected HashSet<SequenceDefinition> buildSequenceDefinitions() {
         // Remember the processed - to handle each sequence just once.
         HashSet processedSequenceNames = new HashSet();
-        HashSet<SequenceDefinition> sequenceDefinitions = new HashSet<SequenceDefinition>();
+        HashSet<SequenceDefinition> sequenceDefinitions = new HashSet<>();
 
         for (ClassDescriptor descriptor : getSession().getDescriptors().values()) {
             if (descriptor.usesSequenceNumbers()) {
@@ -691,6 +691,7 @@ public class JPAMSchemaManager {
      * INTERNAL: Close the schema writer when the schema manger is garbage
      * collected
      */
+    @Override
     public void finalize() {
         try {
             this.closeDDLWriter();

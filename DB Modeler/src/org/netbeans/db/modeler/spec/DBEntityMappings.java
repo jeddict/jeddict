@@ -135,6 +135,7 @@ public class DBEntityMappings extends XMLEntityMappings {
      * INTERNAL: Assumes the correct class loader has been set before calling
      * this method.
      */
+    @Override
     public void initPersistenceUnitClasses(HashMap<String, EntityAccessor> allEntities, HashMap<String, EmbeddableAccessor> allEmbeddables) {
         // Build our ConverterAccessor and ConverterMetadata lists from
         // the mixed converter metadata list.
@@ -221,6 +222,7 @@ public class DBEntityMappings extends XMLEntityMappings {
         }
     }
 
+    @Override
     protected XMLEntityMappings reloadXMLEntityMappingsObject(XMLEntityMappings xmlEntityMappings) {
         XMLEntityMappings newXMLEntityMappings = super.reloadXMLEntityMappingsObject(xmlEntityMappings);
         if (xmlEntityMappings.getEntities() != null) {

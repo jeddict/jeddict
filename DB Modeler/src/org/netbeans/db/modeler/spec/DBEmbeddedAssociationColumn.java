@@ -54,10 +54,12 @@ public abstract class DBEmbeddedAssociationColumn<E extends Attribute> extends D
     /**
      * @return the joinColumn
      */
+    @Override
     public JoinColumn getJoinColumn() {
         return joinColumn;
     }
 
+    @Override
     public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }

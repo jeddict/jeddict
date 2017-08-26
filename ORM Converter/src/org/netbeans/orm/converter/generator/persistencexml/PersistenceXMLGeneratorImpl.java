@@ -60,7 +60,7 @@ public class PersistenceXMLGeneratorImpl implements ModuleGenerator {
 //        results.addAll(entitySnippets);
 //        results.addAll(superClassSnippets);
 //        results.addAll(embededSnippets);
-        List<ClassDefSnippet> classDefs = new ArrayList<ClassDefSnippet>();
+        List<ClassDefSnippet> classDefs = new ArrayList<>();
         for (WritableSnippet writableSnippet : entitySnippets) {
             classDefs.add((ClassDefSnippet) writableSnippet);
         }

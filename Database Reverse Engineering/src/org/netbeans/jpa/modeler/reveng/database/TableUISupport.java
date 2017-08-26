@@ -76,7 +76,7 @@ public class TableUISupport {
     }
 
     public static Set<Table> getSelectedTables(JList list, boolean enabledOnly) {
-        Set<Table> result = new HashSet<Table>();
+        Set<Table> result = new HashSet<>();
 
         int[] selected = list.getSelectedIndices();
         for (int i = 0; i < selected.length; i++) {
@@ -93,7 +93,7 @@ public class TableUISupport {
     }
 
     public static Set<Table> getEnabledTables(JList list) {
-        Set<Table> result = new HashSet<Table>();
+        Set<Table> result = new HashSet<>();
 
         for (int i = 0; i < list.getModel().getSize(); i++) {
             Table table = (Table) list.getModel().getElementAt(i);
@@ -153,7 +153,7 @@ public class TableUISupport {
 
         private void refresh() {
             int oldSize = getSize();
-            displayTables = new ArrayList<Table>(tableClosure.getAvailableTables());
+            displayTables = new ArrayList<>(tableClosure.getAvailableTables());
             Collections.sort(displayTables);
             fireIntervalRemoved(this, 0, oldSize);
             fireIntervalAdded(this, 0, getSize());
@@ -189,7 +189,7 @@ public class TableUISupport {
 
         private void refresh() {
             int oldSize = getSize();
-            displayTables = new ArrayList<Table>(tableClosure.getSelectedTables());
+            displayTables = new ArrayList<>(tableClosure.getSelectedTables());
             Collections.sort(displayTables);
             fireIntervalRemoved(this, 0, oldSize);
             fireIntervalAdded(this, 0, getSize());
@@ -281,7 +281,7 @@ public class TableUISupport {
         }
 
         private static String getTableTooltip(Table table, TableClosure tableClosure) {
-            List<Table> tables = new ArrayList<Table>();
+            List<Table> tables = new ArrayList<>();
             Set<Table> relatedTables;
             String bundleKey;
 

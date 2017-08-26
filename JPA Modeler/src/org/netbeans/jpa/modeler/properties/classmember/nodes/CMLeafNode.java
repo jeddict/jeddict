@@ -32,6 +32,7 @@ public class CMLeafNode extends LeafNode<ClassMembers> {
         this.leafAttributeWidget = leafAttributeWidget;
     }
 
+    @Override
     public void init() {
         getCheckableNode().setEnableWithParent(true);
         this.setIconBaseWithExtension(leafAttributeWidget.getIconPath());

@@ -31,6 +31,7 @@ public class JSONBNode extends FlowPin {
         this.attribute = attribute;
     }
 
+    @Override
     public String getId() {
         return attribute.getId();
     }

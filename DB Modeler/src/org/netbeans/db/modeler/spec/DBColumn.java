@@ -44,6 +44,7 @@ public class DBColumn<E> extends FlowPin {
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -51,6 +52,7 @@ public class DBColumn<E> extends FlowPin {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }

@@ -93,6 +93,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     private final List<SingleValueEmbeddedAttributeWidget> singleValueEmbeddedAttributeWidgets = new ArrayList<>();
     private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<>();
        
+    @Override
     public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
         return getAllAttributeWidgets(true);
     }
@@ -104,6 +105,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
         return attributeWidgets;
     }
 
+    @Override
     public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute) {
         List<AttributeWidget<? extends Attribute>> attributeWidgets = new ArrayList<>();
         JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class

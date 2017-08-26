@@ -35,10 +35,12 @@ public class DBJoinColumn extends DBColumn<Attribute> implements DBForeignKey<Jo
     /**
      * @return the joinColumn
      */
+    @Override
     public JoinColumn getJoinColumn() {
         return joinColumn;
     }
 
+    @Override
     public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }

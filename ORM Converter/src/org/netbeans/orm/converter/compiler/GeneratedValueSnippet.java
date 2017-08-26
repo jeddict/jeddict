@@ -94,7 +94,7 @@ public class GeneratedValueSnippet implements Snippet {
     }
 
     private static List<String> getStrategyTypes() {
-        List<String> strategyTypes = new ArrayList<String>();
+        List<String> strategyTypes = new ArrayList<>();
 
         strategyTypes.add(AUTO);
         strategyTypes.add(IDENTITY);

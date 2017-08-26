@@ -26,7 +26,7 @@ public class ClassesRepository {
     private static ClassesRepository instance = new ClassesRepository();
 
     private Map<ClassType, List<WritableSnippet>> repository
-            = new HashMap<ClassType, List<WritableSnippet>>();
+            = new HashMap<>();
 
     private ClassesRepository() {
     }
@@ -41,7 +41,7 @@ public class ClassesRepository {
         List<WritableSnippet> writableSnippets = repository.get(classType);
 
         if (writableSnippets == null) {
-            writableSnippets = new ArrayList<WritableSnippet>();
+            writableSnippets = new ArrayList<>();
         }
 
         writableSnippets.add(writableSnippet);
@@ -50,7 +50,7 @@ public class ClassesRepository {
     }
 
     public void clear() {
-        repository = new HashMap<ClassType, List<WritableSnippet>>();
+        repository = new HashMap<>();
     }
 
     public WritableSnippet getWritableSnippet(ClassHelper classHelper) {
@@ -72,7 +72,7 @@ public class ClassesRepository {
         List<WritableSnippet> writableSnippets = repository.get(classType);
 
         if (writableSnippets == null) {
-            return new ArrayList<WritableSnippet>();
+            return new ArrayList<>();
         }
 
         return writableSnippets;

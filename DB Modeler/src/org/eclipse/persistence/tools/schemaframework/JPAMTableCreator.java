@@ -258,7 +258,7 @@ public class JPAMTableCreator {
             }
             while ((trys > 0) && !tables.isEmpty()) {
                 trys--;
-                List<JPAMTableDefinition> failed = new ArrayList<JPAMTableDefinition>();
+                List<JPAMTableDefinition> failed = new ArrayList<>();
                 for (JPAMTableDefinition table : tables) {
                     // Must not create sequence table as done in createSequences.
                     if (!table.getName().equals(sequenceTableName)) {

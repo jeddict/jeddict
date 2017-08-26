@@ -54,10 +54,12 @@ public abstract class DBParentAssociationColumn<E extends Attribute> extends DBP
     /**
      * @return the joinColumn
      */
+    @Override
     public JoinColumn getJoinColumn() {
         return joinColumn;
     }
 
+    @Override
     public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }

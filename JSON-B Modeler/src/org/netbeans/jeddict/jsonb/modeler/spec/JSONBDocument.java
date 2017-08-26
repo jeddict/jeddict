@@ -79,6 +79,7 @@ public class JSONBDocument extends FlowNode {
         this.nodes = nodes;
     }
 
+    @Override
     public String getId() {
         return javaClass.getId();
     }

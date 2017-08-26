@@ -132,7 +132,7 @@ public class DbSchemaEjbGenerator {
      * @return A set of tables that are referenced by at least one another table
      */
     public static Set<String> getTablesReferecedByOtherTables(SchemaElement schemaElement) {
-        Set<String> tableNames = new HashSet<String>();
+        Set<String> tableNames = new HashSet<>();
         TableElement[] allTables = schemaElement.getTables();
         for (TableElement allTable : allTables) {
             ForeignKeyElement[] fkElements = allTable.getForeignKeys();
@@ -151,7 +151,7 @@ public class DbSchemaEjbGenerator {
      * promary key reference
      */
     public static Set<String> getTablesReferencesOtherTablesWithPrimaryKeyMatch(SchemaElement schemaElement) {
-        Set<String> tableNames = new HashSet<String>();
+        Set<String> tableNames = new HashSet<>();
         TableElement[] allTables = schemaElement.getTables();
         for (TableElement table0 : allTables) {
             UniqueKeyElement pk0 = table0.getPrimaryKey();
@@ -265,7 +265,7 @@ public class DbSchemaEjbGenerator {
     }
 
     private void addAllTables() {
-        List<TableElement> joinTables = new LinkedList<TableElement>();
+        List<TableElement> joinTables = new LinkedList<>();
         for (String tableName : genTables.getTableNames()) {
             TableElement tableElement
                     = schemaElement.getTable(DBIdentifier.create(tableName));
@@ -656,7 +656,7 @@ public class DbSchemaEjbGenerator {
         if (fkeys == null || fkeys.length == 0) {
             return fkeys;
         }
-        HashMap<ComparableFK, ForeignKeyElement> ret = new HashMap<ComparableFK, ForeignKeyElement>();
+        HashMap<ComparableFK, ForeignKeyElement> ret = new HashMap<>();
         for (ForeignKeyElement key : fkeys) {
             ComparableFK fkc = new ComparableFK(key);
             if (ret.get(fkc) != null) {//we already have the same key

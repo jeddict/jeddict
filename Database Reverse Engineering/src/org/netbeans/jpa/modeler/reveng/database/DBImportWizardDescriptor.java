@@ -182,12 +182,7 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
 
         } finally {
             handle.finish();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    progressPanel.close();
-                }
-            });
+            SwingUtilities.invokeLater(progressPanel::close);
         }
     }
 
@@ -301,7 +296,7 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
 
         String wizardTitle = NbBundle.getMessage(DBImportWizardDescriptor.class, "TXT_TITLE");
 
-        List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<WizardDescriptor.Panel<WizardDescriptor>>();
+        List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<>();
         panels.add(new DatabaseTablesSelectorPanel.WizardPanel(wizardTitle));
         panels.add(new EntityClassesConfigurationPanel.WizardPanel());
         return panels;

@@ -34,7 +34,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
     public void addColumnResult(ColumnResultSnippet columnResult) {
 
         if (columnResults.isEmpty()) {
-            columnResults = new ArrayList<ColumnResultSnippet>();
+            columnResults = new ArrayList<>();
         }
 
         columnResults.add(columnResult);
@@ -43,7 +43,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
     public void addEntityResult(EntityResultSnippet entityResult) {
 
         if (entityResults.isEmpty()) {
-            entityResults = new ArrayList<EntityResultSnippet>();
+            entityResults = new ArrayList<>();
         }
 
         entityResults.add(entityResult);
@@ -52,7 +52,7 @@ public class SQLResultSetMappingSnippet implements Snippet {
     public void addConstructorResult(ConstructorResultSnippet constructorResult) {
 
         if (constructorResults.isEmpty()) {
-            constructorResults = new ArrayList<ConstructorResultSnippet>();
+            constructorResults = new ArrayList<>();
         }
 
         constructorResults.add(constructorResult);

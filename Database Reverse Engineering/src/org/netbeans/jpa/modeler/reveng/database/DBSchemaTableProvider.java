@@ -74,10 +74,10 @@ public class DBSchemaTableProvider implements TableProvider {
     }
 
     private Set<Table> buildTables() {
-        Map<String, DBSchemaTable> name2Table = new HashMap<String, DBSchemaTable>();
-        Map<String, Set<Table>> name2Referenced = new HashMap<String, Set<Table>>();
-        Map<String, Set<Table>> name2ReferencedBy = new HashMap<String, Set<Table>>();
-        Map<String, Set<Table>> name2Join = new HashMap<String, Set<Table>>();
+        Map<String, DBSchemaTable> name2Table = new HashMap<>();
+        Map<String, Set<Table>> name2Referenced = new HashMap<>();
+        Map<String, Set<Table>> name2ReferencedBy = new HashMap<>();
+        Map<String, Set<Table>> name2Join = new HashMap<>();
 
         // need to create all the tables first
         TableElement[] tableElements = schemaElement.getTables();
@@ -114,9 +114,9 @@ public class DBSchemaTableProvider implements TableProvider {
             table.setUniqueConstraints(getUniqueConstraints(tableElement));
 
             name2Table.put(tableName, table);
-            name2Referenced.put(tableName, new HashSet<Table>());
-            name2ReferencedBy.put(tableName, new HashSet<Table>());
-            name2Join.put(tableName, new HashSet<Table>());
+            name2Referenced.put(tableName, new HashSet<>());
+            name2ReferencedBy.put(tableName, new HashSet<>());
+            name2Join.put(tableName, new HashSet<>());
         }
 
         // referenced, referenced by and join tables
@@ -145,7 +145,7 @@ public class DBSchemaTableProvider implements TableProvider {
             }
         }
 
-        Set<Table> result = new HashSet<Table>();
+        Set<Table> result = new HashSet<>();
         for (DBSchemaTable table : name2Table.values()) {
             String tableName = table.getName();
 
@@ -160,7 +160,7 @@ public class DBSchemaTableProvider implements TableProvider {
     }
 
     private Set<List<String>> getUniqueConstraints(TableElement tableElement) {
-        Set<List<String>> uniqueConstraintsCols = new HashSet<List<String>>();
+        Set<List<String>> uniqueConstraintsCols = new HashSet<>();
         UniqueKeyElement[] uks = tableElement.getUniqueKeys();
         for (UniqueKeyElement uk : uks) {
             if (!uk.isPrimaryKey()) {
@@ -169,7 +169,7 @@ public class DBSchemaTableProvider implements TableProvider {
                     // bad one
                     continue;
                 }
-                List<String> cols = new ArrayList<String>();
+                List<String> cols = new ArrayList<>();
                 for (ColumnElement colElm : colElms) {
                     cols.add(colElm.getName().getName());
                 }
@@ -180,7 +180,7 @@ public class DBSchemaTableProvider implements TableProvider {
     }
 
     private static List<DisabledReason> getDisabledReasons(TableElement tableElement, IPersistenceModelGenerator persistenceGen, ClassPath source) {
-        List<DisabledReason> result = new ArrayList<DisabledReason>();
+        List<DisabledReason> result = new ArrayList<>();
 
         if (tableElement.isTable() && hasNoPrimaryKey(tableElement)) {
             result.add(new NoPrimaryKeyDisabledReason());

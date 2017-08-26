@@ -36,10 +36,12 @@ public class DBInverseJoinColumn extends DBColumn<RelationAttribute> implements 
     /**
      * @return the inverseJoinColumn
      */
+    @Override
     public JoinColumn getJoinColumn() {
         return joinColumn;
     }
 
+    @Override
     public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }

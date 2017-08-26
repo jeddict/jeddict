@@ -164,7 +164,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
     public void addQueryHint(QueryHintSnippet queryHint) {
         if (this.queryHints.isEmpty()) {
-            this.queryHints = new ArrayList<QueryHintSnippet>();
+            this.queryHints = new ArrayList<>();
         }
         this.queryHints.add(queryHint);
     }
@@ -173,7 +173,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
      * @return the resultClass
      */
     public List<String> getResultClasses() {
-        List<String> resultClassesText = new ArrayList<String>();
+        List<String> resultClassesText = new ArrayList<>();
         for (ClassHelper resultClass : resultClasses) {
             resultClassesText.add(resultClass.getClassNameWithClassSuffix());
         }
@@ -191,7 +191,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
     public void addResultClasses(String resultClass) {
         if (this.resultClasses.isEmpty()) {
-            this.resultClasses = new ArrayList<ClassHelper>();
+            this.resultClasses = new ArrayList<>();
         }
         ClassHelper classHelper = new ClassHelper();
         classHelper.setClassName(resultClass);
@@ -214,7 +214,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
     public void addResultSetMapping(String resultSetMapping) {
         if (this.resultSetMappings.isEmpty()) {
-            this.resultSetMappings = new ArrayList<String>();
+            this.resultSetMappings = new ArrayList<>();
         }
         this.resultSetMappings.add(resultSetMapping);
     }
@@ -235,7 +235,7 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
     public void addParameter(StoredProcedureParameterSnippet parameter) {
         if (this.parameters.isEmpty()) {
-            this.parameters = new ArrayList<StoredProcedureParameterSnippet>();
+            this.parameters = new ArrayList<>();
         }
         this.parameters.add(parameter);
     }

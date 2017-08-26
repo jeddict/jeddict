@@ -185,11 +185,8 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
         try {
             if (selectedTables == null) {
                 selectedTables = new SelectedTables(persistenceGen, tableClosure, getLocationValue(), getPackageName());
-                selectedTables.addChangeListener(new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent event) {
-                        changeSupport.fireChange();
-                    }
+                selectedTables.addChangeListener((ChangeEvent event) -> {
+                    changeSupport.fireChange();
                 });
             } else {
                 selectedTables.setTableClosureAndTargetFolder(tableClosure, getLocationValue(), getPackageName());

@@ -48,8 +48,8 @@ public final class SelectedTables {
     };
 
     private final IPersistenceModelGenerator persistenceGen;
-    private final Map<Table, String> table2ClassName = new HashMap<Table, String>();
-    private final Map<Table, Set<Problem>> table2Problems = new TreeMap<Table, Set<Problem>>();
+    private final Map<Table, String> table2ClassName = new HashMap<>();
+    private final Map<Table, Set<Problem>> table2Problems = new TreeMap<>();
 //    private final Map<Table, UpdateType> table2UpdateType = new HashMap<Table, UpdateType>();
 
     private final ChangeListener tableClosureListener = new TableClosureListener();
@@ -154,10 +154,10 @@ public final class SelectedTables {
     }
 
     private void validateTables() {
-        Set<Table> addedTables = new HashSet<Table>(tableClosure.getSelectedTables());
+        Set<Table> addedTables = new HashSet<>(tableClosure.getSelectedTables());
         addedTables.removeAll(validatedTables);
 
-        Set<Table> removedTables = new HashSet<Table>(validatedTables);
+        Set<Table> removedTables = new HashSet<>(validatedTables);
         removedTables.removeAll(tableClosure.getSelectedTables());
 
         for (Table table : removedTables) {
@@ -166,7 +166,7 @@ public final class SelectedTables {
         for (Table table : addedTables) {
             putProblems(table, validateClassName(getClassName(table)));
         }
-        validatedTables = new HashSet<Table>(tableClosure.getSelectedTables());
+        validatedTables = new HashSet<>(tableClosure.getSelectedTables());
 
         changeSupport.fireChange();
     }
@@ -176,7 +176,7 @@ public final class SelectedTables {
      * {@link TableClosure#getSelectedTables}.
      */
     public List<Table> getTables() {
-        List<Table> result = new ArrayList<Table>(tableClosure.getSelectedTables());
+        List<Table> result = new ArrayList<>(tableClosure.getSelectedTables());
         Collections.sort(result);
         return result;
     }

@@ -67,7 +67,7 @@ import org.openide.util.NbBundle;
 
 public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator {
 
-    private final Map<String, String> entityName2TableName = new HashMap<String, String>();
+    private final Map<String, String> entityName2TableName = new HashMap<>();
     private Project initProject;
 
     private Set<FileObject> result;
@@ -110,13 +110,10 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
             return;
         }
         MetadataModel<EntityMappingsMetadata> entityMappingsModel = entityClassScope.getEntityMappingsModel(true);
-        readHelper = MetadataModelReadHelper.create(entityMappingsModel, new MetadataModelAction<EntityMappingsMetadata, Set<Entity>>() {
-            @Override
-            public Set<Entity> run(EntityMappingsMetadata metadata) {
-                Set<Entity> result = new HashSet<Entity>();
-                result.addAll(Arrays.asList(metadata.getRoot().getEntity()));
-                return result;
-            }
+        readHelper = MetadataModelReadHelper.create(entityMappingsModel, (EntityMappingsMetadata metadata) -> {
+            Set<Entity> result1 = new HashSet<>();
+            result1.addAll(Arrays.asList(metadata.getRoot().getEntity()));
+            return result1;
         });
 
         readHelper.addChangeListener(e -> {

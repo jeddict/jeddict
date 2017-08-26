@@ -39,7 +39,7 @@ public class MethodDefSnippet implements Snippet {
     public void addCallback(CallbackSnippet callback) {
 
         if (callbacks.isEmpty()) {
-            callbacks = new ArrayList<CallbackSnippet>();
+            callbacks = new ArrayList<>();
         }
 
         if (!callbacks.contains(callback)) {

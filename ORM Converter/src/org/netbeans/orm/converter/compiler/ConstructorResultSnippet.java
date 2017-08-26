@@ -32,7 +32,7 @@ public class ConstructorResultSnippet implements Snippet {
     public void addColumnResult(ColumnResultSnippet columnResult) {
 
         if (columnResults.isEmpty()) {
-            columnResults = new ArrayList<ColumnResultSnippet>();
+            columnResults = new ArrayList<>();
         }
 
         columnResults.add(columnResult);

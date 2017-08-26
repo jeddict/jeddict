@@ -41,7 +41,7 @@ public class AssociationOverrideSnippet implements Snippet {
     public void addJoinColumn(JoinColumnSnippet joinColumn) {
 
         if (joinColumns.isEmpty()) {
-            joinColumns = new ArrayList<JoinColumnSnippet>();
+            joinColumns = new ArrayList<>();
         }
 
         joinColumns.add(joinColumn);

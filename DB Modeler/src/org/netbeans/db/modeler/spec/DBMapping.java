@@ -99,6 +99,7 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -106,6 +107,7 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }

@@ -120,6 +120,7 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
     /**
      * @return the targetField
      */
+    @Override
     public String getTargetField() {
         return targetField;
     }
@@ -127,6 +128,7 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
     /**
      * @param targetField the targetField to set
      */
+    @Override
     public void setTargetField(String targetField) {
         this.targetField = targetField;
     }

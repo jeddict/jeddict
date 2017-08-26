@@ -214,15 +214,7 @@ public final class UpdateHandler {
         try {
             final String displayName = "Checking for updates to Jeddict plugin...";
             silentUpdateProvider.refresh(
-                ProgressHandleFactory.createHandle(
-                    displayName,
-                    new Cancellable () {
-                        @Override
-                        public boolean cancel () {
-                            return true;
-                        }
-                    }
-                ),
+                ProgressHandleFactory.createHandle(displayName, () -> true),
                 true
             );
         } catch (IOException ex) {
@@ -240,15 +232,7 @@ public final class UpdateHandler {
                 try {
                     final String displayName = "Checking for updates to Jeddict plugin...";
                     p.refresh(
-                        ProgressHandleFactory.createHandle(
-                            displayName,
-                            new Cancellable () {
-                                @Override
-                                public boolean cancel () {
-                                    return true;
-                                }
-                            }
-                        ),
+                        ProgressHandleFactory.createHandle(displayName, () -> true),
                         true
                     );
                 } catch (IOException ex) {
@@ -307,44 +291,20 @@ public final class UpdateHandler {
 
     static Validator doDownload(InstallSupport support) throws OperationException {
         final String displayName = "Downloading new version of Jeddict plugin...";
-        ProgressHandle downloadHandle = ProgressHandleFactory.createHandle(
-            displayName,
-            new Cancellable () {
-                @Override
-                public boolean cancel () {
-                    return true;
-                }
-            }
-        );
+        ProgressHandle downloadHandle = ProgressHandleFactory.createHandle(displayName, () -> true);
         return support.doDownload(downloadHandle, true);
     }
 
     static Installer doVerify(InstallSupport support, Validator validator) throws OperationException {
         final String displayName = "Validating Jeddict plugin...";
-        ProgressHandle validateHandle = ProgressHandleFactory.createHandle(
-            displayName,
-            new Cancellable () {
-                @Override
-                public boolean cancel () {
-                    return true;
-                }
-            }
-        );
+        ProgressHandle validateHandle = ProgressHandleFactory.createHandle(displayName, () -> true);
         Installer installer = support.doValidate(validator, validateHandle);
         return installer;
     }
 
     static Restarter doInstall(InstallSupport support, Installer installer) throws OperationException {
         final String displayName = "Installing Jeddict plugin...";
-        ProgressHandle installHandle = ProgressHandleFactory.createHandle(
-            displayName,
-            new Cancellable () {
-                @Override
-                public boolean cancel () {
-                    return true;
-                }
-            }
-        );
+        ProgressHandle installHandle = ProgressHandleFactory.createHandle(displayName, () -> true);
         return support.doInstall(installer, installHandle);
     }
 

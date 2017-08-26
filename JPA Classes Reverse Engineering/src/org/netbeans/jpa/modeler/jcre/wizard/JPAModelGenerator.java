@@ -38,9 +38,7 @@ public class JPAModelGenerator {
         //detect access type
         final ClasspathInfo classpathInfo = ClasspathInfo.create(pkg);
         JavaSource javaSource = JavaSource.create(classpathInfo);
-        javaSource.runUserActionTask(new Task<CompilationController>() {
-            @Override
-            public void run(CompilationController controller) throws IOException {
+        javaSource.runUserActionTask((CompilationController controller) -> {
             try {
                 controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
                 TypeElement jc = controller.getElements().getTypeElement(entityClass);
@@ -56,7 +54,6 @@ public class JPAModelGenerator {
                 }
             } catch(Throwable t){
                 ExceptionUtils.printStackTrace(t);
-            }
             }
         }, true);
     }

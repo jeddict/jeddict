@@ -37,10 +37,12 @@ public class DBMapKeyJoinColumn extends DBColumn<Attribute> implements DBForeign
     /**
      * @return the joinColumn
      */
+    @Override
     public JoinColumn getJoinColumn() {
         return joinColumn;
     }
 
+    @Override
     public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }

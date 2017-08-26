@@ -41,10 +41,12 @@ public class DBPrimaryKeyJoinColumn extends DBColumn<Id> implements DBForeignKey
     /**
      * @return the inverseJoinColumn
      */
+    @Override
     public PrimaryKeyJoinColumn getJoinColumn() {
         return joinColumn;
     }
 
+    @Override
     public List<PrimaryKeyJoinColumn> getJoinColumns() {
         return joinColumns;
     }

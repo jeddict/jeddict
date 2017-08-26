@@ -26,6 +26,7 @@ public class DBMapKeyEmbeddedColumn extends DBEmbeddedAttributeColumn {
         super(name, embeddedList, managedAttribute);
     }
     
+    @Override
     protected void init(){
             attributeOverride = embeddedList.get(0).findAttributeOverride(getKeyName());
             if (attributeOverride == null) {

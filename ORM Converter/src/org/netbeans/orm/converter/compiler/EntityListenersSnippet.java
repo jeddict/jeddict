@@ -67,7 +67,7 @@ public class EntityListenersSnippet implements Snippet {
     public void addEntityListener(EntityListenerSnippet entityListener) {
 
         if (entityListeners.isEmpty()) {
-            entityListeners = new ArrayList<EntityListenerSnippet>();
+            entityListeners = new ArrayList<>();
         }
 
         entityListeners.add(entityListener);

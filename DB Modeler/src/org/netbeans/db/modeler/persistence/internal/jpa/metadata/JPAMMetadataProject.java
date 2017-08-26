@@ -43,6 +43,7 @@ public class JPAMMetadataProject extends MetadataProject {
      * Create the dynamic types using JPA metadata processed descriptors. Called 
      * at deploy time after all metadata processing has completed.
      */
+    @Override
     protected void createDynamicType(MetadataDescriptor descriptor, Map<String, DynamicType> dynamicTypes, DynamicClassLoader dcl) {
         // Build the dynamic class only if we have not already done so.
         if (! dynamicTypes.containsKey(descriptor.getJavaClassName())) {

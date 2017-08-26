@@ -34,7 +34,7 @@ public class EntityResultSnippet implements Snippet {
     public void addFieldResult(FieldResultSnippet fieldResult) {
 
         if (fieldResults.isEmpty()) {
-            fieldResults = new ArrayList<FieldResultSnippet>();
+            fieldResults = new ArrayList<>();
         }
 
         fieldResults.add(fieldResult);

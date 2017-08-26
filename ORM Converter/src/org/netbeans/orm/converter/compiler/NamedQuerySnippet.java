@@ -60,7 +60,7 @@ public class NamedQuerySnippet implements Snippet {
     public void addQueryHint(QueryHintSnippet queryHint) {
 
         if (queryHints.isEmpty()) {
-            queryHints = new ArrayList<QueryHintSnippet>();
+            queryHints = new ArrayList<>();
         }
 
         queryHints.add(queryHint);

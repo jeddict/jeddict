@@ -144,7 +144,7 @@ public class NamedEntityGraphSnippet implements Snippet {
 
     public void addNamedAttributeNode(NamedAttributeNodeSnippet namedAttributeNode) {
         if (namedAttributeNodes.isEmpty()) {
-            namedAttributeNodes = new ArrayList<NamedAttributeNodeSnippet>();
+            namedAttributeNodes = new ArrayList<>();
         }
         namedAttributeNodes.add(namedAttributeNode);
     }
@@ -165,7 +165,7 @@ public class NamedEntityGraphSnippet implements Snippet {
 
     public void addSubgraph(NamedSubgraphSnippet subgraph) {
         if (subgraphs.isEmpty()) {
-            subgraphs = new ArrayList<NamedSubgraphSnippet>();
+            subgraphs = new ArrayList<>();
         }
         subgraphs.add(subgraph);
     }
@@ -186,7 +186,7 @@ public class NamedEntityGraphSnippet implements Snippet {
 
     public void addSubclassSubgraph(NamedSubgraphSnippet subclassSubgraph) {
         if (subclassSubgraphs.isEmpty()) {
-            subclassSubgraphs = new ArrayList<NamedSubgraphSnippet>();
+            subclassSubgraphs = new ArrayList<>();
         }
         subclassSubgraphs.add(subclassSubgraph);
     }

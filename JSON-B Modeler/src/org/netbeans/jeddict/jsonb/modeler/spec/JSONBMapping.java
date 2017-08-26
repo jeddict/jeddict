@@ -107,6 +107,7 @@ public class JSONBMapping extends BaseElement implements IDefinitionElement, IRo
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -114,6 +115,7 @@ public class JSONBMapping extends BaseElement implements IDefinitionElement, IRo
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }

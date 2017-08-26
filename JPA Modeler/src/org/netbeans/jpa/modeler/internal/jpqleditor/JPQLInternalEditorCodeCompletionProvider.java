@@ -150,11 +150,8 @@ public class JPQLInternalEditorCodeCompletionProvider implements CompletionProvi
                             SourceGroup[] sourceGroups = ProjectUtils.getSources(project).getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
                             js = JavaSource.create(ClasspathInfo.create(sourceGroups[0].getRootFolder()));
 
-                            js.runUserActionTask(new org.netbeans.api.java.source.Task<CompilationController>() {
-                                @Override
-                                public void run(CompilationController parameter) throws Exception {
-                                    JPACodeCompletionQuery.this.run(parameter, project, pXml);
-                                }
+                            js.runUserActionTask((CompilationController parameter) -> {
+                                JPACodeCompletionQuery.this.run(parameter, project, pXml);
                             }, false);
                             if ((queryType & COMPLETION_QUERY_TYPE) != 0) {
                                 if (results != null) {
@@ -225,7 +222,7 @@ public class JPQLInternalEditorCodeCompletionProvider implements CompletionProvi
         private void run(CompilationController controller, final Project project, final FileObject fo) throws MetadataModelException, IOException {
             if (hasTask && !isTaskCancelled()) {
                 int startOffset = caretOffset;
-                results = new ArrayList<JPACompletionItem>();
+                results = new ArrayList<>();
                 controller.toPhase(Phase.ELEMENTS_RESOLVED);
                 EntityClassScopeProvider provider = (EntityClassScopeProvider) project.getLookup().lookup(EntityClassScopeProvider.class);
                 EntityClassScope ecs = null;

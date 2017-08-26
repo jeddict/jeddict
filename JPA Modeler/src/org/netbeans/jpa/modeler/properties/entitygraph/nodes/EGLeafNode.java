@@ -39,6 +39,7 @@ public class EGLeafNode extends LeafNode<NamedEntityGraph> {
         this(leafAttributeWidget, namedEntityGraph, null);
     }
 
+    @Override
     public void init() {
         this.setIconBaseWithExtension(leafAttributeWidget.getIconPath());
         BaseAttribute attribute = (BaseAttribute) leafAttributeWidget.getBaseElementSpec();

@@ -95,9 +95,9 @@ public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel
     static final String ICON_PATH = "org/netbeans/modules/j2ee/persistence/jpqleditor/ui/resources/queryEditor16X16.png"; //NOI18N
     private static final Logger logger = Logger.getLogger(JPQLEditorPanel.class.getName());
     private PUDataObject puObject;
-    private HashMap<String, PersistenceUnit> puConfigMap = new HashMap<String, PersistenceUnit>();
+    private HashMap<String, PersistenceUnit> puConfigMap = new HashMap<>();
     private static List<Integer> windowCounts = new ArrayList<Integer>();
-    private Integer thisWindowCount = new Integer(0);
+    private Integer thisWindowCount = 0;
     private JPQLPanelEditorController controller = null;
     private ProgressHandle ph = null;
     private ProgressHandle ph2 = null;
@@ -126,11 +126,8 @@ public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel
     public JPQLEditorPanel(JPQLPanelEditorController controller) {
         this.controller = controller;
         initCustomComponents();
-        puComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                puComboboxActionPerformed();
-            }
+        puComboBox.addActionListener((ActionEvent e) -> {
+            puComboboxActionPerformed();
         });
 
         this.thisWindowCount = getNextWindowCount();
@@ -140,11 +137,9 @@ public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel
 
         sqlToggleButton.setSelected(true);
         jpqlEditor.getDocument().addDocumentListener(new JPQLDocumentListener());
-        ((NbEditorDocument) jpqlEditor.getDocument()).runAtomic(new Runnable() {//hack to unlock editor (make modifieble)
-            @Override
-            public void run() {
-            }
-        });
+        ((NbEditorDocument) jpqlEditor.getDocument()).runAtomic(() -> {
+        } //hack to unlock editor (make modifieble)
+        );
         jpqlEditor.addMouseListener(new JPQLEditorPopupMouseAdapter());
         showSQL(NbBundle.getMessage(JPQLEditorPanel.class, "BuildHint"));
     }
@@ -316,11 +311,11 @@ public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel
                     Project project = pXml != null ? FileOwnerQuery.getOwner(pXml) : null;
                     PersistenceEnvironment pe = project != null ? project.getLookup().lookup(PersistenceEnvironment.class) : null;
                     ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-                    final List<URL> localResourcesURLList = new ArrayList<URL>();
-                    final HashMap<String, String> props = new HashMap<String, String>();
+                    final List<URL> localResourcesURLList = new ArrayList<>();
+                    final HashMap<String, String> props = new HashMap<>();
                     final boolean containerManaged = Util.isSupportedJavaEEVersion(pe.getProject());
                     final Provider provider = ProviderUtil.getProvider(selectedConfigObject.getProvider(), pe.getProject());
-                    final List<String> initialProblems = new ArrayList<String>();
+                    final List<String> initialProblems = new ArrayList<>();
                     if (containerManaged && provider != null) {
                         Utils.substitutePersistenceProperties(pe, selectedConfigObject, dbconn, props);
                     }
@@ -441,20 +436,14 @@ public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel
 
     public void fillPersistenceConfigurations(PUDataObject puObject) {
         this.puObject = puObject;
-        puObject.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (DataObject.PROP_VALID.equals(evt.getPropertyName()) && Boolean.FALSE.equals(evt.getNewValue())) {
-                    if (SwingUtilities.isEventDispatchThread()) {
-                        cancelActionPerformed(null);//  close();//need to close if corresponding dataobject was invalidated (deleted)
-                    } else {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                cancelActionPerformed(null);//   close();//need to close if corresponding dataobject was invalidated (deleted)
-                            }
-                        });
-                    }
+        puObject.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+            if (DataObject.PROP_VALID.equals(evt.getPropertyName()) && Boolean.FALSE.equals(evt.getNewValue())) {
+                if (SwingUtilities.isEventDispatchThread()) {
+                    cancelActionPerformed(null);//  close();//need to close if corresponding dataobject was invalidated (deleted)
+                } else {
+                    SwingUtilities.invokeLater(() -> {
+                        cancelActionPerformed(null);//   close();//need to close if corresponding dataobject was invalidated (deleted)
+                    });
                 }
             }
         });
@@ -501,8 +490,8 @@ public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel
 
             setStatus(strBuffer.toString());
 
-            Vector<String> tableHeaders = new Vector<String>();
-            Vector<Vector> tableData = new Vector<Vector>();
+            Vector<String> tableHeaders = new Vector<>();
+            Vector<Vector> tableData = new Vector<>();
 
             if (!result.getQueryResults().isEmpty()) {
 
@@ -587,7 +576,7 @@ public final class JPQLEditorPanel extends GenericDialog implements ModelerPanel
     }
 
     private void createTableData(Vector<Vector> tableData, Object... rowObject) {
-        Vector<Object> oneRow = new Vector<Object>();
+        Vector<Object> oneRow = new Vector<>();
         for (Object oneObject : rowObject) {
             if (oneObject == null) {
                 oneRow.add("NULL");//NOI18N
@@ -1026,12 +1015,9 @@ NbBundle.getMessage(JPQLEditorPanel.class, "progressTaskname"));//GEN-LAST:event
             dbconn = JPAEditorUtil.findDatabaseConnection(pu, pe.getProject());
             if (dbconn != null) {
                 if (dbconn.getJDBCConnection() == null) {
-                    Mutex.EVENT.readAccess(new Mutex.Action<DatabaseConnection>() {
-                        @Override
-                        public DatabaseConnection run() {
-                            ConnectionManager.getDefault().showConnectionDialog(dbconn);
-                            return dbconn;
-                        }
+                    Mutex.EVENT.readAccess((Mutex.Action<DatabaseConnection>) () -> {
+                        ConnectionManager.getDefault().showConnectionDialog(dbconn);
+                        return dbconn;
                     });
                 }
             } else {

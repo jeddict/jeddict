@@ -49,8 +49,8 @@ public class JPAMMetadataProcessor extends MetadataProcessor {
         // 1 - Iterate through the classes that are defined in the <mapping>
         // files and add them to the map. This will merge the accessors where
         // necessary.
-        HashMap<String, EntityAccessor> entities = new HashMap<String, EntityAccessor>();
-        HashMap<String, EmbeddableAccessor> embeddables = new HashMap<String, EmbeddableAccessor>();
+        HashMap<String, EntityAccessor> entities = new HashMap<>();
+        HashMap<String, EmbeddableAccessor> embeddables = new HashMap<>();
 
         for (XMLEntityMappings entityMappings : m_project.getEntityMappings()) {
             entityMappings.initPersistenceUnitClasses(entities, embeddables);
