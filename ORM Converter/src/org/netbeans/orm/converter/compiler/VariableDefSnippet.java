@@ -227,10 +227,7 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getImplementationType() {
-        System.out.println("#### " + this.getName() + " - " + this.getTypeIdentifier());
-        
         if (this.getTypeIdentifier() != null) {
-            System.out.println("#### " + this.getName() + " = " + this.getTypeIdentifier().getImplementationType());
             return this.getTypeIdentifier().getImplementationType();
         } else {
             return null;

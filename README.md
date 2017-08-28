@@ -23,14 +23,14 @@ See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) 
 
 ##### 1) [JavaEE 8 source generation](http://jeddict.github.io/tutorial/page.html?l=OFB/MVC/QuickStart)
 ##### 2) Visualize architecture
-##### 3) [JPA 2.1 source generation](http://jeddict.github.io/tutorial/page.html?l=QuickStart)
+##### 3) [JPA 2.2 source generation](http://jeddict.github.io/tutorial/page.html?l=QuickStart)
 ##### 4) Reverse Engineering of Java Source Code
 ##### 5) Visual creation of database structures
 ##### 6) DB Reverse Engineering
 ##### 7) SQL/DDL script generation (Beta)
 ##### 8) Model documentation
 ##### 9) Improves your productivity
-##### 10) Tech Stack : REST(JAX-RS), MVC 1.0(JSR-371), JavaEE Security(JSR-375), EJB, CDI, JSP, HTML5, Bootstrap, Angular JS 
+##### 10) Tech Stack : REST(JAX-RS), MVC 1.0(JSR-371), Security(JSR-375), CDI, HTML5, Bootstrap, Angular 
 
 
 ## Communication

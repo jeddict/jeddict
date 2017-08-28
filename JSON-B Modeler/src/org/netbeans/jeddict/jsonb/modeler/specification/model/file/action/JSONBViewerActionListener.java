@@ -35,7 +35,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JSONB", name = "JSONB Viewer", 
         modelerUtil = JSONBModelerUtil.class, modelerScene = JSONBModelerScene.class,
         relationValidator = RelationValidator.class,
-        version = "4.4", architectureVersion = "1.4")
+        version = "4.5", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = JSONBModelerRequestManager.class)
 public class JSONBViewerActionListener extends ModelerFileActionListener implements JSONBModelerRequestManager {
 
