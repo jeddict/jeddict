@@ -262,6 +262,9 @@
                 <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
                     <display-name>Optional</display-name>
                 </attribute>
+                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
+                    <display-name>Optional return type</display-name>
+                </attribute>
             </attributes>
         </element> 
         
@@ -278,15 +281,7 @@
                     <display-name>Optional return type</display-name>
                 </attribute>
             </attributes>
-        </element>
-        <element id="PersistenceBaseAttribute" class="org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute">
-            <attributes>
-                <attribute id="functionalType" groupId="ATTR_PROP" class="java.lang.Boolean" name="functionalType">
-                    <display-name>Optional return type</display-name>
-                </attribute>
-            </attributes>
-        </element>
-        
+        </element>       
         <element id="OneToOne" class="org.netbeans.jpa.modeler.spec.OneToOne">
             <attributes>
                 <attribute id="optional" groupId="JPA_PROP" class="java.lang.Boolean" name="optional">
