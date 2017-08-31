@@ -20,6 +20,7 @@ import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PlainClassWidget;
 import org.netbeans.modeler.widget.connection.relation.IRelationProxy;
 import org.netbeans.modeler.widget.connection.relation.IRelationValidator;
 
@@ -63,6 +64,10 @@ public class RelationValidator implements IRelationValidator {
             } else if ((proxy.getSource() instanceof EmbeddableWidget) && !(proxy.getTarget() instanceof EmbeddableWidget)) {
                 return false;
             } else if (!(proxy.getSource() instanceof EmbeddableWidget) && (proxy.getTarget() instanceof EmbeddableWidget)) {
+                return false;
+            } else if ((proxy.getSource() instanceof PlainClassWidget) && !(proxy.getTarget() instanceof PlainClassWidget)) {
+                return false;
+            } else if (!(proxy.getSource() instanceof PlainClassWidget) && (proxy.getTarget() instanceof PlainClassWidget)) {
                 return false;
             }
             //Prevent Cyclic inheritance

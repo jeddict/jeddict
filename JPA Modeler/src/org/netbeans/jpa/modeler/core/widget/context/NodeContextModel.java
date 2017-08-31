@@ -24,8 +24,10 @@ import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PlainClassWidget;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BI_DIRECTIONAL;
@@ -94,9 +96,9 @@ public class NodeContextModel {
         return new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (widget instanceof PersistenceClassWidget) {
-                    PersistenceClassWidget persistenceClassWidget = (PersistenceClassWidget) widget;
-                    persistenceClassWidget.createPinWidget(addAttributeModel.getId());
+                if (widget instanceof JavaClassWidget) {
+                    JavaClassWidget classWidget = (JavaClassWidget) widget;
+                    classWidget.createPinWidget(addAttributeModel.getId());
                     widget.getModelerScene().getModelerPanelTopComponent().changePersistenceState(false);
                 }
             }
@@ -114,9 +116,9 @@ public class NodeContextModel {
         generalizationConnectionModel.setWidgetActions(getConnectActions(nodeWidget.getModelerScene(), generalizationConnectionModel.getId()));
         contextPaletteModel.getChildren().add(generalizationConnectionModel);
 
-        ContextPaletteButtonModel addAttributeModel = getContextPaletteGroupButtonModel("Add attributes",
+        ContextPaletteButtonModel addWrapperAttributeModel = getContextPaletteGroupButtonModel("Add attributes",
                 CREATE_ICON.getImage(), contextPaletteModel);
-        contextPaletteModel.getChildren().add(addAttributeModel);
+        contextPaletteModel.getChildren().add(addWrapperAttributeModel);
 
         ContextPaletteButtonModel addIdAttributeModel = getContextPaletteButtonModel("ID_ATTRIBUTE", "Id Attribute",
                 ID_ATTRIBUTE, contextPaletteModel);
@@ -145,16 +147,18 @@ public class NodeContextModel {
             addAttributeSubModelList = new ContextPaletteButtonModel[]{addIdAttributeModel, addBasicAttributeModel, addBasicCollectionAttributeModel, addTransientAttributeModel, addVersionAttributeModel};
         } else if (nodeWidget instanceof EmbeddableWidget) {
             addAttributeSubModelList = new ContextPaletteButtonModel[]{addBasicAttributeModel, addBasicCollectionAttributeModel, addTransientAttributeModel};
+        } else if (nodeWidget instanceof PlainClassWidget) {
+            addAttributeSubModelList = new ContextPaletteButtonModel[]{addBasicAttributeModel, addBasicCollectionAttributeModel, addTransientAttributeModel};
         } else {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         for (ContextPaletteButtonModel addAttributeModel_TMP : addAttributeSubModelList) {
-            addAttributeModel.getChildren().add(addAttributeModel_TMP);
+            addWrapperAttributeModel.getChildren().add(addAttributeModel_TMP);
         }
 
+        
         ContextPaletteButtonModel compositionConnectionModel = getContextPaletteGroupButtonModel("Embedded (Drag to Embeddable)",
                 COMPOSITION_ATTRIBUTE, contextPaletteModel);
-        contextPaletteModel.getChildren().add(compositionConnectionModel);
 
         ContextPaletteButtonModel singleValueEmbeddedConnectionModal = getContextPaletteButtonModel("SINGLE_EMBEDDABLE_RELATION", "Single Value Embeddable Connection (Drag to Embeddable)",
                 SINGLE_VALUE_EMBEDDED_ATTRIBUTE, contextPaletteModel);
@@ -167,7 +171,14 @@ public class NodeContextModel {
         collectionValueEmbeddedConnectionModal.setContextActionType(ContextActionType.CONNECT);
         collectionValueEmbeddedConnectionModal.setWidgetActions(getConnectActions(nodeWidget.getModelerScene(), collectionValueEmbeddedConnectionModal.getId()));
         compositionConnectionModel.getChildren().add(collectionValueEmbeddedConnectionModal);
-
+        
+        if (nodeWidget instanceof EntityWidget 
+                 || nodeWidget instanceof MappedSuperclassWidget 
+                 || nodeWidget instanceof EmbeddableWidget) {
+             contextPaletteModel.getChildren().add(compositionConnectionModel);
+        }
+        
+        
         if (nodeWidget instanceof EntityWidget) {
 
             ContextPaletteButtonModel connectionOTOModel = new DefaultGroupButtonModel();
@@ -290,7 +301,8 @@ public class NodeContextModel {
             connectionBMTMModel.setWidgetActions(getConnectActions(nodeWidget.getModelerScene(), connectionBMTMModel.getId()));
             connectionMTMModel.getChildren().add(connectionBMTMModel);
 
-        } else if (nodeWidget instanceof MappedSuperclassWidget || nodeWidget instanceof EmbeddableWidget) {
+        } else if (nodeWidget instanceof MappedSuperclassWidget 
+                || nodeWidget instanceof EmbeddableWidget) {
 
             ContextPaletteButtonModel connectionUOTOModel = new DefaultPaletteButtonModel();
             connectionUOTOModel.setId("UOTO_RELATION");

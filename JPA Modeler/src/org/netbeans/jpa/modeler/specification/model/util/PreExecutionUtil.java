@@ -15,6 +15,7 @@
  */
 package org.netbeans.jpa.modeler.specification.model.util;
 
+import org.netbeans.jpa.modeler.spec.DefaultClass;
 import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.List;

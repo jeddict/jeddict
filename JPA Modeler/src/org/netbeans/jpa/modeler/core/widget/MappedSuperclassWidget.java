@@ -68,4 +68,9 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
     public Image getIcon() {
         return JPAModelerUtil.MAPPED_SUPER_CLASS;
     }
+    
+    @Override
+    public MappedSuperclass createBaseElementSpec() {
+        return new MappedSuperclass();
+    }
 }

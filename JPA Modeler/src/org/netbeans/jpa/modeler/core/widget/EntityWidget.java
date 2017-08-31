@@ -281,5 +281,15 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public void setUnidirectionalRelationFlowWidget(Set<RelationFlowWidget> unidirectionalRelationFlowWidget) {
         this.unidirectionalRelationFlowWidget = unidirectionalRelationFlowWidget;
     }
+    
+    @Override
+    public Entity createBaseElementSpec() {
+        Entity entity = new Entity();
+        Boolean isAbstract = isAbstractEntity();
+        if (isAbstract != null) {
+            entity.setAbstract(isAbstract);
+        }
+        return entity;
+    }
 
 }

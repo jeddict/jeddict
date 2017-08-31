@@ -142,5 +142,10 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
     public Image getIcon() {
         return JPAModelerUtil.EMBEDDABLE;
     }
+    
+    @Override
+    public Embeddable createBaseElementSpec() {
+        return new Embeddable();
+    }
 
 }

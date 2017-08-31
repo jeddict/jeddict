@@ -297,18 +297,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
             IBaseElement baseElement = null;
             if (baseElementWidget instanceof IFlowElementWidget) {
                 if (baseElementWidget instanceof IFlowNodeWidget) {
-                    if (baseElementWidget instanceof EntityWidget) {
-                        baseElement = new Entity();
-                        Boolean isAbstract = ((EntityWidget) baseElementWidget).isAbstractEntity();
-                        if (isAbstract != null) {
-                            ((Entity) baseElement).setAbstract(isAbstract);
-                        }
-                    } else if (baseElementWidget instanceof MappedSuperclassWidget) {
-                        baseElement = new MappedSuperclass();
-                    } else if (baseElementWidget instanceof EmbeddableWidget) {
-                        baseElement = new Embeddable();
-                    } else {
-                        throw new InvalidElmentException("Invalid JPA Task Element : " + baseElement);
+                    if (baseElementWidget instanceof JavaClassWidget) {
+                        baseElement = ((JavaClassWidget)baseElementWidget).createBaseElementSpec();
                     }
                 } else if (baseElementWidget instanceof IFlowEdgeWidget) {
                     // skip don't need to create spec RelationFlowWidget, GeneralizationFlowWidget,EmbeddableFlowWidget

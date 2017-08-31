@@ -146,7 +146,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     }
 
     public void scanDuplicateInheritedAttributes() {
-        this.getAllAttributeWidgets().stream().forEach((attributeWidget) -> {
+        this.getAllAttributeWidgets().forEach((attributeWidget) -> {
             scanDuplicateAttributes(null, attributeWidget.getBaseElementSpec().getName());
         });
     }
@@ -541,29 +541,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
         }
     }
     
-    public String getNextAttributeName() {
-        return getNextAttributeName(null);
-    }
-
-    public String getNextAttributeName(String attrName) {
-        return getNextAttributeName(attrName, false);
-    }
-
-    public String getNextAttributeName(String attrName, boolean multi) {
-        if (attrName == null || attrName.trim().isEmpty()) {
-            attrName = "attribute";
-        }
-        attrName = StringHelper.firstLower(attrName);
-        if (multi) {
-            attrName = English.plural(attrName);
-        }
-        ManagedClass javaClass = this.getBaseElementSpec();
-        if (javaClass.getAttributes() == null) {
-            return attrName;
-        }
-        return getNext(attrName, nextAttrName -> javaClass.getAttributes().isAttributeExist(nextAttrName));
-    }
-
     @Override
     public void sortAttributes() {
             this.sortPins(getAttributeCategories());

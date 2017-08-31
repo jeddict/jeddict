@@ -52,6 +52,7 @@ import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.PlainClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
@@ -1163,6 +1164,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
             case "Embeddable":
                 widget = new EmbeddableWidget(scene, widgetInfo);
                 break;
+            case "JavaClass":
+                widget = new PlainClassWidget(scene, widgetInfo);
+                break;
             default:
                 throw new InvalidElmentException("Invalid JPA Element");
         }
@@ -1236,7 +1240,9 @@ public class JPAModelerUtil implements PModelerUtil<JPAModelerScene> {
     }
 
     public PinWidgetInfo getEdgeSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget, AttributeWidget sourceAttributeWidget) {
-        if (sourceNodeWidget instanceof PersistenceClassWidget && targetNodeWidget instanceof EntityWidget && edgeWidget instanceof RelationFlowWidget) {
+        if (sourceNodeWidget instanceof PersistenceClassWidget
+                && targetNodeWidget instanceof EntityWidget
+                && edgeWidget instanceof RelationFlowWidget) {
             PersistenceClassWidget sourcePersistenceWidget = (PersistenceClassWidget) sourceNodeWidget;
             EntityWidget targetEntityWidget = (EntityWidget) targetNodeWidget;
             RelationFlowWidget relationFlowWidget = (RelationFlowWidget) edgeWidget;
