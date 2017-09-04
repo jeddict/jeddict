@@ -234,6 +234,9 @@
                         HTML label tag
                     </description>
                 </attribute>
+                <attribute id="paginationType" groupId="UI_PROP" class="org.netbeans.jpa.modeler.spec.extend.PaginationType" name="paginationType">
+                    <display-name>Pagination Type</display-name>
+                </attribute>  
             </attributes>
         </element>
 <!--        <element id="RelationAttribute" groupId="CASCADE_PROP" class="org.netbeans.jpa.modeler.spec.extend.RelationAttribute">

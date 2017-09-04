@@ -53,6 +53,13 @@
                 </attribute>
             </attributes>
         </element>
+        <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
+            <attributes>
+                <attribute id="paginationType" groupId="UI_PROP" class="org.netbeans.jpa.modeler.spec.extend.PaginationType" name="paginationType">
+                    <display-name>Pagination Type</display-name>
+                </attribute>
+            </attributes>
+        </element>  
         <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
             <attributes>
                 <attribute id="name" groupId="JSONB_PROP" class="java.lang.String" name="name" read-only="true">
