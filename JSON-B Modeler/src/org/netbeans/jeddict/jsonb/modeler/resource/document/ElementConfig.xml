@@ -55,6 +55,9 @@
         </element>
         <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
             <attributes>
+                <attribute id="label" groupId="UI_PROP" class="java.lang.String" name="label">
+                    <display-name>Title</display-name>
+                </attribute>
                 <attribute id="paginationType" groupId="UI_PROP" class="org.netbeans.jpa.modeler.spec.extend.PaginationType" name="paginationType">
                     <display-name>Pagination Type</display-name>
                 </attribute>

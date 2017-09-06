@@ -229,10 +229,7 @@
                     <description>Abstract entities cannot be instantiated but it can be queried just like concrete entities. If an abstract entity is the target of a query, the query operates on all the concrete subclasses of the abstract entity.</description>
                 </attribute>
                 <attribute id="label" groupId="UI_PROP" class="java.lang.String" name="label">
-                    <display-name>Label</display-name>
-                    <description>
-                        HTML label tag
-                    </description>
+                    <display-name>Title</display-name>
                 </attribute>
                 <attribute id="paginationType" groupId="UI_PROP" class="org.netbeans.jpa.modeler.spec.extend.PaginationType" name="paginationType">
                     <display-name>Pagination Type</display-name>
