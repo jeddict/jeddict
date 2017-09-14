@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
 import org.eclipse.persistence.exceptions.DatabaseException;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
@@ -118,6 +119,7 @@ import org.netbeans.modeler.widget.pin.IPinWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.db.explorer.ConnectionList;
 import org.netbeans.modules.db.explorer.action.ConnectAction;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
 
 public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
