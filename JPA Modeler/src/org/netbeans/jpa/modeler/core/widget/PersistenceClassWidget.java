@@ -824,6 +824,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
         createPinWidget(subCategoryInfo.getModelerDocument().getId().toUpperCase() + "_ATTRIBUTE");
     }
 
+    @Override
     public void createPinWidget(String docId) {
         if (null != docId) {
             switch (docId) {

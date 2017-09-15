@@ -3,5 +3,5 @@ AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.netbeans.jeddict.installer
 OpenIDE-Module-Layer: org/netbeans/jeddict/installer/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/netbeans/jeddict/installer/Bundle.properties
-OpenIDE-Module-Specification-Version: 4.5.2
+OpenIDE-Module-Specification-Version: 4.5.3
 
