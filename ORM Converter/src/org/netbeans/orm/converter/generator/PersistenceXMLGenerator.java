@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
+import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import static org.netbeans.jcode.jpa.util.PersistenceHelper.JTA_VALUE;
@@ -58,8 +59,14 @@ public class PersistenceXMLGenerator {
 
     //Reference : org.netbeans.modules.j2ee.persistence.wizard.unit.PersistenceUnitWizard.instantiateWProgress
     public void generatePersistenceXML(Project project, SourceGroup sourceGroup) {
+        
+        if(StringUtils.isEmpty(puName)){
+            return;
+        }
 
-        List<String> classNames = classDefs.stream().map(classDef->classDef.getClassHelper().getFQClassName()).collect(toList());
+        List<String> classNames = classDefs.stream()
+                .map(classDef -> classDef.getClassHelper().getFQClassName())
+                .collect(toList());
 
         PersistenceXMLUnitSnippet persistenceXMLUnit = new PersistenceXMLUnitSnippet();
         persistenceXMLUnit.setName(puName);
@@ -96,7 +103,7 @@ public class PersistenceXMLGenerator {
                     punit.setTransactionType(RESOURCE_LOCAL_VALUE);
                     Properties properties = punit.newProperties();
                     punit.setProperties(properties);
-// custom gui will be added in future release for DataSource , JTA
+                    // custom gui will be added in future release for DataSource , JTA
                     Property property = properties.newProperty();
                     property.setName("javax.persistence.jdbc.url");
                     property.setValue("jdbc:derby://localhost:1527/sample");
