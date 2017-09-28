@@ -355,7 +355,7 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
     @NbBundle.Messages({
         "GENERATE_SRC=Generate Source Code",
         "VIS_DB=Visualize DB",
-        "VIS_JSON=JSONB View (Beta)",
+        "VIS_JSON=JSONB View",
         "SEARCH=Search",
         "PERSISTENCE_UNIT=Persistence.xml",
         "RUN_JPQL=Run JPQL Query",

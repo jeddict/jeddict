@@ -2,7 +2,7 @@
 <element-config>
     <groups>
         <group id="JSONB_PROP" name="Properties" position="1"/>
-        <group id="UI_PROP" name="UI Properties"  position="50"/>
+        <!--<group id="UI_PROP" name="UI Properties"  position="50"/>-->
         
         <group id="ATTRIBUTE_CONSTRAINTS" name="Field-level constraints - Bean Validation Properties" position="10" />
         <group id="KEY_CONSTRAINTS" name="Key Type argument constraints - Bean Validation Properties" position="11" />
@@ -53,7 +53,7 @@
                 </attribute>
             </attributes>
         </element>
-        <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
+<!--        <element id="Entity" class="org.netbeans.jpa.modeler.spec.Entity">
             <attributes>
                 <attribute id="label" groupId="UI_PROP" class="java.lang.String" name="label">
                     <display-name>Title</display-name>
@@ -62,7 +62,7 @@
                     <display-name>Pagination Type</display-name>
                 </attribute>
             </attributes>
-        </element>  
+        </element>  -->
         <element id="Attribute" class="org.netbeans.jpa.modeler.spec.extend.Attribute">
             <attributes>
                 <attribute id="name" groupId="JSONB_PROP" class="java.lang.String" name="name" read-only="true">
@@ -83,7 +83,7 @@
                 </attribute>
                 <attribute id="jsonbNumberFormat" class="org.netbeans.jpa.modeler.spec.jsonb.JsonbNumberFormat" name="jsonbNumberFormat" >
                 </attribute>
-                <attribute id="includeInUI" groupId="UI_PROP" class="java.lang.Boolean" name="includeInUI">
+<!--                <attribute id="includeInUI" groupId="UI_PROP" class="java.lang.Boolean" name="includeInUI">
                     <display-name>Include in UI</display-name>
                     <description>
                         If unselected, attribute will not be available in frontend.
@@ -94,7 +94,7 @@
                     <description>
                         HTML label tag
                     </description>
-                </attribute>
+                </attribute>-->
             </attributes>
         </element>
         <element id="JsonbDateFormat" class="org.netbeans.jpa.modeler.spec.jsonb.JsonbDateFormat">

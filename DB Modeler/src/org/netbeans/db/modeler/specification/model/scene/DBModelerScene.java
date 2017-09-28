@@ -235,7 +235,7 @@ public class DBModelerScene extends DefaultPModelerScene<DBMapping> {
     @Override
     protected List<JMenuItem> getPopupMenuItemList() {
         List<JMenuItem> menuList = new ArrayList<>();
-        JMenuItem openSQLEditor = new JMenuItem("View SQL (beta)", VIEW_SQL);
+        JMenuItem openSQLEditor = new JMenuItem("View SQL", VIEW_SQL);
         openSQLEditor.addActionListener(e -> SQLEditorUtil.openEditor(DBModelerScene.this.getModelerFile(), DBModelerScene.this.getBaseElementSpec().getSQL()));
 
         menuList.add(openSQLEditor);

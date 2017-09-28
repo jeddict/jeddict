@@ -441,6 +441,7 @@ public class PropertiesHandler {
                 Attribute newType = value.getValue();
                 mapKeyHandler.setMapKeyAttribute(newType);
                 AttributeValidator.scanMapKeyHandlerError(attributeWidget);
+                attributeWidget.setAttributeTooltip();
                 attributeWidget.visualizeDataType();
                 attributeWidget.refreshProperties();
             }
@@ -1146,6 +1147,7 @@ public class PropertiesHandler {
                     AttributeValidator.scanMapKeyHandlerError(attributeWidget);
                 }
                 attributeWidget.refreshProperties();
+                attributeWidget.setAttributeTooltip();
                 attributeWidget.visualizeDataType();
             }
 
