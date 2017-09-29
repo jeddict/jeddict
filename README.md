@@ -21,7 +21,7 @@ See the [Quick Start](http://jeddict.github.io/tutorial/page.html?l=QuickStart) 
 
 ## What does it do?
 
-##### 1) JavaEE 8 source generation
+##### 1) Java EE 8 full-stack application generator
 ##### 2) Visualize architecture
 ##### 3) [JPA 2.2 source generation](http://jeddict.github.io/tutorial/page.html?l=QuickStart)
 ##### 4) Reverse Engineering of Java Source Code
