@@ -17,7 +17,7 @@ package org.netbeans.orm.converter.compiler;
 
 import java.util.Collections;
 import java.util.List;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.netbeans.jcode.jpa.JPAConstants.COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_COLUMN;

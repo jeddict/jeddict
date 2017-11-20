@@ -16,7 +16,7 @@
 package org.netbeans.orm.converter.generator.packageinfo;
 
 import java.util.Collection;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.Snippet;

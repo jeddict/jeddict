@@ -19,7 +19,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.spec.DBSecondaryTable;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;

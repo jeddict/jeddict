@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.BRANCH;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.LEAF;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;

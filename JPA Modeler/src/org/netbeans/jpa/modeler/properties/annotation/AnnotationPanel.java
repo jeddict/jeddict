@@ -16,7 +16,7 @@
 package org.netbeans.jpa.modeler.properties.annotation;
 
 import javax.swing.JOptionPane;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.internal.jpqleditor.ModelerPanel;
 import org.netbeans.jpa.modeler.spec.extend.AnnotationLocation;
 import org.netbeans.jpa.modeler.spec.extend.AttributeAnnotationLocationType;

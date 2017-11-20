@@ -15,7 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget.column.map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
 import org.netbeans.db.modeler.spec.DBMapKeyEmbeddedColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;

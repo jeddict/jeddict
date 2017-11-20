@@ -16,7 +16,7 @@
 package org.netbeans.jpa.modeler.rules.attribute;
 
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jcode.core.util.JavaUtil;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;

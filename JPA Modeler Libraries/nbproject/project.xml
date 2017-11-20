@@ -5,16 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
             <code-name-base>org.netbeans.jpa.modeler.lib</code-name-base>
             <suite-component/>
-            <module-dependencies>
-                <dependency>
-                    <code-name-base>org.apache.commons.lang</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>2.4.0</specification-version>
-                    </run-dependency>
-                </dependency>
-            </module-dependencies>
+            <module-dependencies/>
             <public-packages>
                 <package>net.bytebuddy</package>
                 <package>net.bytebuddy.agent.builder</package>
@@ -52,18 +43,6 @@
                 <package>net.bytebuddy.utility</package>
                 <package>net.bytebuddy.utility.privilege</package>
                 <package>net.bytebuddy.utility.visitor</package>
-                <package>org.apache.commons.collections</package>
-                <package>org.apache.commons.collections.bag</package>
-                <package>org.apache.commons.collections.bidimap</package>
-                <package>org.apache.commons.collections.buffer</package>
-                <package>org.apache.commons.collections.collection</package>
-                <package>org.apache.commons.collections.comparators</package>
-                <package>org.apache.commons.collections.functors</package>
-                <package>org.apache.commons.collections.iterators</package>
-                <package>org.apache.commons.collections.keyvalue</package>
-                <package>org.apache.commons.collections.list</package>
-                <package>org.apache.commons.collections.map</package>
-                <package>org.apache.commons.collections.set</package>
                 <package>org.apache.poi</package>
                 <package>org.apache.poi.common.usermodel</package>
                 <package>org.apache.poi.ddf</package>
@@ -199,31 +178,6 @@
                 <package>org.apache.tools.mail</package>
                 <package>org.apache.tools.tar</package>
                 <package>org.apache.tools.zip</package>
-                <package>org.apache.velocity</package>
-                <package>org.apache.velocity.anakia</package>
-                <package>org.apache.velocity.app</package>
-                <package>org.apache.velocity.app.event</package>
-                <package>org.apache.velocity.app.event.implement</package>
-                <package>org.apache.velocity.app.tools</package>
-                <package>org.apache.velocity.context</package>
-                <package>org.apache.velocity.convert</package>
-                <package>org.apache.velocity.exception</package>
-                <package>org.apache.velocity.io</package>
-                <package>org.apache.velocity.runtime</package>
-                <package>org.apache.velocity.runtime.directive</package>
-                <package>org.apache.velocity.runtime.log</package>
-                <package>org.apache.velocity.runtime.parser</package>
-                <package>org.apache.velocity.runtime.parser.node</package>
-                <package>org.apache.velocity.runtime.resource</package>
-                <package>org.apache.velocity.runtime.resource.loader</package>
-                <package>org.apache.velocity.runtime.resource.util</package>
-                <package>org.apache.velocity.runtime.visitor</package>
-                <package>org.apache.velocity.servlet</package>
-                <package>org.apache.velocity.texen</package>
-                <package>org.apache.velocity.texen.ant</package>
-                <package>org.apache.velocity.texen.util</package>
-                <package>org.apache.velocity.util</package>
-                <package>org.apache.velocity.util.introspection</package>
                 <package>org.atteo.evo.inflector</package>
                 <package>say.swing</package>
             </public-packages>
@@ -234,14 +188,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/jfontchooser-1.0.5.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jfontchooser-1.0.5.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-collections-3.2.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-collections-3.2.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/velocity-1.6.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/velocity-1.6.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/evo-inflector-1.2.1.jar</runtime-relative-path>

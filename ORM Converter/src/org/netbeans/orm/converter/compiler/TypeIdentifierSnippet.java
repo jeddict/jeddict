@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jcode.core.util.AttributeType;
 import static org.netbeans.jcode.core.util.AttributeType.BYTE_ARRAY;
 import static org.netbeans.jcode.core.util.AttributeType.CALENDAR;

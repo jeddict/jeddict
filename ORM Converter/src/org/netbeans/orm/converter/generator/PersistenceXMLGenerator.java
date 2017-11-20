@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import static org.netbeans.jcode.jpa.util.PersistenceHelper.JTA_VALUE;

@@ -81,7 +81,7 @@ public class JoinColumnPanel extends EntityComponent<JoinColumn> {
 //        columnComboBox.addItem(new ComboBoxValue(null, ""));
 //        if (entity != null) {
 ////            entity.getAttributes().getBasic().stream().forEach((basic) -> {
-////                if (basic.getColumn() != null && org.apache.commons.lang.StringUtils.isNotBlank(basic.getColumn().getName())) {
+////                if (basic.getColumn() != null && org.apache.commons.lang3.StringUtils.isNotBlank(basic.getColumn().getName())) {
 ////                    columnComboBox.addItem(new ComboBoxValue(basic, basic.getColumn().getName()));
 ////                } else {
 ////                    columnComboBox.addItem(new ComboBoxValue(basic, basic.getName()));

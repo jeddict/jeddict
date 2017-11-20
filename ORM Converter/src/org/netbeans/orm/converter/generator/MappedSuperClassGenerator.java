@@ -15,7 +15,7 @@
  */
 package org.netbeans.orm.converter.generator;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;

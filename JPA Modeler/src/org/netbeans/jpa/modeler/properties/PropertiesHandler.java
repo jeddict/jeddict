@@ -26,12 +26,12 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.velocity.util.StringUtils.firstLetterCaps;
+import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
+import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.InheritanceStateType;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
@@ -1089,7 +1089,7 @@ public class PropertiesHandler {
             @Override
             public String getDisplay() {
                 if (idAttribute.getGeneratedValue() != null && idAttribute.getGeneratedValue().getStrategy() != null) {
-                    return firstLetterCaps(idAttribute.getGeneratedValue().getStrategy().toString());
+                    return firstUpper(idAttribute.getGeneratedValue().getStrategy().toString());
                 } else if (idAttribute.getGeneratedValue() == null || idAttribute.getGeneratedValue().getStrategy() == null) {
                     return NONE_TYPE;
                 } else {

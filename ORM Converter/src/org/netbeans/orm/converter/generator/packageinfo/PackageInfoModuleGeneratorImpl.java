@@ -17,7 +17,7 @@ package org.netbeans.orm.converter.generator.packageinfo;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jcode.task.ITaskSupervisor;

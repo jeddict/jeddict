@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.bean.validation.constraints.Email;
 import org.netbeans.bean.validation.constraints.Flag;
 import static org.netbeans.jcode.beanvalidation.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;

@@ -15,7 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget.column;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.spec.DBDiscriminatorColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.spec.DiscriminatorColumn;

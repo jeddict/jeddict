@@ -18,7 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;

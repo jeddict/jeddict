@@ -18,7 +18,7 @@ package org.netbeans.jpa.modeler.collaborate.issues;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.modeler.core.IExceptionHandler;
 import org.netbeans.modeler.core.ModelerFile;
 

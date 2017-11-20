@@ -15,7 +15,7 @@
  */
 package org.netbeans.jeddict.jsonb.modeler.properties;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.jcode.core.util.JavaIdentifiers;
 import org.netbeans.jpa.modeler.properties.extend.ClassSelectionPanel;
 import org.netbeans.jpa.modeler.spec.EntityMappings;

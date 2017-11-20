@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import static org.netbeans.jcode.core.util.JavaIdentifiers.getGenericType;
 import static org.netbeans.jcode.core.util.JavaIdentifiers.unqualifyGeneric;
 import org.netbeans.jcode.core.util.JavaSourceHelper;

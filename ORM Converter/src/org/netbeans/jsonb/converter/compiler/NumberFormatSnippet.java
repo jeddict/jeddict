@@ -17,7 +17,7 @@ package org.netbeans.jsonb.converter.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_NUMBER_FORMAT;
 import static org.netbeans.jcode.jsonb.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
 import static org.netbeans.jpa.modeler.settings.code.CodePanel.isGenerateDefaultValue;

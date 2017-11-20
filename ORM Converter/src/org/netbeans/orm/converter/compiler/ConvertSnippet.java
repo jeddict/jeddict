@@ -18,7 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import static org.netbeans.jcode.jpa.JPAConstants.CONVERT;
 import static org.netbeans.jcode.jpa.JPAConstants.CONVERT_FQN;
 import static org.netbeans.jpa.modeler.settings.code.CodePanel.isGenerateDefaultValue;

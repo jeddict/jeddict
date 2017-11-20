@@ -18,7 +18,7 @@ package org.netbeans.orm.converter.compiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
 import static org.netbeans.orm.converter.util.ORMConverterUtil.CLOSE_BRACES;

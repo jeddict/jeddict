@@ -7,30 +7,6 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
-                    <code-name-base>org.apache.commons.io</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>1.4</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>org.apache.commons.lang</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>2.4</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>org.netbeans.libs.javacapi</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>8.10.1.3</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>org.netbeans.api.progress</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -102,7 +78,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.jpa.modeler.collaborate</code-name-base>
+                    <code-name-base>org.netbeans.jeddict.installer</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -110,7 +86,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.jeddict.installer</code-name-base>
+                    <code-name-base>org.netbeans.jpa.modeler.collaborate</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
@@ -134,11 +110,27 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.libs.javacapi</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>8.10.1.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modeler</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>4.3</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modeler.libs</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>4.7</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>

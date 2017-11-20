@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JMenuItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;

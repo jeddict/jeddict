@@ -40,7 +40,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.Widget;

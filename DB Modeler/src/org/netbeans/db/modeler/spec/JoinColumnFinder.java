@@ -17,7 +17,7 @@ package org.netbeans.db.modeler.spec;
 
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.AssociationOverride;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.Entity;

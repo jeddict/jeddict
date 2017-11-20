@@ -16,7 +16,7 @@
 package org.netbeans.jpa.modeler.properties.extend;
 
 import javax.swing.JEditorPane;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.ReferenceClass;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;

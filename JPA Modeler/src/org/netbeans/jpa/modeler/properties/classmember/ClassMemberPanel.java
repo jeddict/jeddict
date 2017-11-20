@@ -19,7 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import static javax.swing.JOptionPane.OK_OPTION;
 import javax.swing.SwingUtilities;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;

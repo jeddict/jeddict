@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.spec.DBBaseTable;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;

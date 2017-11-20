@@ -23,7 +23,7 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
 import static javax.swing.JOptionPane.showMessageDialog;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.properties.classmember.EntityMappingMemberPanel;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.IAttributes;

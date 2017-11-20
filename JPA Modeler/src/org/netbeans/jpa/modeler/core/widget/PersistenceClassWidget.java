@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.StringHelper;

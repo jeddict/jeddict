@@ -15,7 +15,7 @@
  */
 package org.netbeans.jeddict.jsonb.modeler.spec;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.FlowPin;
 

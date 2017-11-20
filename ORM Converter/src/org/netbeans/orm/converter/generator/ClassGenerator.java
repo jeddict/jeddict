@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jcode.infra.JavaEEVersion;
 import static org.jcode.infra.JavaEEVersion.JAVA_EE_8;
 import org.netbeans.bean.validation.constraints.Constraint;

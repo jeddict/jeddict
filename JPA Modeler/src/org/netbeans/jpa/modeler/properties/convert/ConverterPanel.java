@@ -17,7 +17,7 @@ package org.netbeans.jpa.modeler.properties.convert;
 
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.Converter;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;

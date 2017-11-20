@@ -16,7 +16,7 @@
 package org.netbeans.db.modeler.specification.model.util;
 
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.IPrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationColumnWidget;

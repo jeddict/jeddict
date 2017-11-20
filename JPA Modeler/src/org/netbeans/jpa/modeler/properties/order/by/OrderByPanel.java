@@ -17,7 +17,7 @@ package org.netbeans.jpa.modeler.properties.order.by;
 
 import static java.util.Collections.singletonList;
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;

@@ -36,7 +36,7 @@ import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;

@@ -18,7 +18,7 @@ package org.netbeans.db.modeler.properties.uniqueconstraint;
 import java.util.ArrayList;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.properties.tablemember.TableMemberPanel;
 import org.netbeans.db.modeler.spec.DBTable;

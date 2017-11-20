@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jpa.modeler.core.widget.FlowPinWidget;

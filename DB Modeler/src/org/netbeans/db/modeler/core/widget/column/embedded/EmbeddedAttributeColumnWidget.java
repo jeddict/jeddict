@@ -15,7 +15,7 @@
  */
 package org.netbeans.db.modeler.core.widget.column.embedded;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.spec.DBEmbeddedAttributeColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;

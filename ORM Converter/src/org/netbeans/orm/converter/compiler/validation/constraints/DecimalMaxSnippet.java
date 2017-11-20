@@ -16,7 +16,7 @@
 package org.netbeans.orm.converter.compiler.validation.constraints;
 
 import static java.lang.Boolean.FALSE;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.bean.validation.constraints.DecimalMax;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.compiler.*;

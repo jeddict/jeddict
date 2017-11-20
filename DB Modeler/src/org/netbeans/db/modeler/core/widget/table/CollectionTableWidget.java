@@ -16,7 +16,7 @@
 package org.netbeans.db.modeler.core.widget.table;
 
 import java.awt.Image;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.db.modeler.spec.DBCollectionTable;
 import org.netbeans.db.modeler.spec.DBMapping;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
