@@ -33,7 +33,7 @@ import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
 
 public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
 
-    private Entity entity;
+    private final Entity entity;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
         super(new ManagedClassDefSnippet(), parsedEntity.getRootElement().getJavaEEVersion());

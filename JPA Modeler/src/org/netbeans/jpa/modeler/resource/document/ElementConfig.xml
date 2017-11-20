@@ -56,7 +56,7 @@
 <!--                <attribute id="javaEEVersion" groupId="BASIC_PROP" class="org.jcode.infra.JavaEEVersion" name="javaEEVersion">
                     <display-name>Java EE Version</display-name>
                 </attribute>-->
-                <attribute id="package" groupId="PACKAGE" class="java.lang.String" name="package">
+                <attribute id="entityPackage" groupId="PACKAGE" class="java.lang.String" name="entityPackage">
                     <display-name>Entity Package</display-name>
                 </attribute>
                 <attribute id="schema" groupId="BASIC_PROP" class="java.lang.String" name="schema">

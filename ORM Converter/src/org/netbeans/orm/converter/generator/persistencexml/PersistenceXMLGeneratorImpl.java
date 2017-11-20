@@ -31,12 +31,12 @@ import org.netbeans.orm.converter.util.ClassesRepository;
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class PersistenceXMLGeneratorImpl implements ModuleGenerator {
 
-    private EntityMappings parsedEntityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
+    private EntityMappings entityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
 
     @Override
-    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
-        this.parsedEntityMappings = parsedEntityMappings;
+    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings entityMappings) {
+        this.entityMappings = entityMappings;
         generatePersistenceXML(project, sourceGroup);
     }
 
@@ -44,22 +44,12 @@ public class PersistenceXMLGeneratorImpl implements ModuleGenerator {
         List<ClassDefSnippet> classDefs = getPUXMLEntries();
         //Generate persistence.xml
         PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(classDefs);
-        persistenceXMLGenerator.setPUName(parsedEntityMappings.getPersistenceUnitName());
+        persistenceXMLGenerator.setPUName(entityMappings.getPersistenceUnitName());
         persistenceXMLGenerator.generatePersistenceXML(project, sourceGroup);
     }
 
     private List<ClassDefSnippet> getPUXMLEntries() {
-//        List<WritableSnippet> results = new ArrayList<WritableSnippet>();
         List<WritableSnippet> entitySnippets = classesRepository.getWritableSnippets(ClassType.ENTITY_CLASS);
-
-//        List<WritableSnippet> superClassSnippets
-//                = classesRepository.getWritableSnippets(ClassType.SUPER_CLASS);
-//
-//        List<WritableSnippet> embededSnippets
-//                = classesRepository.getWritableSnippets(ClassType.EMBEDED_CLASS);
-//        results.addAll(entitySnippets);
-//        results.addAll(superClassSnippets);
-//        results.addAll(embededSnippets);
         List<ClassDefSnippet> classDefs = new ArrayList<>();
         for (WritableSnippet writableSnippet : entitySnippets) {
             classDefs.add((ClassDefSnippet) writableSnippet);

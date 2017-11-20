@@ -178,7 +178,9 @@ public final class RevEngWizardDescriptor implements WizardDescriptor.Instantiat
 
         if (!entities.isEmpty()) {
             String entity = entities.iterator().next();
-            entityMappingsSpec.setPackage(JavaIdentifiers.getPackageName(entity));
+            String _package = JavaIdentifiers.getPackageName(entity);
+            entityMappingsSpec.setProjectPackage(_package.substring(0, _package.lastIndexOf('.')));
+            entityMappingsSpec.setEntityPackage(_package.substring(_package.lastIndexOf('.')));
         }
 
         List<String> missingEntities = new ArrayList<>();

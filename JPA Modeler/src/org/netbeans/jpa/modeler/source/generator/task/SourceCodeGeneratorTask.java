@@ -17,6 +17,7 @@ package org.netbeans.jpa.modeler.source.generator.task;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
@@ -36,6 +37,7 @@ import org.netbeans.jpa.modeler.source.generator.adaptor.definition.orm.ORMInput
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.util.PreExecutionUtil;
 import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.orm.converter.generator.PersistenceXMLGenerator;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
@@ -44,15 +46,15 @@ import org.openide.util.RequestProcessor;
 public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     private final ModelerFile modelerFile;
-    private final ApplicationConfigData appicationConfigData;
+    private final ApplicationConfigData appConfigData;
     private final Runnable afterExecution;
 
     private final static int SUBTASK_TOT = 1;
     private static String BANNER_TXT;
 
-    public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appicationConfigData, Runnable afterExecution) {
+    public SourceCodeGeneratorTask(ModelerFile modelerFile, ApplicationConfigData appConfigData, Runnable afterExecution) {
         this.modelerFile = modelerFile;
-        this.appicationConfigData = appicationConfigData;
+        this.appConfigData = appConfigData;
         this.afterExecution=afterExecution;
         if (BANNER_TXT == null) {
             try (InputStream stream = getClass().getResourceAsStream("banner")) {
@@ -61,18 +63,17 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
                 Exceptions.printStackTrace(ex);
             }
         }
+        initialize();
     }
 
     @Override
     protected void initTask() {
         setLogLevel(TERSE);
-        setTaskName(getBundleMessage("LBL_GenerateCodeDialogTitle")); 
-
+        setTaskName(getBundleMessage("LBL_GenerateCodeDialogTitle") + " - " + appConfigData.getTargetArtifactId()); 
         setDisplayOutput(true);
 
         progressContribs = new ProgressContributor[SUBTASK_TOT];
         int i = 0;
-
         progressContribs[i] = AggregateProgressFactory
                 .createProgressContributor(getBundleMessage("MSG_Processing")); // NOI18N
     }
@@ -118,19 +119,29 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         JEEApplicationGenerator applicationGenerator = null;
         
         entityMappings.cleanRuntimeArtifact();
-        appicationConfigData.setEntityMappings(entityMappings);
-        if (appicationConfigData.getBussinesTechContext()!= null) {
-            applicationGenerator = new JEEApplicationGenerator(appicationConfigData, handler);
+        appConfigData.setEntityMappings(entityMappings);
+        if (appConfigData.getBussinesTechContext()!= null) {
+            applicationGenerator = new JEEApplicationGenerator(appConfigData, handler);
             applicationGenerator.preGeneration();
         }
         
-        sourceGenerator.generate(this, appicationConfigData.getProject(), appicationConfigData.getSourceGroup(), definiton);
+        if (appConfigData.isMonolith() || appConfigData.isMicroservice()) {
+            sourceGenerator.generate(this,
+                    appConfigData.getTargetProject(),
+                    appConfigData.getTargetSourceGroup(),
+                    definiton);
+        }
+        if (appConfigData.isGateway()) {
+            PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(Collections.emptyList());
+            persistenceXMLGenerator.setPUName(appConfigData.getEntityMappings().getPersistenceUnitName());
+            persistenceXMLGenerator.generatePersistenceXML(appConfigData.getGatewayProject(), appConfigData.getGatewaySourceGroup());
+        }
         
-        if (appicationConfigData.getBussinesTechContext()!= null) {
+        if (appConfigData.getBussinesTechContext()!= null) {
             applicationGenerator.generate();
             applicationGenerator.postGeneration();
         }
-        JeddictLogger.logGenerateEvent(appicationConfigData);
+        JeddictLogger.logGenerateEvent(appConfigData);
     }
 
     private static String getBundleMessage(String key) {

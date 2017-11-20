@@ -16,8 +16,10 @@
 package org.netbeans.jpa.modeler.source.generator.ui;
 
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import static java.awt.event.ItemEvent.SELECTED;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,8 @@ import java.util.prefs.Preferences;
 import javax.lang.model.SourceVersion;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.netbeans.api.project.FileOwnerQuery;
@@ -32,10 +36,10 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.jcode.core.util.POMManager;
 import org.netbeans.jcode.core.util.ProjectHelper;
 import static org.netbeans.jcode.core.util.ProjectHelper.getJavaProjects;
 import org.netbeans.jcode.core.util.ProjectType;
-import static org.netbeans.jcode.core.util.SourceGroupSupport.getPackageForFolder;
 import org.netbeans.jcode.layer.DefaultBusinessLayer;
 import org.netbeans.jcode.layer.DefaultControllerLayer;
 import org.netbeans.jcode.layer.DefaultViewerLayer;
@@ -51,6 +55,8 @@ import org.netbeans.jcode.ui.source.ProjectCellRenderer;
 import org.netbeans.jcode.util.PreferenceUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import static org.netbeans.jpa.modeler.spec.extend.ProjectType.GATEWAY;
+import static org.netbeans.jpa.modeler.spec.extend.ProjectType.MONOLITH;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
@@ -67,6 +73,8 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.NbPreferences;
+import static org.netbeans.jpa.modeler.spec.extend.ProjectType.MICROSERVICE;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -74,17 +82,17 @@ import org.openide.util.NbPreferences;
  */
 public class GenerateCodeDialog extends GenericDialog {
 
-    private static final String SOURCES_TYPE_JAVA = "java"; // NOI18N
-
     private final Preferences technologyPref;
     private final FileObject modelerFileObject;
-    private final String modelerFilePackage;
     private final EntityMappings entityMappings;
     private final ApplicationConfigData configData;
     private final JPAModelerScene scene;
     private final ModelerFile modelerFile;
     private EntityGenerationSettingDialog entityGenerationSettingDialog;
+    private final ProjectInfo targetProjectInfo = new ProjectInfo();
+    private final ProjectInfo gatewayProjectInfo = new ProjectInfo();
 
+    private final static String SOURCES_TYPE_JAVA = "java";
     private final static String COMPLETE_APPLICATION = "COMPLETE_APPLICATION";
 
     /**
@@ -99,8 +107,8 @@ public class GenerateCodeDialog extends GenericDialog {
         this.modelerFileObject = modelerFile.getFileObject();
         this.entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
         this.technologyPref = NbPreferences.forModule(Generator.class);
-        this.modelerFilePackage = sourceGroup != null ? getPackageForFolder(sourceGroup, modelerFileObject.getParent()) : null;
         initUIComponents();
+        setArchState();
     }
 
     private void manageEntityGenerationSetting() {
@@ -115,75 +123,81 @@ public class GenerateCodeDialog extends GenericDialog {
                 selectedWorkSpace = entityMappings.getCurrentWorkSpace();
                 entityMappings.setGenerateWorkSpaceClass(selectedWorkSpace);
             }
-        } 
-//        else {
-//            selectedWorkSpace = entityMappings.getRootWorkSpace();
-//            entityMappings.setGenerateWorkSpaceClass(selectedWorkSpace);
-//        }
-        
+        }
         this.entityGenerationSettingDialog = new EntityGenerationSettingDialog(scene, selectedWorkSpace);
     }
 
-    private boolean isSupportedProject() {
-        ProjectType projectType = getTargetPoject() != null ? ProjectHelper.getProjectType(getTargetPoject()) : null;
+    private boolean isSupportedProject(ProjectInfo projectInfo) {
+        ProjectType projectType = projectInfo.getProject() != null ? ProjectHelper.getProjectType(projectInfo.getProject()) : null;
         return projectType != null && projectType == ProjectType.WEB
-                && getTargetPoject().getClass().getName().contains("Maven");
+                && projectInfo.getProject().getClass().getName().contains("Maven");
     }
-    
-    private void initUIComponents() {
-        manageEntityGenerationSetting();//1st priority
 
+    private void initUIComponents() {
+        manageEntityGenerationSetting();
         initComponents();
         this.setTitle(NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.title"));
         setCaptureWindowSize(false);
         setDefaultButton(generateSourceCode);
-        populateProjectCombo();
-        initLayer();
+        populateProjectCombo(targetProjectCombo, targetProjectInfo);
+        populatePackageCombo(targetProjectPackageCombo, targetProjectInfo);
+        populateProjectCombo(gatewayProjectCombo, gatewayProjectInfo);
+        populatePackageCombo(gatewayProjectPackageCombo, gatewayProjectInfo);
+        setEntityPackage(StringUtils.isNotBlank(entityMappings.getEntityPackage()) ? entityMappings.getEntityPackage() : "domain");
+        setMicroservice(entityMappings.getProjectType() == MICROSERVICE);
+//        initLayer();
+        this.pack();
     }
-   
+
     private void initLayer() {
         setCompleteApplicationCompVisibility(false);
-        setPackage(entityMappings.getPackage());
+
         configPane.removeAll();
         configPane.setVisible(false);
 
-        if (!isSupportedProject()) {
-            businessLayerCombo.setEnabled(false);
-            controllerLayerCombo.setEnabled(false);
-            viewerLayerCombo.setEnabled(false);
-            configData.setBussinesTechContext(null);
-            configData.setControllerTechContext(null);
-            configData.setViewerTechContext(null);
-            infoLabel.setText("Please select the [Maven > Web Application] project for full-stack app");
-            this.pack();
-            return;
-        }
-
         infoLabel.setText("");
-        businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService().toArray()));
+        businessLayerCombo.setModel(new DefaultComboBoxModel(Generator.getBusinessService(isMicroservice() || isGateway()).toArray()));
         controllerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultControllerLayer.class)}));
         viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
         businessLayerCombo.setEnabled(true);
         controllerLayerCombo.setEnabled(false);
         viewerLayerCombo.setEnabled(false);
 
-        TechContext businessContext = Generator.get(technologyPref.get(BUSINESS.name(), DefaultBusinessLayer.class.getSimpleName()));
-        TechContext controllerContext = Generator.get(technologyPref.get(CONTROLLER.name(), DefaultControllerLayer.class.getSimpleName()));
-        TechContext viewerContext = Generator.get(technologyPref.get(VIEWER.name(), DefaultViewerLayer.class.getSimpleName()));
-        if (businessContext != null) {
-            businessLayerCombo.setSelectedItem(businessContext);
-            if (businessContext.isValid() && controllerContext != null) {
-                controllerLayerCombo.setSelectedItem(controllerContext);
-                if (controllerContext.isValid() && viewerContext != null) {
-                    viewerLayerCombo.setSelectedItem(viewerContext);
+        TechContext businessContext = Generator.get(
+                technologyPref.get(BUSINESS.name(),
+                        DefaultBusinessLayer.class.getSimpleName())
+        );
+        TechContext controllerContext = Generator.get(
+                technologyPref.get(CONTROLLER.name(),
+                        DefaultControllerLayer.class.getSimpleName())
+        );
+        TechContext viewerContext = Generator.get(
+                technologyPref.get(VIEWER.name(),
+                        DefaultViewerLayer.class.getSimpleName())
+        );
+
+        SwingUtilities.invokeLater(() -> {
+
+            if (businessContext != null) {
+                businessLayerCombo.getModel().setSelectedItem(businessContext);
+                if (businessContext.isValid() && controllerContext != null) {
+                    controllerLayerCombo.getModel().setSelectedItem(controllerContext);
+                    if (controllerContext.isValid() && viewerContext != null) {
+                        viewerLayerCombo.getModel().setSelectedItem(viewerContext);
+                    }
                 }
             }
-        }
-        this.pack();
+        });
     }
 
     private void setTechPanel(TechContext techContext) {
-        techContext.createPanel(targetPoject, sourceGroup, modelerFilePackage);
+        if ((isMicroservice() || isGateway())
+                && techContext.getTechnology().type() == VIEWER
+                && techContext.getTechnology().microservice()) {
+            techContext.createPanel(gatewayProjectInfo.getProject(), gatewayProjectInfo.getSourceGroup(), getGatewayPackage());
+        } else {
+            techContext.createPanel(targetProjectInfo.getProject(), targetProjectInfo.getSourceGroup(), getTargetPackage());
+        }
         configPane.removeAll();
         configPane.setVisible(false);
         boolean nonePanel = techContext.getTechnology().panel() == LayerConfigPanel.class;
@@ -226,18 +240,19 @@ public class GenerateCodeDialog extends GenericDialog {
             configPane.setVisible(true);
         }
         this.pack();
+        setVisible(true);
     }
 
     private void refreshLayer() {
-        if(getViewerLayer().isValid()){
+        if (getViewerLayer().isValid()) {
             setTechPanel(getViewerLayer());
-        } else if(getControllerLayer().isValid()){
+        } else if (getControllerLayer().isValid()) {
             setTechPanel(getControllerLayer());
-        } else if(getBusinessLayer().isValid()){
+        } else if (getBusinessLayer().isValid()) {
             setTechPanel(getBusinessLayer());
-        }  
+        }
     }
-        
+
     private void addLayerTab(TechContext techContext) {
         Technology tech = techContext.getTechnology();
         if (tech.panel() != LayerConfigPanel.class) {
@@ -250,13 +265,13 @@ public class GenerateCodeDialog extends GenericDialog {
             }
             techContext.getSiblingTechContext()
                     .stream()
-                    .filter(tc -> isCompleteApplication()?true:tc.getTechnology().entityGenerator())
+                    .filter(tc -> isCompleteApplication() ? true : tc.getTechnology().entityGenerator())
                     .forEach(context -> this.addLayerTab(context));
         }
     }
 
     private void changeBusinessLayer(TechContext businessLayer) {
-        controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer).toArray()));
+        controllerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getController(businessLayer, isMicroservice() || isGateway()).toArray()));
         controllerLayerCombo.setEnabled(businessLayer.isValid());
         viewerLayerCombo.setModel(new DefaultComboBoxModel(new Object[]{new TechContext(DefaultViewerLayer.class)}));
         viewerLayerCombo.setEnabled(false);
@@ -264,7 +279,7 @@ public class GenerateCodeDialog extends GenericDialog {
     }
 
     private void changeControllerLayer(TechContext controllerLayer) {
-        viewerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getViewer(controllerLayer).toArray()));
+        viewerLayerCombo.setModel(new DefaultComboBoxModel(Generator.getViewer(controllerLayer, isMicroservice() || isGateway()).toArray()));
         viewerLayerCombo.setEnabled(controllerLayer.isValid());
         setTechPanel(controllerLayer);
     }
@@ -294,35 +309,205 @@ public class GenerateCodeDialog extends GenericDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        archbuttonGroup = new javax.swing.ButtonGroup();
         optionPane = new javax.swing.JLayeredPane();
+        wrapperLayeredPane = new javax.swing.JLayeredPane();
+        archLayeredPane = new javax.swing.JLayeredPane();
+        monolithRadioButton = new javax.swing.JRadioButton();
+        microservicesRadioButton = new javax.swing.JRadioButton();
+        gatewayRadioButton = new javax.swing.JRadioButton();
+        targetProjectLayeredPane = new javax.swing.JLayeredPane();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
+        targetProjectLabel = new javax.swing.JLabel();
+        targetProjectCombo = new javax.swing.JComboBox();
+        jLayeredPane2 = new javax.swing.JLayeredPane();
+        targetProjectPackageLabel = new javax.swing.JLabel();
+        targetProjectPackageCombo = new javax.swing.JComboBox();
+        gatewayProjectLayeredPane = new javax.swing.JLayeredPane();
+        jLayeredPane3 = new javax.swing.JLayeredPane();
+        gatewayProjectLabel = new javax.swing.JLabel();
+        gatewayProjectCombo = new javax.swing.JComboBox();
+        jLayeredPane4 = new javax.swing.JLayeredPane();
+        gatewayProjectPackageLabel = new javax.swing.JLabel();
+        gatewayProjectPackageCombo = new javax.swing.JComboBox();
+        entityLayeredPane = new javax.swing.JLayeredPane();
         packageLabel = new javax.swing.JLabel();
-        resourcePackageCombo = new javax.swing.JComboBox();
+        packageWrapper = new javax.swing.JLayeredPane();
+        packagePrefixLabel = new javax.swing.JLabel();
+        entitySetting = new javax.swing.JButton();
+        entityPackageTextField = new javax.swing.JTextField();
+        businessLayeredPane = new javax.swing.JLayeredPane();
         businessLayerCombo = new javax.swing.JComboBox();
         businessLayerLabel = new javax.swing.JLabel();
-        targetProjectCombo = new javax.swing.JComboBox();
-        targetProjectLabel = new javax.swing.JLabel();
-        viewerLayerLabel = new javax.swing.JLabel();
-        viewerLayerCombo = new javax.swing.JComboBox();
+        controllerLayeredPane = new javax.swing.JLayeredPane();
         controllerLayerCombo = new javax.swing.JComboBox();
         controllerLayerLabel = new javax.swing.JLabel();
+        viewerLayeredPane = new javax.swing.JLayeredPane();
+        viewerLayerCombo = new javax.swing.JComboBox();
+        viewerLayerLabel = new javax.swing.JLabel();
         configPane = new javax.swing.JTabbedPane();
-        entitySetting = new javax.swing.JButton();
         actionPane = new javax.swing.JLayeredPane();
         actionLayeredPane = new javax.swing.JLayeredPane();
         generateSourceCode = new javax.swing.JButton();
         cencelGenerateCode = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
-        completeAppCheckBox = new javax.swing.JCheckBox();
+        targetCompleteAppCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        wrapperLayeredPane.setLayout(new java.awt.GridLayout(7, 0, 0, 4));
+
+        archbuttonGroup.add(monolithRadioButton);
+        monolithRadioButton.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(monolithRadioButton, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.monolithRadioButton.text")); // NOI18N
+        monolithRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                monolithRadioButtonActionPerformed(evt);
+            }
+        });
+
+        archbuttonGroup.add(microservicesRadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(microservicesRadioButton, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.microservicesRadioButton.text")); // NOI18N
+        microservicesRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                microservicesRadioButtonActionPerformed(evt);
+            }
+        });
+
+        archbuttonGroup.add(gatewayRadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(gatewayRadioButton, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.gatewayRadioButton.text")); // NOI18N
+        gatewayRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gatewayRadioButtonActionPerformed(evt);
+            }
+        });
+
+        archLayeredPane.setLayer(monolithRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        archLayeredPane.setLayer(microservicesRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        archLayeredPane.setLayer(gatewayRadioButton, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout archLayeredPaneLayout = new javax.swing.GroupLayout(archLayeredPane);
+        archLayeredPane.setLayout(archLayeredPaneLayout);
+        archLayeredPaneLayout.setHorizontalGroup(
+            archLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(archLayeredPaneLayout.createSequentialGroup()
+                .addGap(89, 89, 89)
+                .addComponent(monolithRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(69, 69, 69)
+                .addComponent(microservicesRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(73, 73, 73)
+                .addComponent(gatewayRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        archLayeredPaneLayout.setVerticalGroup(
+            archLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(monolithRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(microservicesRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(gatewayRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        wrapperLayeredPane.add(archLayeredPane);
+
+        targetProjectLayeredPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 1, 3, 1));
+        targetProjectLayeredPane.setLayout(new java.awt.BorderLayout(10, 0));
+
+        jLayeredPane1.setPreferredSize(new java.awt.Dimension(280, 42));
+        jLayeredPane1.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(targetProjectLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetProjectLabel.text")); // NOI18N
+        targetProjectLabel.setPreferredSize(new java.awt.Dimension(95, 17));
+        jLayeredPane1.add(targetProjectLabel, java.awt.BorderLayout.WEST);
+
+        targetProjectCombo.setMinimumSize(new java.awt.Dimension(50, 20));
+        targetProjectCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                targetProjectComboItemStateChanged(evt);
+            }
+        });
+        jLayeredPane1.add(targetProjectCombo, java.awt.BorderLayout.CENTER);
+
+        targetProjectLayeredPane.add(jLayeredPane1, java.awt.BorderLayout.WEST);
+
+        jLayeredPane2.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(targetProjectPackageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetProjectPackageLabel.text")); // NOI18N
+        targetProjectPackageLabel.setPreferredSize(new java.awt.Dimension(50, 17));
+        jLayeredPane2.add(targetProjectPackageLabel, java.awt.BorderLayout.WEST);
+
+        targetProjectPackageCombo.setEditable(true);
+        targetProjectPackageCombo.setMinimumSize(new java.awt.Dimension(50, 20));
+        jLayeredPane2.add(targetProjectPackageCombo, java.awt.BorderLayout.CENTER);
+
+        targetProjectLayeredPane.add(jLayeredPane2, java.awt.BorderLayout.CENTER);
+
+        wrapperLayeredPane.add(targetProjectLayeredPane);
+
+        gatewayProjectLayeredPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 1, 3, 1));
+        gatewayProjectLayeredPane.setLayout(new java.awt.BorderLayout(10, 0));
+
+        jLayeredPane3.setPreferredSize(new java.awt.Dimension(280, 42));
+        jLayeredPane3.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(gatewayProjectLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.gatewayProjectLabel.text")); // NOI18N
+        gatewayProjectLabel.setPreferredSize(new java.awt.Dimension(95, 17));
+        jLayeredPane3.add(gatewayProjectLabel, java.awt.BorderLayout.WEST);
+
+        gatewayProjectCombo.setMinimumSize(new java.awt.Dimension(50, 20));
+        gatewayProjectCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                gatewayProjectComboItemStateChanged(evt);
+            }
+        });
+        jLayeredPane3.add(gatewayProjectCombo, java.awt.BorderLayout.CENTER);
+
+        gatewayProjectLayeredPane.add(jLayeredPane3, java.awt.BorderLayout.WEST);
+
+        jLayeredPane4.setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(gatewayProjectPackageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.gatewayProjectPackageLabel.text")); // NOI18N
+        gatewayProjectPackageLabel.setPreferredSize(new java.awt.Dimension(50, 17));
+        jLayeredPane4.add(gatewayProjectPackageLabel, java.awt.BorderLayout.WEST);
+
+        gatewayProjectPackageCombo.setEditable(true);
+        gatewayProjectPackageCombo.setMinimumSize(new java.awt.Dimension(50, 20));
+        jLayeredPane4.add(gatewayProjectPackageCombo, java.awt.BorderLayout.CENTER);
+
+        gatewayProjectLayeredPane.add(jLayeredPane4, java.awt.BorderLayout.CENTER);
+
+        wrapperLayeredPane.add(gatewayProjectLayeredPane);
+
+        entityLayeredPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 1, 3, 1));
+        entityLayeredPane.setLayout(new java.awt.BorderLayout());
+
         org.openide.awt.Mnemonics.setLocalizedText(packageLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.packageLabel.text")); // NOI18N
-        packageLabel.setPreferredSize(new java.awt.Dimension(150, 17));
+        packageLabel.setPreferredSize(new java.awt.Dimension(95, 17));
+        entityLayeredPane.add(packageLabel, java.awt.BorderLayout.WEST);
 
-        resourcePackageCombo.setEditable(true);
-        resourcePackageCombo.setEditable(true);
+        packageWrapper.setLayout(new java.awt.BorderLayout());
 
-        resourcePackageCombo.setEditable(true);
+        packagePrefixLabel.setForeground(new java.awt.Color(153, 153, 153));
+        org.openide.awt.Mnemonics.setLocalizedText(packagePrefixLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.packagePrefixLabel.text")); // NOI18N
+        packagePrefixLabel.setPreferredSize(new java.awt.Dimension(130, 14));
+        packageWrapper.add(packagePrefixLabel, java.awt.BorderLayout.WEST);
+
+        entitySetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/resource/image/java/JAVA_CLASS.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(entitySetting, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.entitySetting.text")); // NOI18N
+        entitySetting.setBorder(null);
+        entitySetting.setBorderPainted(false);
+        entitySetting.setPreferredSize(new java.awt.Dimension(20, 17));
+        entitySetting.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                entitySettingActionPerformed(evt);
+            }
+        });
+        packageWrapper.add(entitySetting, java.awt.BorderLayout.EAST);
+
+        entityPackageTextField.setText(org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.entityPackageTextField.text")); // NOI18N
+        packageWrapper.add(entityPackageTextField, java.awt.BorderLayout.CENTER);
+
+        entityLayeredPane.add(packageWrapper, java.awt.BorderLayout.CENTER);
+
+        wrapperLayeredPane.add(entityLayeredPane);
+
         businessLayerCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 businessLayerComboItemStateChanged(evt);
@@ -331,26 +516,29 @@ public class GenerateCodeDialog extends GenericDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(businessLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.businessLayerLabel.text")); // NOI18N
 
-        targetProjectCombo.setMinimumSize(new java.awt.Dimension(50, 20));
-        targetProjectCombo.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                targetProjectComboItemStateChanged(evt);
-            }
-        });
+        businessLayeredPane.setLayer(businessLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        businessLayeredPane.setLayer(businessLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        org.openide.awt.Mnemonics.setLocalizedText(targetProjectLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetProjectLabel.text")); // NOI18N
-        targetProjectLabel.setPreferredSize(new java.awt.Dimension(150, 17));
+        javax.swing.GroupLayout businessLayeredPaneLayout = new javax.swing.GroupLayout(businessLayeredPane);
+        businessLayeredPane.setLayout(businessLayeredPaneLayout);
+        businessLayeredPaneLayout.setHorizontalGroup(
+            businessLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(businessLayeredPaneLayout.createSequentialGroup()
+                .addComponent(businessLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(businessLayerCombo, 0, 519, Short.MAX_VALUE))
+        );
+        businessLayeredPaneLayout.setVerticalGroup(
+            businessLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(businessLayeredPaneLayout.createSequentialGroup()
+                .addGroup(businessLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(businessLayerLabel)
+                    .addComponent(businessLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 6, Short.MAX_VALUE))
+        );
 
-        org.openide.awt.Mnemonics.setLocalizedText(viewerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.viewerLayerLabel.text")); // NOI18N
+        wrapperLayeredPane.add(businessLayeredPane);
 
-        resourcePackageCombo.setEditable(true);
-        viewerLayerCombo.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                viewerLayerComboItemStateChanged(evt);
-            }
-        });
-
-        resourcePackageCombo.setEditable(true);
         controllerLayerCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 controllerLayerComboItemStateChanged(evt);
@@ -359,96 +547,80 @@ public class GenerateCodeDialog extends GenericDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(controllerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.controllerLayerLabel.text")); // NOI18N
 
-        entitySetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/netbeans/jpa/modeler/resource/image/java/JAVA_CLASS.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(entitySetting, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.entitySetting.text")); // NOI18N
-        entitySetting.setBorder(null);
-        entitySetting.setBorderPainted(false);
-        entitySetting.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                entitySettingActionPerformed(evt);
+        controllerLayeredPane.setLayer(controllerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        controllerLayeredPane.setLayer(controllerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout controllerLayeredPaneLayout = new javax.swing.GroupLayout(controllerLayeredPane);
+        controllerLayeredPane.setLayout(controllerLayeredPaneLayout);
+        controllerLayeredPaneLayout.setHorizontalGroup(
+            controllerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(controllerLayeredPaneLayout.createSequentialGroup()
+                .addComponent(controllerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(controllerLayerCombo, 0, 519, Short.MAX_VALUE))
+        );
+        controllerLayeredPaneLayout.setVerticalGroup(
+            controllerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controllerLayeredPaneLayout.createSequentialGroup()
+                .addGroup(controllerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(controllerLayerLabel)
+                    .addComponent(controllerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        wrapperLayeredPane.add(controllerLayeredPane);
+
+        viewerLayerCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                viewerLayerComboItemStateChanged(evt);
             }
         });
 
-        optionPane.setLayer(packageLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(resourcePackageCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(businessLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(businessLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(targetProjectCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(targetProjectLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(viewerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(viewerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(controllerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(controllerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        org.openide.awt.Mnemonics.setLocalizedText(viewerLayerLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.viewerLayerLabel.text")); // NOI18N
+
+        viewerLayeredPane.setLayer(viewerLayerCombo, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        viewerLayeredPane.setLayer(viewerLayerLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout viewerLayeredPaneLayout = new javax.swing.GroupLayout(viewerLayeredPane);
+        viewerLayeredPane.setLayout(viewerLayeredPaneLayout);
+        viewerLayeredPaneLayout.setHorizontalGroup(
+            viewerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(viewerLayeredPaneLayout.createSequentialGroup()
+                .addComponent(viewerLayerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(viewerLayerCombo, 0, 519, Short.MAX_VALUE))
+        );
+        viewerLayeredPaneLayout.setVerticalGroup(
+            viewerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(viewerLayeredPaneLayout.createSequentialGroup()
+                .addGroup(viewerLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(viewerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(viewerLayerLabel))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        wrapperLayeredPane.add(viewerLayeredPane);
+
+        optionPane.setLayer(wrapperLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         optionPane.setLayer(configPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        optionPane.setLayer(entitySetting, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout optionPaneLayout = new javax.swing.GroupLayout(optionPane);
         optionPane.setLayout(optionPaneLayout);
         optionPaneLayout.setHorizontalGroup(
             optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPaneLayout.createSequentialGroup()
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, optionPaneLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(configPane))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, optionPaneLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(optionPaneLayout.createSequentialGroup()
-                                .addComponent(targetProjectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(targetProjectCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(optionPaneLayout.createSequentialGroup()
-                                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(viewerLayerLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(controllerLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(packageLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                                        .addComponent(businessLayerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(controllerLayerCombo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(businessLayerCombo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(viewerLayerCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(optionPaneLayout.createSequentialGroup()
-                                        .addComponent(resourcePackageCombo, 0, 499, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(entitySetting, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+            .addGroup(optionPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(configPane)
+                    .addComponent(wrapperLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE))
                 .addContainerGap())
         );
         optionPaneLayout.setVerticalGroup(
             optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionPaneLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(targetProjectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(targetProjectCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14)
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(resourcePackageCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(packageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(entitySetting, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(optionPaneLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(businessLayerLabel))
-                    .addComponent(businessLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(optionPaneLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(controllerLayerLabel))
-                    .addComponent(controllerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(optionPaneLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(viewerLayerLabel))
-                    .addComponent(viewerLayerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(configPane, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                .addComponent(wrapperLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(configPane, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -491,15 +663,29 @@ public class GenerateCodeDialog extends GenericDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(infoLabel, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.infoLabel.text")); // NOI18N
 
+        setCompleteApplication(technologyPref.getBoolean(COMPLETE_APPLICATION, true));
+        targetCompleteAppCheckBox.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(targetCompleteAppCheckBox, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetCompleteAppCheckBox.text")); // NOI18N
+        targetCompleteAppCheckBox.setToolTipText(org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.targetCompleteAppCheckBox.toolTipText")); // NOI18N
+        targetCompleteAppCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                targetCompleteAppCheckBoxActionPerformed(evt);
+            }
+        });
+
         actionPane.setLayer(actionLayeredPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         actionPane.setLayer(infoLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        actionPane.setLayer(targetCompleteAppCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout actionPaneLayout = new javax.swing.GroupLayout(actionPane);
         actionPane.setLayout(actionPaneLayout);
         actionPaneLayout.setHorizontalGroup(
             actionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(actionPaneLayout.createSequentialGroup()
-                .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(targetCompleteAppCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2))
@@ -510,17 +696,10 @@ public class GenerateCodeDialog extends GenericDialog {
                 .addComponent(actionLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(actionPaneLayout.createSequentialGroup()
+                .addComponent(targetCompleteAppCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
-
-        setCompleteApplication(technologyPref.getBoolean(COMPLETE_APPLICATION, true));
-        completeAppCheckBox.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(completeAppCheckBox, org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.completeAppCheckBox.text")); // NOI18N
-        completeAppCheckBox.setToolTipText(org.openide.util.NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.completeAppCheckBox.toolTipText")); // NOI18N
-        completeAppCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                completeAppCheckBoxActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -529,44 +708,28 @@ public class GenerateCodeDialog extends GenericDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(actionPane)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(completeAppCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(actionPane))
-                    .addComponent(optionPane))
-                .addContainerGap())
+                        .addComponent(optionPane)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
+                .addContainerGap()
                 .addComponent(optionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(completeAppCheckBox))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(actionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private Project targetPoject = null;
-    private final Project orignalProject = null;
-    private SourceGroup sourceGroup = null;
-
     private void targetProjectComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_targetProjectComboItemStateChanged
         if (evt.getStateChange() == SELECTED) {
-//            Project previousProject = getTargetPoject();
-            setTargetPoject((Project) targetProjectCombo.getSelectedItem());
-//            Project newProject = getTargetPoject();
-            populateSourceFolderCombo();
-
-//            if ((ProjectHelper.getProjectType(previousProject) != ProjectHelper.getProjectType(newProject))
-//                    || (previousProject.getClass() != newProject.getClass())) {
-                initLayer();
-//            }
+            targetProjectInfo.setProject((Project) targetProjectCombo.getSelectedItem());
+            populateSourceFolderCombo(targetProjectInfo);
+            populatePackageCombo(targetProjectPackageCombo, targetProjectInfo);
         }
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
@@ -580,14 +743,28 @@ public class GenerateCodeDialog extends GenericDialog {
     }//GEN-LAST:event_generateSourceCodeActionPerformed
 
     private boolean hasError() {
-        if (sourceGroup == null) {
-            NotifyDescriptor d = new NotifyDescriptor.Message("Please select the Source Folder .", NotifyDescriptor.INFORMATION_MESSAGE);
-            d.setTitle("Source Folder");
+        if ((isMonolith() && !isSupportedProject(targetProjectInfo))
+                || (isMicroservice() && (!isSupportedProject(gatewayProjectInfo) || !isSupportedProject(targetProjectInfo)))
+                || (isGateway() && !isSupportedProject(gatewayProjectInfo))) {
+            NotifyDescriptor d = new NotifyDescriptor.Message(
+                    "Please select the [Maven > Web Application] project for full-stack app",
+                    NotifyDescriptor.INFORMATION_MESSAGE);
+            d.setTitle("Invalid project type");
             DialogDisplayer.getDefault().notify(d);
             return true;
         }
-        if (!SourceVersion.isName(getPackage())) {
-            NotifyDescriptor d = new NotifyDescriptor.Message("Please select the Entity Package .", NotifyDescriptor.INFORMATION_MESSAGE);
+        if (isMicroservice() && targetProjectInfo.getProject() == gatewayProjectInfo.getProject()) {
+            NotifyDescriptor d = new NotifyDescriptor.Message(
+                    "Target and Gateway project can't be same",
+                    NotifyDescriptor.INFORMATION_MESSAGE);
+            d.setTitle("Same destination");
+            DialogDisplayer.getDefault().notify(d);
+            return true;
+        }
+        if (!SourceVersion.isName(getEntityPackage())) {
+            NotifyDescriptor d = new NotifyDescriptor.Message(
+                    "Please select the Entity Package .",
+                    NotifyDescriptor.INFORMATION_MESSAGE);
             d.setTitle("Entity Package");
             DialogDisplayer.getDefault().notify(d);
             return true;
@@ -600,7 +777,7 @@ public class GenerateCodeDialog extends GenericDialog {
                     return true;
                 } else {
                     panel.store();
-                    PreferenceUtils.set(getTargetPoject(), panel.getConfigData());
+                    PreferenceUtils.set(targetProjectInfo.getProject(), panel.getConfigData());
                 }
             }
         }
@@ -608,11 +785,14 @@ public class GenerateCodeDialog extends GenericDialog {
     }
 
     private void store() {
-        if (!StringUtils.equals(entityMappings.getPackage(), getPackage())) {
-            modelerFile.getModelerPanelTopComponent().changePersistenceState(false);
-        }
-        entityMappings.setPackage(getPackage());
-        if (isSupportedProject() && getBusinessLayer() != null) {
+        modelerFile.getModelerPanelTopComponent().changePersistenceState(false);
+        entityMappings.setProjectType(isMonolith() ? MONOLITH : MICROSERVICE);
+        entityMappings.setProjectPackage(getTargetPackage());
+        entityMappings.setEntityPackage(getEntityPackage());
+        if (((isMonolith() && isSupportedProject(targetProjectInfo))
+                || (isMicroservice() && isSupportedProject(gatewayProjectInfo) && isSupportedProject(targetProjectInfo))
+                || (isGateway() && isSupportedProject(gatewayProjectInfo)))
+                && getBusinessLayer() != null) {
             technologyPref.put(BUSINESS.name(), getBusinessLayer().getGeneratorClass().getSimpleName());
             if (getControllerLayer() != null) {
                 technologyPref.put(CONTROLLER.name(), getControllerLayer().getGeneratorClass().getSimpleName());
@@ -621,6 +801,26 @@ public class GenerateCodeDialog extends GenericDialog {
                 }
             }
         }
+    }
+
+    private boolean isMonolith() {
+        return monolithRadioButton.isSelected();
+    }
+
+    private void setMicroservice(boolean enabled) {
+        microservicesRadioButton.setSelected(enabled);
+    }
+
+    private boolean isMicroservice() {
+        return microservicesRadioButton.isSelected();
+    }
+
+    private void setGateway(boolean enabled) {
+        gatewayRadioButton.setSelected(enabled);
+    }
+
+    private boolean isGateway() {
+        return gatewayRadioButton.isSelected();
     }
 
     private void cencelGenerateCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cencelGenerateCodeActionPerformed
@@ -651,11 +851,62 @@ public class GenerateCodeDialog extends GenericDialog {
         manageGenerateButtonStatus();
     }//GEN-LAST:event_entitySettingActionPerformed
 
-    private void completeAppCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_completeAppCheckBoxActionPerformed
+    private void targetCompleteAppCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_targetCompleteAppCheckBoxActionPerformed
         technologyPref.putBoolean(COMPLETE_APPLICATION, isCompleteApplication());
         manageGenerateButtonStatus();
         refreshLayer();
-    }//GEN-LAST:event_completeAppCheckBoxActionPerformed
+    }//GEN-LAST:event_targetCompleteAppCheckBoxActionPerformed
+
+    private void microservicesRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_microservicesRadioButtonActionPerformed
+        setArchState();
+    }//GEN-LAST:event_microservicesRadioButtonActionPerformed
+
+    private void monolithRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_monolithRadioButtonActionPerformed
+        setArchState();
+    }//GEN-LAST:event_monolithRadioButtonActionPerformed
+
+    private void gatewayProjectComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_gatewayProjectComboItemStateChanged
+        if (evt.getStateChange() == SELECTED) {
+            gatewayProjectInfo.setProject((Project) gatewayProjectCombo.getSelectedItem());
+            populateSourceFolderCombo(gatewayProjectInfo);
+            populatePackageCombo(gatewayProjectPackageCombo, gatewayProjectInfo);
+        }
+    }//GEN-LAST:event_gatewayProjectComboItemStateChanged
+
+    private void gatewayRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gatewayRadioButtonActionPerformed
+        setArchState();
+    }//GEN-LAST:event_gatewayRadioButtonActionPerformed
+
+    private void setArchState() {
+        wrapperLayeredPane.removeAll();
+        wrapperLayeredPane.revalidate();
+        wrapperLayeredPane.repaint();
+        entitySetting.setVisible(true);
+        targetCompleteAppCheckBox.setEnabled(true);
+
+        wrapperLayeredPane.add(archLayeredPane);
+        if (isMicroservice()) {
+            ((GridLayout) wrapperLayeredPane.getLayout()).setRows(7);
+            ((GridLayout) wrapperLayeredPane.getLayout()).setVgap(4);
+            wrapperLayeredPane.add(targetProjectLayeredPane);
+            wrapperLayeredPane.add(gatewayProjectLayeredPane);
+        } else if (isGateway()) {
+            entitySetting.setVisible(false);
+            targetCompleteAppCheckBox.setEnabled(false);
+            ((GridLayout) wrapperLayeredPane.getLayout()).setRows(6);
+            ((GridLayout) wrapperLayeredPane.getLayout()).setVgap(10);
+            wrapperLayeredPane.add(gatewayProjectLayeredPane);
+        } else {
+            ((GridLayout) wrapperLayeredPane.getLayout()).setRows(6);
+            ((GridLayout) wrapperLayeredPane.getLayout()).setVgap(10);
+            wrapperLayeredPane.add(targetProjectLayeredPane);
+        }
+        wrapperLayeredPane.add(entityLayeredPane);
+        wrapperLayeredPane.add(businessLayeredPane);
+        wrapperLayeredPane.add(controllerLayeredPane);
+        wrapperLayeredPane.add(viewerLayeredPane);
+        initLayer();
+    }
 
     private void manageGenerateButtonStatus() {
         List<JavaClass> javaClassList = entityMappings.findGeneratedClass();
@@ -682,72 +933,51 @@ public class GenerateCodeDialog extends GenericDialog {
         }
     }
 
-    //
-    // target project added elements processing
-    //
     private void enableExistingProjectElementGroup(boolean enable) {
         targetProjectCombo.setEnabled(enable);
     }
 
-    private void populateProjectCombo() {
-        ProjectCellRenderer projectCellRenderer = new ProjectCellRenderer(targetProjectCombo.getRenderer());
-        targetProjectCombo.setRenderer(projectCellRenderer);
+    private void populateProjectCombo(JComboBox projectCombo, ProjectInfo projectInfo) {
+        ProjectCellRenderer projectCellRenderer = new ProjectCellRenderer(projectCombo.getRenderer());
+        projectCombo.setRenderer(projectCellRenderer);
         List<Project> list = getJavaProjects();
-
-        if (orignalProject != null && !list.contains(orignalProject)) {
-            list.add(orignalProject);
-        }
 
         if (list == null || list.isEmpty()) {
             enableExistingProjectElementGroup(false);
         } else {
             DefaultComboBoxModel projectsModel = new DefaultComboBoxModel(list.toArray());
-            targetProjectCombo.setModel(projectsModel);
+            projectCombo.setModel(projectsModel);
 
             // Issue Fix #5850 
-            Project project = FileOwnerQuery.getOwner(modelerFileObject);
-            if (project != null) {
-                targetProjectCombo.setSelectedItem(project);
+            Project modelerProject = FileOwnerQuery.getOwner(modelerFileObject);
+            if (modelerProject != null) {
+                projectCombo.setSelectedItem(modelerProject);
             } else {
-                targetProjectCombo.setSelectedIndex(-1);
+                projectCombo.setSelectedIndex(-1);
             }
-
-            // When the selected index was set to -1 it reset the targetPrj
-            // value.  Since the targetPrj was simply initialized with the
-            // origPrj value, just set it again.
-            setTargetPoject(orignalProject);
-            selectTargetProject();
+            selectProject(projectCombo, projectInfo);
         }
     }
 
-    private void selectTargetProject() {
-        if (getTargetPoject() == null) {
-            if (targetProjectCombo.getSelectedItem() != null) {
-                setTargetPoject((Project) targetProjectCombo.getSelectedItem());
+    private void selectProject(JComboBox projectCombo, ProjectInfo projectInfo) {
+        if (projectInfo.getProject() == null) {
+            if (projectCombo.getSelectedItem() != null) {
+                projectInfo.setProject((Project) projectCombo.getSelectedItem());
             }
-//                sourceFolderCombo.setEnabled(true);
-//            } else {
-//                sourceFolderCombo.setEnabled(false);
-//            }
         } else {
-            targetProjectCombo.setSelectedItem(getTargetPoject());
-//            sourceFolderCombo.setEnabled(true);
+            projectCombo.setSelectedItem(projectInfo.getProject());
         }
-
-        if (targetProjectCombo.getSelectedItem() != null) {
-            populateSourceFolderCombo();
-//            sourceFolderCombo.setEnabled(true);
+        if (projectCombo.getSelectedItem() != null) {
+            populateSourceFolderCombo(projectInfo);
         }
     }
 
-    private void populateSourceFolderCombo() {
-//        SourceRootCellRenderer srcCellRenderer = new SourceRootCellRenderer(sourceFolderCombo.getRenderer());
-//        sourceFolderCombo.setRenderer(srcCellRenderer);
+    private void populateSourceFolderCombo(ProjectInfo projectInfo) {
         ArrayList<SourceGroup> srcRoots = new ArrayList<>();
         int index = 0;
-        FileObject sfo = getSourceGroup() != null ? getSourceGroup().getRootFolder() : null;
-        if (targetPoject != null) {
-            Sources sources = ProjectUtils.getSources(targetPoject);
+        FileObject sfo = projectInfo.getSourceGroup() != null ? projectInfo.getSourceGroup().getRootFolder() : null;
+        if (projectInfo.getProject() != null) {
+            Sources sources = ProjectUtils.getSources(projectInfo.getProject());
             if (sources != null) {
                 SourceGroup[] srcGrps = sources.getSourceGroups(SOURCES_TYPE_JAVA);
                 if (srcGrps != null) {
@@ -762,46 +992,21 @@ public class GenerateCodeDialog extends GenericDialog {
                 }
             }
         }
-        
-        if (srcRoots.size() > 0) {
-            setSourceGroup(srcRoots.get(index));
-        }
 
-//        DefaultComboBoxModel rootsModel = new DefaultComboBoxModel(srcRoots.toArray());
-//        sourceFolderCombo.setModel(rootsModel);
-//        if (srcRoots.size() > 0) {
-//            sourceFolderCombo.setSelectedIndex(index);
-//            setSourceGroup(srcRoots.get(index));
-//            sourceFolderCombo.setEnabled(true);
-//        } else {
-//            sourceFolderCombo.setEnabled(false);
-//        }
-        populatePackageCombo();
+        if (srcRoots.size() > 0) {
+            projectInfo.setSourceGroup(srcRoots.get(index));
+        }
     }
 
-    private void populatePackageCombo() {
-        if (sourceGroup != null) {
-            resourcePackageCombo.setRenderer(PackageView.listRenderer());
-            ComboBoxModel model = PackageView.createListView(sourceGroup);
+    private void populatePackageCombo(JComboBox packageCombo, ProjectInfo projectInfo) {
+        if (projectInfo.getSourceGroup() != null) {
+            packageCombo.setRenderer(PackageView.listRenderer());
+            ComboBoxModel model = PackageView.createListView(projectInfo.getSourceGroup());
             if (model.getSize() > 0) {
                 model.setSelectedItem(model.getElementAt(0));
             }
-            resourcePackageCombo.setModel(model);
+            packageCombo.setModel(model);
         }
-    }
-
-    /**
-     * @return the sourceGroup
-     */
-    public SourceGroup getSourceGroup() {
-        return sourceGroup;
-    }
-
-    /**
-     * @param sourceGroup the sourceGroup to set
-     */
-    public void setSourceGroup(SourceGroup sourceGroup) {
-        this.sourceGroup = sourceGroup;
     }
 
     /**
@@ -811,55 +1016,89 @@ public class GenerateCodeDialog extends GenericDialog {
         return modelerFileObject;
     }
 
-    /**
-     * @return the targetPoject
-     */
-    public Project getTargetPoject() {
-        return targetPoject;
+    public String getEntityPackage() {
+        return entityPackageTextField.getText();
     }
 
-    /**
-     * @param targetPoject the targetPoject to set
-     */
-    public void setTargetPoject(Project targetPoject) {
-        this.targetPoject = targetPoject;
+    private void setEntityPackage(String _package) {
+        entityPackageTextField.setText(_package);
     }
 
-    public String getPackage() {
-        return ((JTextComponent) resourcePackageCombo.getEditor().getEditorComponent()).getText();
+    public String getTargetPackage() {
+        return getPackage(targetProjectPackageCombo);
     }
 
-    private void setPackage(String _package) {
-        ComboBoxModel model = resourcePackageCombo.getModel();
+    private void setTargetPackage(String _package) {
+        setPackage(targetProjectPackageCombo, _package);
+    }
+
+    public String getGatewayPackage() {
+        return getPackage(gatewayProjectPackageCombo);
+    }
+
+    private void setGatewayPackage(String _package) {
+        setPackage(gatewayProjectPackageCombo, _package);
+    }
+
+    public String getPackage(JComboBox packageCombo) {
+        return ((JTextComponent) packageCombo.getEditor().getEditorComponent()).getText();
+    }
+
+    private void setPackage(JComboBox packageCombo, String _package) {
+        ComboBoxModel model = packageCombo.getModel();
         for (int i = 0; i < model.getSize(); i++) {
             if (model.getElementAt(i).toString().equals(_package)) {
                 model.setSelectedItem(model.getElementAt(i));
                 return;
             }
         }
-        ((JTextComponent) resourcePackageCombo.getEditor().getEditorComponent()).setText(_package);
+        ((JTextComponent) packageCombo.getEditor().getEditorComponent()).setText(_package);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane actionLayeredPane;
     private javax.swing.JLayeredPane actionPane;
+    private javax.swing.JLayeredPane archLayeredPane;
+    private javax.swing.ButtonGroup archbuttonGroup;
     private javax.swing.JComboBox businessLayerCombo;
     private javax.swing.JLabel businessLayerLabel;
+    private javax.swing.JLayeredPane businessLayeredPane;
     private javax.swing.JButton cencelGenerateCode;
-    private javax.swing.JCheckBox completeAppCheckBox;
     private javax.swing.JTabbedPane configPane;
     private javax.swing.JComboBox controllerLayerCombo;
     private javax.swing.JLabel controllerLayerLabel;
+    private javax.swing.JLayeredPane controllerLayeredPane;
+    private javax.swing.JLayeredPane entityLayeredPane;
+    private javax.swing.JTextField entityPackageTextField;
     private javax.swing.JButton entitySetting;
+    private javax.swing.JComboBox gatewayProjectCombo;
+    private javax.swing.JLabel gatewayProjectLabel;
+    private javax.swing.JLayeredPane gatewayProjectLayeredPane;
+    private javax.swing.JComboBox gatewayProjectPackageCombo;
+    private javax.swing.JLabel gatewayProjectPackageLabel;
+    private javax.swing.JRadioButton gatewayRadioButton;
     private javax.swing.JButton generateSourceCode;
     private javax.swing.JLabel infoLabel;
+    private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JLayeredPane jLayeredPane2;
+    private javax.swing.JLayeredPane jLayeredPane3;
+    private javax.swing.JLayeredPane jLayeredPane4;
+    private javax.swing.JRadioButton microservicesRadioButton;
+    private javax.swing.JRadioButton monolithRadioButton;
     private javax.swing.JLayeredPane optionPane;
     private javax.swing.JLabel packageLabel;
-    private javax.swing.JComboBox resourcePackageCombo;
+    private javax.swing.JLabel packagePrefixLabel;
+    private javax.swing.JLayeredPane packageWrapper;
+    private javax.swing.JCheckBox targetCompleteAppCheckBox;
     private javax.swing.JComboBox targetProjectCombo;
     private javax.swing.JLabel targetProjectLabel;
+    private javax.swing.JLayeredPane targetProjectLayeredPane;
+    private javax.swing.JComboBox targetProjectPackageCombo;
+    private javax.swing.JLabel targetProjectPackageLabel;
     private javax.swing.JComboBox viewerLayerCombo;
     private javax.swing.JLabel viewerLayerLabel;
+    private javax.swing.JLayeredPane viewerLayeredPane;
+    private javax.swing.JLayeredPane wrapperLayeredPane;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -867,24 +1106,70 @@ public class GenerateCodeDialog extends GenericDialog {
      */
     public ApplicationConfigData getConfigData() {
         configData.setCompleteApplication(isCompleteApplication());
-        configData.setProject(getTargetPoject());
-        configData.setSourceGroup(getSourceGroup());
+        configData.setProjectType(isMonolith() ? MONOLITH : (isMicroservice() ? MICROSERVICE : GATEWAY));
+
+        if (isMonolith()) {
+            configData.setTargetProject(targetProjectInfo.getProject());
+            configData.setTargetSourceGroup(targetProjectInfo.getSourceGroup());
+            configData.setTargetPackage(getTargetPackage());
+            configData.setGatewayProject(targetProjectInfo.getProject());
+            configData.setGatewaySourceGroup(targetProjectInfo.getSourceGroup());
+            configData.setGatewayPackage(getTargetPackage());
+        } else if (isMicroservice()) {
+            configData.setTargetProject(targetProjectInfo.getProject());
+            configData.setTargetSourceGroup(targetProjectInfo.getSourceGroup());
+            configData.setTargetPackage(getTargetPackage());
+            configData.setGatewayProject(gatewayProjectInfo.getProject());
+            configData.setGatewaySourceGroup(gatewayProjectInfo.getSourceGroup());
+            configData.setGatewayPackage(getGatewayPackage());
+        } else if (isGateway()) {
+            configData.setTargetProject(gatewayProjectInfo.getProject());
+            configData.setTargetSourceGroup(gatewayProjectInfo.getSourceGroup());
+            configData.setTargetPackage(getGatewayPackage());
+            configData.setGatewayProject(gatewayProjectInfo.getProject());
+            configData.setGatewaySourceGroup(gatewayProjectInfo.getSourceGroup());
+            configData.setGatewayPackage(getGatewayPackage());
+        }
+
+        configData.setTargetArtifactId(new POMManager(configData.getTargetProject(), true).getArtifactId());
+        configData.setGatewayArtifactId(new POMManager(configData.getGatewayProject(), true).getArtifactId());
+
         return configData;
     }
 
     private boolean isCompleteApplication() {
-        return completeAppCheckBox.isSelected() && completeAppCheckBox.isVisible();
+        return targetCompleteAppCheckBox.isSelected() && targetCompleteAppCheckBox.isVisible();
     }
 
     private void setCompleteApplication(boolean select) {
-        completeAppCheckBox.setSelected(select);
+        targetCompleteAppCheckBox.setSelected(select);
     }
-    
+
     private void setCompleteApplicationCompVisibility(boolean visible) {
-        completeAppCheckBox.setVisible(visible);
+        targetCompleteAppCheckBox.setVisible(visible);
         manageGenerateButtonStatus();
     }
-    
-    
+}
+
+class ProjectInfo {
+
+    private Project project;
+    private SourceGroup sourceGroup;
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public SourceGroup getSourceGroup() {
+        return sourceGroup;
+    }
+
+    public void setSourceGroup(SourceGroup sourceGroup) {
+        this.sourceGroup = sourceGroup;
+    }
 
 }

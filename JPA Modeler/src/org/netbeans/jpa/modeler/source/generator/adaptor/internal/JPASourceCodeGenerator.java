@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.source.generator.adaptor.internal;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jcode.task.ITaskSupervisor;
+import org.netbeans.jpa.modeler.source.generator.adaptor.ISourceCodeGenerator;
 import org.netbeans.jpa.modeler.source.generator.adaptor.definition.InputDefinition;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.orm.converter.compiler.CompilerConfig;
@@ -30,17 +31,22 @@ import org.openide.util.Lookup;
  *
  * @author Gaurav Gupta
  */
-public class JPASourceCodeGenerator implements JavaSourceCodeGenerator {
+public class JPASourceCodeGenerator implements ISourceCodeGenerator {
 
     @Override
-    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, InputDefinition inputDefinition) {
-        EntityMappings parsedEntityMappings = (EntityMappings) inputDefinition.getModelerFile().getDefinitionElement();
-        CompilerConfig compilerConfig = new CompilerConfig(parsedEntityMappings.getPackage());
+    public void generate(ITaskSupervisor task,
+            Project project,
+            SourceGroup sourceGroup,
+            InputDefinition inputDefinition) {
+        EntityMappings entityMappings = (EntityMappings) inputDefinition.getModelerFile().getDefinitionElement();
+        CompilerConfig compilerConfig = new CompilerConfig(entityMappings.getPackage());
         CompilerConfigManager.getInstance().initialize(compilerConfig);
         ClassesRepository.getInstance().clear();
-        for (ModuleGenerator moduleGenerator : Lookup.getDefault().lookupAll(ModuleGenerator.class)) {
-            moduleGenerator.generate(task, project, sourceGroup, parsedEntityMappings);
-        }
+        Lookup.getDefault()
+                .lookupAll(ModuleGenerator.class)
+                .forEach((moduleGenerator) -> {
+                    moduleGenerator.generate(task, project, sourceGroup, entityMappings);
+                });
     }
 
 }

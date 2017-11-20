@@ -49,21 +49,21 @@ public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
     private File destDir;
 
     @Override
-    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
-        if (!parsedEntityMappings.getGenerateStaticMetamodel()) {
+    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings entityMappings) {
+        if (!entityMappings.getGenerateStaticMetamodel()) {
             return;
         }
         this.staticMetamodelClass = new HashSet<>();
         this.task = task;
         destDir = FileUtil.toFile(sourceGroup.getRootFolder());
-        this.entityPackageName = parsedEntityMappings.getPackage();
-        this.packageName = parsedEntityMappings.getStaticMetamodelPackage();
+        this.entityPackageName = entityMappings.getPackage();
+        this.packageName = entityMappings.getProjectPackage() + '.' + entityMappings.getStaticMetamodelPackage();
         if(!JavaSourceHelper.isValidPackageName(packageName)){
-            this.packageName = parsedEntityMappings.getPackage();
+            this.packageName = entityPackageName;
         }
         task.log(Console.wrap("Generating StaticModel Class : " , FG_RED, BOLD), true);
         try {
-            for (JavaClass javaClass : parsedEntityMappings.getJavaClass()) {
+            for (JavaClass javaClass : entityMappings.getJavaClass()) {
                     generateStaticMetamodel((ManagedClass) javaClass);
             }
             flushStaticMetamodel();

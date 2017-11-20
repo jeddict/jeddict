@@ -212,7 +212,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         ClassHelper classHelper = new ClassHelper(javaClass.getClazz());
         classHelper.setPackageName(packageName);
         classDef.setClassName(classHelper.getFQClassName());
-//        classDef.setPackageName(classHelper.getPackageName());
         classDef.setAbstractClass(javaClass.getAbstract());
 
         if (!(javaClass instanceof DefaultClass)) { // custom interface support skiped for IdClass/EmbeddedId
@@ -1185,11 +1184,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (resultClass.charAt(0) == '{' && resultClass.charAt(resultClass.length() - 1) == '}') {
                 String id = resultClass.substring(1, resultClass.length() - 1);
                 Entity entity = entityMappings.getEntity(id);
-                if (entityMappings.getPackage() == null || entityMappings.getPackage().isEmpty()) {
-                    newParsedgetResultClasses.add(entity.getClazz());
-                } else {
-                    newParsedgetResultClasses.add(entityMappings.getPackage() + "." + entity.getClazz());
-                }
+                newParsedgetResultClasses.add(packageName + "." + entity.getClazz());
             } else {
                 newParsedgetResultClasses.add(resultClass);
             }

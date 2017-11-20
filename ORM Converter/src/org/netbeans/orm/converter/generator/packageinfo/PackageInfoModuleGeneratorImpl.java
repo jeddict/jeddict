@@ -39,15 +39,15 @@ public class PackageInfoModuleGeneratorImpl implements ModuleGenerator {
     private File destDir;
 
     @Override
-    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
+    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings entityMappings) {
         destDir = FileUtil.toFile(sourceGroup.getRootFolder());
-        this.packageName = parsedEntityMappings.getPackage();
+        this.packageName = entityMappings.getPackage();
         try {
-            if (StringUtils.isBlank(parsedEntityMappings.getJaxbNameSpace())
-                    && !parsedEntityMappings.isJsonbPackageInfoExist()) {
+            if (StringUtils.isBlank(entityMappings.getJaxbNameSpace())
+                    && !entityMappings.isJsonbPackageInfoExist()) {
                 return;
             }
-            PackageInfoGenerator packageInfoGenerator = new PackageInfoGenerator(parsedEntityMappings, packageName);
+            PackageInfoGenerator packageInfoGenerator = new PackageInfoGenerator(entityMappings, packageName);
             ClassDefSnippet packageInfoDef = packageInfoGenerator.getClassDef();
             classesRepository.addWritableSnippet(ClassType.JAXB_PACKAGE_INFO, packageInfoDef);
             task.log("Generating package-info.java", true);

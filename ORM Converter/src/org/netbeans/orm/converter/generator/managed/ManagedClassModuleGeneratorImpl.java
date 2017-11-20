@@ -49,19 +49,19 @@ import org.openide.filesystems.FileUtil;
 @org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
 public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
 
-    private EntityMappings parsedEntityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
+    private EntityMappings entityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
     private String packageName;
     private File destDir;
     private ITaskSupervisor task;
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
 
     @Override
-    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings parsedEntityMappings) {
+    public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings entityMappings) {
         try {
-            this.parsedEntityMappings = parsedEntityMappings;
+            this.entityMappings = entityMappings;
             this.task = task;
             destDir = FileUtil.toFile(sourceGroup.getRootFolder());
-            this.packageName = parsedEntityMappings.getPackage();
+            this.packageName = entityMappings.getPackage();
 
             generateMappedSuperClasses();
             generateEntityClasses();
@@ -73,7 +73,7 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateDefaultClasses() throws InvalidDataException, IOException {
-        List<DefaultClass> parsedDefaultClasses = parsedEntityMappings.getDefaultClass().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
+        List<DefaultClass> parsedDefaultClasses = entityMappings.getDefaultClass().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
         if(!parsedDefaultClasses.isEmpty()){
             task.log(Console.wrap("Generating IdClass/PrimaryKey Class : " , FG_RED, BOLD), true);
         }
@@ -87,14 +87,14 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
         }
     }
     private void generateEmbededClasses() throws InvalidDataException, IOException {
-        List<Embeddable> parsedEmbeddables = parsedEntityMappings.getEmbeddable().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
+        List<Embeddable> parsedEmbeddables = entityMappings.getEmbeddable().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
         if(!parsedEmbeddables.isEmpty()){
             task.log(Console.wrap("Generating Embeddable Class : " , FG_RED, BOLD), true);
         }
         for (Embeddable parsedEmbeddable : parsedEmbeddables) {
             task.log(parsedEmbeddable.getClazz(), true);
             ManagedClassDefSnippet classDef = new EmbeddableGenerator(parsedEmbeddable, packageName).getClassDef();
-            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
+            classDef.setJaxbSupport(entityMappings.getJaxbSupport());
 
             classesRepository.addWritableSnippet(ClassType.EMBEDED_CLASS, classDef);
             parsedEmbeddable.setFileObject(ORMConverterUtil.writeSnippet(classDef, destDir));
@@ -102,14 +102,17 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateEntityClasses() throws InvalidDataException, IOException {
-        List<Entity> parsedEntities = parsedEntityMappings.getEntity().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
+        List<Entity> parsedEntities = entityMappings.getEntity()
+                .stream()
+                .filter(e -> e.getGenerateSourceCode())
+                .collect(toList());
         if(!parsedEntities.isEmpty()){
             task.log(Console.wrap("Generating Entity Class : " , FG_RED, BOLD), true);
         }
         for (Entity parsedEntity : parsedEntities) {
             task.log(parsedEntity.getClazz(), true);
             ManagedClassDefSnippet classDef = new EntityGenerator(parsedEntity, packageName).getClassDef();
-            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
+            classDef.setJaxbSupport(entityMappings.getJaxbSupport());
 
             classesRepository.addWritableSnippet(ClassType.ENTITY_CLASS, classDef);
             parsedEntity.setFileObject(ORMConverterUtil.writeSnippet(classDef, destDir));
@@ -117,14 +120,14 @@ public class ManagedClassModuleGeneratorImpl implements ModuleGenerator {
     }
 
     private void generateMappedSuperClasses() throws InvalidDataException, IOException {
-        List<MappedSuperclass> parsedMappedSuperclasses = parsedEntityMappings.getMappedSuperclass().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
+        List<MappedSuperclass> parsedMappedSuperclasses = entityMappings.getMappedSuperclass().stream().filter(e -> e.getGenerateSourceCode()).collect(toList());
         if(!parsedMappedSuperclasses.isEmpty()){
         task.log(Console.wrap("Generating MappedSuperclass Class : " , FG_RED, BOLD), true);
         }
         for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
             task.log(parsedMappedSuperclass.getClazz(), true);
             ManagedClassDefSnippet classDef = new MappedSuperClassGenerator(parsedMappedSuperclass, packageName).getClassDef();
-            classDef.setJaxbSupport(parsedEntityMappings.getJaxbSupport());
+            classDef.setJaxbSupport(entityMappings.getJaxbSupport());
 
             classesRepository.addWritableSnippet(ClassType.SUPER_CLASS, classDef);
             parsedMappedSuperclass.setFileObject(ORMConverterUtil.writeSnippet(classDef, destDir));

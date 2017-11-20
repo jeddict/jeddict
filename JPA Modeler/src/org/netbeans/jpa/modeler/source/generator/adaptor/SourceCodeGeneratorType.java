@@ -21,5 +21,5 @@ package org.netbeans.jpa.modeler.source.generator.adaptor;
  */
 public enum SourceCodeGeneratorType {
 
-    JPA, EJB, WEB;
+    JPA;
 }
