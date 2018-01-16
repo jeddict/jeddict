@@ -40,7 +40,7 @@ public class EqualsMethodSnippet implements Snippet {
         StringBuilder builder = new StringBuilder();
         builder.append("if (obj == null) {return false;}\n");
         builder.append("        ")
-                .append("if (!java.util.Objects.equals(getClass(), obj.getClass())) {return false;}\n");
+                .append("if (!Objects.equals(getClass(), obj.getClass())) {return false;}\n");
         builder.append("        ")
                 .append(String.format("final %s other = (%s) obj;\n", className, className));
 
@@ -74,6 +74,6 @@ public class EqualsMethodSnippet implements Snippet {
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.EMPTY_LIST;
+        return Collections.singletonList("java.util.Objects");
     }
 }

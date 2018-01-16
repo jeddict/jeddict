@@ -31,6 +31,9 @@ public class HashcodeMethodSnippet implements Snippet {
 
     private final String className;
     private final ClassMembers classMembers;
+    
+    private boolean objectsImport;
+    private String hashcodeMethodSnippet;
 
     public HashcodeMethodSnippet(String className, ClassMembers classMembers) {
         this.className = className;
@@ -39,9 +42,17 @@ public class HashcodeMethodSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
+        if(hashcodeMethodSnippet == null){
+            hashcodeMethodSnippet = getHashcodeMethodSnippet();
+        }
+        return hashcodeMethodSnippet;
+    }
+        
+    public String getHashcodeMethodSnippet() throws InvalidDataException {
+        
         StringBuilder builder = new StringBuilder();
-        int startNumber = generatePrimeNumber(2, 10);
-        int multiplyNumber = generatePrimeNumber(10, 100);
+        int startNumber = 7;//generatePrimeNumber(2, 10);
+        int multiplyNumber = 31;//generatePrimeNumber(10, 100);
 
         if(!classMembers.getAttributes().isEmpty()){
             builder.append(String.format("int hash = %s;",startNumber)).append(NEW_LINE);
@@ -76,12 +87,17 @@ public class HashcodeMethodSnippet implements Snippet {
             builder.append("        ")
                    .append("return hash;");
         }
-        return builder.toString();
+        String result = builder.toString();
+        objectsImport = result.contains("Objects");
+        return result;
     }
 
     @Override
     public List<String> getImportSnippets() throws InvalidDataException {
-        return Collections.EMPTY_LIST;
+        if(hashcodeMethodSnippet == null){
+            hashcodeMethodSnippet = getHashcodeMethodSnippet();
+        }
+        return objectsImport ? Collections.singletonList("java.util.Objects") : Collections.EMPTY_LIST;
     }
 
     /**

@@ -65,7 +65,7 @@ public class JavaHashcodeEqualsUtil {
         HASH_CODE_PATTERNS = new LinkedHashMap<>();
 
         String DEFAULT_HASHCODE = "this.{VAR}";
-        String HASHCODE_METHOD = "(this.{VAR} != null ? this.{VAR}.hashCode() : 0)";
+        String HASHCODE_METHOD = "Objects.hashCode(this.{VAR})";
         HASH_CODE_PATTERNS.put(KindOfType.BYTE, DEFAULT_HASHCODE);
         HASH_CODE_PATTERNS.put(KindOfType.SHORT, DEFAULT_HASHCODE);
         HASH_CODE_PATTERNS.put(KindOfType.INT, DEFAULT_HASHCODE);
@@ -83,23 +83,23 @@ public class JavaHashcodeEqualsUtil {
 
     public static String getEqualExpression(String dataType, String attributeName, boolean optionalType) {
         KindOfType type = detectKind(dataType);
-        String attributeFunction = (type==KindOfType.BOOLEAN?"is" : "get") + StringHelper.firstUpper(attributeName) + (optionalType?"().orElse(null)":"()");
+        String attributeFunction = (type==KindOfType.BOOLEAN?"is" : "get") + StringHelper.getMethodName(attributeName) + (optionalType?"().orElse(null)":"()");
         return EQUALS_PATTERNS.get(type).replace(VAR_EXPRESSION, attributeFunction);
     }
     
     public static String getEqualExpression(String attributeName, boolean optionalType) {
-        String attributeFunction =  "get" + StringHelper.firstUpper(attributeName) + (optionalType?"().orElse(null)":"()");
+        String attributeFunction =  "get" + StringHelper.getMethodName(attributeName) + (optionalType?"().orElse(null)":"()");
         return EQUALS_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeFunction);
     }
     
     public static String getHashcodeExpression(String dataType, String attributeName, boolean optionalType) {
         KindOfType type = detectKind(dataType);
-        String attributeFunction = (type==KindOfType.BOOLEAN?"is" : "get") + StringHelper.firstUpper(attributeName) + (optionalType?"().orElse(null)":"()");
+        String attributeFunction = (type==KindOfType.BOOLEAN?"is" : "get") + StringHelper.getMethodName(attributeName) + (optionalType?"().orElse(null)":"()");
         return HASH_CODE_PATTERNS.get(type).replace(VAR_EXPRESSION, attributeFunction);
     }
     
     public static String getHashcodeExpression(String attributeName, boolean optionalType) {
-        String attributeFunction =  "get" + StringHelper.firstUpper(attributeName) + (optionalType?"().orElse(null)":"()");
+        String attributeFunction =  "get" + StringHelper.getMethodName(attributeName) + (optionalType?"().orElse(null)":"()");
         return HASH_CODE_PATTERNS.get(KindOfType.OTHER).replace(VAR_EXPRESSION, attributeFunction);
     }
     

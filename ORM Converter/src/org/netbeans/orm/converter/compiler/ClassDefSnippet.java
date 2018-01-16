@@ -348,6 +348,18 @@ public class ClassDefSnippet implements WritableSnippet, AttributeOverridesHandl
         } else if (entity) {
             importSnippets.add(ENTITY_FQN);
         }
+        
+        if(getEqualsMethod()!= null){
+            importSnippets.addAll(getEqualsMethod().getImportSnippets());
+        }
+        
+        if(getHashcodeMethod() != null){
+            importSnippets.addAll(getHashcodeMethod().getImportSnippets());
+        }
+        
+        if(getToStringMethod()!= null){
+            importSnippets.addAll(getToStringMethod().getImportSnippets());
+        }
 
         if (superClassHelper.getPackageName() != null) {
             importSnippets.add(superClassHelper.getFQClassName());
