@@ -20,6 +20,7 @@ import javax.swing.JEditorPane;
 import static javax.swing.JOptionPane.OK_OPTION;
 import javax.swing.SwingUtilities;
 import org.apache.commons.lang3.StringUtils;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildNode;
@@ -31,6 +32,7 @@ import org.netbeans.jpa.modeler.properties.classmember.nodes.ClassMemberChildFac
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 import org.netbeans.modeler.properties.window.OptionDialog;
 import org.openide.explorer.ExplorerManager;
@@ -42,18 +44,17 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     private final String title;
     
     private ClassMembers classMembers;
-    private PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
+    private JavaClassWidget<? extends JavaClass> classWidget;
     private CMRootNode node;
     private boolean customCode = true;
 
-    public ClassMemberPanel(String title, PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        this.persistenceClassWidget = persistenceClassWidget;
+    public ClassMemberPanel(String title, JavaClassWidget<? extends JavaClass> classWidget) {
+        this.classWidget = classWidget;
         this.title = title;
     }
     
-    public ClassMemberPanel(String title, PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget,
-            boolean customCode) {
-        this.persistenceClassWidget = persistenceClassWidget;
+    public ClassMemberPanel(String title, JavaClassWidget<? extends JavaClass> classWidget, boolean customCode) {
+        this.classWidget = classWidget;
         this.title = title;
         this.customCode = customCode;
     }
@@ -75,7 +76,7 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     public void setValue(ClassMembers classMembers) {
         this.classMembers = classMembers;
         SwingUtilities.invokeLater(() -> {
-            node = new CMRootNode(persistenceClassWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode());
+            node = new CMRootNode(classWidget, classMembers, new ClassMemberChildFactory(), new CheckableAttributeNode());
             manager.setRootContext(node);
             node.init();
         });
@@ -236,10 +237,10 @@ public class ClassMemberPanel extends GenericEmbeddedEditor<ClassMembers> implem
     }
 
     /**
-     * @param persistenceClassWidget the persistenceClassWidget to set
+     * @param classWidget the persistenceClassWidget to set
      */
-    public void setPersistenceClassWidget(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        this.persistenceClassWidget = persistenceClassWidget;
+    public void setClassWidget(JavaClassWidget<? extends JavaClass> classWidget) {
+        this.classWidget = classWidget;
     }
 
     /**

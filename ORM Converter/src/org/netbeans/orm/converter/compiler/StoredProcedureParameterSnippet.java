@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.PARAMETER_MODE;
 import static org.netbeans.jcode.jpa.JPAConstants.PARAMETER_MODE_FQN;
@@ -83,7 +84,7 @@ public class StoredProcedureParameterSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
         importSnippets.add(STORED_PROCEDURE_PARAMETER_FQN);
 

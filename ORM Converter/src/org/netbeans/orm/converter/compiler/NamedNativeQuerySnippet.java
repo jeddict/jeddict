@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERY;
 import static org.netbeans.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERY_FQN;
@@ -103,7 +104,7 @@ public class NamedNativeQuerySnippet extends NamedQuerySnippet implements Snippe
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
 
         importSnippets.add(NAMED_NATIVE_QUERY_FQN);

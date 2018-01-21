@@ -17,8 +17,8 @@ $importStatement
 $classDef.getJavaDoc()
 
 #end
-#if($classDef.getEntityString())
-$classDef.getEntityString()
+#if($classDef.getManagedType())
+$classDef.getManagedType()
 #end
 public class $classDef.getClassName() implements Serializable {
 #####################member variables ###############################

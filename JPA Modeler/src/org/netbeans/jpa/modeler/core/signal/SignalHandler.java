@@ -70,7 +70,7 @@ public class SignalHandler {
 
     public void print() {
         StringBuilder message = new StringBuilder();
-        signalList.keySet().stream().forEach((signalKey) -> {
+        signalList.keySet().forEach((signalKey) -> {
             message.append(signalList.get(signalKey)).append(". ").append('\n');
         });
         IWidgetStateHandler handler = widget instanceof INodeWidget ? ((IPNodeWidget) widget).getWidgetStateHandler() : (widget instanceof IPinWidget ? ((IPinWidget) widget).getWidgetStateHandler() : null);

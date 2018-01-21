@@ -32,8 +32,8 @@ import org.netbeans.modules.j2ee.persistence.dd.common.Property;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.PersistenceXMLUnitSnippet;
+import org.netbeans.orm.converter.compiler.def.ClassDefSnippet;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class PersistenceXMLGenerator {

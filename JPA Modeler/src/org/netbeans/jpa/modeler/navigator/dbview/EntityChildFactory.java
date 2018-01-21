@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.swing.Action;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.nodes.AbstractNode;

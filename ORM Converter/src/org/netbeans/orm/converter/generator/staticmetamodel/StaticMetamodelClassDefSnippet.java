@@ -15,12 +15,11 @@
  */
 package org.netbeans.orm.converter.generator.staticmetamodel;
 
-import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
+import org.netbeans.orm.converter.compiler.def.ClassDefSnippet;
 import org.netbeans.orm.converter.util.ClassHelper;
-import org.netbeans.orm.converter.util.ORMConverterUtil;
+import org.netbeans.orm.converter.util.ImportSet;
 
 /**
  *
@@ -32,23 +31,21 @@ public class StaticMetamodelClassDefSnippet extends ClassDefSnippet {
 
     private static final String STATIC_METAMODEL_TEMPLATE_FILENAME = "staticmetamodel.vm";
 
-    @Override
-    protected String getTemplateName() {
-        return STATIC_METAMODEL_TEMPLATE_FILENAME;
-    }
-
     private String value;//i.e: @StaticMetamodel( Person.class )   Class being modelled by the annotated class. //entity, mapped superclass, or embeddable class
     private final ClassHelper entityClassHelper = new ClassHelper();
 
     @Override
-    public Collection<String> getImportSnippets() throws InvalidDataException {
-        Collection<String> importSnippets = super.getImports();
+    protected String getTemplateName() {
+        return STATIC_METAMODEL_TEMPLATE_FILENAME;
+    }
+    
+    @Override
+    public ImportSet getImportSet() throws InvalidDataException {
+        ImportSet importSnippets = super.getImportSet();
         if (StringUtils.isNotBlank(getEntityPackageName()) && !StringUtils.equals(getPackageName(), getEntityPackageName())) {
             importSnippets.add(entityClassHelper.getFQClassName());
         }
-        
-        importSnippets = ORMConverterUtil.eliminateSamePkgImports(getClassHelper().getPackageName(), importSnippets);
-        return ORMConverterUtil.processedImportStatements(importSnippets);
+        return importSnippets;
     }
 
     /**

@@ -15,34 +15,36 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember.nodes;
 
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 
 public class CMRootNode extends RootNode<ClassMembers> {
 
 
-    private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
+    private final JavaClassWidget<? extends JavaClass> classWidget;
 
-    public CMRootNode(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget, ClassMembers classMembers, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
+    public CMRootNode(JavaClassWidget<? extends JavaClass> classWidget, ClassMembers classMembers, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
         super(classMembers, childFactory, checkableNode);
-        this.persistenceClassWidget = persistenceClassWidget;
+        this.classWidget = classWidget;
 
    }
 
-    public PersistenceClassWidget getRootWidget() {
-        return persistenceClassWidget;
+    public JavaClassWidget getRootWidget() {
+        return classWidget;
     }
 
     @Override
     public void init() {
-        ManagedClass managedClass = persistenceClassWidget.getBaseElementSpec();
+        JavaClass managedClass = classWidget.getBaseElementSpec();
         setDisplayName(managedClass.getClazz());
         setShortDescription(managedClass.getClazz());
-        setIconBaseWithExtension(persistenceClassWidget.getIconPath());
+        setIconBaseWithExtension(classWidget.getIconPath());
     }
 
 }

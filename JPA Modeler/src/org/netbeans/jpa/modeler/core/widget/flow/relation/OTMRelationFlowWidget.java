@@ -15,7 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTMR_SOURCE_ANCHOR_SHAPE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.OTMR_TARGET_ANCHOR_SHAPE;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;

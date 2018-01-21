@@ -23,6 +23,7 @@ import org.netbeans.jeddict.analytics.JeddictLogger;
 import org.netbeans.jpa.modeler.core.signal.SignalManager;
 import org.netbeans.jpa.modeler.core.widget.context.NodeContextModel;
 import org.netbeans.jpa.modeler.spec.extend.FlowNode;
+import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
@@ -30,19 +31,22 @@ import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
+import org.netbeans.api.visual.anchor.Anchor;
+import org.netbeans.modeler.border.ResizeBorder;
 
 public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene> extends PNodeWidget<S> implements IFlowNodeWidget<E> {
 
     private final SignalManager signalManager;
+
     public FlowNodeWidget(S scene, NodeWidgetInfo node) {
         super(scene, node);
         signalManager = new SignalManager(this);
-        setAnchorGap(4); 
+        setAnchorGap(4);
         if (!node.isExist()) {
             JeddictLogger.recordJPACreateAction(node.getModelerDocument().getSpecification().getSimpleName());
         }
     }
-    
+
     @Override
     public void onConnection() {
     }
@@ -87,7 +91,7 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     @Override
     public void init() {
     }
-    
+
     @Override
     public void destroy() {
     }
@@ -167,9 +171,19 @@ public abstract class FlowNodeWidget<E extends FlowNode, S extends IModelerScene
     public SignalManager getSignalManager() {
         return signalManager;
     }
-    
-    public abstract String getIconPath();
-    public abstract Image getIcon();
 
+    @Override
+    public Anchor getAnchor() {
+        return new CustomRectangularAnchor(this, 0, true);
+    }
+
+    @Override
+    public ResizeBorder getNodeBorder() {
+        return RECTANGLE_RESIZE_BORDER;
+    }
+
+    public abstract String getIconPath();
+
+    public abstract Image getIcon();
 
 }

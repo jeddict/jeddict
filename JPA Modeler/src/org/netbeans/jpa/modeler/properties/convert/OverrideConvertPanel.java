@@ -151,7 +151,7 @@ public class OverrideConvertPanel extends EntityComponent<Convert> {
                         .map(emb -> getPaths(prefix, emb, attr -> ((attr instanceof Basic) || (attr instanceof ElementCollection))))
                         .collect(ArrayList<String>::new, ArrayList::addAll, ArrayList::addAll));
             }
-            items.stream().forEach(attribute_ComboBox::addItem);
+            items.forEach(attribute_ComboBox::addItem);
         }
     }
 

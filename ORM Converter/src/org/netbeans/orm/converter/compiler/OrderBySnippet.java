@@ -15,6 +15,7 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -73,7 +74,7 @@ public class OrderBySnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList(ORDER_BY_FQN);
     }
 }

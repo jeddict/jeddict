@@ -26,7 +26,7 @@ import org.netbeans.jpa.modeler.spec.extend.CompositionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ConvertContainerHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertContainerHandler;
 import org.netbeans.jpa.modeler.spec.extend.MapKeyConvertHandler;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;

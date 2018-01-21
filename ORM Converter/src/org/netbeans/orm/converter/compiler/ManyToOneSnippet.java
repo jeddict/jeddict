@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
@@ -47,7 +48,6 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
         if (!CodePanel.isGenerateDefaultValue()) {
             if (optional == true
-                    && getTargetEntity() == null
                     && getFetchType() == null
                     && getCascadeTypes().isEmpty()) {
                 return builder.toString();
@@ -76,7 +76,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (getTargetEntity() != null) {
+        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
             builder.append("targetEntity = ");
             builder.append(getTargetEntity());
             builder.append(ORMConverterUtil.COMMA);
@@ -87,7 +87,7 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
         if (isPrimaryKey()) {
             if (mapsId == null) {

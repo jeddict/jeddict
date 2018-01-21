@@ -55,7 +55,7 @@ $n#end
 #end
 #end
 #####################class annotations ###############################
-$classDef.getEntityString()
+$classDef.getManagedType()
 #if ($classDef.getTableDef())
 $classDef.getTableDef().getSnippet()
 #end

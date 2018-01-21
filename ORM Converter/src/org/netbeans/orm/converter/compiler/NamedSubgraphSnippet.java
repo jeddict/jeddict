@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.NAMED_SUBGRAPH;
@@ -108,7 +109,7 @@ public class NamedSubgraphSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
 
         List<String> importSnippets = new ArrayList<>();
 

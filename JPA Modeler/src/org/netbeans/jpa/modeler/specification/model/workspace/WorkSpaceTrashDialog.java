@@ -28,7 +28,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.ListCellRenderer;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.properties.window.GenericDialog;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;

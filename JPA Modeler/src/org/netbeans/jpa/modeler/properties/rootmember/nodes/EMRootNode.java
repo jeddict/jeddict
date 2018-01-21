@@ -15,11 +15,13 @@
  */
 package org.netbeans.jpa.modeler.properties.rootmember.nodes;
 
+import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.RootNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 
 public class EMRootNode extends RootNode<EntityMappings> {

@@ -21,6 +21,9 @@ import static org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.INodeWidget;
+import org.netbeans.modeler.widget.pin.IPinWidget;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 /**
  *
@@ -93,6 +96,32 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JSONBModelerSce
 
     @Override
     public void createPropertySet(ElementPropertySet elementPropertySet) {
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getSourcePinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget sourceAttributeWidget) {
+        DocumentWidget sourceDocumentWidget = (DocumentWidget) sourceNodeWidget;
+        DocumentWidget targetDocumentWidget = (DocumentWidget) targetNodeWidget;
+        GeneralizationFlowWidget generalizationFlowWidget = (GeneralizationFlowWidget) this;
+        generalizationFlowWidget.setSubclassWidget(sourceDocumentWidget);
+        generalizationFlowWidget.setSuperclassWidget(targetDocumentWidget);
+        return sourceDocumentWidget.getInternalPinWidgetInfo();
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getTargetPinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget targetPinWidget) {
+         DocumentWidget documentWidget = (DocumentWidget) targetNodeWidget;
+        return documentWidget.getInternalPinWidgetInfo();
     }
 
 }

@@ -54,6 +54,9 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
 
     public EntityWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
         super(scene, nodeWidgetInfo);
+        if("AbstractEntity".equals(nodeWidgetInfo.getModelerDocument().getId())){
+            setAbstractEntity(true);
+        }
         this.addPropertyChangeListener("abstract", (oldValue, value) -> {
             setImage(getIcon());
             scanDiscriminatorValue();
@@ -71,7 +74,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
         super.init();
         Entity entity = this.getBaseElementSpec();
         if (entity.getAttributes().getAllAttribute().isEmpty() && this.getModelerScene().getModelerFile().isLoaded()) {
-            addNewIdAttribute("id");
+            addIdAttribute("id");
         }
 
         if (entity.getClazz() == null || entity.getClazz().isEmpty()) {
@@ -97,9 +100,9 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     @Override
     public Image getIcon() {
         if (this.getBaseElementSpec().getAbstract()) {
-            return JPAModelerUtil.ABSTRACT_ENTITY;
+            return JPAModelerUtil.ABSTRACT_ENTITY_ICON;
         } else {
-            return JPAModelerUtil.ENTITY;
+            return JPAModelerUtil.ENTITY_ICON;
         }
     }
     
@@ -255,19 +258,7 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
     public void setAbstractEntity(Boolean abstractEntity) {
         this.abstractEntity = abstractEntity;
     }
-
-    public boolean addUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
-        return getUnidirectionalRelationFlowWidget().add(e);
-    }
-
-    public boolean removeUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
-        return getUnidirectionalRelationFlowWidget().remove(e);
-    }
-
-    public void clearUnidirectionalRelationFlowWidget() {
-        getUnidirectionalRelationFlowWidget().clear();
-    }
-
+    
     /**
      * @return the unidirectionalRelationFlowWidget
      */
@@ -280,6 +271,18 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
      */
     public void setUnidirectionalRelationFlowWidget(Set<RelationFlowWidget> unidirectionalRelationFlowWidget) {
         this.unidirectionalRelationFlowWidget = unidirectionalRelationFlowWidget;
+    }
+    
+    public boolean addUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
+        return unidirectionalRelationFlowWidget.add(e);
+    }
+
+    public boolean removeUnidirectionalRelationFlowWidget(RelationFlowWidget e) {
+        return unidirectionalRelationFlowWidget.remove(e);
+    }
+
+    public void clearUnidirectionalRelationFlowWidget() {
+        unidirectionalRelationFlowWidget.clear();
     }
     
     @Override

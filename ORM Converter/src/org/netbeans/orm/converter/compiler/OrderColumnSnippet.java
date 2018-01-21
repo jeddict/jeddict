@@ -15,8 +15,8 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.ORDER_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.ORDER_COLUMN_FQN;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
@@ -148,7 +148,7 @@ public class OrderColumnSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList(ORDER_COLUMN_FQN);
     }
 

@@ -19,11 +19,11 @@ import java.awt.Image;
 import java.util.List;
 import javax.swing.JMenuItem;
 import org.netbeans.jpa.modeler.spec.EmbeddedId;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.EMBEDDED_ID_ATTRIBUTE_ICON;
 
 /**
  *
@@ -50,7 +50,7 @@ public class EmbeddedIdAttributeWidget extends BaseAttributeWidget<EmbeddedId> {
 
     @Override
     public Image getIcon() {
-        return EMBEDDED_ID_ATTRIBUTE;
+        return EMBEDDED_ID_ATTRIBUTE_ICON;
     }
 
 }

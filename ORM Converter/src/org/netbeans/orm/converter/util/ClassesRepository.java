@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.netbeans.orm.converter.compiler.WritableSnippet;
+import org.netbeans.orm.converter.spec.WritableSnippet;
 
 public class ClassesRepository {
 

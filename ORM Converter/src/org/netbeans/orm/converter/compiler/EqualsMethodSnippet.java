@@ -15,8 +15,8 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
@@ -73,7 +73,7 @@ public class EqualsMethodSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList("java.util.Objects");
     }
 }

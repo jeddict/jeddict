@@ -17,10 +17,10 @@ package org.netbeans.jpa.modeler.properties.classmember;
 
 import java.util.List;
 import javax.swing.JOptionPane;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.extend.AccessModifierType;
 import org.netbeans.jpa.modeler.spec.extend.Constructor;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.Entity;
@@ -30,12 +30,10 @@ import static org.openide.util.NbBundle.getMessage;
 public class ConstructorPanel extends EntityComponent<Constructor> {
 
     private Constructor constructor;
-    private final List<Constructor> constructors;
-    private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
+    private final JavaClassWidget<? extends JavaClass> classWidget;
 
-    public ConstructorPanel(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        this.persistenceClassWidget = persistenceClassWidget;
-        constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
+    public ConstructorPanel(JavaClassWidget<? extends JavaClass> classWidget) {
+        this.classWidget = classWidget;
     }
 
     @Override
@@ -67,7 +65,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
         }
         constructor = new Constructor();
         setAccessModifierType(AccessModifierType.PUBLIC);
-        ((ClassMemberPanel)classMemberPanel).setPersistenceClassWidget(persistenceClassWidget);
+        ((ClassMemberPanel)classMemberPanel).setClassWidget(classWidget);
         ((ClassMemberPanel) classMemberPanel).setValue(constructor);
         
     }
@@ -79,7 +77,7 @@ public class ConstructorPanel extends EntityComponent<Constructor> {
             this.setEntity(entityValue);
             Object[] row = ((RowValue) entityValue).getRow();
             constructor = (Constructor) row[0];
-            ((ClassMemberPanel)classMemberPanel).setPersistenceClassWidget(persistenceClassWidget);
+            ((ClassMemberPanel)classMemberPanel).setClassWidget(classWidget);
             ((ClassMemberPanel) classMemberPanel).setValue(constructor);
             
             setAccessModifierType(constructor.getAccessModifier());

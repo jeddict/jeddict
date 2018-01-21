@@ -19,7 +19,6 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import static java.awt.event.ItemEvent.SELECTED;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +57,7 @@ import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import static org.netbeans.jpa.modeler.spec.extend.ProjectType.GATEWAY;
 import static org.netbeans.jpa.modeler.spec.extend.ProjectType.MONOLITH;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.SUCCESS_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.WARNING_ICON;
@@ -74,7 +73,6 @@ import org.openide.util.NbBundle;
 import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.NbPreferences;
 import static org.netbeans.jpa.modeler.spec.extend.ProjectType.MICROSERVICE;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -144,8 +142,8 @@ public class GenerateCodeDialog extends GenericDialog {
         populateProjectCombo(gatewayProjectCombo, gatewayProjectInfo);
         populatePackageCombo(gatewayProjectPackageCombo, gatewayProjectInfo);
         setEntityPackage(StringUtils.isNotBlank(entityMappings.getEntityPackage()) ? entityMappings.getEntityPackage() : "domain");
+        setTargetPackage(StringUtils.isNotBlank(entityMappings.getProjectPackage()) ? entityMappings.getProjectPackage() : "myapp");
         setMicroservice(entityMappings.getProjectType() == MICROSERVICE);
-//        initLayer();
         this.pack();
     }
 
@@ -761,9 +759,17 @@ public class GenerateCodeDialog extends GenericDialog {
             DialogDisplayer.getDefault().notify(d);
             return true;
         }
+        if (!SourceVersion.isName(getTargetPackage())) {
+            NotifyDescriptor d = new NotifyDescriptor.Message(
+                    "Please select the Project Package.",
+                    NotifyDescriptor.INFORMATION_MESSAGE);
+            d.setTitle("Project Package");
+            DialogDisplayer.getDefault().notify(d);
+            return true;
+        }
         if (!SourceVersion.isName(getEntityPackage())) {
             NotifyDescriptor d = new NotifyDescriptor.Message(
-                    "Please select the Entity Package .",
+                    "Please select the Entity Package.",
                     NotifyDescriptor.INFORMATION_MESSAGE);
             d.setTitle("Entity Package");
             DialogDisplayer.getDefault().notify(d);

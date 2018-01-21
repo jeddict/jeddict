@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.JOIN_COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.JOIN_COLUMN_FQN;
@@ -216,7 +217,7 @@ public class JoinColumnSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
         if (mapKey) {
             importSnippets.add(MAP_KEY_JOIN_COLUMN_FQN);

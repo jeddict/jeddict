@@ -18,12 +18,12 @@ package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.OTORelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.spec.OneToOne;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.UnidirectionalRelation;
 
 /**
  *
@@ -55,12 +55,12 @@ public class OTORelationAttributeWidget extends SingleRelationAttributeWidget<On
     @Override
     public String getIconPath() {
         if (getBaseElementSpec().isPrimaryKey()) {
-            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+            if (oneToOneRelationFlowWidget instanceof UnidirectionalRelation) {
                 return JPAModelerUtil.PK_UOTO_ATTRIBUTE_ICON_PATH;
             } else {
                 return JPAModelerUtil.PK_BOTO_ATTRIBUTE_ICON_PATH;
             }
-        } else if (oneToOneRelationFlowWidget instanceof Unidirectional) {
+        } else if (oneToOneRelationFlowWidget instanceof UnidirectionalRelation) {
             return JPAModelerUtil.UOTO_ATTRIBUTE_ICON_PATH;
         } else {
             return JPAModelerUtil.BOTO_ATTRIBUTE_ICON_PATH;
@@ -70,15 +70,15 @@ public class OTORelationAttributeWidget extends SingleRelationAttributeWidget<On
     @Override
     public Image getIcon() {
         if (getBaseElementSpec().isPrimaryKey()) {
-            if (oneToOneRelationFlowWidget instanceof Unidirectional) {
-                return JPAModelerUtil.PK_UOTO_ATTRIBUTE;
+            if (oneToOneRelationFlowWidget instanceof UnidirectionalRelation) {
+                return JPAModelerUtil.PK_UOTO_ATTRIBUTE_ICON;
             } else {
-                return JPAModelerUtil.PK_BOTO_ATTRIBUTE;
+                return JPAModelerUtil.PK_BOTO_ATTRIBUTE_ICON;
             }
-        } else if (oneToOneRelationFlowWidget instanceof Unidirectional) {
-            return JPAModelerUtil.UOTO_ATTRIBUTE;
+        } else if (oneToOneRelationFlowWidget instanceof UnidirectionalRelation) {
+            return JPAModelerUtil.UOTO_ATTRIBUTE_ICON;
         } else {
-            return JPAModelerUtil.BOTO_ATTRIBUTE;
+            return JPAModelerUtil.BOTO_ATTRIBUTE_ICON;
         }
     }
 

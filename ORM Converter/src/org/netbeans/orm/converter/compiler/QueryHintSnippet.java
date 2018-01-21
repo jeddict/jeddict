@@ -69,6 +69,6 @@ public class QueryHintSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(QUERY_HINT_FQN);
+        return Collections.singleton(QUERY_HINT_FQN);
     }
 }

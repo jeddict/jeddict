@@ -21,7 +21,7 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import org.netbeans.jeddict.jsonb.modeler.manager.JSONBModelerRequestManager;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ERROR_ICON;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Lookup;
@@ -53,11 +53,11 @@ public class JSONBUtil {
                         NbBundle.getMessage(JSONBUtil.class, "Error.PLUGIN_INSTALLATION.title"), ERROR_MESSAGE, ERROR_ICON);
             } else {
                 //close diagram and reopen 
-                long st = new Date().getTime();
+//                long st = new Date().getTime();
                 file.getChildrenFile("JSONB").ifPresent(ModelerFile::close);
-                System.out.println("openJSONBViewer close Total time : " + (new Date().getTime() - st) + " ms");
+//                System.out.println("openJSONBViewer close Total time : " + (new Date().getTime() - st) + " ms");
                 jsonbModelerRequestManager.init(file, entityMappings, paramWorkSpace);
-                System.out.println("openJSONBViewer Total time : " + (new Date().getTime() - st) + " ms");
+//                System.out.println("openJSONBViewer Total time : " + (new Date().getTime() - st) + " ms");
             }
         } catch (Throwable t) {
             file.handleException(t);

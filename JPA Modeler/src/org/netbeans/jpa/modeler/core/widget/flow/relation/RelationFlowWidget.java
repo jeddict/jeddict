@@ -16,16 +16,28 @@
 package org.netbeans.jpa.modeler.core.widget.flow.relation;
 
 import java.awt.Color;
+import static org.netbeans.jpa.modeler.Constant.PKBMTO_RELATION;
+import static org.netbeans.jpa.modeler.Constant.PKBOTO_RELATION;
+import static org.netbeans.jpa.modeler.Constant.PKUMTO_RELATION;
+import static org.netbeans.jpa.modeler.Constant.PKUOTO_RELATION;
+import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
+import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
+import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTMRelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTORelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.IPinWidget;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
 import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.openide.nodes.Sheet;
@@ -40,7 +52,6 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerSc
             setName(value);
             RelationFlowWidget.this.setLabel(name);
         });
-//        setAnchorGap(4);
     }
 
     @Override
@@ -71,12 +82,12 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerSc
     public void setSourceRelationAttributeWidget(RelationAttributeWidget sourceRelationAttributeWidget) {
         this.sourceRelationAttributeWidget = sourceRelationAttributeWidget;
     }
-    
+
     public EntityWidget getTargetEntityWidget() { // will always return Entity
-        if(this instanceof Bidirectional){
-           return (EntityWidget) ((Bidirectional)this).getTargetRelationAttributeWidget().getClassWidget();
+        if (this instanceof BidirectionalRelation) {
+            return (EntityWidget) ((BidirectionalRelation) this).getTargetRelationAttributeWidget().getClassWidget();
         } else {
-           return (EntityWidget) ((Unidirectional)this).getTargetEntityWidget(); 
+            return (EntityWidget) ((UnidirectionalRelation) this).getTargetEntityWidget();
         }
     }
 
@@ -110,6 +121,176 @@ public abstract class RelationFlowWidget extends AbstractEdgeWidget<JPAModelerSc
 
     @Override
     public void destroy() {
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getSourcePinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget sourceAttributeWidget) {
+        if (sourceNodeWidget instanceof PersistenceClassWidget && targetNodeWidget instanceof EntityWidget) {
+            PersistenceClassWidget sourcePersistenceWidget = (PersistenceClassWidget) sourceNodeWidget;
+            EntityWidget targetEntityWidget = (EntityWidget) targetNodeWidget;
+            RelationFlowWidget relationFlowWidget = this;
+            RelationAttributeWidget<? extends RelationAttribute> relationAttributeWidget = null;
+            if (relationFlowWidget instanceof OTORelationFlowWidget) {
+                OTORelationFlowWidget otoRelationFlowWidget = (OTORelationFlowWidget) relationFlowWidget;
+                OTORelationAttributeWidget otoRelationAttributeWidget;
+                boolean primaryKey = otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKUOTO_RELATION) || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKBOTO_RELATION);
+                if (sourceAttributeWidget == null) {
+                    otoRelationAttributeWidget = sourcePersistenceWidget.addOneToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()), primaryKey);
+                } else {
+                    otoRelationAttributeWidget = (OTORelationAttributeWidget) sourceAttributeWidget;
+                }
+
+                if (otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKUOTO_RELATION) || otoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKBOTO_RELATION)) {
+                    otoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
+                }
+                otoRelationAttributeWidget.setOneToOneRelationFlowWidget(otoRelationFlowWidget);
+                relationAttributeWidget = otoRelationAttributeWidget;
+            } else if (relationFlowWidget instanceof OTMRelationFlowWidget) {
+                OTMRelationAttributeWidget otmRelationAttributeWidget;
+                if (sourceAttributeWidget == null) {
+                    otmRelationAttributeWidget = sourcePersistenceWidget.addOneToManyRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName(), true));
+                } else {
+                    otmRelationAttributeWidget = (OTMRelationAttributeWidget) sourceAttributeWidget;
+                }
+                otmRelationAttributeWidget.setHierarchicalRelationFlowWidget((OTMRelationFlowWidget) relationFlowWidget);
+                relationAttributeWidget = otmRelationAttributeWidget;
+            } else if (relationFlowWidget instanceof MTORelationFlowWidget) {
+                MTORelationFlowWidget mtoRelationFlowWidget = (MTORelationFlowWidget) relationFlowWidget;
+                MTORelationAttributeWidget mtoRelationAttributeWidget;
+                boolean primaryKey = mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKUMTO_RELATION) || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKBMTO_RELATION);
+                if (sourceAttributeWidget == null) {
+                    mtoRelationAttributeWidget = sourcePersistenceWidget.addManyToOneRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName()), primaryKey);
+                } else {
+                    mtoRelationAttributeWidget = (MTORelationAttributeWidget) sourceAttributeWidget;
+                }
+
+                if (mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKUMTO_RELATION) || mtoRelationFlowWidget.getEdgeWidgetInfo().getType().equals(PKBMTO_RELATION)) {
+                    mtoRelationAttributeWidget.getBaseElementSpec().setPrimaryKey(Boolean.TRUE);
+                }
+                mtoRelationAttributeWidget.setManyToOneRelationFlowWidget(mtoRelationFlowWidget);
+                relationAttributeWidget = mtoRelationAttributeWidget;
+
+            } else if (relationFlowWidget instanceof MTMRelationFlowWidget) {
+                MTMRelationAttributeWidget mtmRelationAttributeWidget;
+                if (sourceAttributeWidget == null) {
+                    mtmRelationAttributeWidget = sourcePersistenceWidget.addManyToManyRelationAttribute(sourcePersistenceWidget.getNextAttributeName(targetEntityWidget.getName(), true));
+                } else {
+                    mtmRelationAttributeWidget = (MTMRelationAttributeWidget) sourceAttributeWidget;
+                }
+                mtmRelationAttributeWidget.setManyToManyRelationFlowWidget((MTMRelationFlowWidget) relationFlowWidget);
+                relationAttributeWidget = mtmRelationAttributeWidget;
+            } else {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            relationFlowWidget.setSourceRelationAttributeWidget(relationAttributeWidget);
+            relationAttributeWidget.getBaseElementSpec().setOwner(true);
+            return relationAttributeWidget.getPinWidgetInfo();
+
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getTargetPinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget targetAttributeWidget) {
+        RelationFlowWidget edgeWidget = this;
+        if (sourceNodeWidget instanceof EntityWidget && targetNodeWidget instanceof EntityWidget) {
+            EntityWidget targetEntityWidget = (EntityWidget) targetNodeWidget;
+            EntityWidget sourceEntityWidget = (EntityWidget) sourceNodeWidget;
+            if (edgeWidget instanceof UnidirectionalRelation) {
+                UnidirectionalRelation uRelationFlowWidget = (UnidirectionalRelation) edgeWidget;
+                uRelationFlowWidget.setTargetEntityWidget(targetEntityWidget);
+                targetEntityWidget.addInverseSideRelationFlowWidget((RelationFlowWidget) uRelationFlowWidget);
+                if (targetAttributeWidget == null) { //called for new added not for already exist widget from loaded document
+                    RelationAttributeWidget sourceRelationAttributeWidget = uRelationFlowWidget.getSourceRelationAttributeWidget();
+                    sourceRelationAttributeWidget.setConnectedSibling(targetEntityWidget);
+                }
+                return targetEntityWidget.getInternalPinWidgetInfo();
+            } else if (edgeWidget instanceof BidirectionalRelation) {
+                if (edgeWidget instanceof BOTORelationFlowWidget) {
+                    BOTORelationFlowWidget botoRelationFlowWidget = (BOTORelationFlowWidget) edgeWidget;
+                    OTORelationAttributeWidget targetOTORelationAttributeWidget;
+                    if (targetAttributeWidget == null) {
+                        targetOTORelationAttributeWidget = targetEntityWidget.addOneToOneRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName()), false);
+                        RelationAttributeWidget sourceOTORelationAttributeWidget = botoRelationFlowWidget.getSourceRelationAttributeWidget();
+                        sourceOTORelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetOTORelationAttributeWidget);
+                        targetOTORelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceOTORelationAttributeWidget);
+                    } else {
+                        targetOTORelationAttributeWidget = (OTORelationAttributeWidget) targetAttributeWidget;
+                    }
+                    targetOTORelationAttributeWidget.setOneToOneRelationFlowWidget(botoRelationFlowWidget);
+                    botoRelationFlowWidget.setTargetRelationAttributeWidget(targetOTORelationAttributeWidget);
+
+                    return targetOTORelationAttributeWidget.getPinWidgetInfo();
+
+                } else {
+                    if (edgeWidget instanceof BMTORelationFlowWidget) {
+                        BMTORelationFlowWidget bmtoRelationFlowWidget = (BMTORelationFlowWidget) edgeWidget;
+                        OTMRelationAttributeWidget targetMTORelationAttributeWidget;
+                        if (targetAttributeWidget == null) {
+                            targetMTORelationAttributeWidget = targetEntityWidget.addOneToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(), true));
+                            RelationAttributeWidget sourceMTORelationAttributeWidget = bmtoRelationFlowWidget.getSourceRelationAttributeWidget();
+                            sourceMTORelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetMTORelationAttributeWidget);
+                            targetMTORelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceMTORelationAttributeWidget);
+                        } else {
+                            targetMTORelationAttributeWidget = (OTMRelationAttributeWidget) targetAttributeWidget;
+                        }
+                        targetMTORelationAttributeWidget.setHierarchicalRelationFlowWidget(bmtoRelationFlowWidget);
+                        bmtoRelationFlowWidget.setTargetRelationAttributeWidget(targetMTORelationAttributeWidget);
+                        return targetMTORelationAttributeWidget.getPinWidgetInfo();
+                    } else {
+                        if (edgeWidget instanceof BMTMRelationFlowWidget) {
+                            BMTMRelationFlowWidget bmtmRelationFlowWidget = (BMTMRelationFlowWidget) edgeWidget;
+                            MTMRelationAttributeWidget targetMTMRelationAttributeWidget;
+                            if (targetAttributeWidget == null) {
+                                targetMTMRelationAttributeWidget = targetEntityWidget.addManyToManyRelationAttribute(targetEntityWidget.getNextAttributeName(sourceEntityWidget.getName(), true));
+                                RelationAttributeWidget sourceMTMRelationAttributeWidget = bmtmRelationFlowWidget.getSourceRelationAttributeWidget();
+                                sourceMTMRelationAttributeWidget.setConnectedSibling(targetEntityWidget, targetMTMRelationAttributeWidget);
+                                targetMTMRelationAttributeWidget.setConnectedSibling(sourceEntityWidget, sourceMTMRelationAttributeWidget);
+
+                            } else {
+                                targetMTMRelationAttributeWidget = (MTMRelationAttributeWidget) targetAttributeWidget;
+                            }
+                            targetMTMRelationAttributeWidget.setManyToManyRelationFlowWidget(bmtmRelationFlowWidget);
+                            bmtmRelationFlowWidget.setTargetRelationAttributeWidget(targetMTMRelationAttributeWidget);
+                            return targetMTMRelationAttributeWidget.getPinWidgetInfo();
+                        } else {
+                            throw new UnsupportedOperationException("Not supported yet.");
+                        }
+                    }
+                }
+            } else {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        } else if ((sourceNodeWidget instanceof MappedSuperclassWidget || sourceNodeWidget instanceof EmbeddableWidget)
+                && targetNodeWidget instanceof EntityWidget) {
+            EntityWidget targetEntityWidget = (EntityWidget) targetNodeWidget;
+            if (edgeWidget instanceof UnidirectionalRelation) {
+                UnidirectionalRelation uRelationFlowWidget = (UnidirectionalRelation) edgeWidget;
+                uRelationFlowWidget.setTargetEntityWidget(targetEntityWidget);
+                if (targetAttributeWidget == null) { //called for new added not for already exist widget from loaded document
+                    RelationAttributeWidget sourceRelationAttributeWidget = uRelationFlowWidget.getSourceRelationAttributeWidget();
+                    sourceRelationAttributeWidget.setConnectedSibling(targetEntityWidget);
+                }
+                return targetEntityWidget.getInternalPinWidgetInfo();
+            } else {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     }
 
 }

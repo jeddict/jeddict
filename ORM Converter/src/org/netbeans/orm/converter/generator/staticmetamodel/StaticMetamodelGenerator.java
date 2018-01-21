@@ -29,7 +29,6 @@ import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
 import org.netbeans.jpa.modeler.spec.extend.PersistenceBaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.orm.converter.compiler.VariableDefSnippet;
 import org.netbeans.orm.converter.generator.ClassGenerator;
 import org.netbeans.orm.converter.util.ClassHelper;
 

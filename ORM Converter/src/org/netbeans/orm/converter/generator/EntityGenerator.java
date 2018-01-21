@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2018] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,21 +29,21 @@ import org.netbeans.orm.converter.compiler.DiscriminatorColumnSnippet;
 import org.netbeans.orm.converter.compiler.DiscriminatorValueSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet;
 import org.netbeans.orm.converter.compiler.InheritanceSnippet.Type;
-import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
+import org.netbeans.orm.converter.compiler.def.EntityDefSnippet;
 
-public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
+public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet> {
 
     private final Entity entity;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
-        super(new ManagedClassDefSnippet(), parsedEntity.getRootElement().getJavaEEVersion());
+        super(new EntityDefSnippet(), parsedEntity.getRootElement().getJavaEEVersion());
         this.entity = parsedEntity;
         this.rootPackageName = packageName;
         this.packageName = entity.getAbsolutePackage(rootPackageName);
     }
 
     @Override
-    public ManagedClassDefSnippet getClassDef() {
+    public EntityDefSnippet getClassDef() {
 
         //Classlevel annotations
         processDiscriminatorColumn();
@@ -117,7 +117,6 @@ public class EntityGenerator extends ClassGenerator<ManagedClassDefSnippet> {
             classDef.setEntityName(entity.getEntityName()); 
         }
         classDef.setAuthor(entity.getAuthor());
-        classDef.setEntity(true);
         classDef.setXmlRootElement(entity.getXmlRootElement());
 
         return classDef;

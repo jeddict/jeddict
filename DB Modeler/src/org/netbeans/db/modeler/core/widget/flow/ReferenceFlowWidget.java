@@ -19,6 +19,7 @@ import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
 import org.netbeans.db.modeler.core.widget.column.IReferenceColumnWidget;
+import org.netbeans.db.modeler.core.widget.table.TableWidget;
 import org.netbeans.db.modeler.spec.DBColumn;
 import org.netbeans.db.modeler.specification.model.scene.DBModelerScene;
 import org.netbeans.jpa.modeler.core.widget.flow.AbstractEdgeWidget;
@@ -31,6 +32,9 @@ import org.netbeans.modeler.anchorshape.crow.ZeroOrMoreCrowShape;
 import org.netbeans.modeler.anchorshape.crow.ZeroOrOneCrowShape;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.INodeWidget;
+import org.netbeans.modeler.widget.pin.IPinWidget;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 /**
  *
@@ -118,6 +122,44 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<DBModelerScene> {
 
     @Override
     public void destroy() {
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getSourcePinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget sourceColumnWidget) {
+        if (sourceNodeWidget instanceof TableWidget
+                && targetNodeWidget instanceof TableWidget
+                && sourceColumnWidget instanceof ForeignKeyWidget) {
+            ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) this;
+            TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
+            DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getPinWidgetInfo().getBaseElementSpec();
+            IReferenceColumnWidget targetColumnWidget = targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
+            referenceFlowWidget.setReferenceColumnWidget(targetColumnWidget);
+            referenceFlowWidget.setForeignKeyWidget((ForeignKeyWidget) sourceColumnWidget);
+            return sourceColumnWidget.getPinWidgetInfo();
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getTargetPinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget targetColumnWidget) {
+        if (sourceNodeWidget instanceof TableWidget
+                && targetNodeWidget instanceof TableWidget
+                && targetColumnWidget instanceof ColumnWidget) {
+            return targetColumnWidget.getPinWidgetInfo();
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
 }

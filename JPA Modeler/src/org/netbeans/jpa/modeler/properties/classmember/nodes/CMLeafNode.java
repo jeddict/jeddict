@@ -18,6 +18,7 @@ package org.netbeans.jpa.modeler.properties.classmember.nodes;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.LeafNode;
+import org.netbeans.jpa.modeler.spec.bean.AssociationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
@@ -39,9 +40,11 @@ public class CMLeafNode extends LeafNode<ClassMembers> {
 
         Attribute attribute = (Attribute) leafAttributeWidget.getBaseElementSpec();
         if(attribute instanceof BaseAttribute){
-        this.setShortDescription(attribute.getName() + " <" + ((BaseAttribute)attribute).getAttributeType() + ">");
-        } else {
-         this.setShortDescription(attribute.getName() + " <" + ((RelationAttribute)attribute).getTargetEntity()+ ">");   
+            this.setShortDescription(attribute.getName() + " <" + ((BaseAttribute) attribute).getAttributeType() + ">");
+        } else if (attribute instanceof RelationAttribute) {
+            this.setShortDescription(attribute.getName() + " <" + ((RelationAttribute) attribute).getTargetEntity() + ">");
+        } else if (attribute instanceof AssociationAttribute) {
+            this.setShortDescription(attribute.getName() + " <" + ((AssociationAttribute) attribute).getTargetClass()+ ">");
         }
     }
 

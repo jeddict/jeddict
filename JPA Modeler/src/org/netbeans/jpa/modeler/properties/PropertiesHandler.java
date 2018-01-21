@@ -123,7 +123,7 @@ import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType;
 import static org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableType.XML_DEFAULT;
 import org.netbeans.jpa.modeler.spec.jaxb.JaxbVariableTypeHandler;
 import org.netbeans.jpa.modeler.spec.validator.ConvertValidator;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.embedded.EmbeddedDataListener;
@@ -956,11 +956,11 @@ public class PropertiesHandler {
         return new EmbeddedPropertySupport(entityWidget.getModelerScene().getModelerFile(), entity);
     }
 
-    public static EmbeddedPropertySupport getHashcodeEqualsProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+    public static EmbeddedPropertySupport getEqualsHashcodeProperty(JavaClassWidget<? extends JavaClass> classWidget) {
         GenericEmbedded entity = new GenericEmbedded("hashcode_equals", "equals() & hashcode()", "Define equals & hashcode implementation for the Entity");
 
-        final JavaClass javaClassObj = persistenceClassWidget.getBaseElementSpec();
-        HashcodeEqualsPanel panel = new HashcodeEqualsPanel(persistenceClassWidget);
+        final JavaClass javaClassObj = classWidget.getBaseElementSpec();
+        HashcodeEqualsPanel panel = new HashcodeEqualsPanel(classWidget);
         panel.postConstruct();
         entity.setEntityEditor(panel);
         entity.setDataListener(new EmbeddedDataListener<JavaClass>() {
@@ -989,13 +989,13 @@ public class PropertiesHandler {
             }
 
         });
-        return new EmbeddedPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), entity);
+        return new EmbeddedPropertySupport(classWidget.getModelerScene().getModelerFile(), entity);
     }
 
-    public static EmbeddedPropertySupport getToStringProperty(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+    public static EmbeddedPropertySupport getToStringProperty(JavaClassWidget<? extends JavaClass> classWidget) {
         GenericEmbedded entity = new GenericEmbedded("toString", "toString()", getMessage(ClassMemberPanel.class, "LBL_tostring_select"));
-        final ClassMembers classMembersObj = persistenceClassWidget.getBaseElementSpec().getToStringMethod();
-        ClassMemberPanel classMemberPanel = new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), persistenceClassWidget, false);
+        final ClassMembers classMembersObj = classWidget.getBaseElementSpec().getToStringMethod();
+        ClassMemberPanel classMemberPanel = new ClassMemberPanel(getMessage(ClassMemberPanel.class, "LBL_tostring_select"), classWidget, false);
         classMemberPanel.postConstruct();
         entity.setEntityEditor(classMemberPanel);
         entity.setDataListener(new EmbeddedDataListener<ClassMembers>() {
@@ -1022,18 +1022,18 @@ public class PropertiesHandler {
             }
 
         });
-        return new EmbeddedPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), entity);
+        return new EmbeddedPropertySupport(classWidget.getModelerScene().getModelerFile(), entity);
     }
 
-    public static PropertySupport getConstructorProperties(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
+    public static PropertySupport getConstructorProperties(JavaClassWidget<? extends JavaClass> classWidget) {
         final NAttributeEntity attributeEntity = new NAttributeEntity("constructor", "Constructor", "Constructor");
         attributeEntity.setCountDisplay(new String[]{"No Constructors exist", "One Constructor exist", "Constructors exist"});
-        List<Constructor> constructors = persistenceClassWidget.getBaseElementSpec().getConstructors();
+        List<Constructor> constructors = classWidget.getBaseElementSpec().getConstructors();
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("#", true, Boolean.class));
         columns.add(new Column("Constructor List", false, String.class));
         attributeEntity.setColumns(columns);
-        attributeEntity.setCustomDialog(new ConstructorPanel(persistenceClassWidget));
+        attributeEntity.setCustomDialog(new ConstructorPanel(classWidget));
         attributeEntity.setTableDataListener(new NEntityDataListener<>(constructors,
                 t -> Arrays.asList(t.isEnable(), t.toString()),
                 (t, row) -> t.setEnable((boolean) row[1]),
@@ -1045,12 +1045,12 @@ public class PropertiesHandler {
                     //Enable no-args constructor and disable other no-args constructor , if more then one are available 
                     if (!constructors.isEmpty()) {
                         List<Constructor> noArgsConstructors = constructors.stream().filter(con -> con.isNoArgs()).collect(toList());
-                        noArgsConstructors.stream().forEach(con -> con.setEnable(false));
+                        noArgsConstructors.forEach(con -> con.setEnable(false));
                         noArgsConstructors.get(0).setEnable(true);
                         noArgsConstructors.get(0).setAccessModifier(AccessModifierType.PUBLIC);
                     }
                 }));
-        return new NEntityPropertySupport(persistenceClassWidget.getModelerScene().getModelerFile(), attributeEntity);
+        return new NEntityPropertySupport(classWidget.getModelerScene().getModelerFile(), attributeEntity);
     }
 
     public static EmbeddedPropertySupport getGeneratorProperty(IdAttributeWidget attributeWidget) {

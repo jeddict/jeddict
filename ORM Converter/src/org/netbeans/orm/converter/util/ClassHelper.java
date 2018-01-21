@@ -108,12 +108,15 @@ public class ClassHelper {
         return packageName + ORMConverterUtil.DOT + className;
     }
 
+    private Class _class;
+
     public Class getClazz() {
-        Class _class = null;
-        try {
-            _class = Class.forName(getFQClassName());
-        } catch (ClassNotFoundException ex) {
-            //skip
+        if (_class == null) {
+            try {
+                _class = Class.forName(getFQClassName());
+            } catch (ClassNotFoundException ex) {
+                //skip
+            }
         }
         return _class;
     }

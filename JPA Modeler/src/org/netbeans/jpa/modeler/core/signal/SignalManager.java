@@ -34,7 +34,7 @@ public final class SignalManager {
 
     public SignalManager(IFlowElementWidget widget) {
         this.widget = widget;
-        Arrays.stream(StateType.values()).forEach(stateType -> createSignalHandler(stateType));
+        Arrays.stream(StateType.values()).forEach(this::createSignalHandler);
     }
 
     void createSignalHandler(IWidgetStateHandler.StateType stateType) {

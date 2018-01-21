@@ -17,11 +17,17 @@ package org.netbeans.jpa.modeler.core.widget.flow;
 
 import java.awt.Color;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
+import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.INodeWidget;
+import org.netbeans.modeler.widget.pin.IPinWidget;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
 import org.openide.nodes.Sheet;
 
@@ -38,16 +44,12 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
         super(scene, edge);
     }
 
-    
     private Color color;
-    
-    
+
     @Override
-    public void init(){
-         sourceEmbeddedAttributeWidget.setAnchorGap(5);
+    public void init() {
+        sourceEmbeddedAttributeWidget.setAnchorGap(5);
     }
-    
-    
 
     public Sheet.Set getVisualPropertiesSet(Sheet.Set set) throws NoSuchMethodException, NoSuchFieldException {
         set.put(new ElementPropertySupport(this, Color.class, "color", "Color", "The Line Color of the SequenceFlow Element."));
@@ -114,6 +116,67 @@ public abstract class EmbeddableFlowWidget extends AbstractEdgeWidget<JPAModeler
 
     @Override
     public void destroy() {
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getSourcePinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget sourceAttributeWidget) {
+        EmbeddableFlowWidget edgeWidget = this;
+        PersistenceClassWidget sourcePersistenceWidget = (PersistenceClassWidget) sourceNodeWidget;
+        EmbeddableWidget targetEmbeddableWidget = (EmbeddableWidget) targetNodeWidget;
+        EmbeddableFlowWidget embeddableFlowWidget = (EmbeddableFlowWidget) edgeWidget;
+        EmbeddedAttributeWidget embeddedAttributeWidget = null;
+        if (edgeWidget instanceof SingleValueEmbeddableFlowWidget) {
+            SingleValueEmbeddedAttributeWidget singleValueEmbeddedAttributeWidget;
+            if (sourceAttributeWidget == null) {
+                singleValueEmbeddedAttributeWidget = sourcePersistenceWidget.addSingleValueEmbeddedAttribute(sourcePersistenceWidget.getNextAttributeName(targetEmbeddableWidget.getName()));
+            } else {
+                singleValueEmbeddedAttributeWidget = (SingleValueEmbeddedAttributeWidget) sourceAttributeWidget;
+            }
+            singleValueEmbeddedAttributeWidget.setEmbeddableFlowWidget(embeddableFlowWidget);
+            embeddedAttributeWidget = singleValueEmbeddedAttributeWidget;
+        } else {
+            if (edgeWidget instanceof MultiValueEmbeddableFlowWidget) {
+                MultiValueEmbeddedAttributeWidget multiValueEmbeddedAttributeWidget;
+                if (sourceAttributeWidget == null) {
+                    multiValueEmbeddedAttributeWidget = sourcePersistenceWidget.addMultiValueEmbeddedAttribute(sourcePersistenceWidget.getNextAttributeName(targetEmbeddableWidget.getName(), true));
+                } else {
+                    multiValueEmbeddedAttributeWidget = (MultiValueEmbeddedAttributeWidget) sourceAttributeWidget;
+                }
+                multiValueEmbeddedAttributeWidget.setEmbeddableFlowWidget(embeddableFlowWidget);
+                embeddedAttributeWidget = multiValueEmbeddedAttributeWidget;
+            } else {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        }
+        embeddableFlowWidget.setSourceEmbeddedAttributeWidget(embeddedAttributeWidget);
+        return embeddedAttributeWidget.getPinWidgetInfo();
+
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getTargetPinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget targetAttributeWidget) {
+        EmbeddableFlowWidget edgeWidget = this;
+        if (sourceNodeWidget instanceof PersistenceClassWidget && targetNodeWidget instanceof EmbeddableWidget) {
+            EmbeddableWidget targetEmbeddableWidget = (EmbeddableWidget) targetNodeWidget;
+            ((EmbeddableFlowWidget) edgeWidget).setTargetEmbeddableWidget(targetEmbeddableWidget);
+            targetEmbeddableWidget.addIncomingEmbeddableFlowWidget((EmbeddableFlowWidget) edgeWidget);
+            EmbeddedAttributeWidget sourceEmbeddedAttributeWidget = ((EmbeddableFlowWidget) edgeWidget).getSourceEmbeddedAttributeWidget();
+            sourceEmbeddedAttributeWidget.setConnectedSibling(targetEmbeddableWidget);
+            return targetEmbeddableWidget.getInternalPinWidgetInfo();
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     }
 
 }

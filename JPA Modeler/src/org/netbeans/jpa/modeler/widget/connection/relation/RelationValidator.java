@@ -16,11 +16,13 @@
 package org.netbeans.jpa.modeler.widget.connection.relation;
 
 import java.util.List;
+import static org.netbeans.jpa.modeler.Constant.MULTI_EMBEDDABLE_RELATION;
+import static org.netbeans.jpa.modeler.Constant.SINGLE_EMBEDDABLE_RELATION;
 import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.core.widget.PlainClassWidget;
+import org.netbeans.jpa.modeler.core.widget.BeanClassWidget;
 import org.netbeans.modeler.widget.connection.relation.IRelationProxy;
 import org.netbeans.modeler.widget.connection.relation.IRelationValidator;
 
@@ -46,42 +48,42 @@ public class RelationValidator implements IRelationValidator {
     @Override
     public boolean validateRelation(IRelationProxy proxy) {
         boolean valid = true;
-//        if (proxy.getTarget() == proxy.getSource()) {
-//            valid = false;
-//        } else
-
         if (proxy.getEdgeType().contains("RELATION") && (proxy.getEdgeType().charAt(0) == 'U' || proxy.getEdgeType().charAt(0) == 'B')) {
-            if (proxy.getTarget() instanceof MappedSuperclassWidget) {
-                return false;
-            } else if (proxy.getTarget() instanceof EmbeddableWidget) {
-                return false;
+            if (proxy.getTarget() instanceof MappedSuperclassWidget
+                    || proxy.getTarget() instanceof EmbeddableWidget
+                    || proxy.getTarget() instanceof BeanClassWidget) {
+                valid = false;
+            }
+        }if (proxy.getEdgeType().contains("ASSOCIATION")) {
+            if (proxy.getTarget() instanceof PersistenceClassWidget) {
+                valid = false;
             }
         } else if (proxy.getEdgeType().equals("GENERALIZATION")) {
             if (!(proxy.getSource() instanceof JavaClassWidget) || !(proxy.getTarget() instanceof JavaClassWidget)) {
-                return false;
+                valid = false;
             } else if (proxy.getSource() == proxy.getTarget()) {
-                return false;
+                valid = false;
             } else if ((proxy.getSource() instanceof EmbeddableWidget) && !(proxy.getTarget() instanceof EmbeddableWidget)) {
-                return false;
+                valid = false;
             } else if (!(proxy.getSource() instanceof EmbeddableWidget) && (proxy.getTarget() instanceof EmbeddableWidget)) {
-                return false;
-            } else if ((proxy.getSource() instanceof PlainClassWidget) && !(proxy.getTarget() instanceof PlainClassWidget)) {
-                return false;
-            } else if (!(proxy.getSource() instanceof PlainClassWidget) && (proxy.getTarget() instanceof PlainClassWidget)) {
-                return false;
+                valid = false;
+            } else if ((proxy.getSource() instanceof BeanClassWidget) && !(proxy.getTarget() instanceof BeanClassWidget)) {
+                valid = false;
+            } else if (!(proxy.getSource() instanceof BeanClassWidget) && (proxy.getTarget() instanceof BeanClassWidget)) {
+                valid = false;
             }
             //Prevent Cyclic inheritance
             JavaClassWidget sourceJavaClassWidget = (JavaClassWidget) proxy.getSource();
             JavaClassWidget targetJavaClassWidget = (JavaClassWidget) proxy.getTarget();
             List<JavaClassWidget> targetSuperclassWidgetList = targetJavaClassWidget.getAllSuperclassWidget();
             if (sourceJavaClassWidget.getOutgoingGeneralizationFlowWidget() != null) {
-                return false;
+                valid = false;
             } else if (targetSuperclassWidgetList.size() > 0 && targetSuperclassWidgetList.contains(sourceJavaClassWidget)) {
-                return false;
+                valid = false;
             }
-        } else if (proxy.getEdgeType().equals("SINGLE_EMBEDDABLE_RELATION") || proxy.getEdgeType().equals("MULTI_EMBEDDABLE_RELATION")) {
+        } else if (proxy.getEdgeType().equals(SINGLE_EMBEDDABLE_RELATION) || proxy.getEdgeType().equals(MULTI_EMBEDDABLE_RELATION)) {
             if (!(proxy.getSource() instanceof PersistenceClassWidget) || !(proxy.getTarget() instanceof EmbeddableWidget)) {
-                return false;
+                valid = false;
             }
 //            //Prevent Cyclic inheritance
 //            JavaClassWidget sourceJavaClassWidget = (JavaClassWidget) proxy.getSource();

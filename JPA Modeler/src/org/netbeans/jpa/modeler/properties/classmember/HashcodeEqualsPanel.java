@@ -15,18 +15,17 @@
  */
 package org.netbeans.jpa.modeler.properties.classmember;
 
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
 
 public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
 
     private JavaClass javaClass;
-    private final PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget;
+    private final JavaClassWidget<? extends JavaClass> classWidget;
 
-    public HashcodeEqualsPanel(PersistenceClassWidget<? extends ManagedClass> persistenceClassWidget) {
-        this.persistenceClassWidget = persistenceClassWidget;
+    public HashcodeEqualsPanel(JavaClassWidget<? extends JavaClass> classWidget) {
+        this.classWidget = classWidget;
     }
 
     public void postConstruct() {
@@ -44,8 +43,8 @@ public class HashcodeEqualsPanel extends GenericEmbeddedEditor<JavaClass> {
     public void setValue(JavaClass javaClass) {
         this.javaClass = javaClass;
 
-        ((ClassMemberPanel) equalsMethodPanel).setPersistenceClassWidget(persistenceClassWidget);
-        ((ClassMemberPanel) hashcodeMethodPanel).setPersistenceClassWidget(persistenceClassWidget);
+        ((ClassMemberPanel) equalsMethodPanel).setClassWidget(classWidget);
+        ((ClassMemberPanel) hashcodeMethodPanel).setClassWidget(classWidget);
 
         ((ClassMemberPanel) equalsMethodPanel).setValue(javaClass.getEqualsMethod());
         ((ClassMemberPanel) hashcodeMethodPanel).setValue(javaClass.getHashCodeMethod());

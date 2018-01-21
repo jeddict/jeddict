@@ -28,6 +28,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import javax.swing.JMenuItem;
 import org.netbeans.api.visual.action.WidgetAction;
+import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
@@ -61,16 +62,15 @@ import org.netbeans.db.modeler.specification.model.util.SQLEditorUtil;
 import org.netbeans.jpa.modeler.core.widget.*;
 import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
+import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.IRootElement;
-import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.INodeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
-import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, DBModelerScene> {
 
@@ -106,81 +106,89 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         }
     }
 
-    public void addNewBasicColumn(String name, DBColumn column) {
-        columnWidgets.put(column.getId(), create(column.getId(), name, column, BasicColumnWidget.class));
+    public void addBasicColumn(String name, DBColumn column) {
+        columnWidgets.put(column.getId(), 
+                createPinWidget(column, BasicColumnWidget.class, w -> new BasicColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addEmbeddedAttributeColumn(String name, DBColumn column) {
-        columnWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAttributeColumnWidget.class));
+        columnWidgets.put(column.getId(), 
+                createPinWidget(column, EmbeddedAttributeColumnWidget.class, w -> new EmbeddedAttributeColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addParentPrimaryKeyAttributeColumn(String name, DBColumn column) {
-        primaryKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAttributePrimaryKeyWidget.class));
+        primaryKeyWidgets.put(column.getId(), 
+                createPinWidget(column, ParentAttributePrimaryKeyWidget.class, w -> new ParentAttributePrimaryKeyWidget(this.getModelerScene(), this, w)));
     }
     
      public void addMapKeyColumn(String name, DBMapKeyColumn column) {
-        columnWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyColumnWidget.class));
+        columnWidgets.put(column.getId(), 
+                createPinWidget(column, MapKeyColumnWidget.class, w -> new MapKeyColumnWidget(this.getModelerScene(), this, w)));
     }
      
      public void addMapKeyJoinColumn(String name, DBMapKeyJoinColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyJoinColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, MapKeyJoinColumnWidget.class, w -> new MapKeyJoinColumnWidget(this.getModelerScene(), this, w)));
     }
      
     public void addMapKeyEmbeddedColumn(String name, DBMapKeyEmbeddedColumn column) {
-        columnWidgets.put(column.getId(), create(column.getId(), name, column, MapKeyEmbeddedColumnWidget.class));
+        columnWidgets.put(column.getId(), 
+                createPinWidget(column, MapKeyEmbeddedColumnWidget.class, w -> new MapKeyEmbeddedColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addDiscriminatorColumn(String name, DBColumn column) {
-        columnWidgets.put(column.getId(), create(column.getId(), name, column, DiscriminatorColumnWidget.class));
+        columnWidgets.put(column.getId(), 
+                createPinWidget(column, DiscriminatorColumnWidget.class, w -> new DiscriminatorColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addParentAttributeColumn(String name, DBColumn column) {
-        columnWidgets.put(column.getId(), create(column.getId(), name, column, ParentAttributeColumnWidget.class));
+        columnWidgets.put(column.getId(), 
+                createPinWidget(column, ParentAttributeColumnWidget.class, w -> new ParentAttributeColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addParentAssociationInverseJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationInverseJoinColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, ParentAssociationInverseJoinColumnWidget.class, w -> new ParentAssociationInverseJoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addParentAssociationJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, ParentAssociationJoinColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, ParentAssociationJoinColumnWidget.class, w -> new ParentAssociationJoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addEmbeddedAttributeJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAttributeJoinColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, EmbeddedAttributeJoinColumnWidget.class, w -> new EmbeddedAttributeJoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addEmbeddedAssociationInverseJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationInverseJoinColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, EmbeddedAssociationInverseJoinColumnWidget.class, w -> new EmbeddedAssociationInverseJoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
     public void addEmbeddedAssociationJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, EmbeddedAssociationJoinColumnWidget.class));
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, EmbeddedAssociationJoinColumnWidget.class, w -> new EmbeddedAssociationJoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
-    public void addNewJoinKey(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, JoinColumnWidget.class));
+    public void addJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, JoinColumnWidget.class, w -> new JoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
-    public void addNewInverseJoinKey(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, InverseJoinColumnWidget.class));
+    public void addInverseJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, InverseJoinColumnWidget.class, w -> new InverseJoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
-    public void addNewPrimaryKeyJoinColumn(String name, DBColumn column) {
-        foreignKeyWidgets.put(column.getId(), create(column.getId(), name, column, PrimaryKeyJoinColumnWidget.class));
+    public void addPrimaryKeyJoinColumn(String name, DBColumn column) {
+        foreignKeyWidgets.put(column.getId(), 
+                createPinWidget(column, PrimaryKeyJoinColumnWidget.class, w -> new PrimaryKeyJoinColumnWidget(this.getModelerScene(), this, w)));
     }
 
-    public void addNewPrimaryKey(String name, DBColumn column) {
-        primaryKeyWidgets.put(column.getId(), create(column.getId(), name, column, PrimaryKeyWidget.class));
-    }
-    
-    
-    private <W extends ColumnWidget> W create(String id, String name, IBaseElement baseElement, Class<W> widgetClass) {
-        PinWidgetInfo pinWidgetInfo = new PinWidgetInfo(id, baseElement);
-        pinWidgetInfo.setName(name);
-        pinWidgetInfo.setDocumentId(widgetClass.getSimpleName());
-        W widget = (W)createPinWidget(pinWidgetInfo);
-        return widget;
+    public void addPrimaryKey(String name, DBColumn column) {
+        primaryKeyWidgets.put(column.getId(), 
+                createPinWidget(column, PrimaryKeyWidget.class, w -> new PrimaryKeyWidget(this.getModelerScene(), this, w)));
     }
 
 //    public abstract void deleteAttribute(AttributeWidget attributeWidget);
@@ -347,4 +355,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, D
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public Anchor getAnchor() {
+        return new CustomRectangularAnchor(this, -5, true);
+    }
 }

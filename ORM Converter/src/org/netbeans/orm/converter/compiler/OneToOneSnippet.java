@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
@@ -59,7 +60,6 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
         if (!CodePanel.isGenerateDefaultValue()) {
             if (mappedBy == null
                     && optional == true
-                    && getTargetEntity() == null
                     && getFetchType() == null
                     && getCascadeTypes().isEmpty()) {
                 return builder.toString();
@@ -92,13 +92,13 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (getTargetEntity() != null) {
+        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
             builder.append("targetEntity = ");
             builder.append(getTargetEntity());
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (getMappedBy() != null) {   //Added By Gaurav Gupta
+        if (getMappedBy() != null) {
             builder.append("mappedBy = ");
             builder.append(ORMConverterUtil.QUOTE);
             builder.append(getMappedBy());
@@ -111,7 +111,7 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (getFetchType() == null
                 && getCascadeTypes().isEmpty() && !isPrimaryKey()) {
@@ -138,10 +138,6 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
         if (getCascadeTypes() != null && !getCascadeTypes().isEmpty()) {
             importSnippets.add(CASCADE_TYPE_FQN);
         }
-
-//        if (getTargetEntityPackage()!= null) {
-//            importSnippets.add(getTargetEntityPackage() + ORMConverterUtil.DOT + getTargetEntityName());
-//        }
         return importSnippets;
     }
 

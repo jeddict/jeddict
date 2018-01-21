@@ -19,6 +19,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.util.Collections;
 import java.util.List;
+import org.netbeans.jpa.modeler.core.widget.BeanClassWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.PrimaryKeyContainerWidget;
@@ -31,6 +32,9 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.MultiValueEmbeddedAtt
 import org.netbeans.jpa.modeler.core.widget.attribute.base.SingleValueEmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.TransientAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.bean.BeanAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.bean.BeanCollectionAttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.bean.BeanTransientAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTMRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.MTORelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.OTMRelationAttributeWidget;
@@ -40,8 +44,7 @@ import org.netbeans.jpa.modeler.spec.IdentifiableClass;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DOWN_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.PAINT_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.UP_ICON;
@@ -128,7 +131,7 @@ public class PinContextModel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
 
                 if (widget instanceof AttributeWidget) {
-                    JavaClassWidget<JavaClass> classWidget = ((AttributeWidget) widget).getClassWidget();
+                    JavaClassWidget<? extends JavaClass> classWidget = ((AttributeWidget) widget).getClassWidget();
                     List list = null;
                     List specList = null;
                     AttributeWidget attributeWidget = (AttributeWidget) widget;
@@ -175,6 +178,18 @@ public class PinContextModel {
                                 list = primaryKeyContainerWidget.getVersionAttributeWidgets();
                                 specList = primaryKeyContainerWidget.getBaseElementSpec().getAttributes().getVersion();
                             }
+                        }
+                    } else if (classWidget instanceof BeanClassWidget) {
+                        BeanClassWidget beanClassWidget = (BeanClassWidget) classWidget;
+                        if (attributeWidget instanceof BeanAttributeWidget) {
+                            list = beanClassWidget.getBeanAttributeWidgets();
+                            specList = beanClassWidget.getBaseElementSpec().getAttributes().getBasic();
+                        } else if (attributeWidget instanceof BeanCollectionAttributeWidget) {
+                            list = beanClassWidget.getBeanCollectionAttributeWidgets();
+                            specList = beanClassWidget.getBaseElementSpec().getAttributes().getElementCollection();
+                        } else if (attributeWidget instanceof BeanTransientAttributeWidget) {
+                            list = beanClassWidget.getBeanTransientAttributeWidgets();
+                            specList = beanClassWidget.getBaseElementSpec().getAttributes().getTransient();
                         }
                     }
                             

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.YES_NO_OPTION;
 import org.eclipse.persistence.exceptions.DatabaseException;
 import org.eclipse.persistence.exceptions.ValidationException;
 import org.eclipse.persistence.internal.jpa.deployment.PersistenceUnitProcessor.Mode;
@@ -30,29 +29,10 @@ import org.eclipse.persistence.internal.jpa.metadata.xml.XMLEntityMappings;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.tools.schemaframework.JPAMSchemaManager;
-import org.netbeans.api.visual.anchor.Anchor;
-import org.netbeans.api.visual.anchor.PointShape;
+
 import org.netbeans.db.modeler.classloader.DynamicDriverClassLoader;
-import org.netbeans.db.modeler.core.widget.column.BasicColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.DiscriminatorColumnWidget;
 import org.netbeans.db.modeler.core.widget.column.ForeignKeyWidget;
-import org.netbeans.db.modeler.core.widget.column.IReferenceColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.InverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.JoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.PrimaryKeyJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.PrimaryKeyWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAssociationJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.embedded.EmbeddedAttributeJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.map.MapKeyColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.map.MapKeyEmbeddedColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.map.MapKeyJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationInverseJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAssociationJoinColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributeColumnWidget;
-import org.netbeans.db.modeler.core.widget.column.parent.ParentAttributePrimaryKeyWidget;
 import org.netbeans.db.modeler.core.widget.flow.ReferenceFlowWidget;
 import org.netbeans.db.modeler.core.widget.table.BaseTableWidget;
 import org.netbeans.db.modeler.core.widget.table.CollectionTableWidget;
@@ -91,8 +71,6 @@ import org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_DRIVER;
 import static org.netbeans.jpa.modeler.spec.extend.cache.DatabaseConnectionCache.DEFAULT_URL;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
-import org.netbeans.modeler.anchors.CustomRectangularAnchor;
-import org.netbeans.modeler.border.ResizeBorder;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;
 import org.netbeans.modeler.core.ModelerFile;
@@ -100,29 +78,21 @@ import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.core.exception.ModelerException;
 import org.netbeans.modeler.core.exception.ProcessInterruptedException;
-import org.netbeans.modeler.shape.ShapeDesign;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.core.IFlowNode;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
-import org.netbeans.modeler.specification.model.document.widget.IFlowEdgeWidget;
-import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
-import org.netbeans.modeler.specification.model.util.PModelerUtil;
+import org.netbeans.modeler.specification.model.util.IModelerUtil;
 import org.netbeans.modeler.widget.edge.IEdgeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
 import org.netbeans.modeler.widget.node.INodeWidget;
-import org.netbeans.modeler.widget.node.IPNodeWidget;
-import org.netbeans.modeler.widget.node.NodeWidget;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 import org.netbeans.modeler.widget.node.vmd.PNodeWidget;
-import org.netbeans.modeler.widget.pin.IPinWidget;
-import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modules.db.explorer.ConnectionList;
 import org.netbeans.modules.db.explorer.action.ConnectAction;
-import static org.openide.util.NbBundle.getMessage;
 import org.openide.windows.WindowManager;
 
-public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
+public class DBModelerUtil implements IModelerUtil<DBModelerScene> {
 
     public static String BASE_TABLE_ICON_PATH;
     public static Image BASE_TABLE;
@@ -296,7 +266,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                 scene.getModelerFile().handleException(ex);
             }
 //            SubCategoryNodeConfig subCategoryNodeConfig = scene.getModelerFile().getVendorSpecification().getPaletteConfig().findSubCategoryNodeConfig(document);
-            NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(flowElement.getId(), document, new Point(0, 0));
+            NodeWidgetInfo nodeWidgetInfo = new NodeWidgetInfo(document, new Point(0, 0));
+            nodeWidgetInfo.setId(flowElement.getId());
             nodeWidgetInfo.setName(flowElement.getName());
             nodeWidgetInfo.setExist(Boolean.TRUE);//to Load JPA
             nodeWidgetInfo.setBaseElementSpec(flowElement);//to Load JPA
@@ -316,11 +287,11 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                         if (column instanceof DBDiscriminatorColumn) {
                             tableWidget.addDiscriminatorColumn(column.getName(), column);
                         } else if (column instanceof DBJoinColumn) {
-                            tableWidget.addNewJoinKey(column.getName(), column);
+                            tableWidget.addJoinColumn(column.getName(), column);
                         } else if (column instanceof DBInverseJoinColumn) {
-                            tableWidget.addNewInverseJoinKey(column.getName(), column);
+                            tableWidget.addInverseJoinColumn(column.getName(), column);
                         } else if (column instanceof DBPrimaryKeyJoinColumn) {
-                            tableWidget.addNewPrimaryKeyJoinColumn(column.getName(), column);
+                            tableWidget.addPrimaryKeyJoinColumn(column.getName(), column);
                         } else if (column instanceof DBEmbeddedColumn) {
                             if (column instanceof DBEmbeddedAttributeColumn) {
                                 if (column instanceof DBMapKeyEmbeddedColumn) {
@@ -356,9 +327,9 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
                         } else if (column instanceof DBMapKeyJoinColumn) {
                             tableWidget.addMapKeyJoinColumn(column.getName(), (DBMapKeyJoinColumn) column);
                         } else if (column.isPrimaryKey()) {
-                            tableWidget.addNewPrimaryKey(column.getName(), column);
+                            tableWidget.addPrimaryKey(column.getName(), column);
                         } else {
-                            tableWidget.addNewBasicColumn(column.getName(), column);
+                            tableWidget.addBasicColumn(column.getName(), column);
                         }
                     });
                     tableWidget.sortAttributes();
@@ -397,15 +368,15 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
             return;
         }
 
-        EdgeWidgetInfo edgeInfo = new EdgeWidgetInfo();
+        EdgeWidgetInfo edgeInfo = new EdgeWidgetInfo(e ->  new ReferenceFlowWidget(scene, e));
         edgeInfo.setId(NBModelerUtil.getAutoGeneratedStringId());
         edgeInfo.setSource(sourceTableWidget.getNodeWidgetInfo().getId());
         edgeInfo.setTarget(targetTableWidget.getNodeWidgetInfo().getId());
-//      edgeInfo.setType(NBModelerUtil.getEdgeType(sourceTableWidget, targetTableWidget, contextToolId));
+        edgeInfo.setType("REFERENCE");
         IEdgeWidget edgeWidget = scene.createEdgeWidget(edgeInfo);
 
-        scene.setEdgeWidgetSource(edgeInfo, getEdgeSourcePinWidget(sourceTableWidget, targetTableWidget, edgeWidget, foreignKeyWidget));
-        scene.setEdgeWidgetTarget(edgeInfo, getEdgeTargetPinWidget(sourceTableWidget, targetTableWidget, edgeWidget, targetColumnWidget));
+        scene.setEdgeWidgetSource(edgeInfo, edgeWidget.getSourcePinWidget(sourceTableWidget, targetTableWidget, foreignKeyWidget));
+        scene.setEdgeWidgetTarget(edgeInfo, edgeWidget.getTargetPinWidget(sourceTableWidget, targetTableWidget, targetColumnWidget));
 
     }
 
@@ -419,215 +390,8 @@ public class DBModelerUtil implements PModelerUtil<DBModelerScene> {
         return file.getParentFile().getModelerUtil().getContent(file.getParentFile());
     }
 
-    @Override
-    public INodeWidget updateNodeWidgetDesign(ShapeDesign shapeDesign, INodeWidget inodeWidget) {
-        PNodeWidget nodeWidget = (PNodeWidget) inodeWidget;
-        //ELEMENT_UPGRADE
-//        if (shapeDesign != null) {
-//            if (shapeDesign.getOuterShapeContext() != null) {
-//                if (shapeDesign.getOuterShapeContext().getBackground() != null) {
-//                    nodeWidget.setOuterElementStartBackgroundColor(shapeDesign.getOuterShapeContext().getBackground().getStartColor());
-//                    nodeWidget.setOuterElementEndBackgroundColor(shapeDesign.getOuterShapeContext().getBackground().getEndColor());
-//                }
-//                if (shapeDesign.getOuterShapeContext().getBorder() != null) {
-//                    nodeWidget.setOuterElementBorderColor(shapeDesign.getOuterShapeContext().getBorder().getColor());
-//                    nodeWidget.setOuterElementBorderWidth(shapeDesign.getOuterShapeContext().getBorder().getWidth());
-//                }
-//            }
-//            if (shapeDesign.getInnerShapeContext() != null) {
-//                if (shapeDesign.getInnerShapeContext().getBackground() != null) {
-//                    nodeWidget.setInnerElementStartBackgroundColor(shapeDesign.getInnerShapeContext().getBackground().getStartColor());
-//                    nodeWidget.setInnerElementEndBackgroundColor(shapeDesign.getInnerShapeContext().getBackground().getEndColor());
-//                }
-//                if (shapeDesign.getInnerShapeContext().getBorder() != null) {
-//                    nodeWidget.setInnerElementBorderColor(shapeDesign.getInnerShapeContext().getBorder().getColor());
-//                    nodeWidget.setInnerElementBorderWidth(shapeDesign.getInnerShapeContext().getBorder().getWidth());
-//                }
-//            }
-//        }
-
-        return (INodeWidget) nodeWidget;
-    }
-
-    @Override
-    public Anchor getAnchor(INodeWidget inodeWidget) {
-        INodeWidget nodeWidget = inodeWidget;
-        Anchor sourceAnchor;
-        if (nodeWidget instanceof IFlowNodeWidget) {
-            sourceAnchor = new CustomRectangularAnchor(nodeWidget, -5, true);
-        } else {
-            throw new InvalidElmentException("Invalid JPA Process Element : " + nodeWidget);
-        }
-        return sourceAnchor;
-    }
-
-    @Override
-    public void transformNode(IFlowNodeWidget flowNodeWidget, IModelerDocument document) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public IPinWidget attachPinWidget(DBModelerScene scene, INodeWidget nodeWidget, PinWidgetInfo widgetInfo) {
-        IPinWidget widget = null;
-        if (widgetInfo.getDocumentId().equals(BasicColumnWidget.class.getSimpleName())) {
-            widget = new BasicColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(JoinColumnWidget.class.getSimpleName())) {
-            widget = new JoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(InverseJoinColumnWidget.class.getSimpleName())) {
-            widget = new InverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(PrimaryKeyWidget.class.getSimpleName())) {
-            widget = new PrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(EmbeddedAttributeColumnWidget.class.getSimpleName())) {
-            widget = new EmbeddedAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(EmbeddedAttributeJoinColumnWidget.class.getSimpleName())) {
-            widget = new EmbeddedAttributeJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationJoinColumnWidget.class.getSimpleName())) {
-            widget = new EmbeddedAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(EmbeddedAssociationInverseJoinColumnWidget.class.getSimpleName())) {
-            widget = new EmbeddedAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(ParentAttributeColumnWidget.class.getSimpleName())) {
-            widget = new ParentAttributeColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(ParentAttributePrimaryKeyWidget.class.getSimpleName())) {
-            widget = new ParentAttributePrimaryKeyWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(ParentAssociationJoinColumnWidget.class.getSimpleName())) {
-            widget = new ParentAssociationJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(ParentAssociationInverseJoinColumnWidget.class.getSimpleName())) {
-            widget = new ParentAssociationInverseJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(PrimaryKeyJoinColumnWidget.class.getSimpleName())) {
-            widget = new PrimaryKeyJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(DiscriminatorColumnWidget.class.getSimpleName())) {
-            widget = new DiscriminatorColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(MapKeyColumnWidget.class.getSimpleName())) {
-            widget = new MapKeyColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(MapKeyJoinColumnWidget.class.getSimpleName())) {
-            widget = new MapKeyJoinColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else if (widgetInfo.getDocumentId().equals(MapKeyEmbeddedColumnWidget.class.getSimpleName())) {
-            widget = new MapKeyEmbeddedColumnWidget(scene, (IPNodeWidget) nodeWidget, widgetInfo);
-        } else {
-            throw new InvalidElmentException("Invalid DB Element");
-        }
-        return widget;
-    }
-
-    @Override
-    public void dettachEdgeSourceAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget sourcePinWidget) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dettachEdgeTargetAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget targetPinWidget) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void attachEdgeSourceAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget sourcePinWidget) {
-        edgeWidget.setSourceAnchor(sourcePinWidget.createAnchor());
-
-    }
-
-    @Override
-    public void attachEdgeSourceAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, INodeWidget sourceNodeWidget) { //BUG : Remove this method
-        edgeWidget.setSourceAnchor(((IPNodeWidget) sourceNodeWidget).getNodeAnchor());
-    }
-
-    @Override
-    public void attachEdgeTargetAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, IPinWidget targetPinWidget) {
-        edgeWidget.setTargetAnchor(targetPinWidget.createAnchor());
-    }
-
-    @Override
-    public void attachEdgeTargetAnchor(DBModelerScene scene, IEdgeWidget edgeWidget, INodeWidget targetNodeWidget) { //BUG : Remove this method
-        edgeWidget.setTargetAnchor(((IPNodeWidget) targetNodeWidget).getNodeAnchor());
-    }
-
-    @Override
-    public IEdgeWidget attachEdgeWidget(DBModelerScene scene, EdgeWidgetInfo widgetInfo) {
-        IEdgeWidget edgeWidget = getEdgeWidget(scene, widgetInfo);
-        edgeWidget.setEndPointShape(PointShape.SQUARE_FILLED_SMALL);
-        edgeWidget.setControlPointShape(PointShape.SQUARE_FILLED_SMALL);
-        edgeWidget.setRouter(scene.getRouter());
-        ((IFlowEdgeWidget) edgeWidget).setName(widgetInfo.getName());
-
-        return edgeWidget;
-    }
-
-    @Override
-    public ResizeBorder getNodeBorder(INodeWidget nodeWidget) {
-        nodeWidget.setWidgetBorder(NodeWidget.RECTANGLE_RESIZE_BORDER);
-        return PNodeWidget.RECTANGLE_RESIZE_BORDER;
-    }
-
-    @Override
-    public INodeWidget attachNodeWidget(DBModelerScene scene, NodeWidgetInfo widgetInfo) {
-        IFlowNodeWidget widget = null;
-        IModelerDocument modelerDocument = widgetInfo.getModelerDocument();
-        switch (modelerDocument.getId()) {
-            case "BaseTable":
-                widget = new BaseTableWidget(scene, widgetInfo);
-                break;
-            case "SecondaryTable":
-                widget = new SecondaryTableWidget(scene, widgetInfo);
-                break;
-            case "RelationTable":
-                widget = new RelationTableWidget(scene, widgetInfo);
-                break;
-            case "CollectionTable":
-                widget = new CollectionTableWidget(scene, widgetInfo);
-                break;
-            default:
-                throw new InvalidElmentException("Invalid DB Element");
-        }
-        return (INodeWidget) widget;
-    }
-
-    private IEdgeWidget getEdgeWidget(DBModelerScene scene, EdgeWidgetInfo edgeWidgetInfo) {
-        IEdgeWidget edgeWidget = new ReferenceFlowWidget(scene, edgeWidgetInfo);
-        return edgeWidget;
-    }
-
-    @Override
-    public String getEdgeType(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, String connectionContextToolId) {
-        String edgeType = connectionContextToolId;
-        return edgeType;
-    }
-
-    @Override
-    public PinWidgetInfo getEdgeSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget) {
-        return getEdgeSourcePinWidget(sourceNodeWidget, targetNodeWidget, edgeWidget, null);
-    }
-
-    public PinWidgetInfo getEdgeSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget, ColumnWidget sourceColumnWidget) {
-        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget && edgeWidget instanceof ReferenceFlowWidget && sourceColumnWidget instanceof ForeignKeyWidget) {
-            ReferenceFlowWidget referenceFlowWidget = (ReferenceFlowWidget) edgeWidget;
-            TableWidget targetTableWidget = (TableWidget) targetNodeWidget;
-            DBColumn sourceColumn = (DBColumn) sourceColumnWidget.getBaseElementSpec();
-            IReferenceColumnWidget targetColumnWidget = targetTableWidget.findColumnWidget(sourceColumn.getReferenceColumn().getId());
-            referenceFlowWidget.setReferenceColumnWidget(targetColumnWidget);
-            referenceFlowWidget.setForeignKeyWidget((ForeignKeyWidget) sourceColumnWidget);
-            return sourceColumnWidget.getPinWidgetInfo();
-        } else {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-    }
-
-    @Override
-    public PinWidgetInfo getEdgeTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget) {
-        return getEdgeTargetPinWidget(sourceNodeWidget, targetNodeWidget, edgeWidget, null);
-    }
-
-    public PinWidgetInfo getEdgeTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IEdgeWidget edgeWidget, ColumnWidget targetColumnWidget) {
-        if (sourceNodeWidget instanceof TableWidget && targetNodeWidget instanceof TableWidget
-                && edgeWidget instanceof ReferenceFlowWidget && targetColumnWidget instanceof ColumnWidget) {
-            return targetColumnWidget.getPinWidgetInfo();
-        } else {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-    }
-
     public static void inDev() {
-        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "This functionality is in developement");
+        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), "This functionality is not supported yet, please raise a ticket");
     }
     
     @Override

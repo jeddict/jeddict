@@ -15,8 +15,8 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.DefaultAttribute;
@@ -93,7 +93,7 @@ public class HashcodeMethodSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         if(hashcodeMethodSnippet == null){
             hashcodeMethodSnippet = getHashcodeMethodSnippet();
         }

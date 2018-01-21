@@ -18,21 +18,21 @@ package org.netbeans.orm.converter.generator;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
-import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
+import org.netbeans.orm.converter.compiler.def.EmbeddableDefSnippet;
 
-public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> {
+public class EmbeddableGenerator extends ManagedClassGenerator<EmbeddableDefSnippet> {
 
-    private Embeddable embeddable;
+    private final Embeddable embeddable;
 
     public EmbeddableGenerator(Embeddable parsedEmbeddable, String packageName) {
-        super(new ManagedClassDefSnippet(), parsedEmbeddable.getRootElement().getJavaEEVersion());
+        super(new EmbeddableDefSnippet(), parsedEmbeddable.getRootElement().getJavaEEVersion());
         this.embeddable = parsedEmbeddable;
         this.rootPackageName = packageName;
         this.packageName = embeddable.getAbsolutePackage(rootPackageName);
     }
 
     @Override
-    public ManagedClassDefSnippet getClassDef() {
+    public EmbeddableDefSnippet getClassDef() {
 
         //Attributes -- Method level annotations
         EmbeddableAttributes parsedEmbeddableAttributes = embeddable.getAttributes();
@@ -54,7 +54,6 @@ public class EmbeddableGenerator extends ClassGenerator<ManagedClassDefSnippet> 
             classDef.setDescription(embeddable.getDescription());
         }
         classDef.setAuthor(embeddable.getAuthor());
-        classDef.setEmbeddable(true);
         classDef.setXmlRootElement(embeddable.getXmlRootElement());
         
         return classDef;

@@ -15,8 +15,8 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import static org.netbeans.jcode.jpa.JPAConstants.UNIQUE_CONSTRAINT;
 import static org.netbeans.jcode.jpa.JPAConstants.UNIQUE_CONSTRAINT_FQN;
@@ -66,7 +66,7 @@ public class UniqueConstraintSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList(UNIQUE_CONSTRAINT_FQN);
 
     }

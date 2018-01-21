@@ -18,12 +18,12 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 import java.awt.Image;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getGeneratorProperty;
 import org.netbeans.jpa.modeler.spec.Id;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ID_ATTRIBUTE;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ID_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.ID_ATTRIBUTE_ICON;
 
 /**
  *
@@ -50,7 +50,7 @@ public class IdAttributeWidget extends BaseAttributeWidget<Id> {
 
     @Override
     public Image getIcon() {
-        return ID_ATTRIBUTE;
+        return ID_ATTRIBUTE_ICON;
     }
 
 }

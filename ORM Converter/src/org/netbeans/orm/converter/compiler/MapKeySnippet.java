@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY;
 import static org.netbeans.jcode.jpa.JPAConstants.MAP_KEY_FQN;
@@ -71,7 +72,7 @@ public class MapKeySnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
         if (mapKeyAttribute != null) {
             importSnippets.add(MAP_KEY_FQN);

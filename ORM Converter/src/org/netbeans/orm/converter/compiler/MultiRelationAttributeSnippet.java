@@ -16,10 +16,12 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
 import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
+import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet /*implements CollectionTypeHandler*/ {
@@ -36,28 +38,16 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     public void setMappedBy(String mappedBy) {
         this.mappedBy = mappedBy;
     }
-
-    /**
-     * @return the collectionType
-     */
-    public String getCollectionType() {
-        return collectionType;
-    }
-
-    /**
-     * @param collectionType the collectionType to set
-     */
-    public void setCollectionType(String collectionType) {
-        this.collectionType = collectionType;
-    }
     
     public abstract String getType();
 
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if (mappedBy == null && getTargetEntity() == null && getFetchType() == null
-                && getCascadeTypes().isEmpty() && (mapKeySnippet==null || mapKeySnippet.isEmpty())) {
+        if (mappedBy == null 
+                && getFetchType() == null
+                && getCascadeTypes().isEmpty() 
+                && (mapKeySnippet==null || mapKeySnippet.isEmpty())) {
             return "@" + getType();
         }
 
@@ -83,7 +73,7 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (getTargetEntity() != null) {
+        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
             builder.append("targetEntity = ");
             builder.append(getTargetEntity());
             builder.append(ORMConverterUtil.COMMA);
@@ -102,7 +92,7 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
         importSnippets.add(PERSISTENCE_PACKAGE_PREFIX + getType());
         if (getFetchType() != null) {
@@ -114,9 +104,6 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         if(mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             importSnippets.addAll(mapKeySnippet.getImportSnippets());
         }
-//        if (getTargetEntityPackage()!= null) {
-//            importSnippets.add(getTargetEntityPackage() + ORMConverterUtil.DOT + getTargetEntityName());
-//        }
         return importSnippets;
     }
 
@@ -134,19 +121,4 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
         this.mapKeySnippet = mapKeySnippet;
     }
 
-    /**
-     * @return the collectionImplType
-     */
-//    @Override
-    public String getCollectionImplType() {
-        return collectionImplType;
-    }
-
-    /**
-     * @param collectionImplType the collectionImplType to set
-     */
-//    @Override
-    public void setCollectionImplType(String collectionImplType) {
-        this.collectionImplType = collectionImplType;
-    }
 }

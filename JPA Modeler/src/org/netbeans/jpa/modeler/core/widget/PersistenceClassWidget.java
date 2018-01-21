@@ -21,12 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang3.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.StringHelper;
-import static org.netbeans.jcode.core.util.StringHelper.getNext;
+import static org.netbeans.jpa.modeler.Constant.BASIC_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.Constant.BASIC_COLLECTION_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.Constant.TRANSIENT_ATTRIBUTE;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.BasicCollectionAttributeWidget;
@@ -42,11 +43,11 @@ import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttribute
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.SingleRelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConstructorProperties;
-import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getHashcodeEqualsProperty;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
+import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
+import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.settings.code.CodePanel;
 import org.netbeans.jpa.modeler.spec.Basic;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
@@ -63,18 +64,20 @@ import org.netbeans.jpa.modeler.spec.OneToMany;
 import org.netbeans.jpa.modeler.spec.OneToOne;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
-import org.netbeans.jpa.modeler.spec.extend.AttributeLocationComparator;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.MultiRelationAttribute;
 import org.netbeans.jpa.modeler.spec.extend.RelationAttribute;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
-import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
+import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
+import org.netbeans.modeler.widget.properties.handler.PropertyChangeListener;
 import org.openide.util.RequestProcessor;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.BidirectionalRelation;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEqualsHashcodeProperty;
 
 /**
  *
@@ -82,7 +85,6 @@ import org.openide.util.RequestProcessor;
  */
 public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IPersistenceAttributes>> extends JavaClassWidget<E> {
 
-    private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<>();
     private final List<BasicAttributeWidget> basicAttributeWidgets = new ArrayList<>();
     private final List<BasicCollectionAttributeWidget> basicCollectionAttributeWidgets = new ArrayList<>();
     private final List<TransientAttributeWidget> transientAttributeWidgets = new ArrayList<>();
@@ -92,28 +94,32 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     private final List<MTMRelationAttributeWidget> manyToManyRelationAttributeWidgets = new ArrayList<>();
     private final List<SingleValueEmbeddedAttributeWidget> singleValueEmbeddedAttributeWidgets = new ArrayList<>();
     private final List<MultiValueEmbeddedAttributeWidget> multiValueEmbeddedAttributeWidgets = new ArrayList<>();
+    private final List<RelationFlowWidget> inverseSideRelationFlowWidgets = new ArrayList<>();
        
-    @Override
-    public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
-        return getAllAttributeWidgets(true);
+    public PersistenceClassWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
+        super(scene, nodeWidgetInfo);
+        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, tableName) -> {
+            if (tableName != null && !tableName.trim().isEmpty()) {
+                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
+                    getSignalManager().fire(WARNING, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                } else {
+                    getSignalManager().clear(WARNING, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+                }
+            } else {
+                getSignalManager().clear(WARNING, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
+            }
+        });
     }
     
-    public List<AttributeWidget<? extends Attribute>> getAllSortedAttributeWidgets() {
-        List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(true);
-        AttributeLocationComparator attributeLocationComparator = new AttributeLocationComparator();
-        attributeWidgets.sort((a1, a2) -> attributeLocationComparator.compare(a1.getBaseElementSpec(), a2.getBaseElementSpec()));
-        return attributeWidgets;
-    }
-
     @Override
     public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute) {
         List<AttributeWidget<? extends Attribute>> attributeWidgets = new ArrayList<>();
-        JavaClassWidget classWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
-        if (includeParentClassAttibute && classWidget instanceof PersistenceClassWidget) {
-            attributeWidgets.addAll(((PersistenceClassWidget) classWidget).getAllAttributeWidgets(includeParentClassAttibute));
+        JavaClassWidget superClassWidget = this.getSuperclassWidget(); //super class will get other attribute from its own super class
+        if (includeParentClassAttibute && superClassWidget instanceof PersistenceClassWidget) {
+            attributeWidgets.addAll(((PersistenceClassWidget) superClassWidget).getAllAttributeWidgets(includeParentClassAttibute));
         }
-        attributeWidgets.addAll(getBasicAttributeWidgets());
-        attributeWidgets.addAll(getBasicCollectionAttributeWidgets());
+        attributeWidgets.addAll(basicAttributeWidgets);
+        attributeWidgets.addAll(basicCollectionAttributeWidgets);
         attributeWidgets.addAll(singleValueEmbeddedAttributeWidgets);
         attributeWidgets.addAll(multiValueEmbeddedAttributeWidgets);
         attributeWidgets.addAll(oneToOneRelationAttributeWidgets);
@@ -141,64 +147,10 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
         return attributeWidgets;
     }
 
-    public PersistenceClassWidget(JPAModelerScene scene, NodeWidgetInfo nodeWidgetInfo) {
-        super(scene, nodeWidgetInfo);
-    }
-
     public void scanDuplicateInheritedAttributes() {
         this.getAllAttributeWidgets().forEach((attributeWidget) -> {
             scanDuplicateAttributes(null, attributeWidget.getBaseElementSpec().getName());
         });
-    }
-
-    @Override
-    public void scanDuplicateAttributes(String previousName, String newName) {
-        int previousNameCount = 0, newNameCount = 0;
-        List<AttributeWidget<? extends Attribute>> attributeWidgets = this.getAllAttributeWidgets(true);
-        ManagedClass managedClass = this.getBaseElementSpec();
-        
-        List<Attribute> hiddenAttributes = new ArrayList<>(managedClass.getAttributes().getAllAttribute(true));
-        hiddenAttributes.removeAll(
-                attributeWidgets.stream()
-                .map(aw -> (Attribute)aw.getBaseElementSpec())
-                .collect(toList())
-        );
-        for (Attribute attribute : hiddenAttributes) {
-            if (attribute.getName().equals(previousName)) {
-                ++previousNameCount;
-            }
-            if (attribute.getName().equals(newName)) {
-                ++newNameCount;
-            }
-        }
-        
-        for (AttributeWidget<? extends Attribute> attributeWidget : attributeWidgets) {
-            Attribute attribute = attributeWidget.getBaseElementSpec();
-
-            if (attribute.getName().equals(previousName)) {
-                if (++previousNameCount > 1) {
-                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                } else if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
-                    attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                }
-            }
-
-            if (attribute.getName().equals(newName)) {
-                if (++newNameCount > 1) {
-                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                } else if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
-                    attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void createPropertySet(ElementPropertySet set) {
-        super.createPropertySet(set);
-        set.put("CLASS_STRUCTURE", getConstructorProperties(this));
-        set.put("CLASS_STRUCTURE", getHashcodeEqualsProperty(this));
-        set.put("CLASS_STRUCTURE", getToStringProperty(this));
     }
 
     public RelationAttributeWidget findRelationAttributeWidget(String id, Class<? extends RelationAttributeWidget>... relationAttributeWidgetClasses) {
@@ -236,19 +188,16 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     public void deleteAttribute(AttributeWidget attributeWidget) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         IPersistenceAttributes attributes = javaClass.getAttributes();
-        if (attributeWidget == null) {
-            return;
-        }
         if (attributeWidget instanceof BasicAttributeWidget) {
-            getBasicAttributeWidgets().remove((BasicAttributeWidget) attributeWidget);
+            basicAttributeWidgets.remove((BasicAttributeWidget) attributeWidget);
             attributes.removeBasic(((BasicAttributeWidget) attributeWidget).getBaseElementSpec());
             removeNamedQuery((Attribute)attributeWidget.getBaseElementSpec());
         } else if (attributeWidget instanceof BasicCollectionAttributeWidget) {
-            getBasicCollectionAttributeWidgets().remove((BasicCollectionAttributeWidget) attributeWidget);
-            attributes.getElementCollection().remove(((BasicCollectionAttributeWidget) attributeWidget).getBaseElementSpec());
+            basicCollectionAttributeWidgets.remove((BasicCollectionAttributeWidget) attributeWidget);
+            attributes.removeElementCollection(((BasicCollectionAttributeWidget) attributeWidget).getBaseElementSpec());
         } else if (attributeWidget instanceof TransientAttributeWidget) {
             transientAttributeWidgets.remove((TransientAttributeWidget) attributeWidget);
-            attributes.getTransient().remove(((TransientAttributeWidget) attributeWidget).getBaseElementSpec());
+            attributes.removeTransient(((TransientAttributeWidget) attributeWidget).getBaseElementSpec());
         } else if (attributeWidget instanceof RelationAttributeWidget) {
             if (attributeWidget instanceof OTORelationAttributeWidget) {
                 OTORelationAttributeWidget otoRelationAttributeWidget = (OTORelationAttributeWidget) attributeWidget;
@@ -257,8 +206,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                 otoRelationAttributeWidget.getOneToOneRelationFlowWidget().remove();
                 otoRelationAttributeWidget.setLocked(false);
                 oneToOneRelationAttributeWidgets.remove((OTORelationAttributeWidget) attributeWidget);
-
-                attributes.getOneToOne().remove(oneToOneSpec);
+                attributes.removeOneToOne(oneToOneSpec);
 
                 if (oneToOneSpec.isPrimaryKey()) {
                     AttributeValidator.validateEmbeddedIdAndIdFound(this);
@@ -279,7 +227,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                 otmRelationAttributeWidget.getHierarchicalRelationFlowWidget().remove();
                 otmRelationAttributeWidget.setLocked(false);
                 oneToManyRelationAttributeWidgets.remove((OTMRelationAttributeWidget) attributeWidget);
-                attributes.getOneToMany().remove(((OTMRelationAttributeWidget) attributeWidget).getBaseElementSpec());
+                attributes.removeOneToMany(((OTMRelationAttributeWidget) attributeWidget).getBaseElementSpec());
             } else if (attributeWidget instanceof MTORelationAttributeWidget) {
                 MTORelationAttributeWidget mtoRelationAttributeWidget = (MTORelationAttributeWidget) attributeWidget;
                 ManyToOne manyToOneSpec = ((MTORelationAttributeWidget) attributeWidget).getBaseElementSpec();
@@ -287,7 +235,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                 mtoRelationAttributeWidget.getManyToOneRelationFlowWidget().remove();
                 mtoRelationAttributeWidget.setLocked(false);
                 manyToOneRelationAttributeWidgets.remove((MTORelationAttributeWidget) attributeWidget);
-                attributes.getManyToOne().remove(manyToOneSpec);
+                attributes.removeManyToOne(manyToOneSpec);
 
                 if (manyToOneSpec.isPrimaryKey()) {
                     AttributeValidator.validateEmbeddedIdAndIdFound(this);
@@ -307,31 +255,31 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                 mtmRelationAttributeWidget.getManyToManyRelationFlowWidget().remove();
                 mtmRelationAttributeWidget.setLocked(false);
                 manyToManyRelationAttributeWidgets.remove((MTMRelationAttributeWidget) attributeWidget);
-                attributes.getManyToMany().remove(((MTMRelationAttributeWidget) attributeWidget).getBaseElementSpec());
+                attributes.removeManyToMany(((MTMRelationAttributeWidget) attributeWidget).getBaseElementSpec());
             }
         } else if (attributeWidget instanceof EmbeddedAttributeWidget) {
             if (attributeWidget instanceof SingleValueEmbeddedAttributeWidget) {
                 singleValueEmbeddedAttributeWidgets.remove((SingleValueEmbeddedAttributeWidget) attributeWidget);
-                attributes.getEmbedded().remove(((SingleValueEmbeddedAttributeWidget) attributeWidget).getBaseElementSpec());
+                attributes.removeEmbedded(((SingleValueEmbeddedAttributeWidget) attributeWidget).getBaseElementSpec());
             } else if (attributeWidget instanceof MultiValueEmbeddedAttributeWidget) {
                 multiValueEmbeddedAttributeWidgets.remove((MultiValueEmbeddedAttributeWidget) attributeWidget);
-                attributes.getElementCollection().remove(((MultiValueEmbeddedAttributeWidget) attributeWidget).getBaseElementSpec());
+                attributes.removeElementCollection(((MultiValueEmbeddedAttributeWidget) attributeWidget).getBaseElementSpec());
             } else {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         } else {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         sortAttributes();
         scanDuplicateAttributes(attributeWidget.getBaseElementSpec().getName(), null);
         javaClass.updateArtifact((Attribute)attributeWidget.getBaseElementSpec());
     }
 
-    public BasicAttributeWidget addNewBasicAttribute(String name) {
-        return addNewBasicAttribute(name, null);
+    public BasicAttributeWidget addBasicAttribute(String name) {
+        return addBasicAttribute(name, null);
     }
 
-    public BasicAttributeWidget addNewBasicAttribute(String name, Basic basic) {
+    public BasicAttributeWidget addBasicAttribute(String name, Basic basic) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 
         if (basic == null) {
@@ -342,18 +290,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             javaClass.getAttributes().addBasic(basic);
             addNamedQuery(basic, false);
         }
-        BasicAttributeWidget attributeWidget = AttributeWidget.<BasicAttributeWidget>getInstance(this, name, basic, BasicAttributeWidget.class);
+        BasicAttributeWidget attributeWidget = createPinWidget(basic, BasicAttributeWidget.class, 
+                widgetInfo -> new BasicAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getBasicAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, basic.getName());
         return attributeWidget;
     }
 
-    public BasicCollectionAttributeWidget addNewBasicCollectionAttribute(String name) {
-        return addNewBasicCollectionAttribute(name, null);
+    public BasicCollectionAttributeWidget addBasicCollectionAttribute(String name) {
+        return addBasicCollectionAttribute(name, null);
     }
 
-    public BasicCollectionAttributeWidget addNewBasicCollectionAttribute(String name, ElementCollection elementCollection) {
+    public BasicCollectionAttributeWidget addBasicCollectionAttribute(String name, ElementCollection elementCollection) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 
         if (elementCollection == null) {
@@ -365,18 +314,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             elementCollection.setCollectionImplType(ArrayList.class.getName());
             javaClass.getAttributes().addElementCollection(elementCollection);
         }
-        BasicCollectionAttributeWidget attributeWidget = AttributeWidget.<BasicCollectionAttributeWidget>getInstance(this, name, elementCollection, BasicCollectionAttributeWidget.class);
+        BasicCollectionAttributeWidget attributeWidget = createPinWidget(elementCollection, BasicCollectionAttributeWidget.class, 
+                widgetInfo -> new BasicCollectionAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getBasicCollectionAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, elementCollection.getName());
         return attributeWidget;
     }
 
-    public TransientAttributeWidget addNewTransientAttribute(String name) {
-        return addNewTransientAttribute(name, null);
+    public TransientAttributeWidget addTransientAttribute(String name) {
+        return addTransientAttribute(name, null);
     }
 
-    public TransientAttributeWidget addNewTransientAttribute(String name, Transient _transient) {
+    public TransientAttributeWidget addTransientAttribute(String name, Transient _transient) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (_transient == null) {
             _transient = new Transient();
@@ -386,18 +336,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             _transient.setIncludeInUI(false);
             javaClass.getAttributes().addTransient(_transient);
         }
-        TransientAttributeWidget attributeWidget = AttributeWidget.<TransientAttributeWidget>getInstance(this, name, _transient, TransientAttributeWidget.class);
+        TransientAttributeWidget attributeWidget = createPinWidget(_transient, TransientAttributeWidget.class, 
+                widgetInfo -> new TransientAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getTransientAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, _transient.getName());
         return attributeWidget;
     }
 
-    public OTORelationAttributeWidget addNewOneToOneRelationAttribute(String name, boolean primaryKey) {
-        return addNewOneToOneRelationAttribute(name, primaryKey,null);
+    public OTORelationAttributeWidget addOneToOneRelationAttribute(String name, boolean primaryKey) {
+        return addOneToOneRelationAttribute(name, primaryKey,null);
     }
 
-    public OTORelationAttributeWidget addNewOneToOneRelationAttribute(String name,boolean primaryKey, OneToOne oneToOne) {
+    public OTORelationAttributeWidget addOneToOneRelationAttribute(String name,boolean primaryKey, OneToOne oneToOne) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (oneToOne == null) {
             oneToOne = new OneToOne();
@@ -406,16 +357,17 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             oneToOne.setName(name);
             javaClass.getAttributes().addRelationAttribute(oneToOne);
         }
-        OTORelationAttributeWidget attributeWidget = AttributeWidget.<OTORelationAttributeWidget>getInstance(this, name, oneToOne, OTORelationAttributeWidget.class);
+        OTORelationAttributeWidget attributeWidget = createPinWidget(oneToOne, OTORelationAttributeWidget.class, 
+                widgetInfo -> new OTORelationAttributeWidget(this.getModelerScene(), this, widgetInfo));
         oneToOneRelationAttributeWidgets.add(attributeWidget);
         return attributeWidget;
     }
 
-    public OTMRelationAttributeWidget addNewOneToManyRelationAttribute(String name) {
-        return addNewOneToManyRelationAttribute(name, null);
+    public OTMRelationAttributeWidget addOneToManyRelationAttribute(String name) {
+        return addOneToManyRelationAttribute(name, null);
     }
 
-    public OTMRelationAttributeWidget addNewOneToManyRelationAttribute(String name, OneToMany oneToMany) {
+    public OTMRelationAttributeWidget addOneToManyRelationAttribute(String name, OneToMany oneToMany) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (oneToMany == null) {
             oneToMany = new OneToMany();
@@ -425,18 +377,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             oneToMany.setCollectionImplType(ArrayList.class.getName());
             javaClass.getAttributes().addRelationAttribute(oneToMany);
         }
-        OTMRelationAttributeWidget attributeWidget = AttributeWidget.<OTMRelationAttributeWidget>getInstance(this, name, oneToMany, OTMRelationAttributeWidget.class);
+        OTMRelationAttributeWidget attributeWidget = createPinWidget(oneToMany, OTMRelationAttributeWidget.class, 
+                widgetInfo -> new OTMRelationAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getOneToManyRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, oneToMany.getName());
         return attributeWidget;
     }
 
-    public MTORelationAttributeWidget addNewManyToOneRelationAttribute(String name, boolean primaryKey) {
-        return addNewManyToOneRelationAttribute(name, primaryKey, null);
+    public MTORelationAttributeWidget addManyToOneRelationAttribute(String name, boolean primaryKey) {
+        return addManyToOneRelationAttribute(name, primaryKey, null);
     }
 
-    public MTORelationAttributeWidget addNewManyToOneRelationAttribute(String name, boolean primaryKey, ManyToOne manyToOne) {
+    public MTORelationAttributeWidget addManyToOneRelationAttribute(String name, boolean primaryKey, ManyToOne manyToOne) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (manyToOne == null) {
             manyToOne = new ManyToOne();
@@ -445,16 +398,17 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             manyToOne.setName(name);
             javaClass.getAttributes().addRelationAttribute(manyToOne);
         }
-        MTORelationAttributeWidget attributeWidget = AttributeWidget.<MTORelationAttributeWidget>getInstance(this, name, manyToOne, MTORelationAttributeWidget.class);
+        MTORelationAttributeWidget attributeWidget = createPinWidget(manyToOne, MTORelationAttributeWidget.class, 
+                widgetInfo -> new MTORelationAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getManyToOneRelationAttributeWidgets().add(attributeWidget);
         return attributeWidget;
     }
 
-    public MTMRelationAttributeWidget addNewManyToManyRelationAttribute(String name) {
-        return addNewManyToManyRelationAttribute(name, null);
+    public MTMRelationAttributeWidget addManyToManyRelationAttribute(String name) {
+        return addManyToManyRelationAttribute(name, null);
     }
 
-    public MTMRelationAttributeWidget addNewManyToManyRelationAttribute(String name, ManyToMany manyToMany) {
+    public MTMRelationAttributeWidget addManyToManyRelationAttribute(String name, ManyToMany manyToMany) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
         if (manyToMany == null) {
             manyToMany = new ManyToMany();
@@ -464,18 +418,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             manyToMany.setCollectionImplType(ArrayList.class.getName());
             javaClass.getAttributes().addRelationAttribute(manyToMany);
         }
-        MTMRelationAttributeWidget attributeWidget = AttributeWidget.<MTMRelationAttributeWidget>getInstance(this, name, manyToMany, MTMRelationAttributeWidget.class);
+        MTMRelationAttributeWidget attributeWidget = createPinWidget(manyToMany, MTMRelationAttributeWidget.class, 
+                widgetInfo -> new MTMRelationAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getManyToManyRelationAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, manyToMany.getName());
         return attributeWidget;
     }
 
-    public SingleValueEmbeddedAttributeWidget addNewSingleValueEmbeddedAttribute(String name) {
-        return addNewSingleValueEmbeddedAttribute(name, null);
+    public SingleValueEmbeddedAttributeWidget addSingleValueEmbeddedAttribute(String name) {
+        return addSingleValueEmbeddedAttribute(name, null);
     }
 
-    public SingleValueEmbeddedAttributeWidget addNewSingleValueEmbeddedAttribute(String name, Embedded embedded) {
+    public SingleValueEmbeddedAttributeWidget addSingleValueEmbeddedAttribute(String name, Embedded embedded) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 //        if (javaClass.getAttributes() == null) {
 //            javaClass.setAttributes(new Attributes());
@@ -486,18 +441,19 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             embedded.setName(name);
             javaClass.getAttributes().addEmbedded(embedded);
         }
-        SingleValueEmbeddedAttributeWidget attributeWidget = AttributeWidget.<SingleValueEmbeddedAttributeWidget>getInstance(this, name, embedded, SingleValueEmbeddedAttributeWidget.class);
+        SingleValueEmbeddedAttributeWidget attributeWidget = createPinWidget(embedded, SingleValueEmbeddedAttributeWidget.class, 
+                widgetInfo -> new SingleValueEmbeddedAttributeWidget(this.getModelerScene(), this, widgetInfo));
         singleValueEmbeddedAttributeWidgets.add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, embedded.getName());
         return attributeWidget;
     }
 
-    public MultiValueEmbeddedAttributeWidget addNewMultiValueEmbeddedAttribute(String name) {
-        return addNewMultiValueEmbeddedAttribute(name, null);
+    public MultiValueEmbeddedAttributeWidget addMultiValueEmbeddedAttribute(String name) {
+        return addMultiValueEmbeddedAttribute(name, null);
     }
 
-    public MultiValueEmbeddedAttributeWidget addNewMultiValueEmbeddedAttribute(String name, ElementCollection elementCollection) {
+    public MultiValueEmbeddedAttributeWidget addMultiValueEmbeddedAttribute(String name, ElementCollection elementCollection) {
         ManagedClass<? extends IPersistenceAttributes> javaClass = this.getBaseElementSpec();
 
         if (elementCollection == null) {
@@ -508,7 +464,8 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             elementCollection.setCollectionImplType(ArrayList.class.getName());
             javaClass.getAttributes().addElementCollection(elementCollection);
         }
-        MultiValueEmbeddedAttributeWidget attributeWidget = AttributeWidget.<MultiValueEmbeddedAttributeWidget>getInstance(this, name, elementCollection, MultiValueEmbeddedAttributeWidget.class);
+        MultiValueEmbeddedAttributeWidget attributeWidget = createPinWidget(elementCollection, MultiValueEmbeddedAttributeWidget.class, 
+                widgetInfo -> new MultiValueEmbeddedAttributeWidget(this.getModelerScene(), this, widgetInfo));
         multiValueEmbeddedAttributeWidgets.add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, elementCollection.getName());
@@ -540,52 +497,31 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
             }
         }
     }
-    
-    @Override
-    public void sortAttributes() {
-            this.sortPins(getAttributeCategories());
-    }
-    
+        
     public Map<String, List<Widget>> getAttributeCategories() {
         Map<String, List<Widget>> categories = new LinkedHashMap<>();
-        List<Widget> basicAttributeCatWidget = new ArrayList<>();
-        getBasicAttributeWidgets().stream().forEach((basicAttributeWidget) -> {
-            basicAttributeCatWidget.add(basicAttributeWidget);
-        });
-        getBasicCollectionAttributeWidgets().stream().forEach((basicCollectionAttributeWidget) -> {
-            basicAttributeCatWidget.add(basicCollectionAttributeWidget);
-        });
+        List<Widget> basicAttributeCatWidget = new LinkedList<>(basicAttributeWidgets);
+        basicAttributeCatWidget.addAll(basicCollectionAttributeWidgets);
         if (!basicAttributeCatWidget.isEmpty()) {
             categories.put("Basic", basicAttributeCatWidget);
         }
-        List<EmbeddedAttributeWidget> embeddedAttributeWidgets = new LinkedList<>(singleValueEmbeddedAttributeWidgets);
+        
+        List<Widget> embeddedAttributeWidgets = new LinkedList<>(singleValueEmbeddedAttributeWidgets);
         embeddedAttributeWidgets.addAll(multiValueEmbeddedAttributeWidgets);
         if (!embeddedAttributeWidgets.isEmpty()) {
-            List<Widget> embeddedAttributeCatWidget = new ArrayList<>();
-            embeddedAttributeWidgets.stream().forEach((embeddedAttributeWidget) -> {
-                embeddedAttributeCatWidget.add(embeddedAttributeWidget);
-            });
-            categories.put("Embedded", embeddedAttributeCatWidget);
+            categories.put("Embedded", embeddedAttributeWidgets);
         }
 
-        List<RelationAttributeWidget> relationAttributeWidgets = new LinkedList<>(oneToOneRelationAttributeWidgets);
+        List<Widget> relationAttributeWidgets = new LinkedList<>(oneToOneRelationAttributeWidgets);
         relationAttributeWidgets.addAll(manyToOneRelationAttributeWidgets);
         relationAttributeWidgets.addAll(oneToManyRelationAttributeWidgets);
         relationAttributeWidgets.addAll(manyToManyRelationAttributeWidgets);
-
         if (!relationAttributeWidgets.isEmpty()) {
-            List<Widget> relationAttributeCatWidget = new ArrayList<>();
-            relationAttributeWidgets.stream().forEach((relationAttributeWidget) -> {
-                relationAttributeCatWidget.add(relationAttributeWidget);
-            });
-            categories.put("Relation", relationAttributeCatWidget);
+            categories.put("Relation", relationAttributeWidgets);
         }
+        
         if (!transientAttributeWidgets.isEmpty()) {
-            List<Widget> transientAttributeCatWidget = new ArrayList<>();
-            transientAttributeWidgets.stream().forEach((transientAttributeWidget) -> {
-                transientAttributeCatWidget.add(transientAttributeWidget);
-            });
-            categories.put("Transient", transientAttributeCatWidget);
+            categories.put("Transient", new LinkedList<>(transientAttributeWidgets));
         }
         return categories;
     }
@@ -626,22 +562,6 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     public List<MTORelationAttributeWidget> getManyToOneRelationAttributeWidgets() {
         return manyToOneRelationAttributeWidgets;
     } 
-
-    @Deprecated //prefer PersistenceAttributes.getDerivedRelationAttributes
-    public List<SingleRelationAttributeWidget> getDerivedRelationAttributeWidgets() {
-        List<SingleRelationAttributeWidget> relationAttributeWidget = new ArrayList<>();
-        oneToOneRelationAttributeWidgets.stream()
-                .filter((oneToOneRelationAttributeWidget) -> (oneToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey()))
-                .forEach((oneToOneRelationAttributeWidget) -> {
-                    relationAttributeWidget.add(oneToOneRelationAttributeWidget);
-                });
-        manyToOneRelationAttributeWidgets.stream()
-                .filter((manyToOneRelationAttributeWidget) -> (manyToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey()))
-                .forEach((manyToOneRelationAttributeWidget) -> {
-                    relationAttributeWidget.add(manyToOneRelationAttributeWidget);
-                });
-        return relationAttributeWidget;
-    }
 
     /**
      * @return the manyToManyRelationAttributeWidgets
@@ -709,6 +629,22 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     }
     
     public abstract List<AttributeWidget> getAttributeOverrideWidgets();
+    
+    @Deprecated //prefer PersistenceAttributes.getDerivedRelationAttributes
+    public List<SingleRelationAttributeWidget> getDerivedRelationAttributeWidgets() {
+        List<SingleRelationAttributeWidget> relationAttributeWidget = new ArrayList<>();
+        oneToOneRelationAttributeWidgets.stream()
+                .filter((oneToOneRelationAttributeWidget) -> (oneToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey()))
+                .forEach((oneToOneRelationAttributeWidget) -> {
+                    relationAttributeWidget.add(oneToOneRelationAttributeWidget);
+                });
+        manyToOneRelationAttributeWidgets.stream()
+                .filter((manyToOneRelationAttributeWidget) -> (manyToOneRelationAttributeWidget.getBaseElementSpec().isPrimaryKey()))
+                .forEach((manyToOneRelationAttributeWidget) -> {
+                    relationAttributeWidget.add(manyToOneRelationAttributeWidget);
+                });
+        return relationAttributeWidget;
+    }
 
     private void refractorReference(String previousName, String newName) {
         if (previousName == null) {
@@ -728,8 +664,8 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                 String singularPreVarName = StringHelper.firstLower(singularPreName);
                 String singularNewVarName = StringHelper.firstLower(singularNewName);
                 for (RelationAttributeWidget attributeWidget : this.getAllRelationAttributeWidgets(true)) {
-                    if (attributeWidget.getRelationFlowWidget() instanceof Bidirectional) {
-                        Bidirectional flowWidget = (Bidirectional) attributeWidget.getRelationFlowWidget();
+                    if (attributeWidget.getRelationFlowWidget() instanceof BidirectionalRelation) {
+                        BidirectionalRelation flowWidget = (BidirectionalRelation) attributeWidget.getRelationFlowWidget();
                         RelationAttributeWidget<RelationAttribute> relationAttributeWidget = flowWidget.getTargetRelationAttributeWidget();
                         if (relationAttributeWidget == attributeWidget) { // refractoring not from owner side
                             relationAttributeWidget = flowWidget.getSourceRelationAttributeWidget();
@@ -761,7 +697,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                             }
                         }
                     }
-                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().stream().forEach((NamedEntityGraph obj) -> {
+                    ((EntityWidget) this).getBaseElementSpec().getNamedEntityGraph().forEach((NamedEntityGraph obj) -> {
                        if (!obj.refractorName(singularPreName, singularNewName)) {
                             obj.refractorName(pluralPreName, pluralNewName);
                         }
@@ -770,13 +706,13 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
                 
                 //Refractor NamedQuery, NamedNativeQuery
                 if (this.getBaseElementSpec() instanceof IdentifiableClass) {
-                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedQuery().stream().forEach((NamedQuery obj) -> {
+                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedQuery().forEach((NamedQuery obj) -> {
                         obj.refractorName(singularPreName, singularNewName);
                         obj.refractorName(pluralPreName, pluralNewName);
                         obj.refractorQuery(singularPreName, singularNewName);
                         obj.refractorQuery(pluralPreName, pluralNewName);
                     });
-                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedNativeQuery().stream().forEach((NamedNativeQuery obj) -> {
+                    ((IdentifiableClass) this.getBaseElementSpec()).getNamedNativeQuery().forEach((NamedNativeQuery obj) -> {
                         obj.refractorName(singularPreName, singularNewName);
                         obj.refractorName(pluralPreName, pluralNewName);
                         obj.refractorQuery(singularPreName, singularNewName);
@@ -828,14 +764,14 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     public void createPinWidget(String docId) {
         if (null != docId) {
             switch (docId) {
-                case "BASIC_ATTRIBUTE":
-                    this.addNewBasicAttribute(getNextAttributeName()).edit();
+                case BASIC_ATTRIBUTE:
+                    this.addBasicAttribute(getNextAttributeName()).edit();
                     break;
-                case "BASIC_COLLECTION_ATTRIBUTE":
-                    this.addNewBasicCollectionAttribute(getNextAttributeName(null, true)).edit();
+                case BASIC_COLLECTION_ATTRIBUTE:
+                    this.addBasicCollectionAttribute(getNextAttributeName(null, true)).edit();
                     break;
-                case "TRANSIENT_ATTRIBUTE":
-                    this.addNewTransientAttribute(getNextAttributeName()).edit();
+                case TRANSIENT_ATTRIBUTE:
+                    this.addTransientAttribute(getNextAttributeName()).edit();
                     break;
                 default:
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        }

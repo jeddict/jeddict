@@ -16,12 +16,30 @@
 package org.netbeans.orm.converter.generator;
 
 import org.netbeans.jpa.modeler.spec.DefaultClass;
+import org.netbeans.orm.converter.compiler.def.VariableDefSnippet;
+import org.netbeans.orm.converter.compiler.def.EmbeddableIdDefSnippet;
 
-public class EmbeddableIdClassGenerator extends DefaultClassGenerator {
+public class EmbeddableIdClassGenerator extends ClassGenerator<EmbeddableIdDefSnippet> {
+
+    private final DefaultClass defaultClass;
 
     public EmbeddableIdClassGenerator(DefaultClass parsedDefaultClass, String packageName) {
-        super(parsedDefaultClass, packageName);
-        classDef.setEmbeddable(true);
+        super(new EmbeddableIdDefSnippet(), parsedDefaultClass.getRootElement().getJavaEEVersion());
+        this.defaultClass = parsedDefaultClass;
+        this.rootPackageName = packageName;
+        this.packageName = defaultClass.getAbsolutePackage(rootPackageName);
     }
 
+    @Override
+    public EmbeddableIdDefSnippet getClassDef() {
+        defaultClass.getAttributes().getDefaultAttributes()
+                .forEach(attribute -> {
+                    VariableDefSnippet variableDef = getVariableDef(attribute);
+                    variableDef.setType(attribute.getAttributeType());
+                });
+        classDef = initClassDef(packageName, defaultClass);
+        classDef.setDefaultClass(true);
+
+        return classDef;
+    }
 }

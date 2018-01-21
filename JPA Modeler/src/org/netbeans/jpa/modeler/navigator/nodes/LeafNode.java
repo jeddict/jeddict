@@ -97,7 +97,7 @@ public abstract class LeafNode<T extends Object> extends PropertyNode implements
         if (!context) {
             if (actions != null && actionInstances == null) {
                 actionInstances = new ArrayList<>();
-                actions.stream().forEach((actionClass) -> {
+                actions.forEach((actionClass) -> {
                     try {
                         
                         LeafNodeAction action = actionClass.newInstance();

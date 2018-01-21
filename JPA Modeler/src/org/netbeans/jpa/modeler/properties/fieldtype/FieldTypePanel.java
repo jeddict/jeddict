@@ -78,6 +78,8 @@ import org.netbeans.jpa.modeler.spec.Lob;
 import org.netbeans.jpa.modeler.spec.TemporalType;
 import org.netbeans.jpa.modeler.spec.Transient;
 import org.netbeans.jpa.modeler.spec.Version;
+import org.netbeans.jpa.modeler.spec.bean.BeanAttribute;
+import org.netbeans.jpa.modeler.spec.bean.BeanCollectionAttribute;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.BaseAttribute;
 import org.netbeans.jpa.modeler.spec.extend.ColumnHandler;
@@ -202,9 +204,15 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                         break;
                 }
             }
-        }
+        } else if (attribute instanceof BeanAttribute) {
+            BeanAttribute beanAttribute = (BeanAttribute) attribute;
+            beanAttribute.setAttributeType(dataType);
+        } else if (attribute instanceof BeanCollectionAttribute) {
+            BeanCollectionAttribute collectionAttribute = (BeanCollectionAttribute) attribute;
+            collectionAttribute.setAttributeType(dataType);
+        } 
 
-        if (attribute instanceof ColumnHandler) { //Issue : #130
+        if (attribute instanceof ColumnHandler) {
             ColumnHandler columnHandler = (ColumnHandler) attribute;
             Integer length = columnHandler.getColumn().getLength();
             Integer precision = columnHandler.getColumn().getPrecision();
@@ -218,6 +226,7 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
 
     private void initTypeComboBox() {
         TitledBorder titledBorder = (TitledBorder) jLayeredPane1.getBorder();
+//        type_LayeredPane.setVisible(false);
         List<String> type = new ArrayList<>();
         type.add(DEFAULT);
         if (mapKey) {
@@ -244,10 +253,15 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
             titledBorder.setTitle("ElementCollection<Basic> Attribute");
         } else if (attribute instanceof Transient) {
             titledBorder.setTitle("Transient Attribute");
+        } else if (attribute instanceof BeanAttribute || attribute instanceof BeanCollectionAttribute) {
+            titledBorder.setTitle("Attribute");
         }
 
         type_ComboBox.removeAllItems();
         type_ComboBox.setModel(new DefaultComboBoxModel(type.toArray(new String[0])));
+//        if(type.size() == 1){
+//            type_LayeredPane.setVisible(false);
+//        }
         //ElementCollection[Basic Type Value] => Lob,Enumerated,Temporal
         //Id => Temporal
     }
@@ -327,8 +341,11 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
         } else if (attribute instanceof Version) {
             dataTypes = new String[]{INT, INT_WRAPPER, SHORT, SHORT_WRAPPER, LONG, LONG_WRAPPER, SQL_TIMESTAMP};
         } else if (attribute instanceof Transient) {
-            //skip it // no datatype is specified in spec
             dataTypes = BASIC_DEFAULT_DATATYPE;
+        } else if (attribute instanceof BeanAttribute) {
+            dataTypes = BASIC_DEFAULT_DATATYPE;
+        } else if (attribute instanceof BeanCollectionAttribute) {
+            dataTypes = ELEMENTCOLLECTION_DEFAULT_DATATYPE;
         }
         
         if (mapKey && classList != null) {
@@ -388,8 +405,9 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
             selectedTemporalType(((Id) attribute).getTemporal());
         } else if (attribute instanceof Version) {
             selectedTemporalType(((Version) attribute).getTemporal());
-        } else if (attribute instanceof Transient) {
-
+        } else if (attribute instanceof Transient
+                || attribute instanceof BeanAttribute 
+                || attribute instanceof BeanCollectionAttribute) {
         } else {
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -637,13 +655,10 @@ public class FieldTypePanel extends GenericEmbeddedEditor<Attribute> {
                         Date_RadioButton.setSelected(true);
                     }
                     break;
-//                    if (ENUMERATED.equals(previousType) || TEMPORAL.equals(previousType)) {
-//                    }
             }
             initDataTypeComboBox();
 
         }
-//        previousType = (String) type;
     }//GEN-LAST:event_type_ComboBoxActionPerformed
 
     private void dataType_ActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataType_ActionActionPerformed

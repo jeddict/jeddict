@@ -25,13 +25,13 @@ import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getOrderProp
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON;
 
 /**
  *
@@ -49,7 +49,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
 
     public MultiValueEmbeddedAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE);
+        this.setImage(JPAModelerUtil.MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON);
     }
     
     @Override
@@ -59,7 +59,7 @@ public class MultiValueEmbeddedAttributeWidget extends EmbeddedAttributeWidget<E
 
     @Override
     public Image getIcon() {
-        return MULTI_VALUE_EMBEDDED_ATTRIBUTE;
+        return MULTI_VALUE_EMBEDDED_ATTRIBUTE_ICON;
     }
 
     @Override

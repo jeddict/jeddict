@@ -15,30 +15,24 @@
  */
 package org.netbeans.orm.converter.generator.packageinfo;
 
-import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
 import org.netbeans.orm.converter.compiler.Snippet;
+import org.netbeans.orm.converter.compiler.def.ClassDefSnippet;
 import org.netbeans.orm.converter.util.ImportSet;
 
-/**
- *
- * The StaticMetamodel annotation specifies that the class is a metamodel class
- * that represents the entity, mapped superclass, or embeddable class designated
- * by the value element.
- */
 public class PackageInfoClassDefSnippet extends ClassDefSnippet {
 
     private static final String JAXB_PACKAGE_INFO_TEMPLATE_FILENAME = "package-info.vm";
 
+    private String namespace;//ex : @XmlSchema(namespace = "http://www.example.org/customer", elementFormDefault = XmlNsForm.QUALIFIED)
+
+    
     @Override
     protected String getTemplateName() {
         return JAXB_PACKAGE_INFO_TEMPLATE_FILENAME;
     }
-
-    private String namespace;//ex : @XmlSchema(namespace = "http://www.example.org/customer", elementFormDefault = XmlNsForm.QUALIFIED)
-
+    
     /**
      * @return the namespace
      */
@@ -52,23 +46,20 @@ public class PackageInfoClassDefSnippet extends ClassDefSnippet {
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
-    
-    public boolean isJaxbMetadataExist(){
+
+    public boolean isJaxbMetadataExist() {
         return StringUtils.isNotBlank(getNamespace());
     }
 
     @Override
-     public Collection<String> getImports() throws InvalidDataException {
+    public ImportSet getImportSet() throws InvalidDataException {
         ImportSet importSnippets = new ImportSet();
-      
-        if(isJaxbMetadataExist()){
+        if (isJaxbMetadataExist()) {
             importSnippets.add("javax.xml.bind.annotation.*");
         }
-        for(Snippet snippet : getJSONBSnippets()){
+        for (Snippet snippet : getJSONBSnippets()) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
-        
         return importSnippets;
-     }
-
+    }
 }

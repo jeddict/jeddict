@@ -18,12 +18,12 @@ package org.netbeans.jpa.modeler.core.widget.attribute.relation;
 import java.awt.Image;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.MTMRelationFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.spec.ManyToMany;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.UnidirectionalRelation;
 
 /**
  *
@@ -55,7 +55,7 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
 
     @Override
     public String getIconPath() {
-        if (manyToManyRelationFlowWidget instanceof Unidirectional) {
+        if (manyToManyRelationFlowWidget instanceof UnidirectionalRelation) {
             return JPAModelerUtil.UMTM_ATTRIBUTE_ICON_PATH;
         } else {
             return JPAModelerUtil.BMTM_ATTRIBUTE_ICON_PATH;
@@ -64,10 +64,10 @@ public class MTMRelationAttributeWidget extends MultiRelationAttributeWidget<Man
 
     @Override
     public Image getIcon() {
-        if (manyToManyRelationFlowWidget instanceof Unidirectional) {
-            return JPAModelerUtil.UMTM_ATTRIBUTE;
+        if (manyToManyRelationFlowWidget instanceof UnidirectionalRelation) {
+            return JPAModelerUtil.UMTM_ATTRIBUTE_ICON;
         } else {
-            return JPAModelerUtil.BMTM_ATTRIBUTE;
+            return JPAModelerUtil.BMTM_ATTRIBUTE_ICON;
         }
     }
 

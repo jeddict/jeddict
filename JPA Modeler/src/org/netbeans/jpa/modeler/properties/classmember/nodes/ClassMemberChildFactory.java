@@ -16,20 +16,20 @@
 package org.netbeans.jpa.modeler.properties.classmember.nodes;
 
 import java.util.List;
-import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
+import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import org.netbeans.jpa.modeler.navigator.nodes.TreeChildFactory;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.ClassMembers;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.openide.nodes.Node;
 
 public class ClassMemberChildFactory extends TreeChildFactory<ClassMembers,AttributeWidget> {
 
     @Override
     protected boolean createKeys(List<AttributeWidget> attributeWidgets) {
-        PersistenceClassWidget<? extends ManagedClass> classWidget = null;
+        JavaClassWidget<? extends JavaClass> classWidget = null;
         if (parentNode instanceof CMRootNode) {
             classWidget = ((CMRootNode) parentNode).getRootWidget();
         }

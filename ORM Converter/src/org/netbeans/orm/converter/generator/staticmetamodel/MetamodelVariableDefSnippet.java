@@ -20,7 +20,7 @@ import static org.netbeans.jcode.core.util.AttributeType.isArray;
 import static org.netbeans.jcode.jpa.JPAConstants.PERSISTENCE_METAMODEL_PACKAGE;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
-import org.netbeans.orm.converter.compiler.VariableDefSnippet;
+import org.netbeans.orm.converter.compiler.def.VariableDefSnippet;
 import org.netbeans.orm.converter.util.ImportSet;
 
 public class MetamodelVariableDefSnippet extends VariableDefSnippet {

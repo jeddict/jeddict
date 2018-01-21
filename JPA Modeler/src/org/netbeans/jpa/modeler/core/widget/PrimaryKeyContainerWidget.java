@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import org.netbeans.api.visual.widget.Widget;
+import static org.netbeans.jpa.modeler.Constant.ID_ATTRIBUTE;
+import static org.netbeans.jpa.modeler.Constant.VERSION_ATTRIBUTE;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.ROOT;
 import static org.netbeans.jpa.modeler.core.widget.InheritanceStateType.SINGLETON;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
@@ -156,12 +158,12 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         return attributeWidgets;
     }
 
-    public IdAttributeWidget addNewIdAttribute(String name) {
-        IdAttributeWidget idAttributeWidget = addNewIdAttribute(name, null);
+    public IdAttributeWidget addIdAttribute(String name) {
+        IdAttributeWidget idAttributeWidget = addIdAttribute(name, null);
         return idAttributeWidget;
     }
 
-    public IdAttributeWidget addNewIdAttribute(String name, Id id) {
+    public IdAttributeWidget addIdAttribute(String name, Id id) {
         ManagedClass javaClass = this.getBaseElementSpec();
         if (id == null) {
             id = new Id();
@@ -174,7 +176,8 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
             ((IPrimaryKeyAttributes) javaClass.getAttributes()).addId(id);
         }
 
-        IdAttributeWidget attributeWidget = AttributeWidget.<IdAttributeWidget>getInstance(this, name, id, IdAttributeWidget.class);
+        IdAttributeWidget attributeWidget = createPinWidget(id, IdAttributeWidget.class, 
+                widgetInfo -> new IdAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getIdAttributeWidgets().add(attributeWidget);
         sortAttributes();
         AttributeValidator.validateEmbeddedIdAndIdFound(this);
@@ -189,11 +192,11 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         return attributeWidget;
     }
 
-    public VersionAttributeWidget addNewVersionAttribute(String name) {
-        return addNewVersionAttribute(name, null);
+    public VersionAttributeWidget addVersionAttribute(String name) {
+        return addVersionAttribute(name, null);
     }
 
-    public VersionAttributeWidget addNewVersionAttribute(String name, Version version) {
+    public VersionAttributeWidget addVersionAttribute(String name, Version version) {
         ManagedClass javaClass = this.getBaseElementSpec();
         if (version == null) {
             version = new Version();
@@ -202,18 +205,19 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
             version.setName(name);
             ((IPrimaryKeyAttributes) javaClass.getAttributes()).addVersion(version);
         }
-        VersionAttributeWidget attributeWidget = AttributeWidget.<VersionAttributeWidget>getInstance(this, name, version, VersionAttributeWidget.class);
+        VersionAttributeWidget attributeWidget = createPinWidget(version, VersionAttributeWidget.class, 
+                widgetInfo -> new VersionAttributeWidget(this.getModelerScene(), this, widgetInfo));
         getVersionAttributeWidgets().add(attributeWidget);
         sortAttributes();
         scanDuplicateAttributes(null, version.getName());
         return attributeWidget;
     }
 
-    public EmbeddedIdAttributeWidget addNewEmbeddedIdAttribute(String name) {
-        return addNewEmbeddedIdAttribute(name, null);
+    public EmbeddedIdAttributeWidget addEmbeddedIdAttribute(String name) {
+        return addEmbeddedIdAttribute(name, null);
     }
 
-    public EmbeddedIdAttributeWidget addNewEmbeddedIdAttribute(String name, EmbeddedId embeddedId) {
+    public EmbeddedIdAttributeWidget addEmbeddedIdAttribute(String name, EmbeddedId embeddedId) {
         ManagedClass javaClass = this.getBaseElementSpec();
         if (embeddedId == null) {
             embeddedId = new EmbeddedId();
@@ -222,7 +226,8 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
             ((IPrimaryKeyAttributes) javaClass.getAttributes()).setEmbeddedId(embeddedId);
         }
 
-        EmbeddedIdAttributeWidget attributeWidget = AttributeWidget.<EmbeddedIdAttributeWidget>getInstance(this, name, embeddedId, EmbeddedIdAttributeWidget.class);
+        EmbeddedIdAttributeWidget attributeWidget = createPinWidget(embeddedId, EmbeddedIdAttributeWidget.class, 
+                widgetInfo -> new EmbeddedIdAttributeWidget(this.getModelerScene(), this, widgetInfo));
         setEmbeddedIdAttributeWidget(attributeWidget);
         sortAttributes();
         AttributeValidator.validateMultipleEmbeddedIdFound(this);
@@ -308,7 +313,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         if ((compositePrimaryKeyType == CompositePrimaryKeyType.EMBEDDEDID
                 || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && CodePanel.isEmbeddedIdDefaultType()))) {
             if (embeddedIdAttributeWidget == null) {
-                addNewEmbeddedIdAttribute(getNextAttributeName(this.getName() + "EmbeddedId"));
+                addEmbeddedIdAttribute(getNextAttributeName(this.getName() + "EmbeddedId"));
             }
         } else if (embeddedIdAttributeWidget != null) {
             embeddedIdAttributeWidget.remove();
@@ -432,7 +437,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
         }
         if (!idAttributeWidgets.isEmpty()) {
             List<Widget> idAttributeCatWidget = new ArrayList<>();
-            getIdAttributeWidgets().stream().forEach((idAttributeWidget) -> {
+            getIdAttributeWidgets().forEach((idAttributeWidget) -> {
                 idAttributeCatWidget.add(idAttributeWidget);
             });
             categories.put("PrimaryKey", idAttributeCatWidget);
@@ -442,7 +447,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
 
         if (!versionAttributeWidgets.isEmpty()) {
             List<Widget> versionAttributeCatWidget = new ArrayList<>();
-            getVersionAttributeWidgets().stream().forEach((versionAttributeWidget) -> {
+            getVersionAttributeWidgets().forEach((versionAttributeWidget) -> {
                 versionAttributeCatWidget.add(versionAttributeWidget);
             });
             categories.put("Version", versionAttributeCatWidget);
@@ -500,11 +505,11 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
     public void createPinWidget(String docId) {
         if (null != docId) {
             switch (docId) {
-                case "ID_ATTRIBUTE":
-                    this.addNewIdAttribute(getNextAttributeName("id")).edit();
+                case ID_ATTRIBUTE:
+                    this.addIdAttribute(getNextAttributeName("id")).edit();
                     break;
-                case "VERSION_ATTRIBUTE":
-                    this.addNewVersionAttribute(getNextAttributeName()).edit();
+                case VERSION_ATTRIBUTE:
+                    this.addVersionAttribute(getNextAttributeName()).edit();
                     break;
                 default:
                     super.createPinWidget(docId);

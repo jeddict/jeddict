@@ -15,18 +15,12 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import org.netbeans.orm.converter.compiler.def.VariableDefSnippet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jcode.core.util.AttributeType;
-import static org.netbeans.jcode.core.util.AttributeType.BYTE_ARRAY;
-import static org.netbeans.jcode.core.util.AttributeType.CALENDAR;
-import static org.netbeans.jcode.core.util.AttributeType.DOUBLE;
-import static org.netbeans.jcode.core.util.AttributeType.LONG;
-import static org.netbeans.jcode.core.util.AttributeType.STRING;
-import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.orm.converter.util.ClassHelper;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
 import org.openide.util.Exceptions;
@@ -34,36 +28,33 @@ import org.openide.util.Exceptions;
 public class TypeIdentifierSnippet implements Snippet {
 
     private static final String SELECT_MAP_KEY = "Map_Key_Missing";
-    private String type, 
+    private String type,
             implementationType, //ArrayList, HashSet etc
             constraintType;//bv, custom annotation etc
 
     private VariableDefSnippet variableDef = null;
 
-    private Collection<String> importSnippets = Collections.EMPTY_LIST;
+    private final Collection<String> importSnippets = new ArrayList<>();
 
     public TypeIdentifierSnippet(VariableDefSnippet variableDef) {
         this.variableDef = variableDef;
+        processVariableType();
     }
 
     public String getVariableType() {
-        processVariableType();
         return type;
     }
-    
+
     public String getConstraintVariableType() {
-        processVariableType();
-        return constraintType==null?type:constraintType;
+        return constraintType == null ? type : constraintType;
     }
 
-    public String getImplementationType(){
-        processVariableType();
+    public String getImplementationType() {
         return implementationType;
     }
-    
+
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        processVariableType();
         return importSnippets;
     }
 
@@ -72,18 +63,12 @@ public class TypeIdentifierSnippet implements Snippet {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    void setType(String type) {
-        this.type = type;
-        processVariableType();
-    }
-
-    private ClassHelper getClassHelper(String targetEntity) {
-
+    private ClassHelper getClassHelper(String clazz) {
         ClassHelper classHelper = null;
-        if (StringUtils.isNotBlank(targetEntity)) {
-            classHelper = new ClassHelper(targetEntity);
-            int count = targetEntity.endsWith(ORMConverterUtil.CLASS_SUFFIX) ? 2 : 1;
-            if (targetEntity.split("\\.").length <= count) {
+        if (StringUtils.isNotBlank(clazz)) {
+            classHelper = new ClassHelper(clazz);
+            int count = clazz.endsWith(ORMConverterUtil.CLASS_SUFFIX) ? 2 : 1;
+            if (clazz.split("\\.").length <= count) {
                 CompilerConfigManager compilerConfigManager = CompilerConfigManager.getInstance();
                 String defaultPkgName = compilerConfigManager.getCompilerConfig().getDefaultPkgName();
                 classHelper.setPackageName(defaultPkgName);
@@ -101,147 +86,91 @@ public class TypeIdentifierSnippet implements Snippet {
     }
 
     private void processVariableType() {
-
-        if (type != null) {
-            return;
-        }
         try {
-            if (variableDef.getRelationDef() != null) {
+            ClassHelper variable = variableDef.getClassHelper();
+            ClassHelper collectionType = getClassHelper(variableDef.getCollectionType());
+            ClassHelper collectionImplType = getClassHelper(variableDef.getCollectionImplType());
+            if (collectionImplType != null) {
+                implementationType = collectionImplType.getClassName();
+                importSnippets.add(collectionImplType.getFQClassName());
+            }
+            if (collectionType != null && collectionType.getClazz() != null
+                    && !Map.class.isAssignableFrom(collectionType.getClazz())) {
+                constraintType = collectionType.getClassName() + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(variable.getClassName()) + ">";
+                type = collectionType.getClassName() + "<" + wrap(variable.getClassName()) + ">";
+                importSnippets.add(collectionType.getFQClassName());
+            }
 
-                RelationDefSnippet relationDef = variableDef.getRelationDef();
+            if (variableDef.getRelationDef() != null && variableDef.getRelationDef() instanceof MultiRelationAttributeSnippet) {
+                MultiRelationAttributeSnippet multiRelationSnippet = (MultiRelationAttributeSnippet) variableDef.getRelationDef();
 
-                if (relationDef instanceof MultiRelationAttributeSnippet) {
-                    MultiRelationAttributeSnippet multiRelationAttributeSnippet = (MultiRelationAttributeSnippet) relationDef;
-
-                    importSnippets = new ArrayList<>();
-                    ClassHelper collectionTypeClassHelper = getClassHelper(multiRelationAttributeSnippet.getCollectionType());
-                    ClassHelper collectionImplTypeClassHelper = getClassHelper(multiRelationAttributeSnippet.getCollectionImplType());
-
-                    ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
-                    classHelper.setPackageName(relationDef.getTargetEntityPackage());
-
-                    ClassHelper mapKeyClassHelper = null;
-                    Class _class = collectionTypeClassHelper.getClazz();
-
-                    if (_class != null && Map.class.isAssignableFrom(_class)) {
-                        if (multiRelationAttributeSnippet.getMapKeySnippet() != null && multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType().getClassName() != null) {
-                            mapKeyClassHelper = multiRelationAttributeSnippet.getMapKeySnippet().getMapKeyAttributeType();
-                            constraintType = collectionTypeClassHelper.getClassName() 
-                                    + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) 
-                                    + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) 
-                                    + ">";
-                            type = collectionTypeClassHelper.getClassName() 
-                                    + "<" + wrap(mapKeyClassHelper.getClassName()) 
-                                    + "," + wrap(classHelper.getClassName()) 
-                                    + ">";
-                        } else {
-                            constraintType = collectionTypeClassHelper.getClassName() 
-                                    + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY 
-                                    + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) 
-                                    + ">";
-                            type = collectionTypeClassHelper.getClassName() 
-                                    + "<" + SELECT_MAP_KEY 
-                                    + "," + wrap(classHelper.getClassName()) 
-                                    + ">";
-                        }
-                    } else {
-                        constraintType = collectionTypeClassHelper.getClassName() 
-                                + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) 
-                                + ">";
-                        type = collectionTypeClassHelper.getClassName() 
-                                + "<" + wrap(classHelper.getClassName()) 
-                                + ">";
-                    }
-
-                    importSnippets.add(collectionTypeClassHelper.getFQClassName());
-                    if (_class != null && Map.class.isAssignableFrom(_class) && mapKeyClassHelper != null) {
-                        importSnippets.add(mapKeyClassHelper.getFQClassName());
-                    }
-                    importSnippets.add(classHelper.getFQClassName());
-                    if (collectionImplTypeClassHelper != null) {
-                        implementationType = collectionImplTypeClassHelper.getClassName();
-                        importSnippets.add(collectionImplTypeClassHelper.getFQClassName());
-                    }
-                    return;
-                } else {
-                    ClassHelper classHelper = getClassHelper(relationDef.getTargetEntity());
-                    classHelper.setPackageName(relationDef.getTargetEntityPackage());
-                    type = classHelper.getClassName();
-                    importSnippets = Collections.singletonList(classHelper.getFQClassName());
-                    return;
-                }
-            } else if (variableDef.getElementCollection() != null) {
-
-                ElementCollectionSnippet elementCollection = variableDef.getElementCollection();
-                importSnippets = new ArrayList<>();
-
-                ClassHelper collectionTypeClassHelper = getClassHelper(elementCollection.getCollectionType());
-                ClassHelper collectionImplTypeClassHelper = getClassHelper(elementCollection.getCollectionImplType());
-                ClassHelper classHelper = getClassHelper(elementCollection.getTargetClass());
-                if (elementCollection.getTargetClassPackage() != null) {
-                    classHelper.setPackageName(elementCollection.getTargetClassPackage());
-                }
                 ClassHelper mapKeyClassHelper = null;
-                Class _class = collectionTypeClassHelper.getClazz();
-                if (_class != null && Map.class.isAssignableFrom(_class)) {
-                    if (elementCollection.getMapKeySnippet() != null && elementCollection.getMapKeySnippet().getMapKeyAttributeType().getClassName() != null) {
-                        mapKeyClassHelper = elementCollection.getMapKeySnippet().getMapKeyAttributeType();
-                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
-                        type = collectionTypeClassHelper.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(classHelper.getClassName()) + ">";
-                    } else {
-                        constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
-                        type = collectionTypeClassHelper.getClassName() + "<" + SELECT_MAP_KEY + "," + wrap(classHelper.getClassName()) + ">";
-                    }
-                } else {
-                    constraintType = collectionTypeClassHelper.getClassName() + "<" + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(classHelper.getClassName()) + ">";
-                    type = collectionTypeClassHelper.getClassName() + "<" + wrap(classHelper.getClassName()) + ">";
-                }
+                Class _class = collectionType.getClazz();
 
-                importSnippets.add(collectionTypeClassHelper.getFQClassName());
+                if (_class != null && Map.class.isAssignableFrom(_class)) {
+                    if (multiRelationSnippet.getMapKeySnippet() != null && multiRelationSnippet.getMapKeySnippet().getMapKeyAttributeType().getClassName() != null) {
+                        mapKeyClassHelper = multiRelationSnippet.getMapKeySnippet().getMapKeyAttributeType();
+                        constraintType = collectionType.getClassName()
+                                + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName())
+                                + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(variable.getClassName())
+                                + ">";
+                        type = collectionType.getClassName()
+                                + "<" + wrap(mapKeyClassHelper.getClassName())
+                                + "," + wrap(variable.getClassName())
+                                + ">";
+                    } else {
+                        constraintType = collectionType.getClassName()
+                                + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY
+                                + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(variable.getClassName())
+                                + ">";
+                        type = collectionType.getClassName()
+                                + "<" + SELECT_MAP_KEY
+                                + "," + wrap(variable.getClassName())
+                                + ">";
+                    }
+                }
                 if (_class != null && Map.class.isAssignableFrom(_class) && mapKeyClassHelper != null) {
                     importSnippets.add(mapKeyClassHelper.getFQClassName());
                 }
-                importSnippets.add(classHelper.getFQClassName());
-                if (collectionImplTypeClassHelper != null) {
-                        implementationType = collectionImplTypeClassHelper.getClassName();
-                        importSnippets.add(collectionImplTypeClassHelper.getFQClassName());
+                importSnippets.add(variable.getFQClassName());
+            } else if (variableDef.getElementCollection() != null) {
+                ElementCollectionSnippet elementCollection = variableDef.getElementCollection();
+                ClassHelper mapKeyClassHelper = null;
+                Class _class = collectionType.getClazz();
+                if (_class != null && Map.class.isAssignableFrom(_class)) {
+                    if (elementCollection.getMapKeySnippet() != null && elementCollection.getMapKeySnippet().getMapKeyAttributeType().getClassName() != null) {
+                        mapKeyClassHelper = elementCollection.getMapKeySnippet().getMapKeyAttributeType();
+                        constraintType = collectionType.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + wrap(mapKeyClassHelper.getClassName()) + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(variable.getClassName()) + ">";
+                        type = collectionType.getClassName() + "<" + wrap(mapKeyClassHelper.getClassName()) + "," + wrap(variable.getClassName()) + ">";
+                    } else {
+                        constraintType = collectionType.getClassName() + "<" + variableDef.getInlineKeyAnnotation() + variableDef.getInlineKeyConstraint() + SELECT_MAP_KEY + "," + variableDef.getInlineValueAnnotation() + variableDef.getInlineValueConstraint() + wrap(variable.getClassName()) + ">";
+                        type = collectionType.getClassName() + "<" + SELECT_MAP_KEY + "," + wrap(variable.getClassName()) + ">";
+                    }
                 }
-                return;
-            }
-
-            if (variableDef.isLob()) {
-                type = BYTE_ARRAY;
-                return;
-            }
-
-            if (variableDef.getTemporal() != null) {
-                importSnippets = Collections.singletonList(CALENDAR);
-                type = JavaSourceHelper.getSimpleClassName(CALENDAR);
-                return;
-            }
-
-            ColumnDefSnippet columnDef = variableDef.getColumnDef();
-
-            if (columnDef != null) {
-
-                if (columnDef.getPrecision() != 0
-                        && columnDef.getScale() != 0) {
-
-                    type = DOUBLE;
-                    return;
-                } else if (columnDef.getPrecision() != 0
-                        && columnDef.getScale() == 0) {
-
-                    type = LONG;
-                    return;
+                if (_class != null && Map.class.isAssignableFrom(_class) && mapKeyClassHelper != null) {
+                    importSnippets.add(mapKeyClassHelper.getFQClassName());
                 }
+                importSnippets.add(variable.getFQClassName());
+            } else {
+                importSnippets.add(variable.getFQClassName());
             }
 
-            type = STRING;
+//            if (variableDef.getColumnDef() != null) {
+//                ColumnDefSnippet columnDef = variableDef.getColumnDef();
+//                if (columnDef.getPrecision() != 0 && columnDef.getScale() != 0) {
+//                    type = DOUBLE;
+//                    return;
+//                } else if (columnDef.getPrecision() != 0 && columnDef.getScale() == 0) {
+//                    type = LONG;
+//                    return;
+//                }
+//            }
+//
+//            type = STRING;
         } catch (InvalidDataException ex) {
             Exceptions.printStackTrace(ex);
             throw new RuntimeException(ex);
         }
-        
+
     }
 }

@@ -24,7 +24,7 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidge
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.spec.Embeddable;
 import org.netbeans.jpa.modeler.spec.EmbeddableAttributes;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
@@ -140,7 +140,7 @@ public class EmbeddableWidget extends PersistenceClassWidget<Embeddable> {
 
     @Override
     public Image getIcon() {
-        return JPAModelerUtil.EMBEDDABLE;
+        return JPAModelerUtil.EMBEDDABLE_ICON;
     }
     
     @Override

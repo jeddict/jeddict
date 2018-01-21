@@ -24,12 +24,12 @@ import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getOrderProp
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.spec.ElementCollection;
 import org.netbeans.jpa.modeler.spec.extend.FetchTypeHandler;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.BASIC_COLLECTION_ATTRIBUTE_ICON;
 
 /**
  *
@@ -71,7 +71,7 @@ public class BasicCollectionAttributeWidget extends BaseAttributeWidget<ElementC
     
     @Override
     public Image getIcon(){
-        return BASIC_COLLECTION_ATTRIBUTE;
+        return BASIC_COLLECTION_ATTRIBUTE_ICON;
     }
 
 }

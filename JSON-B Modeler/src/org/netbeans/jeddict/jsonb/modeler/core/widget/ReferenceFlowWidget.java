@@ -25,6 +25,9 @@ import org.netbeans.modeler.anchorshape.crow.OneAndOneCrowShape;
 import org.netbeans.modeler.anchorshape.crow.OneOrMoreCrowShape;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.INodeWidget;
+import org.netbeans.modeler.widget.pin.IPinWidget;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 
 /**
  *
@@ -95,6 +98,36 @@ public class ReferenceFlowWidget extends AbstractEdgeWidget<JSONBModelerScene> {
 
     @Override
     public void destroy() {
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getSourcePinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget sourceAttributeWidget) {
+        if (sourceAttributeWidget instanceof BranchNodeWidget) {
+            BranchNodeWidget sourceBranchNodeWidget = (BranchNodeWidget) sourceAttributeWidget;
+            ReferenceFlowWidget referenceFlowWidget = this;
+            DocumentWidget targetDocumentWidget = (DocumentWidget) targetNodeWidget;
+            referenceFlowWidget.setReferenceDocumentWidget(targetDocumentWidget);
+            referenceFlowWidget.setBranchNodeWidget(sourceBranchNodeWidget);
+            return sourceBranchNodeWidget.getPinWidgetInfo();
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getTargetPinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget targetPinWidget) {
+        DocumentWidget documentWidget = (DocumentWidget) targetNodeWidget;
+        return documentWidget.getInternalPinWidgetInfo();
     }
 
 }

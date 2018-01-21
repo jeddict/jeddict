@@ -54,13 +54,13 @@ import org.netbeans.jpa.modeler.core.widget.attribute.base.VersionAttributeWidge
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.export.IExportManager;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
 import org.netbeans.modeler.widget.edge.EdgeWidget;
 import org.netbeans.modeler.widget.node.INodeWidget;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION_ICON;
 
 public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
 
@@ -181,7 +181,7 @@ public class ExportManagerImpl implements IExportManager<JPAModelerScene> {
                     group.addShape(shape);
 
                     if (edgeWidget instanceof GeneralizationFlowWidget) {
-                        byte[] targetAnchor = getImageArray(GENERALIZATION);
+                        byte[] targetAnchor = getImageArray(GENERALIZATION_ICON);
                         HSLFPictureData targetPictureData = ppt.addPicture(targetAnchor, PictureData.PictureType.PNG);
                         HSLFPictureShape targetPictureShape = new HSLFPictureShape(targetPictureData);
                         group.addShape(targetPictureShape);

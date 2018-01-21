@@ -17,12 +17,11 @@ package org.netbeans.jpa.modeler.core.widget.attribute.base;
 
 import java.awt.Image;
 import org.netbeans.jpa.modeler.spec.Transient;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.TRANSIENT_ATTRIBUTE;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.TRANSIENT_ATTRIBUTE_ICON_PATH;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.TRANSIENT_ATTRIBUTE_ICON;
 
 /**
  *
@@ -32,9 +31,8 @@ public class TransientAttributeWidget extends BaseAttributeWidget<Transient> {
 
     public TransientAttributeWidget(JPAModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
-        this.setImage(JPAModelerUtil.TRANSIENT_ATTRIBUTE);
+        this.setImage(getIcon());
     }
-
     
     @Override
     public String getIconPath() {
@@ -43,7 +41,7 @@ public class TransientAttributeWidget extends BaseAttributeWidget<Transient> {
 
     @Override
     public Image getIcon() {
-        return TRANSIENT_ATTRIBUTE;
+        return TRANSIENT_ATTRIBUTE_ICON;
     }
 
 }

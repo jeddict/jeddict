@@ -15,8 +15,8 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ATTRIBUTE_NODE;
 import static org.netbeans.jcode.jpa.JPAConstants.NAMED_ATTRIBUTE_NODE_FQN;
 import org.netbeans.orm.converter.util.ORMConverterUtil;
@@ -111,7 +111,7 @@ public class NamedAttributeNodeSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList(NAMED_ATTRIBUTE_NODE_FQN);
     }
 

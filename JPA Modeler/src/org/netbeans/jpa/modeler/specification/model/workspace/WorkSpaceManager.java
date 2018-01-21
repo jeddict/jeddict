@@ -36,7 +36,7 @@ import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceElement;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpaceItem;
 import org.netbeans.jpa.modeler.specification.model.file.JPAFileDataObject;
 import org.netbeans.jpa.modeler.specification.model.file.action.JPAFileActionListener;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.CREATE_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ALL_ICON;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.DELETE_ICON;

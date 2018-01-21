@@ -19,21 +19,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.IPrimaryKeyAttributes;
-import org.netbeans.orm.converter.generator.managed.ManagedClassDefSnippet;
+import org.netbeans.orm.converter.compiler.def.MappedSuperClassDefSnippet;
 
-public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSnippet> {
+public class MappedSuperClassGenerator extends IdentifiableClassGenerator<MappedSuperClassDefSnippet> {
 
     private final MappedSuperclass mappedSuperclass;
 
     public MappedSuperClassGenerator(MappedSuperclass parsedMappedSuperclass, String packageName) {
-        super(new ManagedClassDefSnippet(), parsedMappedSuperclass.getRootElement().getJavaEEVersion());
+        super(new MappedSuperClassDefSnippet(), parsedMappedSuperclass.getRootElement().getJavaEEVersion());
         this.mappedSuperclass = parsedMappedSuperclass;
         this.rootPackageName = packageName;
         this.packageName = mappedSuperclass.getAbsolutePackage(rootPackageName);
     }
 
     @Override
-    public ManagedClassDefSnippet getClassDef() {
+    public MappedSuperClassDefSnippet getClassDef() {
 
         //Classlevel annotations
         processIdClass(mappedSuperclass.getIdClass());
@@ -77,7 +77,6 @@ public class MappedSuperClassGenerator extends ClassGenerator<ManagedClassDefSni
             classDef.setDescription(mappedSuperclass.getDescription());
         }
         classDef.setAuthor(mappedSuperclass.getAuthor());
-        classDef.setMappedSuperClass(true);
         classDef.setXmlRootElement(mappedSuperclass.getXmlRootElement());
         return classDef;
     }

@@ -19,11 +19,13 @@ import java.awt.Cursor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringUtils;
 import org.atteo.evo.inflector.English;
+import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.jcode.core.util.SourceGroupSupport;
 import org.netbeans.jcode.core.util.StringHelper;
 import static org.netbeans.jcode.core.util.StringHelper.firstUpper;
@@ -33,18 +35,21 @@ import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassAnnoation;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConstructorProperties;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomParentClass;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
+import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
 import org.netbeans.jpa.modeler.rules.entity.ClassValidator;
-import org.netbeans.jpa.modeler.rules.entity.SQLKeywords;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.IdentifiableClass;
-import org.netbeans.jpa.modeler.spec.ManagedClass;
+import org.netbeans.jpa.modeler.spec.extend.AttributeLocationComparator;
 import org.netbeans.jpa.modeler.spec.extend.Attribute;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
@@ -55,6 +60,7 @@ import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
+import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getEqualsHashcodeProperty;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
@@ -73,19 +79,6 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
                 setLabel(clazz);
             }
         });
-
-        this.addPropertyChangeListener("table_name", (PropertyChangeListener<String>) (oldValue, tableName) -> {
-            if (tableName != null && !tableName.trim().isEmpty()) {
-                if (SQLKeywords.isSQL99ReservedKeyword(tableName)) {
-                    getSignalManager().fire(WARNING, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                } else {
-                    getSignalManager().clear(WARNING, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-                }
-            } else {
-                getSignalManager().clear(WARNING, ClassValidator.CLASS_TABLE_NAME_WITH_RESERVED_SQL_KEYWORD);
-            }
-        });
-
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
     }
 
@@ -115,6 +108,9 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         set.put("CLASS_STRUCTURE", getCustomParentClass(this));
         set.put("CLASS_STRUCTURE", getCustomArtifact(this.getModelerScene(), javaClass.getInterfaces(), "Interface"));
         set.put("CLASS_STRUCTURE", getClassSnippet(this.getModelerScene(), javaClass.getSnippets()));
+        set.put("CLASS_STRUCTURE", getConstructorProperties(this));
+        set.put("CLASS_STRUCTURE", getEqualsHashcodeProperty(this));
+        set.put("CLASS_STRUCTURE", getToStringProperty(this));
     }
 
     public FileObject getFileObject() {
@@ -141,7 +137,11 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         deleteAttribute((AttributeWidget) pinWidget);//  Issue Fix #5855
     }
 
-    public abstract void sortAttributes();
+    public void sortAttributes() {
+        sortPins(getAttributeCategories());
+    }
+
+    public abstract Map<String, List<Widget>> getAttributeCategories();
 
     protected void validateName(String previousName, String name) {
         if (JavaPersistenceQLKeywords.isKeyword(JavaClassWidget.this.getName())) {
@@ -171,7 +171,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         List<JavaClass> hiddenJavaClasses = new ArrayList<>(entityMappings.getJavaClass());
         hiddenJavaClasses.removeAll(
                 javaClassList.stream()
-                        .map(jcw -> (JavaClass) jcw.getBaseElementSpec())
+                        .map(JavaClassWidget::getBaseElementSpec)
                         .collect(toList())
         );
         for (JavaClass javaClass : hiddenJavaClasses) {
@@ -218,7 +218,7 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
             this.setNodeName(filterName(label));
         }
     }
-
+    
     public JavaClassWidget getSuperclassWidget() {
         if (outgoingGeneralizationFlowWidget != null) {
             return outgoingGeneralizationFlowWidget.getSuperclassWidget();
@@ -406,14 +406,62 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
         }
         return getNext(attrName, nextAttrName -> javaClass.getAttributes().isAttributeExist(nextAttrName));
     }
-    
-    public abstract void scanDuplicateAttributes(String previousName, String newName);
 
-    public abstract List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets();
+    public List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets() {
+        return getAllAttributeWidgets(true);
+    }
+
+    public List<AttributeWidget<? extends Attribute>> getAllSortedAttributeWidgets() {
+        List<AttributeWidget<? extends Attribute>> attributeWidgets = getAllAttributeWidgets(true);
+        AttributeLocationComparator attributeLocationComparator = new AttributeLocationComparator();
+        attributeWidgets.sort((a1, a2) -> attributeLocationComparator.compare(a1.getBaseElementSpec(), a2.getBaseElementSpec()));
+        return attributeWidgets;
+    }
+
+    public void scanDuplicateAttributes(String previousName, String newName) {
+        int previousNameCount = 0, newNameCount = 0;
+        List<AttributeWidget<? extends Attribute>> attributeWidgets = this.getAllAttributeWidgets(true);
+        JavaClass javaClass = this.getBaseElementSpec();
+
+        List<Attribute> hiddenAttributes = new ArrayList<>(javaClass.getAttributes().getAllAttribute(true));
+        hiddenAttributes.removeAll(
+                attributeWidgets.stream()
+                        .map(aw -> (Attribute) aw.getBaseElementSpec())
+                        .collect(toList())
+        );
+        for (Attribute attribute : hiddenAttributes) {
+            if (attribute.getName().equals(previousName)) {
+                ++previousNameCount;
+            }
+            if (attribute.getName().equals(newName)) {
+                ++newNameCount;
+            }
+        }
+
+        for (AttributeWidget<? extends Attribute> attributeWidget : attributeWidgets) {
+            Attribute attribute = attributeWidget.getBaseElementSpec();
+
+            if (attribute.getName().equals(previousName)) {
+                if (++previousNameCount > 1) {
+                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+                    attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                }
+            }
+
+            if (attribute.getName().equals(newName)) {
+                if (++newNameCount > 1) {
+                    attributeWidget.getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                } else if (!attributeWidget.getSignalManager().getSignalList(ERROR).isEmpty()) {
+                    attributeWidget.getSignalManager().clear(ERROR, AttributeValidator.NON_UNIQUE_ATTRIBUTE_NAME);
+                }
+            }
+        }
+    }
 
     public abstract List<AttributeWidget<? extends Attribute>> getAllAttributeWidgets(boolean includeParentClassAttibute);
 
     public abstract E createBaseElementSpec();
-    
+
     public abstract void createPinWidget(String docId);
 }

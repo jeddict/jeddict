@@ -19,9 +19,10 @@ import org.netbeans.jpa.modeler.properties.classmember.EntityMappingMemberPanel;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.workspace.WorkSpace;
 import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
-import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.JAVA_CLASS;
+import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.modeler.properties.entity.custom.editor.combobox.client.entity.ComboBoxValue;
 import org.netbeans.modeler.properties.window.GenericDialog;
+import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.JAVA_CLASS_ICON;
 
 /**
  *
@@ -36,6 +37,7 @@ public class EntityGenerationSettingDialog extends GenericDialog {
      * Creates new form EntityGenerationSettingDialog
      *
      * @param scene
+     * @param selectedWorkSpace
      */
     public EntityGenerationSettingDialog(JPAModelerScene scene, WorkSpace selectedWorkSpace) {
         this.scene = scene;
@@ -93,7 +95,7 @@ public class EntityGenerationSettingDialog extends GenericDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(org.openide.util.NbBundle.getMessage(EntityGenerationSettingDialog.class, "EntityGenerationSettingDialog.title")); // NOI18N
-        setIconImage(JAVA_CLASS);
+        setIconImage(JAVA_CLASS_ICON);
 
         classGenerationPanel.setPreferredSize(new java.awt.Dimension(0, 200));
 

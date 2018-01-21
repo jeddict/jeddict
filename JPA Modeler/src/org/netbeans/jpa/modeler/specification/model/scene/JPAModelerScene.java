@@ -33,28 +33,26 @@ import org.netbeans.jpa.modeler.core.widget.EmbeddableWidget;
 import org.netbeans.jpa.modeler.core.widget.EntityWidget;
 import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
-import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.core.widget.PersistenceClassWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.AttributeWidget;
+import org.netbeans.jpa.modeler.core.widget.attribute.association.AssociationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.base.EmbeddedAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.attribute.relation.RelationAttributeWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.EmbeddableFlowWidget;
 import org.netbeans.jpa.modeler.core.widget.flow.GeneralizationFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.association.AssociationFlowWidget;
+import org.netbeans.jpa.modeler.core.widget.flow.association.BidirectionalAssociation;
+import org.netbeans.jpa.modeler.core.widget.flow.association.DirectionalAssociation;
+import org.netbeans.jpa.modeler.core.widget.flow.association.UnidirectionalAssociation;
 import org.netbeans.jpa.modeler.core.widget.flow.relation.RelationFlowWidget;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Bidirectional;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Direction;
-import org.netbeans.jpa.modeler.core.widget.relation.flow.direction.Unidirectional;
 import org.netbeans.jpa.modeler.external.jpqleditor.JPQLExternalEditorController;
 import org.netbeans.jpa.modeler.network.social.linkedin.LinkedInSocialNetwork;
 import org.netbeans.jpa.modeler.network.social.twitter.TwitterSocialNetwork;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getConverterProperties;
 import static org.netbeans.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
-import org.netbeans.jpa.modeler.spec.Embeddable;
-import org.netbeans.jpa.modeler.spec.Entity;
 import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.jpa.modeler.spec.ManagedClass;
-import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.extend.IPersistenceAttributes;
 import org.netbeans.jpa.modeler.spec.extend.JavaClass;
 import org.netbeans.jpa.modeler.specification.model.event.JPAEventListener;
@@ -93,6 +91,9 @@ import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.BidirectionalRelation;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.UnidirectionalRelation;
+import org.netbeans.jpa.modeler.core.widget.flow.relation.DirectionalRelation;
 
 public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
 
@@ -207,10 +208,8 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                                 embeddableFlowWidget.remove();
                             }
                         }
-
                         persistenceClassWidget.setLocked(false);
                     }
-
                 }
                 entityMappingsSpec.removeBaseElement(baseElementSpec);
                 flowNodeWidget.setFlowElementsContainer(null);
@@ -222,20 +221,38 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     RelationAttributeWidget sourceRelationAttributeWidget = relationFlowWidget.getSourceRelationAttributeWidget();
                     sourceRelationAttributeWidget.remove();
 
-                    if (relationFlowWidget instanceof Direction) {
-                        if (relationFlowWidget instanceof Unidirectional) {
-                            Unidirectional unidirectional = (Unidirectional) relationFlowWidget;
+                    if (relationFlowWidget instanceof DirectionalRelation) {
+                        if (relationFlowWidget instanceof UnidirectionalRelation) {
+                            UnidirectionalRelation unidirectional = (UnidirectionalRelation) relationFlowWidget;
                             unidirectional.getTargetEntityWidget().removeInverseSideRelationFlowWidget(relationFlowWidget);
-                        } else if (relationFlowWidget instanceof Bidirectional) {
-                            Bidirectional bidirectional = (Bidirectional) relationFlowWidget;
+                        } else if (relationFlowWidget instanceof BidirectionalRelation) {
+                            BidirectionalRelation bidirectional = (BidirectionalRelation) relationFlowWidget;
                             RelationAttributeWidget targetRelationAttributeWidget = bidirectional.getTargetRelationAttributeWidget();
                             targetRelationAttributeWidget.remove();
                         }
                     }
                     relationFlowWidget.setLocked(false);
-
                     relationFlowWidget.setFlowElementsContainer(null);
                     this.removeBaseElement(relationFlowWidget);
+                } else if (baseElementWidget instanceof AssociationFlowWidget) {
+                    AssociationFlowWidget associationFlowWidget = (AssociationFlowWidget) baseElementWidget;
+                    associationFlowWidget.setLocked(true);
+                    AssociationAttributeWidget sourceAssociationAttributeWidget = associationFlowWidget.getSourceAssociationAttributeWidget();
+                    sourceAssociationAttributeWidget.remove();
+
+                    if (associationFlowWidget instanceof DirectionalAssociation) {
+                        if (associationFlowWidget instanceof UnidirectionalAssociation) {
+                            UnidirectionalAssociation unidirectional = (UnidirectionalAssociation) associationFlowWidget;
+                            unidirectional.getTargetClassWidget().removeInverseSideAssociationFlowWidget(associationFlowWidget);
+                        } else if (associationFlowWidget instanceof BidirectionalAssociation) {
+                            BidirectionalAssociation bidirectional = (BidirectionalAssociation) associationFlowWidget;
+                            AssociationAttributeWidget targetAssociationAttributeWidget = bidirectional.getTargetAssociationAttributeWidget();
+                            targetAssociationAttributeWidget.remove();
+                        }
+                    }
+                    associationFlowWidget.setLocked(false);
+                    associationFlowWidget.setFlowElementsContainer(null);
+                    this.removeBaseElement(associationFlowWidget);
                 } else if (baseElementWidget instanceof GeneralizationFlowWidget) {
                     GeneralizationFlowWidget generalizationFlowWidget = (GeneralizationFlowWidget) baseElementWidget;
 
@@ -254,7 +271,6 @@ public class JPAModelerScene extends DefaultPModelerScene<EntityMappings> {
                     EmbeddedAttributeWidget sourceEmbeddedAttributeWidget = embeddableFlowWidget.getSourceEmbeddedAttributeWidget();
                     sourceEmbeddedAttributeWidget.remove();
                     embeddableFlowWidget.getTargetEmbeddableWidget().removeIncomingEmbeddableFlowWidget(embeddableFlowWidget);
-
                     embeddableFlowWidget.setLocked(false);
 
                     embeddableFlowWidget.setFlowElementsContainer(null);

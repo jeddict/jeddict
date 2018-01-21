@@ -25,8 +25,6 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class ElementCollectionSnippet implements Snippet {
 
-    private String collectionType;
-    private String collectionImplType;
     private String targetClass;
     private String targetClassPackage;
     
@@ -86,19 +84,7 @@ public class ElementCollectionSnippet implements Snippet {
         this.targetClass = targetClass;
     }
 
-    /**
-     * @return the collectionType
-     */
-    public String getCollectionType() {
-        return collectionType;
-    }
 
-    /**
-     * @param collectionType the collectionType to set
-     */
-    public void setCollectionType(String collectionType) {
-        this.collectionType = collectionType;
-    }
 
     /**
      * @return the mapKeySnippet
@@ -128,19 +114,4 @@ public class ElementCollectionSnippet implements Snippet {
         this.targetClassPackage = targetClassPackage;
     }
     
-        /**
-     * @return the collectionImplType
-     */
-//    @Override
-    public String getCollectionImplType() {
-        return collectionImplType;
-    }
-
-    /**
-     * @param collectionImplType the collectionImplType to set
-     */
-//    @Override
-    public void setCollectionImplType(String collectionImplType) {
-        this.collectionImplType = collectionImplType;
-    }
 }

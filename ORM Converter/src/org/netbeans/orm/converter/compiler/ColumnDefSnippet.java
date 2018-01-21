@@ -15,8 +15,8 @@
  */
 package org.netbeans.orm.converter.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.netbeans.jcode.jpa.JPAConstants.COLUMN;
 import static org.netbeans.jcode.jpa.JPAConstants.COLUMN_FQN;
@@ -230,7 +230,7 @@ public class ColumnDefSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         return Collections.singletonList((mapKey? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
     }
 }

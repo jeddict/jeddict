@@ -38,7 +38,7 @@ import org.apache.velocity.app.Velocity;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.orm.converter.compiler.InvalidDataException;
-import org.netbeans.orm.converter.compiler.WritableSnippet;
+import org.netbeans.orm.converter.spec.WritableSnippet;
 import org.openide.cookies.EditorCookie;
 import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;

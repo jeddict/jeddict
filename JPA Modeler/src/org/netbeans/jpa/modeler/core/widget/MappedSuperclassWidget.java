@@ -18,7 +18,7 @@ package org.netbeans.jpa.modeler.core.widget;
 import java.awt.Image;
 import org.netbeans.jpa.modeler.spec.MappedSuperclass;
 import org.netbeans.jpa.modeler.spec.PrimaryKeyAttributes;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
@@ -66,7 +66,7 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
 
     @Override
     public Image getIcon() {
-        return JPAModelerUtil.MAPPED_SUPER_CLASS;
+        return JPAModelerUtil.MAPPED_SUPER_CLASS_ICON;
     }
     
     @Override

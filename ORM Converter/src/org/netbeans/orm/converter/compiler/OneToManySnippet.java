@@ -28,7 +28,6 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
         if (!CodePanel.isGenerateDefaultValue()) {
             if (mappedBy == null
                     && orphanRemoval == false
-                    && getTargetEntity() == null
                     && getFetchType() == null
                     && getCascadeTypes().isEmpty() 
                     && (mapKeySnippet==null || mapKeySnippet.isEmpty())) {
@@ -58,7 +57,7 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
             builder.append(ORMConverterUtil.COMMA);
         }
 
-        if (getTargetEntity() != null) {
+        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
             builder.append("targetEntity = ");
             builder.append(getTargetEntity());
             builder.append(ORMConverterUtil.COMMA);

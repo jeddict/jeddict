@@ -15,7 +15,7 @@
  */
 package org.netbeans.jpa.modeler.core.widget.flow;
 
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.COMPOSITION_ANCHOR;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.MULTI_VALUE_ANCHOR_SHAPE;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;

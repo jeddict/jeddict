@@ -21,12 +21,16 @@ import org.netbeans.jpa.modeler.core.widget.FlowNodeWidget;
 import org.netbeans.jpa.modeler.core.widget.JavaClassWidget;
 import org.netbeans.jpa.modeler.core.widget.MappedSuperclassWidget;
 import org.netbeans.jpa.modeler.rules.attribute.AttributeValidator;
-import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;
+import org.netbeans.jpa.modeler.spec.extend.JavaClass;
+import org.netbeans.jpa.modeler.specification.model.scene.JPAModelerScene;import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static org.netbeans.jpa.modeler.specification.model.util.JPAModelerUtil.GENERALIZATION_ANCHOR;
 import org.netbeans.modeler.anchorshape.IconAnchorShape;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.specification.model.document.widget.IFlowNodeWidget;
 import org.netbeans.modeler.widget.edge.info.EdgeWidgetInfo;
+import org.netbeans.modeler.widget.node.INodeWidget;
+import org.netbeans.modeler.widget.pin.IPinWidget;
+import org.netbeans.modeler.widget.pin.info.PinWidgetInfo;
 import org.netbeans.modeler.widget.properties.generic.ElementPropertySupport;
 import org.openide.nodes.Sheet;
 
@@ -187,6 +191,36 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JPAModelerScene
         if (subclassWidget != null) {
             subclassWidget.setOutgoingGeneralizationFlowWidget(this);
         }
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getSourcePinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget sourceAttributeWidget) {
+        GeneralizationFlowWidget edgeWidget = this;
+        JavaClassWidget sourceJavaClassWidget = (JavaClassWidget) sourceNodeWidget;
+        JavaClass sourceJavaClass = (JavaClass) sourceJavaClassWidget.getBaseElementSpec();
+        JavaClassWidget targetJavaClassWidget = (JavaClassWidget) targetNodeWidget;
+        JavaClass targetJavaClass = (JavaClass) targetJavaClassWidget.getBaseElementSpec();
+        GeneralizationFlowWidget generalizationFlowWidget = (GeneralizationFlowWidget) edgeWidget;
+        sourceJavaClass.addSuperclass(targetJavaClass);
+        generalizationFlowWidget.setSubclassWidget(sourceJavaClassWidget);
+        generalizationFlowWidget.setSuperclassWidget(targetJavaClassWidget);
+        return sourceJavaClassWidget.getInternalPinWidgetInfo();
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget) {
+        return getTargetPinWidget(sourceNodeWidget, targetNodeWidget, null);
+    }
+
+    @Override
+    public PinWidgetInfo getTargetPinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget targetAttributeWidget) {
+        JavaClassWidget targetJavaClassWidget = (JavaClassWidget) targetNodeWidget;
+        return targetJavaClassWidget.getInternalPinWidgetInfo();
     }
 
 }

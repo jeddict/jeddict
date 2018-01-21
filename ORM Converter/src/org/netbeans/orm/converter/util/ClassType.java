@@ -17,13 +17,11 @@ package org.netbeans.orm.converter.util;
 
 public enum ClassType {
 
+    DEFAULT_CLASS,
     EMBEDED_CLASS,
     SUPER_CLASS,
     LISTENER_CLASS,
     ENTITY_CLASS,
-    SERIALIZER_CLASS,
-    SERIALIZER_UTIL_CLASS,
-    JAVA_SINGLETON,
     STATIC_METAMODEL_CLASS,
     JAXB_PACKAGE_INFO;
 

@@ -16,6 +16,7 @@
 package org.netbeans.orm.converter.compiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static org.netbeans.jcode.jpa.JPAConstants.PRIMARY_KEY_JOIN_COLUMNS;
@@ -104,7 +105,7 @@ public class PrimaryKeyJoinColumnsSnippet implements Snippet {
     }
 
     @Override
-    public List<String> getImportSnippets() throws InvalidDataException {
+    public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
         boolean isRepeatable = this.repeatable || foreignKey != null; 
         if (primaryKeyJoinColumns.size() == 1) {

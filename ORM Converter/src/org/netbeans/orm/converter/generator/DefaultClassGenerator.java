@@ -16,27 +16,26 @@
 package org.netbeans.orm.converter.generator;
 
 import org.netbeans.jpa.modeler.spec.DefaultClass;
-import org.netbeans.orm.converter.compiler.ClassDefSnippet;
-import org.netbeans.orm.converter.compiler.VariableDefSnippet;
+import org.netbeans.orm.converter.compiler.def.VariableDefSnippet;
+import org.netbeans.orm.converter.compiler.def.DefaultClassDefSnippet;
 
-public class DefaultClassGenerator extends ClassGenerator<ClassDefSnippet> {
+public class DefaultClassGenerator extends ClassGenerator<DefaultClassDefSnippet> {
 
-    private DefaultClass defaultClass;
+    private final DefaultClass defaultClass;
 
     public DefaultClassGenerator(DefaultClass parsedDefaultClass, String packageName) {
-        super(new ClassDefSnippet(), parsedDefaultClass.getRootElement().getJavaEEVersion());
+        super(new DefaultClassDefSnippet(), parsedDefaultClass.getRootElement().getJavaEEVersion());
         this.defaultClass = parsedDefaultClass;
         this.rootPackageName = packageName;
         this.packageName = defaultClass.getAbsolutePackage(rootPackageName);
     }
 
     @Override
-    public ClassDefSnippet getClassDef() {
+    public DefaultClassDefSnippet getClassDef() {
         defaultClass.getAttributes().getDefaultAttributes()
-                .stream()
-                .forEach((defaultAttribute) -> {
-                    VariableDefSnippet variableDef = getVariableDef(defaultAttribute);
-                    variableDef.setType(defaultAttribute.getAttributeType());
+                .forEach(attribute -> {
+                    VariableDefSnippet variableDef = getVariableDef(attribute);
+                    variableDef.setType(attribute.getAttributeType());
                 });
         classDef = initClassDef(packageName, defaultClass);
         classDef.setDefaultClass(true);
