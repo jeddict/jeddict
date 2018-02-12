@@ -198,7 +198,7 @@ public class ORMConverterUtil {
         }
     }
 
-    public static String writeToTemplate(String templateName, Map context) throws Exception {
+    public static String writeToTemplate(String templateName, Map<String, Object> context) throws Exception {
         Template template = Velocity.getTemplate(templateName);
         ByteArrayOutputStream generatedClass = new ByteArrayOutputStream();
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(generatedClass, "UTF-8"))) {

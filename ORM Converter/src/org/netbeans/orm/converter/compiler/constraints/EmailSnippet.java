@@ -35,7 +35,7 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_BRACES;
  */
 public class EmailSnippet extends ConstraintSnippet<Email> {
 
-    private List<Flag> flags = Collections.EMPTY_LIST;
+    private List<Flag> flags = Collections.<Flag>emptyList();
 
     public EmailSnippet(Email email) {
         super(email);

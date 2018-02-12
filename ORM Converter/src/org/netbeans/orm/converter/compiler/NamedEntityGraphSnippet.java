@@ -30,9 +30,9 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class NamedEntityGraphSnippet implements Snippet {
 
     private String name = null;
-    private List<NamedAttributeNodeSnippet> namedAttributeNodes = Collections.EMPTY_LIST;
-    private List<NamedSubgraphSnippet> subgraphs = Collections.EMPTY_LIST;
-    private List<NamedSubgraphSnippet> subclassSubgraphs = Collections.EMPTY_LIST;
+    private List<NamedAttributeNodeSnippet> namedAttributeNodes = Collections.<NamedAttributeNodeSnippet>emptyList();
+    private List<NamedSubgraphSnippet> subgraphs = Collections.<NamedSubgraphSnippet>emptyList();
+    private List<NamedSubgraphSnippet> subclassSubgraphs = Collections.<NamedSubgraphSnippet>emptyList();
     private Boolean includeAllAttributes;
 
     @Override

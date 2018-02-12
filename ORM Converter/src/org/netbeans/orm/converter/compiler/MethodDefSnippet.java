@@ -26,7 +26,7 @@ public class MethodDefSnippet implements Snippet {
 
     private String methodName = null;
 
-    private List<CallbackSnippet> callbacks = Collections.EMPTY_LIST;
+    private List<CallbackSnippet> callbacks = Collections.<CallbackSnippet>emptyList();
 
     public String getMethodName() {
         return methodName;
@@ -66,7 +66,7 @@ public class MethodDefSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (callbacks.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<String>emptyList();
         }
 
         ImportSet importSnippets = new ImportSet();

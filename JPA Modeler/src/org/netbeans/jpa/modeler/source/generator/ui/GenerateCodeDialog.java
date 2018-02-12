@@ -142,7 +142,8 @@ public class GenerateCodeDialog extends GenericDialog {
         populateProjectCombo(gatewayProjectCombo, gatewayProjectInfo);
         populatePackageCombo(gatewayProjectPackageCombo, gatewayProjectInfo);
         setEntityPackage(StringUtils.isNotBlank(entityMappings.getEntityPackage()) ? entityMappings.getEntityPackage() : "domain");
-        setTargetPackage(StringUtils.isNotBlank(entityMappings.getProjectPackage()) ? entityMappings.getProjectPackage() : "myapp");
+        setTargetPackage(StringUtils.isNotBlank(entityMappings.getProjectPackage()) ? entityMappings.getProjectPackage() : "");
+//      setGatewayPackage(StringUtils.isNotBlank(entityMappings.getGatewayPackage()) ? entityMappings.getGatewayPackage() : "");
         setMicroservice(entityMappings.getProjectType() == MICROSERVICE);
         this.pack();
     }
@@ -759,14 +760,25 @@ public class GenerateCodeDialog extends GenericDialog {
             DialogDisplayer.getDefault().notify(d);
             return true;
         }
-        if (!SourceVersion.isName(getTargetPackage())) {
+        
+        if ((isGateway() && !SourceVersion.isName(getGatewayPackage()))) {
+            NotifyDescriptor d = new NotifyDescriptor.Message(
+                    "Please select the Gateway Project Package.",
+                    NotifyDescriptor.INFORMATION_MESSAGE);
+            d.setTitle("Gateway Project Package");
+            DialogDisplayer.getDefault().notify(d);
+            gatewayProjectPackageCombo.requestFocus();
+            return true;
+        } else if (!SourceVersion.isName(getTargetPackage())) {
             NotifyDescriptor d = new NotifyDescriptor.Message(
                     "Please select the Project Package.",
                     NotifyDescriptor.INFORMATION_MESSAGE);
             d.setTitle("Project Package");
             DialogDisplayer.getDefault().notify(d);
+            targetProjectPackageCombo.requestFocus();
             return true;
         }
+        
         if (!SourceVersion.isName(getEntityPackage())) {
             NotifyDescriptor d = new NotifyDescriptor.Message(
                     "Please select the Entity Package.",

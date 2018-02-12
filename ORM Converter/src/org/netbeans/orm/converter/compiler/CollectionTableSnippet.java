@@ -16,10 +16,10 @@ public class CollectionTableSnippet implements Snippet {
     private String name = null;
     private String schema = null;
 
-    private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
+    private List<JoinColumnSnippet> joinColumns = Collections.<JoinColumnSnippet>emptyList();
 
-    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
-    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.<UniqueConstraintSnippet>emptyList();
+    private List<IndexSnippet> indices = Collections.<IndexSnippet>emptyList();
     private ForeignKeySnippet foreignKey;
 
     public String getCatalog() {

@@ -37,8 +37,8 @@ public class TableGeneratorSnippet implements Snippet {
     private String table = null;
     private String valueColumnName = null;
 
-    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
-    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.<UniqueConstraintSnippet>emptyList();
+    private List<IndexSnippet> indices = Collections.<IndexSnippet>emptyList();
 
     public int getAllocationSize() {
         return allocationSize;

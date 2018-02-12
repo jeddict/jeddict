@@ -28,20 +28,12 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class NamedQuerySnippet implements Snippet {
 
-//    protected String attributeType = null;
     protected String query = null;
     protected String name = null;
     private LockModeType lockMode;
 
-    protected List<QueryHintSnippet> queryHints = Collections.EMPTY_LIST;
+    protected List<QueryHintSnippet> queryHints = Collections.<QueryHintSnippet>emptyList();
 
-//    public String getAttributeType() {
-//        return attributeType;
-//    }
-//
-//    public void setAttributeType(String attributeType) {
-//        this.attributeType = attributeType;
-//    }
     public String getQuery() {
         return query;
     }

@@ -69,8 +69,9 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
     private List<WizardDescriptor.Panel<WizardDescriptor>> panels;
 
     private static IPersistenceModelGenerator createPersistenceGenerator() {
-        IPersistenceGeneratorProvider persistenceGeneratorProvider = (IPersistenceGeneratorProvider) Lookup.getDefault().lookup(IPersistenceGeneratorProvider.class);
-        return persistenceGeneratorProvider.createGenerator();
+        return Lookup.getDefault()
+                .lookup(IPersistenceGeneratorProvider.class)
+                .createGenerator();
     }
 
     static ImportHelper getHelper(WizardDescriptor wizardDescriptor) {

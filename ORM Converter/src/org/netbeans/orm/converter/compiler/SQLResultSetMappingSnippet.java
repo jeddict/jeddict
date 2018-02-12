@@ -27,9 +27,9 @@ public class SQLResultSetMappingSnippet implements Snippet {
 
     private String name = null;
 
-    private List<EntityResultSnippet> entityResults = Collections.EMPTY_LIST;
-    private List<ConstructorResultSnippet> constructorResults = Collections.EMPTY_LIST;
-    private List<ColumnResultSnippet> columnResults = Collections.EMPTY_LIST;
+    private List<EntityResultSnippet> entityResults = Collections.<EntityResultSnippet>emptyList();
+    private List<ConstructorResultSnippet> constructorResults = Collections.<ConstructorResultSnippet>emptyList();
+    private List<ColumnResultSnippet> columnResults = Collections.<ColumnResultSnippet>emptyList();
 
     public void addColumnResult(ColumnResultSnippet columnResult) {
 

@@ -27,10 +27,10 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class JoinColumnsSnippet implements Snippet {
 
-    private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
+    private List<JoinColumnSnippet> joinColumns = Collections.<JoinColumnSnippet>emptyList();
     private ForeignKeySnippet foreignKey;
     private boolean mapKey;
-    private boolean repeatable;
+    private final boolean repeatable;
     
     public JoinColumnsSnippet(boolean repeatable) {
         this.repeatable = repeatable;

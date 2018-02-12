@@ -29,7 +29,7 @@ public class EntityResultSnippet implements Snippet {
     private ClassHelper classHelper = new ClassHelper();
     private String discriminatorColumn = null;
 
-    private List<FieldResultSnippet> fieldResults = Collections.EMPTY_LIST;
+    private List<FieldResultSnippet> fieldResults = Collections.<FieldResultSnippet>emptyList();
 
     public void addFieldResult(FieldResultSnippet fieldResult) {
 

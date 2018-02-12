@@ -26,7 +26,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class AssociationOverrideSnippet implements Snippet {
 
     private String name = null;
-    private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
+    private List<JoinColumnSnippet> joinColumns = Collections.<JoinColumnSnippet>emptyList();
     private JoinTableSnippet joinTable;
     private ForeignKeySnippet foreignKey;
 

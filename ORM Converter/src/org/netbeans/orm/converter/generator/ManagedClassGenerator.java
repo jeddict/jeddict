@@ -604,14 +604,14 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
     }
     protected List<IndexSnippet> getIndexes(List<Index> parsedIndexes) {
         if (parsedIndexes == null || parsedIndexes.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<IndexSnippet>emptyList();
         }
         return parsedIndexes.stream().filter(index -> !index.getColumnList().isEmpty())
                 .map(index -> new IndexSnippet(index)).collect(toList());
     }
     protected List<UniqueConstraintSnippet> getUniqueConstraints(Set<UniqueConstraint> parsedUniqueConstraints) {
         if (parsedUniqueConstraints == null || parsedUniqueConstraints.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<UniqueConstraintSnippet>emptyList();
         }
         return parsedUniqueConstraints.stream().map(c -> new UniqueConstraintSnippet(c)).collect(toList());
     }    private MapKeySnippet updateMapKeyAttributeSnippet(MapKeyHandler mapKeyHandler) {
@@ -688,7 +688,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
     protected List<String> getCascadeTypes(CascadeType cascadeType) {
 
         if (cascadeType == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.<String>emptyList();
         }
 
         List<String> cascadeTypes = new ArrayList<>();

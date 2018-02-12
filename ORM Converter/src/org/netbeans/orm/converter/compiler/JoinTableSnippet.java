@@ -30,15 +30,15 @@ public class JoinTableSnippet implements Snippet {
     private String name = null;
     private String schema = null;
 
-    private List<JoinColumnSnippet> inverseJoinColumns = Collections.EMPTY_LIST;
-    private List<JoinColumnSnippet> joinColumns = Collections.EMPTY_LIST;
+    private List<JoinColumnSnippet> inverseJoinColumns = Collections.<JoinColumnSnippet>emptyList();
+    private List<JoinColumnSnippet> joinColumns = Collections.<JoinColumnSnippet>emptyList();
     
     private ForeignKeySnippet foreignKey;
     private ForeignKeySnippet inverseForeignKey;
     
 
-    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
-    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.<UniqueConstraintSnippet>emptyList();
+    private List<IndexSnippet> indices = Collections.<IndexSnippet>emptyList();
 
     public String getCatalog() {
         return catalog;

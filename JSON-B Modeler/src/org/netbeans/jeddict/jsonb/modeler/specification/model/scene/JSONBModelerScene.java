@@ -74,14 +74,10 @@ public class JSONBModelerScene extends DefaultPModelerScene<JSONBMapping> {
                     }
 
                     for (BranchNodeWidget branchNodeWidget : new CopyOnWriteArrayList<>(documentWidget.getBranchNodeWidgets())) {
-                        branchNodeWidget.getReferenceFlowWidget().stream().forEach(w -> {
-                            ((ReferenceFlowWidget) w).remove();
-                        });
+                        branchNodeWidget.getReferenceFlowWidget().forEach(ReferenceFlowWidget::remove);
                     }
                     for (LeafNodeWidget leafNodeWidget : new CopyOnWriteArrayList<>(documentWidget.getLeafNodeWidgets())) {
-                        leafNodeWidget.getReferenceFlowWidget().stream().forEach(w -> {
-                            ((ReferenceFlowWidget) w).remove();
-                        });
+                        leafNodeWidget.getReferenceFlowWidget().forEach(ReferenceFlowWidget::remove);
                     }
 
                     documentWidget.setLocked(false);

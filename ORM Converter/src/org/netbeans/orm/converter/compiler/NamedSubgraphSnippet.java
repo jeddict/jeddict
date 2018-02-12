@@ -30,7 +30,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
  */
 public class NamedSubgraphSnippet implements Snippet {
 
-    private List<NamedAttributeNodeSnippet> namedAttributeNodes = Collections.EMPTY_LIST;
+    private List<NamedAttributeNodeSnippet> namedAttributeNodes = Collections.<NamedAttributeNodeSnippet>emptyList();
     private String name;
     private ClassHelper classHelper = new ClassHelper();
 

@@ -46,7 +46,7 @@ public class ExceptionReporterPanel extends GenericDialog {
     private final Throwable throwable;
 
     public ExceptionReporterPanel(String bugDescription, Throwable throwable, String content) {
-        super((Frame) WindowManager.getDefault().getMainWindow(), getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.title"),true);
+        super(WindowManager.getDefault().getMainWindow(), getMessage(ExceptionReporterPanel.class, "ExceptionReporterPanel.title"),true);
         this.content = content;
         this.throwable = throwable;
         this.bugDescription = bugDescription;

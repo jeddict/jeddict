@@ -30,11 +30,9 @@ public class SecondaryTableSnippet implements Snippet {
     private String schema = null;
     private ForeignKeySnippet foreignKey;
 
-    private List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns
-            = Collections.EMPTY_LIST;
-
-    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
-    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
+    private List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = Collections.<PrimaryKeyJoinColumnSnippet>emptyList();
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.<UniqueConstraintSnippet>emptyList();
+    private List<IndexSnippet> indices = Collections.<IndexSnippet>emptyList();
 
     public String getName() {
         return name;
@@ -160,7 +158,7 @@ public class SecondaryTableSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (name == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.<String>emptyList();
         }
 
         ImportSet importSnippets = new ImportSet();

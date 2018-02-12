@@ -23,7 +23,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jcode.console.Console;
 import static org.netbeans.jcode.console.Console.BOLD;
-import static org.netbeans.jcode.console.Console.FG_RED;
+import static org.netbeans.jcode.console.Console.FG_DARK_RED;
 import org.netbeans.jcode.core.util.JavaSourceHelper;
 import org.netbeans.jcode.task.ITaskSupervisor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
@@ -61,7 +61,7 @@ public class StaticModelModuleGeneratorImpl implements ModuleGenerator {
         if(!JavaSourceHelper.isValidPackageName(packageName)){
             this.packageName = entityPackageName;
         }
-        task.log(Console.wrap("Generating StaticModel Class : " , FG_RED, BOLD), true);
+        task.log(Console.wrap("Generating StaticModel Class : " , FG_DARK_RED, BOLD), true);
         try {
             for (JavaClass javaClass : entityMappings.getJavaClass()) {
                     generateStaticMetamodel((ManagedClass) javaClass);

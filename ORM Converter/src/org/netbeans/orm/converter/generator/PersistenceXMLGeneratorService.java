@@ -42,8 +42,7 @@ public class PersistenceXMLGeneratorService implements ModuleGenerator {
     private void generatePersistenceXML(Project project, SourceGroup sourceGroup) {
         List<ClassDefSnippet> classDefs = getPUXMLEntries();
         //Generate persistence.xml
-        PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(classDefs);
-        persistenceXMLGenerator.setPUName(entityMappings.getPersistenceUnitName());
+        PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(entityMappings, classDefs);
         persistenceXMLGenerator.generatePersistenceXML(project, sourceGroup);
     }
 

@@ -85,7 +85,7 @@ public class JPAMTableDefinition extends TableDefinition {
     public void buildDBTable(AbstractSession session, DBMapping dbMapping) throws ValidationException {
 
         DBTable dBTable;
-        Entity entity = (Entity) intrinsicEntity.get(0);
+        Entity entity = intrinsicEntity.get(0);
         Table table;
         if (attribute instanceof RelationAttribute) {
             dBTable = new DBRelationTable(getFullName(), entity, (RelationAttribute) attribute);//Todo pass managedClass

@@ -252,7 +252,7 @@ public class JSONBModelerUtil implements IModelerUtil<JSONBModelerScene> {
             DocumentWidget sourceDocumentWidget, 
             BranchNodeWidget branchNodeWidget) {
 //       JSONBBranchNode => Source  &&  DocumentWidget => Target
-        JSONBBranchNode sourceNode = (JSONBBranchNode) branchNodeWidget.getBaseElementSpec();
+        JSONBBranchNode sourceNode = branchNodeWidget.getBaseElementSpec();
         DocumentWidget targetDocumentWidget = (DocumentWidget) scene.getBaseElement(sourceNode.getDocumentReference().getJavaClass().getId());
 
         EdgeWidgetInfo edgeInfo = new EdgeWidgetInfo(edgeWidgetFunction);

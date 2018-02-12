@@ -32,12 +32,12 @@ public class NamedStoredProcedureQuerySnippet implements Snippet {
 
     private String name = null;
     private String procedureName = null;
-    private List<QueryHintSnippet> queryHints = Collections.EMPTY_LIST;
+    private List<QueryHintSnippet> queryHints = Collections.<QueryHintSnippet>emptyList();
 
-    private List<ClassHelper> resultClasses = Collections.EMPTY_LIST;
-    private List<String> resultSetMappings = Collections.EMPTY_LIST;
+    private List<ClassHelper> resultClasses = Collections.<ClassHelper>emptyList();
+    private List<String> resultSetMappings = Collections.<String>emptyList();
 
-    private List<StoredProcedureParameterSnippet> parameters = Collections.EMPTY_LIST;
+    private List<StoredProcedureParameterSnippet> parameters = Collections.<StoredProcedureParameterSnippet>emptyList();
 
     @Override
     public String getSnippet() throws InvalidDataException {

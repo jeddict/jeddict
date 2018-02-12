@@ -29,8 +29,8 @@ public class TableDefSnippet implements Snippet {
     private String name = null;
     private String schema = null;
 
-    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.EMPTY_LIST;
-    private List<IndexSnippet> indices = Collections.EMPTY_LIST;
+    private List<UniqueConstraintSnippet> uniqueConstraints = Collections.<UniqueConstraintSnippet>emptyList();
+    private List<IndexSnippet> indices = Collections.<IndexSnippet>emptyList();
 
     public String getCatalog() {
         return catalog;

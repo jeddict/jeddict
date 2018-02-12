@@ -195,7 +195,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
     protected List<StoredProcedureParameterSnippet> getStoredProcedureParameters(List<StoredProcedureParameter> parsedStoredProcedureParameters) {
 
         if (parsedStoredProcedureParameters == null || parsedStoredProcedureParameters.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<StoredProcedureParameterSnippet>emptyList();
         }
 
         List<StoredProcedureParameterSnippet> storedProcedureParameters = new ArrayList<>();
@@ -273,7 +273,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
     protected List<EntityResultSnippet> getEntityResults(List<EntityResult> parsedEntityResults) {
 
         if (parsedEntityResults == null || parsedEntityResults.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<EntityResultSnippet>emptyList();
         }
 
         List<EntityResultSnippet> entityResults = new ArrayList<>();
@@ -297,7 +297,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<FieldResult> parsedFieldResults) {
 
         if (parsedFieldResults == null || parsedFieldResults.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<FieldResultSnippet>emptyList();
         }
 
         List<FieldResultSnippet> fieldResults = new ArrayList<>();
@@ -319,7 +319,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<PrimaryKeyJoinColumn> parsedPrimaryKeyJoinColumns) {
 
         if (parsedPrimaryKeyJoinColumns == null || parsedPrimaryKeyJoinColumns.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<PrimaryKeyJoinColumnSnippet>emptyList();
         }
 
         List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = new ArrayList<>();
@@ -340,7 +340,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<NamedAttributeNode> parsedNamedAttributeNodes) {
 
         if (parsedNamedAttributeNodes == null || parsedNamedAttributeNodes.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<NamedAttributeNodeSnippet>emptyList();
         }
 
         List<NamedAttributeNodeSnippet> namedAttributeNodes = new ArrayList<>();
@@ -358,7 +358,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<NamedSubgraph> parsedNamedSubgraphs) {
 
         if (parsedNamedSubgraphs == null || parsedNamedSubgraphs.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<NamedSubgraphSnippet>emptyList();
         }
 
         List<NamedSubgraphSnippet> namedSubgraphs = new ArrayList<>();
@@ -376,7 +376,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<QueryHint> parsedQueryHints) {
 
         if (parsedQueryHints == null || parsedQueryHints.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<QueryHintSnippet>emptyList();
         }
 
         List<QueryHintSnippet> queryHints = new ArrayList<>();
@@ -774,7 +774,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<ColumnResult> parsedColumnResults) {
 
         if (parsedColumnResults == null || parsedColumnResults.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<ColumnResultSnippet>emptyList();
         }
 
         List<ColumnResultSnippet> columnResults = new ArrayList<>();
@@ -794,7 +794,7 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
             List<ConstructorResult> parsedConstructorResults) {
 
         if (parsedConstructorResults == null || parsedConstructorResults.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<ConstructorResultSnippet>emptyList();
         }
 
         List<ConstructorResultSnippet> constructorResults = new ArrayList<>();

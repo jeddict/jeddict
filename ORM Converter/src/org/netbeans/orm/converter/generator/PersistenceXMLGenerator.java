@@ -1,5 +1,5 @@
 /**
- * Copyright [2014] Gaurav Gupta
+ * Copyright [2014-2018] Gaurav Gupta
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,54 +23,46 @@ import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
+import org.netbeans.jcode.jpa.PersistenceProviderType;
 import static org.netbeans.jcode.jpa.util.PersistenceHelper.JTA_VALUE;
 import static org.netbeans.jcode.jpa.util.PersistenceHelper.RESOURCE_LOCAL_VALUE;
+import org.netbeans.jpa.modeler.spec.EntityMappings;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.dd.common.Properties;
 import org.netbeans.modules.j2ee.persistence.dd.common.Property;
+import static org.netbeans.modules.j2ee.persistence.provider.Provider.TABLE_GENERATION_CREATE;
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
-import org.netbeans.orm.converter.compiler.PersistenceXMLUnitSnippet;
 import org.netbeans.orm.converter.compiler.def.ClassDefSnippet;
 import org.netbeans.orm.converter.util.ORMConvLogger;
 
 public class PersistenceXMLGenerator {
 
-    private static Logger logger = ORMConvLogger.getLogger(
-            PersistenceXMLGenerator.class);
+    private static final Logger LOGGER = ORMConvLogger.getLogger(PersistenceXMLGenerator.class);
 
-    private String puName = null;
+    private final String puName;
+    
+    private final String puProvider;
+  
+    private final Collection<ClassDefSnippet> classDefs;
 
-    private Collection<ClassDefSnippet> classDefs = null;
-
-    public PersistenceXMLGenerator(Collection<ClassDefSnippet> classDefs) {
+    public PersistenceXMLGenerator(EntityMappings entityMappings, Collection<ClassDefSnippet> classDefs) {
         this.classDefs = classDefs;
-    }
-
-    public String getPUName() {
-        return puName;
-    }
-
-    public void setPUName(String puName) {
-        this.puName = puName;
+        this.puName = entityMappings.getPersistenceUnitName();
+        this.puProvider = entityMappings.getPersistenceProviderType()!=null?entityMappings.getPersistenceProviderType().getProviderClass():PersistenceProviderType.ECLIPSELINK.getProviderClass();
     }
 
     //Reference : org.netbeans.modules.j2ee.persistence.wizard.unit.PersistenceUnitWizard.instantiateWProgress
     public void generatePersistenceXML(Project project, SourceGroup sourceGroup) {
-        
-        if(StringUtils.isEmpty(puName)){
+        if (StringUtils.isEmpty(puName)) {
             return;
         }
 
         List<String> classNames = classDefs.stream()
                 .map(classDef -> classDef.getClassHelper().getFQClassName())
                 .collect(toList());
-
-        PersistenceXMLUnitSnippet persistenceXMLUnit = new PersistenceXMLUnitSnippet();
-        persistenceXMLUnit.setName(puName);
-        persistenceXMLUnit.setClassNames(classNames);
 
         try {
             // Issue Fix #5915 Start
@@ -81,7 +73,7 @@ public class PersistenceXMLGenerator {
             PersistenceUnit punit = null;
             if (pud.getPersistence().sizePersistenceUnit() != 0) {
                 for (PersistenceUnit persistenceUnit_In : pud.getPersistence().getPersistenceUnit()) {
-                    if (persistenceUnit_In.getName().equalsIgnoreCase(persistenceXMLUnit.getName())) {
+                    if (persistenceUnit_In.getName().equalsIgnoreCase(puName)) {
                         punit = persistenceUnit_In;
                         existFile = true;
                         break;
@@ -96,14 +88,21 @@ public class PersistenceXMLGenerator {
                 } else {//currently default 1.0
                     punit = (PersistenceUnit) new org.netbeans.modules.j2ee.persistence.dd.persistence.model_1_0.PersistenceUnit();
                 }
-                if (Util.isContainerManaged(project)) {
+                Properties properties = punit.newProperties();
+                punit.setProperties(properties);
+
+                if (!Util.isJavaSE(project)) {// if (Util.isContainerManaged(project)) {
                     punit.setTransactionType(JTA_VALUE);
+                    punit.setExcludeUnlistedClasses(false);
+
+                    Property property = properties.newProperty();
+                    property.setName("javax.persistence.schema-generation.database.action");
+                    property.setValue("drop-and-create");
+                    properties.addProperty2(property);
 //                    punit.setJtaDataSource("jdbc/sample"); // custom gui will be added in future release for DataSource , JTA
                 } else {
                     punit.setTransactionType(RESOURCE_LOCAL_VALUE);
-                    Properties properties = punit.newProperties();
-                    punit.setProperties(properties);
-                    // custom gui will be added in future release for DataSource , JTA
+
                     Property property = properties.newProperty();
                     property.setName("javax.persistence.jdbc.url");
                     property.setValue("jdbc:derby://localhost:1527/sample");
@@ -123,27 +122,20 @@ public class PersistenceXMLGenerator {
                     property.setName("javax.persistence.jdbc.user");
                     property.setValue("app");
                     properties.addProperty2(property);
-
                 }
 
-                // Explicitly add <exclude-unlisted-classes>false</exclude-unlisted-classes>
-                // See issue 142575 - desc 10, and issue 180810
-                if (!Util.isJavaSE(project)) {
-                    punit.setExcludeUnlistedClasses(false);
-                }
-
-                punit.setName(persistenceXMLUnit.getName());
-                punit.setProvider("org.eclipse.persistence.jpa.PersistenceProvider");// custom gui will be added in future release
-                ProviderUtil.setTableGeneration(punit, org.netbeans.modules.j2ee.persistence.provider.Provider.TABLE_GENERATION_CREATE, project);
+                punit.setName(puName);
+                punit.setProvider(puProvider);
+                ProviderUtil.setTableGeneration(punit, TABLE_GENERATION_CREATE, project);
                 pud.addPersistenceUnit(punit);
 
             }
-            for (String entityClass : persistenceXMLUnit.getClassNames()) { // run for both exist & non-exist-persistence
+            for (String entityClass : classNames) { // run for both exist & non-exist-persistence
                 pud.addClass(punit, entityClass, false);
             }
             pud.save();
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, "compiler_error", ex);
+            LOGGER.log(Level.SEVERE, "compiler_error", ex);
         }
     }
 

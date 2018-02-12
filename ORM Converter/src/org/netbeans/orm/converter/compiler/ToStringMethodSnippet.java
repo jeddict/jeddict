@@ -25,8 +25,8 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.SINGLE_QUOTE;
 
 public class ToStringMethodSnippet implements Snippet {
 
-    private String className;
-    private List<String> attributes = Collections.EMPTY_LIST;
+    private final String className;
+    private List<String> attributes = Collections.<String>emptyList();
 
     public ToStringMethodSnippet(String className) {
         this.className = className;
@@ -53,7 +53,7 @@ public class ToStringMethodSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.EMPTY_LIST;
+        return Collections.<String>emptyList();
     }
 
     /**

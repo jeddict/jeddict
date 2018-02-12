@@ -22,8 +22,8 @@ import org.apache.commons.io.IOUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.jcode.console.Console;
-import static org.netbeans.jcode.console.Console.FG_MAGENTA;
-import org.netbeans.jcode.generator.JEEApplicationGenerator;
+import static org.netbeans.jcode.console.Console.*;
+import org.netbeans.jcode.generator.internal.ApplicationGenerator;
 import org.netbeans.jcode.stack.config.data.ApplicationConfigData;
 import org.netbeans.jcode.task.AbstractNBTask;
 import org.netbeans.jcode.task.progress.ProgressConsoleHandler;
@@ -116,12 +116,13 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         InputDefinition definiton = new ORMInputDefiniton();
         definiton.setModelerFile(modelerFile);
         EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
-        JEEApplicationGenerator applicationGenerator = null;
+        ApplicationGenerator applicationGenerator = null;
         
         entityMappings.cleanRuntimeArtifact();
         appConfigData.setEntityMappings(entityMappings);
         if (appConfigData.getBussinesTechContext()!= null) {
-            applicationGenerator = new JEEApplicationGenerator(appConfigData, handler);
+            applicationGenerator = new ApplicationGenerator();
+            applicationGenerator.initialize(appConfigData, handler);
             applicationGenerator.preGeneration();
         }
         
@@ -132,8 +133,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
                     definiton);
         }
         if (appConfigData.isGateway()) {
-            PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(Collections.emptyList());
-            persistenceXMLGenerator.setPUName(appConfigData.getEntityMappings().getPersistenceUnitName());
+            PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(appConfigData.getEntityMappings(), Collections.emptyList());
             persistenceXMLGenerator.generatePersistenceXML(appConfigData.getGatewayProject(), appConfigData.getGatewaySourceGroup());
         }
         

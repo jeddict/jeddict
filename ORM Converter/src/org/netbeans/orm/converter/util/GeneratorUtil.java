@@ -26,7 +26,7 @@ public class GeneratorUtil {
 
     public static List<EntityListenerSnippet> processEntityListeners(Set<ReferenceClass> parsedEntityListeners, String packageName) {
         if (parsedEntityListeners == null || parsedEntityListeners.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<EntityListenerSnippet>emptyList();
         }
 
         List<EntityListenerSnippet> entityListeners = new ArrayList<>();

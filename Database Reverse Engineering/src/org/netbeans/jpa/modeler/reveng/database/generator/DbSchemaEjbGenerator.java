@@ -660,13 +660,12 @@ public class DbSchemaEjbGenerator {
         for (ForeignKeyElement key : fkeys) {
             ComparableFK fkc = new ComparableFK(key);
             if (ret.get(fkc) != null) {//we already have the same key
-                LOGGER.log(Level.INFO, key.getName().getFullName() + " key in " + key.getDeclaringTable().getName().getFullName() + " is considered as a duplicate, you may need to verify your schema or database structure.");//NOI18N
-                continue;
+                LOGGER.log(Level.INFO, "{0} key in {1} is considered as a duplicate, you may need to verify your schema or database structure.", new Object[]{key.getName().getFullName(), key.getDeclaringTable().getName().getFullName()});//NOI18N
             } else {
                 ret.put(fkc, key);
             }
         }
-        return (ForeignKeyElement[]) ret.values().toArray(new ForeignKeyElement[]{});
+        return ret.values().toArray(new ForeignKeyElement[]{});
     }
 
     /**

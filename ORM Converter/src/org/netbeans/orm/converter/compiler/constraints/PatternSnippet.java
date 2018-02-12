@@ -35,7 +35,7 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.OPEN_BRACES;
  */
 public class PatternSnippet extends ConstraintSnippet<Pattern> {
 
-    private List<Flag> flags = Collections.EMPTY_LIST;
+    private List<Flag> flags = Collections.<Flag>emptyList();
 
     public PatternSnippet(Pattern pattern) {
         super(pattern);

@@ -62,7 +62,6 @@ public class JeddictLogger {
                     context.getTechnology().type().getDisplayLabel(),
                     context.getTechnology().label());
             context.getPanel().getConfigData().getUsageDetails()
-                    .stream()
                     .forEach(data -> logEvent(GENERATE_CATEGORY,
                     context.getTechnology().type().getDisplayLabel(), (String) data));
             context.getSiblingTechContext()

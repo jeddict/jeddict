@@ -25,7 +25,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class PrimaryKeyJoinColumnsSnippet implements Snippet {
 
-    private List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = Collections.EMPTY_LIST;
+    private List<PrimaryKeyJoinColumnSnippet> primaryKeyJoinColumns = Collections.<PrimaryKeyJoinColumnSnippet>emptyList();
     private ForeignKeySnippet foreignKey;
     private boolean repeatable;
 

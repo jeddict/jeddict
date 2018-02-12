@@ -32,7 +32,7 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.SPACE;
 
 public class OrderBySnippet implements Snippet {
 
-    private List<OrderbyItem> orderList = Collections.EMPTY_LIST;
+    private List<OrderbyItem> orderList = Collections.<OrderbyItem>emptyList();
 
     public OrderBySnippet(OrderBy orderBy) {
         orderList = orderBy.getAttributes();

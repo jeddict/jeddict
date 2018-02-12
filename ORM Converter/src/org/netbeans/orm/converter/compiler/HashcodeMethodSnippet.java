@@ -97,7 +97,7 @@ public class HashcodeMethodSnippet implements Snippet {
         if(hashcodeMethodSnippet == null){
             hashcodeMethodSnippet = getHashcodeMethodSnippet();
         }
-        return objectsImport ? Collections.singletonList("java.util.Objects") : Collections.EMPTY_LIST;
+        return objectsImport ? Collections.singletonList("java.util.Objects") : Collections.<String>emptyList();
     }
 
     /**

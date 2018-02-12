@@ -25,7 +25,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 
 public class EntityListenersSnippet implements Snippet {
 
-    private List<EntityListenerSnippet> entityListeners = Collections.EMPTY_LIST;
+    private List<EntityListenerSnippet> entityListeners = Collections.<EntityListenerSnippet>emptyList();
 
     @Override
     public String getSnippet() throws InvalidDataException {
@@ -50,7 +50,7 @@ public class EntityListenersSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (entityListeners.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<String>emptyList();
         }
 
         List<String> importSnippets = new ArrayList<>();

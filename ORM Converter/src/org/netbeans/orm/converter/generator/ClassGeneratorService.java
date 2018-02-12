@@ -24,7 +24,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.jcode.console.Console;
 import static org.netbeans.jcode.console.Console.BOLD;
-import static org.netbeans.jcode.console.Console.FG_RED;
+import static org.netbeans.jcode.console.Console.FG_DARK_RED;
 import org.netbeans.jcode.task.ITaskSupervisor;
 import org.netbeans.jpa.modeler.collaborate.issues.ExceptionUtils;
 import org.netbeans.jpa.modeler.spec.DefaultClass;
@@ -76,7 +76,7 @@ public class ClassGeneratorService implements ModuleGenerator {
                 .filter(e -> e.getGenerateSourceCode())
                 .collect(toList());
         if(!parsedBeanClasses.isEmpty()){
-            task.log(Console.wrap("Generating Class : " , FG_RED, BOLD), true);
+            task.log(Console.wrap("Generating Class : " , FG_DARK_RED, BOLD), true);
         }
         for (BeanClass parsedBeanClasse : parsedBeanClasses) {
             task.log(parsedBeanClasse.getClazz(), true);
@@ -93,7 +93,7 @@ public class ClassGeneratorService implements ModuleGenerator {
                 .filter(e -> e.getGenerateSourceCode())
                 .collect(toList());
         if(!parsedDefaultClasses.isEmpty()){
-            task.log(Console.wrap("Generating IdClass/PrimaryKey Class : " , FG_RED, BOLD), true);
+            task.log(Console.wrap("Generating IdClass/PrimaryKey Class : " , FG_DARK_RED, BOLD), true);
         }
         for (DefaultClass parsedDefaultClasse : parsedDefaultClasses) {
             task.log(parsedDefaultClasse.getClazz(), true);
@@ -111,7 +111,7 @@ public class ClassGeneratorService implements ModuleGenerator {
                 .filter(e -> e.getGenerateSourceCode())
                 .collect(toList());
         if(!parsedEmbeddables.isEmpty()){
-            task.log(Console.wrap("Generating Embeddable Class : " , FG_RED, BOLD), true);
+            task.log(Console.wrap("Generating Embeddable Class : " , FG_DARK_RED, BOLD), true);
         }
         for (Embeddable parsedEmbeddable : parsedEmbeddables) {
             task.log(parsedEmbeddable.getClazz(), true);
@@ -129,7 +129,7 @@ public class ClassGeneratorService implements ModuleGenerator {
                 .filter(e -> e.getGenerateSourceCode())
                 .collect(toList());
         if(!parsedEntities.isEmpty()){
-            task.log(Console.wrap("Generating Entity Class : " , FG_RED, BOLD), true);
+            task.log(Console.wrap("Generating Entity Class : " , FG_DARK_RED, BOLD), true);
         }
         for (Entity parsedEntity : parsedEntities) {
             task.log(parsedEntity.getClazz(), true);
@@ -147,7 +147,7 @@ public class ClassGeneratorService implements ModuleGenerator {
                 .filter(e -> e.getGenerateSourceCode())
                 .collect(toList());
         if(!parsedMappedSuperclasses.isEmpty()){
-        task.log(Console.wrap("Generating MappedSuperclass Class : " , FG_RED, BOLD), true);
+        task.log(Console.wrap("Generating MappedSuperclass Class : " , FG_DARK_RED, BOLD), true);
         }
         for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
             task.log(parsedMappedSuperclass.getClazz(), true);

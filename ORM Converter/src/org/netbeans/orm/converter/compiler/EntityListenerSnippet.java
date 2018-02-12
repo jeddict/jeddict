@@ -71,7 +71,7 @@ public class EntityListenerSnippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (classHelper.getPackageName() == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.<String>emptyList();
         }
 
         return Collections.singletonList(classHelper.getFQClassName());

@@ -29,7 +29,7 @@ public abstract class AbstractRelationDefSnippet implements RelationDefSnippet {
     private String targetEntityPackage;
     private String targetField;
 
-    private List<String> cascadeTypes = Collections.EMPTY_LIST;
+    private List<String> cascadeTypes = Collections.<String>emptyList();
 
     @Override
     public List<String> getCascadeTypes() {

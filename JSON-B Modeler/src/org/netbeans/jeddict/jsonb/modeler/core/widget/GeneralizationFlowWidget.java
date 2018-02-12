@@ -107,7 +107,7 @@ public class GeneralizationFlowWidget extends AbstractEdgeWidget<JSONBModelerSce
     public PinWidgetInfo getSourcePinWidget(INodeWidget sourceNodeWidget, INodeWidget targetNodeWidget, IPinWidget sourceAttributeWidget) {
         DocumentWidget sourceDocumentWidget = (DocumentWidget) sourceNodeWidget;
         DocumentWidget targetDocumentWidget = (DocumentWidget) targetNodeWidget;
-        GeneralizationFlowWidget generalizationFlowWidget = (GeneralizationFlowWidget) this;
+        GeneralizationFlowWidget generalizationFlowWidget = this;
         generalizationFlowWidget.setSubclassWidget(sourceDocumentWidget);
         generalizationFlowWidget.setSuperclassWidget(targetDocumentWidget);
         return sourceDocumentWidget.getInternalPinWidgetInfo();

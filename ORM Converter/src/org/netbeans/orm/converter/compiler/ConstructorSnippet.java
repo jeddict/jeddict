@@ -102,7 +102,7 @@ public class ConstructorSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.EMPTY_LIST;
+        return Collections.<String>emptyList();
     }
 
     /**

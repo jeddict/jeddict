@@ -106,10 +106,9 @@ final class JPAModelSetupPanel implements WizardDescriptor.Panel, WizardDescript
 
     @Override
     public void storeSettings(Object settings) {
-        WizardDescriptor d = (WizardDescriptor) settings;
-        component.store(d);
-
-        ((WizardDescriptor) d).putProperty("NewProjectWizard_Title", null); // NOI18N
+        WizardDescriptor wizardDescriptor = (WizardDescriptor) settings;
+        component.store(wizardDescriptor);
+         wizardDescriptor.putProperty("NewProjectWizard_Title", null); // NOI18N
     }
 
     protected final void fireChangeEvent(ChangeEvent ev) {

@@ -27,7 +27,7 @@ import static org.netbeans.orm.converter.util.ORMConverterUtil.TAB;
 
 public abstract class SnippetContainer<T extends Snippet> implements Snippet {
 
-    private List<T> snippets = Collections.EMPTY_LIST;
+    private List<T> snippets = Collections.<T>emptyList();
    
     private final boolean repeatable;
 
@@ -71,7 +71,7 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         if (snippets.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.<String>emptyList();
         }
         if (snippets.size() == 1) {
             return snippets.get(0).getImportSnippets();

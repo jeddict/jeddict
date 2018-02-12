@@ -27,7 +27,7 @@ import org.netbeans.orm.converter.util.ORMConverterUtil;
 public class ConstructorResultSnippet implements Snippet {
 
     private ClassHelper classHelper = new ClassHelper();
-    private List<ColumnResultSnippet> columnResults = Collections.EMPTY_LIST;
+    private List<ColumnResultSnippet> columnResults = Collections.<ColumnResultSnippet>emptyList();
 
     public void addColumnResult(ColumnResultSnippet columnResult) {
 
