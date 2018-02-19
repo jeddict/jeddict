@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: io.github.jeddict.db.viewer
+OpenIDE-Module-Layer: io/github/jeddict/db/viewer/layer.xml
+OpenIDE-Module-Localizing-Bundle: io/github/jeddict/db/viewer/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

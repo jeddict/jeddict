@@ -1,0 +1,63 @@
+/**
+ * Copyright [2018] Gaurav Gupta
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.jeddict.db.viewer.initializer;
+
+import org.netbeans.api.db.explorer.node.BaseNode;
+import static org.netbeans.db.modeler.initializer.DBModelerUtil.TAB_ICON;
+import org.netbeans.db.modeler.event.ShortcutListener;
+import io.github.jeddict.analytics.JeddictLogger;
+import org.netbeans.jpa.modeler.widget.connection.relation.RelationValidator;
+import org.netbeans.modeler.core.ModelerFile;
+import org.netbeans.modeler.specification.annotaton.ModelerConfig;
+import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
+import org.netbeans.modules.db.explorer.DatabaseConnection;
+import org.netbeans.modules.db.metadata.model.api.Schema;
+import org.openide.nodes.Node;
+
+@ModelerConfig(palette = "io/github/jeddict/db/viewer/resource/document/PaletteConfig.xml",
+        document = "io/github/jeddict/db/viewer/resource/document/DocumentConfig.xml",
+        element = "io/github/jeddict/db/viewer/resource/document/ElementConfig.xml")
+@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "NATIVE_DB", name = "Native DB Viewer",
+        modelerUtil = DBViewerUtil.class, modelerScene = DBViewerScene.class,
+        relationValidator = RelationValidator.class, modelerDiagramEngine = DBDiagramEngine.class,
+        version = "4.7", architectureVersion = "1.0")
+public class DBViewerActionListener extends ModelerFileActionListener {
+
+    private Schema schema;
+    private BaseNode node;
+
+    @Override
+    public void initSpecification(final ModelerFile modelerFile) {
+        modelerFile.getAttributes().put(Node.class.getSimpleName(), node);
+        modelerFile.getAttributes().put(Schema.class.getSimpleName(), schema);
+        modelerFile.getModelerPanelTopComponent().addKeyListener(new ShortcutListener(modelerFile));
+        JeddictLogger.openModelerFile("NATIVE_DB");
+    }
+
+    public void init(BaseNode node, Schema schema) {
+        this.node = node;
+        this.schema = schema;
+        context = null;
+        DatabaseConnection connection = node.getLookup().lookup(DatabaseConnection.class);
+        String id = connection.getDatabase() + "/" + connection.getSchema();
+
+        ModelerFile file = new ModelerFile();
+        file.setName(id);
+        file.setIcon(TAB_ICON);
+        openModelerFile(id, id, connection.getName(), file, null);
+    }
+
+}
