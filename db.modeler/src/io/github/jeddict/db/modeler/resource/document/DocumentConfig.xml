@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<document-config>
+    <documents>
+        <document id="Table" widget="io.github.jeddict.db.modeler.widget.TableWidget" specification="io.github.jeddict.db.modeler.spec.DBTable" >
+            <container-document>io/github/jeddict/relation/mapper/resource/image/TABLE.gif</container-document>
+        </document>
+    </documents>
+</document-config>

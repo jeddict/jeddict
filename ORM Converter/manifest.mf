@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-AutoUpdate-Show-In-Client: true
-OpenIDE-Module: org.netbeans.orm.converter
-OpenIDE-Module-Localizing-Bundle: org/netbeans/orm/converter/Bundle.properties
-OpenIDE-Module-Specification-Version: 4.7

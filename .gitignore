@@ -1,33 +1,20 @@
-/Database Reverse Engineering/build/
-/JPA Classes Reverse Engineering/build/
-/JPA Specification/build/
-/ORM Converter/build/
-/Jeddict/build/
-/Database Reverse Engineering/nbproject/private/
-/JPA Classes Reverse Engineering/nbproject/private/
-/JPA Specification/nbproject/private/
-/ORM Converter/nbproject/private/
-/Jeddict/nbproject/private/
 /build/
 /nbproject/private/
-/DBViewer/nbproject/private/
-/DBModeler/build/
-/DBModeler/nbproject/private/
-/JPA-RI/build/
-/JPA-RI/nbproject/private
-/JPA RI/nbproject/private/
-/DB Modeler/nbproject/private/
-/DB Modeler/build/
-/JPA RI/build/
-/Collaboration/build/
-/Installer/nbproject/private/
-/Installer/build/
-/Jeddict Libraries/build/
-/Jeddict Libraries/nbproject/private/
-/dist/
-/Collaboration/nbproject/private/
-/JSON-B Modeler/nbproject/private/
-/JSON-B Modeler/build/
-/JPA Modeler Libraries/nbproject/private/
-/JPA Modeler/build/
-/JPA Modeler Libraries/build/
+/installer/nbproject/private/
+/libs/nbproject/private/
+/relation.mapper/nbproject/private/
+/reveng/nbproject/private/
+/jpa.modeler/nbproject/private/
+/jsonb.modeler/nbproject/private/
+/orm.generator/nbproject/private/
+/collaboration/nbproject/private/
+/db.modeler/nbproject/private/
+/installer/build/
+/libs/build/
+/relation.mapper/build/
+/reveng/build/
+/jpa.modeler/build/
+/jsonb.modeler/build/
+/orm.generator/build/
+/collaboration/build/
+/db.modeler/build/

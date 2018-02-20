@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<document-config>
-    <documents>
-        <document id="DocumentWidget" widget="org.netbeans.jeddict.jsonb.modeler.core.widget.DocumentWidget" specification="org.netbeans.jeddict.jsonb.modeler.spec.JSONBDocument" >
-            <container-document>org/netbeans/jeddict/jsonb/modeler/resource/image/DOCUMENT.png</container-document>
-        </document>
-    </documents>
-</document-config>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<document-config>
+    <documents>
+        <document id="BaseTable" widget="io.github.jeddict.relation.mapper.widget.table.BaseTableWidget" specification="io.github.jeddict.relation.mapper.spec.DBBaseTable" >
+            <container-document>io/github/jeddict/relation/mapper/resource/image/TABLE.gif</container-document>
+        </document>
+        <document id="SecondaryTable" widget="io.github.jeddict.relation.mapper.widget.table.SecondaryTableWidget" specification="io.github.jeddict.relation.mapper.spec.DBSecondaryTable" >
+            <container-document>io/github/jeddict/relation/mapper/resource/image/SECONDARY_TABLE.gif</container-document>
+        </document>
+        <document id="RelationTable" widget="io.github.jeddict.relation.mapper.widget.table.RelationTableWidget" specification="io.github.jeddict.relation.mapper.spec.DBRelationTable" >
+            <container-document>io/github/jeddict/relation/mapper/resource/image/JOIN_TABLE.png</container-document>
+        </document>
+        <document id="CollectionTable" widget="io.github.jeddict.relation.mapper.widget.table.CollectionTableWidget" specification="io.github.jeddict.relation.mapper.spec.DBCollectionTable" >
+            <container-document>io/github/jeddict/relation/mapper/resource/image/COLLECTION_TABLE.gif</container-document>
+        </document>
+    </documents>
+</document-config>
