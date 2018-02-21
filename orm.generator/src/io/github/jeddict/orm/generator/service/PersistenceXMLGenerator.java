@@ -15,11 +15,9 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
@@ -27,6 +25,7 @@ import io.github.jeddict.jcode.jpa.PersistenceProviderType;
 import static io.github.jeddict.jpa.util.PersistenceHelper.JTA_VALUE;
 import static io.github.jeddict.jpa.util.PersistenceHelper.RESOURCE_LOCAL_VALUE;
 import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.dd.common.Properties;
@@ -35,38 +34,27 @@ import static org.netbeans.modules.j2ee.persistence.provider.Provider.TABLE_GENE
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
-import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.util.ORMConvLogger;
+import org.openide.util.lookup.ServiceProvider;
 
-public class PersistenceXMLGenerator {
+@ServiceProvider(service = IPersistenceXMLGenerator.class)
+public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
 
     private static final Logger LOGGER = ORMConvLogger.getLogger(PersistenceXMLGenerator.class);
 
-    private final String puName;
-    
-    private final String puProvider;
-  
-    private final Collection<ClassDefSnippet> classDefs;
-
-    public PersistenceXMLGenerator(EntityMappings entityMappings, Collection<ClassDefSnippet> classDefs) {
-        this.classDefs = classDefs;
-        this.puName = entityMappings.getPersistenceUnitName();
-        this.puProvider = entityMappings.getPersistenceProviderType()!=null?entityMappings.getPersistenceProviderType().getProviderClass():PersistenceProviderType.ECLIPSELINK.getProviderClass();
-    }
-
     //Reference : org.netbeans.modules.j2ee.persistence.wizard.unit.PersistenceUnitWizard.instantiateWProgress
-    public void generatePersistenceXML(Project project, SourceGroup sourceGroup) {
+    @Override
+    public void generatePersistenceXML(Project project, SourceGroup sourceGroup, EntityMappings entityMappings, List<String> classNames) {
+        String puName = entityMappings.getPersistenceUnitName();
+        String puProvider = entityMappings.getPersistenceProviderType()!=null?entityMappings.getPersistenceProviderType().getProviderClass():PersistenceProviderType.ECLIPSELINK.getProviderClass();
+        
         if (StringUtils.isEmpty(puName)) {
             return;
         }
 
-        List<String> classNames = classDefs.stream()
-                .map(classDef -> classDef.getClassHelper().getFQClassName())
-                .collect(toList());
-
         try {
             // Issue Fix #5915 Start
-//            String version = PersistenceUtils.getJPAVersion(project);
+            // String version = PersistenceUtils.getJPAVersion(project);
             PUDataObject pud = ProviderUtil.getPUDataObject(project);
             String version = pud.getPersistence().getVersion();
             boolean existFile = false;

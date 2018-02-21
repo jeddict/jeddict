@@ -15,8 +15,7 @@
  */
 package io.github.jeddict.orm.generator;
 
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.SourceGroup;
+import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
 import io.github.jeddict.jcode.task.ITaskSupervisor;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.orm.generator.compiler.CompilerConfig;
@@ -32,19 +31,20 @@ import org.openide.util.Lookup;
 public class JPASourceCodeGenerator implements ISourceCodeGenerator {
 
     @Override
-    public void generate(ITaskSupervisor task,
-            Project project,
-            SourceGroup sourceGroup,
-            InputDefinition inputDefinition) {
-        EntityMappings entityMappings = (EntityMappings) inputDefinition.getModelerFile().getDefinitionElement();
+    public void generate(ITaskSupervisor task, ApplicationConfigData applicationConfig) {
+        EntityMappings entityMappings = applicationConfig.getEntityMappings();
         CompilerConfig compilerConfig = new CompilerConfig(entityMappings.getPackage());
         CompilerConfigManager.getInstance().initialize(compilerConfig);
         ClassesRepository.getInstance().clear();
         Lookup.getDefault()
                 .lookupAll(ModuleGenerator.class)
                 .forEach((moduleGenerator) -> {
-                    moduleGenerator.generate(task, project, sourceGroup, entityMappings);
+                    moduleGenerator.generate(task, 
+                            applicationConfig.getTargetProject(), 
+                            applicationConfig.getTargetSourceGroup(), 
+                            entityMappings);
                 });
+        
     }
 
 }

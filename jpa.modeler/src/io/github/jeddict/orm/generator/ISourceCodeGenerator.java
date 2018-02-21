@@ -15,8 +15,7 @@
  */
 package io.github.jeddict.orm.generator;
 
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.SourceGroup;
+import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
 import io.github.jeddict.jcode.task.ITaskSupervisor;
 
 /**
@@ -25,6 +24,6 @@ import io.github.jeddict.jcode.task.ITaskSupervisor;
  */
 public interface ISourceCodeGenerator {
 
-    void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, InputDefinition inputDefinition);
+    void generate(ITaskSupervisor task, ApplicationConfigData applicationConfig);
 
 }

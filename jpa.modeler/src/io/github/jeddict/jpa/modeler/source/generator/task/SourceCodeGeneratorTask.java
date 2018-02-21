@@ -17,7 +17,6 @@ package io.github.jeddict.jpa.modeler.source.generator.task;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
@@ -32,10 +31,10 @@ import io.github.jeddict.analytics.JeddictLogger;
 import io.github.jeddict.orm.generator.ISourceCodeGenerator;
 import io.github.jeddict.orm.generator.ISourceCodeGeneratorFactory;
 import io.github.jeddict.orm.generator.SourceCodeGeneratorType;
-import io.github.jeddict.orm.generator.InputDefinition;
-import io.github.jeddict.orm.generator.ORMInputDefiniton;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.modeler.initializer.PreExecutionUtil;
+import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
+import java.util.Collections;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -112,8 +111,6 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         
         ISourceCodeGeneratorFactory sourceGeneratorFactory = Lookup.getDefault().lookup(ISourceCodeGeneratorFactory.class);
         ISourceCodeGenerator sourceGenerator = sourceGeneratorFactory.getSourceGenerator(SourceCodeGeneratorType.JPA);
-        InputDefinition definiton = new ORMInputDefiniton();
-        definiton.setModelerFile(modelerFile);
         EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
         ApplicationGenerator applicationGenerator = null;
         
@@ -126,15 +123,17 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         }
         
         if (appConfigData.isMonolith() || appConfigData.isMicroservice()) {
-            sourceGenerator.generate(this,
-                    appConfigData.getTargetProject(),
-                    appConfigData.getTargetSourceGroup(),
-                    definiton);
+            sourceGenerator.generate(this, appConfigData);
         }
-//        if (appConfigData.isGateway()) {
-//            PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(appConfigData.getEntityMappings(), Collections.emptyList());
-//            persistenceXMLGenerator.generatePersistenceXML(appConfigData.getGatewayProject(), appConfigData.getGatewaySourceGroup());
-//        }
+        if (appConfigData.isGateway()) {
+            Lookup.getDefault()
+                    .lookup(IPersistenceXMLGenerator.class)
+                    .generatePersistenceXML(
+                            appConfigData.getGatewayProject(), 
+                            appConfigData.getGatewaySourceGroup(),
+                            entityMappings,
+                            Collections.emptyList());
+        }
         
         if (appConfigData.getBussinesTechContext()!= null) {
             applicationGenerator.generate();

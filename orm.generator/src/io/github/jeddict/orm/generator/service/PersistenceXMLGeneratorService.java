@@ -21,29 +21,31 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.jcode.task.ITaskSupervisor;
 import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
 import io.github.jeddict.orm.generator.spec.WritableSnippet;
 import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.spec.ModuleGenerator;
 import io.github.jeddict.orm.generator.util.ClassType;
 import io.github.jeddict.orm.generator.util.ClassesRepository;
+import static java.util.stream.Collectors.toList;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 
-@org.openide.util.lookup.ServiceProvider(service = ModuleGenerator.class)
+@ServiceProvider(service = ModuleGenerator.class)
 public class PersistenceXMLGeneratorService implements ModuleGenerator {
 
-    private EntityMappings entityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
 
     @Override
     public void generate(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings entityMappings) {
-        this.entityMappings = entityMappings;
-        generatePersistenceXML(project, sourceGroup);
-    }
+        List<String> classNames = getPUXMLEntries()
+                .stream()
+                .map(classDef -> classDef.getClassHelper().getFQClassName())
+                .collect(toList());
 
-    private void generatePersistenceXML(Project project, SourceGroup sourceGroup) {
-        List<ClassDefSnippet> classDefs = getPUXMLEntries();
-        //Generate persistence.xml
-        PersistenceXMLGenerator persistenceXMLGenerator = new PersistenceXMLGenerator(entityMappings, classDefs);
-        persistenceXMLGenerator.generatePersistenceXML(project, sourceGroup);
+        Lookup.getDefault()
+                .lookup(IPersistenceXMLGenerator.class)
+                .generatePersistenceXML(project, sourceGroup, entityMappings, classNames);
     }
 
     private List<ClassDefSnippet> getPUXMLEntries() {
