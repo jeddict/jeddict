@@ -39,18 +39,18 @@ import io.github.jeddict.jcode.util.POMManager;
 import io.github.jeddict.jcode.util.ProjectHelper;
 import static io.github.jeddict.jcode.util.ProjectHelper.getJavaProjects;
 import io.github.jeddict.jcode.util.ProjectType;
-import io.github.jeddict.jcode.layer.DefaultBusinessLayer;
-import io.github.jeddict.jcode.layer.DefaultControllerLayer;
-import io.github.jeddict.jcode.layer.DefaultViewerLayer;
-import io.github.jeddict.jcode.layer.Generator;
-import io.github.jeddict.jcode.layer.TechContext;
-import io.github.jeddict.jcode.layer.Technology;
-import static io.github.jeddict.jcode.layer.Technology.Type.BUSINESS;
-import static io.github.jeddict.jcode.layer.Technology.Type.CONTROLLER;
-import static io.github.jeddict.jcode.layer.Technology.Type.VIEWER;
-import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
-import io.github.jeddict.jcode.stack.config.panel.LayerConfigPanel;
-import io.github.jeddict.jcode.ui.source.ProjectCellRenderer;
+import io.github.jeddict.jcode.Generator;
+import io.github.jeddict.jcode.TechContext;
+import io.github.jeddict.jcode.ApplicationConfigData;
+import io.github.jeddict.jcode.LayerConfigPanel;
+import io.github.jeddict.jcode.annotation.Technology;
+import static io.github.jeddict.jcode.annotation.Technology.Type.BUSINESS;
+import static io.github.jeddict.jcode.annotation.Technology.Type.CONTROLLER;
+import static io.github.jeddict.jcode.annotation.Technology.Type.VIEWER;
+import io.github.jeddict.jcode.impl.DefaultBusinessLayer;
+import io.github.jeddict.jcode.impl.DefaultControllerLayer;
+import io.github.jeddict.jcode.impl.DefaultViewerLayer;
+import io.github.jeddict.jcode.ui.ProjectCellRenderer;
 import io.github.jeddict.jcode.util.PreferenceUtils;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
@@ -58,7 +58,6 @@ import static io.github.jeddict.jpa.spec.extend.ProjectType.GATEWAY;
 import static io.github.jeddict.jpa.spec.extend.ProjectType.MONOLITH;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.ERROR_ICON;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.SUCCESS_ICON;
 import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.WARNING_ICON;
@@ -743,15 +742,17 @@ public class GenerateCodeDialog extends GenericDialog {
     }//GEN-LAST:event_generateSourceCodeActionPerformed
 
     private boolean hasError() {
-        if ((isMonolith() && !isSupportedProject(targetProjectInfo))
-                || (isMicroservice() && (!isSupportedProject(gatewayProjectInfo) || !isSupportedProject(targetProjectInfo)))
-                || (isGateway() && !isSupportedProject(gatewayProjectInfo))) {
-            NotifyDescriptor d = new NotifyDescriptor.Message(
-                    "Please select the [Maven > Web Application] project for full-stack app",
-                    NotifyDescriptor.INFORMATION_MESSAGE);
-            d.setTitle("Invalid project type");
-            DialogDisplayer.getDefault().notify(d);
-            return true;
+        if (!Technology.NONE_LABEL.equals(getBusinessLayer().getTechnology().label())) {
+            if ((isMonolith() && !isSupportedProject(targetProjectInfo))
+                    || (isMicroservice() && (!isSupportedProject(gatewayProjectInfo) || !isSupportedProject(targetProjectInfo)))
+                    || (isGateway() && !isSupportedProject(gatewayProjectInfo))) {
+                NotifyDescriptor d = new NotifyDescriptor.Message(
+                        "Please select the [Maven > Web Application] project for full-stack app",
+                        NotifyDescriptor.INFORMATION_MESSAGE);
+                d.setTitle("Invalid project type");
+                DialogDisplayer.getDefault().notify(d);
+                return true;
+            }
         }
         if (isMicroservice() && targetProjectInfo.getProject() == gatewayProjectInfo.getProject()) {
             NotifyDescriptor d = new NotifyDescriptor.Message(
@@ -760,9 +761,9 @@ public class GenerateCodeDialog extends GenericDialog {
             d.setTitle("Same destination");
             DialogDisplayer.getDefault().notify(d);
             return true;
-        }
+        } 
         
-        if ((isGateway() && !SourceVersion.isName(getGatewayPackage()))) {
+        if (isGateway() && !SourceVersion.isName(getGatewayPackage())) {
             NotifyDescriptor d = new NotifyDescriptor.Message(
                     "Please select the Gateway Project Package.",
                     NotifyDescriptor.INFORMATION_MESSAGE);
@@ -770,7 +771,9 @@ public class GenerateCodeDialog extends GenericDialog {
             DialogDisplayer.getDefault().notify(d);
             gatewayProjectPackageCombo.requestFocus();
             return true;
-        } else if (!SourceVersion.isName(getTargetPackage())) {
+        } 
+        
+        if ((isMonolith() || isMicroservice()) && !SourceVersion.isName(getTargetPackage())) {
             NotifyDescriptor d = new NotifyDescriptor.Message(
                     "Please select the Project Package.",
                     NotifyDescriptor.INFORMATION_MESSAGE);
@@ -808,17 +811,12 @@ public class GenerateCodeDialog extends GenericDialog {
         entityMappings.setProjectType(isMonolith() ? MONOLITH : MICROSERVICE);
         entityMappings.setProjectPackage(getTargetPackage());
         entityMappings.setEntityPackage(getEntityPackage());
-        if (((isMonolith() && isSupportedProject(targetProjectInfo))
+        if ((isMonolith() && isSupportedProject(targetProjectInfo))
                 || (isMicroservice() && isSupportedProject(gatewayProjectInfo) && isSupportedProject(targetProjectInfo))
-                || (isGateway() && isSupportedProject(gatewayProjectInfo)))
-                && getBusinessLayer() != null) {
+                || (isGateway() && isSupportedProject(gatewayProjectInfo))) {
             technologyPref.put(BUSINESS.name(), getBusinessLayer().getGeneratorClass().getSimpleName());
-            if (getControllerLayer() != null) {
-                technologyPref.put(CONTROLLER.name(), getControllerLayer().getGeneratorClass().getSimpleName());
-                if (getViewerLayer() != null) {
-                    technologyPref.put(VIEWER.name(), getViewerLayer().getGeneratorClass().getSimpleName());
-                }
-            }
+            technologyPref.put(CONTROLLER.name(), getControllerLayer().getGeneratorClass().getSimpleName());
+            technologyPref.put(VIEWER.name(), getViewerLayer().getGeneratorClass().getSimpleName());
         }
     }
 
@@ -1150,8 +1148,12 @@ public class GenerateCodeDialog extends GenericDialog {
             configData.setGatewayPackage(getGatewayPackage());
         }
 
-        configData.setTargetArtifactId(new POMManager(configData.getTargetProject(), true).getArtifactId());
-        configData.setGatewayArtifactId(new POMManager(configData.getGatewayProject(), true).getArtifactId());
+        if (POMManager.isMavenProject(configData.getTargetProject())) {
+            configData.setTargetArtifactId(new POMManager(configData.getTargetProject(), true).getArtifactId());
+        }
+        if (POMManager.isMavenProject(configData.getGatewayProject())) {
+            configData.setGatewayArtifactId(new POMManager(configData.getGatewayProject(), true).getArtifactId());
+        }
 
         return configData;
     }
