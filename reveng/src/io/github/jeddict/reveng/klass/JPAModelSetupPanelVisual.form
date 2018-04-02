@@ -84,7 +84,7 @@
     <Component class="javax.swing.JLabel" name="headerLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="io/github/jeddict/reveng/klass/wizard/Bundle.properties" key="MSG_JPA_File_Location" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="io/github/jeddict/reveng/klass/Bundle.properties" key="MSG_JPA_File_Location" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AccessibilityProperties>
@@ -102,7 +102,7 @@
           <ComponentRef name="projectTextField"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="io/github/jeddict/reveng/klass/wizard/Bundle.properties" key="LBL_Project" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="io/github/jeddict/reveng/klass/Bundle.properties" key="LBL_Project" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AccessibilityProperties>

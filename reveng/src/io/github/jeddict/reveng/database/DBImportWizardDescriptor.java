@@ -33,6 +33,7 @@ import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
 import io.github.jeddict.jcode.util.SourceGroupSupport;
+import io.github.jeddict.reveng.BaseWizardDescriptor;
 import io.github.jeddict.reveng.database.generator.IPersistenceGeneratorProvider;
 import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modeler.component.Wizards;
@@ -52,21 +53,23 @@ import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 
-@TemplateRegistration(folder = "Persistence", position = 2, displayName = "#DBImportWizardDescriptor_displayName",
-        iconBase = "io/github/jeddict/reveng/database/resource/JPA_FILE_ICON.png", 
-        description = "resource/JPA_DB_IMPORT_DESC.html", category = "persistence")
-public final class DBImportWizardDescriptor implements WizardDescriptor.InstantiatingIterator<WizardDescriptor> {
+@TemplateRegistration(
+        folder = "Persistence",
+        position = 2,
+        displayName = "#DBImportWizardDescriptor_displayName",
+        iconBase = "io/github/jeddict/reveng/database/resources/JPA_FILE_ICON.png",
+        description = "resources/JPA_DB_IMPORT_DESC.html",
+        category = "persistence"
+)
+public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
 
     private static final String PROP_HELPER = "wizard-helper"; //NOI18N
-    private int currentPanel = 0;
     private WizardDescriptor wizardDescriptor;
     private IPersistenceModelGenerator generator;
     private ImportHelper helper;
     private ProgressPanel progressPanel;
     private Project project;
     private final RequestProcessor RP = new RequestProcessor(DBImportWizardDescriptor.class.getSimpleName(), 5);
-
-    private List<WizardDescriptor.Panel<WizardDescriptor>> panels;
 
     private static IPersistenceModelGenerator createPersistenceGenerator() {
         return Lookup.getDefault()
@@ -93,7 +96,7 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
             try {
                 handle.start();
                 createModel(wizardDescriptor, progressContributor);
-            } catch(Throwable t){
+            } catch (Throwable t) {
                 ExceptionUtils.printStackTrace(t);
             } finally {
                 generator.uninit();
@@ -169,8 +172,6 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
                     DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(message, NotifyDescriptor.ERROR_MESSAGE));
                     return;
                 }
-
-//                String projectName = ProjectUtils.getInformation(project).getDisplayName();
             }
 
             String extracting = NbBundle.getMessage(DBImportWizardDescriptor.class, "TXT_ExtractingEntityClassesAndRelationships");
@@ -205,7 +206,6 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
         wizard.putProperty(PROP_HELPER, helper);
 
         generator.init(wizard);
-
     }
 
     @Override
@@ -214,94 +214,19 @@ public final class DBImportWizardDescriptor implements WizardDescriptor.Instanti
         generator.uninit();
     }
 
-    @Override
-    public WizardDescriptor.Panel<WizardDescriptor> current() {
-        return panels.get(currentPanel);
-    }
-
-    @Override
-    public String name() {
-        return null;
-    }
-
-    @Override
-    public boolean hasPrevious() {
-        return currentPanel > 0;
-    }
-
-    @Override
-    public void previousPanel() {
-        if (!hasPrevious()) {
-            throw new NoSuchElementException();
-        }
-        currentPanel--;
-    }
-
-    @Override
-    public boolean hasNext() {
-        return currentPanel < panels.size() - 1;
-    }
-
-    @Override
-    public void nextPanel() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
-        }
-        currentPanel++;
-    }
-
-//    @Override
-//    public WizardDescriptor.Panel<WizardDescriptor> current() {
-//        return panels.get(currentPanel);
-//    }
-    // If nothing unusual changes in the middle of the wizard, simply:
-    @Override
-    public void addChangeListener(ChangeListener l) {
-    }
-
-    @Override
-    public void removeChangeListener(ChangeListener l) {
-    }
-    // If something changes dynamically (besides moving between panels), e.g.
-    // the number of panels changes in response to user input, then use
-    // ChangeSupport to implement add/removeChangeListener and call fireChange
-    // when needed
-
-    // You could safely ignore this method. Is is here to keep steps which were
-    // there before this wizard was instantiated. It should be better handled
-    // by NetBeans Wizard API itself rather than needed to be implemented by a
-    // client code.
-//    private String[] createSteps() {
-//        String[] beforeSteps = (String[]) wizard.getProperty("WizardPanel_contentData");
-//        assert beforeSteps != null : "This wizard may only be used embedded in the template wizard";
-//        String[] res = new String[(beforeSteps.length - 1) + panels.size()];
-//        for (int i = 0; i < res.length; i++) {
-//            if (i < (beforeSteps.length - 1)) {
-//                res[i] = beforeSteps[i];
-//            } else {
-//                res[i] = panels.get(i - beforeSteps.length + 1).getComponent().getName();
-//            }
-//        }
-//        return res;
-//    }
     private String[] createSteps() {
-
         return new String[]{
             NbBundle.getMessage(DBImportWizardDescriptor.class, "LBL_DatabaseTables"),
             NbBundle.getMessage(DBImportWizardDescriptor.class, "LBL_EntityClasses"),
             NbBundle.getMessage(DBImportWizardDescriptor.class, "LBL_MappingOptions"),};
-
     }
 
     private List<WizardDescriptor.Panel<WizardDescriptor>> createPanels() {
-
         String wizardTitle = NbBundle.getMessage(DBImportWizardDescriptor.class, "TXT_TITLE");
-
         List<WizardDescriptor.Panel<WizardDescriptor>> panels = new ArrayList<>();
         panels.add(new DatabaseTablesSelectorPanel.WizardPanel(wizardTitle));
         panels.add(new EntityClassesConfigurationPanel.WizardPanel());
         return panels;
-
     }
 
 }
