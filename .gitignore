@@ -18,3 +18,5 @@
 /orm.generator/build/
 /collaboration/build/
 /db.modeler/build/
+/reverse.engineering/nbproject/private/
+/reverse.engineering/build/

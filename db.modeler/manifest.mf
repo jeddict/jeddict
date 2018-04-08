@@ -3,5 +3,5 @@ AutoUpdate-Show-In-Client: true
 OpenIDE-Module: io.github.jeddict.db.modeler
 OpenIDE-Module-Layer: io/github/jeddict/db/modeler/layer.xml
 OpenIDE-Module-Localizing-Bundle: io/github/jeddict/db/modeler/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
+OpenIDE-Module-Specification-Version: 4.8
 
