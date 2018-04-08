@@ -224,7 +224,7 @@ public class JPAMDefaultTableGenerator {
             //solution : In mix inheritance, first copy all root node value to its child then copy all child's value to leaf(or child)
             List<DatabaseMapping> parentClassMapping = descriptor.getParentClassMapping();
             if (parentClassMapping != null) {
-                parentClassMapping.stream().forEach((parentMapping) -> {
+                parentClassMapping.forEach((parentMapping) -> {
                     descriptor.getMappings().stream().filter((childMapping) -> (parentMapping.getAttributeName().equals(childMapping.getAttributeName()))).forEach((childMapping) -> {
                         childMapping.setProperty(Attribute.class, parentMapping.getProperty(Attribute.class));
                         childMapping.setProperty(Inheritance.class, true);
@@ -239,7 +239,7 @@ public class JPAMDefaultTableGenerator {
                 if (descriptor.getAccessor() instanceof EntitySpecAccessor) {
                     Entity entity = ((EntitySpecAccessor) descriptor.getAccessor()).getEntity();
                     if (entity.getInheritance() != null && entity.getInheritance().getStrategy() == InheritanceType.SINGLE_TABLE) {
-                        descriptor.getInheritancePolicy().getAllChildDescriptors().stream().forEach((childDescriptor) -> {
+                        descriptor.getInheritancePolicy().getAllChildDescriptors().forEach((childDescriptor) -> {
                             descriptor.getMappings().addAll(childDescriptor.getMappings());
                         });
                     }

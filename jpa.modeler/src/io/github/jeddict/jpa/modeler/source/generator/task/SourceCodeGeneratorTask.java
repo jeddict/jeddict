@@ -23,7 +23,7 @@ import org.netbeans.api.progress.aggregate.ProgressContributor;
 import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.*;
 import io.github.jeddict.generator.internal.ApplicationGenerator;
-import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
+import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.task.AbstractNBTask;
 import io.github.jeddict.jcode.task.progress.ProgressConsoleHandler;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;
@@ -129,6 +129,7 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
             Lookup.getDefault()
                     .lookup(IPersistenceXMLGenerator.class)
                     .generatePersistenceXML(
+                            this,
                             appConfigData.getGatewayProject(), 
                             appConfigData.getGatewaySourceGroup(),
                             entityMappings,

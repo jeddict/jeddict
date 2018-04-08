@@ -201,7 +201,7 @@ public class DBEntityMappings extends XMLEntityMappings {
             }
         }
 
-        mappings.getConverter().stream().forEach(convert -> createConverterClass(convert, classLoader));
+        mappings.getConverter().forEach(convert -> createConverterClass(convert, classLoader));
 
         // Process the JPA converter classes.
         for (ConverterAccessor converterAccessor : getConverterAccessors()) {

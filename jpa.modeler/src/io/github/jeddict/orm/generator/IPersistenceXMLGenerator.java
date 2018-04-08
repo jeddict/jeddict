@@ -5,6 +5,7 @@
  */
 package io.github.jeddict.orm.generator;
 
+import io.github.jeddict.jcode.task.ITaskSupervisor;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import java.util.List;
 import org.netbeans.api.project.Project;
@@ -16,6 +17,6 @@ import org.netbeans.api.project.SourceGroup;
  */
 public interface IPersistenceXMLGenerator {
     
-    void generatePersistenceXML(Project project, SourceGroup sourceGroup, EntityMappings entityMappings, List<String> classNames);
+    void generatePersistenceXML(ITaskSupervisor task, Project project, SourceGroup sourceGroup, EntityMappings entityMappings, List<String> classNames);
     
 }

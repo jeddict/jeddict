@@ -165,7 +165,7 @@ public class RelationMapperUtil implements IModelerUtil<RelationMapperScene> {
             ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMapping);
 
-            dbMapping.getTables().stream().forEach(table -> loadTable(scene, table));
+            dbMapping.getTables().forEach(table -> loadTable(scene, table));
             loadFlowEdge(scene);
             scene.autoLayout();
             scene.commitSceneGeneration();
@@ -277,7 +277,7 @@ public class RelationMapperUtil implements IModelerUtil<RelationMapperScene> {
                 table.sortColumns();
                 TableWidget tableWidget = (TableWidget) nodeWidget;
                 if (table.getColumns() != null) {
-                    table.getColumns().stream().forEach((column) -> {
+                    table.getColumns().forEach((column) -> {
                         if (column instanceof DBDiscriminatorColumn) {
                             tableWidget.addDiscriminatorColumn(column.getName(), column);
                         } else if (column instanceof DBJoinColumn) {

@@ -91,13 +91,13 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
         set.put("JSONB_PROP", getJsonbTypeSerializer(attribute, this, parentScene));
         set.put("JSONB_PROP", getJsonbTypeDeserializer(attribute, this, parentScene));
         
-        attribute.getAttributeConstraints().stream().forEach((constraint) -> {
+        attribute.getAttributeConstraints().forEach((constraint) -> {
             set.createPropertySet("ATTRIBUTE_CONSTRAINTS", "ATTRIBUTE_CONSTRAINTS", this, constraint);
         }); 
-        attribute.getKeyConstraints().stream().forEach((constraint) -> {
+        attribute.getKeyConstraints().forEach((constraint) -> {
             set.createPropertySet("KEY_CONSTRAINTS", "KEY_CONSTRAINTS", this, constraint);
         }); 
-        attribute.getValueConstraints().stream().forEach((constraint) -> {
+        attribute.getValueConstraints().forEach((constraint) -> {
             set.createPropertySet("VALUE_CONSTRAINTS", "VALUE_CONSTRAINTS", this, constraint);
         }); 
 

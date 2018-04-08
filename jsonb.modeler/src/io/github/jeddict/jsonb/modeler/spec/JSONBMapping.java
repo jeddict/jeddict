@@ -60,7 +60,7 @@ public class JSONBMapping extends BaseElement implements IDefinitionElement, IRo
      * @param tables the tables to set
      */
     public void setDocuments(List<JSONBDocument> tables) {
-        tables.stream().forEach(t -> addDocument(t));
+        tables.forEach(t -> addDocument(t));
     }
 
     public JSONBDocument getDocument(String name) {

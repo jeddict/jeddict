@@ -52,7 +52,7 @@ public class DBMapping extends BaseElement implements IDefinitionElement, IRootE
      * @param tables the tables to set
      */
     public void setTables(List<DBTable> tables) {
-        tables.stream().forEach(t -> addTable(t));
+        tables.forEach(t -> addTable(t));
     }
 
     public DBTable getTable(String name) {

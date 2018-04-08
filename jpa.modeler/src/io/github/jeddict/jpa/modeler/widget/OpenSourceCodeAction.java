@@ -92,14 +92,13 @@ public class OpenSourceCodeAction extends WidgetAction.Adapter {
                 });
             }
         } else {
-//                OpenFile.open(fileObject, -1);
             open(fileObject, javaClass.getFQN());
         }
 
     }
 
     private void open(FileObject fileObject, String classHandle) {
-        FileObject pkg = SourceGroupSupport.findSourceGroupForFile(modelerFile.getFileObject()).getRootFolder();
+        FileObject pkg = SourceGroupSupport.findSourceGroupForFile(fileObject).getRootFolder();
         try {
             JavaSource javaSource = JavaSource.create(ClasspathInfo.create(pkg));
             javaSource.runUserActionTask(controller -> {

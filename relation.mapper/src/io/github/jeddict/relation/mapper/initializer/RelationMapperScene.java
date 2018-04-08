@@ -68,12 +68,12 @@ public class RelationMapperScene extends DefaultPModelerScene<DBMapping> {
                     TableWidget<DBTable> tableWidget = (TableWidget) baseElementWidget;
                     tableWidget.setLocked(true); //this method is used to prevent from reverse call( Recursion call) //  Source-flow-target any of deletion will delete each other so as deletion procced each element locked
                     for (ForeignKeyWidget foreignKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getForeignKeyWidgets())) {
-                        foreignKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
+                        foreignKeyWidget.getReferenceFlowWidget().forEach(w -> {
                             ((ReferenceFlowWidget) w).remove();
                         });
                     }
                     for (IPrimaryKeyWidget primaryKeyWidget : new CopyOnWriteArrayList<>(tableWidget.getPrimaryKeyWidgets())) {
-                        primaryKeyWidget.getReferenceFlowWidget().stream().forEach(w -> {
+                        primaryKeyWidget.getReferenceFlowWidget().forEach(w -> {
                             ((ReferenceFlowWidget) w).remove();
                         });
                     }

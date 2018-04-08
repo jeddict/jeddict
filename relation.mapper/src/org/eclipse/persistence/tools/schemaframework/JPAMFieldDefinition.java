@@ -74,7 +74,7 @@ public class JPAMFieldDefinition extends FieldDefinition {
     
     private JPAMFieldDefinition(LinkedList<Attribute> intrinsicAttribute, Attribute managedAttribute) {
         if (intrinsicAttribute != null) {
-            intrinsicAttribute.stream().forEach((attr) -> {
+            intrinsicAttribute.forEach((attr) -> {
                 if (attr != null && attr.getOrignalObject() != null) {
                     this.intrinsicAttribute.add((Attribute) attr.getOrignalObject());
                 } else {

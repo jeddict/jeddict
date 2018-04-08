@@ -15,7 +15,7 @@
  */
 package io.github.jeddict.orm.generator;
 
-import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
+import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.task.ITaskSupervisor;
 
 /**

@@ -87,7 +87,7 @@ public abstract class DBTable extends FlowNode {
      * @param columns the columns to set
      */
     public void setColumns(List<DBColumn> columns) {
-        columns.stream().forEach(c -> addColumn(c));
+        columns.forEach(c -> addColumn(c));
     }
 
     public DBColumn getColumn(String name) {

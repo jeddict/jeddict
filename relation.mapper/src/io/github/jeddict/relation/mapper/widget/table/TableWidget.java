@@ -198,7 +198,7 @@ public abstract class TableWidget<E extends DBTable> extends FlowNodeWidget<E, R
 
         if (!primaryKeyWidgets.isEmpty()) {
             List<Widget> primaryKeyCatWidget = new ArrayList<>();
-            primaryKeyWidgets.values().stream().forEach((primaryKeyWidget) -> {
+            primaryKeyWidgets.values().forEach((primaryKeyWidget) -> {
                 primaryKeyCatWidget.add((Widget) primaryKeyWidget);
             });
             categories.put("Primary Key", primaryKeyCatWidget);

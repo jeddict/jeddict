@@ -16,8 +16,8 @@
 package io.github.jeddict.analytics;
 
 
-import io.github.jeddict.jcode.layer.TechContext;
-import io.github.jeddict.jcode.stack.config.data.ApplicationConfigData;
+import io.github.jeddict.jcode.TechContext;
+import io.github.jeddict.jcode.ApplicationConfigData;
 import static org.netbeans.modeler.analytics.ILogger.*;
 
 /**

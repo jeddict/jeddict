@@ -43,6 +43,7 @@ import io.github.jeddict.jcode.Generator;
 import io.github.jeddict.jcode.TechContext;
 import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.LayerConfigPanel;
+import static io.github.jeddict.jcode.RegistryType.CONSUL;
 import io.github.jeddict.jcode.annotation.Technology;
 import static io.github.jeddict.jcode.annotation.Technology.Type.BUSINESS;
 import static io.github.jeddict.jcode.annotation.Technology.Type.CONTROLLER;
@@ -243,6 +244,9 @@ public class GenerateCodeDialog extends GenericDialog {
     }
 
     private void refreshLayer() {
+        getBusinessLayer().resetPanel();
+        getControllerLayer().resetPanel();
+        getViewerLayer().resetPanel();
         if (getViewerLayer().isValid()) {
             setTechPanel(getViewerLayer());
         } else if (getControllerLayer().isValid()) {
@@ -257,6 +261,9 @@ public class GenerateCodeDialog extends GenericDialog {
         if (tech.panel() != LayerConfigPanel.class) {
             String title = tech.label();
             int index = tech.tabIndex() - 1;
+            if (techContext.getPanel() == null) {
+                techContext.createPanel(targetProjectInfo.getProject(), targetProjectInfo.getSourceGroup(), getTargetPackage());
+            }
             if (index < 0) {
                 configPane.addTab(title, null, techContext.getPanel(), tech.description());
             } else {
@@ -611,7 +618,7 @@ public class GenerateCodeDialog extends GenericDialog {
                 .addContainerGap()
                 .addGroup(optionPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(configPane)
-                    .addComponent(wrapperLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE))
+                    .addComponent(wrapperLayeredPane))
                 .addContainerGap())
         );
         optionPaneLayout.setVerticalGroup(
@@ -726,9 +733,16 @@ public class GenerateCodeDialog extends GenericDialog {
 
     private void targetProjectComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_targetProjectComboItemStateChanged
         if (evt.getStateChange() == SELECTED) {
-            targetProjectInfo.setProject((Project) targetProjectCombo.getSelectedItem());
+            Project project = (Project)targetProjectCombo.getSelectedItem();
+            targetProjectInfo.setProject(project);
             populateSourceFolderCombo(targetProjectInfo);
             populatePackageCombo(targetProjectPackageCombo, targetProjectInfo);
+            
+//            Class businessLayerConfigClass = getBusinessLayer().getPanel().getConfigDataClass();
+//            Preferences businessLayerPref = ProjectUtils.getPreferences(project, businessLayerConfigClass,true);
+//            if (businessLayerPref.getByteArray(businessLayerConfigClass.getName(), null) != null) {
+                refreshLayer();
+//            }
         }
     }//GEN-LAST:event_targetProjectComboItemStateChanged
 
@@ -998,10 +1012,10 @@ public class GenerateCodeDialog extends GenericDialog {
             if (sources != null) {
                 SourceGroup[] srcGrps = sources.getSourceGroups(SOURCES_TYPE_JAVA);
                 if (srcGrps != null) {
-                    for (SourceGroup g : srcGrps) {
-                        if (g != null) {
-                            srcRoots.add(g);
-                            if (g.getRootFolder() != null && g.getRootFolder().equals(sfo)) {
+                    for (SourceGroup srcGrp : srcGrps) {
+                        if (srcGrp != null) {
+                            srcRoots.add(srcGrp);
+                            if (srcGrp.getRootFolder() != null && srcGrp.getRootFolder().equals(sfo)) {
                                 index = srcRoots.size() - 1;
                             }
                         }
@@ -1124,7 +1138,8 @@ public class GenerateCodeDialog extends GenericDialog {
     public ApplicationConfigData getConfigData() {
         configData.setCompleteApplication(isCompleteApplication());
         configData.setProjectType(isMonolith() ? MONOLITH : (isMicroservice() ? MICROSERVICE : GATEWAY));
-
+        configData.setRegistryType(CONSUL);
+        
         if (isMonolith()) {
             configData.setTargetProject(targetProjectInfo.getProject());
             configData.setTargetSourceGroup(targetProjectInfo.getSourceGroup());

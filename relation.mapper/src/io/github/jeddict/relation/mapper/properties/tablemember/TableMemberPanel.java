@@ -83,7 +83,7 @@ public class TableMemberPanel extends GenericEmbeddedEditor<TableMembers> implem
     public void setValue(List<String> columns) {
         TableMembers tableMembers_tmp = new TableMembers();
         Set<OrderbyItem> columnData = new LinkedHashSet<>();
-        columns.stream().forEach(c -> columnData.add(new OrderbyItem(c, OrderType.ASC)));
+        columns.forEach(c -> columnData.add(new OrderbyItem(c, OrderType.ASC)));
         tableMembers_tmp.setColumns(columnData);
         setValue(tableMembers_tmp);
     }

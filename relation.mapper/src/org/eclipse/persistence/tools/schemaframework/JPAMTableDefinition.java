@@ -65,7 +65,7 @@ public class JPAMTableDefinition extends TableDefinition {
 
     public JPAMTableDefinition(ManagedClass managedClass, Attribute managedAttribute, List<Entity> intrinsicEntity) {
         this.managedClass = (ManagedClass) getOrignalElement(managedClass);
-        intrinsicEntity.stream().forEach((_class) -> {
+        intrinsicEntity.forEach((_class) -> {
             if (_class != null && _class.getOrignalObject() != null) {
                 this.intrinsicEntity.add((Entity) _class.getOrignalObject());
             } else {
