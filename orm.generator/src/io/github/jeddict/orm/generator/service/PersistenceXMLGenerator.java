@@ -15,6 +15,9 @@
  */
 package io.github.jeddict.orm.generator.service;
 
+import io.github.jeddict.jcode.console.Console;
+import static io.github.jeddict.jcode.console.Console.BOLD;
+import static io.github.jeddict.jcode.console.Console.FG_DARK_RED;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.jcode.jpa.PersistenceProviderType;
+import io.github.jeddict.jcode.task.ITaskSupervisor;
 import static io.github.jeddict.jpa.util.PersistenceHelper.JTA_VALUE;
 import static io.github.jeddict.jpa.util.PersistenceHelper.RESOURCE_LOCAL_VALUE;
 import io.github.jeddict.jpa.spec.EntityMappings;
@@ -44,11 +48,16 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
 
     //Reference : org.netbeans.modules.j2ee.persistence.wizard.unit.PersistenceUnitWizard.instantiateWProgress
     @Override
-    public void generatePersistenceXML(Project project, SourceGroup sourceGroup, EntityMappings entityMappings, List<String> classNames) {
+    public void generatePersistenceXML(
+            ITaskSupervisor task,
+            Project project, 
+            SourceGroup sourceGroup, 
+            EntityMappings entityMappings, 
+            List<String> classNames) {
         String puName = entityMappings.getPersistenceUnitName();
         String puProvider = entityMappings.getPersistenceProviderType()!=null?entityMappings.getPersistenceProviderType().getProviderClass():PersistenceProviderType.ECLIPSELINK.getProviderClass();
         
-        if (StringUtils.isEmpty(puName)) {
+        if (!entityMappings.getGeneratePersistenceUnit()) {
             return;
         }
 

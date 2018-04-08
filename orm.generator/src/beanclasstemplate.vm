@@ -78,18 +78,18 @@ $n#end
 #if ($varDef.isPropertyJavaDocExist())
 $varDef.getPropertyJavaDoc()
 #end
+#foreach($annotation in $varDef.getAnnotation("PROPERTY") )
+    $annotation.getSnippet()
+#end
+#foreach($snippet in $varDef.getJSONBSnippets() )
+    $snippet.getSnippet()
+#end
 #####################var - jaxb annotations ###############################
 #if($classDef.isJaxbSupport())
 #set($jaxbAnnotationSnippet = $varDef.getJaxbAnnotationSnippet())
 #if($jaxbAnnotationSnippet != "")
     $jaxbAnnotationSnippet
 #end
-#end
-#foreach($annotation in $varDef.getAnnotation("PROPERTY") )
-    $annotation.getSnippet()
-#end
-#foreach($snippet in $varDef.getJSONBSnippets() )
-    $snippet.getSnippet()
 #end
 #foreach($constraint in $varDef.getAttributeConstraints() )
     $constraint.getSnippet()

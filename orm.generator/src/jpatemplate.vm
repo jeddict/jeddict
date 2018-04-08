@@ -139,13 +139,7 @@ $n#end
 #if ($varDef.isPropertyJavaDocExist())
 $varDef.getPropertyJavaDoc()
 #end
-#####################var - jaxb annotations ###############################
-#if($classDef.isJaxbSupport())
-#set($jaxbAnnotationSnippet = $varDef.getJaxbAnnotationSnippet())
-#if($jaxbAnnotationSnippet != "")
-    $jaxbAnnotationSnippet
-#end
-#end
+#####################var - jpa annotations ###############################
 #if ($varDef.getConverts())
     $varDef.getConverts().getSnippet()
 #end
@@ -229,6 +223,13 @@ $varDef.getAttributeOverrides().getSnippet()
 #end
 #foreach($constraint in $varDef.getAttributeConstraints() )
     $constraint.getSnippet()
+#end
+#####################var - jaxb annotations ###############################
+#if($classDef.isJaxbSupport())
+#set($jaxbAnnotationSnippet = $varDef.getJaxbAnnotationSnippet())
+#if($jaxbAnnotationSnippet != "")
+    $jaxbAnnotationSnippet
+#end
 #end
 ## $varDef.type => $varDef.getTypeIdentifier().getConstraintVariableType() ## to resolve problem Collection => Collection<Entity>
     $varDef.accessModifier $varDef.constraintType $varDef.name#if($varDef.getDefaultValue()) = $varDef.getDefaultValue()#end;

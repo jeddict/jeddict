@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang3.StringUtils;
 import io.github.jeddict.bv.constraints.Email;
 import io.github.jeddict.bv.constraints.Flag;
-import static io.github.jeddict.jcode.beanvalidation.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
+import static io.github.jeddict.jcode.bv.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 

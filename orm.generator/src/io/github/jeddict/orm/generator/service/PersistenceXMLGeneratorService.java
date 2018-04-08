@@ -45,7 +45,7 @@ public class PersistenceXMLGeneratorService implements ModuleGenerator {
 
         Lookup.getDefault()
                 .lookup(IPersistenceXMLGenerator.class)
-                .generatePersistenceXML(project, sourceGroup, entityMappings, classNames);
+                .generatePersistenceXML(task, project, sourceGroup, entityMappings, classNames);
     }
 
     private List<ClassDefSnippet> getPUXMLEntries() {
