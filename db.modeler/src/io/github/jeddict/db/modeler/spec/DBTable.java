@@ -21,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import io.github.jeddict.jpa.spec.extend.FlowNode;
+import static java.util.function.Function.identity;
+import java.util.stream.Collectors;
 import org.netbeans.modules.db.metadata.model.api.Table;
 
 /**
@@ -30,6 +32,7 @@ import org.netbeans.modules.db.metadata.model.api.Table;
 public class DBTable extends FlowNode {
 
     private String name;
+    private boolean primary;
     private final Table table;
 
     private final Map<String, DBColumn> columns = new LinkedHashMap<>();
@@ -53,6 +56,20 @@ public class DBTable extends FlowNode {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the primary
+     */
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    /**
+     * @param primary the primary to set
+     */
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
     
     public String getSchemaName() {
@@ -80,7 +97,7 @@ public class DBTable extends FlowNode {
      * @param columns the columns to set
      */
     public void setColumns(List<DBColumn> columns) {
-        columns.stream().forEach(c -> addColumn(c));
+        columns.forEach(c -> addColumn(c));
     }
 
     public DBColumn getColumn(String name) {

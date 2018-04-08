@@ -16,16 +16,20 @@
 package io.github.jeddict.db.modeler.action;
 
 import io.github.jeddict.db.modeler.initializer.DBModelerActionListener;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import static java.util.stream.Collectors.toList;
 import javax.swing.SwingUtilities;
 import org.netbeans.api.db.explorer.node.BaseNode;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modules.db.explorer.DatabaseConnection;
-import org.netbeans.modules.db.metadata.model.api.Metadata;
+import org.netbeans.modules.db.explorer.node.TableNode;
 import org.netbeans.modules.db.metadata.model.api.MetadataElementHandle;
 import org.netbeans.modules.db.metadata.model.api.MetadataModel;
 import org.netbeans.modules.db.metadata.model.api.MetadataModelException;
 import org.netbeans.modules.db.metadata.model.api.Schema;
+import org.netbeans.modules.db.metadata.model.api.Table;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
@@ -43,15 +47,29 @@ public class DBViewerAction extends NodeAction {
 
     @Override
     public HelpCtx getHelpCtx() {
-        return new HelpCtx(DBViewerAction.class);
+        return HelpCtx.DEFAULT_HELP;
     }
 
     @Override
     protected boolean enable(Node[] activatedNodes) {
-        boolean enabled = false;
-
-        if (activatedNodes.length == 1) {
-            enabled = null != activatedNodes[0].getLookup().lookup(BaseNode.class);
+        String database = null; // return false, if table selected across different database
+        BaseNode previousBaseNode = null;   // return false, if table and tablelist selected
+        for(Node activatedNode : activatedNodes){
+            BaseNode baseNode = activatedNode.getLookup().lookup(BaseNode.class);
+            if(baseNode == null){
+                return false;
+            }
+            if (previousBaseNode == null) {
+                previousBaseNode = baseNode;
+            } else if (previousBaseNode.getClass() != baseNode.getClass()) {
+                return false;
+            }
+            DatabaseConnection connection = baseNode.getLookup().lookup(DatabaseConnection.class);
+            if(database == null){
+                database = connection.getDatabase();
+            } else if(!database.equals(connection.getDatabase())) {
+                return false;
+            }
         }
 
         return true;
@@ -62,25 +80,40 @@ public class DBViewerAction extends NodeAction {
         if (activatedNodes[0] == null) {
             return;
         }
-        final BaseNode baseNode = activatedNodes[0].getLookup().lookup(BaseNode.class);
+        List<BaseNode> baseNodes = Arrays.stream(activatedNodes)
+                .map(activatedNode -> activatedNode.getLookup().lookup(BaseNode.class))
+                .collect(toList());
+        final BaseNode baseNode = baseNodes.get(0);
+        
         SwingUtilities.invokeLater(() -> {
             DBModelerActionListener actionListener = new DBModelerActionListener();
             DatabaseConnection connection = baseNode.getLookup().lookup(DatabaseConnection.class);
-            MetadataElementHandle schemaHandle = baseNode.getLookup().lookup(MetadataElementHandle.class);
-            Schema schema = getSchema(connection, schemaHandle);
-            actionListener.init(baseNode, schema);
+            MetadataElementHandle handle = baseNode.getLookup().lookup(MetadataElementHandle.class);
+            Schema schema;
+            if (baseNode instanceof TableNode) {
+                schema = getSchemaFromTable(connection, handle);
+            } else {
+                schema = getSchema(connection, handle);
+            }
+            actionListener.init(baseNode, new TableNodeList(baseNodes), schema);
         });
     }
     
     public static void reloadDBViewer(ModelerFile file) {
-        BaseNode baseNode = (BaseNode) file.getAttribute(Node.class.getSimpleName());
         file.close();
+        BaseNode baseNode = (BaseNode) file.getAttribute(Node.class.getSimpleName());
+        TableNodeList tableNodeList = (TableNodeList) file.getAttribute(TableNodeList.class.getSimpleName());
         refresh(baseNode);
         DBModelerActionListener actionListener = new DBModelerActionListener();
         DatabaseConnection connection = baseNode.getLookup().lookup(DatabaseConnection.class);
-        MetadataElementHandle schemaHandle = baseNode.getLookup().lookup(MetadataElementHandle.class);
-        Schema schema = getSchema(connection, schemaHandle);
-        actionListener.init(baseNode, schema);
+        MetadataElementHandle handle = baseNode.getLookup().lookup(MetadataElementHandle.class);
+        Schema schema;
+        if (baseNode instanceof TableNode) {
+            schema = getSchemaFromTable(connection, handle);
+        } else {
+            schema = getSchema(connection, handle);
+        }
+        actionListener.init(baseNode, tableNodeList, schema);
     }
     
     private static void refresh(BaseNode baseNode) {
@@ -129,4 +162,28 @@ public class DBViewerAction extends NodeAction {
         }
         return array[0];
     }
-}
+    private static Schema getSchemaFromTable(DatabaseConnection connection, MetadataElementHandle<Table> tableHandle) {
+        final Table[] array = {null};
+        MetadataModel metaDataModel = connection.getMetadataModel();
+        if (connection.isConnected() && metaDataModel != null) {
+            try {
+                CountDownLatch latch = new CountDownLatch(1);
+                RP.post(() -> {
+                    try {
+                        metaDataModel.runReadAction(metaData -> {
+                            array[0] = tableHandle.resolve(metaData);
+                            latch.countDown();
+                        });
+                    } catch (MetadataModelException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                });
+                latch.await();
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return array[0].getParent();
+    }
+    
+ }

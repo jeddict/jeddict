@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import io.github.jeddict.jpa.spec.extend.BaseElement;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
 import org.netbeans.modeler.specification.model.document.IRootElement;
@@ -34,7 +36,7 @@ import org.netbeans.modules.db.metadata.model.api.Schema;
  */
 public class DBSchema extends BaseElement implements IDefinitionElement, IRootElement {
 
-    private Schema schema;
+    private final Schema schema;
     private final Map<String, DBTable> tables = new HashMap<>();
     
     private final Map<String, String> queries = new HashMap<>();
@@ -57,19 +59,23 @@ public class DBSchema extends BaseElement implements IDefinitionElement, IRootEl
      * @param tables the tables to set
      */
     public void setTables(List<DBTable> tables) {
-        tables.stream().forEach(t -> addTable(t));
+        tables.forEach(t -> addTable(t));
     }
 
     public DBTable getTable(String name) {
-        return this.tables.get(name);
+        return this.tables.get(name.toUpperCase());
     }
 
     public void addTable(DBTable table) {
-        this.tables.put(table.getName(), table);
+        this.tables.put(table.getName().toUpperCase(), table);
     }
 
     public void removeTable(DBTable table) {
-        this.tables.remove(table.getName());
+        removeTable(table.getName());
+    }
+    
+    public void removeTable(String table) {
+        this.tables.remove(table.toUpperCase());
     }
 
     public List<DBTable> findAllTable(String tableName) {

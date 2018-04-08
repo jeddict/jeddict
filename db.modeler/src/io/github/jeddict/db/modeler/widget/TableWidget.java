@@ -65,6 +65,7 @@ public class TableWidget extends FlowNodeWidget<DBTable, DBModelerScene> {
         this.setImage(this.getNodeWidgetInfo().getModelerDocument().getImage());
         this.getImageWidget().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         this.getImageWidget().getActions().addAction(new TableAction());
+        getNodeNameWidget().getActions().removeAction(editAction);
     }
 
     @Override

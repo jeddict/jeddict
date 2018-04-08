@@ -46,6 +46,7 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     public ColumnWidget(DBModelerScene scene, IPNodeWidget nodeWidget, PinWidgetInfo pinWidgetInfo) {
         super(scene, nodeWidget, pinWidgetInfo);
         this.setImage(getIcon());
+        getPinNameWidget().getActions().removeAction(editAction);
     }
 
     public void setDatatypeTooltip() {
@@ -136,7 +137,7 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
             getSignalManager().clear(ERROR, AttributeValidator.ATTRIBUTE_COLUMN_NAME_WITH_RESERVED_SQL_KEYWORD);
         }
 
-        DBTable tableSpec = (DBTable) this.getTableWidget().getBaseElementSpec();
+        DBTable tableSpec = this.getTableWidget().getBaseElementSpec();
         if (tableSpec.findColumns(name).size() > 1) {
             getSignalManager().fire(ERROR, AttributeValidator.NON_UNIQUE_COLUMN_NAME);
         } else {

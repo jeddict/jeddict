@@ -15,6 +15,13 @@
                     </file>
                 </folder>
             </folder>
+            <folder name="Table">
+                <folder name="Actions">
+                    <file name="io-github-jeddict-db-modeler-action-DBViewerAction.instance">
+                        <attr name="position" intvalue="125"/>
+                    </file>
+                </folder>
+            </folder>
         </folder>
     </folder>
     
