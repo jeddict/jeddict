@@ -107,7 +107,6 @@ public class GenerateCodeDialog extends GenericDialog {
         this.entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
         this.technologyPref = NbPreferences.forModule(Generator.class);
         initUIComponents();
-        setArchState();
     }
 
     private void manageEntityGenerationSetting() {
@@ -138,6 +137,9 @@ public class GenerateCodeDialog extends GenericDialog {
         this.setTitle(NbBundle.getMessage(GenerateCodeDialog.class, "GenerateCodeDialog.title"));
         setCaptureWindowSize(false);
         setDefaultButton(generateSourceCode);
+        setMicroservice(entityMappings.getProjectType() == MICROSERVICE);
+        setArchState();
+
         populateProjectCombo(targetProjectCombo, targetProjectInfo);
         populatePackageCombo(targetProjectPackageCombo, targetProjectInfo);
         populateProjectCombo(gatewayProjectCombo, gatewayProjectInfo);
@@ -145,7 +147,6 @@ public class GenerateCodeDialog extends GenericDialog {
         setEntityPackage(StringUtils.isNotBlank(entityMappings.getEntityPackage()) ? entityMappings.getEntityPackage() : "domain");
         setTargetPackage(StringUtils.isNotBlank(entityMappings.getProjectPackage()) ? entityMappings.getProjectPackage() : "");
 //      setGatewayPackage(StringUtils.isNotBlank(entityMappings.getGatewayPackage()) ? entityMappings.getGatewayPackage() : "");
-        setMicroservice(entityMappings.getProjectType() == MICROSERVICE);
         this.pack();
     }
 
