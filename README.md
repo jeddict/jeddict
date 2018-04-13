@@ -1,4 +1,4 @@
-<img src="https://jeddict.github.io/images/logo/logo.png">
+<img src="https://jeddict.github.io/images/logo/logo-home.png">
 
 # Jeddict [![][license img]][license]
 
