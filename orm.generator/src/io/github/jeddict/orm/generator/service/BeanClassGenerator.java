@@ -28,7 +28,7 @@ public class BeanClassGenerator extends ClassGenerator<BeanClassDefSnippet> {
     private final BeanClass beanClass;
 
     public BeanClassGenerator(BeanClass beanClass, String packageName) {
-        super(new BeanClassDefSnippet(), beanClass.getRootElement().getJavaEEVersion());
+        super(new BeanClassDefSnippet());
         this.beanClass = beanClass;
         this.rootPackageName = packageName;
         this.packageName = beanClass.getAbsolutePackage(rootPackageName);

@@ -108,7 +108,7 @@ public class SignalHandler {
 
         private String get(String key, Object... param) {
             String value = ERRORS.get(key);
-            if (value != null) {
+            if (value != null && param.length == 0) {
                 return value;
             }
             for (Class validator : VALIDATORS) {

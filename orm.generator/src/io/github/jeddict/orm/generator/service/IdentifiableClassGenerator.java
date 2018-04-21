@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import io.github.jeddict.infra.JavaEEVersion;
 import io.github.jeddict.jpa.spec.AssociationOverride;
 import io.github.jeddict.jpa.spec.Column;
 import io.github.jeddict.jpa.spec.ColumnResult;
@@ -106,8 +105,8 @@ import io.github.jeddict.orm.generator.util.GeneratorUtil;
  */
 public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefSnippet> extends ManagedClassGenerator<T> {
 
-    public IdentifiableClassGenerator(T classDef, JavaEEVersion javaEEVersion) {
-        super(classDef, javaEEVersion);
+    public IdentifiableClassGenerator(T classDef) {
+        super(classDef);
     }
 
     protected void processIdClass(IdClass parsedIdClass) {

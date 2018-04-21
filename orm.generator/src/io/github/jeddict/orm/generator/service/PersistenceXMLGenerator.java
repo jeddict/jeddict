@@ -15,19 +15,15 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import io.github.jeddict.jcode.console.Console;
-import static io.github.jeddict.jcode.console.Console.BOLD;
-import static io.github.jeddict.jcode.console.Console.FG_DARK_RED;
+import static io.github.jeddict.jcode.jpa.PersistenceHelper.JTA_VALUE;
+import static io.github.jeddict.jcode.jpa.PersistenceHelper.RESOURCE_LOCAL_VALUE;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.jcode.jpa.PersistenceProviderType;
 import io.github.jeddict.jcode.task.ITaskSupervisor;
-import static io.github.jeddict.jpa.util.PersistenceHelper.JTA_VALUE;
-import static io.github.jeddict.jpa.util.PersistenceHelper.RESOURCE_LOCAL_VALUE;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;

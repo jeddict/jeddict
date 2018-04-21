@@ -41,6 +41,7 @@ import io.github.jeddict.jpa.spec.InheritanceType;
 import io.github.jeddict.jpa.spec.extend.InheritanceHandler;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import io.github.jeddict.jpa.spec.Id;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.WARNING;
@@ -170,17 +171,19 @@ public class EntityWidget extends PrimaryKeyContainerWidget<Entity> {
             // Issue Fix #6041 Start
             boolean relationKey = this.getOneToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey()) ? true
                     : this.getManyToOneRelationAttributeWidgets().stream().anyMatch(w -> w.getBaseElementSpec().isPrimaryKey());
-            
-            if (this.getAllIdAttributeWidgets().isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
+            List<Id> ids = this.getBaseElementSpec().getAttributes().getSuperId();
+            if (ids.isEmpty() && this.isCompositePKPropertyAllow() == CompositePKProperty.NONE && !relationKey) {
                 getSignalManager().fire(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
             } else {
                 getSignalManager().clear(ERROR, ClassValidator.NO_PRIMARYKEY_EXIST);
             }
-            // Issue Fix #6041 End
-          List<String> idGenList = this.getAllIdAttributeWidgets().stream().filter(idAttrWid -> idAttrWid.getBaseElementSpec().getGeneratedValue()!=null &&
-                    idAttrWid.getBaseElementSpec().getGeneratedValue().getStrategy()!=null).map(IdAttributeWidget::getName).collect(toList());
-            if(idGenList.size()> 1){
-               getSignalManager().fire(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
+            List<String> idGenList = ids.stream()
+                    .filter(idAttr -> idAttr.getGeneratedValue() != null)
+                    .filter(idAttr -> idAttr.getGeneratedValue().getStrategy() != null)
+                    .map(Id::getName)
+                    .collect(toList());
+            if (idGenList.size() > 1) {
+                getSignalManager().fire(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST, idGenList.toString());
             } else {
                 getSignalManager().clear(ERROR, ClassValidator.MANY_PRIMARYKEY_GEN_EXIST);
             }

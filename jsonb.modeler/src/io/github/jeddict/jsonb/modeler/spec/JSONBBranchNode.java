@@ -34,11 +34,11 @@ public class JSONBBranchNode extends JSONBNode {
             RelationAttribute relationAttribute = (RelationAttribute)attribute;
             this.documentReference = relationAttribute.getConnectedEntity().getLookup(JSONBDocument.class);
         } else if(attribute instanceof Embedded){
-            Embedded relationAttribute = (Embedded)attribute;
-            this.documentReference = relationAttribute.getConnectedClass().getLookup(JSONBDocument.class);
+            Embedded embedded = (Embedded)attribute;
+            this.documentReference = embedded.getConnectedClass().getLookup(JSONBDocument.class);
         } else if(attribute instanceof ElementCollection){
-            ElementCollection relationAttribute = (ElementCollection)attribute;
-            this.documentReference = relationAttribute.getConnectedClass().getLookup(JSONBDocument.class);
+            ElementCollection elementCollection = (ElementCollection)attribute;
+            this.documentReference = elementCollection.getConnectedClass().getLookup(JSONBDocument.class);
         }
     }
 

@@ -15,14 +15,6 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>io.github.jeddict.javaee</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>4.7</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
                     <code-name-base>io.github.jeddict.jcode.core</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -48,14 +40,6 @@
                 </dependency>
                 <dependency>
                     <code-name-base>io.github.jeddict.lib</code-name-base>
-                    <build-prerequisite/>
-                    <compile-dependency/>
-                    <run-dependency>
-                        <specification-version>4.3</specification-version>
-                    </run-dependency>
-                </dependency>
-                <dependency>
-                    <code-name-base>io.github.jeddict.rest</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>

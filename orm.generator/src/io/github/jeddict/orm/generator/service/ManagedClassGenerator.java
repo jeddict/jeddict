@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import io.github.jeddict.infra.JavaEEVersion;
 import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.AssociationOverride;
 import io.github.jeddict.jpa.spec.AttributeOverride;
@@ -86,8 +85,8 @@ import io.github.jeddict.orm.generator.compiler.def.ManagedClassDefSnippet;
 
 public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> extends ClassGenerator<T> {
 
-    public ManagedClassGenerator(T classDef, JavaEEVersion javaEEVersion) {
-        super(classDef, javaEEVersion);
+    public ManagedClassGenerator(T classDef) {
+        super(classDef);
     }
 
     protected void processTransient(List<Transient> parsedTransients) {

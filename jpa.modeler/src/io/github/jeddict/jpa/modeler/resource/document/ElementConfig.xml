@@ -56,9 +56,6 @@
                 <attribute id="persistenceProviderType" groupId="BASIC_PROP" class="io.github.jeddict.jcode.jpa.PersistenceProviderType" name="persistenceProviderType">
                     <display-name>Persistence Provider</display-name>
                 </attribute>
-<!--                <attribute id="javaEEVersion" groupId="BASIC_PROP" class="io.github.jeddict.infra.JavaEEVersion" name="javaEEVersion">
-                    <display-name>Java EE Version</display-name>
-                </attribute>-->
                 <attribute id="entityPackage" groupId="PACKAGE" class="java.lang.String" name="entityPackage">
                     <display-name>Entity Package</display-name>
                 </attribute>

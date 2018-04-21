@@ -26,7 +26,7 @@ public class MappedSuperClassGenerator extends IdentifiableClassGenerator<Mapped
     private final MappedSuperclass mappedSuperclass;
 
     public MappedSuperClassGenerator(MappedSuperclass parsedMappedSuperclass, String packageName) {
-        super(new MappedSuperClassDefSnippet(), parsedMappedSuperclass.getRootElement().getJavaEEVersion());
+        super(new MappedSuperClassDefSnippet());
         this.mappedSuperclass = parsedMappedSuperclass;
         this.rootPackageName = packageName;
         this.packageName = mappedSuperclass.getAbsolutePackage(rootPackageName);

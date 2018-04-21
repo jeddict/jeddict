@@ -26,8 +26,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import org.apache.commons.lang3.StringUtils;
-import io.github.jeddict.infra.JavaEEVersion;
-import static io.github.jeddict.infra.JavaEEVersion.JAVA_EE_8;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.DefaultClass;
@@ -76,13 +74,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
     protected String packageName;
     protected T classDef;
     protected Map<String, VariableDefSnippet> variables = new LinkedHashMap<>();
-    protected JavaEEVersion javaEEVersion;
-    protected boolean repeatable;
+    protected boolean repeatable = true;
 
-    public ClassGenerator(T classDef, JavaEEVersion javaEEVersion) {
+    public ClassGenerator(T classDef) {
         this.classDef = classDef;
-        this.javaEEVersion = javaEEVersion;
-        this.repeatable = javaEEVersion.getVersion()<JAVA_EE_8.getVersion();
     }
 
     public abstract T getClassDef();

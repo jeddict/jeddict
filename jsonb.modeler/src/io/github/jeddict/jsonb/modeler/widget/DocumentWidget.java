@@ -163,7 +163,8 @@ public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerSc
      * @return the JSONNodeWidget
      */
     public JSONNodeWidget getJSONNodeWidget(Attribute attr) {
-        if (attr instanceof RelationAttribute || attr instanceof Embedded
+        if ((attr instanceof RelationAttribute && ((RelationAttribute) attr).getConnectedEntity() != null)
+                || (attr instanceof Embedded && ((Embedded) attr).getConnectedClass() != null)
                 || (attr instanceof ElementCollection && ((ElementCollection) attr).getConnectedClass() != null)) {
             return branchNodeWidgets.get(attr.getId());
         } else {

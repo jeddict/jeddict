@@ -43,7 +43,7 @@ public class JSONBMapping extends BaseElement implements IDefinitionElement, IRo
         this.entityMappings = entityMapping;
         tables.putAll(entityMapping.getJavaClass().stream()
                 .filter(clazz -> workSpace==null || workSpace.hasItem(clazz))
-                .map(javaClass -> new JSONBDocument(javaClass, workSpace))
+                .map(clazz -> new JSONBDocument(clazz, workSpace))
                 .collect(toMap(doc -> doc.getName(), doc -> doc, (doc1,doc2) -> doc1))); 
         tables.values().forEach(doc -> doc.loadAttribute());
     }

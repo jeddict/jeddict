@@ -38,7 +38,7 @@ public class StaticMetamodelGenerator extends ClassGenerator<StaticMetamodelClas
     private final String entityPackageName;
 
     public StaticMetamodelGenerator(ManagedClass managedClass, String entityPackageName, String packageName) {
-        super(new StaticMetamodelClassDefSnippet(), managedClass.getRootElement().getJavaEEVersion());
+        super(new StaticMetamodelClassDefSnippet());
         this.managedClass = managedClass;
         this.rootPackageName = packageName;
         this.packageName = managedClass.getAbsolutePackage(rootPackageName);

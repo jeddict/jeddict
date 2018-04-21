@@ -57,11 +57,11 @@ public class JSONBDocument extends FlowNode {
         for (Attribute attribute : attributes) {
             JSONBNode node = null;
 
-            if (attribute instanceof RelationAttribute) {
+            if (attribute instanceof RelationAttribute && ((RelationAttribute) attribute).getConnectedEntity()!= null) {
                 if (workSpace == null || workSpace.hasItem(((RelationAttribute) attribute).getConnectedEntity())) {
                     node = new JSONBBranchNode(attribute);
                 }
-            } else if (attribute instanceof Embedded) {
+            } else if (attribute instanceof Embedded && ((Embedded) attribute).getConnectedClass() != null) {
                 if (workSpace == null || workSpace.hasItem(((Embedded) attribute).getConnectedClass())) {
                     node = new JSONBBranchNode(attribute);
                 }

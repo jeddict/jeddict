@@ -36,7 +36,7 @@ public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet
     private final Entity entity;
 
     public EntityGenerator(Entity parsedEntity, String packageName) {
-        super(new EntityDefSnippet(), parsedEntity.getRootElement().getJavaEEVersion());
+        super(new EntityDefSnippet());
         this.entity = parsedEntity;
         this.rootPackageName = packageName;
         this.packageName = entity.getAbsolutePackage(rootPackageName);

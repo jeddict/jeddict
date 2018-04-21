@@ -24,7 +24,7 @@ public class EmbeddableIdClassGenerator extends ClassGenerator<EmbeddableIdDefSn
     private final DefaultClass defaultClass;
 
     public EmbeddableIdClassGenerator(DefaultClass parsedDefaultClass, String packageName) {
-        super(new EmbeddableIdDefSnippet(), parsedDefaultClass.getRootElement().getJavaEEVersion());
+        super(new EmbeddableIdDefSnippet());
         this.defaultClass = parsedDefaultClass;
         this.rootPackageName = packageName;
         this.packageName = defaultClass.getAbsolutePackage(rootPackageName);
