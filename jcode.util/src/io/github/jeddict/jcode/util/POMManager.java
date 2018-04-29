@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -420,6 +421,31 @@ public class POMManager {
         dependency.setClassifier(classifier);
         dependency.setScope(scope);
         registerDependency(Collections.singletonList(dependency), getPOMProject());
+    }
+    
+    public String getDependencyVersion(String groupId, String artifactId){
+        Dependency dependency = getPOMProject().findDependencyById(groupId, artifactId, null);
+        if(dependency != null){
+            return dependency.getVersion();
+        }
+        return null;
+    }
+    
+    public void setDependencyVersion(String groupId, String artifactId, String version) {
+        Dependency dependency = getPOMProject().findDependencyById(groupId, artifactId, null);
+        if (dependency != null) {
+            dependency.setVersion(version);
+        }
+    }
+    
+    public void setPluginConfiguration(String groupId, String artifactId, Map<String, String> configs) {
+        if (getPOMProject().getBuild() != null) {
+            Plugin plugin = getPOMProject().getBuild().findPluginById(groupId, artifactId);
+            if(plugin != null && plugin.getConfiguration() != null) {
+                Configuration configuration = plugin.getConfiguration();
+                configs.forEach((key, value) -> configuration.setSimpleParameter(key, value));
+            }
+        }
     }
 
     private Dependency createDependency(org.apache.maven.model.Dependency source) {

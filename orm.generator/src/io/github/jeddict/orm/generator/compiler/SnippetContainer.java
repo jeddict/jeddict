@@ -45,23 +45,24 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
         if (snippets.size() == 1) {
             return snippets.get(0).getSnippet();
         }
-
+        
+        boolean containerAnnotation = !this.repeatable;
         
         StringBuilder stringBuilder = new StringBuilder();
         
-        if(repeatable){
+        if(containerAnnotation){
             stringBuilder.append("@").append(getContianerName()).append("({");
             stringBuilder.append(NEW_LINE);
         }
 
         for (T snippet : snippets) {
-//            if(repeatable){stringBuilder.append(TAB);}
+//            if(containerAnnotation){stringBuilder.append(TAB);}
             stringBuilder.append(snippet.getSnippet());
-            if(repeatable){stringBuilder.append(COMMA);}
+            if(containerAnnotation){stringBuilder.append(COMMA);}
 //            stringBuilder.append(NEW_LINE);      
         }
         
-        if(repeatable){
+        if(containerAnnotation){
             stringBuilder.setLength(stringBuilder.length() - 1);
             stringBuilder.append(NEW_LINE + TAB + CLOSE_BRACES + CLOSE_PARANTHESES);
         } 
@@ -78,7 +79,8 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
         }
         List<String> importSnippets = new ArrayList<>();
 
-        if(repeatable){
+        boolean containerAnnotation = !this.repeatable;
+        if(containerAnnotation){
             importSnippets.add(getContianerFQN());
         }
 

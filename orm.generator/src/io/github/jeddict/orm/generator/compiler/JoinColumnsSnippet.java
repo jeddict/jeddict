@@ -58,9 +58,9 @@ public class JoinColumnsSnippet implements Snippet {
             return joinColumns.get(0).getSnippet();
         }
         
-        boolean isRepeatable = this.repeatable || foreignKey != null; 
+        boolean containerAnnotation = !this.repeatable || foreignKey != null; 
         
-        if (isRepeatable) {
+        if (containerAnnotation) {
             builder.append("@");
             if (mapKey) {
                 builder.append(MAP_KEY_JOIN_COLUMNS);
@@ -76,10 +76,10 @@ public class JoinColumnsSnippet implements Snippet {
 
         for (JoinColumnSnippet joinColumn : joinColumns) {
             builder.append(joinColumn.getSnippet());
-            if(isRepeatable){builder.append(ORMConverterUtil.COMMA);}
+            if(containerAnnotation){builder.append(ORMConverterUtil.COMMA);}
         }
         
-        if (isRepeatable) {
+        if (containerAnnotation) {
             builder.setLength(builder.length() - 1);
             builder.append(ORMConverterUtil.CLOSE_BRACES);
             builder.append(ORMConverterUtil.COMMA);
@@ -89,7 +89,7 @@ public class JoinColumnsSnippet implements Snippet {
             builder.append(foreignKey.getSnippet());
             builder.append(ORMConverterUtil.COMMA);
         }
-        if (isRepeatable) {
+        if (containerAnnotation) {
             builder.setLength(builder.length() - 1);
             builder.append(ORMConverterUtil.CLOSE_PARANTHESES);
         }
@@ -100,10 +100,10 @@ public class JoinColumnsSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException { 
         List<String> importSnippets = new ArrayList<>();
-        boolean isRepeatable = this.repeatable || foreignKey != null; 
+        boolean containerAnnotation = !this.repeatable || foreignKey != null; 
         if (joinColumns.size() == 1) {
             importSnippets.addAll(joinColumns.get(0).getImportSnippets());
-            if (isRepeatable && foreignKey != null) {
+            if (containerAnnotation && foreignKey != null) {
                 if (mapKey) {
                     importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
                 } else {
@@ -114,7 +114,7 @@ public class JoinColumnsSnippet implements Snippet {
             for (JoinColumnSnippet jc : joinColumns) {
                 importSnippets.addAll(jc.getImportSnippets());
             }
-            if (isRepeatable) {
+            if (containerAnnotation) {
                 if (mapKey) {
                     importSnippets.add(MAP_KEY_JOIN_COLUMNS_FQN);
                 } else {
