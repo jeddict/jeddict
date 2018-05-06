@@ -52,6 +52,8 @@ public class JSONBDocument extends FlowNode {
                     .boxed()
                     .collect(toMap(i -> propertyOrder.get(i).getId(), identity()));
             attributes.sort(Comparator.comparing(attr -> attributesMap.get(attr.getId())));
+        } else {
+            attributes.sort(Comparator.comparing(Attribute::getName));
         }
 
         for (Attribute attribute : attributes) {

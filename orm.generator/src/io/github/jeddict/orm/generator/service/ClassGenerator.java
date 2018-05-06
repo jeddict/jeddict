@@ -281,6 +281,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (!javaClass.getJsonbPropertyOrder().isEmpty()) {
             snippets.add(new PropertyOrderSnippet(javaClass.getJsonbPropertyOrder()
                     .stream()
+                    .filter(attr -> !attr.getJsonbTransient())
                     .map(Attribute::getName)
                     .collect(toList())
                 )

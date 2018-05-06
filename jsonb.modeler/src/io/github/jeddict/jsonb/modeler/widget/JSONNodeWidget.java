@@ -33,6 +33,9 @@ import static io.github.jeddict.jpa.modeler.widget.JavaClassWidget.getFileObject
 import io.github.jeddict.jpa.modeler.widget.OpenSourceCodeAction;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
@@ -178,7 +181,10 @@ public abstract class JSONNodeWidget<E extends JSONBNode> extends FlowPinWidget<
 
     @Override
     public void setName(String name) {
-        if (StringUtils.isNotBlank(name)) {
+        if(equalsIgnoreCase(this.name, trim(name))) {
+            return;
+        }
+        if (isNotBlank(name)) {
             this.name = name.replaceAll("\\s+", "");
             if (this.getModelerScene().getModelerFile().isLoaded()) {
                 updateName(this.name);

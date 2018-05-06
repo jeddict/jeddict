@@ -48,6 +48,7 @@ import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.jpa.modeler.initializer.JPAFileActionListener;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
+import java.util.Comparator;
 import org.netbeans.modeler.anchors.CustomRectangularAnchor;
 import org.netbeans.modeler.config.palette.SubCategoryNodeConfig;
 import org.netbeans.modeler.core.ModelerFile;
@@ -296,6 +297,7 @@ public class DocumentWidget extends FlowNodeWidget<JSONBDocument, JSONBModelerSc
         List<Attribute> attributes = this.getBaseElementSpec().getJavaClass().getJsonbPropertyOrder();
         if (attributes.isEmpty()) {
             attributes = this.getBaseElementSpec().getJavaClass().getAttributes().getAllAttribute();
+            attributes.sort(Comparator.comparing(Attribute::getName));
         }
         return Collections.singletonMap("", attributes.stream()
                 .map(attr -> getJSONNodeWidget(attr))
