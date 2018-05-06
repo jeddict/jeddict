@@ -51,6 +51,7 @@ public class WorkSpace extends BaseElement {
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -58,6 +59,7 @@ public class WorkSpace extends BaseElement {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }

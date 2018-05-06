@@ -912,6 +912,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
             } else {
                 throw new InvalidElmentException("Invalid JPA Element");
             }
+            getCurrentWorkSpace().removeItem(new WorkSpaceItem((JavaClass) baseElement_In));
         } else {
             throw new InvalidElmentException("Invalid JPA Element");
         }

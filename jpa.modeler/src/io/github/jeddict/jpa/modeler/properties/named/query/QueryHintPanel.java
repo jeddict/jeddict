@@ -92,12 +92,9 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
 
         org.openide.awt.Mnemonics.setLocalizedText(value_Label, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.value_Label.text")); // NOI18N
         query_LayeredPane.add(value_Label, java.awt.BorderLayout.WEST);
-
-        value_TextField.setText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.value_TextField.text")); // NOI18N
         query_LayeredPane.add(value_TextField, java.awt.BorderLayout.CENTER);
 
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.save_Button.text")); // NOI18N
-        save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.save_Button.toolTipText")); // NOI18N
         save_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 save_ButtonActionPerformed(evt);
@@ -107,7 +104,6 @@ public class QueryHintPanel extends EntityComponent<QueryHint> {
         save_Button.setBounds(20, 0, 70, 30);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.cancel_Button.text")); // NOI18N
-        cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(QueryHintPanel.class, "QueryHintPanel.cancel_Button.toolTipText")); // NOI18N
         cancel_Button.setPreferredSize(new java.awt.Dimension(60, 23));
         cancel_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

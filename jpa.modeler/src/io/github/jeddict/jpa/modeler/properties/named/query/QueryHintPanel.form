@@ -79,7 +79,7 @@
             <Component class="javax.swing.JLabel" name="name_Label">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.name_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="io/github/jeddict/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.name_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Constraints>
@@ -121,7 +121,7 @@
             <Component class="javax.swing.JLabel" name="value_Label">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.value_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="io/github/jeddict/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.value_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Constraints>
@@ -131,11 +131,6 @@
               </Constraints>
             </Component>
             <Component class="javax.swing.JTextField" name="value_TextField">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.value_TextField.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                   <BorderConstraints direction="Center"/>
@@ -153,10 +148,7 @@
             <Component class="javax.swing.JButton" name="save_Button">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.save_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-                </Property>
-                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.save_Button.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="io/github/jeddict/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.save_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>
@@ -171,10 +163,7 @@
             <Component class="javax.swing.JButton" name="cancel_Button">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.cancel_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-                </Property>
-                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/netbeans/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.cancel_Button.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                  <ResourceString bundle="io/github/jeddict/jpa/modeler/properties/named/query/Bundle.properties" key="QueryHintPanel.cancel_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[60, 23]"/>

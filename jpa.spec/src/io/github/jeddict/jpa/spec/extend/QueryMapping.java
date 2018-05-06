@@ -25,7 +25,7 @@ import io.github.jeddict.settings.code.CodePanel;
  * @author Gaurav Gupta
  */
 public abstract class QueryMapping extends DataMapping {
-    
+
     @XmlElement(required = true)
     protected String query;
 
@@ -37,8 +37,6 @@ public abstract class QueryMapping extends DataMapping {
             return false;
         }
     }
-    
-    
 
     /**
      * Gets the value of the query property.

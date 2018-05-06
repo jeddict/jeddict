@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.settings.code.CodePanel;
 import static io.github.jeddict.jpa.spec.NamedQuery.FIND_BY;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  *
@@ -37,6 +38,7 @@ public abstract class DataMapping {
     @XmlAttribute(required = true)
     protected String name;
     
+    @XmlElement(name="desc")
     protected String description;
 
     public boolean refractorName(String prevName, String newName) {

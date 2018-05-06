@@ -27,6 +27,11 @@ import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jpa.spec.LockModeType;
 import io.github.jeddict.jpa.spec.NamedQuery;
 import io.github.jeddict.jpa.spec.QueryHint;
+import java.awt.Component;
+import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
+import static javax.swing.JOptionPane.OK_OPTION;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.spec.ComboBoxValue;
@@ -42,8 +47,9 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
     private NamedQuery namedQuery;
     private NAttributeEntity attributeEntity;
-    private ModelerFile modelerFile;
-    private IdentifiableClass identifiableClass;
+    private final ModelerFile modelerFile;
+    private final IdentifiableClass identifiableClass;
+    private String description;
     
     public NamedQueryPanel(IdentifiableClass identifiableClass, ModelerFile modelerFile) {
         this.modelerFile=modelerFile;
@@ -76,6 +82,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
             this.setEntity(new RowValue(new Object[5]));
         }
         namedQuery = null;
+        description = null;
         name_TextField.setText(identifiableClass.getClazz() + '.' + "findByX");
         query_EditorPane.setText("Select e from " + identifiableClass.getClazz() + " e");
         lockModeType_jComboBox.setSelectedIndex(0);
@@ -93,6 +100,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
             namedQuery = (NamedQuery) row[0];
             name_TextField.setText(namedQuery.getName());
             query_EditorPane.setText(namedQuery.getQuery());
+            description = namedQuery.getDescription();
             setLockModeType(namedQuery.getLockMode());
         }
 
@@ -135,6 +143,8 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         jLayeredPane1 = new javax.swing.JLayeredPane();
         query_ScrollPane = new javax.swing.JScrollPane();
         query_EditorPane = new javax.swing.JEditorPane();
+        jLayeredPane2 = new javax.swing.JLayeredPane();
+        descriptionButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         lockModeType_LayeredPane = new javax.swing.JLayeredPane();
         lockModeType_Label = new javax.swing.JLabel();
@@ -161,27 +171,50 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         query_LayeredPane.add(query_Label, java.awt.BorderLayout.WEST);
 
         jLayeredPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jLayeredPane1.setLayout(new javax.swing.BoxLayout(jLayeredPane1, javax.swing.BoxLayout.LINE_AXIS));
+        jLayeredPane1.setLayout(new java.awt.BorderLayout());
 
         query_ScrollPane.setPreferredSize(new java.awt.Dimension(400, 100));
 
-        query_EditorPane.setPreferredSize(new java.awt.Dimension(210, 23));
+        query_EditorPane.setPreferredSize(new java.awt.Dimension(150, 23));
         query_ScrollPane.setViewportView(query_EditorPane);
         //jEditorPane1.getDocument().removeDocumentListener(NamedStoredProcedureQueryPanel.this);
         query_EditorPane.setEditorKit(CloneableEditorSupport.getEditorKit("text/x-jpql-jpam"));
         //jEditorPane1.getDocument().addDocumentListener(NamedStoredProcedureQueryPanel.this);
 
-        jLayeredPane1.add(query_ScrollPane);
+        jLayeredPane1.add(query_ScrollPane, java.awt.BorderLayout.CENTER);
+
+        jLayeredPane2.setMinimumSize(new java.awt.Dimension(15, 100));
+        jLayeredPane2.setPreferredSize(new java.awt.Dimension(30, 100));
+
+        descriptionButton.setBackground(new java.awt.Color(204, 204, 204));
+        descriptionButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/jeddict/jpa/modeler/resource/image/misc/note.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(descriptionButton, org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.descriptionButton.text")); // NOI18N
+        descriptionButton.setToolTipText(org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.descriptionButton.toolTipText")); // NOI18N
+        descriptionButton.setBorder(null);
+        descriptionButton.setBorderPainted(false);
+        descriptionButton.setMinimumSize(new java.awt.Dimension(10, 25));
+        descriptionButton.setPreferredSize(new java.awt.Dimension(10, 15));
+        descriptionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                descriptionButtonActionPerformed(evt);
+            }
+        });
+        jLayeredPane2.add(descriptionButton);
+        descriptionButton.setBounds(10, 30, 20, 20);
 
         editButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/io/github/jeddict/jpa/modeler/resource/image/misc/jpqlEditor.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(editButton, org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.editButton.text")); // NOI18N
-        editButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        editButton.setMinimumSize(new java.awt.Dimension(10, 25));
+        editButton.setPreferredSize(new java.awt.Dimension(10, 25));
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
             }
         });
-        jLayeredPane1.add(editButton);
+        jLayeredPane2.add(editButton);
+        editButton.setBounds(10, 0, 20, 20);
+
+        jLayeredPane1.add(jLayeredPane2, java.awt.BorderLayout.EAST);
 
         query_LayeredPane.add(jLayeredPane1, java.awt.BorderLayout.CENTER);
 
@@ -192,8 +225,13 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
         lockModeType_LayeredPane.add(lockModeType_jComboBox, java.awt.BorderLayout.CENTER);
 
+        action_jLayeredPane.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
         org.openide.awt.Mnemonics.setLocalizedText(save_Button, org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.save_Button.text")); // NOI18N
         save_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.save_Button.toolTipText")); // NOI18N
+        save_Button.setMaximumSize(new java.awt.Dimension(57, 26));
+        save_Button.setMinimumSize(new java.awt.Dimension(57, 26));
+        save_Button.setPreferredSize(new java.awt.Dimension(60, 26));
         save_Button.setSelected(true);
         save_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -201,18 +239,16 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
             }
         });
         action_jLayeredPane.add(save_Button);
-        save_Button.setBounds(0, 0, 80, 30);
 
         org.openide.awt.Mnemonics.setLocalizedText(cancel_Button, org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.cancel_Button.text")); // NOI18N
         cancel_Button.setToolTipText(org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.cancel_Button.toolTipText")); // NOI18N
-        cancel_Button.setPreferredSize(new java.awt.Dimension(60, 23));
+        cancel_Button.setPreferredSize(new java.awt.Dimension(70, 26));
         cancel_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancel_ButtonActionPerformed(evt);
             }
         });
         action_jLayeredPane.add(cancel_Button);
-        cancel_Button.setBounds(80, 0, 70, 30);
 
         queryHint_LayeredPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), org.openide.util.NbBundle.getMessage(NamedQueryPanel.class, "NamedQueryPanel.queryHint_LayeredPane.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         queryHint_LayeredPane.setPreferredSize(new java.awt.Dimension(460, 30));
@@ -228,7 +264,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         queryHint_LayeredPaneLayout.setVerticalGroup(
             queryHint_LayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(queryHint_LayeredPaneLayout.createSequentialGroup()
-                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addComponent(customNAttributeClientEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -242,17 +278,14 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
         root_jLayeredPane.setLayout(root_jLayeredPaneLayout);
         root_jLayeredPaneLayout.setHorizontalGroup(
             root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(root_jLayeredPaneLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lockModeType_LayeredPane)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, root_jLayeredPaneLayout.createSequentialGroup()
-                        .addGap(0, 724, Short.MAX_VALUE)
-                        .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(9, 9, 9))
-                    .addComponent(name_LayeredPane)
-                    .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 888, Short.MAX_VALUE)
-                    .addComponent(query_LayeredPane))
+                .addGroup(root_jLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(action_jLayeredPane)
+                    .addComponent(lockModeType_LayeredPane, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(name_LayeredPane, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                    .addComponent(query_LayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE))
                 .addContainerGap())
         );
         root_jLayeredPaneLayout.setVerticalGroup(
@@ -261,14 +294,13 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
                 .addContainerGap()
                 .addComponent(name_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(query_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lockModeType_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(query_LayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lockModeType_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(queryHint_LayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(action_jLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -312,6 +344,7 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
 
         namedQuery.setName(name_TextField.getText());
         namedQuery.setQuery(query_EditorPane.getText());
+        namedQuery.setDescription(description);
         namedQuery.setLockMode(((ComboBoxValue<LockModeType>) lockModeType_jComboBox.getSelectedItem()).getValue());
 
         if (this.getEntity().getClass() == RowValue.class) {
@@ -333,10 +366,24 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         String jpql = new JPQLPanelEditorController(modelerFile).execute(query_EditorPane.getText());
         if(jpql!=null){
-        query_EditorPane.setText(jpql);
+            query_EditorPane.setText(jpql);
         }
     }//GEN-LAST:event_editButtonActionPerformed
 
+    private void descriptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_descriptionButtonActionPerformed
+       this.description = showDescription(this, "Description", description);
+    }//GEN-LAST:event_descriptionButtonActionPerformed
+    
+    public static String showDescription(Component component, String title, String description) {
+        JTextArea descriptionArea = new JTextArea(15, 50);
+        descriptionArea.setText(description);
+        JScrollPane scrollPane = new JScrollPane(descriptionArea);
+        if(JOptionPane.showConfirmDialog(component, scrollPane, title, OK_CANCEL_OPTION) == OK_OPTION) {
+            return descriptionArea.getText();
+        }
+        return description;
+    }
+    
     private NAttributeEntity getQueryHint() {
         final NAttributeEntity attributeEntity = new NAttributeEntity("QueryHint", "Query Hint", "");
         attributeEntity.setCountDisplay(new String[]{"No QueryHints", "One QueryHint", " QueryHints"});
@@ -402,8 +449,10 @@ public class NamedQueryPanel extends EntityComponent<NamedQuery> implements Mode
     private javax.swing.JLayeredPane action_jLayeredPane;
     private javax.swing.JButton cancel_Button;
     private org.netbeans.modeler.properties.nentity.NEntityEditor customNAttributeClientEditor;
+    private javax.swing.JButton descriptionButton;
     private javax.swing.JButton editButton;
     private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JLayeredPane jLayeredPane2;
     private javax.swing.JLabel lockModeType_Label;
     private javax.swing.JLayeredPane lockModeType_LayeredPane;
     private javax.swing.JComboBox lockModeType_jComboBox;
