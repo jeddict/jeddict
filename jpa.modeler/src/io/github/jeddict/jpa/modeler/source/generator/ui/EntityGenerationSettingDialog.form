@@ -7,7 +7,7 @@
       <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="EntityGenerationSettingDialog.title" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
     </Property>
     <Property name="iconImage" type="java.awt.Image" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-      <Connection code="JAVA_CLASS" type="code"/>
+      <Connection code="JAVA_CLASS_ICON" type="code"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -32,7 +32,7 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="classGenerationPanel" pref="376" max="32767" attributes="0"/>
+                  <Component id="classGenerationPanel" pref="407" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="workSpace_LayeredPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -113,7 +113,7 @@
         <Component class="javax.swing.JButton" name="save_Button">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="EntityGenerationSettingDialog.save_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="EntityGenerationSettingDialog.save_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -126,7 +126,7 @@
         <Component class="javax.swing.JButton" name="cancel_Button">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="EntityGenerationSettingDialog.cancel_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="EntityGenerationSettingDialog.cancel_Button.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -144,7 +144,7 @@
                   <Component id="workSpace_Label" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="workSpace_ComboBox" min="-2" pref="140" max="-2" attributes="0"/>
-                  <EmptySpace pref="21" max="32767" attributes="0"/>
+                  <EmptySpace pref="52" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -164,7 +164,7 @@
         <Component class="javax.swing.JLabel" name="workSpace_Label">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/netbeans/jpa/modeler/source/generator/ui/Bundle.properties" key="EntityGenerationSettingDialog.workSpace_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+              <ResourceString bundle="io/github/jeddict/jpa/modeler/source/generator/ui/Bundle.properties" key="EntityGenerationSettingDialog.workSpace_Label.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>

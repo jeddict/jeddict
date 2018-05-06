@@ -34,9 +34,7 @@ public class EMLeafNode extends LeafNode<EntityMappings> {
     @Override
     public void init() {
         getCheckableNode().setEnableWithParent(true);
-        
         this.setIconBaseWithExtension(JPAModelerUtil.getBaseElementIcon(getJavaClass().getClass()));
-//        JavaClass javaClass = (JavaClass) leafClass.getBaseElementSpec();
         this.setShortDescription(getJavaClass().getClazz());
     }
 

@@ -41,7 +41,7 @@ public abstract class RootNode<T extends Object> extends AbstractNode implements
     private final T baseElementSpec;
 
     public RootNode(T baseElementSpec, TreeChildFactory childFactory, CheckableAttributeNode checkableNode) {
-        super(Children.create(childFactory, true), checkableNode==null?null:Lookups.singleton(checkableNode));
+        super(Children.create(childFactory, true), checkableNode == null ? null : Lookups.singleton(checkableNode));
         this.checkableNode = checkableNode;
         this.baseElementSpec = baseElementSpec;
         if (checkableNode != null) {

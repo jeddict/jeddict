@@ -22,6 +22,7 @@ import io.github.jeddict.jpa.modeler.navigator.nodes.TreeChildFactory;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
+import java.util.Comparator;
 import org.netbeans.modeler.specification.model.document.IModelerScene;
 import org.openide.nodes.Node;
 
@@ -40,7 +41,9 @@ public class EntityManagerChildFactory extends TreeChildFactory<EntityMappings ,
             scene = ((EMRootNode) parentNode).getRootWidget();
         }
         if (scene != null) {
-            javaClasses.addAll(scene.getBaseElementSpec().getJavaClass());
+            List<JavaClass> javaClassList = scene.getBaseElementSpec().getJavaClass();
+            javaClassList.sort(Comparator.comparing(JavaClass::getName));
+            javaClasses.addAll(javaClassList);
         }
         return true;
     }

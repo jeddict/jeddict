@@ -58,7 +58,7 @@ public class BeanClass extends JavaClass<BeanAttributes> {
 
     @Override
     public void setName(String name) {
-        this.clazz = clazz;
+        setClazz(name);
     }
 
 }

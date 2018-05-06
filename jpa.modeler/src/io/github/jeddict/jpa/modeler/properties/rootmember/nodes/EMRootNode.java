@@ -15,13 +15,11 @@
  */
 package io.github.jeddict.jpa.modeler.properties.rootmember.nodes;
 
-import org.apache.commons.lang3.StringUtils;
 import io.github.jeddict.jpa.modeler.navigator.nodes.CheckableAttributeNode;
 import io.github.jeddict.jpa.modeler.navigator.nodes.RootNode;
 import io.github.jeddict.jpa.modeler.navigator.nodes.TreeChildFactory;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
 
 public class EMRootNode extends RootNode<EntityMappings> {
