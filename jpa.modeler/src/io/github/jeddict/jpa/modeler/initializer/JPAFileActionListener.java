@@ -29,7 +29,7 @@ import org.netbeans.modeler.specification.model.file.action.ModelerFileActionLis
         document = "io/github/jeddict/jpa/modeler/resource/document/DocumentConfig.xml",
         element = "io/github/jeddict/jpa/modeler/resource/document/ElementConfig.xml")
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA", name = "JPA 2.2 Specification", 
-        version = "4.8.2", architectureVersion = "1.4",
+        version = "4.8.4", architectureVersion = "1.4",
         modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class, exportManager = ExportManagerImpl.class,
         relationValidator = RelationValidator.class, exceptionHandler = ExceptionUtils.class)
 public class JPAFileActionListener extends ModelerFileActionListener {
