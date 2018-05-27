@@ -71,7 +71,7 @@ import org.openide.util.RequestProcessor;
  *
  * @author jGauravGupta
  */
-public class POMManager {
+public class POMManager extends BuildManager {
 
     private Project project;
     
@@ -81,7 +81,7 @@ public class POMManager {
     
     private NbMavenProjectImpl mavenProject;
 
-    private Model sourceModel;
+    private List<Model> sourceModels = new ArrayList<>();
     
     private List<ModelOperation<POMModel>> operations;
     
@@ -103,26 +103,42 @@ public class POMManager {
         if(!readonly)pomModel.startTransaction();
     }
 
-    public POMManager(String inputResource, Project project) {
+    public POMManager(Project project, String... inputResources) {
         this(project, false);
-        try {
-            //source
-            ModelReader reader = EmbedderFactory.getProjectEmbedder().lookupComponent(ModelReader.class);
-            sourceModel = reader.read(FileUtil.loadResource(inputResource), Collections.singletonMap(ModelReader.IS_STRICT, false));
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        copy(inputResources);
     }
     
-    public POMManager(Reader inputResource, Project project) {
+    public POMManager(Project project, Reader... inputResources) {
         this(project, false);
-        try {
-            //source
-            ModelReader reader = EmbedderFactory.getProjectEmbedder().lookupComponent(ModelReader.class);
-            sourceModel = reader.read(inputResource, Collections.singletonMap(ModelReader.IS_STRICT, false));
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+        copy(inputResources);
+    }
+    
+    public POMManager copy(String... inputResources) {
+        Map<String, ?> properties = Collections.singletonMap(ModelReader.IS_STRICT, false);
+        ModelReader reader = EmbedderFactory.getProjectEmbedder().lookupComponent(ModelReader.class);
+        for (String inputResource : inputResources) {
+            try {
+                //source
+                sourceModels.add(reader.read(FileUtil.loadResource(inputResource), properties));
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
+        return this;
+    }
+        
+    public POMManager copy(Reader... inputResources) {
+                Map<String, ?> properties = Collections.singletonMap(ModelReader.IS_STRICT, false);
+        ModelReader reader = EmbedderFactory.getProjectEmbedder().lookupComponent(ModelReader.class);
+        for (Reader inputResource : inputResources) {
+            try {
+                //source
+                sourceModels.add(reader.read(inputResource, properties));
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return this;
     }
     
     public void fixDistributionProperties() {
@@ -192,40 +208,20 @@ public class POMManager {
         return project.getLookup().lookup(NbMavenProjectImpl.class) != null;
     }
 
-    public void reload() {
-        reload(project);
-    }
-    
-    public static void reload(Project project) {
-        NbMavenProjectImpl mavenProject = project.getLookup().lookup(NbMavenProjectImpl.class);
-        try {
-            FileObject pomFileObject = toFileObject(mavenProject.getPOMFile());
-            POMModel model = POMModelFactory.getDefault().getModel(Utilities.createModelSource(pomFileObject));
-            Utilities.saveChanges(model);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-
-        RP.post(() -> {
-            project.getLookup().lookup(NbMavenProject.class).triggerDependencyDownload();
-            NbMavenProject.fireMavenProjectReload(mavenProject);
-        });
-
-        SwingUtilities.invokeLater(() -> NbMavenProject.fireMavenProjectReload(mavenProject));
-    }
-
     private void execute() {
-        if (sourceModel != null) {
-            org.netbeans.modules.maven.model.pom.Project pomProject = getPOMProject();
-            if (pomProject.getProperties() == null) {
-                pomProject.setProperties(pomModel.getFactory().createProperties());
+        for (Model sourceModel : sourceModels) {
+            if (sourceModel != null) {
+                org.netbeans.modules.maven.model.pom.Project pomProject = getPOMProject();
+                if (pomProject.getProperties() == null) {
+                    pomProject.setProperties(pomModel.getFactory().createProperties());
+                }
+                registerProperties(sourceModel.getProperties(), pomProject.getProperties());
+                pomProject.setDependencyManagement(registerDependencyManagement(sourceModel.getDependencyManagement(), pomProject.getDependencyManagement()));
+                registerDependency(sourceModel.getDependencies(), pomProject);
+                registerRepository(sourceModel.getRepositories());
+                registerBuild(sourceModel.getBuild());
+                registerProfile(sourceModel.getProfiles());
             }
-            registerProperties(sourceModel.getProperties(), pomProject.getProperties());
-            pomProject.setDependencyManagement(registerDependencyManagement(sourceModel.getDependencyManagement(), pomProject.getDependencyManagement()));
-            registerDependency(sourceModel.getDependencies(), pomProject);
-            registerRepository();
-            registerBuild();
-            registerProfile();
         }
     }
 
@@ -245,9 +241,9 @@ public class POMManager {
         return target;
     }
 
-    private void registerBuild() {
-        if (sourceModel.getBuild() != null) {
-            registerBuildBase(sourceModel.getBuild(), getPOMProject().getBuild());
+    private void registerBuild(org.apache.maven.model.Build sourceBuild) {
+        if (sourceBuild != null) {
+            registerBuildBase(sourceBuild, getPOMProject().getBuild());
         }
     }
 
@@ -360,10 +356,10 @@ public class POMManager {
         }
     }
 
-    private void registerProfile() {
-        if (!sourceModel.getProfiles().isEmpty()) {
+    private void registerProfile(List<org.apache.maven.model.Profile> sourceProfiles) {
+        if (!sourceProfiles.isEmpty()) {
             org.netbeans.modules.maven.model.pom.Project pomProject = getPOMProject();
-            for (org.apache.maven.model.Profile sourceProfile : sourceModel.getProfiles()) {
+            for (org.apache.maven.model.Profile sourceProfile : sourceProfiles) {
                 Profile targetProfile = pomProject.findProfileById(sourceProfile.getId());
                 if (targetProfile == null) {
                     targetProfile = pomModel.getFactory().createProfile();
@@ -475,8 +471,8 @@ public class POMManager {
         }
     }
 
-    private void registerRepository() {
-        if (sourceModel.getRepositories().size() > 0) {
+    private void registerRepository(List<org.apache.maven.model.Repository> sourceRepositories) {
+        if (sourceRepositories.size() > 0) {
             operations.add(pomModel -> {
                 Set<String> existingRepositories = getPOMProject().getRepositories() != null ? 
                         getPOMProject().getRepositories()
@@ -484,16 +480,16 @@ public class POMManager {
                                 .map(Repository::getId)
                                 .collect(toSet()) 
                         : Collections.EMPTY_SET;
-                for (org.apache.maven.model.Repository repository : sourceModel.getRepositories()) {
-                    if (!existingRepositories.contains(repository.getId())) {
+                for (org.apache.maven.model.Repository sourceRepository : sourceRepositories) {
+                    if (!existingRepositories.contains(sourceRepository.getId())) {
                         Repository repo = pomModel.getFactory().createRepository();
-                        repo.setId(repository.getId());//isSnapshot ? MavenNbModuleImpl.NETBEANS_SNAPSHOT_REPO_ID : MavenNbModuleImpl.NETBEANS_REPO_ID);
-                        repo.setName(repository.getName());
-                        repo.setLayout(repository.getLayout());
-                        repo.setUrl(repository.getUrl());
-                        if (repository.getSnapshots() != null) {
+                        repo.setId(sourceRepository.getId());//isSnapshot ? MavenNbModuleImpl.NETBEANS_SNAPSHOT_REPO_ID : MavenNbModuleImpl.NETBEANS_REPO_ID);
+                        repo.setName(sourceRepository.getName());
+                        repo.setLayout(sourceRepository.getLayout());
+                        repo.setUrl(sourceRepository.getUrl());
+                        if (sourceRepository.getSnapshots() != null) {
                             RepositoryPolicy policy = pomModel.getFactory().createReleaseRepositoryPolicy();
-                            policy.setEnabled(Boolean.valueOf(repository.getSnapshots().getEnabled()));
+                            policy.setEnabled(Boolean.valueOf(sourceRepository.getSnapshots().getEnabled()));
                             repo.setReleases(policy);
                         }
                         getPOMProject().addRepository(repo);
@@ -503,8 +499,9 @@ public class POMManager {
         }
     }
 
-    public void setSourceVersion(final String version) {
+    public POMManager setSourceVersion(final String version) {
         operations.add(pomModel -> ModelUtils.setSourceLevel(pomModel, version));
+        return this;
     }
 
 //    private void downloadDependency() {
@@ -513,12 +510,39 @@ public class POMManager {
 //            NbMavenProject.fireMavenProjectReload(mavenProject);
 //        });
 //    }
-    public void commit() {
+    
+    @Override
+    public POMManager commit() {
         execute();
         if (operations.size() > 0) {
             Utilities.performPOMModelOperations(pomFileObject, operations);
         }
         pomModel.endTransaction();
+        return this;
+    }
+    
+    @Override
+    public POMManager reload() {
+        reload(project);
+        return this;
+    }
+    
+    public static void reload(Project project) {
+        NbMavenProjectImpl mavenProject = project.getLookup().lookup(NbMavenProjectImpl.class);
+        try {
+            FileObject pomFileObject = toFileObject(mavenProject.getPOMFile());
+            POMModel model = POMModelFactory.getDefault().getModel(Utilities.createModelSource(pomFileObject));
+            Utilities.saveChanges(model);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        RP.post(() -> {
+            project.getLookup().lookup(NbMavenProject.class).triggerDependencyDownload();
+            NbMavenProject.fireMavenProjectReload(mavenProject);
+        });
+
+        SwingUtilities.invokeLater(() -> NbMavenProject.fireMavenProjectReload(mavenProject));
     }
 //    
 //    public static void reloadProject(Project project){

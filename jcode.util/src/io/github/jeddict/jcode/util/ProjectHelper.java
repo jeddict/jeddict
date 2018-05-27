@@ -126,10 +126,8 @@ public class ProjectHelper {
     }
     
     public static FileObject getTestResourceDirectory(Project prj) {
-        
         SourceGroup sourceGroup = getTestSourceGroup(prj);
         FileObject fileObject = getFolderForPackage(sourceGroup.getRootFolder().getParent(), "resources", true);
-    //if(POMManager.isMavenProject(project)){
         return fileObject;
     }
 

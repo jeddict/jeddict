@@ -37,6 +37,7 @@ import static java.util.stream.Collectors.toSet;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;
+import io.github.jeddict.jcode.util.BuildManager;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jcode.util.WebDDUtil;
 import org.openide.util.Exceptions;
@@ -119,14 +120,10 @@ public class ApplicationGenerator extends AbstractGenerator {
             
             generateCRUD();
             if (appConfigData.isMonolith() || appConfigData.isMicroservice()) {
-                if (POMManager.isMavenProject(appConfigData.getTargetProject())) {
-                    POMManager.reload(appConfigData.getTargetProject());
-                }
+                BuildManager.reload(appConfigData.getTargetProject());
             }
             if (appConfigData.isGateway() || appConfigData.isMicroservice()) {
-                if (POMManager.isMavenProject(appConfigData.getGatewayProject())) {
-                    POMManager.reload(appConfigData.getGatewayProject());
-                }
+                BuildManager.reload(appConfigData.getGatewayProject());
             }
                         
             appConfigData.getWebDescriptorContent().forEach((project, webDescriptorContent) -> {
@@ -220,7 +217,7 @@ public class ApplicationGenerator extends AbstractGenerator {
     }
     
     private void inject(TechContext rootTechContext) {
-        inject(rootTechContext.getGenerator(), appConfigData, layerConfigData, handler);
+        inject(rootTechContext.getGenerator(), appConfigData, layerConfigData, handler, null, null);
         for (TechContext context : rootTechContext.getSiblingTechContext()) {
             inject(context);
         }
@@ -261,7 +258,7 @@ public class ApplicationGenerator extends AbstractGenerator {
 //        });
     }
 
-    private List<Field> getAllFields(List<Field> fields, Class<?> type) {
+    private static List<Field> getAllFields(List<Field> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()));
         if (type.getSuperclass()!= Object.class) {
             fields = getAllFields(fields, type.getSuperclass());
@@ -269,7 +266,12 @@ public class ApplicationGenerator extends AbstractGenerator {
         return fields;
     }
 
-    private void inject(Generator instance, ApplicationConfigData applicationConfigData, Map<Class<? extends LayerConfigData>, LayerConfigData> layerConfigData, ProgressHandler handler) {
+    public static void inject(Object instance, 
+            ApplicationConfigData applicationConfigData,
+            Map<Class<? extends LayerConfigData>, LayerConfigData> layerConfigData,
+            ProgressHandler handler,
+            Project project,
+            SourceGroup sourceGroup) {
         List<Field> fields = getAllFields(new LinkedList<>(), instance.getClass());
         for (Field field : fields) {
             if (field.isAnnotationPresent(ConfigData.class)) {
@@ -283,6 +285,10 @@ public class ApplicationGenerator extends AbstractGenerator {
                         field.set(instance, handler);
                     } else if (LayerConfigData.class.isAssignableFrom(field.getType())) {
                         field.set(instance, layerConfigData.get(field.getType()));
+                    } else if (field.getGenericType() == Project.class && project != null) {
+                        field.set(instance, project);
+                    } else if (field.getGenericType() == SourceGroup.class && sourceGroup != null) {
+                        field.set(instance, sourceGroup);
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     e.printStackTrace();
