@@ -32,6 +32,7 @@ import org.netbeans.modules.web.api.webmodule.WebProjectConstants;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
+import java.util.function.Predicate;
 
 /**
  *
@@ -39,7 +40,7 @@ import org.openide.util.Exceptions;
  */
 public class WebDDUtil {
 
-    private static final String DD_NAME = "web.xml";
+    public static final String DD_NAME = "web.xml";
 
     public static boolean setWelcomeFiles(Project project, String text) throws IOException {
         FileObject webXml = null;
@@ -96,26 +97,37 @@ public class WebDDUtil {
         }
         return true;
     }
-
-    public static FileObject createDD(Project project, String ddTemplatePath, Map<String, Object> params) {
+    
+    public static FileObject createDD(Project project,
+            String ddTemplatePath,
+            Map<String, Object> params,
+            Predicate<FileObject> condition) {
         FileObject fileObject = null;
         try {
             Sources sources = ProjectUtils.getSources(project);
             SourceGroup sourceGroups[] = sources.getSourceGroups(WebProjectConstants.TYPE_DOC_ROOT);
             FileObject webRoot = sourceGroups[0].getRootFolder();
             FileObject targetDir = FileUtil.createFolder(webRoot, WEB_INF);
-            fileObject = expandTemplate(ddTemplatePath, targetDir, DD_NAME, params);
+            if (condition.test(targetDir)) {
+                fileObject = expandTemplate(ddTemplatePath, targetDir, DD_NAME, params);
+            }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
         return fileObject;
     }
-    
-    public static FileObject createTestDD(Project project, String ddTemplatePath, Map<String, Object> params) {
+        
+    public static FileObject createTestDD(
+            Project project,
+            String ddTemplatePath,
+            Map<String, Object> params,
+            Predicate<FileObject> condition) {
         FileObject fileObject = null;
         try {
             FileObject testResourceRoot = ProjectHelper.getTestResourceDirectory(project);
-            fileObject = expandTemplate(ddTemplatePath, testResourceRoot, DD_NAME, params);
+            if (condition.test(testResourceRoot)) {
+                fileObject = expandTemplate(ddTemplatePath, testResourceRoot, DD_NAME, params);
+            }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

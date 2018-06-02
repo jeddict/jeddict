@@ -15,10 +15,8 @@
  */
 package io.github.jeddict.jcode.generator;
 
-import io.github.jeddict.jcode.util.POMManager;
 import io.github.jeddict.jcode.AbstractGenerator;
 import io.github.jeddict.jcode.annotation.ConfigData;
-import io.github.jeddict.jcode.Generator;
 import io.github.jeddict.jcode.TechContext;
 import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.LayerConfigData;
@@ -27,7 +25,7 @@ import io.github.jeddict.jcode.rest.RestUtil;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
+import static java.util.Collections.singletonMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +38,7 @@ import io.github.jeddict.jcode.task.progress.ProgressHandler;
 import io.github.jeddict.jcode.util.BuildManager;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jcode.util.WebDDUtil;
+import static io.github.jeddict.jcode.util.WebDDUtil.DD_NAME;
 import org.openide.util.Exceptions;
 
 /**
@@ -51,24 +50,19 @@ public class ApplicationGenerator extends AbstractGenerator {
     private ApplicationConfigData appConfigData;
     private ProgressHandler handler;
     private Map<Class<? extends LayerConfigData>, LayerConfigData> layerConfigData;
-    
-    private Project targetProject;
 
-    private SourceGroup targetSource;
+    private Project targetProject;
 
     private Project gatewayProject;
 
-    private SourceGroup gatewaySource;
-    
+    private static final String WEB_XML_TEMPLATE = "/io/github/jeddict/template/web/descriptor/_web.xml.ftl";
+
     @Override
     public void initialize(ApplicationConfigData applicationConfigData, ProgressHandler progressHandler) {
         this.appConfigData = applicationConfigData;
         this.handler = progressHandler;
-//        this.project = applicationConfigData.getTargetProject();
         targetProject = appConfigData.getTargetProject();
-        targetSource = appConfigData.getTargetSourceGroup();
         gatewayProject = appConfigData.getGatewayProject();
-        gatewaySource = appConfigData.getGatewaySourceGroup();
         injectData();
     }
 
@@ -117,25 +111,39 @@ public class ApplicationGenerator extends AbstractGenerator {
             if (appConfigData.isGateway()) {
                 new PersistenceHelper(gatewayProject).configure(entities, !RestUtil.hasJTASupport(gatewayProject));
             }
-            
+
             generateCRUD();
-            if (appConfigData.isMonolith() || appConfigData.isMicroservice()) {
-                BuildManager.reload(appConfigData.getTargetProject());
-            }
-            if (appConfigData.isGateway() || appConfigData.isMicroservice()) {
-                BuildManager.reload(appConfigData.getGatewayProject());
-            }
-                        
-            appConfigData.getWebDescriptorContent().forEach((project, webDescriptorContent) -> {
-                if (!webDescriptorContent.toString().isEmpty()) {
-                    WebDDUtil.createDD(project, "/io/github/jeddict/template/web/descriptor/_web.xml.ftl", Collections.singletonMap("content", webDescriptorContent));
-                }
+            appConfigData.getWebDescriptorContent().forEach((project, content) -> {
+                WebDDUtil.createDD(
+                        project,
+                        WEB_XML_TEMPLATE,
+                        singletonMap("content", content),
+                        targetDir -> content.length() > 0
+                );
             });
-            appConfigData.getWebDescriptorTestContent().forEach((project, webDescriptorTestContent) -> {
-                if (!webDescriptorTestContent.toString().isEmpty()) {
-                    WebDDUtil.createTestDD(project, "/io/github/jeddict/template/web/descriptor/_web.xml.ftl", Collections.singletonMap("content", webDescriptorTestContent));
-                }
+            appConfigData.getWebDescriptorTestContent().forEach((project, content) -> {
+                WebDDUtil.createTestDD(
+                        project,
+                        WEB_XML_TEMPLATE,
+                        singletonMap("content", content),
+                        testResourceRoot -> content.length() > 0
+                );
             });
+
+            Project project = appConfigData.isGateway() ? appConfigData.getGatewayProject() : appConfigData.getTargetProject();
+            BuildManager.reload(project);
+            WebDDUtil.createDD(
+                    project,
+                    WEB_XML_TEMPLATE,
+                    singletonMap("content", ""),
+                    targetDir -> targetDir.getFileObject(DD_NAME) == null
+            );
+            WebDDUtil.createTestDD(
+                    project,
+                    WEB_XML_TEMPLATE,
+                    singletonMap("content", ""),
+                    testResourceRoot -> testResourceRoot.getFileObject(DD_NAME) == null
+            );
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -143,7 +151,7 @@ public class ApplicationGenerator extends AbstractGenerator {
 
     @Override
     public void postGeneration() {
-        
+
         TechContext bussinesLayerConfig = appConfigData.getBussinesTechContext();
         if (bussinesLayerConfig == null) {
             return;
@@ -170,7 +178,7 @@ public class ApplicationGenerator extends AbstractGenerator {
         for (TechContext context : viewerLayerConfig.getSiblingTechContext()) {
             context.getGenerator().postExecute();
         }
-        
+
         String profiles = appConfigData.getProfiles();
         String goals = appConfigData.getGoals();
         handler.addDynamicVariable("profiles", profiles.isEmpty() ? "" : "-P " + profiles);
@@ -186,7 +194,7 @@ public class ApplicationGenerator extends AbstractGenerator {
             return;
         }
         storeLayerConfigData(bussinesLayerConfig);
-        
+
         TechContext controllerLayerConfig = appConfigData.getControllerTechContext();
         TechContext viewerLayerConfig = null;
         if (controllerLayerConfig != null) {
@@ -208,14 +216,14 @@ public class ApplicationGenerator extends AbstractGenerator {
             inject(viewerLayerConfig);
         }
     }
-    
+
     private void storeLayerConfigData(TechContext rootTechContext) {
         layerConfigData.put(rootTechContext.getPanel().getConfigData().getClass(), rootTechContext.getPanel().getConfigData());
         for (TechContext context : rootTechContext.getSiblingTechContext()) {
             storeLayerConfigData(context);
         }
     }
-    
+
     private void inject(TechContext rootTechContext) {
         inject(rootTechContext.getGenerator(), appConfigData, layerConfigData, handler, null, null);
         for (TechContext context : rootTechContext.getSiblingTechContext()) {
@@ -223,13 +231,13 @@ public class ApplicationGenerator extends AbstractGenerator {
         }
     }
 
-    private void execute(TechContext rootTechContext) throws IOException{
+    private void execute(TechContext rootTechContext) throws IOException {
         rootTechContext.getGenerator().execute();
         for (TechContext siblingTechContext : rootTechContext.getSiblingTechContext()) {
             execute(siblingTechContext);
         }
     }
-    
+
     private void generateCRUD() throws IOException {
         TechContext bussinesLayerConfig = appConfigData.getBussinesTechContext();
         if (bussinesLayerConfig == null) {
@@ -260,13 +268,13 @@ public class ApplicationGenerator extends AbstractGenerator {
 
     private static List<Field> getAllFields(List<Field> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()));
-        if (type.getSuperclass()!= Object.class) {
+        if (type.getSuperclass() != Object.class) {
             fields = getAllFields(fields, type.getSuperclass());
         }
         return fields;
     }
 
-    public static void inject(Object instance, 
+    public static void inject(Object instance,
             ApplicationConfigData applicationConfigData,
             Map<Class<? extends LayerConfigData>, LayerConfigData> layerConfigData,
             ProgressHandler handler,
