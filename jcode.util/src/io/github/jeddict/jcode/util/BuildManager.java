@@ -46,5 +46,12 @@ public abstract class BuildManager {
     
     public abstract BuildManager setSourceVersion(final String version);
     
-    
+    public abstract BuildManager addDefaultProperties(java.util.Properties prop);
+
+    public abstract BuildManager addDefaultProperties(String profile, java.util.Properties prop);
+
+    public abstract BuildManager addProperties(java.util.Properties prop);
+
+    public abstract BuildManager addProperties(String profile, java.util.Properties prop);
+
 }

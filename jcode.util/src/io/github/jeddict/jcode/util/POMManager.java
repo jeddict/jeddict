@@ -170,11 +170,31 @@ public class POMManager extends BuildManager {
         return getPOMProject().getVersion();
     }
 
-    public void addProperties(java.util.Properties prop) {
-        addProperties(null, prop);
+    @Override
+    public POMManager addDefaultProperties(java.util.Properties prop) {
+        addDefaultProperties(null, prop);
+        return this;
     }
 
-    public void addProperties(String profile, java.util.Properties prop) {
+    @Override
+    public POMManager addDefaultProperties(String profile, java.util.Properties prop) {
+        addProperties(profile, prop, true);
+        return this;
+    }
+
+    @Override
+    public POMManager addProperties(java.util.Properties prop) {
+        addProperties(null, prop);
+        return this;
+    }
+
+    @Override
+    public POMManager addProperties(String profile, java.util.Properties prop) {
+        addProperties(profile, prop, false);
+        return this;
+    }
+
+    private void addProperties(String profile, java.util.Properties prop, boolean defaultValue) {
         boolean tx = pomModel.isIntransaction();
         try {
             if (!tx) {
@@ -189,9 +209,9 @@ public class POMManager extends BuildManager {
                 if (targetProfile.getProperties() == null) {
                         targetProfile.setProperties(pomModel.getFactory().createProperties());
                     }
-                registerProperties(prop, targetProfile.getProperties());
+                registerProperties(prop, targetProfile.getProperties(), defaultValue);
             } else {
-                registerProperties(prop, pomProject.getProperties());
+                registerProperties(prop, pomProject.getProperties(), defaultValue);
             }
         } finally {
             if (!tx) {
@@ -215,7 +235,7 @@ public class POMManager extends BuildManager {
                 if (pomProject.getProperties() == null) {
                     pomProject.setProperties(pomModel.getFactory().createProperties());
                 }
-                registerProperties(sourceModel.getProperties(), pomProject.getProperties());
+                registerProperties(sourceModel.getProperties(), pomProject.getProperties(), false);
                 pomProject.setDependencyManagement(registerDependencyManagement(sourceModel.getDependencyManagement(), pomProject.getDependencyManagement()));
                 registerDependency(sourceModel.getDependencies(), pomProject);
                 registerRepository(sourceModel.getRepositories());
@@ -225,17 +245,17 @@ public class POMManager extends BuildManager {
         }
     }
 
-    private Properties registerProperties(java.util.Properties source, Properties target) {
+    private Properties registerProperties(java.util.Properties source, Properties target, boolean defaultValue) {
         if (source != null && !source.isEmpty()) {
             if (target == null) {
                 target = pomModel.getFactory().createProperties();
             }
             for (String sourceKey : source.stringPropertyNames()) {
                 String sourceValue = source.getProperty(sourceKey);
-//                String targetValue = target.getProperty(sourceKey);
-//                if (targetValue == null) {
-                target.setProperty(sourceKey, sourceValue);
-//                }
+                String targetValue = target.getProperty(sourceKey);
+                if (targetValue == null || !defaultValue) {
+                    target.setProperty(sourceKey, sourceValue);
+                }
             }
         }
         return target;
@@ -366,7 +386,7 @@ public class POMManager extends BuildManager {
                     pomProject.addProfile(targetProfile);
                     targetProfile.setId(sourceProfile.getId());
                 }
-                targetProfile.setProperties(registerProperties(sourceProfile.getProperties(), targetProfile.getProperties()));
+                targetProfile.setProperties(registerProperties(sourceProfile.getProperties(), targetProfile.getProperties(), false));
                 if (sourceProfile.getActivation() != null) {
                     Activation activation = pomModel.getFactory().createActivation();
                     targetProfile.setActivation(activation);
@@ -554,7 +574,7 @@ public class POMManager extends BuildManager {
 //            });
 //    }
     
-    public static void updateNBActionMapping(String actionName, Project project, List<String> profiles) {
+    public static void addNBActionMappingProfile(String actionName, Project project, List<String> profiles) {
         try {
             M2ConfigProvider usr = project.getLookup().lookup(M2ConfigProvider.class);
             NetbeansActionMapping mapp = ModelHandle2.getMapping(actionName, project, usr.getActiveConfiguration());
@@ -567,6 +587,26 @@ public class POMManager extends BuildManager {
                 mapp.addActivatedProfile(profile);
             }
            }
+            ModelHandle2.putMapping(mapp, project, usr.getActiveConfiguration());
+        } catch (Exception e) {
+            Exceptions.attachMessage(e, "Cannot persist action configuration.");
+            Exceptions.printStackTrace(e);
+        }
+    }
+    
+    public static void addNBActionMappingGoal(String actionName, Project project, List<String> goals) {
+        try {
+            M2ConfigProvider usr = project.getLookup().lookup(M2ConfigProvider.class);
+            NetbeansActionMapping mapp = ModelHandle2.getMapping(actionName, project, usr.getActiveConfiguration());
+            if (mapp == null) {
+                mapp = ModelHandle2.getDefaultMapping(actionName, project);
+            }
+            Set<String> existingGoals = new HashSet<>(mapp.getGoals());
+            for (String goal : goals) {
+                if (!existingGoals.contains(goal)) {
+                    mapp.addGoal(goal);
+                }
+            }
             ModelHandle2.putMapping(mapp, project, usr.getActiveConfiguration());
         } catch (Exception e) {
             Exceptions.attachMessage(e, "Cannot persist action configuration.");
