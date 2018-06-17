@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.jcode;
 
-import static io.github.jeddict.jcode.RegistryType.CONSUL;
-import static io.github.jeddict.jcode.util.POMManager.updateNBActionMapping;
+import static io.github.jeddict.jcode.util.POMManager.addNBActionMappingGoal;
+import static io.github.jeddict.jcode.util.POMManager.addNBActionMappingProfile;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.ProjectType;
 import java.io.Serializable;
@@ -104,10 +104,10 @@ public class ApplicationConfigData implements Serializable {
     
     public void addProfileAndActivate(Project project, String profile) {
         addProfile(profile);
-        updateNBActionMapping("run", project, asList(profile));
-        updateNBActionMapping("run.single.deploy", project, asList(profile));
-        updateNBActionMapping("debug", project, asList(profile));
-        updateNBActionMapping("debug.single.deploy", project, asList(profile));
+        addNBActionMappingProfile("run", project, asList(profile));
+        addNBActionMappingProfile("run.single.deploy", project, asList(profile));
+        addNBActionMappingProfile("debug", project, asList(profile));
+        addNBActionMappingProfile("debug.single.deploy", project, asList(profile));
     }
     
     public void addGoal(String goal) {
@@ -120,6 +120,14 @@ public class ApplicationConfigData implements Serializable {
 
     public String getGoals() {
         return String.join(" ", goals);
+    }
+    
+    public void addGoalAndActivate(Project project, String goal) {
+        addGoal(goal);
+        addNBActionMappingGoal("run", project, asList(goal));
+        addNBActionMappingGoal("run.single.deploy", project, asList(goal));
+        addNBActionMappingGoal("debug", project, asList(goal));
+        addNBActionMappingGoal("debug.single.deploy", project, asList(goal));
     }
     
     public void addBuildProperty(String propertyName, String propertyValue) {
