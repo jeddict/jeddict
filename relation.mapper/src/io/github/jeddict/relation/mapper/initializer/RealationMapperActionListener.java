@@ -39,7 +39,7 @@ import io.github.jeddict.relation.mapper.RelationMapper;
 @org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA_DB", name = "DB Viewer", 
         modelerUtil = RelationMapperUtil.class, modelerScene = RelationMapperScene.class,
         relationValidator = RelationValidator.class, modelerDiagramEngine = RelationMapperDiagramEngine.class,
-        version = "4.8.4", architectureVersion = "1.4")
+        version = "4.9", architectureVersion = "1.4")
 @org.openide.util.lookup.ServiceProvider(service = RelationMapper.class)
 public class RealationMapperActionListener extends ModelerFileActionListener implements RelationMapper {
 

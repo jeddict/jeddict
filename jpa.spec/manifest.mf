@@ -2,4 +2,4 @@ Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module: io.github.jeddict.jpa.spec
 OpenIDE-Module-Localizing-Bundle: io/github/jeddict/jpa/spec/Bundle.properties
-OpenIDE-Module-Specification-Version: 4.8.4
+OpenIDE-Module-Specification-Version: 4.9
