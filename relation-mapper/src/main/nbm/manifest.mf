@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: io.github.jeddict.relation.mapper
+OpenIDE-Module-Display-Category: Jeddict
+OpenIDE-Module-Long-Description: Database design is one of the key features of Jeddict. This module helps to create, modify, and design your models without the need to write complex SQL to create and edit objects, you’ll know exactly what you are working on. You can develop a complete database schema with just a few clicks.
+OpenIDE-Module-Short-Description: Relation mapper to design the database

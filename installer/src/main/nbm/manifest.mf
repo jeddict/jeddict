@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Display-Category: Jeddict
+OpenIDE-Module: io.github.jeddict.installer
+OpenIDE-Module-Short-Description: Jeddict auto update & instaler module
+OpenIDE-Module-Layer: io/github/jeddict/installer/layer.xml

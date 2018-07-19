@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Display-Category: Jeddict
+OpenIDE-Module: io.github.jeddict.db.modeler
+OpenIDE-Module-Short-Description: DB Modeler module provides the instant native database viewer functionality from Services > Databases > Tables 
+OpenIDE-Module-Layer: io/github/jeddict/db/modeler/layer.xml

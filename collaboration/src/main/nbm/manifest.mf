@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Display-Category: Jeddict
+OpenIDE-Module: io.github.jeddict.collaborate
+OpenIDE-Module-Short-Description: Collaborate module helps to collect the exception stacktrace and create the github ticket.

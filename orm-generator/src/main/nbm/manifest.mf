@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: io.github.jeddict.orm.generator
+OpenIDE-Module-Display-Category: Jeddict
+OpenIDE-Module-Long-Description: Module to generated the JPA 2.2 source code to accelerate the implementation phase of project and eliminate the unintended errors that can creep into manually written code and prove time-consuming to debug later on.
+OpenIDE-Module-Short-Description: JPA 2.2 source code generator

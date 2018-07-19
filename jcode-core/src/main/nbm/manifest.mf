@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Display-Category: Jeddict
+OpenIDE-Module: io.github.jeddict.jcode.core
+OpenIDE-Module-Short-Description: Core module to extend and integrate external code generator (e.g rest, mvc, docker)

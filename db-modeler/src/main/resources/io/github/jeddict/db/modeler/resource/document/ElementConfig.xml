@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<element-config>
+    <groups>
+        <group id="BASIC_PROP" name="Properties" position="1"/>
+        <group id="COLUMN" name="@Column" position="2"/>
+        <group id="JOIN_COLUMN" name="@JoinColumn" position="3"/>
+        <group id="INVERSE_JOIN_COLUMN" name="Inverse @JoinColumn" position="4"/>
+        <group id="ATTRIBUTE_OVERRIDE" name="AttributeOverride @Column" position="5"/>
+        <group id="ASSOCIATION_OVERRIDE" name="AssociationOverride @JoinColumn" position="6"/>
+        <group id="EMBEDDABLE_COLUMN" name="Embeddable @Column" position="7"/>
+        <group id="EMBEDDABLE_JOINCOLUMN" name="Embeddable @JoinColumn" position="8"/>
+        <group id="PARENT_JOINCOLUMN" name="Superclass @JoinColumn" position="9"/>
+        <group id="PK_JOIN_COLUMN" name="@PrimaryKeyJoinColumn" position="10"/>
+        <group id="FOREIGN_KEY" name="@ForeignKey" position="11"/>
+        <group id="PK_FOREIGN_KEY" name="PrimaryKey @ForeignKey" position="12"/>
+        <group id="INVERSE_FOREIGN_KEY" name="Inverse @ForeignKey" position="13"/>
+    </groups>
+    <elements>
+        <element id="Schema" groupId="BASIC_PROP" class="io.github.jeddict.db.modeler.spec.DBSchema">
+            <attributes>
+                <attribute id="schema_name" groupId="BASIC_PROP" class="java.lang.String" name="schemaName" read-only="true">
+                    <display-name>Schema</display-name>
+                </attribute>
+                <attribute id="catalog_name" groupId="BASIC_PROP" class="java.lang.String" name="catalogName" read-only="true">
+                    <display-name>Catalog</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Table" groupId="BASIC_PROP" class="io.github.jeddict.db.modeler.spec.DBTable">
+            <attributes>
+                <attribute id="table_name" groupId="BASIC_PROP" class="java.lang.String" name="name" read-only="true">
+                    <display-name>Table</display-name>
+                </attribute>
+                <attribute id="schema_name" groupId="BASIC_PROP" class="java.lang.String" name="schemaName" read-only="true">
+                    <display-name>Schema</display-name>
+                </attribute>
+                <attribute id="catalog_name" groupId="BASIC_PROP" class="java.lang.String" name="catalogName" read-only="true">
+                    <display-name>Catalog</display-name>
+                </attribute>
+            </attributes>
+        </element>
+        <element id="Column" groupId="BASIC_PROP" class="io.github.jeddict.db.modeler.spec.DBColumn">
+            <attributes>
+                <attribute id="column_name" groupId="BASIC_PROP" class="java.lang.String" name="name" read-only="true">
+                    <display-name>Column Name</display-name>
+                </attribute>
+                <attribute id="typeName" groupId="BASIC_PROP" class="java.lang.String" name="typeName" read-only="true">
+                    <display-name>Data Type</display-name>
+                </attribute>
+                
+                <attribute id="nullable" groupId="BASIC_PROP" class="java.lang.Boolean" name="nullable" read-only="true">
+                    <display-name>Nulls allowed</display-name>
+                </attribute>
+                <attribute id="length" groupId="BASIC_PROP" class="java.lang.Integer" name="length" read-only="true">
+                    <display-name>Column Size</display-name>
+                </attribute>
+                <attribute id="scale" groupId="BASIC_PROP" class="java.lang.Short" name="scale" read-only="true">
+                    <display-name>Decimal Digits</display-name>
+                </attribute>
+                <attribute id="table_name" groupId="BASIC_PROP" class="java.lang.String" name="tableName" read-only="true">
+                    <display-name>Table Name</display-name>
+                </attribute>
+            </attributes>
+        </element>
+     
+    </elements>
+</element-config>

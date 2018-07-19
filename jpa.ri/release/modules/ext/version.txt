@@ -1,2 +1,0 @@
-javax.persistence_2.2.0.v201708071007
-eclipselink version 2.7.1

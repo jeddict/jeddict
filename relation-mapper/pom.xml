@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.jeddict</groupId>
+        <artifactId>jeddict</artifactId>
+        <version>4.9</version>
+    </parent>
+    <artifactId>relation-mapper</artifactId>
+    <name>Relation Mapper</name>
+    <packaging>nbm</packaging>
+        
+    <properties>
+        <root.dir>${basedir}/../</root.dir>
+    </properties>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <clusterBuildDir>../../jeddict_clusters/netbeans</clusterBuildDir>
+                    <publicPackages>
+                        <publicPackage>io.github.jeddict.relation.mapper.initializer</publicPackage>
+                        <publicPackage>io.github.jeddict.relation.mapper.theme</publicPackage>
+                        <publicPackage>io.github.jeddict.relation.mapper.widget.api</publicPackage>
+                        <publicPackage>io.github.jeddict.relation.mapper.event</publicPackage>
+                    </publicPackages>
+                    
+                    <moduleDependencies>
+                        <dependency>
+                            <id>org.netbeans.api:org-netbeans-modules-db</id>
+                            <type>impl</type>
+                        </dependency>
+                    </moduleDependencies>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>    
+    
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.8.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.0.60</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.jeddict.modeler</groupId>
+            <artifactId>modeler-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jeddict.modeler</groupId>
+            <artifactId>modeler-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jeddict.modeler</groupId>
+            <artifactId>modeler-properties</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jpa-spec</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jpa-modeler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>collaboration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jcode-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util-ui</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-nodes</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-visual</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-awt</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-java-classpath</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-db</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-explorer</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-windows</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-libs-javacapi</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-libs-lucene</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+    </dependencies>
+    
+</project>
+
+<!--[
+org.netbeans.lib.ddl.CommandNotSupportedException, 
+org.netbeans.modules.db.explorer.action.ExecuteCommandAction, 
+org.netbeans.lib.ddl.util.CommandBuffer, 
+org.netbeans.modules.db.explorer.node.TableNode, 
+org.netbeans.modules.db.explorer.DatabaseConnection, 
+org.netbeans.lib.ddl.impl.RenameTable, 
+org.netbeans.modules.db.explorer.action.ViewDataAction, 
+org.netbeans.lib.ddl.impl.Specification, 
+org.netbeans.modules.db.explorer.DatabaseConnector, 
+org.netbeans.lib.ddl.DDLException
+]-->
