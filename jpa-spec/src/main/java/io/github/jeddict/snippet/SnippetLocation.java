@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.jpa.spec.extend;
+package io.github.jeddict.snippet;
 
 public interface SnippetLocation {
 

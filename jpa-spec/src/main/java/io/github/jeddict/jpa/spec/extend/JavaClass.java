@@ -15,14 +15,68 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.TypeParameter;
+import static io.github.jeddict.jcode.bv.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
+import static io.github.jeddict.jcode.jaxb.JAXBConstants.JAXB_PACKAGE;
+import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_NILLABLE_FQN;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_PACKAGE;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_ADAPTER_FQN;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_VISIBILITY_FQN;
+import static io.github.jeddict.jcode.util.JavaIdentifiers.isFQN;
+import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
+import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
+import static io.github.jeddict.jcode.util.JavaUtil.isBeanMethod;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.IdentifiableClass;
+import static io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType.TYPE;
+import io.github.jeddict.jsonb.spec.JsonbDateFormat;
+import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
+import io.github.jeddict.jsonb.spec.JsonbTypeHandler;
+import io.github.jeddict.jsonb.spec.JsonbVisibilityHandler;
+import io.github.jeddict.snippet.ClassSnippet;
+import io.github.jeddict.snippet.ClassSnippetLocationType;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_CLASS;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_FIELD;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.AFTER_METHOD;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.BEFORE_PACKAGE;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.IMPORT;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.TYPE_JAVADOC;
+import io.github.jeddict.source.JCRELoader;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
+import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import static java.util.Objects.nonNull;
 import java.util.Set;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toMap;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -36,22 +90,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.netbeans.api.java.source.JavaSource;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_NILLABLE_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_ADAPTER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_VISIBILITY_FQN;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.IdentifiableClass;
-import io.github.jeddict.jsonb.spec.JsonbDateFormat;
-import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
-import io.github.jeddict.jsonb.spec.JsonbTypeHandler;
-import io.github.jeddict.jsonb.spec.JsonbVisibilityHandler;
-import io.github.jeddict.source.JCRELoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
-import static java.util.Arrays.asList;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.type.Embedded;
 import org.openide.filesystems.FileObject;
@@ -62,8 +102,8 @@ import org.openide.filesystems.FileObject;
  * @param <T>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class JavaClass<T extends IAttributes> extends FlowNode implements JCRELoader,
-        JsonbTypeHandler, JsonbVisibilityHandler, Embedded {
+public abstract class JavaClass<T extends IAttributes> extends FlowNode
+        implements JCRELoader, JsonbTypeHandler, JsonbVisibilityHandler, Embedded {
 
     @XmlElement(name = "ts")
     private ClassMembers toStringMethod;
@@ -83,6 +123,9 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
 
+    @XmlAttribute(name = "pclass")
+    private String previousClass;
+
     @XmlTransient
     private String superclassId;
 
@@ -94,24 +137,33 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
     private Set<JavaClass> subclassList;
 
     @XmlAttribute(name = "v")
-    private boolean visibile = true;
-
-    private List<ClassAnnotation> annotation;
-
-    @XmlTransient
-    private List<ClassAnnotation> runtimeAnnotation;
+    private boolean visible = true;
 
     @XmlElement(name = "ext")
-    private ReferenceClass superclassRef;//if refered from classpath
+    private ReferenceClass superclassRef; // if refered from classpath
 
     @XmlElement(name = "inf")
     private Set<ReferenceClass> interfaces;
+
+    private List<ClassAnnotation> annotation;
 
     @XmlElement(name = "snp")
     private List<ClassSnippet> snippets;
 
     @XmlTransient
+    private ReferenceClass runtimeSuperclassRef;
+
+    @XmlTransient
+    private Set<ReferenceClass> runtimeInterfaces;
+
+    @XmlTransient
+    private List<ClassAnnotation> runtimeAnnotation;
+
+    @XmlTransient
     private List<ClassSnippet> runtimeSnippets;
+
+    @XmlTransient
+    private List<String> runtimeTypeParameters;
 
     @XmlTransient
     private FileObject fileObject;
@@ -154,10 +206,14 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
     @XmlElement(name = "i")
     @XmlIDREF
     private List<Attribute> jsonbPropertyOrder; //REVENG pending
-
     //Jsonb support end
+
     @XmlAttribute(name = "xre")
     private Boolean xmlRootElement = false;
+
+    @XmlElementWrapper(name = "removedAttributes")
+    @XmlElement(name = "i")
+    private Set<String> removedAttributes;
 
     @Override
     public void load(EntityMappings entityMappings, TypeElement element, boolean fieldAccess) {
@@ -212,6 +268,258 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
             }
         }
 
+    }
+
+    public void loadExistingSnippet(CompilationUnit existingSource) {
+        Map<String, Attribute> attributes = this.getAttributes().getAllAttributeMap();
+        Map<String, Attribute> previousAttributes
+                = this.getAttributes()
+                        .getAllAttribute()
+                        .stream()
+                        .filter(attr -> Objects.nonNull(attr.getPreviousName()))
+                        .collect(toMap(Attribute::getPreviousName, identity()));
+
+        Map<String, ImportDeclaration> imports = existingSource.getImports()
+                .stream()
+                .collect(toMap(importDec -> unqualify(importDec.getNameAsString()), identity()));
+
+        NodeList<TypeDeclaration<?>> types = existingSource.getTypes();
+        for (TypeDeclaration<?> type : types) {
+            if (type.getNameAsString().equals(this.getPreviousClass())
+                    || type.getNameAsString().equals(this.getClazz())) {
+                ClassOrInterfaceDeclaration rootClass = (ClassOrInterfaceDeclaration) type;
+
+                if (type.getParentNode().isPresent()) {
+                    Node parentNode = type.getParentNode().get();
+
+                    parentNode.getComment()
+                            .ifPresent(comment -> loadHeader(comment, BEFORE_PACKAGE));
+
+                    parentNode.getChildNodes()
+                            .stream()
+                            .filter(node -> node instanceof JavadocComment)
+                            .map(node -> (JavadocComment) node)
+                            .forEach(javadocComment -> loadJavadoc(javadocComment, TYPE_JAVADOC));// Alternative of type.getJavadocComment() **
+                }
+
+                addTypeParameters(rootClass.getTypeParameters(), imports);
+                addExtendedTypes(rootClass.getExtendedTypes(), imports);
+                addImplementedTypes(rootClass.getImplementedTypes(), imports);
+                addAnnotations(rootClass.getAnnotations(), TYPE, imports);
+
+                NodeList<BodyDeclaration<?>> members = rootClass.getMembers();
+                for (BodyDeclaration<?> member : members) {
+                    if (member instanceof MethodDeclaration) {
+                        MethodDeclaration method = (MethodDeclaration) member;
+                        if (isBeanMethod(method.getNameAsString())) {
+                            String methodName = method.getNameAsString();
+                            String attributeName = getFieldName(methodName);
+
+                            if (getRemovedAttributes().contains(attributeName)) {
+                                continue; //ignore deleted attribute
+                            }
+
+                            Attribute previousAttribute = previousAttributes.get(attributeName);
+                            Attribute attribute = attributes.get(attributeName);
+                            if (previousAttribute != null) { //renamed
+                                previousAttribute.loadExistingSnippet(attributeName, method, imports);
+                            } else if (attribute != null) { // new or non-modified
+                                attribute.loadExistingSnippet(attributeName, method, imports);
+                            } else {
+                                addMethodSnippet(method, imports);
+                            }
+                        } else if (method.getNameAsString().equals("toString")
+                                && method.getParameters().isEmpty()) {
+                            if (toStringMethod == null || toStringMethod.getAttributes().isEmpty()) {
+                                addMethodSnippet(method, imports);
+                            }
+                        } else if (method.getNameAsString().equals("hashCode")
+                                && method.getParameters().isEmpty()) {
+                            if (hashCodeMethod == null || hashCodeMethod.getAttributes().isEmpty()) {
+                                addMethodSnippet(method, imports);
+                            }
+                        } else if (method.getNameAsString().equals("equals")
+                                && method.getParameters().size() == 1
+                                && method.getParameters().get(0).getTypeAsString().equals("Object")) {
+                            if (equalsMethod == null || equalsMethod.getAttributes().isEmpty()) {
+                                addMethodSnippet(method, imports);
+                            }
+                        } else {
+                            addMethodSnippet(method, imports);
+                        }
+                    } else if (member instanceof FieldDeclaration) {
+                        FieldDeclaration field = (FieldDeclaration) member;
+                        String attributeName = field.getVariable(0).getNameAsString();
+
+                        if (getRemovedAttributes().contains(attributeName)) {
+                            continue; //ignore deleted attribute
+                        }
+
+                        Attribute previousAttribute = previousAttributes.get(attributeName);
+                        Attribute attribute = attributes.get(attributeName);
+                        if (previousAttribute != null) { //renamed
+                            previousAttribute.loadExistingSnippet(attributeName, field, imports);
+                        } else if (attribute != null) { // new or non-modified
+                            attribute.loadExistingSnippet(attributeName, field, imports);
+                        } else {
+                            addFieldSnippet((FieldDeclaration) member, imports);
+                        }
+                    } else if (member instanceof ClassOrInterfaceDeclaration) {
+                        addInnerClassOrInterfaceSnippet((ClassOrInterfaceDeclaration) member, imports);
+                    } else if (member instanceof InitializerDeclaration) {
+                        addInitializationBlockSnippet((InitializerDeclaration) member, imports);
+                    } else if (member instanceof ConstructorDeclaration) {
+                        addConstructorSnippet((ConstructorDeclaration) member, imports);
+                    } else {
+                        System.out.println("");
+                    }
+                }
+            } else if (type instanceof ClassOrInterfaceDeclaration) {
+                addClassOrInterfaceSnippet((ClassOrInterfaceDeclaration) type, imports);
+            } else {
+                System.out.println("fff");
+            }
+
+        }
+    }
+
+    private void loadHeader(Comment comment, ClassSnippetLocationType locationType) {
+        this.addRuntimeSnippet(new ClassSnippet(comment.toString(), locationType));
+    }
+
+    private void loadJavadoc(JavadocComment javadocComment, ClassSnippetLocationType locationType) {
+        String value = javadocComment.toString();
+        if (description == null || !value.contains(description)) {
+            this.addRuntimeSnippet(new ClassSnippet(value, locationType));
+        }
+    }
+
+    private void addTypeParameters(List<TypeParameter> typeParameters, Map<String, ImportDeclaration> imports) {
+        for (TypeParameter typeParameter : typeParameters) {
+            String value = typeParameter.toString();
+            this.addRuntimeTypeParameter(value);
+            addImportSnippet(value, imports);;
+        }
+    }
+
+    private void addExtendedTypes(List<ClassOrInterfaceType> extendedTypes, Map<String, ImportDeclaration> imports) {
+        if (extendedTypes.size() != 1) {
+            return; // single extends is valid for entity
+        }
+        ClassOrInterfaceType extendedType = extendedTypes.get(0);
+        String value = extendedType.toString();
+        if (getSuperclassRef() == null && getSuperclass() == null) {
+            this.setRuntimeSuperclassRef(new ReferenceClass(value));
+            addImportSnippet(value, imports);;
+        }
+    }
+
+    private void addImplementedTypes(List<ClassOrInterfaceType> implementedTypes, Map<String, ImportDeclaration> imports) {
+        Set<ReferenceClass> allInterfaces = new LinkedHashSet<>(this.getRootElement().getInterfaces());
+        allInterfaces.addAll(this.getInterfaces());
+
+        for (ClassOrInterfaceType implementedType : implementedTypes) {
+            String implementedExprName = implementedType.getNameAsString();
+            String implementedName;
+            if (isFQN(implementedExprName)) {
+                implementedName = unqualify(implementedExprName);
+            } else {
+                implementedName = implementedExprName;
+            }
+
+            String value = implementedType.toString();
+            if (!allInterfaces
+                    .stream()
+                    .filter(inter -> inter.isEnable())
+                    .filter(inter -> inter.getName().contains(implementedName))
+                    .findAny()
+                    .isPresent()) {
+                this.addRuntimeInterface(new ReferenceClass(value));
+                addImportSnippet(value, imports);;
+            }
+        }
+    }
+
+    private void addAnnotations(List<AnnotationExpr> annotationExprs, ClassAnnotationLocationType locationType, Map<String, ImportDeclaration> imports) {
+        for (AnnotationExpr annotationExpr : annotationExprs) {
+            String annotationExprName = annotationExpr.getNameAsString();
+            String annotationName;
+            String annotationFQN;
+            if (isFQN(annotationExprName)) {
+                annotationFQN = annotationExprName;
+                annotationName = unqualify(annotationExprName);
+            } else {
+                annotationFQN = imports.containsKey(annotationExprName)
+                        ? imports.get(annotationExprName).getNameAsString() : annotationExprName;
+                annotationName = annotationExprName;
+            }
+
+            if (!annotationFQN.startsWith(PERSISTENCE_PACKAGE)
+                    && !annotationFQN.startsWith(BEAN_VAILDATION_PACKAGE)
+                    && !annotationFQN.startsWith(JSONB_PACKAGE)
+                    && !annotationFQN.startsWith(JAXB_PACKAGE)) {
+                String value = annotationExpr.toString();
+                if (!getAnnotation().stream()
+                        .filter(anot -> anot.getLocationType() == locationType)
+                        .filter(anot -> anot.getName().contains(annotationName))
+                        .findAny()
+                        .isPresent()) {
+                    this.addRuntimeAnnotation(new ClassAnnotation(value, locationType));
+                    addImportSnippet(value, imports);;
+                }
+            }
+
+        }
+    }
+
+    private void addFieldSnippet(FieldDeclaration field, Map<String, ImportDeclaration> imports) {
+        addClassSnippet(AFTER_FIELD, field.toString(), imports);
+    }
+
+    private void addInitializationBlockSnippet(InitializerDeclaration initializationBlock, Map<String, ImportDeclaration> imports) {
+        addClassSnippet(AFTER_FIELD, initializationBlock.toString(), imports);
+    }
+
+    private void addConstructorSnippet(ConstructorDeclaration constructor, Map<String, ImportDeclaration> imports) {
+        String signature
+                = constructor.getParameters()
+                        .stream()
+                        .map(Parameter::getTypeAsString)
+                        .collect(joining(", "));
+        if (!constructors
+                .stream()
+                .filter(Constructor::isEnable)
+                .filter(cot -> cot.getSignature().equals(signature))
+                .findAny()
+                .isPresent()) {
+            addClassSnippet(AFTER_FIELD, constructor.toString(), imports);
+        }
+    }
+
+    private void addMethodSnippet(MethodDeclaration method, Map<String, ImportDeclaration> imports) {
+        addClassSnippet(AFTER_METHOD, method.toString(), imports);
+    }
+
+    private void addInnerClassOrInterfaceSnippet(ClassOrInterfaceDeclaration subClass, Map<String, ImportDeclaration> imports) {
+        addClassSnippet(AFTER_METHOD, subClass.toString(), imports);
+    }
+
+    private void addClassOrInterfaceSnippet(ClassOrInterfaceDeclaration subClass, Map<String, ImportDeclaration> imports) {
+        addClassSnippet(AFTER_CLASS, subClass.toString(), imports);
+    }
+
+    private void addClassSnippet(ClassSnippetLocationType locationType, String snippet, Map<String, ImportDeclaration> imports) {
+        addImportSnippet(snippet, imports);
+        this.addRuntimeSnippet(new ClassSnippet(snippet, locationType));
+    }
+
+    private void addImportSnippet(String snippet, Map<String, ImportDeclaration> imports) {
+        imports.keySet()
+                .stream()
+                .filter(snippet::contains)
+                .map(imports::get)
+                .map(importClass -> new ClassSnippet(importClass.getNameAsString(), IMPORT))
+                .forEach(importSnippet -> this.addRuntimeSnippet(importSnippet));
     }
 
     public void beforeMarshal(Marshaller marshaller) {
@@ -275,21 +583,21 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
     }
 
     /**
-     * @return the visibile
+     * @return the visible
      */
-    public boolean isVisibile() {
-        return visibile;
+    public boolean isVisible() {
+        return visible;
     }
 
     /**
-     * @param visibile the visibile to set
+     * @param visible the visible to set
      */
-    public void setVisibile(boolean visibile) {
-        this.visibile = visibile;
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     /**
-     * @return the superclassRef
+     * @return the superclass
      */
     public JavaClass<? extends IAttributes> getSuperclass() {
         return superclass;
@@ -318,30 +626,30 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
     }
 
     /**
-     * @param superclassRef the superclassRef to set
+     * @param superclass the superclass to set
      */
-    public void addSuperclass(JavaClass superclassRef) {
-        if (this.superclass == superclassRef) {
+    public void addSuperclass(JavaClass superclass) {
+        if (this.superclass == superclass) {
             return;
         }
         if (this.superclass != null) {
             throw new RuntimeException("JavaClass.addSuperclass > superclass is already exist [remove it first to add the new one]");
         }
-        this.superclass = superclassRef;
+        this.superclass = superclass;
         if (this.superclass != null) {
             this.superclassId = this.superclass.getId();
             this.superclass.addSubclass(this);
         } else {
-            throw new RuntimeException("JavaClass.addSuperclass > superclassRef is null");
+            throw new RuntimeException("JavaClass.addSuperclass > superclass is null");
         }
     }
 
-    public void removeSuperclass(JavaClass superclassRef) {
+    public void removeSuperclass(JavaClass superclass) {
 
-        if (superclassRef != null) {
-            superclassRef.removeSubclass(this);
+        if (superclass != null) {
+            superclass.removeSubclass(this);
         } else {
-            throw new RuntimeException("JavaClass.removeSuperclass > superclassRef is null");
+            throw new RuntimeException("JavaClass.removeSuperclass > superclass is null");
         }
         this.superclassId = null;
         this.superclass = null;
@@ -427,6 +735,43 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
         this.interfaces = interfaces;
     }
 
+    public void addRuntimeInterface(ReferenceClass runtimeInterfaces) {
+        this.getRuntimeInterfaces().add(runtimeInterfaces);
+    }
+
+    public void removeRuntimeInterface(ReferenceClass runtimeInterfaces) {
+        this.getRuntimeInterfaces().remove(runtimeInterfaces);
+    }
+
+    /**
+     * @return the runtimeInterfaces
+     */
+    public Set<ReferenceClass> getRuntimeInterfaces() {
+        if (this.runtimeInterfaces == null) {
+            this.runtimeInterfaces = new LinkedHashSet<>();
+        }
+        return runtimeInterfaces;
+    }
+
+    /**
+     * @param runtimeInterfaces the runtimeInterfaces to set
+     */
+    public void setRuntimeInterfaces(Set<ReferenceClass> runtimeInterfaces) {
+        this.runtimeInterfaces = runtimeInterfaces;
+    }
+
+    public String getPreviousClass() {
+        return previousClass;
+    }
+
+    private void setPreviousClass(String previousClass) {
+        this.previousClass = previousClass;
+    }
+
+    public void resetPreviousClass() {
+        this.previousClass = null;
+    }
+
     /**
      * Gets the value of the clazz property.
      *
@@ -444,6 +789,9 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
      *
      */
     public void setClazz(String value) {
+        if (getPreviousClass() == null && getClazz() != null) {
+            setPreviousClass(getClazz());
+        }
         this.clazz = value;
     }
 
@@ -613,6 +961,31 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
     }
 
     /**
+     * @return the runtimeTypeParameters
+     */
+    public List<String> getRuntimeTypeParameters() {
+        if (runtimeTypeParameters == null) {
+            runtimeTypeParameters = new ArrayList<>();
+        }
+        return runtimeTypeParameters;
+    }
+
+    /**
+     * @param runtimeTypeParameters the runtimeTypeParameters to set
+     */
+    public void setRuntimeTypeParameters(List<String> runtimeTypeParameters) {
+        this.runtimeTypeParameters = runtimeTypeParameters;
+    }
+
+    public boolean addRuntimeTypeParameter(String runtimeTypeParameter) {
+        return getRuntimeTypeParameters().add(runtimeTypeParameter);
+    }
+
+    public boolean removeRuntimeTypeParameter(String runtimeTypeParameter) {
+        return getRuntimeTypeParameters().remove(runtimeTypeParameter);
+    }
+
+    /**
      * @return the _package
      */
     public String getPackage() {
@@ -624,7 +997,7 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
      * @return the complete _package
      */
     public String getAbsolutePackage(String rootPackage) { // rootPackage.class_pkg
-        return StringUtils.isBlank(_package) ? rootPackage : rootPackage + '.' + _package;
+        return isBlank(_package) ? rootPackage : rootPackage + '.' + _package;
     }
 
     public String getRootPackage() { // project_pkg.entity_pkg
@@ -663,6 +1036,21 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
     public void setSuperclassRef(ReferenceClass superclassRef) {
         this.superclassRef = superclassRef;
     }
+
+    /**
+     * @return the runtimeSuperclassRef
+     */
+    public ReferenceClass getRuntimeSuperclassRef() {
+        return runtimeSuperclassRef;
+    }
+
+    /**
+     * @param runtimeSuperclassRef the runtimeSuperclassRef to set
+     */
+    public void setRuntimeSuperclassRef(ReferenceClass runtimeSuperclassRef) {
+        this.runtimeSuperclassRef = runtimeSuperclassRef;
+    }
+
 
     /**
      * Gets the value of the description property.
@@ -867,6 +1255,23 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode implemen
      */
     public void setXmlRootElement(Boolean xmlRootElement) {
         this.xmlRootElement = xmlRootElement;
+    }
+
+    public Set<String> getRemovedAttributes() {
+        if (removedAttributes == null) {
+            removedAttributes = new HashSet<>();
+        }
+        return removedAttributes;
+    }
+
+    public void removedAttribute(Attribute attribute) {
+        getRemovedAttributes().add(
+                nonNull(attribute.getPreviousName()) ? attribute.getPreviousName() : attribute.getName()
+        );
+    }
+
+    public void resetRemovedAttributes() {
+        this.removedAttributes = null;
     }
 
     private final static Set<String> AUTO_GEN_ENITY = new HashSet<>(asList(

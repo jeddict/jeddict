@@ -20,7 +20,12 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import static java.util.Objects.nonNull;
+import java.util.Optional;
 import java.util.Set;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,8 +41,20 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
     @XmlTransient
     private T _class;
     
-    private final transient List<PropertyChangeListener> listener = new ArrayList<>();
+    private final transient List<PropertyChangeListener> listeners = new ArrayList<>();
 
+    protected final static String ADD_ATTRIBUTE_PROPERTY = "addAttribute";
+    protected final static String REMOVE_ATTRIBUTE_PROPERTY = "removeAttribute";
+
+    protected <T extends Attribute> Optional<T> findById(List<T> attributes, String id) {
+        if (attributes != null) {
+            return attributes
+                    .stream()
+                    .filter(a -> a.getId().equals(id))
+                    .findFirst();
+        }
+        return Optional.empty();
+    }
     
     @Override
     public List<Attribute> findAllAttribute(String name) {
@@ -73,6 +90,7 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
     public List<Attribute> getAllAttribute() {
         return getAllAttribute(false);
     }
+    
     @Override
     public List<Attribute> getAllAttribute(boolean includeParentClassAttibute) {
         List<Attribute> attributes = new ArrayList<>();
@@ -80,6 +98,19 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
             attributes.addAll(this.getJavaClass().getSuperclass().getAttributes().getAllAttribute(true));
         }
         return attributes;
+    }
+    
+        
+    @Override
+    public Map<String, Attribute> getAllAttributeMap() {
+        return getAllAttributeMap(false);
+    }
+    
+    @Override
+    public Map<String, Attribute> getAllAttributeMap(boolean includeParentClassAttibute) {
+            return getAllAttribute(includeParentClassAttibute)
+                .stream()
+                .collect(toMap(Attribute::getName, identity()));
     }
     
     @Override
@@ -92,7 +123,7 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
         }
         return getAllAttribute(false)
                 .stream()
-                .filter(attr -> attr.getName() != null)
+                .filter(attr -> nonNull(attr.getName()))
                 .anyMatch(attr -> attr.getName().equals(name));
     }
     
@@ -113,6 +144,11 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
 
     public void setJavaClass(T _class) {
         this._class = _class;
+        addChangeListener(evt -> {
+            if (REMOVE_ATTRIBUTE_PROPERTY.equals(evt.getPropertyName())) {
+                getJavaClass().removedAttribute((Attribute) evt.getSource());
+            }
+        });
     }
 
     void afterUnmarshal(Unmarshaller u, Object parent) {
@@ -121,19 +157,19 @@ public abstract class Attributes<T extends JavaClass> implements IAttributes {
     
     @Override
     public void notifyListeners(Object object, String property, String oldValue, String newValue) {
-        for (PropertyChangeListener propertyChangeListener : listener) {
-            propertyChangeListener.propertyChange(new PropertyChangeEvent(object, property, oldValue, newValue));
-        }
+        listeners.forEach(listener -> 
+            listener.propertyChange(new PropertyChangeEvent(object, property, oldValue, newValue))
+        );
     }
 
     @Override
     public void addChangeListener(PropertyChangeListener newListener) {
-        listener.add(newListener);
+        listeners.add(newListener);
     }
 
     @Override
     public void removeChangeListener(PropertyChangeListener newListener) {
-        listener.remove(newListener);
+        listeners.remove(newListener);
     }
 
 }

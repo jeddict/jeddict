@@ -6,6 +6,31 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import io.github.jeddict.jcode.jpa.PersistenceProviderType;
+import io.github.jeddict.jcode.util.JavaSourceHelper;
+import io.github.jeddict.jpa.spec.bean.BeanClass;
+import io.github.jeddict.jpa.spec.design.Diagram;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.BaseElement;
+import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
+import io.github.jeddict.jpa.spec.extend.MapKeyType;
+import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
+import io.github.jeddict.jpa.spec.extend.PersistenceAttributes;
+import io.github.jeddict.jpa.spec.extend.ProjectType;
+import io.github.jeddict.jpa.spec.extend.ReferenceClass;
+import io.github.jeddict.jpa.spec.extend.RelationAttribute;
+import io.github.jeddict.jpa.spec.extend.cache.Cache;
+import io.github.jeddict.jpa.spec.workspace.WorkSpace;
+import io.github.jeddict.jpa.spec.workspace.WorkSpaceItem;
+import io.github.jeddict.jsonb.spec.JsonbDateFormat;
+import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
+import io.github.jeddict.jsonb.spec.JsonbVisibilityHandler;
+import io.github.jeddict.jsonb.spec.PropertyNamingStrategy;
+import io.github.jeddict.jsonb.spec.PropertyOrderStrategy;
+import io.github.jeddict.snippet.ClassSnippet;
+import io.github.jeddict.snippet.ClassSnippetLocationType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,31 +57,6 @@ import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import io.github.jeddict.jcode.util.JavaSourceHelper;
-import io.github.jeddict.jcode.jpa.PersistenceProviderType;
-import io.github.jeddict.jpa.spec.design.Diagram;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.BaseElement;
-import io.github.jeddict.jpa.spec.extend.ClassSnippet;
-import io.github.jeddict.jpa.spec.extend.ClassSnippetLocationType;
-import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
-import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
-import io.github.jeddict.jpa.spec.extend.MapKeyType;
-import io.github.jeddict.jpa.spec.extend.MultiRelationAttribute;
-import io.github.jeddict.jpa.spec.extend.PersistenceAttributes;
-import io.github.jeddict.jpa.spec.bean.BeanClass;
-import io.github.jeddict.jpa.spec.extend.ProjectType;
-import io.github.jeddict.jpa.spec.extend.ReferenceClass;
-import io.github.jeddict.jpa.spec.extend.RelationAttribute;
-import io.github.jeddict.jpa.spec.extend.cache.Cache;
-import io.github.jeddict.jsonb.spec.JsonbDateFormat;
-import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
-import io.github.jeddict.jsonb.spec.JsonbVisibilityHandler;
-import io.github.jeddict.jsonb.spec.PropertyNamingStrategy;
-import io.github.jeddict.jsonb.spec.PropertyOrderStrategy;
-import io.github.jeddict.jpa.spec.workspace.WorkSpace;
-import io.github.jeddict.jpa.spec.workspace.WorkSpaceItem;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
@@ -1811,8 +1811,13 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
 
     public void cleanRuntimeArtifact() {
         for (JavaClass javaClass : getJavaClass()) {
+            javaClass.setRuntimeTypeParameters(null);
+            javaClass.setRuntimeSuperclassRef(null);
+            javaClass.setRuntimeInterfaces(null);
             javaClass.setRuntimeAnnotation(null);
             javaClass.setRuntimeSnippets(null);
+            javaClass.resetRemovedAttributes();
+            javaClass.resetPreviousClass();
             List<? extends Attribute> attributes = null;
             if (javaClass instanceof ManagedClass) {
                 attributes = ((ManagedClass) javaClass).getAttributes().getAllAttribute();
@@ -1823,6 +1828,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
                 attributes.forEach(attr -> {
                     attr.setRuntimeAnnotation(null);
                     attr.setRuntimeSnippets(null);
+                    attr.resetPreviousName();
                 });
             }
         }

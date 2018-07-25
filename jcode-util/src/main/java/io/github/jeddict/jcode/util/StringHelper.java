@@ -146,36 +146,6 @@ public final class StringHelper {
         }
         return result.toString();
     }
-    
-    /**
-     * @return the a derived methodName from variableName Eg nickname Nickname
-     */
-    public static String getMethodName(String name) {
-        if (name.charAt(0) == '_') {
-            char ch = Character.toUpperCase(name.charAt(1));
-            return Character.toString(ch) + name.substring(2);
-        } else {
-            char ch = Character.toUpperCase(name.charAt(0));
-            return Character.toString(ch) + name.substring(1);
-        }
-    }
-
-    public static String removeBeanMethodPrefix(String methodName) {
-        if (methodName.startsWith("get")) {  //NOI18N
-            methodName = methodName.replaceFirst("get", EMPTY);
-        }
-        if (methodName.startsWith("set")) {  //NOI18N
-            methodName = methodName.replaceFirst("set", EMPTY);
-        }
-        if (methodName.startsWith("is")) {  //NOI18N
-            methodName = methodName.replaceFirst("is", EMPTY);
-        }
-        return methodName;
-    }
-
-    public static boolean isGetterMethod(String methodName) {
-        return methodName.startsWith("get") || methodName.startsWith("is");
-    }
 
     /**
      *

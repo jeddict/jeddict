@@ -15,12 +15,6 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import static java.util.stream.Collectors.toList;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.AssociationOverride;
 import io.github.jeddict.jpa.spec.AttributeOverride;
 import io.github.jeddict.jpa.spec.Basic;
@@ -80,8 +74,14 @@ import io.github.jeddict.orm.generator.compiler.OrderBySnippet;
 import io.github.jeddict.orm.generator.compiler.OrderColumnSnippet;
 import io.github.jeddict.orm.generator.compiler.TemporalSnippet;
 import io.github.jeddict.orm.generator.compiler.UniqueConstraintSnippet;
-import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.ManagedClassDefSnippet;
+import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
+import io.github.jeddict.settings.code.CodePanel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import static java.util.stream.Collectors.toList;
 
 public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> extends ClassGenerator<T> {
 
@@ -147,8 +147,6 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         if (parsedOneToManys == null) {
             return;
         }
-//
-//        List<ParsedOneToMany> parsedOneToManys = parsedAttributes.getOneToMany();
         for (OneToMany parsedOneToMany : parsedOneToManys) {
             List<String> cascadeTypes = getCascadeTypes(
                     parsedOneToMany.getCascade());
@@ -193,8 +191,6 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
         if (parsedOneToOnes == null) {
             return;
         }
-//
-//        List<ParsedOneToOne> parsedOneToOnes = parsedAttributes.getOneToOne();
         for (OneToOne parsedOneToOne : parsedOneToOnes) {
             List<String> cascadeTypes = getCascadeTypes(
                     parsedOneToOne.getCascade());

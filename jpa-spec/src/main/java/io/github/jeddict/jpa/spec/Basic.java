@@ -6,6 +6,13 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.jpa.JPAConstants.BASIC_FQN;
+import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
+import io.github.jeddict.jpa.spec.extend.ConvertHandler;
+import io.github.jeddict.jpa.spec.extend.EnumTypeHandler;
+import io.github.jeddict.jpa.spec.extend.FetchTypeHandler;
+import io.github.jeddict.jpa.spec.extend.PersistenceBaseAttribute;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -15,13 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.BASIC_FQN;
-import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
-import io.github.jeddict.jpa.spec.extend.ConvertHandler;
-import io.github.jeddict.jpa.spec.extend.EnumTypeHandler;
-import io.github.jeddict.jpa.spec.extend.FetchTypeHandler;
-import io.github.jeddict.jpa.spec.extend.PersistenceBaseAttribute;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -157,17 +157,6 @@ public class Basic extends PersistenceBaseAttribute implements AccessTypeHandler
     @Override
     public void setConvert(Convert value) {
         this.convert = value;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     *
-     */
-    @Override
-    public void setName(String value) {
-        notifyListeners("name", this.name, this.name = value);
     }
 
     /**

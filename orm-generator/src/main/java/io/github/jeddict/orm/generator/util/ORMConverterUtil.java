@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.orm.generator.util;
 
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import io.github.jeddict.orm.generator.spec.WritableSnippet;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,8 +39,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.editor.indent.api.Reformat;
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.spec.WritableSnippet;
 import org.openide.cookies.EditorCookie;
 import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;

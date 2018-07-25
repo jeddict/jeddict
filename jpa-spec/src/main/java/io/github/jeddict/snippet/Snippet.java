@@ -13,12 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.jpa.spec.extend;
+package io.github.jeddict.snippet;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
+import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.deleteWhitespace;
 
 /**
  *
@@ -29,9 +32,10 @@ public abstract class Snippet<L extends SnippetLocation> {
 
     
     @XmlAttribute(name = "e")
-    private boolean enable = true;
+    protected boolean enable = true;
+
     @XmlValue
-    private String value;
+    protected String value;
 
     /**
      * @return the enable
@@ -71,5 +75,28 @@ public abstract class Snippet<L extends SnippetLocation> {
         this.value = value;
     }
 
-     
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.getLocationType());
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Snippet other = (Snippet) obj;
+        if (this.getLocationType() != other.getLocationType()) {
+            return false;
+        }
+        return StringUtils.equals(deleteWhitespace(this.getValue()), deleteWhitespace(other.getValue()));
+    }
 }

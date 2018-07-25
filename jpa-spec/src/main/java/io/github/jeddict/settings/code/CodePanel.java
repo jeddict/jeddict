@@ -44,14 +44,14 @@ public final class CodePanel extends javax.swing.JPanel {
         fluentAPIPrefixComp = new javax.swing.JTextField();
         generateDefaultValueComp = new javax.swing.JCheckBox();
         javaseWrapperPanel = new javax.swing.JLayeredPane();
-        javaseSupportLabel = new javax.swing.JLabel();
         javaseSupportComp = new javax.swing.JCheckBox();
+        javaseSupportLabel = new javax.swing.JLabel();
         javaDocPanel = new javax.swing.JLayeredPane();
         javaDoc_Label = new javax.swing.JLabel();
         javadocSetting_LayeredPane = new javax.swing.JLayeredPane();
         propertyJavaDocComp = new javax.swing.JCheckBox();
-        getterJavaDocComp = new javax.swing.JCheckBox();
         setterJavaDocComp = new javax.swing.JCheckBox();
+        getterJavaDocComp = new javax.swing.JCheckBox();
         fluentAPIJavaDocComp = new javax.swing.JCheckBox();
         optionalReturnTypePanel = new javax.swing.JLayeredPane();
         optionalReturnTypeStatusLabel = new javax.swing.JLabel();
@@ -92,29 +92,29 @@ public final class CodePanel extends javax.swing.JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(generateDefaultValueComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.generateDefaultValueComp.text")); // NOI18N
         rootLayeredPane.add(generateDefaultValueComp);
 
+        org.openide.awt.Mnemonics.setLocalizedText(javaseSupportComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.javaseSupportComp.text")); // NOI18N
+
         javaseSupportLabel.setForeground(new java.awt.Color(153, 153, 153));
         org.openide.awt.Mnemonics.setLocalizedText(javaseSupportLabel, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.javaseSupportLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(javaseSupportComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.javaseSupportComp.text")); // NOI18N
-
-        javaseWrapperPanel.setLayer(javaseSupportLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         javaseWrapperPanel.setLayer(javaseSupportComp, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        javaseWrapperPanel.setLayer(javaseSupportLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout javaseWrapperPanelLayout = new javax.swing.GroupLayout(javaseWrapperPanel);
         javaseWrapperPanel.setLayout(javaseWrapperPanelLayout);
         javaseWrapperPanelLayout.setHorizontalGroup(
             javaseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javaseWrapperPanelLayout.createSequentialGroup()
-                .addComponent(javaseSupportComp, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
+                .addComponent(javaseSupportComp)
+                .addGap(37, 37, 37)
                 .addComponent(javaseSupportLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 121, Short.MAX_VALUE))
         );
         javaseWrapperPanelLayout.setVerticalGroup(
             javaseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javaseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(javaseSupportLabel)
-                .addComponent(javaseSupportComp))
+                .addComponent(javaseSupportComp)
+                .addComponent(javaseSupportLabel))
         );
 
         rootLayeredPane.add(javaseWrapperPanel);
@@ -131,11 +131,11 @@ public final class CodePanel extends javax.swing.JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(propertyJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.propertyJavaDocComp.text")); // NOI18N
         javadocSetting_LayeredPane.add(propertyJavaDocComp);
 
-        org.openide.awt.Mnemonics.setLocalizedText(getterJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.getterJavaDocComp.text")); // NOI18N
-        javadocSetting_LayeredPane.add(getterJavaDocComp);
-
         org.openide.awt.Mnemonics.setLocalizedText(setterJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.setterJavaDocComp.text")); // NOI18N
         javadocSetting_LayeredPane.add(setterJavaDocComp);
+
+        org.openide.awt.Mnemonics.setLocalizedText(getterJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.getterJavaDocComp.text")); // NOI18N
+        javadocSetting_LayeredPane.add(getterJavaDocComp);
 
         org.openide.awt.Mnemonics.setLocalizedText(fluentAPIJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.fluentAPIJavaDocComp.text")); // NOI18N
         javadocSetting_LayeredPane.add(fluentAPIJavaDocComp);
@@ -157,10 +157,10 @@ public final class CodePanel extends javax.swing.JPanel {
             optionalReturnTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionalReturnTypePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optionalReturnTypeStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(optionalReturnTypeStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(83, 83, 83)
                 .addComponent(optionalReturnTypeStatusComp, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(121, Short.MAX_VALUE))
         );
         optionalReturnTypePanelLayout.setVerticalGroup(
             optionalReturnTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -168,7 +168,7 @@ public final class CodePanel extends javax.swing.JPanel {
                 .addGroup(optionalReturnTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(optionalReturnTypeStatusLabel)
                     .addComponent(optionalReturnTypeStatusComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         rootLayeredPane.add(optionalReturnTypePanel);
@@ -186,10 +186,10 @@ public final class CodePanel extends javax.swing.JPanel {
             compositePKWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(compositePKWrapperPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(compositePrimaryKeyTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(compositePrimaryKeyTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(defaultCompositePrimaryKeyTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(85, 85, 85))
         );
         compositePKWrapperPanelLayout.setVerticalGroup(
             compositePKWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,7 +197,7 @@ public final class CodePanel extends javax.swing.JPanel {
                 .addGroup(compositePKWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(compositePrimaryKeyTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(defaultCompositePrimaryKeyTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         rootLayeredPane.add(compositePKWrapperPanel);
@@ -215,10 +215,10 @@ public final class CodePanel extends javax.swing.JPanel {
             defaultSingleAssociationFetchTypeWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(defaultSingleAssociationFetchTypeWrapperPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(defaultSingleAssociationFetchTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(defaultSingleAssociationFetchTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(defaultSingleAssociationFetchTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(125, 125, 125))
         );
         defaultSingleAssociationFetchTypeWrapperPanelLayout.setVerticalGroup(
             defaultSingleAssociationFetchTypeWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,7 +226,7 @@ public final class CodePanel extends javax.swing.JPanel {
                 .addGroup(defaultSingleAssociationFetchTypeWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(defaultSingleAssociationFetchTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(defaultSingleAssociationFetchTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         rootLayeredPane.add(defaultSingleAssociationFetchTypeWrapperPanel);
@@ -235,21 +235,17 @@ public final class CodePanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 494, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(rootLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 437, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(47, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(rootLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 311, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(rootLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(47, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(rootLayeredPane)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 

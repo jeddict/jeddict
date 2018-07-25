@@ -15,18 +15,6 @@
  */
 package io.github.jeddict.jpa.spec.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toList;
-import javax.lang.model.element.TypeElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import org.apache.commons.lang3.StringUtils;
 import io.github.jeddict.jcode.util.AttributeType;
 import static io.github.jeddict.jcode.util.AttributeType.Type.OTHER;
 import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
@@ -40,6 +28,18 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.Attributes;
 import io.github.jeddict.jpa.spec.extend.BaseAttribute;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
+import javax.lang.model.element.TypeElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import org.apache.commons.lang3.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanAttributes extends Attributes<BeanClass> {
@@ -50,7 +50,7 @@ public class BeanAttributes extends Attributes<BeanClass> {
     private List<BeanCollectionAttribute> elementCollection;
     @XmlElement(name = "transient")
     private List<Transient> _transient;
-    
+
     @XmlElement(name = "many-to-one")
     private List<ManyToOneAssociation> manyToOne;
     @XmlElement(name = "one-to-many")
@@ -69,12 +69,12 @@ public class BeanAttributes extends Attributes<BeanClass> {
         attributes.addAll(this.getTransient());
         return attributes;
     }
-    
+
     public List<BeanAttribute> getBasic() {
         if (this.basic == null) {
             this.basic = new ArrayList<>();
         }
-        return basic;
+        return this.basic;
     }
 
     public void setBasic(List<BeanAttribute> attributes) {
@@ -82,20 +82,19 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public Optional<BeanAttribute> getBasic(String id) {
-        if (basic != null) {
-            return basic.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(basic, id);
     }
-    
+
     public void addBasic(BeanAttribute attribute) {
         getBasic().add(attribute);
         attribute.setAttributes(this);
+        notifyListeners(basic, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public void removeBasic(BeanAttribute attribute) {
         getBasic().remove(attribute);
         attribute.setAttributes(null);
+        notifyListeners(basic, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public List<BeanCollectionAttribute> getElementCollection() {
@@ -110,20 +109,19 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public Optional<BeanCollectionAttribute> getElementCollection(String id) {
-        if (elementCollection != null) {
-            return elementCollection.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(elementCollection, id);
     }
-    
+
     public void addElementCollection(BeanCollectionAttribute attribute) {
         getElementCollection().add(attribute);
         attribute.setAttributes(this);
+        notifyListeners(attribute, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public void removeElementCollection(BeanCollectionAttribute attribute) {
         getElementCollection().remove(attribute);
         attribute.setAttributes(null);
+        notifyListeners(attribute, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public List<Transient> getTransient() {
@@ -137,25 +135,22 @@ public class BeanAttributes extends Attributes<BeanClass> {
         this._transient = attributes;
     }
 
-    
     public Optional<Transient> getTransient(String id) {
-        if (_transient != null) {
-            return _transient.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
-    }
-    
-    public void addTransient(Transient attribute) {
-        getTransient().add(attribute);
-        attribute.setAttributes(this);
+        return findById(_transient, id);
     }
 
-    public void removeTransient(Transient attribute) {
-        getTransient().remove(attribute);
-        attribute.setAttributes(null);
+    public void addTransient(Transient _transient) {
+        getTransient().add(_transient);
+        _transient.setAttributes(this);
+        notifyListeners(_transient, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
-    
+    public void removeTransient(Transient _transient) {
+        getTransient().remove(_transient);
+        _transient.setAttributes(null);
+        notifyListeners(_transient, REMOVE_ATTRIBUTE_PROPERTY, null, null);
+    }
+
     public List<ManyToOneAssociation> getManyToOne() {
         if (manyToOne == null) {
             this.manyToOne = new ArrayList<>();
@@ -168,20 +163,19 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public Optional<ManyToOneAssociation> getManyToOne(String id) {
-        if (manyToOne != null) {
-            return manyToOne.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(manyToOne, id);
     }
 
     public void addManyToOne(ManyToOneAssociation manyToOne) {
         getManyToOne().add(manyToOne);
         manyToOne.setAttributes(this);
+        notifyListeners(manyToOne, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public void removeManyToOne(ManyToOneAssociation manyToOne) {
         getManyToOne().remove(manyToOne);
         manyToOne.setAttributes(null);
+        notifyListeners(manyToOne, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public List<OneToManyAssociation> getOneToMany() {
@@ -196,20 +190,19 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public Optional<OneToManyAssociation> getOneToMany(String id) {
-        if (oneToMany != null) {
-            return oneToMany.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(oneToMany, id);
     }
 
     public void addOneToMany(OneToManyAssociation oneToMany) {
         getOneToMany().add(oneToMany);
         oneToMany.setAttributes(this);
+        notifyListeners(oneToMany, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public void removeOneToMany(OneToManyAssociation oneToMany) {
         getOneToMany().remove(oneToMany);
         oneToMany.setAttributes(null);
+        notifyListeners(oneToMany, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public List<OneToOneAssociation> getOneToOne() {
@@ -224,20 +217,19 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public Optional<OneToOneAssociation> getOneToOne(String id) {
-        if (oneToOne != null) {
-            return oneToOne.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(oneToOne, id);
     }
 
     public void addOneToOne(OneToOneAssociation oneToOne) {
         getOneToOne().add(oneToOne);
         oneToOne.setAttributes(this);
+        notifyListeners(oneToOne, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public void removeOneToOne(OneToOneAssociation oneToOne) {
         getOneToOne().remove(oneToOne);
         oneToOne.setAttributes(null);
+        notifyListeners(oneToOne, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public List<ManyToManyAssociation> getManyToMany() {
@@ -252,20 +244,19 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public Optional<ManyToManyAssociation> getManyToMany(String id) {
-        if (manyToMany != null) {
-            return manyToMany.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(manyToMany, id);
     }
 
     public void addManyToMany(ManyToManyAssociation manyToMany) {
         getManyToMany().add(manyToMany);
         manyToMany.setAttributes(this);
+        notifyListeners(manyToMany, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public void removeManyToMany(ManyToManyAssociation manyToMany) {
         getManyToMany().remove(manyToMany);
         manyToMany.setAttributes(null);
+        notifyListeners(manyToMany, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public List<AssociationAttribute> getAssociationAttributes() {
@@ -300,7 +291,6 @@ public class BeanAttributes extends Attributes<BeanClass> {
 //        }
 //        return javaClasses;
 //    }
-
 //    public Set<Entity> getAssociationConnectedClassRef() {
 //        Set<Entity> javaClasses = getAssociationAttributes().stream()
 //                .map(AssociationAttribute::getConnectedEntity)
@@ -311,7 +301,6 @@ public class BeanAttributes extends Attributes<BeanClass> {
 //                .collect(toSet()));
 //        return javaClasses;
 //    }
-
 //    public Set<String> getElementCollectionConnectedClass(Set<String> javaClasses) {
 //        Map<ManagedClass, String> elementCollectionClasses = getElementCollection().stream()
 //                .filter(ec -> ec.getConnectedClass() != null)
@@ -325,7 +314,6 @@ public class BeanAttributes extends Attributes<BeanClass> {
 //        }
 //        return javaClasses;
 //    }
-
     public Set<String> getBasicConnectedClass(Set<String> javaClasses) {
         List<String> basicClasses = getBasic().stream()
                 .map(BaseAttribute::getDataTypeLabel)
@@ -346,45 +334,38 @@ public class BeanAttributes extends Attributes<BeanClass> {
     }
 
     public Optional<AssociationAttribute> getAssociationAttribute(String id) {
-        return getAssociationAttributes().stream().filter(a -> a.getId().equals(id)).findFirst();
+        return findById(getAssociationAttributes(), id);
     }
 
     public void removeAssociationAttribute(AssociationAttribute associationAttribute) {
         if (associationAttribute instanceof ManyToManyAssociation) {
             this.getManyToMany().remove((ManyToManyAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "removeAttribute", null, null);
         } else if (associationAttribute instanceof OneToManyAssociation) {
             this.getOneToMany().remove((OneToManyAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "removeAttribute", null, null);
         } else if (associationAttribute instanceof ManyToOneAssociation) {
             this.getManyToOne().remove((ManyToOneAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "removeAttribute", null, null);
         } else if (associationAttribute instanceof OneToOneAssociation) {
             this.getOneToOne().remove((OneToOneAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "removeAttribute", null, null);
         } else {
             throw new IllegalStateException("Invalid Type Association Attribute");
         }
+        notifyListeners(associationAttribute, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     public void addAssociationAttribute(AssociationAttribute associationAttribute) {
         if (associationAttribute instanceof ManyToManyAssociation) {
             this.addManyToMany((ManyToManyAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "addAttribute", null, null);
         } else if (associationAttribute instanceof OneToManyAssociation) {
             this.addOneToMany((OneToManyAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "addAttribute", null, null);
         } else if (associationAttribute instanceof ManyToOneAssociation) {
             this.addManyToOne((ManyToOneAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "addAttribute", null, null);
         } else if (associationAttribute instanceof OneToOneAssociation) {
             this.addOneToOne((OneToOneAssociation) associationAttribute);
-            notifyListeners(associationAttribute, "addAttribute", null, null);
         } else {
             throw new IllegalStateException("Invalid Type Association Attribute");
         }
+        notifyListeners(associationAttribute, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
-
 
     public List<Attribute> getNonAssociationAttributes() {
         List<Attribute> attributes = new ArrayList<>(this.getBasic());

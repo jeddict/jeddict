@@ -17,7 +17,7 @@ package io.github.jeddict.jpa.spec.extend;
 
 public enum ClassAnnotationLocationType implements AnnotationLocation {
 
-    CLASS("Class");
+    TYPE("Class");
     
     private final String title;
     

@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
@@ -33,7 +33,12 @@ public class AttributeAnnotation extends Annotation<AttributeAnnotationLocationT
     public AttributeAnnotation(String name) {
         super(name);
     }
-    
+
+    public AttributeAnnotation(String name, AttributeAnnotationLocationType locationType) {
+        super(name);
+        this.locationType = locationType;
+    }
+
     /**
      * @return the locationType
      */

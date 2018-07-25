@@ -16,25 +16,19 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="494" max="32767" attributes="0"/>
-          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="rootLayeredPane" min="-2" pref="437" max="-2" attributes="0"/>
-                  <EmptySpace pref="47" max="32767" attributes="0"/>
-              </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="rootLayeredPane" min="-2" pref="582" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="311" max="32767" attributes="0"/>
-          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="rootLayeredPane" min="-2" pref="253" max="-2" attributes="0"/>
-                  <EmptySpace pref="47" max="32767" attributes="0"/>
-              </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="rootLayeredPane" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -123,23 +117,30 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="javaseSupportComp" min="-2" pref="113" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="javaseSupportComp" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                       <Component id="javaseSupportLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="121" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="javaseSupportLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="javaseSupportComp" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="javaseSupportLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
+            <Component class="javax.swing.JCheckBox" name="javaseSupportComp">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="io/github/jeddict/settings/code/Bundle.properties" key="CodePanel.javaseSupportComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
             <Component class="javax.swing.JLabel" name="javaseSupportLabel">
               <Properties>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -147,13 +148,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="io/github/jeddict/settings/code/Bundle.properties" key="CodePanel.javaseSupportLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="javaseSupportComp">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="io/github/jeddict/settings/code/Bundle.properties" key="CodePanel.javaseSupportComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -201,17 +195,17 @@
                     </Property>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="getterJavaDocComp">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="io/github/jeddict/settings/code/Bundle.properties" key="CodePanel.getterJavaDocComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-                    </Property>
-                  </Properties>
-                </Component>
                 <Component class="javax.swing.JCheckBox" name="setterJavaDocComp">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="io/github/jeddict/settings/code/Bundle.properties" key="CodePanel.setterJavaDocComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="getterJavaDocComp">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="io/github/jeddict/settings/code/Bundle.properties" key="CodePanel.getterJavaDocComp.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -233,10 +227,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="optionalReturnTypeStatusLabel" min="-2" pref="230" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="optionalReturnTypeStatusLabel" min="-2" pref="278" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
                       <Component id="optionalReturnTypeStatusComp" min="-2" pref="85" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace pref="121" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -247,7 +241,7 @@
                           <Component id="optionalReturnTypeStatusLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="optionalReturnTypeStatusComp" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -282,10 +276,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="compositePrimaryKeyTypeLabel" min="-2" pref="230" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="compositePrimaryKeyTypeLabel" pref="343" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="defaultCompositePrimaryKeyTypeComp" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -296,7 +290,7 @@
                           <Component id="compositePrimaryKeyTypeLabel" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="defaultCompositePrimaryKeyTypeComp" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -331,10 +325,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="defaultSingleAssociationFetchTypeLabel" min="-2" pref="230" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="defaultSingleAssociationFetchTypeLabel" pref="343" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="defaultSingleAssociationFetchTypeComp" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -345,7 +339,7 @@
                           <Component id="defaultSingleAssociationFetchTypeLabel" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="defaultSingleAssociationFetchTypeComp" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="6" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

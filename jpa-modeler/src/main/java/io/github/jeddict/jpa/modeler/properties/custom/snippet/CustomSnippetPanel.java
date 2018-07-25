@@ -15,14 +15,14 @@
  */
 package io.github.jeddict.jpa.modeler.properties.custom.snippet;
 
+import io.github.jeddict.jpa.modeler.internal.jpqleditor.ModelerPanel;
+import io.github.jeddict.snippet.AttributeSnippetLocationType;
+import io.github.jeddict.snippet.ClassSnippet;
+import io.github.jeddict.snippet.ClassSnippetLocationType;
+import io.github.jeddict.snippet.Snippet;
+import io.github.jeddict.snippet.SnippetLocation;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import io.github.jeddict.jpa.modeler.internal.jpqleditor.ModelerPanel;
-import io.github.jeddict.jpa.spec.extend.AttributeSnippetLocationType;
-import io.github.jeddict.jpa.spec.extend.ClassSnippet;
-import io.github.jeddict.jpa.spec.extend.ClassSnippetLocationType;
-import io.github.jeddict.jpa.spec.extend.Snippet;
-import io.github.jeddict.jpa.spec.extend.SnippetLocation;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.spec.ComboBoxValue;

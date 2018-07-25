@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.jpa.spec.extend;
+package io.github.jeddict.snippet;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
@@ -25,6 +25,15 @@ public class AttributeSnippet extends Snippet<AttributeSnippetLocationType> {
 
     @XmlAttribute(name="loc")
     protected AttributeSnippetLocationType locationType;
+
+    public AttributeSnippet() {
+    }
+
+    public AttributeSnippet(String value, AttributeSnippetLocationType locationType) {
+        this.value = value;
+        this.locationType = locationType;
+    }
+
     /**
      * @return the locationType
      */
@@ -46,4 +55,5 @@ public class AttributeSnippet extends Snippet<AttributeSnippetLocationType> {
         }
         this.locationType = locationType;
     }
+
 }

@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import io.github.jeddict.jpa.spec.EntityMappings;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
-import io.github.jeddict.jpa.spec.EntityMappings;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 
 /**
@@ -98,20 +98,20 @@ public abstract class BaseElement implements IBaseElement {
         this.extensionElement = extensionElement;
     }
 
-    private final transient List<PropertyChangeListener> listener = new ArrayList<>();
+    private final transient List<PropertyChangeListener> listeners = new ArrayList<>();
 
     protected void notifyListeners(String property, String oldValue, String newValue) {
-        for (PropertyChangeListener propertyChangeListener : listener) {
-            propertyChangeListener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
-        }
+        listeners.forEach(listener
+                -> listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue))
+        );
     }
 
-    public void addChangeListener(PropertyChangeListener newListener) {
-        listener.add(newListener);
+    public void addChangeListener(PropertyChangeListener listener) {
+        listeners.add(listener);
     }
 
-    public void removeChangeListener(PropertyChangeListener newListener) {
-        listener.remove(newListener);
+    public void removeChangeListener(PropertyChangeListener listener) {
+        listeners.remove(listener);
     }
 
     @Override

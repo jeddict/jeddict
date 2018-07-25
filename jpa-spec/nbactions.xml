@@ -3,12 +3,14 @@
     <action>
         <actionName>run</actionName>
         <goals>
+            <goal>install</goal>
             <goal>nbm:run-ide</goal>  
         </goals>
     </action>
     <action>
         <actionName>debug</actionName>
         <goals>
+            <goal>install</goal>
             <goal>nbm:run-ide</goal>  
         </goals>
         <properties>

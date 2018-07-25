@@ -26,14 +26,16 @@
                         <publicPackage>io.github.jeddict.db.*</publicPackage>
                         <publicPackage>io.github.jeddict.jaxb.*</publicPackage>
                         <publicPackage>io.github.jeddict.jpa.*</publicPackage>
-                        <publicPackage>org.eclipse.persistence.*</publicPackage>
+                        <publicPackage>io.github.jeddict.jsonb.*</publicPackage>
                         <publicPackage>io.github.jeddict.source</publicPackage>
                         <publicPackage>io.github.jeddict.settings.*</publicPackage>
                         <publicPackage>io.github.jeddict.settings</publicPackage>
-                        <publicPackage>io.github.jeddict.jsonb.*</publicPackage>
+                        <publicPackage>io.github.jeddict.snippet</publicPackage>
                         <publicPackage>javax.persistence.*</publicPackage>
-                        <publicPackage>org.eclipse.persistence.*</publicPackage>
                         <publicPackage>javax.validation.*</publicPackage>
+                        <publicPackage>org.eclipse.persistence.*</publicPackage>
+                        <publicPackage>com.github.javaparser.*</publicPackage>
+                        <publicPackage>com.github.javaparser.symbolsolver.*</publicPackage>
                     </publicPackages>
                     <moduleDependencies>
                         <dependency>
@@ -51,7 +53,16 @@
     </build>
    
     <dependencies>
-                
+<!--        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.6.14</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-symbol-solver-core</artifactId>
+            <version>3.6.14</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>

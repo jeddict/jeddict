@@ -15,8 +15,9 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -85,18 +86,25 @@ public class Constructor extends ClassMembers {
         return true;
     }
     
-    private static final String NO_ARG = "no-arg constructor";
+    public static final String NO_ARG = "no-arg constructor";
+
     public String getSignature() {
-        String sign = getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel()).collect(Collectors.joining(", "));
+        String sign = getAttributes()
+                .stream()
+                .map(a -> unqualify(a.getDataTypeLabel()))
+                .collect(joining(", "));
         if(StringUtils.isBlank(sign)){
-            sign = NO_ARG;
+            sign = "";
         }
         return sign;
     }
     
     @Override
     public String toString() {
-        String sign = getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel() + " " + a.getName()).collect(Collectors.joining(", "));
+        String sign = getAttributes()
+                .stream()
+                .map(a -> unqualify(a.getDataTypeLabel()) + " " + a.getName())
+                .collect(joining(", "));
         if(StringUtils.isBlank(sign)){
             sign = NO_ARG;
         }

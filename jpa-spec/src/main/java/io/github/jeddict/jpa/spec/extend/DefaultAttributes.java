@@ -15,6 +15,9 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import io.github.jeddict.jpa.spec.DefaultAttribute;
+import io.github.jeddict.jpa.spec.DefaultClass;
+import io.github.jeddict.jpa.spec.EntityMappings;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,9 +26,6 @@ import javax.lang.model.element.TypeElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import io.github.jeddict.jpa.spec.DefaultAttribute;
-import io.github.jeddict.jpa.spec.DefaultClass;
-import io.github.jeddict.jpa.spec.EntityMappings;
 
 /**
  *
@@ -95,10 +95,7 @@ public class DefaultAttributes extends Attributes<DefaultClass> {
             return false;
         }
         final DefaultAttributes other = (DefaultAttributes) obj;
-        if (!Objects.equals(new HashSet(this.defaultAttributes), new HashSet(other.defaultAttributes))) {
-            return false;
-        }
-        return true;
+        return Objects.equals(new HashSet(this.defaultAttributes), new HashSet(other.defaultAttributes));
     }
 
     

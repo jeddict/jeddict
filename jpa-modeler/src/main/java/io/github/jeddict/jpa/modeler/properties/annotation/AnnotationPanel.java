@@ -15,15 +15,15 @@
  */
 package io.github.jeddict.jpa.modeler.properties.annotation;
 
-import javax.swing.JOptionPane;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import io.github.jeddict.jpa.modeler.internal.jpqleditor.ModelerPanel;
 import io.github.jeddict.jpa.spec.extend.AnnotationLocation;
 import io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotation;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType;
-import io.github.jeddict.jpa.spec.extend.SnippetLocation;
 import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
+import io.github.jeddict.snippet.SnippetLocation;
+import javax.swing.JOptionPane;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.EntityComponent;

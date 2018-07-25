@@ -12,21 +12,8 @@ $snippet
 $n#end
 
 #####################import statements #################################
-#if ($classDef.isPropertyChangeSupport())
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-#end
-#if ($classDef.isVetoableChangeSupport())
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
-import java.beans.VetoableChangeSupport;
-#end
 #foreach ( $importStatement in $classDef.getImportSnippets() )
 $importStatement
-#end
-#####################jaxb import ###############################
-#if($classDef.isJaxbSupport())
-import javax.xml.bind.annotation.*;
 #end
 #####################custom class snippet - import ###############################
 #foreach($snippet in $classDef.getCustomSnippet("IMPORT") )
@@ -121,10 +108,10 @@ $classDef.getNamedStoredProcedureQueries().getSnippet()
 $snippet.getSnippet()
 #end
 ##################### custom annotation ###############################
-#foreach($annotation in $classDef.getAnnotation("CLASS") )
+#foreach($annotation in $classDef.getAnnotation("TYPE") )
 $annotation.getSnippet()
 #end
-public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end#if($classDef.isInterfaceExist()) implements $classDef.getUnqualifiedInterfaceList()#end { 
+public#if($classDef.isMappedSuperClass() || $classDef.isAbstractClass()) abstract#end class $classDef.getClassName()#if($classDef.isTypeParameterExist())<$classDef.getTypeParameterList()>#end#if ($classDef.getSuperClassName()) extends $classDef.getSuperClassName()#end#if($classDef.isInterfaceExist()) implements $classDef.getUnqualifiedInterfaceList()#end { 
 
 #####################custom class snippet - before field ###############################
 #foreach($snippet in $classDef.getCustomSnippet("BEFORE_FIELD") )
@@ -239,18 +226,6 @@ $varDef.getAttributeOverrides().getSnippet()
     $snippet 
 $n#end
 #end
-##################### PropertyChangeSupport / VetoableChangeSupport ###############################
-#if ($classDef.isPropertyChangeSupport())
-    private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-$n#end
-#if ($classDef.isVetoableChangeSupport())
-    private transient final VetoableChangeSupport vetoableChangeSupport = new VetoableChangeSupport(this);
-$n#end
-#foreach( $varDef in $classDef.getVariableDefs() )
-#if ($varDef.isPropertyChangeSupport() || $varDef.isVetoableChangeSupport())
-    public static final String $varDef.getPropName() = "$varDef.name";
-$n#end
-#end
 #####################custom class snippet - after field ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_FIELD") )
     $snippet
@@ -278,9 +253,9 @@ $varDef.getGetterJavaDoc()
 #end
 #set($method = $varDef.getMethodName())
 #if($varDef.type == "boolean" || $varDef.type == "java.lang.Boolean" || $varDef.type == "Boolean")
-    public $varDef.returnType is$method() {
+    public $varDef.returnType is$method() #if($varDef.isGetterThrows()) $varDef.getGetterThrowsSnippet() #end {
 #else
-    public $varDef.returnType get$method() {
+    public $varDef.returnType get$method() #if($varDef.isGetterThrows()) $varDef.getGetterThrowsSnippet() #end {
 #end
 #####################custom attribute snippet - pre getter ###############################
 #foreach($snippet in $varDef.getCustomSnippet("PRE_GETTER") )
@@ -299,6 +274,10 @@ $varDef.getGetterJavaDoc()
     #end
         return $varDef.returnValue;
 #end
+#####################custom attribute snippet - post getter ###############################
+#foreach($snippet in $varDef.getCustomSnippet("POST_GETTER") )
+        $snippet
+#end
     }
 
 ##################### setter ###############################
@@ -308,7 +287,7 @@ $varDef.getSetterJavaDoc()
 #foreach($annotation in $varDef.getAnnotation("SETTER") )
     $annotation.getSnippet()
 #end
-    public void set$method($varDef.type $varDef.name) #if($classDef.isVetoableChangeSupport())throws PropertyVetoException #end{
+    public void set$method($varDef.type $varDef.name) #if($varDef.isSetterThrows()) $varDef.getSetterThrowsSnippet() #end{
 #####################custom attribute snippet - pre setter ###############################
 #foreach($snippet in $varDef.getCustomSnippet("PRE_SETTER") )
         $snippet
@@ -319,18 +298,6 @@ $varDef.getSetterJavaDoc()
         $snippet
 #end
 #else
-##################### PropertyChangeSupport / VetoableChangeSupport ###############################
-#set($PROP = $varDef.getPropName())
-#set($oldProp = "old" + $varDef.getMethodName())
-#if ($varDef.isPropertyChangeSupport() || $varDef.isVetoableChangeSupport())
-        String $oldProp = this.$varDef.name;
-#end
-#if ($varDef.isVetoableChangeSupport())
-        vetoableChangeSupport.fireVetoableChange($PROP, $oldProp, $varDef.name);
-#end
-#if ($varDef.isPropertyChangeSupport())
-        propertyChangeSupport.firePropertyChange($PROP, $oldProp, $varDef.name);
-#end
         this.$varDef.name = $varDef.name;
 #end
 #####################custom attribute snippet - post setter ###############################
@@ -373,47 +340,6 @@ $n#end
 #foreach($snippet in $varDef.getCustomSnippet("AFTER_METHOD") )
     $snippet
 $n#end
-$n#end
-##################### PropertyChangeSupport / VetoableChangeSupport ###############################
-#if ($classDef.isPropertyChangeSupport())
-
-    /**
-     * Add PropertyChangeListener.
-     *
-     * @param listener
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    /**
-     * Remove PropertyChangeListener.
-     *
-     * @param listener
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-#end
-#if ($classDef.isVetoableChangeSupport())
-
-    /**
-     * Add VetoableChangeListener.
-     *
-     * @param listener
-     */
-    public void addVetoableChangeListener(VetoableChangeListener listener) {
-        vetoableChangeSupport.addVetoableChangeListener(listener);
-    }
-
-    /**
-     * Remove VetoableChangeListener.
-     *
-     * @param listener
-     */
-    public void removeVetoableChangeListener(VetoableChangeListener listener) {
-        vetoableChangeSupport.removeVetoableChangeListener(listener);
-    }
 $n#end
 #####################custom class snippet - after method ###############################
 #foreach($snippet in $classDef.getCustomSnippet("AFTER_METHOD") )

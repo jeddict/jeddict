@@ -15,7 +15,6 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import org.apache.commons.lang3.StringUtils;
 import io.github.jeddict.jpa.spec.DiscriminatorColumn;
 import io.github.jeddict.jpa.spec.DiscriminatorType;
 import io.github.jeddict.jpa.spec.Entity;
@@ -30,6 +29,7 @@ import io.github.jeddict.orm.generator.compiler.DiscriminatorValueSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet;
 import io.github.jeddict.orm.generator.compiler.InheritanceSnippet.Type;
 import io.github.jeddict.orm.generator.compiler.def.EntityDefSnippet;
+import org.apache.commons.lang3.StringUtils;
 
 public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet> {
 
@@ -103,8 +103,11 @@ public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet
             processTransient(parsedAttributes.getTransient());
         }
 
-        // Classlevel annotations - Special case
-        // processTableGeneratorEntity() && processSequenceGeneratorEntity() depends on @GeneratedValue annotation - So process it after @GeneratedValue
+        /**
+         * processTableGeneratorEntity() && processSequenceGeneratorEntity()
+         * depends on @GeneratedValue annotation - So process it after
+         * @GeneratedValue
+         */
         processTableGeneratorEntity(entity.getTableGenerator());
         processSequenceGeneratorEntity(entity.getSequenceGenerator());
 
@@ -118,7 +121,7 @@ public class EntityGenerator extends IdentifiableClassGenerator<EntityDefSnippet
         }
         classDef.setAuthor(entity.getAuthor());
         classDef.setXmlRootElement(entity.getXmlRootElement());
-
+        
         return classDef;
     }
 

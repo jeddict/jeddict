@@ -15,12 +15,6 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
 import io.github.jeddict.jpa.spec.AssociationOverride;
 import io.github.jeddict.jpa.spec.Column;
 import io.github.jeddict.jpa.spec.ColumnResult;
@@ -94,10 +88,16 @@ import io.github.jeddict.orm.generator.compiler.TableDefSnippet;
 import io.github.jeddict.orm.generator.compiler.TableGeneratorSnippet;
 import io.github.jeddict.orm.generator.compiler.TemporalSnippet;
 import io.github.jeddict.orm.generator.compiler.UniqueConstraintSnippet;
+import io.github.jeddict.orm.generator.compiler.def.IdentifiableClassDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import static io.github.jeddict.orm.generator.service.ClassGenerator.logger;
-import io.github.jeddict.orm.generator.compiler.def.IdentifiableClassDefSnippet;
 import io.github.jeddict.orm.generator.util.GeneratorUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 /**
  *
@@ -230,7 +230,6 @@ public abstract class IdentifiableClassGenerator<T extends IdentifiableClassDefS
                 namedNativeQuery.setPackageName(packageName);
                 namedNativeQuery.setResultSetMapping(parsedNamedNativeQuery.getResultSetMapping());
                 namedNativeQuery.setQueryHints(queryHints);
-//            namedNativeQuery.setAttributeType(parsedNamedNativeQuery.getAttributeType());
                 namedNativeQueries.add(namedNativeQuery);
             }
         }

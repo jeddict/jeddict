@@ -15,10 +15,11 @@
  */
 package io.github.jeddict.jcode.util;
 
+import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
-import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -34,7 +35,7 @@ public class JavaUtil {
     public static double getJavaVersion() {
         return Double.parseDouble(ManagementFactory.getRuntimeMXBean().getSpecVersion());
     }
-    
+
     public static String getUniqueClassName(String candidateName, FileObject targetFolder) {
         return org.openide.filesystems.FileUtil.findFreeFileName(targetFolder, candidateName, JAVA_EXT); //NOI18N
     }
@@ -74,7 +75,7 @@ public class JavaUtil {
             primitiveTypes.put("java.lang.Short[]", Short[].class);
         }
     }
-    
+
     public static boolean isMap(String _className) {
         boolean valid = false;
         try {
@@ -89,4 +90,60 @@ public class JavaUtil {
         return valid;
     }
 
+    public static boolean isGetterMethod(String methodName) {
+        return methodName.startsWith("get") || methodName.startsWith("is");
+    }
+
+    public static boolean isSetterMethod(String methodName) {
+        return methodName.startsWith("set") || methodName.startsWith("is");
+    }
+
+    public static boolean isBeanMethod(String methodName) {
+        return isGetterMethod(methodName) || isSetterMethod(methodName);
+    }
+
+    /**
+     * a derived methodName from variableName Eg nickname -> getNickname /
+     * setNickname
+     */
+    public static String getMethodName(String type, String fieldName) {
+        String methodName;
+        if (fieldName.charAt(0) == '_') {
+            char ch = Character.toUpperCase(fieldName.charAt(1));
+            methodName = Character.toString(ch) + fieldName.substring(2);
+        } else {
+            char ch = Character.toUpperCase(fieldName.charAt(0));
+            methodName = Character.toString(ch) + fieldName.substring(1);
+        }
+        if (type != null) {
+            methodName = type + methodName;
+        }
+        return methodName;
+    }
+
+    public static String getFieldName(String methodName) {
+        String fieldName;
+        if (methodName.startsWith("get") || methodName.startsWith("set")) {
+            fieldName = methodName.substring(3);
+        } else if (methodName.startsWith("is")) {
+            fieldName = methodName.substring(2);
+        } else {
+            return null;
+        }
+        fieldName = StringHelper.firstLower(fieldName);
+        return fieldName;
+    }
+
+    public static String removeBeanMethodPrefix(String methodName) {
+        if (methodName.startsWith("get")) {
+            methodName = methodName.replaceFirst("get", EMPTY);
+        }
+        if (methodName.startsWith("set")) {
+            methodName = methodName.replaceFirst("set", EMPTY);
+        }
+        if (methodName.startsWith("is")) {
+            methodName = methodName.replaceFirst("is", EMPTY);
+        }
+        return methodName;
+    }
 }

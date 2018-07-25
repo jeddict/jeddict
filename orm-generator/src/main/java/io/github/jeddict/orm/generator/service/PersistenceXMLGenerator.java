@@ -15,17 +15,23 @@
  */
 package io.github.jeddict.orm.generator.service;
 
+import static io.github.jeddict.jcode.jpa.JPAConstants.DATABASE_ACTION;
+import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_DRIVER;
+import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_PASSWORD;
+import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_URL;
+import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_USER;
 import static io.github.jeddict.jcode.jpa.PersistenceHelper.JTA_VALUE;
 import static io.github.jeddict.jcode.jpa.PersistenceHelper.RESOURCE_LOCAL_VALUE;
+import io.github.jeddict.jcode.jpa.PersistenceProviderType;
+import io.github.jeddict.jcode.task.ITaskSupervisor;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
+import io.github.jeddict.orm.generator.util.ORMConvLogger;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
-import io.github.jeddict.jcode.jpa.PersistenceProviderType;
-import io.github.jeddict.jcode.task.ITaskSupervisor;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.dd.common.Properties;
@@ -34,7 +40,6 @@ import static org.netbeans.modules.j2ee.persistence.provider.Provider.TABLE_GENE
 import org.netbeans.modules.j2ee.persistence.provider.ProviderUtil;
 import org.netbeans.modules.j2ee.persistence.unit.PUDataObject;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
-import io.github.jeddict.orm.generator.util.ORMConvLogger;
 import org.openide.util.lookup.ServiceProvider;
 
 @ServiceProvider(service = IPersistenceXMLGenerator.class)
@@ -58,8 +63,6 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
         }
 
         try {
-            // Issue Fix #5915 Start
-            // String version = PersistenceUtils.getJPAVersion(project);
             PUDataObject pud = ProviderUtil.getPUDataObject(project);
             String version = pud.getPersistence().getVersion();
             boolean existFile = false;
@@ -89,7 +92,7 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
                     punit.setExcludeUnlistedClasses(false);
 
                     Property property = properties.newProperty();
-                    property.setName("javax.persistence.schema-generation.database.action");
+                    property.setName(DATABASE_ACTION);
                     property.setValue("drop-and-create");
                     properties.addProperty2(property);
 //                    punit.setJtaDataSource("jdbc/sample"); // custom gui will be added in future release for DataSource , JTA
@@ -97,22 +100,22 @@ public class PersistenceXMLGenerator implements IPersistenceXMLGenerator{
                     punit.setTransactionType(RESOURCE_LOCAL_VALUE);
 
                     Property property = properties.newProperty();
-                    property.setName("javax.persistence.jdbc.url");
+                    property.setName(JDBC_URL);
                     property.setValue("jdbc:derby://localhost:1527/sample");
                     properties.addProperty2(property);
 
                     property = properties.newProperty();
-                    property.setName("javax.persistence.jdbc.password");
+                    property.setName(JDBC_PASSWORD);
                     property.setValue("app");
                     properties.addProperty2(property);
 
                     property = properties.newProperty();
-                    property.setName("javax.persistence.jdbc.driver");
+                    property.setName(JDBC_DRIVER);
                     property.setValue("org.apache.derby.jdbc.ClientDriver");
                     properties.addProperty2(property);
 
                     property = properties.newProperty();
-                    property.setName("javax.persistence.jdbc.user");
+                    property.setName(JDBC_USER);
                     property.setValue("app");
                     properties.addProperty2(property);
                 }

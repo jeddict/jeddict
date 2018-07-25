@@ -15,30 +15,30 @@
  */
 package io.github.jeddict.jpa.modeler.source.generator.task;
 
-import java.io.IOException;
-import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
-import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
-import org.netbeans.api.progress.aggregate.ProgressContributor;
+import io.github.jeddict.analytics.JeddictLogger;
+import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.*;
-import io.github.jeddict.jcode.ApplicationConfigData;
+import io.github.jeddict.jcode.generator.ApplicationGenerator;
 import io.github.jeddict.jcode.task.AbstractNBTask;
 import io.github.jeddict.jcode.task.progress.ProgressConsoleHandler;
 import io.github.jeddict.jcode.task.progress.ProgressHandler;
-import io.github.jeddict.analytics.JeddictLogger;
-import io.github.jeddict.jcode.generator.ApplicationGenerator;
+import io.github.jeddict.jpa.modeler.initializer.PreExecutionUtil;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
 import io.github.jeddict.orm.generator.ISourceCodeGenerator;
 import io.github.jeddict.orm.generator.ISourceCodeGeneratorFactory;
 import io.github.jeddict.orm.generator.SourceCodeGeneratorType;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.modeler.initializer.PreExecutionUtil;
-import io.github.jeddict.orm.generator.IPersistenceXMLGenerator;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
+import org.apache.commons.io.IOUtils;
+import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
+import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
+import static org.openide.util.NbBundle.getMessage;
 import org.openide.util.RequestProcessor;
 
 public class SourceCodeGeneratorTask extends AbstractNBTask {
@@ -67,26 +67,16 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
     @Override
     protected void initTask() {
         setLogLevel(TERSE);
-        setTaskName(getBundleMessage("LBL_GenerateCodeDialogTitle") + " - " + appConfigData.getTargetArtifactId()); 
+        setTaskName(getMessage(SourceCodeGeneratorTask.class, "LBL_GenerateCodeDialogTitle", appConfigData.getTargetArtifactId()));
         setDisplayOutput(true);
-
         progressContribs = new ProgressContributor[SUBTASK_TOT];
-        int i = 0;
-        progressContribs[i] = AggregateProgressFactory
-                .createProgressContributor(getBundleMessage("MSG_Processing")); // NOI18N
+        progressContribs[0] = AggregateProgressFactory
+                .createProgressContributor(getMessage(SourceCodeGeneratorTask.class, "MSG_Processing")); // NOI18N
     }
 
     @Override
     protected void begin() {
-        // Issue Fix #5847 Start
-        if (!modelerFile.getModelerPanelTopComponent().isPersistenceState()) {
-            this.log("Saving " + modelerFile.getName() + " File..\n");
-            modelerFile.getModelerUtil().saveModelerFile(modelerFile);//synchronous
-            modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);//remove * from header
-        } else {
-            PreExecutionUtil.preExecution(modelerFile);
-        }
-        // Issue Fix #5847 End
+        PreExecutionUtil.preExecution(modelerFile);
         try {
             exportCode();
         } catch (Throwable t) {
@@ -96,6 +86,8 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
 
     @Override
     protected void finish() {
+        modelerFile.getModelerUtil().saveModelerFile(modelerFile);
+        modelerFile.getModelerScene().getModelerPanelTopComponent().changePersistenceState(true);
         if (afterExecution != null) {
             RequestProcessor.getDefault().post(afterExecution);
         }
@@ -114,7 +106,6 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
         EntityMappings entityMappings = (EntityMappings) modelerFile.getDefinitionElement();
         ApplicationGenerator applicationGenerator = null;
         
-        entityMappings.cleanRuntimeArtifact();
         appConfigData.setEntityMappings(entityMappings);
         if (appConfigData.getBussinesTechContext()!= null) {
             applicationGenerator = new ApplicationGenerator();
@@ -140,11 +131,8 @@ public class SourceCodeGeneratorTask extends AbstractNBTask {
             applicationGenerator.generate();
             applicationGenerator.postGeneration();
         }
+        entityMappings.cleanRuntimeArtifact();
         JeddictLogger.logGenerateEvent(appConfigData);
-    }
-
-    private static String getBundleMessage(String key) {
-        return NbBundle.getMessage(SourceCodeGeneratorTask.class, key);
     }
 
 }

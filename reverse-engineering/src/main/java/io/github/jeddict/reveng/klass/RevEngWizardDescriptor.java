@@ -16,6 +16,7 @@
 package io.github.jeddict.reveng.klass;
 
 import io.github.jeddict.analytics.JeddictLogger;
+import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +36,6 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeListener;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
@@ -273,7 +272,7 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
 
         List<String> missingEntities = new ArrayList<>();
         for (String entityClass : entities) {
-            progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + ".java");//NOI18N
+            progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + JAVA_EXT_SUFFIX);//NOI18N
             reporter.progress(progressMsg, progressIndex++);
             JPAModelGenerator.generateJPAModel(entityMappingsSpec, project, entityClass, packageFileObject, missingEntities);
         }
@@ -288,7 +287,7 @@ public final class RevEngWizardDescriptor extends BaseWizardDescriptor implement
                 for (RelationAttribute attribute : new ArrayList<>(managedClass.getAttributes().getRelationAttributes())) {
                     String entityClass = StringUtils.isBlank(entityMappingsSpec.getPackage()) ? attribute.getTargetEntity() : entityMappingsSpec.getPackage() + '.' + attribute.getTargetEntity();
                     if (!entities.contains(entityClass)) {
-                        progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + ".java");//NOI18N
+                        progressMsg = getMessage(RevEngWizardDescriptor.class, "MSG_Progress_JPA_Class_Parsing", entityClass + JAVA_EXT_SUFFIX);//NOI18N
                         reporter.progress(progressMsg, progressIndex++);
                         JPAModelGenerator.generateJPAModel(entityMappingsSpec, project, entityClass, packageFileObject, missingEntities);
                         entities.add(entityClass);

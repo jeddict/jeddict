@@ -38,12 +38,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-core</artifactId>
-            <version>3.6.14</version>
-        </dependency>
-
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jcode-util</artifactId>
             <version>${project.version}</version>

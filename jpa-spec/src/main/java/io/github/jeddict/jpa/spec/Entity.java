@@ -6,6 +6,19 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import static io.github.jeddict.jcode.jpa.JPAConstants.CACHEABLE_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.DISCRIMINATOR_VALUE_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.ENTITY_FQN;
+import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
+import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.AttributeOverrideHandler;
+import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
+import io.github.jeddict.jpa.spec.extend.InheritanceHandler;
+import io.github.jeddict.jpa.spec.extend.PaginationType;
+import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
+import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,19 +36,9 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang3.StringUtils;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CACHEABLE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.DISCRIMINATOR_VALUE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ENTITY_FQN;
-import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
-import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.AttributeOverrideHandler;
-import io.github.jeddict.jpa.spec.extend.ConvertContainerHandler;
-import io.github.jeddict.jpa.spec.extend.InheritanceHandler;
-import io.github.jeddict.jpa.spec.extend.PaginationType;
-import io.github.jeddict.jpa.spec.validator.override.AssociationValidator;
-import io.github.jeddict.jpa.spec.validator.override.AttributeValidator;
-import io.github.jeddict.source.JavaSourceParserUtil;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  *
@@ -566,11 +569,6 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     }
 
     @Override
-    public String toString() {
-        return "Entity{" + "description=" + description + ", table=" + table + ", secondaryTable=" + secondaryTable + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn + ", idClass=" + idClass + ", inheritance=" + inheritance + ", discriminatorValue=" + discriminatorValue + ", discriminatorColumn=" + discriminatorColumn + ", sequenceGenerator=" + sequenceGenerator + ", tableGenerator=" + tableGenerator + ", namedQuery=" + namedQuery + ", namedNativeQuery=" + namedNativeQuery + ", sqlResultSetMapping=" + sqlResultSetMapping + ", excludeDefaultListeners=" + excludeDefaultListeners + ", excludeSuperclassListeners=" + excludeSuperclassListeners + ", entityListeners=" + entityListeners + ", prePersist=" + prePersist + ", postPersist=" + postPersist + ", preRemove=" + preRemove + ", postRemove=" + postRemove + ", preUpdate=" + preUpdate + ", postUpdate=" + postUpdate + ", postLoad=" + postLoad + ", attributeOverride=" + attributeOverride + ", associationOverride=" + associationOverride + ", attributes=" + attributes + ", entityName=" + entityName + ", clazz=" + clazz + ", access=" + access + ", cacheable=" + cacheable + ", metadataComplete=" + metadataComplete + '}';
-    }
-
-    @Override
     @Deprecated
     public AttributeOverride getAttributeOverride(String attributePath) {
         Set<AttributeOverride> attributeOverrides = getAttributeOverride();
@@ -757,7 +755,7 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
 
     public String getDiscriminatorColumnName() {
         DiscriminatorColumn localDiscriminatorColumn = getDiscriminatorColumn();
-        if (localDiscriminatorColumn == null || StringUtils.isBlank(localDiscriminatorColumn.getName())) {
+        if (localDiscriminatorColumn == null || isBlank(localDiscriminatorColumn.getName())) {
             return "DTYPE";
         } else {
             return localDiscriminatorColumn.getName();
@@ -765,14 +763,15 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     }
 
     public Table getTable(String tableName){
-        if(this.getTable()!=null && StringUtils.equalsIgnoreCase(this.getTable().getName(), tableName)){
+        if (this.getTable() != null && equalsIgnoreCase(this.getTable().getName(), tableName)) {
             return this.getTable();
         }
         if(!this.getSecondaryTable().isEmpty()){
-            Optional<SecondaryTable> secondaryTableOptional = this.getSecondaryTable()
-                    .stream()
-                    .filter(secondaryTable -> StringUtils.equalsIgnoreCase(secondaryTable.getName(), tableName))
-                    .findFirst();
+            Optional<SecondaryTable> secondaryTableOptional
+                    = this.getSecondaryTable()
+                            .stream()
+                            .filter(secondaryTable -> equalsIgnoreCase(secondaryTable.getName(), tableName))
+                            .findFirst();
             if(secondaryTableOptional.isPresent()){
                 return secondaryTableOptional.get();
             }
@@ -835,8 +834,18 @@ public class Entity extends IdentifiableClass implements AccessTypeHandler, Inhe
     @Override
     public Set<String> getAllConvert(){
         Set<String> converts = getAttributes().getAllConvert();
-        converts.addAll(this.getConverts().stream().filter(con -> StringUtils.isNotBlank(con.getConverter())).map(Convert::getConverter).collect(toSet()));
+        converts.addAll(
+                this.getConverts()
+                        .stream()
+                        .filter(con -> isNotBlank(con.getConverter()))
+                        .map(Convert::getConverter)
+                        .collect(toSet())
+        );
         return converts;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Entity{" + "description=" + description + ", table=" + table + ", secondaryTable=" + secondaryTable + ", primaryKeyJoinColumn=" + primaryKeyJoinColumn + ", idClass=" + idClass + ", inheritance=" + inheritance + ", discriminatorValue=" + discriminatorValue + ", discriminatorColumn=" + discriminatorColumn + ", sequenceGenerator=" + sequenceGenerator + ", tableGenerator=" + tableGenerator + ", namedQuery=" + namedQuery + ", namedNativeQuery=" + namedNativeQuery + ", sqlResultSetMapping=" + sqlResultSetMapping + ", excludeDefaultListeners=" + excludeDefaultListeners + ", excludeSuperclassListeners=" + excludeSuperclassListeners + ", entityListeners=" + entityListeners + ", prePersist=" + prePersist + ", postPersist=" + postPersist + ", preRemove=" + preRemove + ", postRemove=" + postRemove + ", preUpdate=" + preUpdate + ", postUpdate=" + postUpdate + ", postLoad=" + postLoad + ", attributeOverride=" + attributeOverride + ", associationOverride=" + associationOverride + ", attributes=" + attributes + ", entityName=" + entityName + ", clazz=" + clazz + ", access=" + access + ", cacheable=" + cacheable + ", metadataComplete=" + metadataComplete + '}';
+    }
 }

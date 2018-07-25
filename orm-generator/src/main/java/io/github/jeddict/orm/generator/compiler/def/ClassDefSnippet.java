@@ -15,21 +15,10 @@
  */
 package io.github.jeddict.orm.generator.compiler.def;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.getGenericType;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualifyGeneric;
 import io.github.jeddict.jcode.util.JavaSourceHelper;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType;
-import io.github.jeddict.jpa.spec.extend.ClassSnippetLocationType;
 import io.github.jeddict.orm.generator.compiler.AnnotationSnippet;
 import io.github.jeddict.orm.generator.compiler.ConstructorSnippet;
 import io.github.jeddict.orm.generator.compiler.EqualsMethodSnippet;
@@ -44,6 +33,20 @@ import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.eliminateSamePkgImports;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.processedImportStatements;
+import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.snippet.ClassSnippetLocationType;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.IMPORT;
+import static io.github.jeddict.snippet.ClassSnippetLocationType.TYPE_JAVADOC;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public abstract class ClassDefSnippet implements WritableSnippet {
 
@@ -60,6 +63,7 @@ public abstract class ClassDefSnippet implements WritableSnippet {
     private boolean defaultClass = false;
     private boolean beanClass = false;
     private boolean _abstract = false;
+    private List<String> typeParameters;
     private List<String> interfaces;
 
     private final ClassHelper classHelper = new ClassHelper();
@@ -198,6 +202,33 @@ public abstract class ClassDefSnippet implements WritableSnippet {
     }
 
     /**
+     * @return the typeParameters
+     */
+    public List<String> getTypeParameters() {
+        if (typeParameters == null) {
+            typeParameters = new ArrayList<>();
+        }
+        return typeParameters;
+    }
+
+    /**
+     * @param typeParameters the typeParameters to set
+     */
+    public void setTypeParameters(List<String> typeParameters) {
+        this.typeParameters = typeParameters;
+    }
+
+    public boolean isTypeParameterExist() {
+        return typeParameters != null && !typeParameters.isEmpty();
+    }
+
+    public String getTypeParameterList() {
+        return typeParameters
+                .stream()
+                .collect(joining(", "));
+    }
+
+    /**
      * @return the interfaces
      */
     public List<String> getInterfaces() {
@@ -219,7 +250,10 @@ public abstract class ClassDefSnippet implements WritableSnippet {
     }
 
     public String getUnqualifiedInterfaceList() {
-        return interfaces.stream().map(fqn -> unqualifyGeneric(fqn) + getGenericType(fqn)).collect(joining(", "));
+        return interfaces
+                .stream()
+                .map(fqn -> unqualifyGeneric(fqn) + getGenericType(fqn))
+                .collect(joining(", "));
     }
 
     /**
@@ -237,24 +271,31 @@ public abstract class ClassDefSnippet implements WritableSnippet {
     }
 
     public String getJavaDoc() {
-        StringBuilder doc = new StringBuilder();
-        if (StringUtils.isNotBlank(description) || StringUtils.isNotBlank(author)) {
-            doc.append(NEW_LINE).append("/**").append(NEW_LINE);
-            if (StringUtils.isNotBlank(description)) {
-                for (String line : description.split("\\r\\n|\\n|\\r")) {
-                    doc.append(" * ").append(line).append(NEW_LINE);
+        if (getCustomSnippet(TYPE_JAVADOC.name()) != null) {
+            return getCustomSnippet(TYPE_JAVADOC.name())
+                    .stream()
+                    .collect(joining("\n"));
+        } else {
+            StringBuilder doc = new StringBuilder();
+            if (StringUtils.isNotBlank(description) || StringUtils.isNotBlank(author)) {
+                doc.append(NEW_LINE).append("/**").append(NEW_LINE);
+                if (StringUtils.isNotBlank(description)) {
+                    for (String line : description.split("\\r\\n|\\n|\\r")) {
+                        doc.append(" * ").append(line).append(NEW_LINE);
+                    }
                 }
+                if (StringUtils.isNotBlank(author)) {
+                    doc.append(" * @author ").append(author).append(NEW_LINE);
+                }
+                doc.append(" */");
             }
-            if (StringUtils.isNotBlank(author)) {
-                doc.append(" * @author ").append(author).append(NEW_LINE);
-            }
-            doc.append(" */");
+            return doc.toString();
         }
-        return doc.toString();
     }
 
     public boolean isJavaDocExist() {
-        return StringUtils.isNotBlank(description) || StringUtils.isNotBlank(JavaSourceHelper.getAuthor());
+        return (StringUtils.isNotBlank(description) || StringUtils.isNotBlank(JavaSourceHelper.getAuthor()))
+                || getCustomSnippet(TYPE_JAVADOC.name()) != null;
     }
 
     /**
@@ -332,7 +373,17 @@ public abstract class ClassDefSnippet implements WritableSnippet {
     }
 
     public List<String> getCustomSnippet(String type) {
-        return customSnippet.get(ClassSnippetLocationType.valueOf(type));
+        ClassSnippetLocationType locationType = ClassSnippetLocationType.valueOf(type);
+        List<String> customSnippets = customSnippet.get(locationType);
+        if (locationType == IMPORT && customSnippets != null) {
+            customSnippets
+                    = customSnippets
+                            .stream()
+                            .filter(snippet -> snippet.startsWith("import"))
+                            .filter(snippet -> snippet.startsWith(";"))
+                            .collect(toList());
+        }
+        return customSnippets;
     }
 
     /**
@@ -443,8 +494,11 @@ public abstract class ClassDefSnippet implements WritableSnippet {
             }
         }
 
-        for (AnnotationSnippet snippet : this.getAnnotation().values().stream()
-                .flatMap(annot -> annot.stream()).collect(toList())) {
+        for (AnnotationSnippet snippet : this.getAnnotation()
+                .values()
+                .stream()
+                .flatMap(annot -> annot.stream())
+                .collect(toList())) {
             importSnippets.addAll(snippet.getImportSnippets());
         }
 
@@ -452,6 +506,21 @@ public abstract class ClassDefSnippet implements WritableSnippet {
 
         for (Snippet snippet : this.getJSONBSnippets()) {
             importSnippets.addAll(snippet.getImportSnippets());
+        }
+
+        List<String> customImportSnippets = getCustomSnippet().get(IMPORT);
+        if (customImportSnippets != null) {
+            importSnippets.addAll(
+                    customImportSnippets
+                            .stream()
+                            .filter(snippet -> !snippet.startsWith("import"))
+                            .filter(snippet -> !snippet.startsWith(";"))
+                            .collect(toSet())
+            );
+        }
+
+        if (isJaxbSupport()) {
+            importSnippets.add("javax.xml.bind.annotation.*");
         }
 
         return importSnippets;

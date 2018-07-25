@@ -15,18 +15,18 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERT;
 import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERT_FQN;
-import static io.github.jeddict.settings.code.CodePanel.isGenerateDefaultValue;
 import io.github.jeddict.jpa.spec.Convert;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.code.CodePanel.isGenerateDefaultValue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 public class ConvertSnippet implements Snippet {
 
@@ -45,14 +45,6 @@ public class ConvertSnippet implements Snippet {
         StringBuilder builder = new StringBuilder();
         builder.append("@").append(CONVERT).append("(");
 
-//        if (converterClass != null && StringUtils.isBlank(attributeName) && !disableConversion && !isGenerateDefaultValue()) {
-//            return builder.append(converterClass.getClassNameWithClassSuffix()).append(")").toString();
-//        }
-//        
-//        if (converterClass == null && StringUtils.isBlank(attributeName) && disableConversion && !isGenerateDefaultValue()) {
-//            return builder.append(disableConversion).append(")").toString();
-//        }
-        
         if (converterClass != null) {
             builder.append("converter=");
             builder.append(converterClass.getClassNameWithClassSuffix());

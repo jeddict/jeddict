@@ -13,21 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.jpa.spec.extend;
+package io.github.jeddict.snippet;
 
-public enum ClassSnippetLocationType implements SnippetLocation {
+public enum AttributeSnippetLocationType implements SnippetLocation {
 
-    DEFAULT("Default"), 
-    BEFORE_FIELD("Before Field"), AFTER_FIELD("After Field"), 
-    BEFORE_METHOD("Before Method"), AFTER_METHOD("After Method"),
-    BEFORE_CLASS("Before Class"), AFTER_CLASS("After Class"),
-    BEFORE_PACKAGE("Before Package"), AFTER_PACKAGE("After Package"),
+    BEFORE_FIELD("Before Field"),
+    AFTER_FIELD("After Field"),
+    BEFORE_METHOD("Before Method"),
+    AFTER_METHOD("After Method"),
+    PROPERTY_JAVADOC("Property Javadoc"),
+    GETTER_JAVADOC("Getter Javadoc"),
+    GETTER_THROWS("Getter throws"),
+    PRE_GETTER("Pre Getter"),
+    GETTER("Getter"),
+    POST_GETTER("Post Getter"),
+    SETTER_JAVADOC("Setter Javadoc"),
+    SETTER_THROWS("Setter throws"),
+    PRE_SETTER("Pre Setter"),
+    SETTER("Setter"),
+    POST_SETTER("Post Setter"),
+    PRE_FLUENT("Pre Fluent"),
+    FLUENT("Fluent"),
     IMPORT("Import");
     
     private final String title;
 
     
-    private ClassSnippetLocationType(String title) {
+    private AttributeSnippetLocationType(String title) {
         this.title = title;
     }
 

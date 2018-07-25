@@ -15,13 +15,13 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
+import io.github.jeddict.orm.generator.util.ClassHelper;
 import java.util.Collection;
 import java.util.Collections;
-import io.github.jeddict.orm.generator.util.ClassHelper;
 
 public class EntityListenerSnippet {
 
-    private ClassHelper classHelper = new ClassHelper();
+    private final ClassHelper classHelper = new ClassHelper();
 
 //    private List<CallbackSnippet> callbacks = Collections.EMPTY_LIST;
 

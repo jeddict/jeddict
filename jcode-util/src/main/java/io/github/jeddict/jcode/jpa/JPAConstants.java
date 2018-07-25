@@ -21,7 +21,7 @@ package io.github.jeddict.jcode.jpa;
  */
 public class JPAConstants {
 
-//Misc
+    //Misc
     public static final String PERSISTENCE_PACKAGE = "javax.persistence";
     public static final String PERSISTENCE_PACKAGE_PREFIX = PERSISTENCE_PACKAGE + '.';
     public static final String PERSISTENCE_METAMODEL_PACKAGE = PERSISTENCE_PACKAGE_PREFIX + "metamodel.";
@@ -47,7 +47,7 @@ public class JPAConstants {
 
     public static final String NO_RESULT_EXCEPTION = "NoResultException";
 
-//Class 
+    //Class
     public static final String ENTITY = "Entity";
     public static final String ENTITY_FQN = PERSISTENCE_PACKAGE_PREFIX + ENTITY;
 
@@ -89,7 +89,7 @@ public class JPAConstants {
     public static final String INHERITANCE_TYPE = "InheritanceType";
     public static final String INHERITANCE_TYPE_FQN = PERSISTENCE_PACKAGE_PREFIX + INHERITANCE_TYPE;
 
-//Primary Key
+    //Primary Key
     public static final String ID = "Id";
     public static final String ID_FQN = PERSISTENCE_PACKAGE_PREFIX + ID;
 
@@ -111,7 +111,7 @@ public class JPAConstants {
     public static final String PRIMARY_KEY_JOIN_COLUMN = "PrimaryKeyJoinColumn";
     public static final String PRIMARY_KEY_JOIN_COLUMN_FQN = PERSISTENCE_PACKAGE_PREFIX + PRIMARY_KEY_JOIN_COLUMN;
 
-//Map
+    //Map
     public static final String MAPS_ID = "MapsId";
     public static final String MAPS_ID_FQN = PERSISTENCE_PACKAGE_PREFIX + MAPS_ID;
 
@@ -133,7 +133,7 @@ public class JPAConstants {
     public static final String MAP_KEY_JOIN_COLUMN = "MapKeyJoinColumn";
     public static final String MAP_KEY_JOIN_COLUMN_FQN = PERSISTENCE_PACKAGE_PREFIX + MAP_KEY_JOIN_COLUMN;
 
-//Attribute
+    //Attribute
     public static final String BASIC = "Basic";
     public static final String BASIC_FQN = PERSISTENCE_PACKAGE_PREFIX + BASIC;
 
@@ -177,7 +177,7 @@ public class JPAConstants {
     public static final String VERSION = "Version";
     public static final String VERSION_FQN = PERSISTENCE_PACKAGE_PREFIX + VERSION;
 
-//Ref Attribute
+    //Ref Attribute
     public static final String JOIN_TABLE = "JoinTable";
     public static final String JOIN_TABLE_FQN = PERSISTENCE_PACKAGE_PREFIX + JOIN_TABLE;
 
@@ -215,7 +215,7 @@ public class JPAConstants {
     public static final String ASSOCIATION_OVERRIDES = "AssociationOverrides";
     public static final String ASSOCIATION_OVERRIDES_FQN = PERSISTENCE_PACKAGE_PREFIX + ASSOCIATION_OVERRIDES;
 
-//Query
+    //Query
     public static final String NAMED_ENTITY_GRAPH = "NamedEntityGraph";
     public static final String NAMED_ENTITY_GRAPH_FQN = PERSISTENCE_PACKAGE_PREFIX + NAMED_ENTITY_GRAPH;
     public static final String NAMED_ENTITY_GRAPHS = "NamedEntityGraphs";
@@ -265,11 +265,12 @@ public class JPAConstants {
     public static final String LOCK_MODE_TYPE_FQN = PERSISTENCE_PACKAGE_PREFIX + LOCK_MODE_TYPE;
 
     //Persistence.xml
-    public static final String JDBC_URL = "javax.persistence.jdbc.url";
-    public static final String JDBC_PASSWORD = "javax.persistence.jdbc.password";
-    public static final String JDBC_DRIVER = "javax.persistence.jdbc.driver";
-    public static final String JDBC_USER = "javax.persistence.jdbc.user";
+    public static final String JDBC_URL = PERSISTENCE_PACKAGE_PREFIX + "jdbc.url";
+    public static final String JDBC_PASSWORD = PERSISTENCE_PACKAGE_PREFIX + "jdbc.password";
+    public static final String JDBC_DRIVER = PERSISTENCE_PACKAGE_PREFIX + "jdbc.driver";
+    public static final String JDBC_USER = PERSISTENCE_PACKAGE_PREFIX + "jdbc.user";
     public static final String JAVA_DATASOURCE_PREFIX = "java:/";
     public static final String JAVA_GLOBAL_DATASOURCE_PREFIX = "java:global/";
+    public static final String DATABASE_ACTION = PERSISTENCE_PACKAGE_PREFIX + "schema-generation.database.action";
 
 }

@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
@@ -34,13 +34,18 @@ public class ClassAnnotation extends Annotation<ClassAnnotationLocationType> {
         super(name);
     }
 
+    public ClassAnnotation(String name, ClassAnnotationLocationType locationType) {
+        super(name);
+        this.locationType = locationType;
+    }
+
     /**
      * @return the locationType
      */
     @Override
     public ClassAnnotationLocationType getLocationType() {
         if (locationType == null) {
-            return ClassAnnotationLocationType.CLASS;
+            return ClassAnnotationLocationType.TYPE;
         }
         return locationType;
     }
@@ -50,7 +55,7 @@ public class ClassAnnotation extends Annotation<ClassAnnotationLocationType> {
      */
     @Override
     public void setLocationType(ClassAnnotationLocationType locationType) {
-        if (locationType == ClassAnnotationLocationType.CLASS) {
+        if (locationType == ClassAnnotationLocationType.TYPE) {
             locationType = null;
         }
         this.locationType = locationType;

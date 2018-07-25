@@ -15,6 +15,31 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import io.github.jeddict.db.accessor.BasicSpecAccessor;
+import io.github.jeddict.db.accessor.ElementCollectionSpecAccessor;
+import io.github.jeddict.db.accessor.EmbeddedSpecAccessor;
+import io.github.jeddict.db.accessor.ManyToManySpecAccessor;
+import io.github.jeddict.db.accessor.ManyToOneSpecAccessor;
+import io.github.jeddict.db.accessor.OneToManySpecAccessor;
+import io.github.jeddict.db.accessor.OneToOneSpecAccessor;
+import io.github.jeddict.jcode.util.AttributeType.Type;
+import static io.github.jeddict.jcode.util.AttributeType.Type.OTHER;
+import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
+import static io.github.jeddict.jcode.util.AttributeType.getType;
+import static io.github.jeddict.jcode.util.AttributeType.isArray;
+import io.github.jeddict.jcode.util.JavaIdentifiers;
+import io.github.jeddict.jpa.spec.Basic;
+import io.github.jeddict.jpa.spec.Convert;
+import io.github.jeddict.jpa.spec.ElementCollection;
+import io.github.jeddict.jpa.spec.Embedded;
+import io.github.jeddict.jpa.spec.Entity;
+import io.github.jeddict.jpa.spec.ManagedClass;
+import io.github.jeddict.jpa.spec.ManyToMany;
+import io.github.jeddict.jpa.spec.ManyToOne;
+import io.github.jeddict.jpa.spec.OneToMany;
+import io.github.jeddict.jpa.spec.OneToOne;
+import io.github.jeddict.jpa.spec.Transient;
+import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,31 +57,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.accessors.classes.XMLAttributes;
-import io.github.jeddict.jcode.util.AttributeType.Type;
-import static io.github.jeddict.jcode.util.AttributeType.Type.OTHER;
-import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
-import static io.github.jeddict.jcode.util.AttributeType.getType;
-import static io.github.jeddict.jcode.util.AttributeType.isArray;
-import io.github.jeddict.jcode.util.JavaIdentifiers;
-import io.github.jeddict.db.accessor.BasicSpecAccessor;
-import io.github.jeddict.db.accessor.ElementCollectionSpecAccessor;
-import io.github.jeddict.db.accessor.EmbeddedSpecAccessor;
-import io.github.jeddict.db.accessor.ManyToManySpecAccessor;
-import io.github.jeddict.db.accessor.ManyToOneSpecAccessor;
-import io.github.jeddict.db.accessor.OneToManySpecAccessor;
-import io.github.jeddict.db.accessor.OneToOneSpecAccessor;
-import io.github.jeddict.jpa.spec.Basic;
-import io.github.jeddict.jpa.spec.Convert;
-import io.github.jeddict.jpa.spec.ElementCollection;
-import io.github.jeddict.jpa.spec.Embedded;
-import io.github.jeddict.jpa.spec.Entity;
-import io.github.jeddict.jpa.spec.ManagedClass;
-import io.github.jeddict.jpa.spec.ManyToMany;
-import io.github.jeddict.jpa.spec.ManyToOne;
-import io.github.jeddict.jpa.spec.OneToMany;
-import io.github.jeddict.jpa.spec.OneToOne;
-import io.github.jeddict.jpa.spec.Transient;
-import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 
 /**
  *
@@ -98,23 +98,21 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<Basic> getBasic(String id) {
-        if (basic != null) {
-            return basic.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(basic, id);
     }
 
     @Override
     public void addBasic(Basic basic) {
-        this.getBasic().add(basic);
-        notifyListeners(basic, "addAttribute", null, null);
+        getBasic().add(basic);
         basic.setAttributes(this);
+        notifyListeners(basic, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void removeBasic(Basic basic) {
-        this.getBasic().remove(basic);
-        notifyListeners(basic, "removeAttribute", null, null);
+        getBasic().remove(basic);
+        basic.setAttributes(null);
+        notifyListeners(basic, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
@@ -154,15 +152,16 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public void addElementCollection(ElementCollection elementCollection) {
-        this.getElementCollection().add(elementCollection);
-        notifyListeners(elementCollection, "addAttribute", null, null);
+        getElementCollection().add(elementCollection);
         elementCollection.setAttributes(this);
+        notifyListeners(elementCollection, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void removeElementCollection(ElementCollection elementCollection) {
-        this.getElementCollection().remove(elementCollection);
-        notifyListeners(elementCollection, "removeAttribute", null, null);
+        getElementCollection().remove(elementCollection);
+        elementCollection.setAttributes(null);
+        notifyListeners(elementCollection, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
@@ -180,30 +179,28 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<Embedded> getEmbedded(String id) {
-        if (embedded != null) {
-            return embedded.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(embedded, id);
     }
 
     @Override
     public void addEmbedded(Embedded embedded) {
         if (embedded != null) {
-            this.getEmbedded().add(embedded);
-            notifyListeners(embedded, "addAttribute", null, null);
+            getEmbedded().add(embedded);
             embedded.setAttributes(this);
+            notifyListeners(embedded, ADD_ATTRIBUTE_PROPERTY, null, null);
         }
     }
 
     @Override
     public void removeEmbedded(Embedded embedded) {
-        this.getEmbedded().remove(embedded);
-        notifyListeners(embedded, "removeAttribute", null, null);
+        getEmbedded().remove(embedded);
+        embedded.setAttributes(null);
+        notifyListeners(embedded, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public List<Transient> getTransient() {
-        if (_transient == null) {
+        if (this._transient == null) {
             this._transient = new ArrayList<>();
         }
         return this._transient;
@@ -216,23 +213,21 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<Transient> getTransient(String id) {
-        if (_transient != null) {
-            return _transient.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(_transient, id);
     }
 
     @Override
     public void addTransient(Transient _transient) {
-        this.getTransient().add(_transient);
-        notifyListeners(_transient, "addAttribute", null, null);
+        getTransient().add(_transient);
         _transient.setAttributes(this);
+        notifyListeners(_transient, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void removeTransient(Transient _transient) {
-        this.getTransient().remove(_transient);
-        notifyListeners(_transient, "removeAttribute", null, null);
+        getTransient().remove(_transient);
+        _transient.setAttributes(null);
+        notifyListeners(_transient, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
@@ -250,22 +245,21 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<ManyToOne> getManyToOne(String id) {
-        if (manyToOne != null) {
-            return manyToOne.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(manyToOne, id);
     }
 
     @Override
     public void addManyToOne(ManyToOne manyToOne) {
         getManyToOne().add(manyToOne);
         manyToOne.setAttributes(this);
+        notifyListeners(manyToOne, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void removeManyToOne(ManyToOne manyToOne) {
         getManyToOne().remove(manyToOne);
         manyToOne.setAttributes(null);
+        notifyListeners(manyToOne, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
@@ -283,22 +277,21 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<OneToMany> getOneToMany(String id) {
-        if (oneToMany != null) {
-            return oneToMany.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(oneToMany, id);
     }
 
     @Override
     public void addOneToMany(OneToMany oneToMany) {
         getOneToMany().add(oneToMany);
         oneToMany.setAttributes(this);
+        notifyListeners(oneToMany, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void removeOneToMany(OneToMany oneToMany) {
         getOneToMany().remove(oneToMany);
         oneToMany.setAttributes(null);
+        notifyListeners(oneToMany, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
@@ -316,22 +309,21 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<OneToOne> getOneToOne(String id) {
-        if (oneToOne != null) {
-            return oneToOne.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(oneToOne, id);
     }
 
     @Override
     public void addOneToOne(OneToOne oneToOne) {
         getOneToOne().add(oneToOne);
         oneToOne.setAttributes(this);
+        notifyListeners(oneToOne, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void removeOneToOne(OneToOne oneToOne) {
         getOneToOne().remove(oneToOne);
         oneToOne.setAttributes(null);
+        notifyListeners(oneToOne, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
@@ -349,30 +341,29 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public Optional<ManyToMany> getManyToMany(String id) {
-        if (manyToMany != null) {
-            return manyToMany.stream().filter(a -> a.getId().equals(id)).findFirst();
-        }
-        return null;
+        return findById(manyToMany, id);
     }
 
     @Override
     public void addManyToMany(ManyToMany manyToMany) {
         getManyToMany().add(manyToMany);
         manyToMany.setAttributes(this);
+        notifyListeners(manyToMany, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void removeManyToMany(ManyToMany manyToMany) {
         getManyToMany().remove(manyToMany);
         manyToMany.setAttributes(null);
+        notifyListeners(manyToMany, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public List<RelationAttribute> getRelationAttributes() {
-        List<RelationAttribute> relationAttributes = new ArrayList<>(this.getOneToOne());
-        relationAttributes.addAll(this.getManyToOne());
-        relationAttributes.addAll(this.getOneToMany());
-        relationAttributes.addAll(this.getManyToMany());
+        List<RelationAttribute> relationAttributes = new ArrayList<>(getOneToOne());
+        relationAttributes.addAll(getManyToOne());
+        relationAttributes.addAll(getOneToMany());
+        relationAttributes.addAll(getManyToMany());
         return relationAttributes;
     }
 
@@ -484,49 +475,43 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
     @Override
     public void removeRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
-            this.getManyToMany().remove((ManyToMany) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
+            getManyToMany().remove((ManyToMany) relationAttribute);
         } else if (relationAttribute instanceof OneToMany) {
-            this.getOneToMany().remove((OneToMany) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
+            getOneToMany().remove((OneToMany) relationAttribute);
         } else if (relationAttribute instanceof ManyToOne) {
-            this.getManyToOne().remove((ManyToOne) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
+            getManyToOne().remove((ManyToOne) relationAttribute);
         } else if (relationAttribute instanceof OneToOne) {
-            this.getOneToOne().remove((OneToOne) relationAttribute);
-            notifyListeners(relationAttribute, "removeAttribute", null, null);
+            getOneToOne().remove((OneToOne) relationAttribute);
         } else {
             throw new IllegalStateException("Invalid Type Relation Attribute");
         }
+        notifyListeners(relationAttribute, REMOVE_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public void addRelationAttribute(RelationAttribute relationAttribute) {
         if (relationAttribute instanceof ManyToMany) {
             this.addManyToMany((ManyToMany) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof OneToMany) {
             this.addOneToMany((OneToMany) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof ManyToOne) {
             this.addManyToOne((ManyToOne) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else if (relationAttribute instanceof OneToOne) {
             this.addOneToOne((OneToOne) relationAttribute);
-            notifyListeners(relationAttribute, "addAttribute", null, null);
         } else {
             throw new IllegalStateException("Invalid Type Relation Attribute");
         }
+        notifyListeners(relationAttribute, ADD_ATTRIBUTE_PROPERTY, null, null);
     }
 
     @Override
     public List<Attribute> getAllAttribute(boolean includeParentClassAttibute) {
         List<Attribute> attributes = super.getAllAttribute(includeParentClassAttibute);
-        attributes.addAll(this.getBasic());
-        attributes.addAll(this.getElementCollection());
-        attributes.addAll(this.getEmbedded());
-        attributes.addAll(this.getRelationAttributes());
-        attributes.addAll(this.getTransient());
+        attributes.addAll(getBasic());
+        attributes.addAll(getElementCollection());
+        attributes.addAll(getEmbedded());
+        attributes.addAll(getRelationAttributes());
+        attributes.addAll(getTransient());
         return attributes;
     }
 
@@ -597,8 +582,8 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
 
     @Override
     public List<Attribute> getNonRelationAttributes() {
-        List<Attribute> attributes = new ArrayList<>(this.getBasic());
-        attributes.addAll(this.getElementCollection()
+        List<Attribute> attributes = new ArrayList<>(getBasic());
+        attributes.addAll(getElementCollection()
                 .stream()
                 .filter(ec -> ec.getConnectedClass() == null)
                 .collect(toList()));
@@ -680,4 +665,5 @@ public abstract class PersistenceAttributes<T extends ManagedClass> extends Attr
                         .collect(toList())
         );
     }
+
 }

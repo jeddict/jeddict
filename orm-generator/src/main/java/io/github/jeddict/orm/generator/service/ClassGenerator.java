@@ -15,34 +15,16 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import static java.lang.Boolean.TRUE;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang3.StringUtils;
 import io.github.jeddict.bv.constraints.Constraint;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.DefaultClass;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.extend.AnnotationLocation;
 import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.AttributeSnippet;
-import io.github.jeddict.jpa.spec.extend.AttributeSnippetLocationType;
 import io.github.jeddict.jpa.spec.extend.ClassMembers;
-import io.github.jeddict.jpa.spec.extend.ClassSnippet;
-import io.github.jeddict.jpa.spec.extend.ClassSnippetLocationType;
 import io.github.jeddict.jpa.spec.extend.Constructor;
 import io.github.jeddict.jpa.spec.extend.IAttributes;
 import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
-import io.github.jeddict.jpa.spec.extend.Snippet;
-import io.github.jeddict.jpa.spec.extend.SnippetLocation;
 import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
 import io.github.jeddict.jsonb.generator.compiler.DateFormatSnippet;
 import io.github.jeddict.jsonb.generator.compiler.NillableSnippet;
@@ -59,12 +41,29 @@ import io.github.jeddict.orm.generator.compiler.ConstructorSnippet;
 import io.github.jeddict.orm.generator.compiler.EqualsMethodSnippet;
 import io.github.jeddict.orm.generator.compiler.HashcodeMethodSnippet;
 import io.github.jeddict.orm.generator.compiler.ToStringMethodSnippet;
-import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
+import io.github.jeddict.orm.generator.compiler.VetoPropertyRuntimeSnippet;
 import io.github.jeddict.orm.generator.compiler.constraints.ConstraintSnippet;
 import io.github.jeddict.orm.generator.compiler.constraints.ConstraintSnippetFactory;
 import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
+import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConvLogger;
+import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.snippet.AttributeSnippet;
+import io.github.jeddict.snippet.ClassSnippet;
+import io.github.jeddict.snippet.Snippet;
+import io.github.jeddict.snippet.SnippetLocation;
+import static java.lang.Boolean.TRUE;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
@@ -87,21 +86,33 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         classHelper.setPackageName(packageName);
         classDef.setClassName(classHelper.getFQClassName());
         classDef.setAbstractClass(javaClass.getAbstract());
+        classDef.setTypeParameters(javaClass.getRuntimeTypeParameters());
 
         if (!(javaClass instanceof DefaultClass)) { // custom interface support skiped for IdClass/EmbeddedId
             Set<ReferenceClass> interfaces = new LinkedHashSet<>(javaClass.getRootElement().getInterfaces());
             interfaces.addAll(javaClass.getInterfaces());
-            classDef.setInterfaces(interfaces.stream().filter(ReferenceClass::isEnable).map(ReferenceClass::getName).collect(toList()));
+            interfaces.addAll(javaClass.getRuntimeInterfaces());
+            classDef.setInterfaces(
+                    interfaces
+                            .stream()
+                            .filter(ReferenceClass::isEnable)
+                            .map(ReferenceClass::getName)
+                            .collect(toList())
+            );
         }
         
         classDef.setJSONBSnippets(getJSONBClassSnippet(javaClass));
         classDef.setAnnotation(getAnnotationSnippet(javaClass.getAnnotation()));
         classDef.getAnnotation().putAll(getAnnotationSnippet(javaClass.getRuntimeAnnotation()));
-        
-        List<ClassSnippet> snippets = new ArrayList<>(javaClass.getRootElement().getSnippets());
+
+        Set<ClassSnippet> snippets = new LinkedHashSet<>(javaClass.getRootElement().getSnippets());
         snippets.addAll(javaClass.getSnippets());
         snippets.addAll(javaClass.getRuntimeSnippets());
-        classDef.setCustomSnippet(getCustomSnippet(snippets));
+
+        VetoPropertyRuntimeSnippet vetoPropertySnippet = new VetoPropertyRuntimeSnippet();
+        snippets.addAll(vetoPropertySnippet.getClassSnippet(classDef.isPropertyChangeSupport(), classDef.isVetoableChangeSupport()));
+
+        classDef.setCustomSnippet(buildCustomSnippet(snippets));
 
         classDef.setVariableDefs(new ArrayList<>(variables.values()));
 
@@ -114,6 +125,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             classDef.setSuperClassName(javaClass.getSuperclass().getFQN());
         } else if (javaClass.getSuperclassRef() != null) {
             classDef.setSuperClassName(javaClass.getSuperclassRef().getName());
+        } else if (javaClass.getRuntimeSuperclassRef() != null) {
+            classDef.setSuperClassName(javaClass.getRuntimeSuperclassRef().getName());
         }
         return classDef;
     }
@@ -144,7 +157,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         return snippetsMap;
     }
 
-    protected <T extends SnippetLocation> Map<T, List<String>> getCustomSnippet(List<? extends Snippet<T>> snippets) {
+    protected <T extends SnippetLocation> Map<T, List<String>> buildCustomSnippet(Set<? extends Snippet<T>> snippets) {
         Map<T, List<String>> snippetsMap = new HashMap<>();
         for (Snippet<T> snippet : snippets) {
             if (snippet.isEnable()) {
@@ -152,15 +165,6 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
                     snippetsMap.put(snippet.getLocationType(), new ArrayList<>());
                 }
                 String value = snippet.getValue();
-                if(snippet.getLocationType() == ClassSnippetLocationType.IMPORT ||
-                        snippet.getLocationType() == AttributeSnippetLocationType.IMPORT){
-                    if(!value.startsWith("import")){
-                        value = "import " + value;
-                    }
-                    if(!value.endsWith(";")){
-                        value = value + ";";
-                    }
-                }
                 snippetsMap.get(snippet.getLocationType()).add(value);
             }
         }
@@ -350,6 +354,9 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             if (CodePanel.isJavaSESupportEnable()) {
                 variableDef.setPropertyChangeSupport(TRUE.equals(attr.getPropertyChangeSupport()));
                 variableDef.setVetoableChangeSupport(TRUE.equals(attr.getVetoableChangeSupport()));
+                VetoPropertyRuntimeSnippet vetoPropertySnippet = new VetoPropertyRuntimeSnippet();
+                attr.getJavaClass().getRuntimeSnippets().addAll(vetoPropertySnippet.getClassSnippet(variableDef));
+                attr.getRuntimeSnippets().addAll(vetoPropertySnippet.getAttributeSnippet(variableDef));
                 if (TRUE.equals(attr.getPropertyChangeSupport())) {
                     classDef.setPropertyChangeSupport(true);
                 }
@@ -363,10 +370,10 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             variableDef.setValueConstraints(getConstraintSnippet(attr.getValueConstraints()));
             variableDef.setJSONBSnippets(getJSONBAttributeSnippet(attr));
 
-            List<AttributeSnippet> snippets = new ArrayList<>();//todo global attribute snippet at class level ; javaClass.getAttrSnippets());
+            Set<AttributeSnippet> snippets = new LinkedHashSet<>();
             snippets.addAll(attr.getSnippets());
             snippets.addAll(attr.getRuntimeSnippets());
-            variableDef.setCustomSnippet(getCustomSnippet(snippets));
+            variableDef.setCustomSnippet(buildCustomSnippet(snippets));
             variableDef.setAnnotation(getAnnotationSnippet(attr.getAnnotation()));
             variableDef.getAnnotation().putAll(getAnnotationSnippet(attr.getRuntimeAnnotation()));
             

@@ -15,9 +15,10 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import io.github.jeddict.jpa.spec.validator.ClassMemberValidator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import io.github.jeddict.jpa.spec.validator.ClassMemberValidator;
 
 /**
  *
@@ -95,7 +95,10 @@ public class ClassMembers {
     
     @Override
     public String toString() {
-        return getAttributes().stream().map((Attribute a) -> a.getDataTypeLabel() + " " + a.getName()).collect(Collectors.joining(", "));
+        return getAttributes()
+                .stream()
+                .map(a -> a.getDataTypeLabel() + " " + a.getName())
+                .collect(joining(", "));
     }
     
     /**

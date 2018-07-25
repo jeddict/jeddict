@@ -25,13 +25,22 @@ import org.netbeans.modeler.file.IModelerFileDataObject;
 import org.netbeans.modeler.specification.annotaton.ModelerConfig;
 import org.netbeans.modeler.specification.model.file.action.ModelerFileActionListener;
 
-@ModelerConfig(palette = "io/github/jeddict/jpa/modeler/resource/document/PaletteConfig.xml",
+@ModelerConfig(
+        palette = "io/github/jeddict/jpa/modeler/resource/document/PaletteConfig.xml",
         document = "io/github/jeddict/jpa/modeler/resource/document/DocumentConfig.xml",
-        element = "io/github/jeddict/jpa/modeler/resource/document/ElementConfig.xml")
-@org.netbeans.modeler.specification.annotaton.DiagramModel(id = "JPA", name = "JPA 2.2 Specification", 
-        version = "4.9", architectureVersion = "1.4",
-        modelerUtil = JPAModelerUtil.class, modelerScene = JPAModelerScene.class, exportManager = ExportManagerImpl.class,
-        relationValidator = RelationValidator.class, exceptionHandler = ExceptionUtils.class)
+        element = "io/github/jeddict/jpa/modeler/resource/document/ElementConfig.xml"
+)
+@org.netbeans.modeler.specification.annotaton.DiagramModel(
+        id = "JPA",
+        name = "JPA 2.2 Specification",
+        version = "4.9",
+        architectureVersion = "1.4",
+        modelerUtil = JPAModelerUtil.class,
+        modelerScene = JPAModelerScene.class,
+        exportManager = ExportManagerImpl.class,
+        relationValidator = RelationValidator.class,
+        exceptionHandler = ExceptionUtils.class
+)
 public class JPAFileActionListener extends ModelerFileActionListener {
 
     public JPAFileActionListener(IModelerFileDataObject context) {

@@ -21,10 +21,11 @@ package io.github.jeddict.jcode.jsonb;
  */
 public class JSONBConstants {
 
-    public static final String JSONB_ANNOTATION_PACKAGE = "javax.json.bind.annotation";
+    public static final String JSONB_PACKAGE = "javax.json.bind";
+    public static final String JSONB_ANNOTATION_PACKAGE = JSONB_PACKAGE + ".annotation";
     public static final String JSONB_ANNOTATION_PACKAGE_PREFIX = JSONB_ANNOTATION_PACKAGE + '.';
 
-    public static final String JSONB_CONFIG_PACKAGE = "javax.json.bind.config";
+    public static final String JSONB_CONFIG_PACKAGE = JSONB_PACKAGE + ".config";
     public static final String JSONB_CONFIG_PACKAGE_PREFIX = JSONB_CONFIG_PACKAGE + '.';
 
     public static final String JSONB_PROPERTY_ORDER = "JsonbPropertyOrder";

@@ -19,6 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Set;
 import io.github.jeddict.source.JCRELoader;
+import java.util.Map;
 
 /**
  *
@@ -51,5 +52,9 @@ public interface IAttributes extends JCRELoader {
     List<Attribute> getAllSortedAttribute();
     
     List<Attribute> getAllSortedAttribute(boolean includeParentClassAttibute);
+    
+    Map<String, Attribute> getAllAttributeMap();
+    
+    Map<String, Attribute> getAllAttributeMap(boolean includeParentClassAttibute);
 
 }

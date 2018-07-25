@@ -15,6 +15,17 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import io.github.jeddict.jaxb.spec.JaxbVariableType;
+import static io.github.jeddict.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
+import io.github.jeddict.jpa.spec.AccessType;
+import io.github.jeddict.jpa.spec.CascadeType;
+import io.github.jeddict.jpa.spec.EmptyType;
+import io.github.jeddict.jpa.spec.Entity;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.FetchType;
+import io.github.jeddict.jpa.spec.JoinTable;
+import io.github.jeddict.source.JARELoader;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
@@ -27,16 +38,6 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang3.StringUtils;
-import io.github.jeddict.jpa.spec.AccessType;
-import io.github.jeddict.jpa.spec.CascadeType;
-import io.github.jeddict.jpa.spec.EmptyType;
-import io.github.jeddict.jpa.spec.Entity;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.FetchType;
-import io.github.jeddict.jpa.spec.JoinTable;
-import io.github.jeddict.jaxb.spec.JaxbVariableType;
-import io.github.jeddict.source.JARELoader;
-import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**
  *
@@ -81,22 +82,22 @@ public abstract class RelationAttribute extends Attribute implements AccessTypeH
             this.cascade = cascadeType;
             for (Object cascadeObj : cascadeList) {
                 switch (cascadeObj.toString()) {
-                    case "javax.persistence.CascadeType.ALL":
+                    case CASCADE_TYPE_FQN + ".ALL":
                         cascadeType.setCascadeAll(new EmptyType());
                         break;
-                    case "javax.persistence.CascadeType.PERSIST":
+                    case CASCADE_TYPE_FQN + ".PERSIST":
                         cascadeType.setCascadePersist(new EmptyType());
                         break;
-                    case "javax.persistence.CascadeType.MERGE":
+                    case CASCADE_TYPE_FQN + ".MERGE":
                         cascadeType.setCascadeMerge(new EmptyType());
                         break;
-                    case "javax.persistence.CascadeType.REMOVE":
+                    case CASCADE_TYPE_FQN + ".REMOVE":
                         cascadeType.setCascadeRemove(new EmptyType());
                         break;
-                    case "javax.persistence.CascadeType.REFRESH":
+                    case CASCADE_TYPE_FQN + ".REFRESH":
                         cascadeType.setCascadeRefresh(new EmptyType());
                         break;
-                    case "javax.persistence.CascadeType.DETACH":
+                    case CASCADE_TYPE_FQN + ".DETACH":
                         cascadeType.setCascadeDetach(new EmptyType());
                         break;
                     default:

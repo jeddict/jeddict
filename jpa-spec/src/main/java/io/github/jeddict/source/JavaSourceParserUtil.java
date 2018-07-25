@@ -15,6 +15,54 @@
  */
 package io.github.jeddict.source;
 
+import io.github.jeddict.bv.constraints.AssertFalse;
+import io.github.jeddict.bv.constraints.AssertTrue;
+import io.github.jeddict.bv.constraints.Constraint;
+import io.github.jeddict.bv.constraints.DecimalMax;
+import io.github.jeddict.bv.constraints.DecimalMin;
+import io.github.jeddict.bv.constraints.Digits;
+import io.github.jeddict.bv.constraints.Email;
+import io.github.jeddict.bv.constraints.Future;
+import io.github.jeddict.bv.constraints.FutureOrPresent;
+import io.github.jeddict.bv.constraints.Max;
+import io.github.jeddict.bv.constraints.Min;
+import io.github.jeddict.bv.constraints.Negative;
+import io.github.jeddict.bv.constraints.NegativeOrZero;
+import io.github.jeddict.bv.constraints.NotBlank;
+import io.github.jeddict.bv.constraints.NotEmpty;
+import io.github.jeddict.bv.constraints.NotNull;
+import io.github.jeddict.bv.constraints.Null;
+import io.github.jeddict.bv.constraints.Past;
+import io.github.jeddict.bv.constraints.PastOrPresent;
+import io.github.jeddict.bv.constraints.Positive;
+import io.github.jeddict.bv.constraints.PositiveOrZero;
+import io.github.jeddict.bv.constraints.Size;
+import static io.github.jeddict.jcode.bv.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
+import static io.github.jeddict.jcode.jpa.JPAConstants.BASIC_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.COLUMN_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDED_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.ENTITY_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.ID_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMN_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.MANY_TO_MANY_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.MANY_TO_ONE_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.ONE_TO_MANY_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.ONE_TO_ONE_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import static io.github.jeddict.jcode.jpa.JPAConstants.TRANSIENT_FQN;
+import static io.github.jeddict.jcode.jpa.JPAConstants.VERSION_FQN;
+import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
+import io.github.jeddict.jcode.util.StringHelper;
+import io.github.jeddict.jpa.spec.Embeddable;
+import io.github.jeddict.jpa.spec.Entity;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -49,53 +97,6 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.WorkingCopy;
-import io.github.jeddict.bv.constraints.AssertFalse;
-import io.github.jeddict.bv.constraints.AssertTrue;
-import io.github.jeddict.bv.constraints.Constraint;
-import io.github.jeddict.bv.constraints.DecimalMax;
-import io.github.jeddict.bv.constraints.DecimalMin;
-import io.github.jeddict.bv.constraints.Digits;
-import io.github.jeddict.bv.constraints.Email;
-import io.github.jeddict.bv.constraints.Future;
-import io.github.jeddict.bv.constraints.FutureOrPresent;
-import io.github.jeddict.bv.constraints.Max;
-import io.github.jeddict.bv.constraints.Min;
-import io.github.jeddict.bv.constraints.Negative;
-import io.github.jeddict.bv.constraints.NegativeOrZero;
-import io.github.jeddict.bv.constraints.NotBlank;
-import io.github.jeddict.bv.constraints.NotEmpty;
-import io.github.jeddict.bv.constraints.NotNull;
-import io.github.jeddict.bv.constraints.Null;
-import io.github.jeddict.bv.constraints.Past;
-import io.github.jeddict.bv.constraints.PastOrPresent;
-import io.github.jeddict.bv.constraints.Positive;
-import io.github.jeddict.bv.constraints.PositiveOrZero;
-import io.github.jeddict.bv.constraints.Size;
-import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
-import io.github.jeddict.jcode.util.StringHelper;
-import static io.github.jeddict.jcode.jpa.JPAConstants.BASIC_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.COLUMN_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDED_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ENTITY_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ID_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMN_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MANY_TO_MANY_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MANY_TO_ONE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ONE_TO_MANY_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ONE_TO_ONE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.TRANSIENT_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.VERSION_FQN;
-import io.github.jeddict.jpa.spec.Embeddable;
-import io.github.jeddict.jpa.spec.Entity;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.extend.annotation.Annotation;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Utilities;
@@ -192,7 +193,7 @@ public class JavaSourceParserUtil {
 
     static {
         for (Class<? extends Constraint> bvClass : BEAN_VALIDATION_REVENG_CLASS_LIST) {
-            SUPPORTED_BV_REVENG_CLASS_SET.put(io.github.jeddict.jcode.bv.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE + "." + bvClass.getSimpleName(), bvClass);
+            SUPPORTED_BV_REVENG_CLASS_SET.put(BEAN_VAILDATION_PACKAGE + "." + bvClass.getSimpleName(), bvClass);
         }
     }
 
@@ -778,7 +779,6 @@ public class JavaSourceParserUtil {
         }
         return result;
     }
-    // Issue Fix #5977 End
 
     public static VariableElement guessField(ExecutableElement getter) {
         String name;

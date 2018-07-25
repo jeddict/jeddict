@@ -15,15 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.jpa.JPAConstants.MAP_KEY;
 import static io.github.jeddict.jcode.jpa.JPAConstants.MAP_KEY_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class MapKeySnippet implements Snippet {
 
@@ -105,7 +105,6 @@ public class MapKeySnippet implements Snippet {
     /**
      * @param mapKeyAttribute the mapKeyAttribute to set
      */
-//    @Override
     public void setMapKeyAttribute(Attribute mapKeyAttribute) {
         this.mapKeyAttribute = mapKeyAttribute;
     }

@@ -15,15 +15,15 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class SnippetContainer<T extends Snippet> implements Snippet {
 
@@ -56,10 +56,8 @@ public abstract class SnippetContainer<T extends Snippet> implements Snippet {
         }
 
         for (T snippet : snippets) {
-//            if(containerAnnotation){stringBuilder.append(TAB);}
             stringBuilder.append(snippet.getSnippet());
             if(containerAnnotation){stringBuilder.append(COMMA);}
-//            stringBuilder.append(NEW_LINE);      
         }
         
         if(containerAnnotation){

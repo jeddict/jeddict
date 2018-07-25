@@ -15,33 +15,14 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toSet;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
-import org.apache.commons.lang3.StringUtils;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.type.ReferenceType;
 import io.github.jeddict.bv.constraints.AssertFalse;
 import io.github.jeddict.bv.constraints.AssertTrue;
 import io.github.jeddict.bv.constraints.Constraint;
@@ -66,6 +47,17 @@ import io.github.jeddict.bv.constraints.Pattern;
 import io.github.jeddict.bv.constraints.Positive;
 import io.github.jeddict.bv.constraints.PositiveOrZero;
 import io.github.jeddict.bv.constraints.Size;
+import io.github.jeddict.jaxb.spec.JaxbMetadata;
+import io.github.jeddict.jaxb.spec.JaxbVariableType;
+import io.github.jeddict.jaxb.spec.JaxbVariableTypeHandler;
+import static io.github.jeddict.jcode.bv.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
+import static io.github.jeddict.jcode.jaxb.JAXBConstants.JAXB_PACKAGE;
+import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_PACKAGE;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_PROPERTY_FQN;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_ADAPTER_FQN;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN;
+import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
 import static io.github.jeddict.jcode.util.AttributeType.BIGDECIMAL;
 import static io.github.jeddict.jcode.util.AttributeType.BIGINTEGER;
 import static io.github.jeddict.jcode.util.AttributeType.BOOLEAN;
@@ -103,18 +95,57 @@ import static io.github.jeddict.jcode.util.AttributeType.YEAR_MONTH;
 import static io.github.jeddict.jcode.util.AttributeType.ZONED_DATE_TIME;
 import static io.github.jeddict.jcode.util.AttributeType.getArrayType;
 import static io.github.jeddict.jcode.util.AttributeType.isArray;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_PROPERTY_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_ADAPTER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
-import io.github.jeddict.settings.code.CodePanel;
-import io.github.jeddict.jaxb.spec.JaxbMetadata;
-import io.github.jeddict.jaxb.spec.JaxbVariableType;
-import io.github.jeddict.jaxb.spec.JaxbVariableTypeHandler;
+import static io.github.jeddict.jcode.util.JavaIdentifiers.isFQN;
+import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
+import static io.github.jeddict.jcode.util.JavaUtil.isGetterMethod;
+import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.GETTER;
+import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.PROPERTY;
+import static io.github.jeddict.jpa.spec.extend.AttributeAnnotationLocationType.SETTER;
 import io.github.jeddict.jsonb.spec.JsonbDateFormat;
 import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
 import io.github.jeddict.jsonb.spec.JsonbTypeHandler;
+import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.snippet.AttributeSnippet;
+import io.github.jeddict.snippet.AttributeSnippetLocationType;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_JAVADOC;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_THROWS;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.IMPORT;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.POST_GETTER;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.POST_SETTER;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_GETTER;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.PRE_SETTER;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.PROPERTY_JAVADOC;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_JAVADOC;
+import static io.github.jeddict.snippet.AttributeSnippetLocationType.SETTER_THROWS;
 import io.github.jeddict.source.JavaSourceParserUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlTransient;
+import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.deleteWhitespace;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.type.Embedded;
 import org.openide.util.Exceptions;
@@ -123,13 +154,9 @@ import org.openide.util.Exceptions;
  *
  * @author Gaurav Gupta
  */
-public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandler, 
+public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandler,
         JsonbTypeHandler, Embedded {
 
-    @XmlElement(name = "an")
-    private List<AttributeAnnotation> annotation;
-    @XmlTransient
-    private List<AttributeAnnotation> runtimeAnnotation;
     @XmlAttribute(name = "v")
     private boolean visibile = true;
     @XmlElement(name = "des")
@@ -149,33 +176,40 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 //    @XmlAttribute(name = "jaxb-xml-list")
 //    private Boolean jaxbXmlList;
 
-    @XmlAttribute(name="am")
+    @XmlAttribute(name = "am")
     private AccessModifierType accessModifier;
-    
+
     @XmlAttribute(name = "name", required = true)
     protected String name;
+
+    @XmlAttribute(name = "pname")
+    private String previousName;
 
     @XmlAttribute(name = "dv")
     protected String defaultValue;
 
     //ui properties start
-    
     @XmlAttribute(name = "ui")
     private Boolean includeInUI;
-    
+
     @XmlAttribute(name = "uil")
     private String label;
-    
+
     @XmlAttribute(name = "bt")
     private BlobContentType blobContentType;
 
     //ui properties end
-    
     @XmlAttribute(name = "ft")
     private Boolean functionalType;
 
+    @XmlElement(name = "an")
+    private List<AttributeAnnotation> annotation;
+
     @XmlElement(name = "snp")
     private List<AttributeSnippet> snippets;
+
+    @XmlTransient
+    private List<AttributeAnnotation> runtimeAnnotation;
 
     @XmlTransient
     private List<AttributeSnippet> runtimeSnippets;
@@ -186,79 +220,55 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     @XmlAttribute(name = "vc")
     private Boolean vetoableChangeSupport;
 
-    
     //Jsonb support start
-    
     @XmlAttribute(name = "jbn")
     private Boolean jsonbNillable;
 
     @XmlAttribute(name = "jbt")
-    private Boolean jsonbTransient ;
+    private Boolean jsonbTransient;
 
     @XmlAttribute(name = "jbp")
     private String jsonbProperty;
 
     @XmlElement(name = "jbta")
     private ReferenceClass jsonbTypeAdapter;
-    
+
     @XmlElement(name = "jbdf")
     private JsonbDateFormat jsonbDateFormat;
-        
+
     @XmlElement(name = "jbnf")
-    private JsonbNumberFormat jsonbNumberFormat;   
-    
+    private JsonbNumberFormat jsonbNumberFormat;
+
     @XmlElement(name = "jbtd")
     private ReferenceClass jsonbTypeDeserializer;
-        
+
     @XmlElement(name = "jbts")
-    private ReferenceClass jsonbTypeSerializer ;
-    
+    private ReferenceClass jsonbTypeSerializer;
+
     //Jsonb support end
-    
     @XmlElementWrapper(name = "bv")
     @XmlElements({
-        @XmlElement(name = "nu", type = Null.class)
-        ,
-        @XmlElement(name = "nn", type = NotNull.class)
-        ,
-        @XmlElement(name = "nb", type = NotBlank.class)
-        ,
-        @XmlElement(name = "ne", type = NotEmpty.class)
-        ,
-        @XmlElement(name = "af", type = AssertFalse.class)
-        ,
-        @XmlElement(name = "at", type = AssertTrue.class)
-        ,
-        @XmlElement(name = "pa", type = Past.class)
-        ,
-        @XmlElement(name = "pp", type = PastOrPresent.class)
-        ,
-        @XmlElement(name = "fu", type = Future.class)
-        ,
-        @XmlElement(name = "fp", type = FutureOrPresent.class)
-        ,
-        @XmlElement(name = "si", type = Size.class)
-        ,
-        @XmlElement(name = "pt", type = Pattern.class)
-        ,
-        @XmlElement(name = "em", type = Email.class)
-        ,
-        @XmlElement(name = "mi", type = Min.class)
-        ,
-        @XmlElement(name = "ma", type = Max.class)
-        ,
-        @XmlElement(name = "dmi", type = DecimalMin.class)
-        ,
-        @XmlElement(name = "dma", type = DecimalMax.class)
-        ,
-        @XmlElement(name = "di", type = Digits.class)
-        ,
-        @XmlElement(name = "ng", type = Negative.class)
-        ,
-        @XmlElement(name = "nz", type = NegativeOrZero.class)
-        ,
-        @XmlElement(name = "po", type = Positive.class)
-        ,
+        @XmlElement(name = "nu", type = Null.class),
+        @XmlElement(name = "nn", type = NotNull.class),
+        @XmlElement(name = "nb", type = NotBlank.class),
+        @XmlElement(name = "ne", type = NotEmpty.class),
+        @XmlElement(name = "af", type = AssertFalse.class),
+        @XmlElement(name = "at", type = AssertTrue.class),
+        @XmlElement(name = "pa", type = Past.class),
+        @XmlElement(name = "pp", type = PastOrPresent.class),
+        @XmlElement(name = "fu", type = Future.class),
+        @XmlElement(name = "fp", type = FutureOrPresent.class),
+        @XmlElement(name = "si", type = Size.class),
+        @XmlElement(name = "pt", type = Pattern.class),
+        @XmlElement(name = "em", type = Email.class),
+        @XmlElement(name = "mi", type = Min.class),
+        @XmlElement(name = "ma", type = Max.class),
+        @XmlElement(name = "dmi", type = DecimalMin.class),
+        @XmlElement(name = "dma", type = DecimalMax.class),
+        @XmlElement(name = "di", type = Digits.class),
+        @XmlElement(name = "ng", type = Negative.class),
+        @XmlElement(name = "nz", type = NegativeOrZero.class),
+        @XmlElement(name = "po", type = Positive.class),
         @XmlElement(name = "pz", type = PositiveOrZero.class)
     })
     private Set<Constraint> attributeConstraints;
@@ -270,48 +280,27 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     @XmlElementWrapper(name = "kbv")
     @XmlElements({
-        @XmlElement(name = "nu", type = Null.class)
-        ,
-        @XmlElement(name = "nn", type = NotNull.class)
-        ,
-        @XmlElement(name = "nb", type = NotBlank.class)
-        ,
-        @XmlElement(name = "ne", type = NotEmpty.class)
-        ,
-        @XmlElement(name = "af", type = AssertFalse.class)
-        ,
-        @XmlElement(name = "at", type = AssertTrue.class)
-        ,
-        @XmlElement(name = "pa", type = Past.class)
-        ,
-        @XmlElement(name = "pp", type = PastOrPresent.class)
-        ,
-        @XmlElement(name = "fu", type = Future.class)
-        ,
-        @XmlElement(name = "fp", type = FutureOrPresent.class)
-        ,
-        @XmlElement(name = "si", type = Size.class)
-        ,
-        @XmlElement(name = "pt", type = Pattern.class)
-        ,
-        @XmlElement(name = "em", type = Email.class)
-        ,
-        @XmlElement(name = "mi", type = Min.class)
-        ,
-        @XmlElement(name = "ma", type = Max.class)
-        ,
-        @XmlElement(name = "dmi", type = DecimalMin.class)
-        ,
-        @XmlElement(name = "dma", type = DecimalMax.class)
-        ,
-        @XmlElement(name = "di", type = Digits.class)
-        ,
-        @XmlElement(name = "ng", type = Negative.class)
-        ,
-        @XmlElement(name = "nz", type = NegativeOrZero.class)
-        ,
-        @XmlElement(name = "po", type = Positive.class)
-        ,
+        @XmlElement(name = "nu", type = Null.class),
+        @XmlElement(name = "nn", type = NotNull.class),
+        @XmlElement(name = "nb", type = NotBlank.class),
+        @XmlElement(name = "ne", type = NotEmpty.class),
+        @XmlElement(name = "af", type = AssertFalse.class),
+        @XmlElement(name = "at", type = AssertTrue.class),
+        @XmlElement(name = "pa", type = Past.class),
+        @XmlElement(name = "pp", type = PastOrPresent.class),
+        @XmlElement(name = "fu", type = Future.class),
+        @XmlElement(name = "fp", type = FutureOrPresent.class),
+        @XmlElement(name = "si", type = Size.class),
+        @XmlElement(name = "pt", type = Pattern.class),
+        @XmlElement(name = "em", type = Email.class),
+        @XmlElement(name = "mi", type = Min.class),
+        @XmlElement(name = "ma", type = Max.class),
+        @XmlElement(name = "dmi", type = DecimalMin.class),
+        @XmlElement(name = "dma", type = DecimalMax.class),
+        @XmlElement(name = "di", type = Digits.class),
+        @XmlElement(name = "ng", type = Negative.class),
+        @XmlElement(name = "nz", type = NegativeOrZero.class),
+        @XmlElement(name = "po", type = Positive.class),
         @XmlElement(name = "pz", type = PositiveOrZero.class)
     })
     private Set<Constraint> keyConstraints;
@@ -323,48 +312,27 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     @XmlElementWrapper(name = "vbv")
     @XmlElements({
-        @XmlElement(name = "nu", type = Null.class)
-        ,
-        @XmlElement(name = "nn", type = NotNull.class)
-        ,
-        @XmlElement(name = "nb", type = NotBlank.class)
-        ,
-        @XmlElement(name = "ne", type = NotEmpty.class)
-        ,
-        @XmlElement(name = "af", type = AssertFalse.class)
-        ,
-        @XmlElement(name = "at", type = AssertTrue.class)
-        ,
-        @XmlElement(name = "pa", type = Past.class)
-        ,
-        @XmlElement(name = "pp", type = PastOrPresent.class)
-        ,
-        @XmlElement(name = "fu", type = Future.class)
-        ,
-        @XmlElement(name = "fp", type = FutureOrPresent.class)
-        ,
-        @XmlElement(name = "si", type = Size.class)
-        ,
-        @XmlElement(name = "pt", type = Pattern.class)
-        ,
-        @XmlElement(name = "em", type = Email.class)
-        ,
-        @XmlElement(name = "mi", type = Min.class)
-        ,
-        @XmlElement(name = "ma", type = Max.class)
-        ,
-        @XmlElement(name = "dmi", type = DecimalMin.class)
-        ,
-        @XmlElement(name = "dma", type = DecimalMax.class)
-        ,
-        @XmlElement(name = "di", type = Digits.class)
-        ,
-        @XmlElement(name = "ng", type = Negative.class)
-        ,
-        @XmlElement(name = "nz", type = NegativeOrZero.class)
-        ,
-        @XmlElement(name = "po", type = Positive.class)
-        ,
+        @XmlElement(name = "nu", type = Null.class),
+        @XmlElement(name = "nn", type = NotNull.class),
+        @XmlElement(name = "nb", type = NotBlank.class),
+        @XmlElement(name = "ne", type = NotEmpty.class),
+        @XmlElement(name = "af", type = AssertFalse.class),
+        @XmlElement(name = "at", type = AssertTrue.class),
+        @XmlElement(name = "pa", type = Past.class),
+        @XmlElement(name = "pp", type = PastOrPresent.class),
+        @XmlElement(name = "fu", type = Future.class),
+        @XmlElement(name = "fp", type = FutureOrPresent.class),
+        @XmlElement(name = "si", type = Size.class),
+        @XmlElement(name = "pt", type = Pattern.class),
+        @XmlElement(name = "em", type = Email.class),
+        @XmlElement(name = "mi", type = Min.class),
+        @XmlElement(name = "ma", type = Max.class),
+        @XmlElement(name = "dmi", type = DecimalMin.class),
+        @XmlElement(name = "dma", type = DecimalMax.class),
+        @XmlElement(name = "di", type = Digits.class),
+        @XmlElement(name = "ng", type = Negative.class),
+        @XmlElement(name = "nz", type = NegativeOrZero.class),
+        @XmlElement(name = "po", type = Positive.class),
         @XmlElement(name = "pz", type = PositiveOrZero.class)
     })
     private Set<Constraint> valueConstraints;
@@ -376,8 +344,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
 
     public final static Map<Class<? extends Constraint>, Integer> ALL_CONSTRAINTS = getAllConstraintsClass(); //Applicable Constraint template for datatype
     public final static Supplier<Set<Constraint>> CONSTRAINTS_SUPPLIER = () -> new TreeSet<>(
-            (a, b) -> ALL_CONSTRAINTS
-                    .getOrDefault(a.getClass(), 0)
+            (a, b) -> ALL_CONSTRAINTS.getOrDefault(a.getClass(), 0)
                     .compareTo(ALL_CONSTRAINTS.getOrDefault(b.getClass(), 0))
     );
 
@@ -385,19 +352,19 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
         this.setId(NBModelerUtil.getAutoGeneratedStringId());
         this.name = variableElement.getSimpleName().toString();
         this.setAnnotation(JavaSourceParserUtil.getNonEEAnnotation(element, AttributeAnnotation.class));
-        if(getterElement!=null){
+        if (getterElement != null) {
             this.setFunctionalType(getterElement.getReturnType().toString().startsWith(Optional.class.getCanonicalName()));
         }
-        
+
         AnnotationMirror prpertyAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JSONB_PROPERTY_FQN);
-        if(prpertyAnnotationMirror!=null){
-            this.jsonbNillable = (Boolean)JavaSourceParserUtil.findAnnotationValue(prpertyAnnotationMirror, "nillable");
-            this.jsonbProperty = (String)JavaSourceParserUtil.findAnnotationValue(prpertyAnnotationMirror, "value");
+        if (prpertyAnnotationMirror != null) {
+            this.jsonbNillable = (Boolean) JavaSourceParserUtil.findAnnotationValue(prpertyAnnotationMirror, "nillable");
+            this.jsonbProperty = (String) JavaSourceParserUtil.findAnnotationValue(prpertyAnnotationMirror, "value");
         }
-        
+
         this.jsonbDateFormat = JsonbDateFormat.load(element);
         this.jsonbNumberFormat = JsonbNumberFormat.load(element);
-        
+
         AnnotationMirror typeAdapterAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JSONB_TYPE_ADAPTER_FQN);
         if (typeAdapterAnnotationMirror != null) {
             DeclaredType classType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(typeAdapterAnnotationMirror, "value");
@@ -405,7 +372,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
                 this.jsonbTypeAdapter = new ReferenceClass(classType.toString());
             }
         }
-        
+
         AnnotationMirror typeDeserializerAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JSONB_TYPE_DESERIALIZER_FQN);
         if (typeDeserializerAnnotationMirror != null) {
             DeclaredType classType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(typeDeserializerAnnotationMirror, "value");
@@ -413,7 +380,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
                 this.jsonbTypeDeserializer = new ReferenceClass(classType.toString());
             }
         }
-        
+
         AnnotationMirror typeSerializerAnnotationMirror = JavaSourceParserUtil.findAnnotation(element, JSONB_TYPE_SERIALIZER_FQN);
         if (typeSerializerAnnotationMirror != null) {
             DeclaredType classType = (DeclaredType) JavaSourceParserUtil.findAnnotationValue(typeSerializerAnnotationMirror, "value");
@@ -423,24 +390,128 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
         }
     }
 
+    public void loadExistingSnippet(String name, FieldDeclaration field, Map<String, ImportDeclaration> imports) {
+        loadJavadoc(field.getJavadocComment(), PROPERTY_JAVADOC);
+        loadAnnotation(field.getAnnotations(), PROPERTY, imports);
+    }
+
+    public void loadExistingSnippet(String name, MethodDeclaration method, Map<String, ImportDeclaration> imports) {
+        String methodName = method.getNameAsString();
+        boolean getterMethod = isGetterMethod(methodName);
+
+        for (ReferenceType thrownException : method.getThrownExceptions()) {
+            String value = thrownException.toString();
+            this.addRuntimeSnippet(new AttributeSnippet(value, getterMethod ? GETTER_THROWS : SETTER_THROWS));
+            addImportSnippet(value, imports);
+        }
+
+        if (method.getBody().isPresent()) {
+            BlockStmt block = method.getBody().get();
+
+            AttributeSnippetLocationType locationType = getterMethod ? PRE_GETTER : PRE_SETTER;
+            String bridgeLine = deleteWhitespace(String.format(getterMethod ? "return this.%s;" : "this.%s = %s;", name, name));
+            for (Node node : block.getChildNodes()) {
+                String[] statements = node.toString().split("\n");
+                for (String statement : statements) {
+                    if (StringUtils.equals(bridgeLine, deleteWhitespace(statement))) {
+                        locationType = getterMethod ? POST_GETTER : POST_SETTER;
+                    } else {
+                        this.addRuntimeSnippet(new AttributeSnippet(statement, locationType));
+                        addImportSnippet(statement, imports);
+                    }
+                }
+            }
+        }
+
+        loadJavadoc(method.getJavadocComment(), getterMethod ? GETTER_JAVADOC : SETTER_JAVADOC);
+        loadAnnotation(method.getAnnotations(), getterMethod ? GETTER : SETTER, imports);
+
+    }
+
+    private void loadJavadoc(Optional<JavadocComment> docOptional, AttributeSnippetLocationType locationType) {
+        if (docOptional.isPresent()) {
+            JavadocComment doc = docOptional.get();
+            AttributeSnippet attributeSnippet = new AttributeSnippet();
+            attributeSnippet.setLocationType(locationType);
+            attributeSnippet.setValue(doc.toString());
+            if (description == null || !attributeSnippet.getValue().contains(description)) {
+                this.addRuntimeSnippet(attributeSnippet);
+            }
+        }
+    }
+
+    private void loadAnnotation(List<AnnotationExpr> annotationExprs, AttributeAnnotationLocationType locationType, Map<String, ImportDeclaration> imports) {
+        for (AnnotationExpr annotationExpr : annotationExprs) {
+            String annotationExprName = annotationExpr.getNameAsString();
+            String annotationName;
+            String annotationFQN;
+            if (isFQN(annotationExprName)) {
+                annotationFQN = annotationExprName;
+                annotationName = unqualify(annotationExprName);
+            } else {
+                annotationFQN = imports.containsKey(annotationExprName)
+                        ? imports.get(annotationExprName).getNameAsString() : annotationExprName;
+                annotationName = annotationExprName;
+            }
+
+            if (!annotationFQN.startsWith(PERSISTENCE_PACKAGE)
+                    && !annotationFQN.startsWith(BEAN_VAILDATION_PACKAGE)
+                    && !annotationFQN.startsWith(JSONB_PACKAGE)
+                    && !annotationFQN.startsWith(JAXB_PACKAGE)) {
+                String value = annotationExpr.toString();
+                if (!getAnnotation()
+                        .stream()
+                        .filter(anot -> anot.getLocationType() == locationType)
+                        .filter(anot -> anot.getName().contains(annotationName))
+                        .findAny()
+                        .isPresent()) {
+                    this.addRuntimeAnnotation(new AttributeAnnotation(value, locationType));
+                    addImportSnippet(value, imports);
+                }
+            }
+
+        }
+    }
+
+    private void addImportSnippet(String snippet, Map<String, ImportDeclaration> imports) {
+        imports.keySet()
+                .stream()
+                .filter(snippet::contains)
+                .map(imports::get)
+                .map(importClass -> new AttributeSnippet(importClass.getNameAsString(), IMPORT))
+                .forEach(importSnippet -> this.addRuntimeSnippet(importSnippet));
+    }
+
     public void beforeMarshal(Marshaller marshaller) {
-        if(attributeConstraints!=null 
+        if (attributeConstraints != null
                 && (attributeConstraints.isEmpty()
-                || attributeConstraints.stream().allMatch(ConstraintsValidator::isEmpty))){
+                || attributeConstraints.stream().allMatch(ConstraintsValidator::isEmpty))) {
             attributeConstraints = null;
         }
-        if(keyConstraints!=null 
+        if (keyConstraints != null
                 && (keyConstraints.isEmpty()
-                || keyConstraints.stream().allMatch(ConstraintsValidator::isEmpty))){
+                || keyConstraints.stream().allMatch(ConstraintsValidator::isEmpty))) {
             keyConstraints = null;
         }
-        if(valueConstraints!=null 
+        if (valueConstraints != null
                 && (valueConstraints.isEmpty()
-                || valueConstraints.stream().allMatch(ConstraintsValidator::isEmpty))){
+                || valueConstraints.stream().allMatch(ConstraintsValidator::isEmpty))) {
             valueConstraints = null;
         }
     }
-    
+
+    public String getPreviousName() {
+        return previousName;
+    }
+
+    private void setPreviousName(String previousName) {
+        this.previousName = previousName;
+    }
+
+    public void resetPreviousName() {
+        this.previousName = null;
+    }
+
     /**
      * Gets the value of the name property.
      *
@@ -460,7 +531,10 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      */
     @Override
     public void setName(String value) {
-        this.name = value;
+        if (getPreviousName() == null && getName() != null) {
+            setPreviousName(getName());
+        }
+        notifyListeners("name", this.name, this.name = value);
     }
 
     /**
@@ -546,7 +620,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      */
     @Override
     public JaxbVariableType getJaxbVariableType() {
-        if(jaxbVariableType==null){
+        if (jaxbVariableType == null) {
             jaxbVariableType = JaxbVariableType.XML_DEFAULT;
         }
         return jaxbVariableType;
@@ -706,7 +780,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     public boolean isTextAttributeType(String attributeType) {
         return STRING.equals(attributeType) || STRING_FQN.equals(attributeType);
     }
-    
+
     public boolean isBlobAttributeType(String attributeType) {
         if (isArray(attributeType)) {
             String dataType = getArrayType(attributeType);
@@ -855,7 +929,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      */
     private Set<Constraint> bootAllConstraints(Set<Constraint> constraints) {
         Set<Class<? extends Constraint>> existingConstraints = constraints.stream().map(c -> c.getClass()).collect(toSet());
-        
+
         for (Class<? extends Constraint> constraintClass : ALL_CONSTRAINTS.keySet()) {
             if (!existingConstraints.contains(constraintClass)) {
                 try {
@@ -875,47 +949,43 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      */
     private static Map<Class<? extends Constraint>, Integer> getAllConstraintsClass() {
         Map<Class<? extends Constraint>, Integer> classes = new HashMap<>();
-        classes.put(Null.class,             1);
-        classes.put(NotNull.class,          2);
-        classes.put(NotEmpty.class,         3);
-        classes.put(NotBlank.class,         4);
-        classes.put(AssertFalse.class,      5);
-        classes.put(AssertTrue.class,       6);
-        classes.put(Past.class,             7);
-        classes.put(PastOrPresent.class,    8);
-        classes.put(Future.class,           9);
-        classes.put(FutureOrPresent.class,  10);
-        classes.put(Size.class,             11);
-        classes.put(Pattern.class,          12);
-        classes.put(Email.class,            13);
-        classes.put(Min.class,              14);
-        classes.put(Max.class,              15);
-        classes.put(DecimalMin.class,       16);
-        classes.put(DecimalMax.class,       17);
-        classes.put(Digits.class,           18);
-        classes.put(Negative.class,         19);
-        classes.put(NegativeOrZero.class,   20);
-        classes.put(Positive.class,         21);
-        classes.put(PositiveOrZero.class,   22);
+        classes.put(Null.class, 1);
+        classes.put(NotNull.class, 2);
+        classes.put(NotEmpty.class, 3);
+        classes.put(NotBlank.class, 4);
+        classes.put(AssertFalse.class, 5);
+        classes.put(AssertTrue.class, 6);
+        classes.put(Past.class, 7);
+        classes.put(PastOrPresent.class, 8);
+        classes.put(Future.class, 9);
+        classes.put(FutureOrPresent.class, 10);
+        classes.put(Size.class, 11);
+        classes.put(Pattern.class, 12);
+        classes.put(Email.class, 13);
+        classes.put(Min.class, 14);
+        classes.put(Max.class, 15);
+        classes.put(DecimalMin.class, 16);
+        classes.put(DecimalMax.class, 17);
+        classes.put(Digits.class, 18);
+        classes.put(Negative.class, 19);
+        classes.put(NegativeOrZero.class, 20);
+        classes.put(Positive.class, 21);
+        classes.put(PositiveOrZero.class, 22);
         return classes;
     }
 
-    public Set<Class<? extends Constraint>> getAttributeConstraintsClass() {        
-         return Collections.emptySet();
-     }
-     
-     
-     public Set<Class<? extends Constraint>> getKeyConstraintsClass() {
-         return Collections.emptySet();
-     }
-     
-     
-     public Set<Class<? extends Constraint>> getValueConstraintsClass() {
-         return Collections.emptySet();
-     }
-     
-     
-     
+    public Set<Class<? extends Constraint>> getAttributeConstraintsClass() {
+        return Collections.emptySet();
+    }
+
+    public Set<Class<? extends Constraint>> getKeyConstraintsClass() {
+        return Collections.emptySet();
+    }
+
+    public Set<Class<? extends Constraint>> getValueConstraintsClass() {
+        return Collections.emptySet();
+    }
+
     /**
      * Filtered constraint class based on data type
      *
@@ -962,7 +1032,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
                 case FLOAT:
                 case DOUBLE:
                 case FLOAT_WRAPPER:
-                case DOUBLE_WRAPPER:                    
+                case DOUBLE_WRAPPER:
                     classes.add(Negative.class);
                     classes.add(NegativeOrZero.class);
                     classes.add(Positive.class);
@@ -995,14 +1065,14 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
                     classes.add(FutureOrPresent.class);
                     break;
                 default:
-                    if(isArray(attribute)){
+                    if (isArray(attribute)) {
                         classes.add(Size.class);
-                    } 
+                    }
             }
         }
         return classes;
     }
-    
+
     protected Set<Class<? extends Constraint>> getCollectionTypeConstraintsClass() {
         Set<Class<? extends Constraint>> classes = new LinkedHashSet<>();
         classes.add(NotNull.class);
@@ -1010,7 +1080,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
         classes.add(Size.class);
         return classes;
     }
-  
+
     /**
      * @return the constraints
      */
@@ -1229,7 +1299,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      * @return the jsonbDateFormat
      */
     public JsonbDateFormat getJsonbDateFormat() {
-        if(jsonbDateFormat==null){
+        if (jsonbDateFormat == null) {
             jsonbDateFormat = new JsonbDateFormat();
         }
         return jsonbDateFormat;
@@ -1246,7 +1316,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      * @return the jsonbNumberFormat
      */
     public JsonbNumberFormat getJsonbNumberFormat() {
-        if(jsonbNumberFormat==null){
+        if (jsonbNumberFormat == null) {
             jsonbNumberFormat = new JsonbNumberFormat();
         }
         return jsonbNumberFormat;
@@ -1284,7 +1354,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
     }
 
     /**
-     * @param JsonbTypeSerializer the JsonbTypeSerializer to set
+     * @param ReferenceClass the JsonbTypeSerializer to set
      */
     @Override
     public void setJsonbTypeSerializer(ReferenceClass jsonbTypeSerializer) {

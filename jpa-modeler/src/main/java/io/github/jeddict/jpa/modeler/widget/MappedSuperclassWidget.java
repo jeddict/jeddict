@@ -15,12 +15,10 @@
  */
 package io.github.jeddict.jpa.modeler.widget;
 
-import java.awt.Image;
-import io.github.jeddict.jpa.spec.MappedSuperclass;
-import io.github.jeddict.jpa.spec.PrimaryKeyAttributes;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
-import org.netbeans.modeler.specification.model.document.IModelerScene;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import io.github.jeddict.jpa.spec.MappedSuperclass;
+import java.awt.Image;
 import org.netbeans.modeler.widget.node.info.NodeWidgetInfo;
 
 /**
@@ -37,16 +35,12 @@ public class MappedSuperclassWidget extends PrimaryKeyContainerWidget<MappedSupe
     public void init() {
         super.init();
         MappedSuperclass mappedSuperclass = this.getBaseElementSpec();
-        if (mappedSuperclass.getAttributes() == null) {
-            mappedSuperclass.setAttributes(new PrimaryKeyAttributes());
-        }
         if (mappedSuperclass.getClazz() == null || mappedSuperclass.getClazz().isEmpty()) {
             mappedSuperclass.setClazz(this.getModelerScene().getNextClassName("MappedSuperclass_"));
         }
         setName(mappedSuperclass.getClazz());
         setLabel(mappedSuperclass.getClazz());
         validateName(null, this.getName());
-
     }
     
     @Override

@@ -131,10 +131,15 @@ public final class JavaIdentifiers {
         }
         return fqn.substring(0, lastDot);
     }
+
+    public static boolean isFQN(String fqn) {
+        return !getPackageName(fqn).equals(EMPTY);
+    }
+
     
-    private static void checkFQN(String fqn){
+    private static void checkFQN(String fqn) {
         Parameters.notEmpty("fqn", fqn); //NOI18N
-        if (!isValidPackageName(fqn)){
+        if (!isValidPackageName(fqn)) {
             throw new IllegalArgumentException("The given fqn [" + fqn + "] does not represent a fully qualified class name"); //NOI18N
         }
     }

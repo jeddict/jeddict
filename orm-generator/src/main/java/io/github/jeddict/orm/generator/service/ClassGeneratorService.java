@@ -15,32 +15,40 @@
  */
 package io.github.jeddict.orm.generator.service;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.SourceGroup;
 import io.github.jeddict.jcode.console.Console;
 import static io.github.jeddict.jcode.console.Console.BOLD;
 import static io.github.jeddict.jcode.console.Console.FG_DARK_RED;
 import io.github.jeddict.jcode.task.ITaskSupervisor;
+import static io.github.jeddict.jcode.util.Constants.JAVA_EXT_SUFFIX;
 import io.github.jeddict.jpa.spec.DefaultClass;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.Entity;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.MappedSuperclass;
 import io.github.jeddict.jpa.spec.bean.BeanClass;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.spec.WritableSnippet;
 import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.ManagedClassDefSnippet;
 import io.github.jeddict.orm.generator.spec.ModuleGenerator;
+import io.github.jeddict.orm.generator.spec.WritableSnippet;
 import io.github.jeddict.orm.generator.util.ClassType;
 import io.github.jeddict.orm.generator.util.ClassesRepository;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.SourceGroup;
+import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -49,6 +57,7 @@ public class ClassGeneratorService implements ModuleGenerator {
 
     private EntityMappings entityMappings;//Required Generation based on inheritance means if any entity metamodel is generated then its super class metamodel must be generated either user want or not .
     private String packageName;
+    private SourceGroup sourceGroup;
     private File destDir;
     private ITaskSupervisor task;
     private final ClassesRepository classesRepository = ClassesRepository.getInstance();
@@ -58,6 +67,7 @@ public class ClassGeneratorService implements ModuleGenerator {
         try {
             this.entityMappings = entityMappings;
             this.task = task;
+            this.sourceGroup = sourceGroup;
             destDir = FileUtil.toFile(sourceGroup.getRootFolder());
             this.packageName = entityMappings.getPackage();
 
@@ -116,6 +126,7 @@ public class ClassGeneratorService implements ModuleGenerator {
         }
         for (Embeddable parsedEmbeddable : parsedEmbeddables) {
             task.log(parsedEmbeddable.getClazz(), true);
+            loadExistingSnippet(parsedEmbeddable);
             ManagedClassDefSnippet classDef = new EmbeddableGenerator(parsedEmbeddable, packageName).getClassDef();
             classDef.setJaxbSupport(entityMappings.getJaxbSupport());
 
@@ -134,6 +145,7 @@ public class ClassGeneratorService implements ModuleGenerator {
         }
         for (Entity parsedEntity : parsedEntities) {
             task.log(parsedEntity.getClazz(), true);
+            loadExistingSnippet(parsedEntity);
             ManagedClassDefSnippet classDef = new EntityGenerator(parsedEntity, packageName).getClassDef();
             classDef.setJaxbSupport(entityMappings.getJaxbSupport());
 
@@ -152,6 +164,7 @@ public class ClassGeneratorService implements ModuleGenerator {
         }
         for (MappedSuperclass parsedMappedSuperclass : parsedMappedSuperclasses) {
             task.log(parsedMappedSuperclass.getClazz(), true);
+            loadExistingSnippet(parsedMappedSuperclass);
             ManagedClassDefSnippet classDef = new MappedSuperClassGenerator(parsedMappedSuperclass, packageName).getClassDef();
             classDef.setJaxbSupport(entityMappings.getJaxbSupport());
 
@@ -179,6 +192,34 @@ public class ClassGeneratorService implements ModuleGenerator {
             classDefs.add((ClassDefSnippet) writableSnippet);
         }
         return classDefs;
+    }
+
+    static {
+        // Set up a minimal type solver that only looks at the classes used to run this sample.
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+
+        // Configure JavaParser to use type resolution
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+        JavaParser.getStaticConfiguration().setSymbolResolver(symbolSolver);
+    }
+    
+    private void loadExistingSnippet(JavaClass javaClass) {
+        String pathTemplate = javaClass.getRootPackage().replace(".", "/") + "/%s" + JAVA_EXT_SUFFIX;
+        FileObject root = sourceGroup.getRootFolder();
+        FileObject existingFile = null;
+        if (javaClass.getPreviousClass() != null) {
+            existingFile = root.getFileObject(String.format(pathTemplate, javaClass.getPreviousClass()));
+        }
+        if (existingFile == null) {
+            existingFile = root.getFileObject(String.format(pathTemplate, javaClass.getClazz()));
+        }
+        if (existingFile != null) {
+            try {
+                javaClass.loadExistingSnippet(JavaParser.parse(FileUtil.toFile(existingFile)));
+            } catch (FileNotFoundException ex) {
+            }
+        }
     }
 
 }
