@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MANY_TO_ONE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MANY_TO_ONE_FQN;
 import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

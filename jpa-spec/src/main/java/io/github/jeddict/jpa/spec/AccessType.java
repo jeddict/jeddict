@@ -10,7 +10,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ACCESS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ACCESS_FQN;
 import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**

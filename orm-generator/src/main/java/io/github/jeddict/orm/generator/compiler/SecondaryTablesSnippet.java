@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.SECONDARY_TABLES;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SECONDARY_TABLES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLES;
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLES_FQN;
 
 public class SecondaryTablesSnippet extends SnippetContainer<SecondaryTableSnippet> {
 

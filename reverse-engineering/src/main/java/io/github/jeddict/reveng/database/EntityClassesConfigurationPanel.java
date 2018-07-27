@@ -16,6 +16,12 @@
 package io.github.jeddict.reveng.database;
 
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderForPackage;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
+import static io.github.jeddict.jcode.util.ProjectHelper.getPackageForFolder;
+import static io.github.jeddict.jcode.util.ProjectHelper.isFolderWritable;
+import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -39,8 +45,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.dd.common.Persistence;
 import org.netbeans.modules.j2ee.persistence.provider.Provider;
@@ -136,7 +140,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
 
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
 
-        SourceGroup[] sourceGroups = SourceGroupSupport.getJavaSourceGroups(project);
+        SourceGroup[] sourceGroups = getJavaSourceGroups(project);
         SourceGroupUISupport.connect(locationComboBox, sourceGroups);
 
         packageComboBox.setRenderer(PackageView.listRenderer());
@@ -145,10 +149,10 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
 
         if (targetFolder != null) {
             // set default source group and package cf. targetFolder
-            SourceGroup targetSourceGroup = SourceGroupSupport.getFolderSourceGroup(sourceGroups, targetFolder);
+            SourceGroup targetSourceGroup = getFolderSourceGroup(sourceGroups, targetFolder);
             if (targetSourceGroup != null) {
                 locationComboBox.setSelectedItem(targetSourceGroup);
-                String targetPackage = SourceGroupSupport.getPackageForFolder(targetSourceGroup, targetFolder);
+                String targetPackage = getPackageForFolder(targetSourceGroup, targetFolder);
                 if (targetPackage != null) {
                     packageComboBoxEditor.setText(targetPackage);
                 }
@@ -595,7 +599,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
                 return false;
             }
 
-            if (!SourceGroupSupport.isFolderWritable(sourceGroup, packageName)) {
+            if (!isFolderWritable(sourceGroup, packageName)) {
                 setErrorMessage(NbBundle.getMessage(EntityClassesConfigurationPanel.class, "ERR_JavaTargetChooser_UnwritablePackage")); //NOI18N
                 return false;
             }
@@ -608,7 +612,7 @@ public class EntityClassesConfigurationPanel extends javax.swing.JPanel {
             // issue 92192: need to check that we will have a persistence provider
             // available to add to the classpath while generating entity classes (unless
             // the classpath already contains one)
-            FileObject packageFO = SourceGroupSupport.getFolderForPackage(sourceGroup, packageName, false);
+            FileObject packageFO = getFolderForPackage(sourceGroup, packageName, false);
             if (packageFO == null) {
                 packageFO = sourceGroup.getRootFolder();
             }

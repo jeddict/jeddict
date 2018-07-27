@@ -16,6 +16,8 @@
 package io.github.jeddict.reveng.klass;
 
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.io.IOException;
 import java.util.List;
 import javax.lang.model.element.TypeElement;
@@ -23,16 +25,11 @@ import org.netbeans.api.java.source.ClasspathInfo;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.project.Project;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import org.openide.filesystems.FileObject;
 
 public class JPAModelGenerator {
 
     public static void generateJPAModel(final EntityMappings entityMappings, Project project, final String entityClass, FileObject pkg, final List<String> missingEntities) throws IOException {
-//        final boolean isInjection = Util.isContainerManaged(project);
-//        final String simpleEntityName = JavaSourceParserUtil.simpleClassName(entityClass);
-
         final boolean[] fieldAccess = new boolean[]{false};
         //detect access type
         final ClasspathInfo classpathInfo = ClasspathInfo.create(pkg);

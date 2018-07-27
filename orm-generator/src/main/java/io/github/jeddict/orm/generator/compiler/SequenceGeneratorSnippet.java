@@ -17,8 +17,8 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SEQUENCE_GENERATOR;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SEQUENCE_GENERATOR_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR;
+import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
 import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

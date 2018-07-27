@@ -16,7 +16,7 @@
 package io.github.jeddict.jpa.spec.extend;
 
 import io.github.jeddict.jaxb.spec.JaxbVariableType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CASCADE_TYPE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CASCADE_TYPE_FQN;
 import io.github.jeddict.jpa.spec.AccessType;
 import io.github.jeddict.jpa.spec.CascadeType;
 import io.github.jeddict.jpa.spec.EmptyType;

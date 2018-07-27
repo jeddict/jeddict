@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.CollectionTableMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.COLLECTION_TABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.COLLECTION_TABLE_FQN;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.jpa.spec.validator.table.CollectionTableValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;

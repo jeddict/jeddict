@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONSTRAINT_MODE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONSTRAINT_MODE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.FOREIGN_KEY;
-import static io.github.jeddict.jcode.jpa.JPAConstants.FOREIGN_KEY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CONSTRAINT_MODE;
+import static io.github.jeddict.jcode.JPAConstants.CONSTRAINT_MODE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY;
+import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY_FQN;
 import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

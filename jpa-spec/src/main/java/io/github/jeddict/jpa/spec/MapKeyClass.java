@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MAP_KEY_CLASS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_CLASS_FQN;
 import io.github.jeddict.source.JAREAnnotationLoader;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

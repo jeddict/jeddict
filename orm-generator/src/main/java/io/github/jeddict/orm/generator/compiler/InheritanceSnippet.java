@@ -18,10 +18,10 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.INHERITANCE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.INHERITANCE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.INHERITANCE_TYPE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.INHERITANCE_TYPE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.INHERITANCE;
+import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_TYPE;
+import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_TYPE_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class InheritanceSnippet implements Snippet {

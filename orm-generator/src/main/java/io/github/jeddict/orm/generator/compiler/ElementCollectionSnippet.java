@@ -18,9 +18,9 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ELEMENT_COLLECTION;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.FETCH_TYPE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION;
+import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
+import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class ElementCollectionSnippet implements Snippet {

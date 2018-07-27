@@ -18,8 +18,8 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
-import static io.github.jeddict.jcode.jpa.JPAConstants.UNIQUE_CONSTRAINT;
-import static io.github.jeddict.jcode.jpa.JPAConstants.UNIQUE_CONSTRAINT_FQN;
+import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT;
+import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT_FQN;
 import io.github.jeddict.jpa.spec.UniqueConstraint;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

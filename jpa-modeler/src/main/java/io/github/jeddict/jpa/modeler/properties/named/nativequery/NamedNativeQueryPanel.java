@@ -15,6 +15,13 @@
  */
 package io.github.jeddict.jpa.modeler.properties.named.nativequery;
 
+import static io.github.jeddict.jcode.util.ProjectHelper.getClassName;
+import static io.github.jeddict.jpa.modeler.properties.named.query.NamedQueryPanel.showDescription;
+import io.github.jeddict.jpa.modeler.properties.named.query.QueryHintPanel;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.NamedNativeQuery;
+import io.github.jeddict.jpa.spec.QueryHint;
+import io.github.jeddict.jpa.spec.extend.cache.DBConnectionUtil;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -26,23 +33,15 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.db.explorer.DatabaseConnection;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import static io.github.jeddict.jpa.modeler.properties.named.query.NamedQueryPanel.showDescription;
-import io.github.jeddict.jpa.modeler.properties.named.query.QueryHintPanel;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.NamedNativeQuery;
-import io.github.jeddict.jpa.spec.QueryHint;
-import io.github.jeddict.jpa.spec.SqlResultSetMapping;
-import io.github.jeddict.jpa.spec.extend.cache.DBConnectionUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.EntityComponent;
-import org.netbeans.modeler.properties.spec.Entity;
-import org.netbeans.modeler.properties.spec.RowValue;
 import org.netbeans.modeler.properties.nentity.Column;
 import org.netbeans.modeler.properties.nentity.INEntityDataListener;
 import org.netbeans.modeler.properties.nentity.NAttributeEntity;
 import org.netbeans.modeler.properties.nentity.NEntityEditor;
+import org.netbeans.modeler.properties.spec.Entity;
+import org.netbeans.modeler.properties.spec.RowValue;
 import org.netbeans.modules.db.api.sql.execute.SQLExecution;
 import org.openide.text.CloneableEditorSupport;
 import org.openide.util.Lookup;
@@ -420,7 +419,7 @@ public class NamedNativeQueryPanel extends EntityComponent<NamedNativeQuery> imp
     
     private void addResultClass(String resultClass){
         DefaultComboBoxModel model = (DefaultComboBoxModel) resultClass_jComboBox.getModel();
-        String unqualifiedClassName = SourceGroupSupport.getClassName(resultClass);
+        String unqualifiedClassName = getClassName(resultClass);
         if (model.getIndexOf(unqualifiedClassName) != -1) { // check if it is Entity then select
             resultClass_jComboBox.setSelectedItem(unqualifiedClassName);
         } else { //if other class

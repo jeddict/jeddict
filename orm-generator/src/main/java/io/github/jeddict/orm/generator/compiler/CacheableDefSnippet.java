@@ -17,8 +17,8 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CACHEABLE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CACHEABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CACHEABLE;
+import static io.github.jeddict.jcode.JPAConstants.CACHEABLE_FQN;
 import io.github.jeddict.settings.code.CodePanel;
 
 public class CacheableDefSnippet implements Snippet {

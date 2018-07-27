@@ -18,8 +18,8 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SECONDARY_TABLE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SECONDARY_TABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLE;
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLE_FQN;
 import io.github.jeddict.orm.generator.util.ImportSet;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

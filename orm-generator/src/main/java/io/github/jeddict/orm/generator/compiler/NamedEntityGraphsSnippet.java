@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPHS;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPHS;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
 
 /**
  *

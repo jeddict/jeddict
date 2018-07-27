@@ -6,7 +6,7 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.BASIC_FQN;
+import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
 import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
 import io.github.jeddict.jpa.spec.extend.ConvertHandler;
 import io.github.jeddict.jpa.spec.extend.EnumTypeHandler;

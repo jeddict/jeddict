@@ -15,11 +15,11 @@
  */
 package io.github.jeddict.orm.generator.service;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.DATABASE_ACTION;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_DRIVER;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_PASSWORD;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_URL;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JDBC_USER;
+import static io.github.jeddict.jcode.JPAConstants.DATABASE_ACTION;
+import static io.github.jeddict.jcode.JPAConstants.JDBC_DRIVER;
+import static io.github.jeddict.jcode.JPAConstants.JDBC_PASSWORD;
+import static io.github.jeddict.jcode.JPAConstants.JDBC_URL;
+import static io.github.jeddict.jcode.JPAConstants.JDBC_USER;
 import static io.github.jeddict.jcode.jpa.PersistenceHelper.JTA_VALUE;
 import static io.github.jeddict.jcode.jpa.PersistenceHelper.RESOURCE_LOCAL_VALUE;
 import io.github.jeddict.jcode.jpa.PersistenceProviderType;

@@ -17,8 +17,8 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_ATTRIBUTE_NODE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_ATTRIBUTE_NODE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ATTRIBUTE_NODE;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ATTRIBUTE_NODE_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 /**

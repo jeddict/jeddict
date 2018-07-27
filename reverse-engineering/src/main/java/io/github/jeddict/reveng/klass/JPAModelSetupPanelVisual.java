@@ -16,6 +16,10 @@
 package io.github.jeddict.reveng.klass;
 
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
+import static io.github.jeddict.jcode.util.ProjectHelper.getPackageForFolder;
+import static io.github.jeddict.jcode.util.ProjectHelper.isFolderWritable;
 import java.io.IOException;
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ChangeListener;
@@ -27,8 +31,6 @@ import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import static io.github.jeddict.jcode.util.SourceGroupSupport.getFolderSourceGroup;
 import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.wizard.Util;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.SourceGroupUISupport;
@@ -229,7 +231,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
             return false;
         }
 
-        if (!SourceGroupSupport.isFolderWritable(getLocationValue(), packageName)) {
+        if (!isFolderWritable(getLocationValue(), packageName)) {
             wizard.putProperty("WizardPanel_errorMessage", NbBundle.getMessage(JPAModelSetupPanelVisual.class, "ERR_JavaTargetChooser_UnwritablePackage")); //NOI18N
             return false;
         }
@@ -257,7 +259,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
     void read(WizardDescriptor settings) {
         FileObject targetFolder = Templates.getTargetFolder(settings);
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
-        SourceGroup[] sourceGroups = SourceGroupSupport.getJavaSourceGroups(project);
+        SourceGroup[] sourceGroups = getJavaSourceGroups(project);
         SourceGroupUISupport.connect(locationComboBox, sourceGroups);
         packageComboBox.setRenderer(PackageView.listRenderer());
         updateSourceGroupPackages();
@@ -267,7 +269,7 @@ public class JPAModelSetupPanelVisual extends javax.swing.JPanel implements Docu
             SourceGroup targetSourceGroup = getFolderSourceGroup(sourceGroups, targetFolder);
             if (targetSourceGroup != null) {
                 locationComboBox.setSelectedItem(targetSourceGroup);
-                String targetPackage = SourceGroupSupport.getPackageForFolder(targetSourceGroup, targetFolder);
+                String targetPackage = getPackageForFolder(targetSourceGroup, targetFolder);
                 if (targetPackage != null) {
                     packageComboBoxEditor.setText(targetPackage);
                 }

@@ -6,9 +6,9 @@
 //
 package io.github.jeddict.jpa.spec;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.CACHEABLE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.DISCRIMINATOR_VALUE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ENTITY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CACHEABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_VALUE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
 import io.github.jeddict.jpa.spec.extend.AccessTypeHandler;
 import io.github.jeddict.jpa.spec.extend.AssociationOverrideHandler;
 import io.github.jeddict.jpa.spec.extend.Attribute;

@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler.def;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDABLE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.util.ImportSet;
 

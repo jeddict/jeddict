@@ -16,12 +16,16 @@
 package io.github.jeddict.jcode.generator;
 
 import io.github.jeddict.jcode.AbstractGenerator;
-import io.github.jeddict.jcode.annotation.ConfigData;
-import io.github.jeddict.jcode.TechContext;
 import io.github.jeddict.jcode.ApplicationConfigData;
 import io.github.jeddict.jcode.LayerConfigData;
+import io.github.jeddict.jcode.TechContext;
+import io.github.jeddict.jcode.annotation.ConfigData;
 import io.github.jeddict.jcode.jpa.PersistenceHelper;
-import io.github.jeddict.jcode.rest.RestUtil;
+import io.github.jeddict.jcode.task.progress.ProgressHandler;
+import io.github.jeddict.jcode.util.BuildManager;
+import io.github.jeddict.jcode.util.WebDDUtil;
+import static io.github.jeddict.jcode.util.WebDDUtil.DD_NAME;
+import io.github.jeddict.jpa.spec.EntityMappings;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -34,11 +38,6 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
-import io.github.jeddict.jcode.task.progress.ProgressHandler;
-import io.github.jeddict.jcode.util.BuildManager;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jcode.util.WebDDUtil;
-import static io.github.jeddict.jcode.util.WebDDUtil.DD_NAME;
 import org.openide.util.Exceptions;
 
 /**
@@ -106,10 +105,10 @@ public class ApplicationGenerator extends AbstractGenerator {
             Set<String> entities = entityMappings.getFQEntity().collect(toSet());
             //Make necessary changes to the persistence.xml
             if (appConfigData.isMonolith() || appConfigData.isMicroservice()) {
-                new PersistenceHelper(targetProject).configure(entities, !RestUtil.hasJTASupport(targetProject));
+                new PersistenceHelper(targetProject).configure(entities);
             }
             if (appConfigData.isGateway()) {
-                new PersistenceHelper(gatewayProject).configure(entities, !RestUtil.hasJTASupport(gatewayProject));
+                new PersistenceHelper(gatewayProject).configure(entities);
             }
 
             generateCRUD();

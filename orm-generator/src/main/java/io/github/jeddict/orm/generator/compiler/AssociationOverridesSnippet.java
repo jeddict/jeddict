@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDES;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
 
 public class AssociationOverridesSnippet extends SnippetContainer<AssociationOverrideSnippet> {
 

@@ -12,7 +12,7 @@ import javax.lang.model.element.VariableElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.LOB_FQN;
+import static io.github.jeddict.jcode.JPAConstants.LOB_FQN;
 import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**

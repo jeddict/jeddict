@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPING;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING;
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPING_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class SQLResultSetMappingSnippet implements Snippet {

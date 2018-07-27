@@ -17,25 +17,23 @@ package io.github.jeddict.reveng.database;
 
 import io.github.jeddict.analytics.JeddictLogger;
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderForPackage;
+import io.github.jeddict.reveng.BaseWizardDescriptor;
+import io.github.jeddict.reveng.database.generator.IPersistenceGeneratorProvider;
+import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeListener;
 import org.netbeans.api.progress.aggregate.AggregateProgressFactory;
 import org.netbeans.api.progress.aggregate.AggregateProgressHandle;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.templates.TemplateRegistration;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.reveng.BaseWizardDescriptor;
-import io.github.jeddict.reveng.database.generator.IPersistenceGeneratorProvider;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modeler.component.Wizards;
 import org.netbeans.modules.j2ee.persistence.api.PersistenceLocation;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
@@ -153,7 +151,7 @@ public final class DBImportWizardDescriptor extends BaseWizardDescriptor {
         }
 
         return Collections.<DataObject>singleton(DataFolder.findFolder(
-                SourceGroupSupport.getFolderForPackage(helper.getLocation(), helper.getPackageName(), true)));
+                getFolderForPackage(helper.getLocation(), helper.getPackageName(), true)));
     }
 
     private void createModel(WizardDescriptor wiz, ProgressContributor handle) throws IOException {

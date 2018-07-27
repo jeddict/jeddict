@@ -15,8 +15,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPHS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_ENTITY_GRAPH_FQN;
 import io.github.jeddict.jpa.spec.extend.DataMapping;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

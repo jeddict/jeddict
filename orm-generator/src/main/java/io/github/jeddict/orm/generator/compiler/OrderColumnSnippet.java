@@ -17,8 +17,8 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ORDER_COLUMN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ORDER_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN;
+import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN_FQN;
 import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.OrderColumn;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;

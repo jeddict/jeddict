@@ -33,7 +33,7 @@ import static io.github.jeddict.jcode.util.AttributeType.LONG;
 import static io.github.jeddict.jcode.util.AttributeType.LONG_WRAPPER;
 import static io.github.jeddict.jcode.util.AttributeType.SHORT;
 import static io.github.jeddict.jcode.util.AttributeType.SHORT_WRAPPER;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
 import io.github.jeddict.jpa.spec.validator.JsonbNumberFormatValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

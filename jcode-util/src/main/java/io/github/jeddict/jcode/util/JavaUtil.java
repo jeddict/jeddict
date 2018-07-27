@@ -20,6 +20,8 @@ import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -145,5 +147,16 @@ public class JavaUtil {
             methodName = methodName.replaceFirst("is", EMPTY);
         }
         return methodName;
+    }
+
+    public static String mergePackage(String package1, String package2) {
+        if (isNoneBlank(package1, package2)) {
+            return package1 + '.' + package2;
+        } else if (isNotBlank(package1)) {
+            return package1;
+        } else if (isNotBlank(package2)) {
+            return package2;
+        }
+        return EMPTY;
     }
 }

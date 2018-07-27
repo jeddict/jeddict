@@ -15,6 +15,27 @@
  */
 package io.github.jeddict.jpa.modeler.widget;
 
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaFileObject;
+import io.github.jeddict.jcode.util.StringHelper;
+import static io.github.jeddict.jcode.util.StringHelper.firstUpper;
+import static io.github.jeddict.jcode.util.StringHelper.getNext;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getClassAnnoation;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConstructorProperties;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCustomParentClass;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getEqualsHashcodeProperty;
+import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
+import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
+import io.github.jeddict.jpa.modeler.rules.entity.ClassValidator;
+import io.github.jeddict.jpa.modeler.widget.attribute.AttributeWidget;
+import io.github.jeddict.jpa.modeler.widget.flow.GeneralizationFlowWidget;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.IdentifiableClass;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.AttributeLocationComparator;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
 import java.awt.Cursor;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,26 +47,6 @@ import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringUtils;
 import org.atteo.evo.inflector.English;
 import org.netbeans.api.visual.widget.Widget;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.jcode.util.StringHelper;
-import static io.github.jeddict.jcode.util.StringHelper.firstUpper;
-import static io.github.jeddict.jcode.util.StringHelper.getNext;
-import io.github.jeddict.jpa.modeler.widget.attribute.AttributeWidget;
-import io.github.jeddict.jpa.modeler.widget.flow.GeneralizationFlowWidget;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getClassAnnoation;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getClassSnippet;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getConstructorProperties;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCustomArtifact;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getCustomParentClass;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getToStringProperty;
-import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
-import io.github.jeddict.jpa.modeler.rules.entity.ClassValidator;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.IdentifiableClass;
-import io.github.jeddict.jpa.spec.extend.AttributeLocationComparator;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.IColorScheme;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -58,7 +59,6 @@ import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
-import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getEqualsHashcodeProperty;
 
 public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidget<E, JPAModelerScene> {
 
@@ -119,10 +119,10 @@ public abstract class JavaClassWidget<E extends JavaClass> extends FlowNodeWidge
 
     public static FileObject getFileObject(JavaClass javaClass, ModelerFile modelerFile) {
         if (javaClass.getFileObject() == null) {
-            javaClass.setFileObject(SourceGroupSupport.getJavaFileObject(modelerFile.getSourceGroup(), javaClass.getFQN()));
+            javaClass.setFileObject(getJavaFileObject(modelerFile.getSourceGroup(), javaClass.getFQN()));
         }
         if (javaClass.getFileObject() == null) {
-            javaClass.setFileObject(SourceGroupSupport.getJavaFileObject(modelerFile.getProject(), javaClass.getFQN()));
+            javaClass.setFileObject(getJavaFileObject(modelerFile.getProject(), javaClass.getFQN()));
         }
         return javaClass.getFileObject();
     }

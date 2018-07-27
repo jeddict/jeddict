@@ -15,6 +15,11 @@
  */
 package io.github.jeddict.jpa.modeler.properties.convert;
 
+import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
+import io.github.jeddict.jpa.spec.Convert;
+import io.github.jeddict.jpa.spec.Converter;
+import io.github.jeddict.jpa.spec.EntityMappings;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,11 +33,6 @@ import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringUtils;
 import org.netbeans.api.java.source.ClasspathInfo;
 import org.netbeans.api.java.source.JavaSource;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.collaborate.issues.ExceptionUtils;
-import io.github.jeddict.jpa.spec.Convert;
-import io.github.jeddict.jpa.spec.Converter;
-import io.github.jeddict.jpa.spec.EntityMappings;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.embedded.GenericEmbeddedEditor;
@@ -86,7 +86,7 @@ public class ConvertPanel extends GenericEmbeddedEditor<Convert> {
             validated.set(true);
             return;
         }
-        FileObject pkg = SourceGroupSupport.findSourceGroupForFile(modelerFile.getFileObject()).getRootFolder();
+        FileObject pkg = findSourceGroupForFile(modelerFile.getFileObject()).getRootFolder();
         try {
             JavaSource javaSource = JavaSource.create(ClasspathInfo.create(pkg));
             javaSource.runUserActionTask(controller -> {

@@ -32,19 +32,20 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
-import static io.github.jeddict.jcode.bv.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
-import static io.github.jeddict.jcode.jaxb.JAXBConstants.JAXB_PACKAGE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_NILLABLE_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_PACKAGE;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_ADAPTER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_VISIBILITY_FQN;
+import static io.github.jeddict.jcode.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
+import static io.github.jeddict.jcode.JAXBConstants.JAXB_PACKAGE;
+import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_NILLABLE_FQN;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_PACKAGE;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_ADAPTER_FQN;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_DESERIALIZER_FQN;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_TYPE_SERIALIZER_FQN;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_VISIBILITY_FQN;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.isFQN;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import static io.github.jeddict.jcode.util.JavaUtil.getFieldName;
 import static io.github.jeddict.jcode.util.JavaUtil.isBeanMethod;
+import static io.github.jeddict.jcode.util.JavaUtil.mergePackage;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.IdentifiableClass;
 import static io.github.jeddict.jpa.spec.extend.ClassAnnotationLocationType.TYPE;
@@ -90,7 +91,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.type.Embedded;
@@ -997,7 +997,7 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode
      * @return the complete _package
      */
     public String getAbsolutePackage(String rootPackage) { // rootPackage.class_pkg
-        return isBlank(_package) ? rootPackage : rootPackage + '.' + _package;
+        return mergePackage(rootPackage, _package);
     }
 
     public String getRootPackage() { // project_pkg.entity_pkg
@@ -1009,11 +1009,11 @@ public abstract class JavaClass<T extends IAttributes> extends FlowNode
     }
 
     public String getFQN() { // project_pkg.entity_pkg.class_pkg
-        return getAbsolutePackage(this.getRootElement().getPackage()) + '.' + getClazz();
+        return mergePackage(getAbsolutePackage(this.getRootElement().getPackage()), getClazz());
     }
 
     public String getRelativeFQN() { // entity_pkg.class_pkg
-        return getAbsolutePackage(this.getRootElement().getEntityPackage()) + '.' + getClazz();
+        return mergePackage(getAbsolutePackage(this.getRootElement().getEntityPackage()), getClazz());
     }
 
     /**

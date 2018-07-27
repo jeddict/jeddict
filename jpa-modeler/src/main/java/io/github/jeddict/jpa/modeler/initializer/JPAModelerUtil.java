@@ -15,43 +15,18 @@
  */
 package io.github.jeddict.jpa.modeler.initializer;
 
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import javax.swing.ImageIcon;
-import static javax.swing.JOptionPane.YES_NO_OPTION;
-import static javax.swing.JOptionPane.YES_OPTION;
-import static javax.swing.JOptionPane.showConfirmDialog;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
-import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.lang3.StringUtils;
-import org.netbeans.api.visual.widget.Widget;
+import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import static io.github.jeddict.jcode.util.StringHelper.getNext;
 import static io.github.jeddict.jpa.modeler.Constant.*;
-import io.github.jeddict.reveng.JCREProcessor;
-import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import io.github.jeddict.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
+import io.github.jeddict.jpa.modeler.source.generator.ui.GenerateCodeDialog;
+import io.github.jeddict.jpa.modeler.specification.model.file.JPAFileDataObject;
+import static io.github.jeddict.jpa.modeler.specification.model.workspace.WorkSpaceManager.WORK_SPACE;
+import io.github.jeddict.jpa.modeler.widget.BeanClassWidget;
 import io.github.jeddict.jpa.modeler.widget.EmbeddableWidget;
 import io.github.jeddict.jpa.modeler.widget.EntityWidget;
 import io.github.jeddict.jpa.modeler.widget.JavaClassWidget;
 import io.github.jeddict.jpa.modeler.widget.PersistenceClassWidget;
-import io.github.jeddict.jpa.modeler.widget.BeanClassWidget;
 import io.github.jeddict.jpa.modeler.widget.PrimaryKeyContainerWidget;
 import io.github.jeddict.jpa.modeler.widget.attribute.AttributeWidget;
 import io.github.jeddict.jpa.modeler.widget.attribute.association.AssociationAttributeWidget;
@@ -84,14 +59,13 @@ import io.github.jeddict.jpa.modeler.widget.flow.relation.UMTMRelationFlowWidget
 import io.github.jeddict.jpa.modeler.widget.flow.relation.UMTORelationFlowWidget;
 import io.github.jeddict.jpa.modeler.widget.flow.relation.UOTMRelationFlowWidget;
 import io.github.jeddict.jpa.modeler.widget.flow.relation.UOTORelationFlowWidget;
-import io.github.jeddict.jpa.modeler.source.generator.task.SourceCodeGeneratorTask;
-import io.github.jeddict.jpa.modeler.source.generator.ui.GenerateCodeDialog;
 import io.github.jeddict.jpa.spec.Basic;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.Embedded;
 import io.github.jeddict.jpa.spec.EmbeddedId;
 import io.github.jeddict.jpa.spec.Entity;
+import io.github.jeddict.jpa.spec.EntityMappings;
 import io.github.jeddict.jpa.spec.Id;
 import io.github.jeddict.jpa.spec.IdentifiableClass;
 import io.github.jeddict.jpa.spec.JoinColumn;
@@ -103,13 +77,14 @@ import io.github.jeddict.jpa.spec.OneToMany;
 import io.github.jeddict.jpa.spec.OneToOne;
 import io.github.jeddict.jpa.spec.Transient;
 import io.github.jeddict.jpa.spec.Version;
+import io.github.jeddict.jpa.spec.bean.AssociationAttribute;
+import io.github.jeddict.jpa.spec.bean.BeanClass;
 import io.github.jeddict.jpa.spec.design.Bounds;
 import io.github.jeddict.jpa.spec.design.Diagram;
 import io.github.jeddict.jpa.spec.design.DiagramElement;
 import io.github.jeddict.jpa.spec.design.Shape;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.BaseElement;
-import io.github.jeddict.jpa.spec.bean.BeanClass;
 import io.github.jeddict.jpa.spec.extend.CompositionAttribute;
 import io.github.jeddict.jpa.spec.extend.ExtensionElements;
 import io.github.jeddict.jpa.spec.extend.FlowNode;
@@ -122,8 +97,35 @@ import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
 import io.github.jeddict.jpa.spec.workspace.WorkSpace;
 import io.github.jeddict.jpa.spec.workspace.WorkSpaceElement;
 import io.github.jeddict.jpa.spec.workspace.WorkSpaceItem;
-import io.github.jeddict.jpa.modeler.specification.model.file.JPAFileDataObject;
-import static io.github.jeddict.jpa.modeler.specification.model.workspace.WorkSpaceManager.WORK_SPACE;
+import io.github.jeddict.reveng.JCREProcessor;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import javax.swing.ImageIcon;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
+import javax.xml.transform.stream.StreamSource;
+import org.apache.commons.lang3.StringUtils;
+import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;
 import org.netbeans.modeler.config.element.ElementConfigFactory;
@@ -138,6 +140,7 @@ import org.netbeans.modeler.specification.annotaton.DiagramModel;
 import org.netbeans.modeler.specification.model.ModelerDiagramSpecification;
 import org.netbeans.modeler.specification.model.document.core.IBaseElement;
 import org.netbeans.modeler.specification.model.document.widget.IBaseElementWidget;
+import org.netbeans.modeler.specification.model.util.IModelerUtil;
 import org.netbeans.modeler.specification.version.SoftwareVersion;
 import org.netbeans.modeler.validation.jaxb.ValidateJAXB;
 import org.netbeans.modeler.widget.edge.IEdgeWidget;
@@ -157,9 +160,6 @@ import org.openide.util.RequestProcessor;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 import org.openide.windows.WindowManager;
-import org.netbeans.modeler.specification.model.util.IModelerUtil;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.bean.AssociationAttribute;
 
 public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
 
@@ -436,41 +436,41 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
     }
 
     @Override
-    public void loadModelerFile(final ModelerFile file) throws ProcessInterruptedException {
+    public void loadModelerFile(final ModelerFile modelerFile) throws ProcessInterruptedException {
 
         try {
-            JPAModelerScene scene = (JPAModelerScene) file.getModelerScene();
+            JPAModelerScene scene = (JPAModelerScene) modelerFile.getModelerScene();
             scene.startSceneGeneration();
-            File savedFile = file.getFile();
+            File savedFile = modelerFile.getFile();
             EntityMappings entityMappings = null;
             try {
                 entityMappings = getEntityMapping(savedFile);
             } catch (JAXBException ex) {
-                if (StringUtils.isBlank(file.getFileContent())) {
+                if (StringUtils.isBlank(modelerFile.getFileContent())) {
                     entityMappings = null;
                 } else {
                     throw ex;
                 }
             }
             if (entityMappings == null) {
-                ElementConfigFactory elementConfigFactory = file.getModelerDiagramModel().getElementConfigFactory();
-                entityMappings = EntityMappings.getNewInstance(file.getCurrentVersion().getValue());
+                ElementConfigFactory elementConfigFactory = modelerFile.getModelerDiagramModel().getElementConfigFactory();
+                entityMappings = EntityMappings.getNewInstance(modelerFile.getCurrentVersion().getValue());
                 elementConfigFactory.initializeObjectValue(entityMappings);
             } else {
-                if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(file.getArchitectureVersion()) < 0) {
+                if (SoftwareVersion.getInstance(entityMappings.getVersion()).compareTo(modelerFile.getArchitectureVersion()) < 0) {
                     int reply = showConfirmDialog(WindowManager.getDefault().getMainWindow(),
-                            getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.text", file.getCurrentVersion()),
+                            getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.text", modelerFile.getCurrentVersion()),
                             getMessage(JPAModelerUtil.class, "Notification.JCRE_SUGGESION.title"), YES_NO_OPTION);
                     if (reply == YES_OPTION) {
-                        file.getModelerPanelTopComponent().close();
+                        modelerFile.getModelerPanelTopComponent().close();
                         JCREProcessor processor = Lookup.getDefault().lookup(JCREProcessor.class);
-                        file.getModelerDiagramModel().setDefinitionElement(entityMappings);
-                        processor.process(file);
+                        modelerFile.getModelerDiagramModel().setDefinitionElement(entityMappings);
+                        processor.syncExistingDiagram(modelerFile);
                         throw new ProcessInterruptedException("Reverse engineering initiated");
                     } else {
-                        entityMappings.setVersion(file.getCurrentVersion());
+                        entityMappings.setVersion(modelerFile.getCurrentVersion());
                         NotificationDisplayer.getDefault().notify(getMessage(JPAModelerUtil.class, "Notification.SVC_WARNING.title"),
-                                ImageUtilities.image2Icon(file.getIcon()),
+                                ImageUtilities.image2Icon(modelerFile.getIcon()),
                                 getMessage(JPAModelerUtil.class, "Notification.SVC_WARNING.text"), null,
                                 NotificationDisplayer.Priority.HIGH, NotificationDisplayer.Category.INFO);
                     }
@@ -479,7 +479,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
 
             }
 
-            ModelerDiagramSpecification modelerDiagram = file.getModelerDiagramModel();
+            ModelerDiagramSpecification modelerDiagram = modelerFile.getModelerDiagramModel();
             modelerDiagram.setDefinitionElement(entityMappings);
             scene.setBaseElementSpec(entityMappings);
 
@@ -491,7 +491,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             if (diagram != null) {
                 entityMappings.getJavaClass().forEach(node -> loadFlowNode(scene, node));
             } else {
-                workSpace = (WorkSpace) file.getAttribute(WORK_SPACE);
+                workSpace = (WorkSpace) modelerFile.getAttribute(WORK_SPACE);
                 if (workSpace != null) {
                     entityMappings.setCurrentWorkSpace(workSpace.getId());
                 }
@@ -528,7 +528,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
                 entityMappings.setStatus(null);
             }
 
-            updateWindowTitle(file, entityMappings);
+            updateWindowTitle(modelerFile, entityMappings);
             scene.commitSceneGeneration();
         } catch (JAXBException ex) {
             throw new RuntimeException(ex);

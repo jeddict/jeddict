@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang3.StringUtils;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ONE_TO_ONE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
 import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

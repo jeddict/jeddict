@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERTS;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERTS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CONVERTS;
+import static io.github.jeddict.jcode.JPAConstants.CONVERTS_FQN;
 
 public class ConvertsSnippet extends SnippetContainer<ConvertSnippet> {
 

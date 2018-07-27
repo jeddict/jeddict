@@ -19,8 +19,8 @@ import io.github.jeddict.orm.generator.compiler.Snippet;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import java.util.Collection;
 import java.util.Collections;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TRANSIENT;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_TRANSIENT_FQN;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_TRANSIENT;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_TRANSIENT_FQN;
 
 public class TransientSnippet implements Snippet {
 

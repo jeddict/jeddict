@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.MAP_KEY;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MAP_KEY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;

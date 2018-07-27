@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.ColumnMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
 import io.github.jeddict.jpa.spec.extend.BaseElement;
 import io.github.jeddict.jpa.spec.validator.column.ColumnValidator;
 import io.github.jeddict.source.JAREAnnotationLoader;

@@ -18,7 +18,7 @@ package io.github.jeddict.orm.generator.service.staticmetamodel;
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
 import java.util.Collection;
 import static io.github.jeddict.jcode.util.AttributeType.isArray;
-import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_METAMODEL_PACKAGE;
+import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_METAMODEL_PACKAGE;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.util.ImportSet;

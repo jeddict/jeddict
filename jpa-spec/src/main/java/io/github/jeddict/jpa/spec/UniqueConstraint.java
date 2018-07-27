@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.tables.UniqueConstraintMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.UNIQUE_CONSTRAINT_FQN;
+import static io.github.jeddict.jcode.JPAConstants.UNIQUE_CONSTRAINT_FQN;
 import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**

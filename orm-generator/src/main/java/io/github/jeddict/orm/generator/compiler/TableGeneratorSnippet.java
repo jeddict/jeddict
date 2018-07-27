@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.TABLE_GENERATOR;
-import static io.github.jeddict.jcode.jpa.JPAConstants.TABLE_GENERATOR_FQN;
+import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR;
+import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_FQN;
 import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

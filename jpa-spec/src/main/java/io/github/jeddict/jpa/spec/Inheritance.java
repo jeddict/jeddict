@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.inheritance.InheritanceMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.INHERITANCE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.INHERITANCE_FQN;
 import io.github.jeddict.db.metadata.InheritanceSpecMetadata;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

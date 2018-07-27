@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERY;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

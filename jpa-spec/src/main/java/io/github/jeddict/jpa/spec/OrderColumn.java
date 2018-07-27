@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.columns.OrderColumnMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ORDER_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN_FQN;
 import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**

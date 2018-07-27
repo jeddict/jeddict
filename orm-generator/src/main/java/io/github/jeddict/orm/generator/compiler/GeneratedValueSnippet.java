@@ -18,9 +18,9 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.GENERATED_VALUE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.GENERATION_TYPE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE;
+import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.GENERATION_TYPE_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class GeneratedValueSnippet implements Snippet {

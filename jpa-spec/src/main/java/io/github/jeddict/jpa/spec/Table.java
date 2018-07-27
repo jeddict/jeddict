@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.tables.TableMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.TABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.TABLE_FQN;
 import io.github.jeddict.jpa.spec.validator.table.TableValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

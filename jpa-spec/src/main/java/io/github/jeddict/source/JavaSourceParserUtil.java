@@ -37,27 +37,28 @@ import io.github.jeddict.bv.constraints.PastOrPresent;
 import io.github.jeddict.bv.constraints.Positive;
 import io.github.jeddict.bv.constraints.PositiveOrZero;
 import io.github.jeddict.bv.constraints.Size;
-import static io.github.jeddict.jcode.bv.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.BASIC_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.COLUMN_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ELEMENT_COLLECTION_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDABLE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDED_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EMBEDDED_ID_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ENTITY_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.GENERATED_VALUE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ID_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMN_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MANY_TO_MANY_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MANY_TO_ONE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MAPPED_SUPERCLASS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ONE_TO_MANY_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ONE_TO_ONE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.TRANSIENT_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.VERSION_FQN;
+import static io.github.jeddict.jcode.BeanVaildationConstants.BEAN_VAILDATION_PACKAGE;
+import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
+import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ELEMENT_COLLECTION_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EMBEDDED_ID_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ENTITY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.GENERATED_VALUE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ID_FQN;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MANY_TO_MANY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MANY_TO_ONE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAPPED_SUPERCLASS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ONE_TO_MANY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE;
+import static io.github.jeddict.jcode.JPAConstants.TRANSIENT_FQN;
+import static io.github.jeddict.jcode.JPAConstants.VERSION_FQN;
 import static io.github.jeddict.jcode.util.JavaSourceHelper.getSimpleClassName;
+import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jcode.util.StringHelper;
 import io.github.jeddict.jpa.spec.Embeddable;
 import io.github.jeddict.jpa.spec.Entity;
@@ -118,24 +119,21 @@ public class JavaSourceParserUtil {
         // read the config from resource first
         StringBuilder sbuffer = new StringBuilder();
         String lineSep = System.getProperty("line.separator");//NOI18N
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, encoding));
-        String line = br.readLine();
-        while (line != null) {
-            sbuffer.append(line);
-            sbuffer.append(lineSep);
-            line = br.readLine();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(is, encoding))) {
+            String line = br.readLine();
+            while (line != null) {
+                sbuffer.append(line);
+                sbuffer.append(lineSep);
+                line = br.readLine();
+            }
         }
-        br.close();
         return sbuffer.toString();
     }
 
     public static void createFile(FileObject target, String content, String encoding) throws IOException {
         FileLock lock = target.lock();
-        try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(target.getOutputStream(lock), encoding));
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(target.getOutputStream(lock), encoding))) {
             bw.write(content);
-            bw.close();
-
         } finally {
             lock.releaseLock();
         }
@@ -148,13 +146,20 @@ public class JavaSourceParserUtil {
         Name qualifiedName = typeElement.getQualifiedName();
         whileloop:
         while (typeElement != null) {
-            if (isAnnotatedWith(typeElement, ENTITY_FQN) || isAnnotatedWith(typeElement, MAPPED_SUPERCLASS_FQN)) { // NOI18N
+            if (isAnnotatedWith(typeElement, ENTITY_FQN)
+                    || isAnnotatedWith(typeElement, MAPPED_SUPERCLASS_FQN)) {
                 for (Element element : typeElement.getEnclosedElements()) {
-                    if (isAnnotatedWith(element, ID_FQN) || isAnnotatedWith(element, EMBEDDED_ID_FQN) || isAnnotatedWith(element, EMBEDDED_FQN)
-                            || isAnnotatedWith(element, BASIC_FQN) || isAnnotatedWith(element, TRANSIENT_FQN)
-                            || isAnnotatedWith(element, VERSION_FQN) || isAnnotatedWith(element, ELEMENT_COLLECTION_FQN)
-                            || isAnnotatedWith(element, ONE_TO_MANY_FQN) || isAnnotatedWith(element, MANY_TO_MANY_FQN)
-                            || isAnnotatedWith(element, ONE_TO_ONE_FQN) || isAnnotatedWith(element, MANY_TO_ONE_FQN)) {
+                    if (isAnnotatedWith(element, ID_FQN)
+                            || isAnnotatedWith(element, EMBEDDED_ID_FQN)
+                            || isAnnotatedWith(element, EMBEDDED_FQN)
+                            || isAnnotatedWith(element, BASIC_FQN)
+                            || isAnnotatedWith(element, TRANSIENT_FQN)
+                            || isAnnotatedWith(element, VERSION_FQN)
+                            || isAnnotatedWith(element, ELEMENT_COLLECTION_FQN)
+                            || isAnnotatedWith(element, ONE_TO_MANY_FQN)
+                            || isAnnotatedWith(element, MANY_TO_MANY_FQN)
+                            || isAnnotatedWith(element, ONE_TO_ONE_FQN)
+                            || isAnnotatedWith(element, MANY_TO_ONE_FQN)) {
                         if (ElementKind.FIELD == element.getKind()) {
                             fieldAccess = true;
                         }

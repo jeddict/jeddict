@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.ForeignKeyMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.FOREIGN_KEY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.FOREIGN_KEY_FQN;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

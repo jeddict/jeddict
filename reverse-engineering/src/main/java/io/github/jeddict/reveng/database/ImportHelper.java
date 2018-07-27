@@ -15,6 +15,9 @@
  */
 package io.github.jeddict.reveng.database;
 
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderForPackage;
+import io.github.jeddict.reveng.database.generator.DbSchemaEntityGenerator;
+import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,9 +28,6 @@ import java.util.Set;
 import org.netbeans.api.db.explorer.DatabaseConnection;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.SourceGroup;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.reveng.database.generator.DbSchemaEntityGenerator;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.dbschema.SchemaElement;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityClass;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityRelation;
@@ -207,7 +207,7 @@ public class ImportHelper {
     }
 
     public FileObject getPackageObject() throws IOException {
-        return SourceGroupSupport.getFolderForPackage(getLocation(), getPackageName());
+        return getFolderForPackage(getLocation(), getPackageName());
     }
 
     public SourceGroup getLocation() {

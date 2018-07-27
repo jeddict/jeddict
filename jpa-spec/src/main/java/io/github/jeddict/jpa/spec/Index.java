@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.internal.jpa.metadata.tables.IndexMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.INDEX_FQN;
+import static io.github.jeddict.jcode.JPAConstants.INDEX_FQN;
 import io.github.jeddict.jpa.spec.extend.OrderbyItem;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

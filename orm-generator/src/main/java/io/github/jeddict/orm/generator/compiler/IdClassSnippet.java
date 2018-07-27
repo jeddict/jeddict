@@ -18,8 +18,8 @@ package io.github.jeddict.orm.generator.compiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ID_CLASS;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ID_CLASS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ID_CLASS;
+import static io.github.jeddict.jcode.JPAConstants.ID_CLASS_FQN;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

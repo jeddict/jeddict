@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERIES;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_NATIVE_QUERIES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERIES;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_NATIVE_QUERIES_FQN;
 
 public class NamedNativeQueriesSnippet extends SnippetContainer<NamedNativeQuerySnippet> {
 

@@ -17,7 +17,7 @@ package io.github.jeddict.orm.generator.compiler;
 
 import java.util.Collection;
 import java.util.Collections;
-import static io.github.jeddict.jcode.jpa.JPAConstants.DISCRIMINATOR_VALUE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_VALUE_FQN;
 import static org.netbeans.modules.j2ee.persistence.dd.orm.model_1_0.Entity.DISCRIMINATOR_VALUE;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

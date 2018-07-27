@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMNS;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMNS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MAP_KEY_JOIN_COLUMNS;
-import static io.github.jeddict.jcode.jpa.JPAConstants.MAP_KEY_JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMNS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS;
+import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMNS_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class JoinColumnsSnippet implements Snippet {

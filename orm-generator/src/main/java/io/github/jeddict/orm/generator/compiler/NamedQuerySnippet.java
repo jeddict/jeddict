@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.LOCK_MODE_TYPE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.LOCK_MODE_TYPE_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_QUERY;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_QUERY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.LOCK_MODE_TYPE;
+import static io.github.jeddict.jcode.JPAConstants.LOCK_MODE_TYPE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_QUERY_FQN;
 import io.github.jeddict.jpa.spec.LockModeType;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 

@@ -17,8 +17,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
 import io.github.jeddict.jpa.spec.extend.JoinColumnHandler;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

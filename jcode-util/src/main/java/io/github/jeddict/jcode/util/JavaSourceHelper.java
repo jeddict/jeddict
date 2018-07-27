@@ -28,6 +28,11 @@ import com.sun.source.tree.TypeParameterTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
+import io.github.jeddict.jcode.task.AbstractTask;
+import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSource;
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
+import static io.github.jeddict.jcode.util.ProjectHelper.getTemplateProperties;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,9 +78,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import static io.github.jeddict.jcode.util.Constants.JAVA_EXT;
-import static io.github.jeddict.jcode.util.ProjectHelper.getTemplateProperties;
-import io.github.jeddict.jcode.task.AbstractTask;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.modules.j2ee.core.api.support.java.GenerationUtils;
 import org.netbeans.modules.websvc.rest.model.api.RestConstants;
@@ -101,7 +103,7 @@ public class JavaSourceHelper {
 
     public static List<JavaSource> getJavaSources(Project project) {
         List<JavaSource> result = new ArrayList<>();
-        SourceGroup[] groups = SourceGroupSupport.getJavaSourceGroups(project);
+        SourceGroup[] groups = getJavaSourceGroups(project);
 
         for (SourceGroup group : groups) {
             FileObject root = group.getRootFolder();
@@ -301,7 +303,7 @@ public class JavaSourceHelper {
         List<ExecutableElement> constructors = ElementFilter.constructorsIn(classElement.getEnclosedElements());
 
         for (ExecutableElement constructor : constructors) {
-            if (constructor.getParameters().size() == 0) {
+            if (constructor.getParameters().isEmpty()) {
                 return controller.getTrees().getTree(constructor);
             }
         }
@@ -866,7 +868,7 @@ public class JavaSourceHelper {
     }
     
     public static List<VariableElement> getEnumVariableElements(Project project, String fqClassName) throws IOException {
-        JavaSource javaSource = SourceGroupSupport.getJavaSource(project, fqClassName);
+        JavaSource javaSource = getJavaSource(project, fqClassName);
         if(javaSource == null){
             throw new IOException();
         }

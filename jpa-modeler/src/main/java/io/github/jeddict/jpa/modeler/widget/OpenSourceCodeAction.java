@@ -15,6 +15,13 @@
  */
 package io.github.jeddict.jpa.modeler.widget;
 
+import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import static io.github.jeddict.jcode.util.ProjectHelper.findSourceGroupForFile;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.extend.Attribute;
+import io.github.jeddict.jpa.spec.extend.JavaClass;
+import io.github.jeddict.source.JavaSourceParserUtil;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -27,13 +34,6 @@ import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.java.source.ui.ElementOpen;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Widget;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.collaborate.issues.ExceptionUtils;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.extend.Attribute;
-import io.github.jeddict.jpa.spec.extend.JavaClass;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -98,7 +98,7 @@ public class OpenSourceCodeAction extends WidgetAction.Adapter {
     }
 
     private void open(FileObject fileObject, String classHandle) {
-        FileObject pkg = SourceGroupSupport.findSourceGroupForFile(fileObject).getRootFolder();
+        FileObject pkg = findSourceGroupForFile(fileObject).getRootFolder();
         try {
             JavaSource javaSource = JavaSource.create(ClasspathInfo.create(pkg));
             javaSource.runUserActionTask(controller -> {

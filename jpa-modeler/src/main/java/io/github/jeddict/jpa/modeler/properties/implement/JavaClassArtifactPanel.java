@@ -15,34 +15,20 @@
  */
 package io.github.jeddict.jpa.modeler.properties.implement;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import io.github.jeddict.jcode.util.JavaIdentifiers;
+import io.github.jeddict.jpa.modeler.internal.jpqleditor.ModelerPanel;
+import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import java.util.Optional;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import org.netbeans.api.java.source.ClasspathInfo;
-import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
-import org.netbeans.api.java.source.JavaSource;
-import io.github.jeddict.jcode.util.JavaIdentifiers;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.collaborate.issues.ExceptionUtils;
-import io.github.jeddict.jpa.modeler.internal.jpqleditor.ModelerPanel;
-import io.github.jeddict.jpa.spec.extend.ReferenceClass;
-import io.github.jeddict.source.JavaSourceParserUtil;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.properties.EntityComponent;
 import org.netbeans.modeler.properties.spec.Entity;
 import org.netbeans.modeler.properties.spec.RowValue;
-import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
-import org.openide.util.NbBundle;
-import org.openide.windows.WindowManager;
 
 public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> implements ModelerPanel {
 
@@ -87,39 +73,6 @@ public class JavaClassArtifactPanel extends EntityComponent<ReferenceClass> impl
             class_EditorPane.setText(referenceClass.getName());
         }
 
-    }
-
-    private void importFields(ElementHandle<TypeElement> classHandle) {
-        FileObject pkg = SourceGroupSupport.findSourceGroupForFile(modelerFile.getFileObject()).getRootFolder();
-        try {
-            JavaSource javaSource = JavaSource.create(ClasspathInfo.create(pkg));
-            javaSource.runUserActionTask((CompilationController controller) -> {
-                try {
-                    controller.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);//classHandle.resolve(controller);//
-                    TypeElement jc = controller.getElements().getTypeElement(classHandle.getQualifiedName());
-                    if (jc != null) {
-                        Map<String, String> elements = new LinkedHashMap<>();
-                        for (ExecutableElement method : JavaSourceParserUtil.getMethods(jc)) {
-                            try {
-                                String methodName = method.getSimpleName().toString();
-                                if (methodName.startsWith("get") || methodName.startsWith("is")) {
-//                                    elements.put
-                                }
-                            } catch (TypeNotPresentException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                    } else {
-                        JOptionPane.showMessageDialog(WindowManager.getDefault().getMainWindow(), NbBundle.getMessage(JavaClassArtifactPanel.class, "MSG_ARTIFACT_NOT_FOUND"));
-                    }
-                } catch (IOException t) {
-                    ExceptionUtils.printStackTrace(t);
-                }
-            }, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
     }
 
     /**

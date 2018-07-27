@@ -8,6 +8,7 @@ package io.github.jeddict.jpa.spec;
 
 import io.github.jeddict.jcode.jpa.PersistenceProviderType;
 import io.github.jeddict.jcode.util.JavaSourceHelper;
+import static io.github.jeddict.jcode.util.JavaUtil.mergePackage;
 import io.github.jeddict.jpa.spec.bean.BeanClass;
 import io.github.jeddict.jpa.spec.design.Diagram;
 import io.github.jeddict.jpa.spec.extend.Attribute;
@@ -54,9 +55,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNoneBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modeler.core.exception.InvalidElmentException;
 import org.netbeans.modeler.specification.model.document.IDefinitionElement;
@@ -386,14 +384,7 @@ public class EntityMappings extends BaseElement implements IDefinitionElement, I
      *
      */
     public String getPackage() {
-        if (isNoneBlank(getProjectPackage(), getEntityPackage())) {
-            return getProjectPackage() + '.' + getEntityPackage();
-        } else if (isNotBlank(getProjectPackage())) {
-            return getProjectPackage();
-        } else if (isNotBlank(getEntityPackage())) {
-            return getEntityPackage();
-        }
-        return EMPTY;
+        return mergePackage(getProjectPackage(), getEntityPackage());
     }
 
     /**

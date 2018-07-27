@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDE;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE;
+import static io.github.jeddict.jcode.JPAConstants.ASSOCIATION_OVERRIDE_FQN;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 
 public class AssociationOverrideSnippet implements Snippet {

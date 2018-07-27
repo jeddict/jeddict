@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPINGS;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SQL_RESULTSET_MAPPINGS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPINGS;
+import static io.github.jeddict.jcode.JPAConstants.SQL_RESULTSET_MAPPINGS_FQN;
 
 public class SQLResultSetMappingsSnippet extends SnippetContainer<SQLResultSetMappingSnippet> {
 

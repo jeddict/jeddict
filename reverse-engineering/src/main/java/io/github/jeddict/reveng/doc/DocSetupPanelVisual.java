@@ -16,21 +16,23 @@
 package io.github.jeddict.reveng.doc;
 
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
+import static io.github.jeddict.jcode.util.ProjectHelper.getPackageForFolder;
+import static io.github.jeddict.jcode.util.ProjectHelper.isFolderWritable;
+import java.io.File;
 import java.io.IOException;
 import javax.swing.ComboBoxModel;
+import javax.swing.JFileChooser;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import static io.github.jeddict.jcode.util.SourceGroupSupport.getFolderSourceGroup;
-import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import org.netbeans.modules.j2ee.core.api.support.java.JavaIdentifiers;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.SourceGroupUISupport;
 import org.netbeans.spi.java.project.support.ui.PackageView;
@@ -331,7 +333,7 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
             return false;
         }
 
-        if (!SourceGroupSupport.isFolderWritable(getLocationValue(), packageName)) {
+        if (!isFolderWritable(getLocationValue(), packageName)) {
             wizard.putProperty("WizardPanel_errorMessage", getMessage(DocSetupPanelVisual.class, "ERR_JavaTargetChooser_UnwritablePackage")); //NOI18N
             return false;
         }
@@ -382,7 +384,7 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
     void read(WizardDescriptor settings) {
         FileObject targetFolder = Templates.getTargetFolder(settings);
         projectTextField.setText(ProjectUtils.getInformation(project).getDisplayName());
-        SourceGroup[] sourceGroups = SourceGroupSupport.getJavaSourceGroups(project);
+        SourceGroup[] sourceGroups = getJavaSourceGroups(project);
         SourceGroupUISupport.connect(locationComboBox, sourceGroups);
         packageComboBox.setRenderer(PackageView.listRenderer());
         updateSourceGroupPackages();
@@ -392,7 +394,7 @@ public class DocSetupPanelVisual extends javax.swing.JPanel implements DocumentL
             SourceGroup targetSourceGroup = getFolderSourceGroup(sourceGroups, targetFolder);
             if (targetSourceGroup != null) {
                 locationComboBox.setSelectedItem(targetSourceGroup);
-                String targetPackage = SourceGroupSupport.getPackageForFolder(targetSourceGroup, targetFolder);
+                String targetPackage = getPackageForFolder(targetSourceGroup, targetFolder);
                 if (targetPackage != null) {
                     packageComboBoxEditor.setText(targetPackage);
                 }

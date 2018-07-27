@@ -15,6 +15,8 @@
  */
 package io.github.jeddict.reveng.database;
 
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderForPackage;
+import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +30,6 @@ import java.util.TreeMap;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.SourceGroup;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.j2ee.persistence.dd.JavaPersistenceQLKeywords;
 import org.netbeans.modules.j2ee.persistence.entitygenerator.EntityMember;
 import org.netbeans.modules.j2ee.persistence.wizard.fromdb.Table;
@@ -122,7 +122,7 @@ public final class SelectedTables {
             this.packageName = packageName;
 
             if (packageName != null && !packageName.isEmpty()) {
-                targetFolder = SourceGroupSupport.getFolderForPackage(location, packageName, false);
+                targetFolder = getFolderForPackage(location, packageName, false);
             } else {
                 targetFolder = location.getRootFolder();
             }

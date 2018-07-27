@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler.def;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_DEFAULT_LISTENERS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.EXCLUDE_SUPERCLASS_LISTENERS_FQN;
 import io.github.jeddict.orm.generator.compiler.CacheableDefSnippet;
 import io.github.jeddict.orm.generator.compiler.EntityListenersSnippet;
 import io.github.jeddict.orm.generator.compiler.IdClassSnippet;

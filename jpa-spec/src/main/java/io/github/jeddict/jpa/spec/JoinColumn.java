@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.columns.JoinColumnMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.JOIN_COLUMN_FQN;
+import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
 import io.github.jeddict.jpa.spec.extend.IJoinColumn;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.jpa.spec.validator.column.JoinColumnValidator;

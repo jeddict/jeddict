@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDES;
+import static io.github.jeddict.jcode.JPAConstants.ATTRIBUTE_OVERRIDES_FQN;
 
 public class AttributeOverridesSnippet extends SnippetContainer<AttributeOverrideSnippet> {
 

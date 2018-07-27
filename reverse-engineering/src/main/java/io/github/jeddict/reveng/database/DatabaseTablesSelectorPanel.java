@@ -16,6 +16,9 @@
 package io.github.jeddict.reveng.database;
 
 import io.github.jeddict.collaborate.issues.ExceptionUtils;
+import static io.github.jeddict.jcode.util.ProjectHelper.getFolderSourceGroup;
+import static io.github.jeddict.jcode.util.ProjectHelper.getJavaSourceGroups;
+import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,8 +51,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import io.github.jeddict.jcode.util.SourceGroupSupport;
-import io.github.jeddict.reveng.database.generator.IPersistenceModelGenerator;
 import org.netbeans.modules.dbschema.SchemaElement;
 import org.netbeans.modules.j2ee.persistence.dd.common.PersistenceUnit;
 import org.netbeans.modules.j2ee.persistence.provider.InvalidPersistenceXmlException;
@@ -227,8 +228,8 @@ public class DatabaseTablesSelectorPanel extends javax.swing.JPanel implements A
             // should be selected
             int dbschemaCount = dbschemaComboBox.getItemCount();
             if (targetFolder != null) {
-                SourceGroup[] sourceGroups = SourceGroupSupport.getJavaSourceGroups(project);
-                SourceGroup targetSourceGroup = SourceGroupSupport.getFolderSourceGroup(sourceGroups, targetFolder);
+                SourceGroup[] sourceGroups = getJavaSourceGroups(project);
+                SourceGroup targetSourceGroup = getFolderSourceGroup(sourceGroups, targetFolder);
                 if (targetSourceGroup != null) {
                     for (int i = 0; i < dbschemaCount; i++) {
                         Object nextSchema = dbschemaComboBox.getItemAt(i);

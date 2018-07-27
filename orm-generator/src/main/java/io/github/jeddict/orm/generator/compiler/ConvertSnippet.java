@@ -15,8 +15,8 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERT;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERT_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CONVERT;
+import static io.github.jeddict.jcode.JPAConstants.CONVERT_FQN;
 import io.github.jeddict.jpa.spec.Convert;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;

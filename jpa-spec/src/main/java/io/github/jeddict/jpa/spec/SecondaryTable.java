@@ -17,8 +17,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.internal.jpa.metadata.columns.PrimaryKeyForeignKeyMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.tables.SecondaryTableMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SECONDARY_TABLES_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SECONDARY_TABLE_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SECONDARY_TABLE_FQN;
 import io.github.jeddict.jpa.spec.validator.column.ForeignKeyValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

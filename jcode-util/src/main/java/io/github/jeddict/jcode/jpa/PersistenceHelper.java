@@ -15,14 +15,15 @@
  */
 package io.github.jeddict.jcode.jpa;
 
-import io.github.jeddict.jcode.rest.RestUtil;
+import io.github.jeddict.jcode.util.DOMHelper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static java.util.Objects.nonNull;
 import org.netbeans.api.project.Project;
-import io.github.jeddict.jcode.util.DOMHelper;
 import org.netbeans.modules.j2ee.deployment.common.api.Datasource;
+import org.netbeans.modules.websvc.rest.spi.MiscUtilities;
 import org.netbeans.modules.websvc.rest.spi.RestSupport;
 import org.openide.filesystems.FileObject;
 import org.w3c.dom.Attr;
@@ -53,7 +54,7 @@ public class PersistenceHelper {
 
     private static final String PROVIDER_TAG = "provider";  //NOI18N
 
-    private static final String DEFAULT_GFV3_PROVIDER = "org.eclipse.persistence.jpa.PersistenceProvider";  //NOI18N
+    private static final String DEFAULT_PERSISTENCE_PROVIDER = "org.eclipse.persistence.jpa.PersistenceProvider";  //NOI18N
 
     private final Project project;
     private DOMHelper helper;
@@ -81,11 +82,7 @@ public class PersistenceHelper {
                 if (nodes.getLength() > 0) {
                     provider = helper.getValue((Element) nodes.item(0));
                 } else {
-                    if (RestUtil.isServerGFV3(project)) {
-                        provider = DEFAULT_GFV3_PROVIDER;
-                    } else {
-                        provider = DEFAULT_GFV3_PROVIDER;
-                    }
+                    provider = DEFAULT_PERSISTENCE_PROVIDER;
                 }
 
                 Datasource datasource = null;
@@ -94,7 +91,7 @@ public class PersistenceHelper {
                 if (nodeList.getLength() > 0) {
                     Element dsElement = (Element) nodeList.item(0);
                     String jndiName = helper.getValue(dsElement);
-                    datasource = RestUtil.getDatasource(project, jndiName);
+                    datasource = MiscUtilities.getDatasource(project, jndiName);
                 }
 
                 return new PersistenceUnit(puName, provider, datasource);
@@ -104,24 +101,18 @@ public class PersistenceHelper {
         return null;
     }
 
-    public void configure(Collection<String> classNames, boolean useResourceLocalTx) throws IOException {
+    public void configure(Collection<String> classNames) throws IOException {
         if (helper == null) {
             return;
         }
-
-        /* Required by Spring
-         * Fix for BZ#195973 -  EE6 RESTful WS in Spring app fails to deploy to GF 3.1
-         */
-        // Need to do this for Tomcat
-        if (RestUtil.isServerTomcat(project)) {
+        RestSupport support = project.getLookup().lookup(RestSupport.class);
+        if (nonNull(support) && support.isServerTomcat()) {
             unsetExcludeEnlistedClasses();
             addEntityClasses(classNames);
         }
-
-        if (useResourceLocalTx) {
+        if (nonNull(support) && !support.hasJTASupport()) {
             switchToResourceLocalTransaction();
         }
-
         helper.save();
     }
 
@@ -169,7 +160,7 @@ public class PersistenceHelper {
     }
 
     private FileObject getPersistenceXML() {
-        RestSupport rs = RestUtil.getRestSupport(project);
+        RestSupport rs = project.getLookup().lookup(RestSupport.class);
         if (rs != null) {
             return rs.getPersistenceXml();
         }

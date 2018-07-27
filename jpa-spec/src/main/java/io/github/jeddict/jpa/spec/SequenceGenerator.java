@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.sequencing.SequenceGeneratorMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.SEQUENCE_GENERATOR_FQN;
+import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
 import io.github.jeddict.jpa.spec.validator.SequenceGeneratorValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

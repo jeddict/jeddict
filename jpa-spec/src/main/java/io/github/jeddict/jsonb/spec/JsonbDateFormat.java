@@ -37,7 +37,7 @@ import static io.github.jeddict.jcode.util.AttributeType.TIME_ZONE;
 import static io.github.jeddict.jcode.util.AttributeType.ZONED_DATE_TIME;
 import static io.github.jeddict.jcode.util.AttributeType.ZONE_ID;
 import static io.github.jeddict.jcode.util.AttributeType.ZONE_OFFSET;
-import static io.github.jeddict.jcode.jsonb.JSONBConstants.JSONB_DATE_FORMAT_FQN;
+import static io.github.jeddict.jcode.JSONBConstants.JSONB_DATE_FORMAT_FQN;
 import io.github.jeddict.jpa.spec.validator.JsonbDateFormatValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

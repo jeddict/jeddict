@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.converters.ConvertMetadata;
 import org.eclipse.persistence.internal.jpa.metadata.converters.ConverterMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERTS_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.CONVERT_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CONVERTS_FQN;
+import static io.github.jeddict.jcode.JPAConstants.CONVERT_FQN;
 import io.github.jeddict.jpa.spec.validator.ConvertValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

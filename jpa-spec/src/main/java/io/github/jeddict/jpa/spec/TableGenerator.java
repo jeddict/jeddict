@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.internal.jpa.metadata.sequencing.TableGeneratorMetadata;
-import static io.github.jeddict.jcode.jpa.JPAConstants.TABLE_GENERATOR_FQN;
+import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_FQN;
 import io.github.jeddict.jpa.spec.validator.TableGeneratorValidator;
 import io.github.jeddict.source.JavaSourceParserUtil;
 

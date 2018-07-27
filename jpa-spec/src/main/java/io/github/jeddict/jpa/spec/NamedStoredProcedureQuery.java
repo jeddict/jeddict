@@ -15,8 +15,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERIES_FQN;
-import static io.github.jeddict.jcode.jpa.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERIES_FQN;
+import static io.github.jeddict.jcode.JPAConstants.NAMED_STORED_PROCEDURE_QUERY_FQN;
 import io.github.jeddict.source.JavaSourceParserUtil;
 
 /**

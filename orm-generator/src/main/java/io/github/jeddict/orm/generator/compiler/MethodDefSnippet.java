@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static io.github.jeddict.jcode.jpa.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
+import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
 import io.github.jeddict.orm.generator.util.ImportSet;
 
 public class MethodDefSnippet implements Snippet {

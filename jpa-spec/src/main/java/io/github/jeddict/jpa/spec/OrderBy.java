@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.StringUtils;
-import static io.github.jeddict.jcode.jpa.JPAConstants.ORDER_BY_FQN;
+import static io.github.jeddict.jcode.JPAConstants.ORDER_BY_FQN;
 import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.OrderbyItem;
 import io.github.jeddict.source.JavaSourceParserUtil;
