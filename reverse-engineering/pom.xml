@@ -192,5 +192,10 @@
             <artifactId>org-netbeans-modules-java-project</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-options-api</artifactId>
+            <version>RELEASE82</version>
+        </dependency>
     </dependencies>
 </project>

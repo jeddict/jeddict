@@ -15,6 +15,22 @@
  */
 package io.github.jeddict.reveng.database.generator;
 
+import static io.github.jeddict.jcode.util.AttributeType.STRING_FQN;
+import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
+import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.getModelerFileVersion;
+import io.github.jeddict.jpa.spec.EntityMappings;
+import io.github.jeddict.jpa.spec.GenerationType;
+import io.github.jeddict.jpa.spec.JoinColumn;
+import io.github.jeddict.jpa.spec.JoinTable;
+import io.github.jeddict.jpa.spec.ManyToMany;
+import io.github.jeddict.jpa.spec.ManyToOne;
+import io.github.jeddict.jpa.spec.OneToMany;
+import io.github.jeddict.jpa.spec.OneToOne;
+import io.github.jeddict.jpa.spec.PrimaryKeyAttributes;
+import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
+import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
+import io.github.jeddict.jpa.spec.extend.RelationAttribute;
+import io.github.jeddict.reveng.database.ImportHelper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,22 +44,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.progress.aggregate.ProgressContributor;
 import org.netbeans.api.project.Project;
-import static io.github.jeddict.jcode.util.AttributeType.STRING_FQN;
-import io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil;
-import static io.github.jeddict.jpa.modeler.initializer.JPAModelerUtil.getModelerFileVersion;
-import io.github.jeddict.reveng.database.ImportHelper;
-import io.github.jeddict.jpa.spec.EntityMappings;
-import io.github.jeddict.jpa.spec.GenerationType;
-import io.github.jeddict.jpa.spec.JoinColumn;
-import io.github.jeddict.jpa.spec.JoinTable;
-import io.github.jeddict.jpa.spec.ManyToMany;
-import io.github.jeddict.jpa.spec.ManyToOne;
-import io.github.jeddict.jpa.spec.OneToMany;
-import io.github.jeddict.jpa.spec.OneToOne;
-import io.github.jeddict.jpa.spec.PrimaryKeyAttributes;
-import io.github.jeddict.jpa.spec.extend.IPersistenceAttributes;
-import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
-import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import org.netbeans.modeler.core.NBModelerUtil;
 import org.netbeans.modules.j2ee.metadata.model.api.MetadataModel;
 import org.netbeans.modules.j2ee.persistence.api.EntityClassScope;
@@ -259,7 +259,7 @@ public class JavaPersistenceModelGenerator implements IPersistenceModelGenerator
             // manageSiblingAttribute for MappedSuperClass and Embeddable is not required because it not generated DBRE CASE
 
             FileObject parentFileObject = entityClasses[0].getPackageFileObject();
-            JPAModelerUtil.createNewModelerFile(entityMappingsSpec, parentFileObject, fileName, true);
+            JPAModelerUtil.createNewModelerFile(entityMappingsSpec, parentFileObject, fileName, true, true);
 
         }
 
