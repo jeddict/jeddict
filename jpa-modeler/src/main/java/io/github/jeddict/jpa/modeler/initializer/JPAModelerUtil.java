@@ -124,7 +124,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.commons.lang3.StringUtils;
+import io.github.common.lang.StringUtils;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.modeler.config.document.IModelerDocument;
 import org.netbeans.modeler.config.document.ModelerDocumentFactory;
@@ -241,6 +241,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
     public static Image JAVA_CLASS_ICON;
     public static Image MAPPED_SUPER_CLASS_ICON;
     public static Image EMBEDDABLE_ICON;
+    public static Image PACKAGE_ICON;
 
     public static ImageIcon CREATE_ICON;
     public static ImageIcon EDIT_ICON;
@@ -377,12 +378,13 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             PK_BI_DIRECTIONAL_ICON = new ImageIcon(cl.getResource("io/github/jeddict/jpa/modeler/resource/image/pk-bi.png")).getImage();
             COMPOSITION_ATTRIBUTE_ICON = new ImageIcon(cl.getResource("io/github/jeddict/jpa/modeler/resource/image/composition.png")).getImage();
 
-            JAVA_CLASS_ICON = new ImageIcon(cl.getResource(JPAModelerUtil.JAVA_CLASS_ICON_PATH)).getImage();
-            ABSTRACT_JAVA_CLASS_ICON = new ImageIcon(cl.getResource(JPAModelerUtil.ABSTRACT_JAVA_CLASS_ICON_PATH)).getImage();
-            ENTITY_ICON = new ImageIcon(cl.getResource(JPAModelerUtil.ENTITY_ICON_PATH)).getImage();
-            ABSTRACT_ENTITY_ICON = new ImageIcon(cl.getResource(JPAModelerUtil.ABSTRACT_ENTITY_ICON_PATH)).getImage();
-            MAPPED_SUPER_CLASS_ICON = new ImageIcon(cl.getResource(JPAModelerUtil.MAPPED_SUPER_CLASS_ICON_PATH)).getImage();
-            EMBEDDABLE_ICON = new ImageIcon(cl.getResource(JPAModelerUtil.EMBEDDABLE_ICON_PATH)).getImage();
+            JAVA_CLASS_ICON = new ImageIcon(cl.getResource(JAVA_CLASS_ICON_PATH)).getImage();
+            ABSTRACT_JAVA_CLASS_ICON = new ImageIcon(cl.getResource(ABSTRACT_JAVA_CLASS_ICON_PATH)).getImage();
+            ENTITY_ICON = new ImageIcon(cl.getResource(ENTITY_ICON_PATH)).getImage();
+            ABSTRACT_ENTITY_ICON = new ImageIcon(cl.getResource(ABSTRACT_ENTITY_ICON_PATH)).getImage();
+            MAPPED_SUPER_CLASS_ICON = new ImageIcon(cl.getResource(MAPPED_SUPER_CLASS_ICON_PATH)).getImage();
+            EMBEDDABLE_ICON = new ImageIcon(cl.getResource(EMBEDDABLE_ICON_PATH)).getImage();
+            PACKAGE_ICON = new ImageIcon(cl.getResource(PACKAGE_ICON_PATH)).getImage();
             ID_ATTRIBUTE_ICON = new ImageIcon(cl.getResource(ID_ATTRIBUTE_ICON_PATH)).getImage();
             BASIC_ATTRIBUTE_ICON = new ImageIcon(cl.getResource(BASIC_ATTRIBUTE_ICON_PATH)).getImage();
             BASIC_COLLECTION_ATTRIBUTE_ICON = new ImageIcon(cl.getResource(BASIC_COLLECTION_ATTRIBUTE_ICON_PATH)).getImage();
@@ -980,6 +982,11 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
         }
     }
 
+    /**
+     * For internal invocation, call ModelerFile.save(true) to save file
+     *
+     * @param file
+     */
     @Override
     public void saveModelerFile(ModelerFile file) {
         EntityMappings entityMappings = (EntityMappings) file.getDefinitionElement();
@@ -1052,7 +1059,7 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
         }
     }
 
-    public static void saveFile(EntityMappings entityMappings, File file) {
+    private static void saveFile(EntityMappings entityMappings, File file) {
         try {
             if (MODELER_MARSHALLER == null) {
                 MODELER_MARSHALLER = MODELER_CONTEXT.createMarshaller();
@@ -1081,10 +1088,6 @@ public class JPAModelerUtil implements IModelerUtil<JPAModelerScene> {
             ExceptionUtils.printStackTrace(ex);
         }
         return sw.toString();
-    }
-
-    public static void createNewModelerFile(EntityMappings entityMappingsSpec, FileObject parentFileObject, String fileName, boolean autoOpen) {
-        createNewModelerFile(entityMappingsSpec, parentFileObject, fileName, true, autoOpen);
     }
 
     /**
