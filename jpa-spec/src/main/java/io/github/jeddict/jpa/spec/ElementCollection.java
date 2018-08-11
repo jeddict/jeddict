@@ -6,6 +6,7 @@
 //
 package io.github.jeddict.jpa.spec;
 
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.bv.constraints.Size;
@@ -368,39 +369,42 @@ public class ElementCollection extends CompositionAttribute<Embeddable> implemen
         }
         boolean mapKeyExist = collectionTypeClass != null && Map.class.isAssignableFrom(collectionTypeClass);
 
-        Optional<ResolvedReferenceTypeDeclaration> targetEntityOpt = annotation.getResolvedClass("targetClass");
+        Optional<ResolvedReferenceTypeDeclaration> targetTypeOpt = annotation.getResolvedClass("targetClass");
         ResolvedReferenceTypeDeclaration type;
-        if (targetEntityOpt.isPresent()) {
-            type = targetEntityOpt.get();
+        if (targetTypeOpt.isPresent()) {
+            type = targetTypeOpt.get();
         } else {
-            type = member.getTypeArgumentDeclarations().get(mapKeyExist ? 1 : 0);
-        }
-        if (type != null) {
-            if (type.hasAnnotation(EMBEDDABLE_FQN)) {
-                Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(type.getClassName());
-                Embeddable embeddableClassSpec = null;
-                if (embeddableClassSpecOpt.isPresent()) {
-                    embeddableClassSpec = embeddableClassSpecOpt.get();
-                } else if (member.isIncludeReference()
-                        || member.getSource().isSelectedClass(type.getClassName())) {
-                    try {
-                        ClassExplorer clazz = member.getSource().createClass(type.getQualifiedName());
-                        embeddableClassSpec = new Embeddable();
-                        embeddableClassSpec.load(clazz);
-                        entityMappings.addEmbeddable(embeddableClassSpec);
-                    } catch (FileNotFoundException ex) {
-                        member.getSource().addMissingClass(type.getQualifiedName());
-                    }
-                }
-                if (embeddableClassSpec == null) {
-                    return null;
-                }
-                elementCollection.setConnectedClass(embeddableClassSpec);
+            targetTypeOpt = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
+            if (targetTypeOpt.isPresent()) {
+                type = targetTypeOpt.get();
+                elementCollection.setValueConstraints(member.getTypeArgumentBeanValidationConstraints(mapKeyExist ? 1 : 0));
             } else {
-                elementCollection.setTargetClass(type.getQualifiedName());
+                throw new UnsolvedSymbolException("targetClass or generic type not defined in ElementCollection attribute '" + member.getFieldName() + "'");
             }
+        }
+
+        if (type.hasAnnotation(EMBEDDABLE_FQN)) {
+            Optional<Embeddable> embeddableClassSpecOpt = entityMappings.findEmbeddable(type.getClassName());
+            Embeddable embeddableClassSpec = null;
+            if (embeddableClassSpecOpt.isPresent()) {
+                embeddableClassSpec = embeddableClassSpecOpt.get();
+            } else if (member.isIncludeReference()
+                    || member.getSource().isSelectedClass(type.getClassName())) {
+                try {
+                    ClassExplorer clazz = member.getSource().createClass(type.getQualifiedName());
+                    embeddableClassSpec = new Embeddable();
+                    embeddableClassSpec.load(clazz);
+                    entityMappings.addEmbeddable(embeddableClassSpec);
+                } catch (FileNotFoundException ex) {
+                    member.getSource().addMissingClass(type.getQualifiedName());
+                }
+            }
+            if (embeddableClassSpec == null) {
+                return null;
+            }
+            elementCollection.setConnectedClass(embeddableClassSpec);
         } else {
-            elementCollection.setTargetClass(STRING);
+            elementCollection.setTargetClass(type.getQualifiedName());
         }
 
         elementCollection.convert = Convert.load(member, mapKeyExist, false);

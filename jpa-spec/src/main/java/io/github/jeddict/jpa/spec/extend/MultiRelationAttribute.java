@@ -15,6 +15,7 @@
  */
 package io.github.jeddict.jpa.spec.extend;
 
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import io.github.jeddict.bv.constraints.Constraint;
 import io.github.jeddict.bv.constraints.Size;
@@ -235,7 +236,13 @@ public abstract class MultiRelationAttribute extends RelationAttribute
         if (targetEntityOpt.isPresent()) {
             targetEntityValue = targetEntityOpt.get();
         } else {
-            targetEntityValue = member.getTypeArgumentDeclarations().get(mapKeyExist ? 1 : 0);
+            targetEntityOpt = member.getTypeArgumentDeclaration(mapKeyExist ? 1 : 0);
+            if (targetEntityOpt.isPresent()) {
+                targetEntityValue = targetEntityOpt.get();
+                this.setValueConstraints(member.getTypeArgumentBeanValidationConstraints(mapKeyExist ? 1 : 0));
+            } else {
+                throw new UnsolvedSymbolException("targetEntity or generic type not defined in relation attribute '" + member.getFieldName() + "'");
+            }
         }
         this.targetEntityPackage = targetEntityValue.getPackageName();
         this.targetEntity = targetEntityValue.getClassName();

@@ -20,14 +20,19 @@ import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
+import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import io.github.jeddict.bv.constraints.Constraint;
 import static io.github.jeddict.jcode.util.JavaIdentifiers.unqualify;
 import io.github.jeddict.jpa.spec.EntityMappings;
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -66,11 +71,47 @@ public class MemberExplorer extends AnnotatedMember {
         return field.getVariable(0).getNameAsString();
     }
 
+    public Set<Constraint> getTypeArgumentBeanValidationConstraints(int index) {
+        NodeWithAnnotations<? extends Annotation> nodeWithAnnotations = null;
+
+        if (index < 0) {
+            throw new IllegalStateException("index value must be positive");
+        }
+        index = index + 1;
+        List<Node> childNodes = field.getElementType().getChildNodes();
+        if (!childNodes.isEmpty() && childNodes.size() >= index
+                && childNodes.get(index) instanceof NodeWithAnnotations) {
+            nodeWithAnnotations = (NodeWithAnnotations) childNodes.get(index);
+        }
+
+        Set<Constraint> constraints = Collections.emptySet();
+        if (nodeWithAnnotations != null) {
+            constraints = getBeanValidationConstraints(
+                    nodeWithAnnotations.getAnnotations()
+                            .stream()
+                            .map(AnnotationExplorer::new)
+            );
+        }
+
+        return constraints;
+    }
+
     public List<String> getTypeArguments() {
         return getReferenceType().getTypeParametersMap()
                 .stream()
                 .map(param -> param.b.asReferenceType().getQualifiedName())
                 .collect(toList());
+    }
+
+    public Optional<ResolvedReferenceTypeDeclaration> getTypeArgumentDeclaration(int index) {
+        if (index < 0) {
+            throw new IllegalStateException("index value must be positive");
+        }
+        List<ResolvedReferenceTypeDeclaration> declarations = getTypeArgumentDeclarations();
+        if (!declarations.isEmpty() && declarations.size() >= index) {
+            return Optional.of(declarations.get(index));
+        }
+        return Optional.empty();
     }
 
     public List<ResolvedReferenceTypeDeclaration> getTypeArgumentDeclarations() {

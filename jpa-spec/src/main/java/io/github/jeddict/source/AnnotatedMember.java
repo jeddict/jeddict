@@ -52,7 +52,7 @@ import java.util.stream.Stream;
  */
 public abstract class AnnotatedMember {
 
-    private static final Map<String, Class<? extends Constraint>> SUPPORTED_BV_REVENG_SIMPLE_CLASS_SET = new HashMap<>();
+    protected static final Map<String, Class<? extends Constraint>> SUPPORTED_BV_REVENG_SIMPLE_CLASS_SET = new HashMap<>();
 
     static {
         for (Class<? extends Constraint> bvClass : BEAN_VALIDATION_REVENG_CLASS_LIST) {
@@ -61,8 +61,12 @@ public abstract class AnnotatedMember {
     }
 
     public Set<Constraint> getBeanValidationConstraints() {
+        return getBeanValidationConstraints(getAnnotations());
+    }
+
+    protected Set<Constraint> getBeanValidationConstraints(Stream<AnnotationExplorer> annotations) {
         Set<Constraint> constraints = Attribute.CONSTRAINTS_SUPPLIER.get();
-        getAnnotations().forEach(annotation -> {
+        annotations.forEach(annotation -> {
             String annotationName = annotation.getName(); // ?? annotationQualifiedName
             Class<? extends Constraint> bvClass = SUPPORTED_BV_REVENG_SIMPLE_CLASS_SET.get(annotationName);
             if (bvClass != null) {
