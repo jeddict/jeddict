@@ -17,17 +17,23 @@ package io.github.jeddict.orm.generator.compiler.constraints;
 
 import io.github.jeddict.bv.constraints.Email;
 import io.github.jeddict.bv.constraints.Flag;
+import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
-import static io.github.jeddict.jcode.BeanVaildationConstants.BV_CONSTRAINTS_PACKAGE;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -39,7 +45,7 @@ public class EmailSnippet extends ConstraintSnippet<Email> {
 
     public EmailSnippet(Email email) {
         super(email);
-        if (!StringUtils.isBlank(constraint.getFlags())) {
+        if (isNotBlank(constraint.getFlags())) {
             flags = Arrays.stream(constraint.getFlags().split(","))
                     .map(flag -> Flag.fromValue(flag.trim()))
                     .filter(flag -> flag != null)
@@ -54,34 +60,42 @@ public class EmailSnippet extends ConstraintSnippet<Email> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null && StringUtils.isBlank(constraint.getRegexp()) && flags.isEmpty()) {
-            return "@" + getAPI();
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(getAPI());
 
-        if (!StringUtils.isBlank(constraint.getRegexp())) {
-            builder.append("regexp=\"");
-            builder.append(constraint.getRegexp());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isBlank(constraint.getMessage())
+                && isBlank(constraint.getRegexp())
+                && flags.isEmpty()) {
+            return builder.toString();
+        }
+
+        builder.append(OPEN_PARANTHESES);
+
+        if (isNotBlank(constraint.getRegexp())) {
+            builder.append("regexp=")
+                    .append(QUOTE)
+                    .append(constraint.getRegexp())
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
         if (!flags.isEmpty()) {
-            builder.append("flags=").append(OPEN_BRACES);
-            builder.append(flags.stream().map(Flag::name).collect(joining(", ")));
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("flags=")
+                    .append(OPEN_BRACES)
+                    .append(flags.stream().map(Flag::name).collect(joining(", ")))
+                    .append(CLOSE_BRACES)
+                    .append(COMMA);
         }
 
-        if (constraint.getMessage() != null) {
-            builder.append("message=\"");
-            builder.append(constraint.getMessage());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(constraint.getMessage())) {
+            builder.append("message=")
+                    .append(QUOTE)
+                    .append(constraint.getMessage())
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override

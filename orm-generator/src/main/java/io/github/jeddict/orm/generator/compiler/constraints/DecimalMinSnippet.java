@@ -15,12 +15,17 @@
  */
 package io.github.jeddict.orm.generator.compiler.constraints;
 
-import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.bv.constraints.DecimalMin;
 import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import static java.lang.Boolean.FALSE;
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  *
@@ -39,40 +44,43 @@ public class DecimalMinSnippet extends ConstraintSnippet<DecimalMin> {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (constraint.getMessage() == null 
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(getAPI());
+
+        if (constraint.getMessage() == null
                 && StringUtils.isBlank(constraint.getValue())
                 && !FALSE.equals(constraint.getInclusive())) {
-            return "@" + getAPI();
+            return builder.toString();
         }
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(getAPI()).append(ORMConverterUtil.OPEN_PARANTHESES);
 
-        if (!StringUtils.isBlank(constraint.getValue())) {
-            builder.append("value=\"");
-            builder.append(constraint.getValue());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        builder.append(OPEN_PARANTHESES);
+
+        if (isNotBlank(constraint.getValue())) {
+            builder.append("value=\"")
+                    .append(constraint.getValue())
+                    .append(QUOTE)
+                    .append(COMMA);
         }
         
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             boolean inclusive = !FALSE.equals(constraint.getInclusive());
-            builder.append("inclusive=");
-            builder.append(inclusive);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("inclusive=")
+                    .append(inclusive)
+                    .append(COMMA);
         } else if (FALSE.equals(constraint.getInclusive())) {
-            builder.append("inclusive=");
-            builder.append(constraint.getInclusive());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append("inclusive=")
+                    .append(constraint.getInclusive())
+                    .append(COMMA);
         }
 
-         if (constraint.getMessage() != null) {
-            builder.append("message=\"");
-            builder.append(constraint.getMessage());
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(constraint.getMessage())) {
+             builder.append("message=\"")
+                     .append(constraint.getMessage())
+                     .append(QUOTE)
+                     .append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
 }

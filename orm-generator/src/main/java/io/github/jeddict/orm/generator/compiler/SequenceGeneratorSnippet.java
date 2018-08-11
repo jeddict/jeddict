@@ -15,12 +15,18 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
 import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR;
 import static io.github.jeddict.jcode.JPAConstants.SEQUENCE_GENERATOR_FQN;
-import io.github.jeddict.settings.code.CodePanel;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class SequenceGeneratorSnippet implements Snippet {
 
@@ -29,8 +35,8 @@ public class SequenceGeneratorSnippet implements Snippet {
 
     private String name = null;
     private String sequenceName = null;
-    private String catalog;//added by gaurav gupta
-    private String schema;//added by gaurav gupta
+    private String catalog;
+    private String schema;
 
     public int getAllocationSize() {
         return allocationSize;
@@ -67,63 +73,66 @@ public class SequenceGeneratorSnippet implements Snippet {
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if (name == null) {
+        if (isBlank(name)) {
             throw new InvalidDataException("Name is required");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
 
-        builder.append("@").append(SEQUENCE_GENERATOR).append("(name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
+        builder.append(SEQUENCE_GENERATOR)
+                .append(OPEN_PARANTHESES);
 
-        if (!CodePanel.isGenerateDefaultValue()) {
+        builder.append("name=")
+                .append(QUOTE)
+                .append(name)
+                .append(QUOTE)
+                .append(COMMA);
+
+        if (!isGenerateDefaultValue()) {
             if (sequenceName == null && allocationSize == 50 && initialValue == 1) {
-                return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+                return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
             }
         }
 
-        if (sequenceName != null && !sequenceName.isEmpty()) {
-            builder.append("sequenceName=\"");
-            builder.append(sequenceName);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(sequenceName)) {
+            builder.append("sequenceName=\"")
+                    .append(sequenceName)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || allocationSize != 50) {
-            builder.append("allocationSize=");
-            builder.append(allocationSize);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || allocationSize != 50) {
+            builder.append("allocationSize=")
+                    .append(allocationSize)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || initialValue != 1) {
-            builder.append("initialValue=");
-            builder.append(initialValue);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || initialValue != 1) {
+            builder.append("initialValue=")
+                    .append(initialValue)
+                    .append(COMMA);
         }
 
-        if (catalog != null && !catalog.isEmpty()) {
-            builder.append("catalog=\"");
-            builder.append(catalog);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(catalog)) {
+            builder.append("catalog=\"")
+                    .append(catalog)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (schema != null && !schema.isEmpty()) {
-            builder.append("schema=\"");
-            builder.append(schema);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(schema)) {
+            builder.append("schema=\"")
+                    .append(schema)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singleton(SEQUENCE_GENERATOR_FQN);
+        return singleton(SEQUENCE_GENERATOR_FQN);
     }
 
     /**

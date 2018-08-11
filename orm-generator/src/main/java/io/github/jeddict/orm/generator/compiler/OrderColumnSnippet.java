@@ -15,25 +15,28 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_COLUMN_FQN;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.OrderColumn;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class OrderColumnSnippet implements Snippet {
-    
+
     private boolean insertable = true;
     private boolean nullable = true;
     private boolean updatable = true;
     private String columnDefinition = null;
     private String name = null;
-    
+
     public OrderColumnSnippet(OrderColumn orderColumn) {
         this.name = orderColumn.getName();
         this.columnDefinition = orderColumn.getColumnDefinition();
@@ -41,7 +44,6 @@ public class OrderColumnSnippet implements Snippet {
         this.nullable = orderColumn.isNullable();
         this.updatable = orderColumn.isUpdatable();
     }
-
 
     public boolean isInsertable() {
         return insertable;
@@ -85,71 +87,71 @@ public class OrderColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder("@");
+        StringBuilder builder = new StringBuilder(AT);
         builder.append(ORDER_COLUMN);
-        
-        if (!CodePanel.isGenerateDefaultValue()) {
+
+        if (!isGenerateDefaultValue()) {
             if (insertable == true
                     && nullable == true
                     && updatable == true
-                    && columnDefinition == null
-                    && name == null) {
+                    && isBlank(columnDefinition)
+                    && isBlank(name)) {
                 return builder.toString();
             }
         }
 
         builder.append(OPEN_PARANTHESES);
 
-        if (name != null) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(QUOTE);
-            builder.append(COMMA);
+        if (isNotBlank(name)) {
+            builder.append("name=\"")
+                    .append(name)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
-            builder.append(" insertable=");
-            builder.append(insertable);
-            builder.append(COMMA);
+        if (isGenerateDefaultValue()) {
+            builder.append(" insertable=")
+                    .append(insertable)
+                    .append(COMMA);
         } else if (insertable == false) {
-            builder.append(" insertable=");
-            builder.append(insertable);
-            builder.append(COMMA);
+            builder.append(" insertable=")
+                    .append(insertable)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
-            builder.append(" nullable=");
-            builder.append(nullable);
-            builder.append(COMMA);
+        if (isGenerateDefaultValue()) {
+            builder.append(" nullable=")
+                    .append(nullable)
+                    .append(COMMA);
         } else if (nullable == false) {
-            builder.append(" nullable=");
-            builder.append(nullable);
-            builder.append(COMMA);
+            builder.append(" nullable=")
+                    .append(nullable)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
-            builder.append(" updatable=");
-            builder.append(updatable);
-            builder.append(COMMA);
+        if (isGenerateDefaultValue()) {
+            builder.append(" updatable=")
+                    .append(updatable)
+                    .append(COMMA);
         } else if (updatable == false) {
-            builder.append(" updatable=");
-            builder.append(updatable);
-            builder.append(COMMA);
+            builder.append(" updatable=")
+                    .append(updatable)
+                    .append(COMMA);
         }
-        
-        if (columnDefinition != null && !columnDefinition.trim().isEmpty()) {
-            builder.append(" columnDefinition=\"");
-            builder.append(columnDefinition);
-            builder.append(QUOTE);
-            builder.append(COMMA);
+
+        if (isNotBlank(columnDefinition)) {
+            builder.append(" columnDefinition=\"")
+                    .append(columnDefinition)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
-        
+
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(ORDER_COLUMN_FQN);
+        return singleton(ORDER_COLUMN_FQN);
     }
 
 }

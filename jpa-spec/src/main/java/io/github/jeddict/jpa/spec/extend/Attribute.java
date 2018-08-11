@@ -87,7 +87,7 @@ import static io.github.jeddict.jcode.util.AttributeType.isArray;
 import io.github.jeddict.jsonb.spec.JsonbDateFormat;
 import io.github.jeddict.jsonb.spec.JsonbNumberFormat;
 import io.github.jeddict.jsonb.spec.JsonbTypeHandler;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
@@ -755,7 +755,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      */
     public Boolean getFunctionalType() {
         if (functionalType == null) {
-            return CodePanel.isOptionalReturnType();
+            return ClassDiagramSettings.isOptionalReturnType();
         }
         return functionalType;
     }
@@ -1115,7 +1115,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      * @return the propertyChangeSupport
      */
     public Boolean getPropertyChangeSupport() {
-        if (!CodePanel.isJavaSESupportEnable() && (propertyChangeSupport == null || propertyChangeSupport == false)) {
+        if (!ClassDiagramSettings.isJavaSESupportEnable() && (propertyChangeSupport == null || propertyChangeSupport == false)) {
             return null;
         }
 //        if (propertyChangeSupport == null) {
@@ -1135,7 +1135,7 @@ public abstract class Attribute extends FlowPin implements JaxbVariableTypeHandl
      * @return the vetoableChangeSupport
      */
     public Boolean getVetoableChangeSupport() {
-        if (!CodePanel.isJavaSESupportEnable() && (vetoableChangeSupport == null || vetoableChangeSupport == false)) {
+        if (!ClassDiagramSettings.isJavaSESupportEnable() && (vetoableChangeSupport == null || vetoableChangeSupport == false)) {
             return null;
         }
         return vetoableChangeSupport;

@@ -15,18 +15,21 @@
  */
 package io.github.jeddict.jsonb.generator.compiler;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.compiler.Snippet;
-import java.util.Collection;
-import java.util.Collections;
-import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_NUMBER_FORMAT_FQN;
-import static io.github.jeddict.settings.code.CodePanel.isGenerateDefaultValue;
 import io.github.jeddict.jsonb.spec.JsonbFormat;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import io.github.jeddict.orm.generator.compiler.Snippet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class NumberFormatSnippet implements Snippet {
 
@@ -38,25 +41,30 @@ public class NumberFormatSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(JSONB_NUMBER_FORMAT).append("(");
-        if (!StringUtils.isBlank(format.getValue())) {
-            builder.append(!StringUtils.isBlank(format.getLocale())?"value=\"":"\"");
-            builder.append(format.getValue());
-            builder.append(QUOTE);
-            builder.append(COMMA);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(JSONB_NUMBER_FORMAT)
+                .append(OPEN_PARANTHESES);
+
+        if (isNotBlank(format.getValue())) {
+            builder.append(isNotBlank(format.getLocale()) ? "value=" : EMPTY)
+                    .append(QUOTE)
+                    .append(format.getValue())
+                    .append(QUOTE)
+                    .append(COMMA);
         }
-        if (isGenerateDefaultValue() || !StringUtils.isBlank(format.getLocale())) {
-            builder.append("locale=\"");
-            builder.append(format.getLocale());
-            builder.append(QUOTE);
-            builder.append(COMMA);
+
+        if (isGenerateDefaultValue() || isNotBlank(format.getLocale())) {
+            builder.append("locale=\"")
+                    .append(QUOTE)
+                    .append(format.getLocale())
+                    .append(QUOTE)
+                    .append(COMMA);
         }
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(JSONB_NUMBER_FORMAT_FQN);
+        return singleton(JSONB_NUMBER_FORMAT_FQN);
     }
 }

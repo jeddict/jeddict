@@ -15,17 +15,20 @@
  */
 package io.github.jeddict.jsonb.generator.compiler;
 
-import io.github.jeddict.orm.generator.compiler.InvalidDataException;
-import io.github.jeddict.orm.generator.compiler.Snippet;
-import java.util.Collection;
-import java.util.Collections;
-import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PROPERTY;
 import static io.github.jeddict.jcode.JSONBConstants.JSONB_PROPERTY_FQN;
-import static io.github.jeddict.settings.code.CodePanel.isGenerateDefaultValue;
+import io.github.jeddict.orm.generator.compiler.InvalidDataException;
+import io.github.jeddict.orm.generator.compiler.Snippet;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.Collection;
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class PropertySnippet implements Snippet {
 
@@ -39,24 +42,27 @@ public class PropertySnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(JSONB_PROPERTY).append("(");
-        if (!StringUtils.isBlank(property)) {
-            builder.append((isGenerateDefaultValue() || nillable)?"value=\"":"\"");
-            builder.append(property);
-            builder.append(QUOTE);
-            builder.append(COMMA);
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(JSONB_PROPERTY)
+                .append(OPEN_PARANTHESES);
+
+        if (isNotBlank(property)) {
+            builder.append((isGenerateDefaultValue() || nillable) ? "value=" : EMPTY)
+                    .append(QUOTE)
+                    .append(property)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
         if (isGenerateDefaultValue() || nillable) {
-            builder.append("nillable=");
-            builder.append(nillable);
-            builder.append(COMMA);
+            builder.append("nillable=")
+                    .append(nillable)
+                    .append(COMMA);
         }
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(JSONB_PROPERTY_FQN);
+        return singleton(JSONB_PROPERTY_FQN);
     }
 }

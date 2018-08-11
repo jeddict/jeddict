@@ -37,7 +37,7 @@ import io.github.jeddict.jpa.spec.extend.PrimaryKeyContainer;
 import io.github.jeddict.jpa.spec.extend.ReferenceClass;
 import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
 import io.github.jeddict.jpa.spec.validation.adapter.CompositePrimaryKeyAdapter;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import io.github.jeddict.source.AnnotationExplorer;
 import io.github.jeddict.source.ClassExplorer;
 import io.github.jeddict.source.JavaSourceParserUtil;
@@ -693,13 +693,13 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
     @Override
     public boolean isIdClassType() {
         return compositePrimaryKeyType == CompositePrimaryKeyType.IDCLASS
-                || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && !CodePanel.isEmbeddedIdDefaultType());
+                || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && !ClassDiagramSettings.isEmbeddedIdDefaultType());
     }
 
     @Override
     public boolean isEmbeddedIdType() {
         return compositePrimaryKeyType == CompositePrimaryKeyType.EMBEDDEDID
-                || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && CodePanel.isEmbeddedIdDefaultType());
+                || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && ClassDiagramSettings.isEmbeddedIdDefaultType());
     }
 
     /**
@@ -735,7 +735,7 @@ public abstract class IdentifiableClass extends ManagedClass<IPrimaryKeyAttribut
     private void manageCompositePrimaryKeyType() {
         if (null != compositePrimaryKeyType) {
             CompositePrimaryKeyType type = compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT ? 
-                    (CodePanel.isEmbeddedIdDefaultType() ? CompositePrimaryKeyType.EMBEDDEDID : CompositePrimaryKeyType.IDCLASS) : 
+                    (ClassDiagramSettings.isEmbeddedIdDefaultType() ? CompositePrimaryKeyType.EMBEDDEDID : CompositePrimaryKeyType.IDCLASS) : 
                     compositePrimaryKeyType;
             switch (type) {
                 case EMBEDDEDID:

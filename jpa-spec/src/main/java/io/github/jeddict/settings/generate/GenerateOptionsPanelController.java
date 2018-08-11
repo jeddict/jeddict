@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.settings.code;
+package io.github.jeddict.settings.generate;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -25,14 +25,14 @@ import org.openide.util.Lookup;
 
 @OptionsPanelController.SubRegistration(
         location = "Jeddict",
-        displayName = "#DISPLAYNAME_CODE",
-        keywords = "#KEYWORDS_CODE",
-        keywordsCategory = "Jeddict/Code"
+        displayName = "#DISPLAYNAME_GENERATE",
+        keywords = "#KEYWORDS_GENERATE",
+        keywordsCategory = "Jeddict/Generate"
 )
-@org.openide.util.NbBundle.Messages({"DISPLAYNAME_CODE=Code", "KEYWORDS_CODE=Jeddict Code"})
-public final class CodeOptionsPanelController extends OptionsPanelController {
+@org.openide.util.NbBundle.Messages({"DISPLAYNAME_GENERATE=Generate", "KEYWORDS_GENERATE=Jeddict Generate"})
+public final class GenerateOptionsPanelController extends OptionsPanelController {
 
-    private CodePanel panel;
+    private GenerateSettings panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
@@ -52,7 +52,6 @@ public final class CodeOptionsPanelController extends OptionsPanelController {
 
     @Override
     public void cancel() {
-        // need not do anything special, if no changes have been persisted yet
     }
 
     @Override
@@ -67,7 +66,7 @@ public final class CodeOptionsPanelController extends OptionsPanelController {
 
     @Override
     public HelpCtx getHelpCtx() {
-        return null; // new HelpCtx("...ID") if you have a help set
+        return null;
     }
 
     @Override
@@ -85,9 +84,9 @@ public final class CodeOptionsPanelController extends OptionsPanelController {
         pcs.removePropertyChangeListener(l);
     }
 
-    private CodePanel getPanel() {
+    private GenerateSettings getPanel() {
         if (panel == null) {
-            panel = new CodePanel();
+            panel = new GenerateSettings();
         }
         return panel;
     }

@@ -18,18 +18,21 @@ package io.github.jeddict.orm.generator.compiler;
 import static io.github.jeddict.jcode.JPAConstants.CASCADE_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
 import static io.github.jeddict.jcode.JPAConstants.PERSISTENCE_PACKAGE_PREFIX;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefSnippet /*implements CollectionTypeHandler*/ {
 
@@ -55,19 +58,19 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
                 && getFetchType() == null
                 && getCascadeTypes().isEmpty() 
                 && (mapKeySnippet==null || mapKeySnippet.isEmpty())) {
-            return "@" + getType();
+            return AT + getType();
         }
 
         StringBuilder builder = new StringBuilder();
         if (mapKeySnippet != null && !mapKeySnippet.isEmpty()) {
             builder.append(mapKeySnippet.getSnippet())
-                    .append(ORMConverterUtil.NEW_LINE)
-                    .append(ORMConverterUtil.TAB);
+                    .append(NEW_LINE)
+                    .append(TAB);
         }
 
-        builder.append("@").append(getType()).append(OPEN_PARANTHESES);
+        builder.append(AT).append(getType()).append(OPEN_PARANTHESES);
 
-        if (mappedBy != null) {
+        if (isNotBlank(mappedBy)) {
             builder.append("mappedBy = ")
                     .append(QUOTE)
                     .append(mappedBy)
@@ -75,13 +78,13 @@ public abstract class MultiRelationAttributeSnippet extends AbstractRelationDefS
                     .append(COMMA);
         }
 
-        if (getFetchType() != null) {
+        if (isNotBlank(getFetchType())) {
             builder.append("fetch = ")
                     .append(getFetchType())
                     .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
+        if (isGenerateDefaultValue() && isNotBlank(getTargetEntity())) {
             builder.append("targetEntity = ")
                     .append(getTargetEntity())
                     .append(COMMA);

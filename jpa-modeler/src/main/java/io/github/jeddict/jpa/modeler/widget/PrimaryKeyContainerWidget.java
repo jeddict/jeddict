@@ -43,7 +43,7 @@ import io.github.jeddict.jpa.spec.extend.IPrimaryKeyAttributes;
 import io.github.jeddict.jpa.spec.extend.PrimaryKeyContainer;
 import io.github.jeddict.jpa.spec.extend.RelationAttribute;
 import io.github.jeddict.jpa.spec.extend.SingleRelationAttribute;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -314,7 +314,7 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
 
     public void onCompositePrimaryKeyTypeChange(CompositePrimaryKeyType compositePrimaryKeyType) {
         if ((compositePrimaryKeyType == CompositePrimaryKeyType.EMBEDDEDID
-                || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && CodePanel.isEmbeddedIdDefaultType()))) {
+                || (compositePrimaryKeyType == CompositePrimaryKeyType.DEFAULT && ClassDiagramSettings.isEmbeddedIdDefaultType()))) {
             if (embeddedIdAttributeWidget == null) {
                 addEmbeddedIdAttribute(getNextAttributeName(this.getName() + "EmbeddedId"));
             }
@@ -341,14 +341,14 @@ public abstract class PrimaryKeyContainerWidget<E extends IdentifiableClass> ext
                 } else if (primaryKeyContainerSpec.getCompositePrimaryKeyType() == CompositePrimaryKeyType.IDCLASS) {
                     return new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class");
                 } else {
-                    return new ComboBoxValue(CompositePrimaryKeyType.DEFAULT, String.format("Default (%s)", CodePanel.getDefaultCompositePrimaryKeyType()));
+                    return new ComboBoxValue(CompositePrimaryKeyType.DEFAULT, String.format("Default (%s)", ClassDiagramSettings.getDefaultCompositePrimaryKeyType()));
                 }
             }
 
             @Override
             public List<ComboBoxValue<CompositePrimaryKeyType>> getItemList() {
                 List<ComboBoxValue<CompositePrimaryKeyType>> values = new ArrayList<>();
-                values.add(new ComboBoxValue(CompositePrimaryKeyType.DEFAULT, String.format("Default (%s)", CodePanel.getDefaultCompositePrimaryKeyType())));
+                values.add(new ComboBoxValue(CompositePrimaryKeyType.DEFAULT, String.format("Default (%s)", ClassDiagramSettings.getDefaultCompositePrimaryKeyType())));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.IDCLASS, "Id Class"));
                 values.add(new ComboBoxValue(CompositePrimaryKeyType.EMBEDDEDID, "Embedded Id"));
                 return values;

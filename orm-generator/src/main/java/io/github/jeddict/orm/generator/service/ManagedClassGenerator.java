@@ -77,7 +77,7 @@ import io.github.jeddict.orm.generator.compiler.TemporalSnippet;
 import io.github.jeddict.orm.generator.compiler.UniqueConstraintSnippet;
 import io.github.jeddict.orm.generator.compiler.def.ManagedClassDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Collections.singletonList;
@@ -255,7 +255,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         if (parsedOneToOne.getFetch() != null) {
             oneToOne.setFetchType(parsedOneToOne.getFetch().value());
-        } else if (CodePanel.isLazyDefaultTypeForSingleAssociation()) {
+        } else if (ClassDiagramSettings.isLazyDefaultTypeForSingleAssociation()) {
             oneToOne.setFetchType(FetchType.LAZY.value());
         }
 
@@ -291,7 +291,7 @@ public abstract class ManagedClassGenerator<T extends ManagedClassDefSnippet> ex
 
         if (parsedManyToOne.getFetch() != null) {
             manyToOne.setFetchType(parsedManyToOne.getFetch().value());
-        } else if (CodePanel.isLazyDefaultTypeForSingleAssociation()) {
+        } else if (ClassDiagramSettings.isLazyDefaultTypeForSingleAssociation()) {
             manyToOne.setFetchType(FetchType.LAZY.value());
         }
 

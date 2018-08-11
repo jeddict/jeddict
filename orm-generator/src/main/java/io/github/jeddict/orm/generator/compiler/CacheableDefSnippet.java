@@ -15,28 +15,29 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
 import static io.github.jeddict.jcode.JPAConstants.CACHEABLE;
 import static io.github.jeddict.jcode.JPAConstants.CACHEABLE_FQN;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.Collection;
+import static java.util.Collections.singleton;
 
 public class CacheableDefSnippet implements Snippet {
 
-    private Boolean status;
+    private final Boolean status;
 
     public CacheableDefSnippet(Boolean status) {
         this.status = status;
     }
-    
-    
+
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(CACHEABLE);
-        if(status!=null && !status){
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(CACHEABLE);
+
+        if (status != null && !status) {
             builder.append("(false)");
-        } else if (CodePanel.isGenerateDefaultValue()) {
+        } else if (isGenerateDefaultValue()) {
             builder.append("(true)");
         }
         return builder.toString();
@@ -44,6 +45,6 @@ public class CacheableDefSnippet implements Snippet {
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singleton(CACHEABLE_FQN);
+        return singleton(CACHEABLE_FQN);
     }
 }

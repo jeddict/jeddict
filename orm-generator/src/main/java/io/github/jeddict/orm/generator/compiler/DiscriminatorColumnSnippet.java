@@ -15,15 +15,21 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.DISCRIMINATOR_TYPE_FQN;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.DiscriminatorType;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class DiscriminatorColumnSnippet implements Snippet {
 
@@ -66,43 +72,45 @@ public class DiscriminatorColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
 
-        stringBuilder.append("@").append(DISCRIMINATOR_COLUMN).append("(");
+        builder.append(DISCRIMINATOR_COLUMN)
+                .append(OPEN_PARANTHESES);
 
-        if (CodePanel.isGenerateDefaultValue() || length != 30) {
-            stringBuilder.append("length=");
-            stringBuilder.append(length);
-            stringBuilder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || length != 30) {
+            builder.append("length=")
+                    .append(length)
+                    .append(COMMA);
         }
 
-        if (name != null && !name.isEmpty()) {
-            stringBuilder.append("name=\"");
-            stringBuilder.append(name);
-            stringBuilder.append(ORMConverterUtil.QUOTE);
-            stringBuilder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(name)) {
+            builder.append("name=\"")
+                    .append(name)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
         if (discriminatorType != null) {
-            stringBuilder.append("discriminatorType=DiscriminatorType.");
-            stringBuilder.append(discriminatorType);
-            stringBuilder.append(ORMConverterUtil.COMMA);
+            builder.append("discriminatorType=DiscriminatorType.")
+                    .append(discriminatorType)
+                    .append(COMMA);
         }
 
-        if (columnDefinition != null && !columnDefinition.isEmpty()) {
-            stringBuilder.append("columnDefinition=\"");
-            stringBuilder.append(columnDefinition);
-            stringBuilder.append(ORMConverterUtil.QUOTE);
-            stringBuilder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(columnDefinition)) {
+            builder.append("columnDefinition=\"")
+                    .append(columnDefinition)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        return stringBuilder.substring(0, stringBuilder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
-
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     public boolean isDefault() {
-        if ((name == null || name.isEmpty()) && (columnDefinition == null || columnDefinition.isEmpty()) && (discriminatorType == null || discriminatorType == DiscriminatorType.STRING) && length == 30) {
+        if (isBlank(name)
+                && isBlank(columnDefinition)
+                && (discriminatorType == null || discriminatorType == DiscriminatorType.STRING)
+                && length == 30) {
             return true;
         }
         return false;
@@ -111,12 +119,10 @@ public class DiscriminatorColumnSnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-
         importSnippets.add(DISCRIMINATOR_COLUMN_FQN);
         if (discriminatorType != null) {
             importSnippets.add(DISCRIMINATOR_TYPE_FQN);
         }
-
         return importSnippets;
     }
 }

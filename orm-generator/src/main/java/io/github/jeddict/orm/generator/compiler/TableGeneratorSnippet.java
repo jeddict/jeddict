@@ -15,14 +15,24 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR;
 import static io.github.jeddict.jcode.JPAConstants.TABLE_GENERATOR_FQN;
-import io.github.jeddict.settings.code.CodePanel;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.Collection;
+import java.util.Collections;
+import static java.util.Collections.singleton;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class TableGeneratorSnippet implements Snippet {
 
@@ -124,99 +134,109 @@ public class TableGeneratorSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        if (name == null) {
+        if (isBlank(name)) {
             throw new InvalidDataException("Name is required");
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
 
-        builder.append("@").append(TABLE_GENERATOR).append("(name=\"");
-        builder.append(name);
-        builder.append(ORMConverterUtil.QUOTE);
-        builder.append(ORMConverterUtil.COMMA);
+        builder.append(TABLE_GENERATOR)
+                .append(OPEN_PARANTHESES);
 
-        if (pkColumnValue != null && !pkColumnValue.isEmpty()) {
-            builder.append("pkColumnValue=\"");
-            builder.append(pkColumnValue);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        builder.append("name=")
+                .append(QUOTE)
+                .append(name)
+                .append(QUOTE)
+                .append(COMMA);
+
+        if (isNotBlank(pkColumnValue)) {
+            builder.append("pkColumnValue=")
+                    .append(QUOTE)
+                    .append(pkColumnValue)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (schema != null && !schema.isEmpty()) {
-            builder.append("schema=\"");
-            builder.append(schema);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(schema)) {
+            builder.append("schema=")
+                    .append(QUOTE)
+                    .append(schema)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (table != null && !table.isEmpty()) {
-            builder.append("table=\"");
-            builder.append(table);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(table)) {
+            builder.append("table=")
+                    .append(QUOTE)
+                    .append(table)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (valueColumnName != null && !valueColumnName.isEmpty()) {
-            builder.append("valueColumnName=\"");
-            builder.append(valueColumnName);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(valueColumnName)) {
+            builder.append("valueColumnName=")
+                    .append(QUOTE)
+                    .append(valueColumnName)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (catalog != null && !catalog.isEmpty()) {
-            builder.append("catalog=\"");
-            builder.append(catalog);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(catalog)) {
+            builder.append("catalog=")
+                    .append(QUOTE)
+                    .append(catalog)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (pkColumnName != null && !pkColumnName.isEmpty()) {
-            builder.append("pkColumnName=\"");
-            builder.append(pkColumnName);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isNotBlank(pkColumnName)) {
+            builder.append("pkColumnName=")
+                    .append(QUOTE)
+                    .append(pkColumnName)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || allocationSize != 50) {
-            builder.append("allocationSize=");
-            builder.append(allocationSize);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || allocationSize != 50) {
+            builder.append("allocationSize=")
+                    .append(allocationSize)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || initialValue != 0) {//BUG : 1 -> 0 //resolved by gaurav gupta
-            builder.append("initialValue=");
-            builder.append(initialValue);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || initialValue != 0) {
+            builder.append("initialValue=")
+                    .append(initialValue)
+                    .append(COMMA);
         }
 
         if (!uniqueConstraints.isEmpty()) {
             builder.append("uniqueConstraints={");
 
             for (UniqueConstraintSnippet uniqueConstraint : uniqueConstraints) {
-                builder.append(uniqueConstraint.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
+                builder.append(uniqueConstraint.getSnippet())
+                        .append(COMMA);
             }
             builder.deleteCharAt(builder.length() - 1);
 
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(CLOSE_BRACES)
+                    .append(COMMA);
         }
-        
-                if (!indices.isEmpty()) {
-            builder.append("indexes={");
+
+        if (!indices.isEmpty()) {
+            builder.append("indexes=")
+                    .append(OPEN_BRACES);
 
             for (IndexSnippet snippet : indices) {
-                builder.append(snippet.getSnippet());
-                builder.append(ORMConverterUtil.COMMA);
+                builder.append(snippet.getSnippet())
+                        .append(COMMA);
             }
 
             builder.deleteCharAt(builder.length() - 1);
-            builder.append(ORMConverterUtil.CLOSE_BRACES);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(CLOSE_BRACES)
+                    .append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
 
     }
 
@@ -224,10 +244,10 @@ public class TableGeneratorSnippet implements Snippet {
     public Collection<String> getImportSnippets() throws InvalidDataException {
 
         if (uniqueConstraints.isEmpty() && indices.isEmpty()) {
-            return Collections.singletonList(TABLE_GENERATOR_FQN);
+            return singleton(TABLE_GENERATOR_FQN);
         }
 
-        List<String> importSnippets = new ArrayList<>();
+        Set<String> importSnippets = new HashSet<>();
         importSnippets.add(TABLE_GENERATOR_FQN);
         if (!uniqueConstraints.isEmpty()) {
             importSnippets.addAll(uniqueConstraints.get(0).getImportSnippets());
@@ -237,8 +257,8 @@ public class TableGeneratorSnippet implements Snippet {
         }
         return importSnippets;
     }
-    
-        /**
+
+    /**
      * @return the indices
      */
     public List<IndexSnippet> getIndices() {

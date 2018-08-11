@@ -18,7 +18,7 @@ package io.github.jeddict.jpa.spec.extend;
 import java.util.regex.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang.StringUtils;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 
 /**
  *
@@ -30,7 +30,7 @@ public abstract class QueryMapping extends DataMapping {
     protected String query;
 
     public boolean refractorQuery(String prevQuery, String newQuery) {
-        if (CodePanel.isRefractorQuery() && StringUtils.containsIgnoreCase(this.getQuery(), prevQuery)) {
+        if (ClassDiagramSettings.isRefractorQuery() && StringUtils.containsIgnoreCase(this.getQuery(), prevQuery)) {
             this.setQuery(this.getQuery().replaceAll("\\b(?i)" + Pattern.quote(prevQuery) + "\\b", newQuery));
             return true;
         } else {

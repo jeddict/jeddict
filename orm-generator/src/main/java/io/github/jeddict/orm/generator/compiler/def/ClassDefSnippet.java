@@ -33,7 +33,7 @@ import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.eliminateSamePkgImports;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.processedImportStatements;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.generate.GenerateSettings;
 import io.github.jeddict.snippet.ClassSnippetLocationType;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.IMPORT;
 import static io.github.jeddict.snippet.ClassSnippetLocationType.TYPE_JAVADOC;
@@ -455,7 +455,7 @@ public abstract class ClassDefSnippet implements WritableSnippet {
             Map velocityContext = new HashMap();
             velocityContext.put("classDef", this);
             velocityContext.put("n", NEW_LINE);
-            velocityContext.put("fluentAPI", CodePanel.isGenerateFluentAPI());
+            velocityContext.put("fluentAPI", GenerateSettings.isGenerateFluentAPI());
             return ORMConverterUtil.writeToTemplate(getTemplateName(), velocityContext);
         } catch (Exception e) {
             throw new InvalidDataException("Class name : " + classHelper.getFQClassName(), e);

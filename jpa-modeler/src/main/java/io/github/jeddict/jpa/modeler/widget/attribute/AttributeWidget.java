@@ -15,7 +15,6 @@
  */
 package io.github.jeddict.jpa.modeler.widget.attribute;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
 import io.github.jeddict.jaxb.spec.JaxbVariableTypeHandler;
 import io.github.jeddict.jcode.util.JavaSourceHelper;
 import io.github.jeddict.jpa.modeler.initializer.JPAModelerScene;
@@ -42,8 +41,8 @@ import io.github.jeddict.jpa.spec.extend.Attribute;
 import io.github.jeddict.jpa.spec.extend.CollectionTypeHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyHandler;
 import io.github.jeddict.jpa.spec.extend.MapKeyType;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import io.github.jeddict.settings.view.AttributeViewAs;
-import io.github.jeddict.settings.view.ViewPanel;
 import java.awt.Cursor;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +50,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.lang.model.SourceVersion;
 import javax.swing.JMenuItem;
 import static javax.swing.JOptionPane.showMessageDialog;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import org.atteo.evo.inflector.English;
 import org.netbeans.modeler.core.ModelerFile;
 import org.netbeans.modeler.specification.model.document.property.ElementPropertySet;
@@ -78,7 +78,7 @@ public abstract class AttributeWidget<E extends Attribute> extends FlowPinWidget
     }
     
     public void visualizeDataType() {
-        AttributeViewAs viewAs = ViewPanel.getDataType();
+        AttributeViewAs viewAs = ClassDiagramSettings.getDataType();
         String dataType = this.getBaseElementSpec().getDataTypeLabel();
         if (null != viewAs) switch (viewAs) {
             case SIMPLE_CLASS_NAME:

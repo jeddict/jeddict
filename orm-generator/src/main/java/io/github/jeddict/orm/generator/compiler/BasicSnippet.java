@@ -15,16 +15,19 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.BASIC;
 import static io.github.jeddict.jcode.JPAConstants.BASIC_FQN;
 import static io.github.jeddict.jcode.JPAConstants.FETCH_TYPE_FQN;
-import io.github.jeddict.settings.code.CodePanel;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class BasicSnippet implements Snippet {
 
@@ -52,42 +55,40 @@ public class BasicSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        
-        StringBuilder builder = new StringBuilder();
-       builder.append("@").append(BASIC);
-        if (!CodePanel.isGenerateDefaultValue()) {
-            if (optional == true && getFetchType() == null){
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(BASIC);
+
+        if (!isGenerateDefaultValue()) {
+            if (optional == true && isBlank(getFetchType())) {
                 return builder.toString();
             }
         }
         
-        builder.append("(");
+        builder.append(OPEN_PARANTHESES);
 
-        if (CodePanel.isGenerateDefaultValue() || optional == false) {
-            builder.append("optional=").append(optional).append(COMMA);
+        if (isGenerateDefaultValue() || optional == false) {
+            builder.append("optional=")
+                    .append(optional)
+                    .append(COMMA);
         }
         
-        if (getFetchType() != null) {
-            builder.append("fetch = ");
-            builder.append(getFetchType());
-            builder.append(COMMA);
+        if (isNotBlank(getFetchType())) {
+            builder.append("fetch = ")
+                    .append(getFetchType())
+                    .append(COMMA);
         }
 
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-
-        if (fetchType == null) {
-            return Collections.singletonList(BASIC_FQN);
-        }
-
         List<String> importSnippets = new ArrayList<>();
-
         importSnippets.add(BASIC_FQN);
-        importSnippets.add(FETCH_TYPE_FQN);
-
+        if (isNotBlank(getFetchType())) {
+            importSnippets.add(FETCH_TYPE_FQN);
+        }
         return importSnippets;
     }
+
 }

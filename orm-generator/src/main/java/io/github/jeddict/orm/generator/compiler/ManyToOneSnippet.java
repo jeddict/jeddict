@@ -30,10 +30,12 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
 
@@ -52,32 +54,31 @@ public class ManyToOneSnippet extends SingleRelationAttributeSnippet {
         }
         builder.append(AT).append(MANY_TO_ONE);
 
-        if (!CodePanel.isGenerateDefaultValue()) {
-            if (optional == true
-                    && getFetchType() == null
-                    && getCascadeTypes().isEmpty()) {
+        if (!isGenerateDefaultValue()
+                && optional == true
+                && isBlank(getFetchType())
+                && getCascadeTypes().isEmpty()) {
                 return builder.toString();
-            }
         }
 
         builder.append(OPEN_PARANTHESES);
 
-        if (getFetchType() != null) {
-            builder.append("fetch = ");
-            builder.append(getFetchType());
-            builder.append(COMMA);
+        if (isNotBlank(getFetchType())) {
+            builder.append("fetch = ")
+                    .append(getFetchType())
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || optional == false) {
+        if (isGenerateDefaultValue() || optional == false) {
             builder.append("optional = ")
                     .append(optional)
                     .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
-            builder.append("targetEntity = ");
-            builder.append(getTargetEntity());
-            builder.append(COMMA);
+        if (isGenerateDefaultValue() && isNotBlank(getTargetEntity())) {
+            builder.append("targetEntity = ")
+                    .append(getTargetEntity())
+                    .append(COMMA);
         }
 
         if (!getCascadeTypes().isEmpty()) {

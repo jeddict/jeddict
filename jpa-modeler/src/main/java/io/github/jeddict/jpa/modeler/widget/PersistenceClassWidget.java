@@ -48,7 +48,7 @@ import static io.github.jeddict.jpa.modeler.properties.PropertiesHandler.getToSt
 import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
 import io.github.jeddict.jpa.modeler.rules.entity.ClassValidator;
 import io.github.jeddict.jpa.modeler.rules.entity.SQLKeywords;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import io.github.jeddict.jpa.spec.Basic;
 import io.github.jeddict.jpa.spec.ElementCollection;
 import io.github.jeddict.jpa.spec.Embedded;
@@ -490,7 +490,7 @@ public abstract class PersistenceClassWidget<E extends ManagedClass<? extends IP
     
     private void removeNamedQuery(Attribute attribute) {
         ManagedClass managedClass = this.getBaseElementSpec();
-        if (CodePanel.isDeleteQuery() && managedClass instanceof Entity) {
+        if (ClassDiagramSettings.isDeleteQuery() && managedClass instanceof Entity) {
             IdentifiableClass identifiableClass = (IdentifiableClass) managedClass;
             Optional<NamedQuery> value = identifiableClass.findNamedQuery(attribute);
             if(value.isPresent()){

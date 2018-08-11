@@ -24,11 +24,11 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANT
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ForeignKeySnippet implements Snippet {
 
@@ -39,30 +39,37 @@ public class ForeignKeySnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(AT);
 
-        builder.append(AT).append(FOREIGN_KEY).append(OPEN_PARANTHESES);
-        if (StringUtils.isNotBlank(name)) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append(QUOTE);
-            builder.append(COMMA);
+        builder.append(FOREIGN_KEY)
+                .append(OPEN_PARANTHESES);
+
+        if (isNotBlank(name)) {
+            builder.append("name=\"")
+                    .append(name)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
 
-        if (StringUtils.isNotBlank(constraintMode)) {
-            builder.append("value=").append(CONSTRAINT_MODE).append(".");
-            builder.append(constraintMode);
-            builder.append(COMMA);
-        } else if (CodePanel.isGenerateDefaultValue()) {
-            builder.append("value=").append(CONSTRAINT_MODE).append(".");
-            builder.append("PROVIDER_DEFAULT");
-            builder.append(COMMA);
+        if (isNotBlank(constraintMode)) {
+            builder.append("value=")
+                    .append(CONSTRAINT_MODE)
+                    .append(".")
+                    .append(constraintMode)
+                    .append(COMMA);
+        } else if (isGenerateDefaultValue()) {
+            builder.append("value=")
+                    .append(CONSTRAINT_MODE)
+                    .append(".")
+                    .append("PROVIDER_DEFAULT")
+                    .append(COMMA);
         }
-        if (StringUtils.isNotBlank(foreignKeyDefinition)) {
-            builder.append("foreignKeyDefinition=\"");
-            builder.append(foreignKeyDefinition);
-            builder.append(QUOTE);
-            builder.append(COMMA);
+
+        if (isNotBlank(foreignKeyDefinition)) {
+            builder.append("foreignKeyDefinition=\"")
+                    .append(foreignKeyDefinition)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
@@ -70,7 +77,7 @@ public class ForeignKeySnippet implements Snippet {
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
         List<String> importSnippets = new ArrayList<>();
-        if (StringUtils.isNotBlank(constraintMode) || CodePanel.isGenerateDefaultValue()) {
+        if (isNotBlank(constraintMode) || isGenerateDefaultValue()) {
             importSnippets.add(CONSTRAINT_MODE_FQN);
         }
         importSnippets.add(FOREIGN_KEY_FQN);

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.settings.view;
+package io.github.jeddict.settings.diagram;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -22,27 +22,28 @@ import javax.swing.SwingUtilities;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle.Messages;
 
 @OptionsPanelController.SubRegistration(
         location = "Jeddict",
-        displayName = "#DISPLAYNAME_VIEW",
-        keywords = "#KEYWORDS_VIEW",
-        keywordsCategory = "Jeddict/View"
+        displayName = "#DISPLAYNAME_CLASS_MODELER",
+        keywords = "#KEYWORDS_CLASS_MODELER",
+        keywordsCategory = "Jeddict/ClassDiagram"
 )
-@org.openide.util.NbBundle.Messages({"DISPLAYNAME_VIEW=View", "KEYWORDS_VIEW=Jeddict View"})
-public final class ViewOptionsPanelController extends OptionsPanelController {
+@Messages({"DISPLAYNAME_CLASS_MODELER=Class Diagram", "KEYWORDS_CLASS_MODELER=Jeddict Class Diagram"})
+public final class ClassDiagramOptionsPanelController extends OptionsPanelController {
 
-    private ViewPanel panel;
+    private ClassDiagramSettings panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
-        @Override
+    @Override
     public void update() {
         getPanel().load();
         changed = false;
     }
 
-        @Override
+    @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
             getPanel().store();
@@ -50,44 +51,43 @@ public final class ViewOptionsPanelController extends OptionsPanelController {
         });
     }
 
-        @Override
+    @Override
     public void cancel() {
-        // need not do anything special, if no changes have been persisted yet
     }
 
-        @Override
+    @Override
     public boolean isValid() {
         return getPanel().valid();
     }
 
-        @Override
+    @Override
     public boolean isChanged() {
         return changed;
     }
 
-        @Override
+    @Override
     public HelpCtx getHelpCtx() {
-        return null; 
+        return null;
     }
 
-        @Override
+    @Override
     public JComponent getComponent(Lookup masterLookup) {
         return getPanel();
     }
 
-        @Override
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener l) {
         pcs.addPropertyChangeListener(l);
     }
 
-        @Override
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener l) {
         pcs.removePropertyChangeListener(l);
     }
 
-    private ViewPanel getPanel() {
+    private ClassDiagramSettings getPanel() {
         if (panel == null) {
-            panel = new ViewPanel();
+            panel = new ClassDiagramSettings();
         }
         return panel;
     }

@@ -13,16 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.jeddict.settings.code;
+package io.github.jeddict.settings.diagram;
 
+import io.github.jeddict.settings.view.AttributeViewAs;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import org.netbeans.modeler.properties.spec.ComboBoxValue;
 import org.openide.util.NbPreferences;
 
-public final class CodePanel extends javax.swing.JPanel {
+public final class ClassDiagramSettings extends javax.swing.JPanel {
 
-
-    CodePanel() {
+    ClassDiagramSettings() {
         initComponents();
     }
 
@@ -37,22 +39,9 @@ public final class CodePanel extends javax.swing.JPanel {
         rootLayeredPane = new javax.swing.JLayeredPane();
         refractorNamedQueryComp = new javax.swing.JCheckBox();
         deleteNamedQueryComp = new javax.swing.JCheckBox();
-        javaseWrapperPanel1 = new javax.swing.JLayeredPane();
-        generateFluentAPIComp = new javax.swing.JCheckBox();
-        fluentAPIPrefixWrapperPanel = new javax.swing.JLayeredPane();
-        fluentAPIPrefix_Label = new javax.swing.JLabel();
-        fluentAPIPrefixComp = new javax.swing.JTextField();
-        generateDefaultValueComp = new javax.swing.JCheckBox();
         javaseWrapperPanel = new javax.swing.JLayeredPane();
         javaseSupportComp = new javax.swing.JCheckBox();
         javaseSupportLabel = new javax.swing.JLabel();
-        javaDocPanel = new javax.swing.JLayeredPane();
-        javaDoc_Label = new javax.swing.JLabel();
-        javadocSetting_LayeredPane = new javax.swing.JLayeredPane();
-        propertyJavaDocComp = new javax.swing.JCheckBox();
-        setterJavaDocComp = new javax.swing.JCheckBox();
-        getterJavaDocComp = new javax.swing.JCheckBox();
-        fluentAPIJavaDocComp = new javax.swing.JCheckBox();
         optionalReturnTypePanel = new javax.swing.JLayeredPane();
         optionalReturnTypeStatusLabel = new javax.swing.JLabel();
         optionalReturnTypeStatusComp = new javax.swing.JComboBox<>();
@@ -62,40 +51,22 @@ public final class CodePanel extends javax.swing.JPanel {
         defaultSingleAssociationFetchTypeWrapperPanel = new javax.swing.JLayeredPane();
         defaultSingleAssociationFetchTypeLabel = new javax.swing.JLabel();
         defaultSingleAssociationFetchTypeComp = new javax.swing.JComboBox<>();
+        dataTypeLayeredPane = new javax.swing.JLayeredPane();
+        dataTypeLabel = new javax.swing.JLabel();
+        dataTypeComboBox = new javax.swing.JComboBox();
 
         rootLayeredPane.setLayout(new java.awt.GridLayout(9, 1, 0, 2));
 
-        org.openide.awt.Mnemonics.setLocalizedText(refractorNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.refractorNamedQueryComp.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(refractorNamedQueryComp, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.refractorNamedQueryComp.text")); // NOI18N
         rootLayeredPane.add(refractorNamedQueryComp);
 
-        org.openide.awt.Mnemonics.setLocalizedText(deleteNamedQueryComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.deleteNamedQueryComp.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(deleteNamedQueryComp, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.deleteNamedQueryComp.text")); // NOI18N
         rootLayeredPane.add(deleteNamedQueryComp);
 
-        javaseWrapperPanel1.setLayout(new java.awt.BorderLayout());
-
-        org.openide.awt.Mnemonics.setLocalizedText(generateFluentAPIComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.generateFluentAPIComp.text")); // NOI18N
-        javaseWrapperPanel1.add(generateFluentAPIComp, java.awt.BorderLayout.WEST);
-
-        fluentAPIPrefixWrapperPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        org.openide.awt.Mnemonics.setLocalizedText(fluentAPIPrefix_Label, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.fluentAPIPrefix_Label.text")); // NOI18N
-        fluentAPIPrefixWrapperPanel.add(fluentAPIPrefix_Label);
-
-        fluentAPIPrefixComp.setText(org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.fluentAPIPrefixComp.text")); // NOI18N
-        fluentAPIPrefixComp.setPreferredSize(new java.awt.Dimension(120, 20));
-        fluentAPIPrefixWrapperPanel.add(fluentAPIPrefixComp);
-
-        javaseWrapperPanel1.add(fluentAPIPrefixWrapperPanel, java.awt.BorderLayout.CENTER);
-
-        rootLayeredPane.add(javaseWrapperPanel1);
-
-        org.openide.awt.Mnemonics.setLocalizedText(generateDefaultValueComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.generateDefaultValueComp.text")); // NOI18N
-        rootLayeredPane.add(generateDefaultValueComp);
-
-        org.openide.awt.Mnemonics.setLocalizedText(javaseSupportComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.javaseSupportComp.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(javaseSupportComp, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.javaseSupportComp.text")); // NOI18N
 
         javaseSupportLabel.setForeground(new java.awt.Color(153, 153, 153));
-        org.openide.awt.Mnemonics.setLocalizedText(javaseSupportLabel, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.javaseSupportLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(javaseSupportLabel, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.javaseSupportLabel.text")); // NOI18N
 
         javaseWrapperPanel.setLayer(javaseSupportComp, javax.swing.JLayeredPane.DEFAULT_LAYER);
         javaseWrapperPanel.setLayer(javaseSupportLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -105,46 +76,20 @@ public final class CodePanel extends javax.swing.JPanel {
         javaseWrapperPanelLayout.setHorizontalGroup(
             javaseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javaseWrapperPanelLayout.createSequentialGroup()
-                .addComponent(javaseSupportComp)
-                .addGap(37, 37, 37)
+                .addComponent(javaseSupportComp, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
                 .addComponent(javaseSupportLabel)
-                .addGap(0, 121, Short.MAX_VALUE))
+                .addGap(0, 288, Short.MAX_VALUE))
         );
         javaseWrapperPanelLayout.setVerticalGroup(
             javaseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javaseWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(javaseSupportComp)
-                .addComponent(javaseSupportLabel))
+            .addComponent(javaseSupportComp, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+            .addComponent(javaseSupportLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         rootLayeredPane.add(javaseWrapperPanel);
 
-        javaDocPanel.setLayout(new java.awt.BorderLayout());
-
-        org.openide.awt.Mnemonics.setLocalizedText(javaDoc_Label, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.javaDoc_Label.text")); // NOI18N
-        javaDocPanel.add(javaDoc_Label, java.awt.BorderLayout.WEST);
-
-        javadocSetting_LayeredPane.setPreferredSize(new java.awt.Dimension(253, 17));
-        javadocSetting_LayeredPane.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 18, 0));
-
-        propertyJavaDocComp.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(propertyJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.propertyJavaDocComp.text")); // NOI18N
-        javadocSetting_LayeredPane.add(propertyJavaDocComp);
-
-        org.openide.awt.Mnemonics.setLocalizedText(setterJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.setterJavaDocComp.text")); // NOI18N
-        javadocSetting_LayeredPane.add(setterJavaDocComp);
-
-        org.openide.awt.Mnemonics.setLocalizedText(getterJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.getterJavaDocComp.text")); // NOI18N
-        javadocSetting_LayeredPane.add(getterJavaDocComp);
-
-        org.openide.awt.Mnemonics.setLocalizedText(fluentAPIJavaDocComp, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.fluentAPIJavaDocComp.text")); // NOI18N
-        javadocSetting_LayeredPane.add(fluentAPIJavaDocComp);
-
-        javaDocPanel.add(javadocSetting_LayeredPane, java.awt.BorderLayout.CENTER);
-
-        rootLayeredPane.add(javaDocPanel);
-
-        org.openide.awt.Mnemonics.setLocalizedText(optionalReturnTypeStatusLabel, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.optionalReturnTypeStatusLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(optionalReturnTypeStatusLabel, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.optionalReturnTypeStatusLabel.text")); // NOI18N
 
         optionalReturnTypeStatusComp.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Disable", "Enable" }));
 
@@ -157,23 +102,23 @@ public final class CodePanel extends javax.swing.JPanel {
             optionalReturnTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionalReturnTypePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optionalReturnTypeStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(83, 83, 83)
-                .addComponent(optionalReturnTypeStatusComp, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(121, Short.MAX_VALUE))
+                .addComponent(optionalReturnTypeStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(optionalReturnTypeStatusComp, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(88, Short.MAX_VALUE))
         );
         optionalReturnTypePanelLayout.setVerticalGroup(
             optionalReturnTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionalReturnTypePanelLayout.createSequentialGroup()
+                .addGap(3, 3, 3)
                 .addGroup(optionalReturnTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(optionalReturnTypeStatusLabel)
-                    .addComponent(optionalReturnTypeStatusComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(optionalReturnTypeStatusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(optionalReturnTypeStatusComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         rootLayeredPane.add(optionalReturnTypePanel);
 
-        org.openide.awt.Mnemonics.setLocalizedText(compositePrimaryKeyTypeLabel, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.compositePrimaryKeyTypeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(compositePrimaryKeyTypeLabel, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.compositePrimaryKeyTypeLabel.text")); // NOI18N
 
         defaultCompositePrimaryKeyTypeComp.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "IdClass", "EmbeddedId" }));
 
@@ -186,23 +131,23 @@ public final class CodePanel extends javax.swing.JPanel {
             compositePKWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(compositePKWrapperPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(compositePrimaryKeyTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(defaultCompositePrimaryKeyTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(85, 85, 85))
+                .addComponent(compositePrimaryKeyTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(defaultCompositePrimaryKeyTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(88, Short.MAX_VALUE))
         );
         compositePKWrapperPanelLayout.setVerticalGroup(
             compositePKWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(compositePKWrapperPanelLayout.createSequentialGroup()
+                .addGap(3, 3, 3)
                 .addGroup(compositePKWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(compositePrimaryKeyTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(defaultCompositePrimaryKeyTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(compositePrimaryKeyTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(defaultCompositePrimaryKeyTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         rootLayeredPane.add(compositePKWrapperPanel);
 
-        org.openide.awt.Mnemonics.setLocalizedText(defaultSingleAssociationFetchTypeLabel, org.openide.util.NbBundle.getMessage(CodePanel.class, "CodePanel.defaultSingleAssociationFetchTypeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(defaultSingleAssociationFetchTypeLabel, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.defaultSingleAssociationFetchTypeLabel.text")); // NOI18N
 
         defaultSingleAssociationFetchTypeComp.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "EAGER", "LAZY" }));
 
@@ -215,21 +160,54 @@ public final class CodePanel extends javax.swing.JPanel {
             defaultSingleAssociationFetchTypeWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(defaultSingleAssociationFetchTypeWrapperPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(defaultSingleAssociationFetchTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(defaultSingleAssociationFetchTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(125, 125, 125))
+                .addComponent(defaultSingleAssociationFetchTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(defaultSingleAssociationFetchTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(88, Short.MAX_VALUE))
         );
         defaultSingleAssociationFetchTypeWrapperPanelLayout.setVerticalGroup(
             defaultSingleAssociationFetchTypeWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(defaultSingleAssociationFetchTypeWrapperPanelLayout.createSequentialGroup()
+                .addGap(3, 3, 3)
                 .addGroup(defaultSingleAssociationFetchTypeWrapperPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(defaultSingleAssociationFetchTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(defaultSingleAssociationFetchTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(defaultSingleAssociationFetchTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(defaultSingleAssociationFetchTypeComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         rootLayeredPane.add(defaultSingleAssociationFetchTypeWrapperPanel);
+
+        org.openide.awt.Mnemonics.setLocalizedText(dataTypeLabel, org.openide.util.NbBundle.getMessage(ClassDiagramSettings.class, "ClassDiagramSettings.dataTypeLabel.text")); // NOI18N
+        dataTypeLabel.setMinimumSize(new java.awt.Dimension(90, 17));
+        dataTypeLabel.setPreferredSize(new java.awt.Dimension(100, 17));
+
+        List<ComboBoxValue> values = new ArrayList<>();
+        for (AttributeViewAs value : AttributeViewAs.values()) {
+            values.add(new ComboBoxValue(value, value.getDescription()));
+        }
+        dataTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(values.toArray()));
+
+        dataTypeLayeredPane.setLayer(dataTypeLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        dataTypeLayeredPane.setLayer(dataTypeComboBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout dataTypeLayeredPaneLayout = new javax.swing.GroupLayout(dataTypeLayeredPane);
+        dataTypeLayeredPane.setLayout(dataTypeLayeredPaneLayout);
+        dataTypeLayeredPaneLayout.setHorizontalGroup(
+            dataTypeLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dataTypeLayeredPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(dataTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(dataTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(88, Short.MAX_VALUE))
+        );
+        dataTypeLayeredPaneLayout.setVerticalGroup(
+            dataTypeLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dataTypeLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(dataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                .addComponent(dataTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        rootLayeredPane.add(dataTypeLayeredPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -237,14 +215,14 @@ public final class CodePanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(rootLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(rootLayeredPane)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(rootLayeredPane)
+                .addComponent(rootLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -252,117 +230,47 @@ public final class CodePanel extends javax.swing.JPanel {
     void load() {
         refractorNamedQueryComp.setSelected(isRefractorQuery());
         deleteNamedQueryComp.setSelected(isDeleteQuery());
-        propertyJavaDocComp.setSelected(isPropertyJavaDoc());
-        getterJavaDocComp.setSelected(isGetterJavaDoc());
-        setterJavaDocComp.setSelected(isSetterJavaDoc());
-        fluentAPIJavaDocComp.setSelected(isFluentAPIJavaDoc());
-        generateFluentAPIComp.setSelected(isGenerateFluentAPI());
-        fluentAPIPrefixComp.setText(getFluentAPIPrefix());
-        generateDefaultValueComp.setSelected(isGenerateDefaultValue());
         javaseSupportComp.setSelected(isJavaSESupportEnable());
         optionalReturnTypeStatusComp.setSelectedItem(isOptionalReturnType() ? "Enable" : "Disable");
         defaultCompositePrimaryKeyTypeComp.setSelectedItem(getDefaultCompositePrimaryKeyType());
-       defaultSingleAssociationFetchTypeComp.setSelectedItem(getDefaultSingleAssociationFetchType());
+        defaultSingleAssociationFetchTypeComp.setSelectedItem(getDefaultSingleAssociationFetchType());
+        dataTypeComboBox.setSelectedItem(getDataType());
     }
 
     void store() {
         pref.putBoolean("refractorNamedQuery", refractorNamedQueryComp.isSelected());
         pref.putBoolean("deleteNamedQuery", deleteNamedQueryComp.isSelected());
-        pref.putBoolean("propertyJavaDoc", propertyJavaDocComp.isSelected());
-        pref.putBoolean("getterJavaDoc", getterJavaDocComp.isSelected());
-        pref.putBoolean("setterJavaDoc", setterJavaDocComp.isSelected());
-        pref.putBoolean("fluentAPIJavaDoc", fluentAPIJavaDocComp.isSelected());
-        pref.putBoolean("generateFluentAPI", generateFluentAPIComp.isSelected());
-        pref.put("fluentAPIPrefix", fluentAPIPrefixComp.getText());
-        pref.putBoolean("generateDefaultValue", generateDefaultValueComp.isSelected());
         pref.putBoolean("javaSESupportEnable", javaseSupportComp.isSelected());
         pref.putBoolean("optionalReturnType", "Enable".equals(optionalReturnTypeStatusComp.getSelectedItem()));
         pref.put("defaultCompositePrimaryKeyType", (String) defaultCompositePrimaryKeyTypeComp.getSelectedItem());
         pref.put("defaultSingleAssociationFetchType", (String) defaultSingleAssociationFetchTypeComp.getSelectedItem());
+        pref.put("dataType", ((AttributeViewAs) ((ComboBoxValue) dataTypeComboBox.getSelectedItem()).getValue()).name());
+//      pref.put("dbArtifactCase", ((DBArtifactCase)((ComboBoxValue)dbArtifactCaseComboBox.getSelectedItem()).getValue()).name());
+
         deleteNamedQuery = null;
         refractorNamedQuery = null;
-        propertyJavaDoc = null;
-        getterJavaDoc = null;
-        setterJavaDoc = null;
-        fluentAPIJavaDoc = null;
-        generateFluentAPI = null;
-        fluentAPIPrefix = null;
-        generateDefaultValue = null;
         javaSESupportEnable = null;
         optionalReturnTypeStatus = null;
         defaultCompositePrimaryKeyType = null;
         defaultSingleAssociationFetchType = null;
+        attributeViewAs = null;
+
     }
 
     private static Boolean deleteNamedQuery;
     private static Boolean refractorNamedQuery;
-    private static Boolean propertyJavaDoc;
-    private static Boolean getterJavaDoc;
-    private static Boolean setterJavaDoc;
-    private static Boolean fluentAPIJavaDoc;
-    private static Boolean generateFluentAPI;
-    private static String fluentAPIPrefix;
-    private static Boolean generateDefaultValue;
     private static Boolean javaSESupportEnable;
     private static Boolean optionalReturnTypeStatus;
     private static String defaultCompositePrimaryKeyType;
     private static String defaultSingleAssociationFetchType;
+    private static AttributeViewAs attributeViewAs;
+//    private static DBArtifactCase dbArtifactCase;
 
     public static boolean isRefractorQuery() {
         if (refractorNamedQuery == null) {
             refractorNamedQuery = pref.getBoolean("refractorNamedQuery", Boolean.TRUE);
         }
         return refractorNamedQuery;
-    }
-
-    public static boolean isGenerateFluentAPI() {
-        if (generateFluentAPI == null) {
-            generateFluentAPI = pref.getBoolean("generateFluentAPI", Boolean.FALSE);
-        }
-        return generateFluentAPI;
-    }
-    
-    
-    public static boolean isPropertyJavaDoc() {
-        if (propertyJavaDoc == null) {
-            propertyJavaDoc = pref.getBoolean("propertyJavaDoc", Boolean.TRUE);
-        }
-        return propertyJavaDoc;
-    }
-
-    public static boolean isGetterJavaDoc() {
-        if (getterJavaDoc == null) {
-            getterJavaDoc = pref.getBoolean("getterJavaDoc", Boolean.FALSE);
-        }
-        return getterJavaDoc;
-    }
-
-    public static boolean isSetterJavaDoc() {
-        if (setterJavaDoc == null) {
-            setterJavaDoc = pref.getBoolean("setterJavaDoc", Boolean.FALSE);
-        }
-        return setterJavaDoc;
-    }
-    
-    public static boolean isFluentAPIJavaDoc() {
-        if (fluentAPIJavaDoc == null) {
-            fluentAPIJavaDoc = pref.getBoolean("fluentAPIJavaDoc", Boolean.FALSE);
-        }
-        return fluentAPIJavaDoc;
-    }
-    
-    public static String getFluentAPIPrefix() {
-        if (fluentAPIPrefix == null) {
-            fluentAPIPrefix = pref.get("fluentAPIPrefix", EMPTY);
-        }
-        return fluentAPIPrefix;
-    }
-
-    public static boolean isGenerateDefaultValue() {
-        if (generateDefaultValue == null) {
-            generateDefaultValue = pref.getBoolean("generateDefaultValue", Boolean.FALSE);
-        }
-        return generateDefaultValue;
     }
 
     public static boolean isJavaSESupportEnable() {
@@ -396,7 +304,7 @@ public final class CodePanel extends javax.swing.JPanel {
     public static boolean isEmbeddedIdDefaultType() {
         return "EmbeddedId".equals(getDefaultCompositePrimaryKeyType());
     }
-    
+
     public static String getDefaultSingleAssociationFetchType() {
         if (defaultSingleAssociationFetchType == null) {
             defaultSingleAssociationFetchType = pref.get("defaultSingleAssociationFetchType", "EAGER");
@@ -408,39 +316,42 @@ public final class CodePanel extends javax.swing.JPanel {
         return "LAZY".equals(getDefaultSingleAssociationFetchType());
     }
 
+    public static AttributeViewAs getDataType() {
+        if (attributeViewAs == null) {
+            attributeViewAs = AttributeViewAs.valueOf(pref.get("dataType", AttributeViewAs.NONE.name()));
+        }
+        return attributeViewAs;
+    }
+    
+//    public static DBArtifactCase getDBArtifactCase() {
+//        if (dbArtifactCase == null) {
+//            dbArtifactCase = DBArtifactCase.valueOf(NbPreferences.forModule(ViewPanel.class).get("dbArtifactCase", DBArtifactCase.UPPER_CASE.name()));
+//        }
+//        return dbArtifactCase;
+//    }
     public boolean valid() {
         return true;
     }
 
-    private static final Preferences pref = NbPreferences.forModule(CodePanel.class);
+    private static final Preferences pref = NbPreferences.forModule(ClassDiagramSettings.class);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane compositePKWrapperPanel;
     private javax.swing.JLabel compositePrimaryKeyTypeLabel;
+    private javax.swing.JComboBox dataTypeComboBox;
+    private javax.swing.JLabel dataTypeLabel;
+    private javax.swing.JLayeredPane dataTypeLayeredPane;
     private javax.swing.JComboBox<String> defaultCompositePrimaryKeyTypeComp;
     private javax.swing.JComboBox<String> defaultSingleAssociationFetchTypeComp;
     private javax.swing.JLabel defaultSingleAssociationFetchTypeLabel;
     private javax.swing.JLayeredPane defaultSingleAssociationFetchTypeWrapperPanel;
     private javax.swing.JCheckBox deleteNamedQueryComp;
-    private javax.swing.JCheckBox fluentAPIJavaDocComp;
-    private javax.swing.JTextField fluentAPIPrefixComp;
-    private javax.swing.JLayeredPane fluentAPIPrefixWrapperPanel;
-    private javax.swing.JLabel fluentAPIPrefix_Label;
-    private javax.swing.JCheckBox generateDefaultValueComp;
-    private javax.swing.JCheckBox generateFluentAPIComp;
-    private javax.swing.JCheckBox getterJavaDocComp;
-    private javax.swing.JLayeredPane javaDocPanel;
-    private javax.swing.JLabel javaDoc_Label;
-    private javax.swing.JLayeredPane javadocSetting_LayeredPane;
     private javax.swing.JCheckBox javaseSupportComp;
     private javax.swing.JLabel javaseSupportLabel;
     private javax.swing.JLayeredPane javaseWrapperPanel;
-    private javax.swing.JLayeredPane javaseWrapperPanel1;
     private javax.swing.JLayeredPane optionalReturnTypePanel;
     private javax.swing.JComboBox<String> optionalReturnTypeStatusComp;
     private javax.swing.JLabel optionalReturnTypeStatusLabel;
-    private javax.swing.JCheckBox propertyJavaDocComp;
     private javax.swing.JCheckBox refractorNamedQueryComp;
     private javax.swing.JLayeredPane rootLayeredPane;
-    private javax.swing.JCheckBox setterJavaDocComp;
     // End of variables declaration//GEN-END:variables
 }

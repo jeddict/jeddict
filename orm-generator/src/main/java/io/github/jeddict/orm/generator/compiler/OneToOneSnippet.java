@@ -23,6 +23,7 @@ import static io.github.jeddict.jcode.JPAConstants.MAPS_ID;
 import static io.github.jeddict.jcode.JPAConstants.MAPS_ID_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE;
 import static io.github.jeddict.jcode.JPAConstants.ONE_TO_ONE_FQN;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
@@ -30,11 +31,12 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
@@ -52,8 +54,9 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
     @Override
     public String getSnippet() throws InvalidDataException {
         StringBuilder builder = new StringBuilder();
+
         if (isPrimaryKey()) {
-            builder.append("@");
+            builder.append(AT);
             if (mapsId == null) {
                 builder.append(ID);
             } else if (mapsId.trim().isEmpty()) {
@@ -62,8 +65,9 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
                 builder.append(MAPS_ID).append("(\"").append(mapsId).append("\")");
             }
         }
-        builder.append("@").append(ONE_TO_ONE);
-        if (!CodePanel.isGenerateDefaultValue()) {
+
+        builder.append(AT).append(ONE_TO_ONE);
+        if (!isGenerateDefaultValue()) {
             if (mappedBy == null
                     && optional == true
                     && getFetchType() == null
@@ -74,7 +78,7 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
 
         builder.append(OPEN_PARANTHESES);
 
-        if (getMappedBy() != null) {
+        if (isNotBlank(getMappedBy())) {
             builder.append("mappedBy = ")
                     .append(QUOTE)
                     .append(getMappedBy())
@@ -82,25 +86,25 @@ public class OneToOneSnippet extends SingleRelationAttributeSnippet {
                     .append(COMMA);
         }
 
-        if (getFetchType() != null) {
+        if (isNotBlank(getFetchType())) {
             builder.append("fetch = ")
                     .append(getFetchType())
                     .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || optional == false) {
+        if (isGenerateDefaultValue() || optional == false) {
             builder.append("optional = ")
                     .append(optional)
                     .append(COMMA);
         }
         
-        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
+        if (isGenerateDefaultValue() || orphanRemoval == true) {
             builder.append("orphanRemoval = ")
                     .append(orphanRemoval)
                     .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
+        if (isGenerateDefaultValue() && isNotBlank(getTargetEntity())) {
             builder.append("targetEntity = ")
                     .append(getTargetEntity())
                     .append(COMMA);

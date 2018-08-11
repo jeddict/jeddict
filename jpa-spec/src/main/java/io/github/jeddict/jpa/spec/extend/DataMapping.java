@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.StringUtils;
 import io.github.jeddict.jcode.util.StringHelper;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import static io.github.jeddict.jpa.spec.NamedQuery.FIND_BY;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -42,7 +42,7 @@ public abstract class DataMapping {
     protected String description;
 
     public boolean refractorName(String prevName, String newName) {
-        if (CodePanel.isRefractorQuery()) {
+        if (ClassDiagramSettings.isRefractorQuery()) {
             if (StringUtils.containsIgnoreCase(this.getName(), FIND_BY + prevName)) {
                 this.setName(this.getName().replaceAll("\\b(?i)" + Pattern.quote(FIND_BY + prevName) + "\\b", FIND_BY + StringHelper.firstUpper(newName)));
                 return true;

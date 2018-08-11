@@ -15,9 +15,6 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import static io.github.jeddict.jcode.JPAConstants.ENUMERATED;
 import static io.github.jeddict.jcode.JPAConstants.ENUMERATED_FQN;
 import static io.github.jeddict.jcode.JPAConstants.ENUM_TYPE_FQN;
@@ -25,9 +22,14 @@ import static io.github.jeddict.jcode.JPAConstants.ENUM_TYPE_ORDINAL;
 import static io.github.jeddict.jcode.JPAConstants.ENUM_TYPE_STRING;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_ENUMERATED_FQN;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.EnumType;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class EnumeratedSnippet implements Snippet {
 
@@ -67,19 +69,21 @@ public class EnumeratedSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append('@');
-         if (mapKey) {
+        StringBuilder builder = new StringBuilder(AT);
+        if (mapKey) {
             builder.append(MAP_KEY_ENUMERATED);
         } else {
             builder.append(ENUMERATED);
         }
         if (ENUM_TYPE_STRING.equals(value)) {
-            builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_STRING).append(ORMConverterUtil.CLOSE_PARANTHESES);
-        } else if (ENUM_TYPE_ORDINAL.equals(value)) {
-            builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_ORDINAL).append(ORMConverterUtil.CLOSE_PARANTHESES);
-        } else if (CodePanel.isGenerateDefaultValue()){
-            builder.append(ORMConverterUtil.OPEN_PARANTHESES).append(ENUM_TYPE_ORDINAL).append(ORMConverterUtil.CLOSE_PARANTHESES);  
+            builder.append(OPEN_PARANTHESES)
+                    .append(ENUM_TYPE_STRING)
+                    .append(CLOSE_PARANTHESES);
+        } else if (isGenerateDefaultValue()
+                || ENUM_TYPE_ORDINAL.equals(value)) {
+            builder.append(OPEN_PARANTHESES)
+                    .append(ENUM_TYPE_ORDINAL)
+                    .append(CLOSE_PARANTHESES);
         }
         return builder.toString();
     }
@@ -94,7 +98,9 @@ public class EnumeratedSnippet implements Snippet {
             importSnippets.add(ENUMERATED_FQN);
         }
         
-        if(ENUM_TYPE_STRING.equals(value) || ENUM_TYPE_ORDINAL.equals(value) || CodePanel.isGenerateDefaultValue()){
+        if (isGenerateDefaultValue()
+                || ENUM_TYPE_STRING.equals(value)
+                || ENUM_TYPE_ORDINAL.equals(value)) {
             importSnippets.add(ENUM_TYPE_FQN);
         }
         return importSnippets;

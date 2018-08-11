@@ -85,7 +85,11 @@ import io.github.jeddict.orm.generator.util.ImportSet;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.NEW_LINE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.TAB;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.settings.generate.GenerateSettings.getFluentAPIPrefix;
+import static io.github.jeddict.settings.generate.GenerateSettings.isFluentAPIJavaDoc;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGetterJavaDoc;
+import static io.github.jeddict.settings.generate.GenerateSettings.isPropertyJavaDoc;
+import static io.github.jeddict.settings.generate.GenerateSettings.isSetterJavaDoc;
 import io.github.jeddict.snippet.AttributeSnippetLocationType;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_JAVADOC;
 import static io.github.jeddict.snippet.AttributeSnippetLocationType.GETTER_THROWS;
@@ -104,6 +108,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import org.openide.util.Exceptions;
 
 public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, AssociationOverridesHandler {
@@ -299,8 +304,8 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public String getFluentMethodName() {
-        if (StringUtils.isNotBlank(CodePanel.getFluentAPIPrefix())) {
-            return CodePanel.getFluentAPIPrefix() + firstUpper(getName());
+        if (isNotBlank(getFluentAPIPrefix())) {
+            return getFluentAPIPrefix() + firstUpper(getName());
         } else {
             return getName();
         }
@@ -1031,22 +1036,22 @@ public class VariableDefSnippet implements Snippet, AttributeOverridesHandler, A
     }
 
     public boolean isPropertyJavaDocExist() {
-        return (isJavaDocExist() && CodePanel.isPropertyJavaDoc())
+        return (isJavaDocExist() && isPropertyJavaDoc())
                 || getCustomSnippet(PROPERTY_JAVADOC.name()) != null;
     }
 
     public boolean isGetterJavaDocExist() {
-        return (isJavaDocExist() && CodePanel.isGetterJavaDoc())
+        return (isJavaDocExist() && isGetterJavaDoc())
                 || getCustomSnippet(GETTER_JAVADOC.name()) != null;
     }
 
     public boolean isSetterJavaDocExist() {
-        return (isJavaDocExist() && CodePanel.isSetterJavaDoc())
+        return (isJavaDocExist() && isSetterJavaDoc())
                 || getCustomSnippet(SETTER_JAVADOC.name()) != null;
     }
 
     public boolean isFluentJavaDocExist() {
-        return isJavaDocExist() && CodePanel.isFluentAPIJavaDoc();
+        return isJavaDocExist() && isFluentAPIJavaDoc();
     }
 
     /**

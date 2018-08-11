@@ -16,6 +16,7 @@
 package io.github.jeddict.orm.generator.compiler;
 
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
@@ -23,7 +24,8 @@ import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_BRACES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.getCommaSeparatedString;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class OneToManySnippet extends MultiRelationAttributeSnippet {
 
@@ -32,13 +34,13 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
     @Override
     public String getSnippet() throws InvalidDataException {
 
-        if (!CodePanel.isGenerateDefaultValue()) {
+        if (!isGenerateDefaultValue()) {
             if (mappedBy == null
                     && orphanRemoval == false
                     && getFetchType() == null
                     && getCascadeTypes().isEmpty() 
                     && (mapKeySnippet==null || mapKeySnippet.isEmpty())) {
-                return "@" + getType();
+                return AT + getType();
             }
         }
                
@@ -49,9 +51,9 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
                     .append(ORMConverterUtil.TAB);
         }
 
-        builder.append("@").append(getType()).append(OPEN_PARANTHESES);
+        builder.append(AT).append(getType()).append(OPEN_PARANTHESES);
 
-        if (mappedBy != null) {
+        if (isNotBlank(mappedBy)) {
             builder.append("mappedBy = ")
                     .append(QUOTE)
                     .append(mappedBy)
@@ -59,19 +61,19 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
                     .append(COMMA);
         }
 
-        if (getFetchType() != null) {
+        if (isNotBlank(getFetchType())) {
             builder.append("fetch = ")
                     .append(getFetchType())
                     .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || orphanRemoval == true) {
+        if (isGenerateDefaultValue() || orphanRemoval == true) {
             builder.append("orphanRemoval = ")
                     .append(orphanRemoval)
                     .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() && getTargetEntity() != null) {
+        if (isGenerateDefaultValue() && isNotBlank(getTargetEntity())) {
             builder.append("targetEntity = ")
                     .append(getTargetEntity())
                     .append(COMMA);
@@ -92,7 +94,7 @@ public class OneToManySnippet extends MultiRelationAttributeSnippet {
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
-       @Override
+    @Override
     public String getType() {
         return "OneToMany";
     }

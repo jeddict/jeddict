@@ -19,8 +19,11 @@ import static io.github.jeddict.jcode.JPAConstants.COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_COLUMN_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.Collection;
 import java.util.Collections;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -48,10 +51,9 @@ public class ColumnDefSnippet implements Snippet {
     public ColumnDefSnippet() {
     }
 
-    
     public boolean isEmptyObject() {
         boolean empty = false;
-        if (!CodePanel.isGenerateDefaultValue()) {
+        if (!isGenerateDefaultValue()) {
             if ((name == null || name.trim().isEmpty())
                     && (table == null || table.trim().isEmpty())
                     && (columnDefinition == null || columnDefinition.trim().isEmpty())
@@ -149,18 +151,18 @@ public class ColumnDefSnippet implements Snippet {
         StringBuilder builder = new StringBuilder();
 
         if (name != null) {
-            builder.append("name=\"");
-            builder.append(name);
-            builder.append("\",");
+            builder.append("name=\"")
+                    .append(name)
+                    .append("\",");
         }
 
         if (table != null) {
-            builder.append("table=\"");
-            builder.append(table);
-            builder.append("\",");
+            builder.append("table=\"")
+                    .append(table)
+                    .append("\",");
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             if (unique == true) {
                 builder.append("unique=true,");
             } else {
@@ -170,7 +172,7 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("unique=true,");
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             if (insertable == true) {
                 builder.append("insertable=true,");
             } else {
@@ -180,7 +182,7 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("insertable=false,");
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             if (nullable == true) {
                 builder.append("nullable=true,");
             } else {
@@ -190,7 +192,7 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("nullable=false,");
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             if (updatable == true) {
                 builder.append("updatable=true,");
             } else {
@@ -200,37 +202,38 @@ public class ColumnDefSnippet implements Snippet {
             builder.append("updatable=false,");
         }
 
-        if (CodePanel.isGenerateDefaultValue() || length != 255) {
-            builder.append("length=");
-            builder.append(length);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || length != 255) {
+            builder.append("length=")
+                    .append(length)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || scale != 0) {
-            builder.append("scale=");
-            builder.append(scale);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || scale != 0) {
+            builder.append("scale=")
+                    .append(scale)
+                    .append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue() || precision != 0) {
-            builder.append("precision=");
-            builder.append(precision);
-            builder.append(ORMConverterUtil.COMMA);
+        if (isGenerateDefaultValue() || precision != 0) {
+            builder.append("precision=")
+                    .append(precision)
+                    .append(COMMA);
         }
 
         if (columnDefinition != null) {
-            builder.append("columnDefinition=\"");
-            builder.append(columnDefinition);
-            builder.append("\",");
+            builder.append("columnDefinition=\"")
+                    .append(columnDefinition)
+                    .append("\",");
         }
-        
-        return "@" + (mapKey? MAP_KEY_COLUMN : COLUMN) + ORMConverterUtil.OPEN_PARANTHESES + 
-                (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
-                + ORMConverterUtil.CLOSE_PARANTHESES;
+
+        return AT + (mapKey ? MAP_KEY_COLUMN : COLUMN)
+                + OPEN_PARANTHESES
+                + (builder.length() > 1 ? builder.substring(0, builder.length() - 1) : EMPTY)
+                + CLOSE_PARANTHESES;
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList((mapKey? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
+        return Collections.singletonList((mapKey ? MAP_KEY_COLUMN_FQN : COLUMN_FQN));
     }
 }

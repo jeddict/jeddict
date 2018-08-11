@@ -15,20 +15,23 @@
  */
 package io.github.jeddict.orm.generator.compiler;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_BY;
 import static io.github.jeddict.jcode.JPAConstants.ORDER_BY_FQN;
-import io.github.jeddict.settings.code.CodePanel;
 import io.github.jeddict.jpa.spec.OrderBy;
 import io.github.jeddict.jpa.spec.OrderType;
 import io.github.jeddict.jpa.spec.extend.OrderbyItem;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.SPACE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
+import java.util.Collection;
+import java.util.Collections;
+import static java.util.Collections.singleton;
+import java.util.List;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class OrderBySnippet implements Snippet {
 
@@ -40,18 +43,18 @@ public class OrderBySnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(ORDER_BY);
 
         if (orderList.isEmpty()) {
-            return "@" + ORDER_BY;
+            return builder.toString();
         }
 
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("@").append(ORDER_BY).append("(");
-        builder.append(QUOTE);
+        builder.append(OPEN_PARANTHESES)
+                .append(QUOTE);
 
         for (OrderbyItem order : orderList) {
-            boolean propertyExist = !StringUtils.isBlank(order.getProperty());
+            boolean propertyExist = isNotBlank(order.getProperty());
             if (propertyExist) {
                 builder.append(order.getProperty());
             }
@@ -60,21 +63,23 @@ public class OrderBySnippet implements Snippet {
                     builder.append(SPACE);
                 }
                 builder.append(order.getOrderType().name());
-            } else if (CodePanel.isGenerateDefaultValue()) {
+            } else if (isGenerateDefaultValue()) {
                 if (propertyExist) {
                     builder.append(SPACE);
                 }
                 builder.append(OrderType.ASC.name());
             }
-            builder.append(COMMA).append(SPACE);
+            builder.append(COMMA)
+                    .append(SPACE);
         }
         builder.setLength(builder.length() - 2);
-        builder.append(QUOTE).append(CLOSE_PARANTHESES);
+        builder.append(QUOTE)
+                .append(CLOSE_PARANTHESES);
         return builder.toString();
     }
 
     @Override
     public Collection<String> getImportSnippets() throws InvalidDataException {
-        return Collections.singletonList(ORDER_BY_FQN);
+        return singleton(ORDER_BY_FQN);
     }
 }

@@ -19,12 +19,16 @@ import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.JOIN_COLUMN_FQN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN;
 import static io.github.jeddict.jcode.JPAConstants.MAP_KEY_JOIN_COLUMN_FQN;
-import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
-import io.github.jeddict.settings.code.CodePanel;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class JoinColumnSnippet implements Snippet {
 
@@ -116,14 +120,14 @@ public class JoinColumnSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder("@");
+        StringBuilder builder = new StringBuilder(AT);
         if (mapKey) {
             builder.append(MAP_KEY_JOIN_COLUMN);
         } else {
             builder.append(JOIN_COLUMN);
         }
         
-        if (!CodePanel.isGenerateDefaultValue()) {
+        if (!isGenerateDefaultValue()) {
             if (insertable == true
                     && nullable == true
                     && unique == false
@@ -139,81 +143,81 @@ public class JoinColumnSnippet implements Snippet {
 
         builder.append(OPEN_PARANTHESES);
 
-        if (name != null) {
+        if (isNotBlank(name)) {
             builder.append("name=\"");
             builder.append(name);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(QUOTE);
+            builder.append(COMMA);
         }
 
-        if (referencedColumnName != null && !referencedColumnName.trim().isEmpty()) {
+        if (isNotBlank(referencedColumnName)) {
             builder.append("referencedColumnName=\"");
             builder.append(referencedColumnName);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(QUOTE);
+            builder.append(COMMA);
         }
 
-        if (table != null && !table.trim().isEmpty()) {
+        if (isNotBlank(table)) {
             builder.append("table=\"");
             builder.append(table);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(QUOTE);
+            builder.append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             builder.append("unique=");
             builder.append(unique);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         } else if (unique == true) {
             builder.append("unique=");
             builder.append(unique);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             builder.append("insertable=");
             builder.append(insertable);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         } else if (insertable == false) {
             builder.append("insertable=");
             builder.append(insertable);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             builder.append("nullable=");
             builder.append(nullable);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         } else if (nullable == false) {
             builder.append("nullable=");
             builder.append(nullable);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        if (CodePanel.isGenerateDefaultValue()) {
+        if (isGenerateDefaultValue()) {
             builder.append("updatable=");
             builder.append(updatable);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         } else if (updatable == false) {
             builder.append("updatable=");
             builder.append(updatable);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
         
         if (foreignKey != null) {
             builder.append("foreignKey=");
             builder.append(foreignKey.getSnippet());
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(COMMA);
         }
 
-        if (columnDefinition != null && !columnDefinition.trim().isEmpty()) {
+        if (isNotBlank(columnDefinition)) {
             builder.append("columnDefinition=\"");
             builder.append(columnDefinition);
-            builder.append(ORMConverterUtil.QUOTE);
-            builder.append(ORMConverterUtil.COMMA);
+            builder.append(QUOTE);
+            builder.append(COMMA);
         }
         
-        return builder.substring(0, builder.length() - 1) + ORMConverterUtil.CLOSE_PARANTHESES;
+        return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }
 
     @Override

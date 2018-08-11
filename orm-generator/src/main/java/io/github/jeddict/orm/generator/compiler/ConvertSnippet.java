@@ -19,14 +19,17 @@ import static io.github.jeddict.jcode.JPAConstants.CONVERT;
 import static io.github.jeddict.jcode.JPAConstants.CONVERT_FQN;
 import io.github.jeddict.jpa.spec.Convert;
 import io.github.jeddict.orm.generator.util.ClassHelper;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.AT;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.CLOSE_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.COMMA;
+import static io.github.jeddict.orm.generator.util.ORMConverterUtil.OPEN_PARANTHESES;
 import static io.github.jeddict.orm.generator.util.ORMConverterUtil.QUOTE;
-import static io.github.jeddict.settings.code.CodePanel.isGenerateDefaultValue;
+import static io.github.jeddict.settings.generate.GenerateSettings.isGenerateDefaultValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class ConvertSnippet implements Snippet {
 
@@ -42,26 +45,27 @@ public class ConvertSnippet implements Snippet {
 
     @Override
     public String getSnippet() throws InvalidDataException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("@").append(CONVERT).append("(");
+        StringBuilder builder = new StringBuilder(AT);
+        builder.append(CONVERT)
+                .append(OPEN_PARANTHESES);
 
         if (converterClass != null) {
-            builder.append("converter=");
-            builder.append(converterClass.getClassNameWithClassSuffix());
-            builder.append(COMMA);
+            builder.append("converter=")
+                    .append(converterClass.getClassNameWithClassSuffix())
+                    .append(COMMA);
         }
 
         if (isGenerateDefaultValue() || disableConversion) {
-            builder.append("disableConversion=");
-            builder.append(disableConversion);
-            builder.append(COMMA);
+            builder.append("disableConversion=")
+                    .append(disableConversion)
+                    .append(COMMA);
         }
 
-        if (!StringUtils.isBlank(attributeName)) {
-            builder.append("attributeName=\"");
-            builder.append(attributeName);
-            builder.append(QUOTE);
-            builder.append(COMMA);
+        if (isNotBlank(attributeName)) {
+            builder.append("attributeName=\"")
+                    .append(attributeName)
+                    .append(QUOTE)
+                    .append(COMMA);
         }
         return builder.substring(0, builder.length() - 1) + CLOSE_PARANTHESES;
     }

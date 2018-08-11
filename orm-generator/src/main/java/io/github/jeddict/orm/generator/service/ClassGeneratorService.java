@@ -45,6 +45,7 @@ import io.github.jeddict.orm.generator.spec.WritableSnippet;
 import io.github.jeddict.orm.generator.util.ClassType;
 import io.github.jeddict.orm.generator.util.ClassesRepository;
 import io.github.jeddict.orm.generator.util.ORMConverterUtil;
+import static io.github.jeddict.settings.generate.GenerateSettings.isSyncExistingSourceCode;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -210,6 +211,9 @@ public class ClassGeneratorService implements ModuleGenerator {
     }
 
     private void loadExistingSnippet(JavaClass javaClass) {
+        if (!isSyncExistingSourceCode()) {
+            return;
+        }
         String pathTemplate = javaClass.getRootPackage().replace(".", "/") + "/%s" + JAVA_EXT_SUFFIX;
         FileObject root = sourceGroup.getRootFolder();
         FileObject existingFile = null;

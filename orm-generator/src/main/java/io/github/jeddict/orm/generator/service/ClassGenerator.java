@@ -49,7 +49,7 @@ import io.github.jeddict.orm.generator.compiler.def.ClassDefSnippet;
 import io.github.jeddict.orm.generator.compiler.def.VariableDefSnippet;
 import io.github.jeddict.orm.generator.util.ClassHelper;
 import io.github.jeddict.orm.generator.util.ORMConvLogger;
-import io.github.jeddict.settings.code.CodePanel;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
 import io.github.jeddict.snippet.AttributeSnippet;
 import io.github.jeddict.snippet.ClassSnippet;
 import io.github.jeddict.snippet.Snippet;
@@ -64,7 +64,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
@@ -176,8 +177,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected HashcodeMethodSnippet getHashcodeMethodSnippet(JavaClass javaClass, ClassMembers classMembers) {
         if (classMembers.getAttributes().isEmpty()
-                && StringUtils.isBlank(classMembers.getPreCode())
-                && StringUtils.isBlank(classMembers.getPostCode())) {
+                && isBlank(classMembers.getPreCode())
+                && isBlank(classMembers.getPostCode())) {
             return null;
         }
         return new HashcodeMethodSnippet(javaClass.getClazz(), classMembers);
@@ -185,8 +186,8 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
 
     protected EqualsMethodSnippet getEqualsMethodSnippet(JavaClass javaClass, ClassMembers classMembers) {
         if (classMembers.getAttributes().isEmpty()
-                && StringUtils.isBlank(classMembers.getPreCode())
-                && StringUtils.isBlank(classMembers.getPostCode())) {
+                && isBlank(classMembers.getPreCode())
+                && isBlank(classMembers.getPostCode())) {
             return null;
         }
         return new EqualsMethodSnippet(javaClass.getClazz(), classMembers);
@@ -248,32 +249,32 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         if (attribute.getJsonbTransient()) {
             snippets.add(new TransientSnippet());
         } else {
-            if (StringUtils.isNotBlank(attribute.getJsonbProperty()) || attribute.getJsonbNillable()) {
+            if (isNotBlank(attribute.getJsonbProperty()) || attribute.getJsonbNillable()) {
                 snippets.add(new PropertySnippet(attribute.getJsonbProperty(), attribute.getJsonbNillable()));
             }
             if (attribute.getJsonbDateFormat() != null
-                    && (StringUtils.isNotBlank(attribute.getJsonbDateFormat().getValue())
-                    || StringUtils.isNotBlank(attribute.getJsonbDateFormat().getLocale()))) {
+                    && (isNotBlank(attribute.getJsonbDateFormat().getValue())
+                    || isNotBlank(attribute.getJsonbDateFormat().getLocale()))) {
                 snippets.add(new DateFormatSnippet(attribute.getJsonbDateFormat()));
             }
             if (attribute.getJsonbNumberFormat() != null
-                    && (StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getValue())
-                    || StringUtils.isNotBlank(attribute.getJsonbNumberFormat().getLocale()))) {
+                    && (isNotBlank(attribute.getJsonbNumberFormat().getValue())
+                    || isNotBlank(attribute.getJsonbNumberFormat().getLocale()))) {
                 snippets.add(new NumberFormatSnippet(attribute.getJsonbNumberFormat()));
             }
             if (attribute.getJsonbTypeAdapter() != null
                     && attribute.getJsonbTypeAdapter().isEnable()
-                    && !StringUtils.isBlank(attribute.getJsonbTypeAdapter().getName())) {
+                    && isNotBlank(attribute.getJsonbTypeAdapter().getName())) {
                 snippets.add(new TypeAdapterSnippet(attribute.getJsonbTypeAdapter()));
             }
             if (attribute.getJsonbTypeDeserializer() != null
                     && attribute.getJsonbTypeDeserializer().isEnable()
-                    && !StringUtils.isBlank(attribute.getJsonbTypeDeserializer().getName())) {
+                    && isNotBlank(attribute.getJsonbTypeDeserializer().getName())) {
                 snippets.add(new TypeDeserializerSnippet(attribute.getJsonbTypeDeserializer()));
             }
             if (attribute.getJsonbTypeSerializer() != null
                     && attribute.getJsonbTypeSerializer().isEnable()
-                    && !StringUtils.isBlank(attribute.getJsonbTypeSerializer().getName())) {
+                    && isNotBlank(attribute.getJsonbTypeSerializer().getName())) {
                 snippets.add(new TypeSerializerSnippet(attribute.getJsonbTypeSerializer()));
             }
         }
@@ -303,22 +304,22 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         }
         if(javaClass.getJsonbTypeAdapter()!=null 
                 && javaClass.getJsonbTypeAdapter().isEnable() 
-                && !StringUtils.isBlank(javaClass.getJsonbTypeAdapter().getName())){
+                && isNotBlank(javaClass.getJsonbTypeAdapter().getName())){
             snippets.add(new TypeAdapterSnippet(javaClass.getJsonbTypeAdapter()));
         }
         if(javaClass.getJsonbTypeDeserializer()!=null 
                 && javaClass.getJsonbTypeDeserializer().isEnable() 
-                && !StringUtils.isBlank(javaClass.getJsonbTypeDeserializer().getName())){
+                && isNotBlank(javaClass.getJsonbTypeDeserializer().getName())){
             snippets.add(new TypeDeserializerSnippet(javaClass.getJsonbTypeDeserializer()));
         }
         if(javaClass.getJsonbTypeSerializer()!=null 
                 && javaClass.getJsonbTypeSerializer().isEnable() 
-                && !StringUtils.isBlank(javaClass.getJsonbTypeSerializer().getName())){
+                && isNotBlank(javaClass.getJsonbTypeSerializer().getName())){
             snippets.add(new TypeSerializerSnippet(javaClass.getJsonbTypeSerializer()));
         }
         if(javaClass.getJsonbVisibility()!=null 
                 && javaClass.getJsonbVisibility().isEnable() 
-                && !StringUtils.isBlank(javaClass.getJsonbVisibility().getName())){
+                && isNotBlank(javaClass.getJsonbVisibility().getName())){
             snippets.add(new VisibilitySnippet(javaClass.getJsonbVisibility()));
         }
         return snippets;
@@ -330,18 +331,18 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
             snippets.add(new NillableSnippet(entityMappings.getJsonbNillable()));
         }
         if (entityMappings.getJsonbDateFormat() != null
-                && (StringUtils.isNotBlank(entityMappings.getJsonbDateFormat().getValue())
-                || StringUtils.isNotBlank(entityMappings.getJsonbDateFormat().getLocale()))) {
+                && (isNotBlank(entityMappings.getJsonbDateFormat().getValue())
+                || isNotBlank(entityMappings.getJsonbDateFormat().getLocale()))) {
             snippets.add(new DateFormatSnippet(entityMappings.getJsonbDateFormat()));
         }
         if (entityMappings.getJsonbNumberFormat() != null
-                && (StringUtils.isNotBlank(entityMappings.getJsonbNumberFormat().getValue())
-                || StringUtils.isNotBlank(entityMappings.getJsonbNumberFormat().getLocale()))) {
+                && (isNotBlank(entityMappings.getJsonbNumberFormat().getValue())
+                || isNotBlank(entityMappings.getJsonbNumberFormat().getLocale()))) {
             snippets.add(new NumberFormatSnippet(entityMappings.getJsonbNumberFormat()));
         }
         if (entityMappings.getJsonbVisibility() != null 
                 && entityMappings.getJsonbVisibility().isEnable() 
-                && !StringUtils.isBlank(entityMappings.getJsonbVisibility().getName())){
+                && isNotBlank(entityMappings.getJsonbVisibility().getName())){
             snippets.add(new VisibilitySnippet(entityMappings.getJsonbVisibility()));
         }
         return snippets;
@@ -363,7 +364,7 @@ public abstract class ClassGenerator<T extends ClassDefSnippet> {
         variableDef.setFunctionalType(attr.isOptionalReturnType());
         variableDef.setDefaultValue(attr.getDefaultValue());
         variableDef.setDescription(attr.getDescription());
-        if (CodePanel.isJavaSESupportEnable()) {
+        if (ClassDiagramSettings.isJavaSESupportEnable()) {
             variableDef.setPropertyChangeSupport(TRUE.equals(attr.getPropertyChangeSupport()));
             variableDef.setVetoableChangeSupport(TRUE.equals(attr.getVetoableChangeSupport()));
             VetoPropertyRuntimeSnippet vetoPropertySnippet = new VetoPropertyRuntimeSnippet();

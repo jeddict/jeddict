@@ -15,26 +15,26 @@
  */
 package io.github.jeddict.relation.mapper.widget.column;
 
+import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
+import io.github.jeddict.jpa.modeler.rules.entity.SQLKeywords;
+import io.github.jeddict.jpa.modeler.widget.FlowPinWidget;
+import io.github.jeddict.relation.mapper.initializer.RelationMapperScene;
+import io.github.jeddict.relation.mapper.initializer.RelationMapperUtil;
+import static io.github.jeddict.relation.mapper.initializer.RelationMapperUtil.COLUMN;
+import static io.github.jeddict.relation.mapper.initializer.RelationMapperUtil.COLUMN_ICON_PATH;
+import io.github.jeddict.relation.mapper.spec.DBColumn;
+import io.github.jeddict.relation.mapper.spec.DBTable;
 import io.github.jeddict.relation.mapper.widget.api.IColumnWidget;
+import io.github.jeddict.relation.mapper.widget.flow.ReferenceFlowWidget;
+import io.github.jeddict.relation.mapper.widget.table.TableWidget;
+import io.github.jeddict.settings.diagram.ClassDiagramSettings;
+import io.github.jeddict.settings.view.AttributeViewAs;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JMenuItem;
 import org.apache.commons.lang.StringUtils;
-import io.github.jeddict.relation.mapper.widget.flow.ReferenceFlowWidget;
-import io.github.jeddict.relation.mapper.widget.table.TableWidget;
-import io.github.jeddict.relation.mapper.spec.DBColumn;
-import io.github.jeddict.relation.mapper.spec.DBTable;
-import io.github.jeddict.relation.mapper.initializer.RelationMapperScene;
-import io.github.jeddict.relation.mapper.initializer.RelationMapperUtil;
-import static io.github.jeddict.relation.mapper.initializer.RelationMapperUtil.COLUMN;
-import static io.github.jeddict.relation.mapper.initializer.RelationMapperUtil.COLUMN_ICON_PATH;
-import io.github.jeddict.jpa.modeler.widget.FlowPinWidget;
-import io.github.jeddict.jpa.modeler.rules.attribute.AttributeValidator;
-import io.github.jeddict.jpa.modeler.rules.entity.SQLKeywords;
-import io.github.jeddict.settings.view.AttributeViewAs;
-import io.github.jeddict.settings.view.ViewPanel;
 import org.netbeans.modeler.widget.context.ContextPaletteModel;
 import org.netbeans.modeler.widget.node.IPNodeWidget;
 import static org.netbeans.modeler.widget.node.IWidgetStateHandler.StateType.ERROR;
@@ -54,7 +54,7 @@ public abstract class ColumnWidget<E extends DBColumn> extends FlowPinWidget<E, 
     }
 
     public void visualizeDataType() {
-        AttributeViewAs viewAs = ViewPanel.getDataType();
+        AttributeViewAs viewAs = ClassDiagramSettings.getDataType();
         DBColumn column = this.getBaseElementSpec();
         
         String dataType = column.getDataType();
