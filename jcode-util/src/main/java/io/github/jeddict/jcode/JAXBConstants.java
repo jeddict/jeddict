@@ -37,6 +37,9 @@ public class JAXBConstants {
     public static final String JAXB_XML_ELEMENT_WRAPPER = "XmlElementWrapper";
     public static final String JAXB_XML_ATTRIBUTE = "XmlAttribute";
     public static final String JAXB_XML_INVERSE_REFERENCE = "XmlInverseReference";
+    public static final String JAXB_XML_SCHEMA = "XmlSchema";
+    public static final String JAXB_XML_ACCESSOR_TYPE = "XmlAccessorType";
+    public static final String JAXB_XML_ROOT_ELEMENT = "XmlRootElement";
 
     public static final Set<String> JAXB_ANNOTATIONS = new HashSet<>(asList(
             JAXB_XML_ELEMENT,
@@ -46,7 +49,10 @@ public class JAXBConstants {
             JAXB_XML_ELEMENT_REF,
             JAXB_XML_ELEMENT_WRAPPER,
             JAXB_XML_ATTRIBUTE,
-            JAXB_XML_INVERSE_REFERENCE
+            JAXB_XML_INVERSE_REFERENCE,
+            JAXB_XML_SCHEMA,
+            JAXB_XML_ACCESSOR_TYPE,
+            JAXB_XML_ROOT_ELEMENT
     ));
 
 }
